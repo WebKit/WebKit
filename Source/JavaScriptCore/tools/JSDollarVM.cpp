@@ -52,6 +52,7 @@
 #include "SnippetParams.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
+#include "VMEntryScopeInlines.h"
 #include "VMInspector.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"

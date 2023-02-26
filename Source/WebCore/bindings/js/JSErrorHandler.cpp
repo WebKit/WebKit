@@ -42,7 +42,7 @@
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/VMEntryScope.h>
+#include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

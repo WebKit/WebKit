@@ -106,7 +106,7 @@
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
-#include "VMEntryScope.h"
+#include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
@@ -778,8 +778,7 @@ void VM::whenIdle(Function<void()>&& callback)
         callback();
         return;
     }
-
-    entryScope->addDidPopListener(WTFMove(callback));
+    m_didPopListeners.append(WTFMove(callback));
 }
 
 void VM::deleteAllLinkedCode(DeleteAllCodeEffort effort)

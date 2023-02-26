@@ -40,6 +40,7 @@
 #include "RegExpGlobalDataInlines.h"
 #include "StringPrototypeInlines.h"
 #include "SuperSampler.h"
+#include "VMEntryScopeInlines.h"
 #include <algorithm>
 #include <unicode/unorm2.h>
 #include <unicode/ustring.h>

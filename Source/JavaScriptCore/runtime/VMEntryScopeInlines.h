@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,33 +20,30 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include <functional>
-#include <wtf/Vector.h>
+#include "VM.h"
+#include "VMEntryScope.h"
 
 namespace JSC {
 
-class JSGlobalObject;
-class VM;
+ALWAYS_INLINE VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
+    : m_vm(vm)
+    , m_globalObject(globalObject)
+{
+    if (!vm.entryScope)
+        setUpSlow();
+    vm.clearLastException();
+}
 
-class VMEntryScope {
-public:
-    VMEntryScope(VM&, JSGlobalObject*);
-    ~VMEntryScope();
-
-    VM& vm() const { return m_vm; }
-    JSGlobalObject* globalObject() const { return m_globalObject; }
-
-private:
-    JS_EXPORT_PRIVATE void setUpSlow();
-    JS_EXPORT_PRIVATE void tearDownSlow();
-
-    VM& m_vm;
-    JSGlobalObject* m_globalObject;
-};
+ALWAYS_INLINE VMEntryScope::~VMEntryScope()
+{
+    if (m_vm.entryScope != this)
+        return;
+    tearDownSlow();
+}
 
 } // namespace JSC

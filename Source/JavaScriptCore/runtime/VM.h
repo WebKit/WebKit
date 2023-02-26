@@ -734,6 +734,13 @@ public:
     void clearScratchBuffers();
     bool isScratchBuffer(void*);
 
+    void invokeDidPopListeners()
+    {
+        auto listeners = WTFMove(m_didPopListeners);
+        for (auto& listener : listeners)
+            listener();
+    }
+
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {
         ASSERT(Options::useExceptionFuzz());
@@ -1034,6 +1041,8 @@ private:
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
     Ref<Waiter> m_syncWaiter;
+
+    Vector<Function<void()>> m_didPopListeners;
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

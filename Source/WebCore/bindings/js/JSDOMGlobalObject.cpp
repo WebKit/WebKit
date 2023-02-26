@@ -71,7 +71,7 @@
 #include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/StructureInlines.h>
-#include <JavaScriptCore/VMEntryScope.h>
+#include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <JavaScriptCore/VMTrapsInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>

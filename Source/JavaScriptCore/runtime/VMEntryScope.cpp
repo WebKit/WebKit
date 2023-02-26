@@ -29,6 +29,7 @@
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "VM.h"
+#include "VMEntryScopeInlines.h"
 #include "WasmCapabilities.h"
 #include "WasmMachineThreads.h"
 #include "Watchdog.h"
@@ -37,58 +38,44 @@
 
 namespace JSC {
 
-VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
-    : m_vm(vm)
-    , m_globalObject(globalObject)
+void VMEntryScope::setUpSlow()
 {
-    if (!vm.entryScope) {
-        vm.entryScope = this;
+    m_vm.entryScope = this;
 
-        auto& thread = Thread::current();
-        if (UNLIKELY(!thread.isJSThread())) {
-            Thread::registerJSThread(thread);
+    auto& thread = Thread::current();
+    if (UNLIKELY(!thread.isJSThread())) {
+        Thread::registerJSThread(thread);
 
-            if (Wasm::isSupported())
-                Wasm::startTrackingCurrentThread();
+        if (Wasm::isSupported())
+            Wasm::startTrackingCurrentThread();
 #if HAVE(MACH_EXCEPTIONS)
-            if (g_wtfConfig.signalHandlers.initState == WTF::SignalHandlers::InitState::AddedHandlers)
-                registerThreadForMachExceptionHandling(thread);
+        if (g_wtfConfig.signalHandlers.initState == WTF::SignalHandlers::InitState::AddedHandlers)
+            registerThreadForMachExceptionHandling(thread);
 #endif
-        }
-
-        vm.firePrimitiveGigacageEnabledIfNecessary();
-
-        // Reset the date cache between JS invocations to force the VM to
-        // observe time zone changes.
-        vm.resetDateCacheIfNecessary();
-
-        if (UNLIKELY(vm.watchdog()))
-            vm.watchdog()->enteredVM();
-
-#if ENABLE(SAMPLING_PROFILER)
-        {
-            SamplingProfiler* samplingProfiler = vm.samplingProfiler();
-            if (UNLIKELY(samplingProfiler))
-                samplingProfiler->noticeVMEntry();
-        }
-#endif
-        if (UNLIKELY(Options::useTracePoints()))
-            tracePoint(VMEntryScopeStart);
     }
 
-    vm.clearLastException();
+    m_vm.firePrimitiveGigacageEnabledIfNecessary();
+
+    // Reset the date cache between JS invocations to force the VM to
+    // observe time zone changes.
+    m_vm.resetDateCacheIfNecessary();
+
+    if (UNLIKELY(m_vm.watchdog()))
+        m_vm.watchdog()->enteredVM();
+
+#if ENABLE(SAMPLING_PROFILER)
+    {
+        SamplingProfiler* samplingProfiler = m_vm.samplingProfiler();
+        if (UNLIKELY(samplingProfiler))
+            samplingProfiler->noticeVMEntry();
+    }
+#endif
+    if (UNLIKELY(Options::useTracePoints()))
+        tracePoint(VMEntryScopeStart);
 }
 
-void VMEntryScope::addDidPopListener(Function<void ()>&& listener)
+void VMEntryScope::tearDownSlow()
 {
-    m_didPopListeners.append(WTFMove(listener));
-}
-
-VMEntryScope::~VMEntryScope()
-{
-    if (m_vm.entryScope != this)
-        return;
-
     ASSERT_WITH_MESSAGE(!m_vm.hasCheckpointOSRSideState(), "Exitting the VM but pending checkpoint side state still available");
 
     if (UNLIKELY(Options::useTracePoints()))
@@ -98,9 +85,7 @@ VMEntryScope::~VMEntryScope()
         m_vm.watchdog()->exitedVM();
 
     m_vm.entryScope = nullptr;
-
-    for (auto& listener : m_didPopListeners)
-        listener();
+    m_vm.invokeDidPopListeners();
 
     // If the trap bit is still set at this point, then it means that VMTraps::handleTraps()
     // has not yet been called for this termination request. As a result, we've not thrown a
