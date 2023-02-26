@@ -126,6 +126,9 @@ public:
     void outputLineTree(WTF::TextStream&, size_t depth) const;
 #endif
 
+    // This is temporary, required by partial bailout check.
+    bool hasOutOfFlowContent() const;
+
 private:
     void updateReplacedDimensions(const RenderBox&);
     void updateInlineBlockDimensions(const RenderBlock&);

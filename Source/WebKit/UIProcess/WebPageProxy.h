@@ -328,6 +328,7 @@ struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct TextRecognitionResult;
 struct ViewportAttributes;
+struct WheelEventHandlingResult;
 struct WindowFeatures;
 
 template<typename> class RectEdges;
@@ -1073,6 +1074,7 @@ public:
 
     bool isProcessingWheelEvents() const;
     void handleWheelEvent(const NativeWebWheelEvent&);
+    void continueWheelEventHandling(const NativeWebWheelEvent&, const WebCore::WheelEventHandlingResult&);
 
     bool isProcessingKeyboardEvents() const;
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);

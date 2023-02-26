@@ -1239,6 +1239,11 @@ Layout::InlineDamage& LineLayout::ensureLineDamage()
     return *m_lineDamage;
 }
 
+bool LineLayout::hasOutOfFlowContent() const
+{
+    return !m_inlineFormattingState.outOfFlowBoxes().isEmpty();
+}
+
 #if ENABLE(TREE_DEBUGGING)
 void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
 {

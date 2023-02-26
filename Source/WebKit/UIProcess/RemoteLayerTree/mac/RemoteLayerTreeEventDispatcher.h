@@ -28,6 +28,8 @@
 #if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
 
 #include "DisplayLinkObserverID.h"
+#include "NativeWebWheelEvent.h"
+#include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -60,8 +62,7 @@ public:
     
     void invalidate();
 
-    void willHandleWheelEvent(const NativeWebWheelEvent&);
-    WebCore::WheelEventHandlingResult handleWheelEvent(const WebWheelEvent&, RectEdges<bool> rubberBandableEdges);
+    void handleWheelEvent(const NativeWebWheelEvent&, RectEdges<bool> rubberBandableEdges);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 
@@ -72,6 +73,9 @@ private:
     WebCore::WheelEventHandlingResult internalHandleWheelEvent(const PlatformWheelEvent&, RectEdges<bool> rubberBandableEdges);
     WebCore::WheelEventHandlingResult scrollingTreeHandleWheelEvent(RemoteScrollingTree&, const PlatformWheelEvent&);
     PlatformWheelEvent filteredWheelEvent(const PlatformWheelEvent&);
+
+    void willHandleWheelEvent(const NativeWebWheelEvent&);
+    void wheelEventWasHandledByScrollingThread(WheelEventHandlingResult);
 
     DisplayLink* displayLink() const;
 
@@ -84,6 +88,8 @@ private:
 
     Lock m_scrollingTreeLock;
     RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
+
+    Deque<NativeWebWheelEvent, 2> m_wheelEventsBeingProcessed;
 
     WeakPtr<RemoteScrollingCoordinatorProxyMac> m_scrollingCoordinator;
     WebCore::PageIdentifier m_pageIdentifier;

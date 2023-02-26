@@ -269,7 +269,14 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 
 void BoxTree::updateContent(const RenderText& textRenderer)
 {
-    UNUSED_PARAM(textRenderer);
+    auto& inlineTextBox = downcast<Layout::InlineTextBox>(layoutBoxForRenderer(textRenderer));
+    auto& style = inlineTextBox.style();
+    auto isCombinedText = is<RenderCombineText>(textRenderer) && downcast<RenderCombineText>(textRenderer).isCombined();
+    auto text = style.textSecurity() == TextSecurity::None ? (isCombinedText ? textRenderer.originalText() : textRenderer.text()) : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
+    auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
+    auto canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, &inlineTextBox.firstLineStyle());
+
+    inlineTextBox.updateContent(text, canUseSimpleFontCodePath, canUseSimplifiedTextMeasuring);
 }
 
 const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child)

@@ -29,6 +29,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -480,7 +481,7 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     return canUseForLineLayout(blockContainer);
 }
 
-bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& rendererWithNewContent, const LineLayout&)
+bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
 {
     UNUSED_PARAM(rootBlockContainer);
     if (!is<RenderText>(rendererWithNewContent) || !is<RenderBlockFlow>(rendererWithNewContent.parent()))
@@ -488,6 +489,8 @@ bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& 
     if (!rendererWithNewContent.style().isLeftToRightDirection() || !rendererWithNewContent.style().isHorizontalWritingMode())
         return true;
     if (rendererWithNewContent.nextSibling())
+        return true;
+    if (lineLayout.hasOutOfFlowContent())
         return true;
     // Simple text content append only.
     return false;

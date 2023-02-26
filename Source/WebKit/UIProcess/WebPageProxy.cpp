@@ -3052,30 +3052,37 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 
     closeOverlayedViews();
 
-    auto handlingResult = WheelEventHandlingResult { WheelEventProcessingSteps::MainThreadForScrolling, false };
-    auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
-
     if (drawingArea()->shouldSendWheelEventsToEventDispatcher()) {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
         // FIXME: We should not have to look this up repeatedly, but it can also change occasionally.
         if (event.momentumPhase() == WebWheelEvent::PhaseBegan && preferences().momentumScrollingAnimatorEnabled())
             m_scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(event);
 #endif
-    } else {
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
-        if (m_scrollingCoordinatorProxy) {
-            handlingResult = m_scrollingCoordinatorProxy->handleWheelEvent(event, rubberBandableEdges);
-            if (!handlingResult.needsMainThreadProcessing()) {
-                if (!handlingResult.wasHandled)
-                    wheelEventWasNotHandled(event);
-                return;
-            }
-        }
-#endif
+        // "MainThreadForScrolling" here means "needs sending to the web process".
+        continueWheelEventHandling(event, { WheelEventProcessingSteps::MainThreadForScrolling, false });
+        return;
     }
 
-    if (wheelEventCoalescer().shouldDispatchEvent(event, handlingResult.steps)) {
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+    if (m_scrollingCoordinatorProxy) {
+        auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
+        m_scrollingCoordinatorProxy->handleWheelEvent(event, rubberBandableEdges);
+        // continueWheelEventHandling() will get called after the event has been handled by the scrolling thread.
+    }
+#endif
+}
+
+void WebPageProxy::continueWheelEventHandling(const NativeWebWheelEvent& wheelEvent, const WheelEventHandlingResult& result)
+{
+    if (!result.needsMainThreadProcessing()) {
+        if (!result.wasHandled)
+            wheelEventWasNotHandled(wheelEvent);
+        return;
+    }
+
+    if (wheelEventCoalescer().shouldDispatchEvent(wheelEvent, result.steps)) {
         auto eventAndSteps = wheelEventCoalescer().nextEventToDispatch();
+        auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
         sendWheelEvent(eventAndSteps->event, eventAndSteps->processingSteps, rubberBandableEdges);
     }
 }

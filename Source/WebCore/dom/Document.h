@@ -1141,6 +1141,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
     WEBCORE_EXPORT Ref<XPathNSResolver> createNSResolver(Node& nodeResolver);
     WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
+    static void createNSResolverForBindings(Node&) { } // Legacy.
 
     bool hasNodesWithNonFinalStyle() const { return m_hasNodesWithNonFinalStyle; }
     void setHasNodesWithNonFinalStyle() { m_hasNodesWithNonFinalStyle = true; }
