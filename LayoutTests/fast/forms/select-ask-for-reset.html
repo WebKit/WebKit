@@ -7,6 +7,17 @@
 <script>
 test(function() {
     var select = document.createElement('select');
+    select.innerHTML = '<option>foo</option>';
+    assert_equals(select.selectedIndex, 0);
+    select.value = '';
+    assert_equals(select.selectedIndex, -1);
+    document.body.appendChild(select);
+    // appendChild shouldn't change selection because it didn't change the
+    // option list.
+    assert_equals(select.selectedIndex, -1);
+}, 'Adding a SELECT tree to another tree should not reset selection.');
+test(function() {
+    var select = document.createElement('select');
     document.body.appendChild(select);
     select.innerHTML = '<option>foo</option>';
     assert_equals(select.selectedIndex, 0);
