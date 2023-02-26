@@ -3,7 +3,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2010-2022 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -1600,15 +1600,6 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent& event)
     selectOption(listToOptionIndex(index), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
     if (!usesMenuList())
         listBoxOnChange();
-}
-
-Node::InsertedIntoAncestorResult HTMLSelectElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
-{
-    // When the element is created during document parsing, it won't have any
-    // items yet - but for innerHTML and related methods, this method is called
-    // after the whole subtree is constructed.
-    recalcListItems();
-    return HTMLFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void HTMLSelectElement::accessKeySetSelectedIndex(int index)
