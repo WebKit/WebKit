@@ -151,7 +151,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDisplayBox(const I
 }
 
 struct DamagedLine {
-    size_t lineIndex { 0 };
+    size_t index { 0 };
     InlineItemPosition leadingInlineItemPosition { };
 };
 static std::optional<DamagedLine> leadingInlineItemPositionForDamage(std::optional<DamagedContent> damagedContent, const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
@@ -182,9 +182,9 @@ static std::optional<DamagedLine> leadingInlineItemPositionOnLastLine(const Inli
     return leadingInlineItemPositionForDamage({ }, inlineItems, displayBoxes);
 }
 
-static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(const InlineTextBox& damagedInlineTextBox, size_t offset, const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
+static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedContent damagedContent, const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
 {
-    return leadingInlineItemPositionForDamage(DamagedContent { damagedInlineTextBox, offset }, inlineItems, displayBoxes);
+    return leadingInlineItemPositionForDamage(damagedContent, inlineItems, displayBoxes);
 }
 
 void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox, std::optional<size_t> offset, std::optional<size_t> length)
@@ -198,13 +198,13 @@ void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox,
         // New text box got appended. Let's dirty the last existing line.
         ASSERT(!offset);
         ASSERT(!length);
-        if (auto damagedContent = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes))
-            m_inlineDamage.setDamagedPosition({ damagedContent->lineIndex, damagedContent->leadingInlineItemPosition });
+        if (auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes))
+            m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
         return;
     }
     // Existing text box got modified. Dirty all the way up to the damaged position's line.
-    if (auto damagedContent = leadingInlineItemPositionByDamagedBox(*damagedInlineTextBox, offset.value_or(0), m_inlineFormattingState.inlineItems(), m_displayBoxes))
-        m_inlineDamage.setDamagedPosition({ damagedContent->lineIndex, damagedContent->leadingInlineItemPosition });
+    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ *damagedInlineTextBox, offset.value_or(0) }, m_inlineFormattingState.inlineItems(), m_displayBoxes))
+        m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
 }
 
 void InlineInvalidation::textWillBeRemoved(const InlineTextBox& textBox, std::optional<size_t> offset, std::optional<size_t> length)
