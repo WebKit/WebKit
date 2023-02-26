@@ -31,7 +31,7 @@
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
 #include "WebGLRenderingContext.h"
-
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>

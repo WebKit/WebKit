@@ -3408,6 +3408,10 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "Foo.h"\n',
                                          '')
 
+    def test_check_next_include_order__no_inlines_in_non_inlines_header(self):
+        self.assertEqual('Non-Inlines.h header should not include Inlines.h header.',
+                         self.include_state.check_next_include_order(cpp_style._INLINES_HEADER, 'Foo.h', True, True, True))
+
     def test_check_next_include_order__likely_then_config(self):
         self.assertEqual('Found header this file implements before WebCore config.h.',
                          self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, 'Foo.cpp', False, True, True))
