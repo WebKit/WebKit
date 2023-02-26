@@ -440,26 +440,19 @@ void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(Re
     // having to shrink in order to preserve the aspect ratio. Because we compute these values independently along
     // each axis, the final returned size may in fact not preserve the aspect ratio.
     if (!intrinsicRatio.isZero() && style().logicalWidth().isAuto() && style().logicalHeight().isAuto()) {
-        if (isVideoWithDefaultObjectSize(this)) {
-            LayoutUnit width = RenderBox::computeReplacedLogicalWidth();
-            intrinsicSize.setWidth(width);
-            LayoutUnit height = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), intrinsicRatio.aspectRatioDouble(), BoxSizing::ContentBox, adjustBorderBoxLogicalWidthForBoxSizing(width, LengthType::Fixed), style().aspectRatioType(), true);
-            intrinsicSize.setHeight(height.round() - verticalBorderAndPaddingExtent());
-        } else {
-            auto removeBorderAndPaddingFromMinMaxSizes = [](LayoutUnit& minSize, LayoutUnit &maxSize, LayoutUnit borderAndPadding) {
-                minSize = std::max(0_lu, minSize - borderAndPadding);
-                maxSize = std::max(0_lu, maxSize - borderAndPadding);
-            };
+        auto removeBorderAndPaddingFromMinMaxSizes = [](LayoutUnit& minSize, LayoutUnit &maxSize, LayoutUnit borderAndPadding) {
+            minSize = std::max(0_lu, minSize - borderAndPadding);
+            maxSize = std::max(0_lu, maxSize - borderAndPadding);
+        };
 
-            auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
-            removeBorderAndPaddingFromMinMaxSizes(minLogicalWidth, maxLogicalWidth, borderAndPaddingLogicalWidth());
+        auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+        removeBorderAndPaddingFromMinMaxSizes(minLogicalWidth, maxLogicalWidth, borderAndPaddingLogicalWidth());
 
-            auto [minLogicalHeight, maxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
-            removeBorderAndPaddingFromMinMaxSizes(minLogicalHeight, maxLogicalHeight, borderAndPaddingLogicalHeight());
+        auto [minLogicalHeight, maxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
+        removeBorderAndPaddingFromMinMaxSizes(minLogicalHeight, maxLogicalHeight, borderAndPaddingLogicalHeight());
 
-            intrinsicSize.setWidth(std::clamp(LayoutUnit { intrinsicSize.width() }, minLogicalWidth, maxLogicalWidth));
-            intrinsicSize.setHeight(std::clamp(LayoutUnit { intrinsicSize.height() }, minLogicalHeight, maxLogicalHeight));
-        }
+        intrinsicSize.setWidth(std::clamp(LayoutUnit { intrinsicSize.width() }, minLogicalWidth, maxLogicalWidth));
+        intrinsicSize.setHeight(std::clamp(LayoutUnit { intrinsicSize.height() }, minLogicalHeight, maxLogicalHeight));
     }
 }
 
