@@ -99,10 +99,10 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
     return std::exchange(m_requestedScroll, { });
 }
 
-WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
+void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
     if (!m_scrollingTree)
-        return WheelEventHandlingResult::unhandled();
+        return;
 
     auto platformWheelEvent = platform(wheelEvent);
 
@@ -113,15 +113,23 @@ WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(platformWheelEvent);
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::handleWheelEvent " << platformWheelEvent << " - steps " << processingSteps);
-    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
-        return WheelEventHandlingResult::unhandled(processingSteps);
+    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread)) {
+        continueWheelEventHandling(wheelEvent, { processingSteps, false });
+        return;
+    }
 
     m_scrollingTree->willProcessWheelEvent();
 
     auto filteredEvent = filteredWheelEvent(platformWheelEvent);
     auto result = m_scrollingTree->handleWheelEvent(filteredEvent, processingSteps);
     didReceiveWheelEvent(result.wasHandled);
-    return result;
+
+    continueWheelEventHandling(wheelEvent, result);
+}
+
+void RemoteScrollingCoordinatorProxy::continueWheelEventHandling(const NativeWebWheelEvent& wheelEvent, WheelEventHandlingResult result)
+{
+    webPageProxy().continueWheelEventHandling(wheelEvent, result);
 }
 
 void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

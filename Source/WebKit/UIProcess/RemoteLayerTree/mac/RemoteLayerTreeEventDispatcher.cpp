@@ -124,17 +124,37 @@ RefPtr<RemoteScrollingTree> RemoteLayerTreeEventDispatcher::scrollingTree()
     return result;
 }
 
-void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const NativeWebWheelEvent&)
+void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const NativeWebWheelEvent& wheelEvent)
 {
     ASSERT(isMainRunLoop());
+    
+    m_wheelEventsBeingProcessed.append(wheelEvent);
 }
 
-// FIXME: This should return void and send its response back to the main thread.
-WheelEventHandlingResult RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
+void RemoteLayerTreeEventDispatcher::handleWheelEvent(const NativeWebWheelEvent& nativeWheelEvent, RectEdges<bool> rubberBandableEdges)
 {
-    ASSERT(ScrollingThread::isCurrentThread());
+    ASSERT(isMainRunLoop());
 
-    return internalHandleWheelEvent(platform(wheelEvent), rubberBandableEdges);
+    willHandleWheelEvent(nativeWheelEvent);
+
+    ScrollingThread::dispatch([dispatcher = Ref { *this }, platformWheelEvent = platform(nativeWheelEvent), rubberBandableEdges] {
+        auto handlingResult = dispatcher->internalHandleWheelEvent(platformWheelEvent, rubberBandableEdges);
+
+        RunLoop::main().dispatch([dispatcher, handlingResult] {
+            dispatcher->wheelEventWasHandledByScrollingThread(handlingResult);
+        });
+    });
+}
+
+void RemoteLayerTreeEventDispatcher::wheelEventWasHandledByScrollingThread(WheelEventHandlingResult handlingResult)
+{
+    ASSERT(isMainRunLoop());
+
+    if (!m_scrollingCoordinator)
+        return;
+
+    auto event = m_wheelEventsBeingProcessed.takeFirst();
+    m_scrollingCoordinator->continueWheelEventHandling(event, handlingResult);
 }
 
 WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEvent(const PlatformWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
@@ -181,7 +201,7 @@ PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const Plat
 DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
 {
     ASSERT(isMainRunLoop());
-    
+
     if (!m_scrollingCoordinator)
         return nullptr;
 

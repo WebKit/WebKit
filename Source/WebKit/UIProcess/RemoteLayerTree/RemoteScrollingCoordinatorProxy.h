@@ -92,7 +92,9 @@ public:
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
-    WebCore::WheelEventHandlingResult handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    virtual void handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    void continueWheelEventHandling(const NativeWebWheelEvent&, WebCore::WheelEventHandlingResult);
+
     void handleMouseEvent(const WebCore::PlatformMouseEvent&);
     
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
