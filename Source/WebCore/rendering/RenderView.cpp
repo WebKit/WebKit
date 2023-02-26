@@ -107,7 +107,7 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
         if (frameView().pagination().mode != Pagination::Unpaginated)
             updateColumnProgressionFromStyle(style());
-        updateStylesForColumnChildren();
+        updateStylesForColumnChildren(oldStyle);
     }
 
     if (directionChanged)
