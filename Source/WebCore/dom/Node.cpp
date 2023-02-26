@@ -1517,6 +1517,11 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
 {
     switch (node.nodeType()) {
     case Node::ELEMENT_NODE: {
+        if (prefix == xmlAtom())
+            return XMLNames::xmlNamespaceURI.get();
+        if (prefix == xmlnsAtom())
+            return XMLNSNames::xmlnsNamespaceURI.get();
+
         auto& element = downcast<Element>(node);
         auto& namespaceURI = element.namespaceURI();
         if (!namespaceURI.isNull() && element.prefix() == prefix)
