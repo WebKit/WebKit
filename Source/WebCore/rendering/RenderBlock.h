@@ -113,6 +113,8 @@ public:
     bool hasMarginBeforeQuirk(const RenderBox& child) const;
     bool hasMarginAfterQuirk(const RenderBox& child) const;
 
+    virtual bool shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType /* marginSide */, const RenderElement&) const { return true; }
+
     void markPositionedObjectsForLayout();
     void markForPaginationRelayoutIfNeeded() override;
     
