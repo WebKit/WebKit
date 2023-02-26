@@ -99,7 +99,7 @@ public:
     bool isScrollAnimationInProgressForNode(ScrollingNodeID);
     void setScrollAnimationInProgressForNode(ScrollingNodeID, bool);
 
-    bool hasNodeWithActiveScrollAnimations();
+    WEBCORE_EXPORT bool hasNodeWithActiveScrollAnimations();
 
     virtual void invalidate() { }
     WEBCORE_EXPORT void commitTreeState(std::unique_ptr<ScrollingStateTree>&&);

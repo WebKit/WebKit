@@ -87,11 +87,14 @@ Ref<RemoteLayerTreeEventDispatcher> RemoteLayerTreeEventDispatcher::create(Remot
     return adoptRef(*new RemoteLayerTreeEventDispatcher(scrollingCoordinator, pageIdentifier));
 }
 
+static constexpr Seconds wheelEventHysteresisDuration { 500_ms };
+
 RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCoordinatorProxyMac& scrollingCoordinator, WebCore::PageIdentifier pageIdentifier)
     : m_scrollingCoordinator(WeakPtr { scrollingCoordinator })
     , m_pageIdentifier(pageIdentifier)
     , m_wheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_displayLinkClient(makeUnique<RemoteLayerTreeEventDispatcherDisplayLinkClient>(*this))
+    , m_wheelEventActivityHysteresis([this](PAL::HysteresisState state) { wheelEventHysteresisUpdated(state); }, wheelEventHysteresisDuration)
 {
 }
 
@@ -124,10 +127,17 @@ RefPtr<RemoteScrollingTree> RemoteLayerTreeEventDispatcher::scrollingTree()
     return result;
 }
 
+void RemoteLayerTreeEventDispatcher::wheelEventHysteresisUpdated(PAL::HysteresisState state)
+{
+    ASSERT(isMainRunLoop());
+    startOrStopDisplayLink();
+}
+
 void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const NativeWebWheelEvent& wheelEvent)
 {
     ASSERT(isMainRunLoop());
     
+    m_wheelEventActivityHysteresis.impulse();
     m_wheelEventsBeingProcessed.append(wheelEvent);
 }
 
@@ -215,6 +225,9 @@ DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
 void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
 {
     auto needsDisplayLink = [&]() {
+        if (m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started)
+            return true;
+
         auto scrollingTree = this->scrollingTree();
         return scrollingTree && scrollingTree->hasNodeWithActiveScrollAnimations();
     }();

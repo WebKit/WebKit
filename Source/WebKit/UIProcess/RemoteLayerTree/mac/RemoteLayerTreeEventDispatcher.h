@@ -29,6 +29,7 @@
 
 #include "DisplayLinkObserverID.h"
 #include "NativeWebWheelEvent.h"
+#include <pal/HysteresisActivity.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -74,6 +75,8 @@ private:
     WebCore::WheelEventHandlingResult scrollingTreeHandleWheelEvent(RemoteScrollingTree&, const PlatformWheelEvent&);
     PlatformWheelEvent filteredWheelEvent(const PlatformWheelEvent&);
 
+    void wheelEventHysteresisUpdated(PAL::HysteresisState);
+
     void willHandleWheelEvent(const NativeWebWheelEvent&);
     void wheelEventWasHandledByScrollingThread(WheelEventHandlingResult);
 
@@ -97,6 +100,7 @@ private:
     std::unique_ptr<WebCore::WheelEventDeltaFilter> m_wheelEventDeltaFilter;
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
+    PAL::HysteresisActivity m_wheelEventActivityHysteresis;
 };
 
 } // namespace WebKit
