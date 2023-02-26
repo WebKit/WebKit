@@ -32,18 +32,22 @@ namespace WebCore {
 template<typename> class ElementAncestorRange;
 
 // Range for iterating an element and its ancestors.
-template<typename ElementType> ElementAncestorRange<ElementType> lineageOfType(Element& first);
-template<typename ElementType> ElementAncestorRange<const ElementType> lineageOfType(const Element& first);
+template<typename ElementType>
+inline ElementAncestorRange<ElementType> lineageOfType(Element& first);
+template<typename ElementType>
+inline ElementAncestorRange<const ElementType> lineageOfType(const Element& first);
 
 // Range for iterating a node's element ancestors.
-template<typename ElementType> ElementAncestorRange<ElementType> ancestorsOfType(Node& descendant);
-template<typename ElementType> ElementAncestorRange<const ElementType> ancestorsOfType(const Node& descendant);
+template<typename ElementType>
+inline ElementAncestorRange<ElementType> ancestorsOfType(Node& descendant);
+template<typename ElementType>
+inline ElementAncestorRange<const ElementType> ancestorsOfType(const Node& descendant);
 
 template <typename ElementType>
 class ElementAncestorIterator : public ElementIterator<ElementType> {
 public:
     explicit ElementAncestorIterator(ElementType* = nullptr);
-    ElementAncestorIterator& operator++();
+    inline ElementAncestorIterator& operator++();
 };
 
 template <typename ElementType>
@@ -66,65 +70,12 @@ inline ElementAncestorIterator<ElementType>::ElementAncestorIterator(ElementType
 {
 }
 
-template <typename ElementType>
-inline ElementAncestorIterator<ElementType>& ElementAncestorIterator<ElementType>::operator++()
-{
-    ElementIterator<ElementType>::traverseAncestor();
-    return *this;
-}
-
 // ElementAncestorRange
 
 template <typename ElementType>
 inline ElementAncestorRange<ElementType>::ElementAncestorRange(ElementType* first)
     : m_first(first)
 {
-}
-
-template <typename ElementType>
-inline ElementAncestorIterator<ElementType> ElementAncestorRange<ElementType>::begin() const
-{
-    return ElementAncestorIterator<ElementType>(m_first);
-}
-
-// Standalone functions
-
-template<> inline ElementAncestorRange<Element> lineageOfType<Element>(Element& first)
-{
-    return ElementAncestorRange<Element>(&first);
-}
-
-template <typename ElementType>
-inline ElementAncestorRange<ElementType> lineageOfType(Element& first)
-{
-    if (is<ElementType>(first))
-        return ElementAncestorRange<ElementType>(&downcast<ElementType>(first));
-    return ancestorsOfType<ElementType>(first);
-}
-
-template<> inline ElementAncestorRange<const Element> lineageOfType<Element>(const Element& first)
-{
-    return ElementAncestorRange<const Element>(&first);
-}
-
-template <typename ElementType>
-inline ElementAncestorRange<const ElementType> lineageOfType(const Element& first)
-{
-    if (is<ElementType>(first))
-        return ElementAncestorRange<const ElementType>(&downcast<ElementType>(first));
-    return ancestorsOfType<ElementType>(first);
-}
-
-template <typename ElementType>
-inline ElementAncestorRange<ElementType> ancestorsOfType(Node& descendant)
-{
-    return ElementAncestorRange<ElementType>(findElementAncestorOfType<ElementType>(descendant));
-}
-
-template <typename ElementType>
-inline ElementAncestorRange<const ElementType> ancestorsOfType(const Node& descendant)
-{
-    return ElementAncestorRange<const ElementType>(findElementAncestorOfType<const ElementType>(descendant));
 }
 
 } // namespace WebCore

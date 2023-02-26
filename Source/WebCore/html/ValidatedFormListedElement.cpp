@@ -32,7 +32,7 @@
 
 #include "AXObjectCache.h"
 #include "ControlStates.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"

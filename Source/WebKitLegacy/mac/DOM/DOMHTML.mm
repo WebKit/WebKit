@@ -35,7 +35,7 @@
 #import "DOMPrivate.h"
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/HTMLCollection.h>
+#import <WebCore/HTMLCollectionInlines.h>
 #import <WebCore/HTMLDocument.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>

@@ -30,7 +30,7 @@
 #include "AccessibilityObject.h"
 #include "CharacterData.h"
 #include "Editing.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "EventLoop.h"
 #include "FrameView.h"
 #include "HTMLBRElement.h"

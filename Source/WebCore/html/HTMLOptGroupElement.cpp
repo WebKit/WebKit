@@ -26,7 +26,7 @@
 #include "HTMLOptGroupElement.h"
 
 #include "Document.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
@@ -35,6 +35,7 @@
 #include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
 #include "StyleResolver.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 

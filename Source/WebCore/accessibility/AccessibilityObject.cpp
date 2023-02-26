@@ -2573,6 +2573,11 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
+SRGBA<uint8_t> AccessibilityObject::colorValue() const
+{
+    return Color::transparentBlack;
+}
+
 #if !PLATFORM(MAC)
 String AccessibilityObject::rolePlatformString() const
 {

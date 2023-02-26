@@ -31,7 +31,7 @@
 #include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormController.h"
@@ -59,6 +59,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubmitEvent.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>

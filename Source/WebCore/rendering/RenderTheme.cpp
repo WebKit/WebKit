@@ -72,6 +72,7 @@
 #include "TextControlInnerElements.h"
 #include "TextFieldPart.h"
 #include "ToggleButtonPart.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>

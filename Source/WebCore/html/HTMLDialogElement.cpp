@@ -35,7 +35,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScopedEventQueue.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

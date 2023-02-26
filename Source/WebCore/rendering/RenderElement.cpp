@@ -31,7 +31,7 @@
 #include "ContentData.h"
 #include "CursorList.h"
 #include "DocumentInlines.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"

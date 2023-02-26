@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "ElementInlines.h"
-#include "ElementTraversal.h"
-
 #if ASSERT_ENABLED
 #include "ElementIteratorAssertions.h"
 #endif
 
 namespace WebCore {
+
+class ContainerNode;
+class Node;
 
 template <typename ElementType>
 class ElementIterator {
@@ -45,22 +45,22 @@ public:
 
     ElementIterator() = default;
 
-    ElementType& operator*() const;
-    ElementType* operator->() const;
+    inline ElementType& operator*() const;
+    inline ElementType* operator->() const;
 
-    constexpr operator bool() const;
-    constexpr bool operator!() const;
-    constexpr bool operator!=(std::nullptr_t) const;
-    constexpr bool operator!=(const ElementIterator&) const;
+    constexpr operator bool() const { return m_current; }
+    constexpr bool operator!() const { return !m_current; }
+    constexpr bool operator!=(std::nullptr_t) const { return m_current; }
+    inline constexpr bool operator!=(const ElementIterator&) const;
 
-    ElementIterator& traverseNext();
-    ElementIterator& traversePrevious();
-    ElementIterator& traverseNextSibling();
-    ElementIterator& traversePreviousSibling();
-    ElementIterator& traverseNextSkippingChildren();
-    ElementIterator& traverseAncestor();
+    inline ElementIterator& traverseNext();
+    inline ElementIterator& traversePrevious();
+    inline ElementIterator& traverseNextSibling();
+    inline ElementIterator& traversePreviousSibling();
+    inline ElementIterator& traverseNextSkippingChildren();
+    inline ElementIterator& traverseAncestor();
 
-    void dropAssertions();
+    inline void dropAssertions();
 
 protected:
     ElementIterator(const ContainerNode* root, ElementType* current);
@@ -74,6 +74,9 @@ private:
 #endif
 };
 
+template <typename ElementType>
+inline ElementType* findElementAncestorOfType(const Node&);
+
 // ElementIterator
 
 template <typename ElementType>
@@ -86,113 +89,10 @@ inline ElementIterator<ElementType>::ElementIterator(const ContainerNode* root, 
 {
 }
 
-template <typename ElementType>
-inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNext()
+template<typename ElementType> constexpr bool ElementIterator<ElementType>::operator!=(const ElementIterator& other) const
 {
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::next(*m_current, m_root);
-#if ASSERT_ENABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline ElementIterator<ElementType>& ElementIterator<ElementType>::traversePrevious()
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::previous(*m_current, m_root);
-#if ASSERT_ENABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNextSibling()
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::nextSibling(*m_current);
-#if ASSERT_ENABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline ElementIterator<ElementType>& ElementIterator<ElementType>::traversePreviousSibling()
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::previousSibling(*m_current);
-#if ASSERT_ENABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNextSkippingChildren()
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::nextSkippingChildren(*m_current, m_root);
-#if ASSERT_ENABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline void ElementIterator<ElementType>::dropAssertions()
-{
-#if ASSERT_ENABLED
-    m_assertions.clear();
-#endif
-}
-
-template <typename ElementType>
-inline ElementType* findElementAncestorOfType(const Node& current)
-{
-    for (Element* ancestor = current.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (is<ElementType>(*ancestor))
-            return downcast<ElementType>(ancestor);
-    }
-    return nullptr;
-}
-
-template <>
-inline Element* findElementAncestorOfType<Element>(const Node& current)
-{
-    return current.parentElement();
-}
-
-template <typename ElementType>
-inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseAncestor()
-{
-    ASSERT(m_current);
-    ASSERT(m_current != m_root);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = findElementAncestorOfType<ElementType>(*m_current);
-#if ASSERT_ENABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
+    ASSERT(m_root == other.m_root || !m_current || !other.m_current);
+    return m_current != other.m_current;
 }
 
 template <typename ElementType>
@@ -211,29 +111,12 @@ inline ElementType* ElementIterator<ElementType>::operator->() const
     return m_current;
 }
 
-template<typename ElementType> constexpr ElementIterator<ElementType>::operator bool() const
+template <typename ElementType>
+inline void ElementIterator<ElementType>::dropAssertions()
 {
-    return m_current;
-}
-
-template<typename ElementType> constexpr bool ElementIterator<ElementType>::operator!() const
-{
-    return !m_current;
-}
-
-template<typename ElementType> constexpr bool ElementIterator<ElementType>::operator!=(std::nullptr_t) const
-{
-    return m_current;
-}
-
-template<typename ElementType> constexpr bool ElementIterator<ElementType>::operator!=(const ElementIterator& other) const
-{
-    ASSERT(m_root == other.m_root || !m_current || !other.m_current);
-    return m_current != other.m_current;
+#if ASSERT_ENABLED
+    m_assertions.clear();
+#endif
 }
 
 } // namespace WebCore
-
-#include "ElementAncestorIterator.h"
-#include "ElementChildIterator.h"
-#include "TypedElementDescendantIterator.h"

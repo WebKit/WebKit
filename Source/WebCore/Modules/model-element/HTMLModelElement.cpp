@@ -32,7 +32,7 @@
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "DocumentInlines.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"

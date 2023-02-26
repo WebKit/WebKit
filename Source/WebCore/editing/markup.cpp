@@ -46,7 +46,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EmptyClients.h"
 #include "File.h"
@@ -77,6 +77,7 @@
 #include "SocketProvider.h"
 #include "TextIterator.h"
 #include "TextManipulationController.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>

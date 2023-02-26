@@ -39,7 +39,7 @@
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "WOFFFileFormat.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Vector.h>

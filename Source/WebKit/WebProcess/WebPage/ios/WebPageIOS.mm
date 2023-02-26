@@ -83,7 +83,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
 #import <WebCore/Element.h>
-#import <WebCore/ElementAncestorIterator.h>
+#import <WebCore/ElementAncestorIteratorInlines.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/File.h>
 #import <WebCore/FloatQuad.h>

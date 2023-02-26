@@ -35,7 +35,6 @@
 #include "DocumentLoader.h"
 #include "DocumentSVG.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -58,6 +57,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SocketProvider.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/text/TextStream.h>

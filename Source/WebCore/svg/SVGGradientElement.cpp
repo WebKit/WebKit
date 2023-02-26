@@ -23,7 +23,7 @@
 #include "config.h"
 #include "SVGGradientElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"

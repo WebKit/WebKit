@@ -29,7 +29,7 @@
 #include "JSHTMLDocument.h"
 #include "JSXMLDocument.h"
 #include "NodeTraversal.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
 
 namespace WebCore {

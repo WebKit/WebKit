@@ -27,7 +27,7 @@
 #include "LinkIconCollector.h"
 
 #include "Document.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "HTMLHeadElement.h"
 #include "HTMLLinkElement.h"
 #include "LinkIconType.h"

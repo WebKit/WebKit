@@ -24,7 +24,7 @@
 
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"

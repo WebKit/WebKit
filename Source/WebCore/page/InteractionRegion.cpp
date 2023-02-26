@@ -27,7 +27,7 @@
 #include "InteractionRegion.h"
 
 #include "Document.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameSnapshotting.h"

@@ -31,7 +31,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -51,6 +51,7 @@
 #include "RenderView.h"
 #include "SimulatedClickOptions.h"
 #include "Text.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/Scope.h>

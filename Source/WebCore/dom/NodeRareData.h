@@ -175,13 +175,7 @@ public:
         m_tagCollectionNSCache.remove(name);
     }
 
-    void removeCachedCollection(HTMLCollection* collection, const AtomString& name = starAtom())
-    {
-        ASSERT(collection == m_cachedCollections.get(namedCollectionKey(collection->type(), name)));
-        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection->ownerNode()))
-            return;
-        m_cachedCollections.remove(namedCollectionKey(collection->type(), name));
-    }
+    inline void removeCachedCollection(HTMLCollection*, const AtomString& = starAtom());
 
     void invalidateCaches();
     void invalidateCachesForAttribute(const QualifiedName& attrName);
@@ -191,24 +185,7 @@ public:
         invalidateCaches();
     }
 
-    void adoptDocument(Document& oldDocument, Document& newDocument)
-    {
-        if (&oldDocument == &newDocument) {
-            invalidateCaches();
-            return;
-        }
-
-        for (auto& cache : m_atomNameCaches.values())
-            cache->invalidateCacheForDocument(oldDocument);
-
-        for (auto& list : m_tagCollectionNSCache.values()) {
-            ASSERT(!list->isRootedAtTreeScope());
-            list->invalidateCacheForDocument(oldDocument);
-        }
-
-        for (auto& collection : m_cachedCollections.values())
-            collection->invalidateCacheForDocument(oldDocument);
-    }
+    inline void adoptDocument(Document& oldDocument, Document& newDocument);
 
 private:
     std::pair<unsigned char, AtomString> namedCollectionKey(CollectionType type, const AtomString& name)

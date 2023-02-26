@@ -71,7 +71,7 @@
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementRareData.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -119,6 +119,7 @@
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <utility>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>

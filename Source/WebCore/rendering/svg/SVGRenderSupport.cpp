@@ -27,7 +27,7 @@
 #include "config.h"
 #include "SVGRenderSupport.h"
 
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LegacyRenderSVGTransformableContainer.h"

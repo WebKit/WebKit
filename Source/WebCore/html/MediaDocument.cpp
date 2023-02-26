@@ -49,7 +49,7 @@
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -31,7 +31,6 @@
 #include "CSSStyleSheet.h"
 #include "CSSStyleSheetObservableArray.h"
 #include "DOMWindow.h"
-#include "ElementIterator.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -51,6 +50,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {

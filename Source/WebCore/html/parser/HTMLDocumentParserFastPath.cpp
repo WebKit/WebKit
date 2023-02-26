@@ -34,7 +34,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementTraversal.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLAnchorElement.h"

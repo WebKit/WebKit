@@ -30,7 +30,7 @@
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameSelection.h"

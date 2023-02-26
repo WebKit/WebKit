@@ -30,7 +30,7 @@
 #import "AccessibilityList.h"
 #import "ColorCocoa.h"
 #import "Editor.h"
-#import "ElementAncestorIterator.h"
+#import "ElementAncestorIteratorInlines.h"
 #import "FrameSelection.h"
 #import "FrameView.h"
 #import "HTMLFieldSetElement.h"

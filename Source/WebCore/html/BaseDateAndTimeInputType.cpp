@@ -55,6 +55,7 @@
 #include "ShadowRoot.h"
 #include "StepRange.h"
 #include "Text.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/DateMath.h>

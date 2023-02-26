@@ -35,6 +35,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 

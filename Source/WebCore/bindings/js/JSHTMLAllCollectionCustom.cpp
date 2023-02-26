@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSHTMLAllCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "Element.h"
 #include "HTMLCollection.h"
 #include "JSDOMConvertInterface.h"

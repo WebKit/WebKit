@@ -33,6 +33,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMTimeRangesInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/JSExecState.h>

@@ -1264,6 +1264,7 @@ html/EnterKeyHint.cpp
 html/FTPDirectoryDocument.cpp
 html/FeaturePolicy.cpp
 html/FileInputType.cpp
+html/FormAssociatedElement.cpp
 html/FormAssociatedCustomElement.cpp
 html/FormController.cpp
 html/FormListedElement.cpp

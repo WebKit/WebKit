@@ -22,7 +22,7 @@
 #include "config.h"
 #include "SVGFEComponentTransferElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementName.h"
 #include "FEComponentTransfer.h"
 #include "SVGComponentTransferFunctionElement.h"

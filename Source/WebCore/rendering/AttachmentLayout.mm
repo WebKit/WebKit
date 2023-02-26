@@ -29,6 +29,7 @@
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
 
 #include "ColorCocoa.h"
+#include "ElementInlines.h"
 #include "FontCacheCoreText.h"
 #include "FrameSelection.h"
 #include "GeometryUtilities.h"

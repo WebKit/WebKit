@@ -52,7 +52,7 @@
 #include "ShadowRoot.h"
 #include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>

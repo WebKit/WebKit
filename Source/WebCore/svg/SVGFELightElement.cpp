@@ -23,7 +23,7 @@
 #include "config.h"
 #include "SVGFELightElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementTypeHelpers.h"

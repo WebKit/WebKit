@@ -24,7 +24,7 @@
 #include "config.h"
 #include "RenderSVGResourceClipper.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HitTestRequest.h"

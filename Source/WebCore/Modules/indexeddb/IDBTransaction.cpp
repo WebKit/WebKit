@@ -51,7 +51,7 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 

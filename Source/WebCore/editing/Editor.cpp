@@ -51,7 +51,7 @@
 #include "DocumentMarkerController.h"
 #include "Editing.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "File.h"

@@ -39,14 +39,14 @@
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
-#include "JSNode.h"
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
 #include "ScopedEventQueue.h"
 #include "TextIterator.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "markup.h"
 #include <stdio.h>
 #include <wtf/IsoMallocInlines.h>

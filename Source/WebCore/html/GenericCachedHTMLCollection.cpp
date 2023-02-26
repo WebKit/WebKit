@@ -43,6 +43,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(GenericDescendantsCachedHTMLCollection);
 WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(GenericChildrenOnlyCachedHTMLCollection);
 
 template <CollectionTraversalType traversalType>
+GenericCachedHTMLCollection<traversalType>::GenericCachedHTMLCollection(ContainerNode& base, CollectionType collectionType)
+    : CachedHTMLCollection<GenericCachedHTMLCollection<traversalType>, traversalType>(base, collectionType)
+{ }
+template GenericCachedHTMLCollection<CollectionTraversalType::Descendants>::GenericCachedHTMLCollection(ContainerNode&, CollectionType);
+template GenericCachedHTMLCollection<CollectionTraversalType::ChildrenOnly>::GenericCachedHTMLCollection(ContainerNode&, CollectionType);
+
+template <CollectionTraversalType traversalType>
 bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element) const
 {
     switch (this->type()) {

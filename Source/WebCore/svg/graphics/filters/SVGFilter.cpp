@@ -23,7 +23,7 @@
 #include "config.h"
 #include "SVGFilter.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "FilterResults.h"
 #include "GeometryUtilities.h"
 #include "SVGFilterElement.h"

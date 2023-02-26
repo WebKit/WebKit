@@ -73,7 +73,7 @@
 #include "StepRange.h"
 #include "StyleGradientImage.h"
 #include "TextControlInnerElements.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>

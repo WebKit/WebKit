@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Element;
 
-static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
+inline bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 class LiveNodeList : public NodeList {
     WTF_MAKE_ISO_NONALLOCATABLE(LiveNodeList);
@@ -75,20 +75,20 @@ class CachedLiveNodeList : public LiveNodeList {
 public:
     virtual ~CachedLiveNodeList();
 
-    unsigned length() const final { return m_indexCache.nodeCount(nodeList()); }
-    Element* item(unsigned offset) const final { return m_indexCache.nodeAt(nodeList(), offset); }
+    inline unsigned length() const final;
+    inline Node* item(unsigned offset) const final;
 
     // For CollectionIndexCache
     using Traversal = CollectionTraversal<CollectionTraversalType::Descendants>;
     using Iterator = Traversal::Iterator;
-    auto collectionBegin() const { return Traversal::begin(nodeList(), rootNode()); }
-    auto collectionLast() const { return Traversal::last(nodeList(), rootNode()); }
-    void collectionTraverseForward(Iterator& current, unsigned count, unsigned& traversedCount) const { Traversal::traverseForward(nodeList(), current, count, traversedCount); }
-    void collectionTraverseBackward(Iterator& current, unsigned count) const { Traversal::traverseBackward(nodeList(), current, count); }
-    bool collectionCanTraverseBackward() const { return true; }
-    void willValidateIndexCache() const { document().registerNodeListForInvalidation(const_cast<CachedLiveNodeList&>(*this)); }
+    inline Iterator collectionBegin() const;
+    inline Iterator collectionLast() const;
+    inline void collectionTraverseForward(Iterator& current, unsigned count, unsigned& traversedCount) const;
+    inline void collectionTraverseBackward(Iterator& current, unsigned count) const;
+    inline bool collectionCanTraverseBackward() const;
+    inline void willValidateIndexCache() const;
 
-    void invalidateCacheForDocument(Document&) const final;
+    inline void invalidateCacheForDocument(Document&) const final;
     size_t memoryCost() const final
     {
         // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
@@ -98,7 +98,7 @@ public:
     }
 
 protected:
-    CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);
+    inline CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);
 
 private:
     NodeListType& nodeList() { return static_cast<NodeListType&>(*this); }
@@ -106,43 +106,6 @@ private:
 
     mutable CollectionIndexCache<NodeListType, Iterator> m_indexCache;
 };
-
-ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)
-{
-    switch (type) {
-    case InvalidateOnClassAttrChange:
-        return attrName == HTMLNames::classAttr;
-    case InvalidateOnNameAttrChange:
-        return attrName == HTMLNames::nameAttr;
-    case InvalidateOnIdNameAttrChange:
-        return attrName == HTMLNames::idAttr || attrName == HTMLNames::nameAttr;
-    case InvalidateOnForTypeAttrChange:
-        return attrName == HTMLNames::forAttr || attrName == HTMLNames::typeAttr;
-    case InvalidateForFormControls:
-        return attrName == HTMLNames::nameAttr || attrName == HTMLNames::idAttr || attrName == HTMLNames::forAttr
-            || attrName == HTMLNames::formAttr || attrName == HTMLNames::typeAttr;
-    case InvalidateOnHRefAttrChange:
-        return attrName == HTMLNames::hrefAttr;
-    case DoNotInvalidateOnAttributeChanges:
-        return false;
-    case InvalidateOnAnyAttrChange:
-        return true;
-    }
-    return false;
-}
-
-ALWAYS_INLINE void LiveNodeList::invalidateCacheForAttribute(const QualifiedName& attributeName) const
-{
-    if (shouldInvalidateTypeOnAttributeChange(m_invalidationType, attributeName))
-        invalidateCache();
-}
-
-inline ContainerNode& LiveNodeList::rootNode() const
-{
-    if (isRootedAtTreeScope() && m_ownerNode->isInTreeScope())
-        return m_ownerNode->treeScope().rootNode();
-    return m_ownerNode;
-}
 
 template <class NodeListType>
 CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType)
@@ -155,15 +118,6 @@ CachedLiveNodeList<NodeListType>::~CachedLiveNodeList()
 {
     if (m_indexCache.hasValidCache())
         document().unregisterNodeListForInvalidation(*this);
-}
-
-template <class NodeListType>
-void CachedLiveNodeList<NodeListType>::invalidateCacheForDocument(Document& document) const
-{
-    if (m_indexCache.hasValidCache()) {
-        document.unregisterNodeListForInvalidation(const_cast<NodeListType&>(nodeList()));
-        m_indexCache.invalidate();
-    }
 }
 
 } // namespace WebCore

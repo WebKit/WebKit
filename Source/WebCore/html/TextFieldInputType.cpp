@@ -37,7 +37,6 @@
 #include "ChromeClient.h"
 #include "DOMFormData.h"
 #include "Editor.h"
-#include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -63,6 +62,7 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
 

@@ -29,7 +29,6 @@
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
-#include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLInputElement.h"
@@ -53,6 +52,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Text.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
 

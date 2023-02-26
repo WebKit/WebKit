@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ScrollSnapOffsetsInfo.h"
 
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "LayoutRect.h"
 #include "Length.h"
 #include "Logging.h"

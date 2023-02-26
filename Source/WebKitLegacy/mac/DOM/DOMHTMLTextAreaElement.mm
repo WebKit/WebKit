@@ -29,6 +29,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMNodeListInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/NodeList.h>

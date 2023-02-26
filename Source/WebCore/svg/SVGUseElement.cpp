@@ -28,7 +28,8 @@
 
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocument.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -42,6 +43,7 @@
 #include "SVGSymbolElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RobinHoodHashSet.h>

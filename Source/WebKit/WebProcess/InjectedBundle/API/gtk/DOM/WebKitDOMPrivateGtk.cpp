@@ -29,6 +29,7 @@
 #include <WebCore/Event.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/File.h>
+#include <WebCore/HTMLCollectionInlines.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/KeyboardEvent.h>

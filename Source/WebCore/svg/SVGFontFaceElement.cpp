@@ -31,7 +31,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "FontCascade.h"
 #include "Logging.h"
 #include "MutableStyleProperties.h"

@@ -30,12 +30,13 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ElementRareData.h"
+#include "ElementTraversal.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/AtomString.h>
 

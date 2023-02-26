@@ -33,6 +33,7 @@
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 
 #if TARGET_OS_IPHONE
 #if __has_include(<UIKit/UITextAutofillSuggestion.h>)

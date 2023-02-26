@@ -30,7 +30,7 @@
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
 #include "Editor.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"

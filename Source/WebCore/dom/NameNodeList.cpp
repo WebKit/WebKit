@@ -46,6 +46,11 @@ Ref<NameNodeList> NameNodeList::create(ContainerNode& rootNode, const AtomString
 NameNodeList::~NameNodeList()
 {
     ownerNode().nodeLists()->removeCacheWithAtomName(*this, m_name);
-} 
+}
+
+bool NameNodeList::elementMatches(Element& element) const
+{
+    return element.getNameAttribute() == m_name;
+}
 
 } // namespace WebCore

@@ -31,7 +31,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerGlobalScope.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

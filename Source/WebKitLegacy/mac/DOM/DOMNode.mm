@@ -35,7 +35,7 @@
 #import "ObjCEventListener.h"
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/DOMImplementation.h>
-#import <WebCore/Element.h>
+#import <WebCore/ElementInlines.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/SVGTests.h>

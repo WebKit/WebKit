@@ -30,7 +30,7 @@
 #include "CSSPropertyParser.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"

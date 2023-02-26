@@ -32,7 +32,7 @@
 #include "DOMFormData.h"
 #include "Document.h"
 #include "Editor.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormController.h"

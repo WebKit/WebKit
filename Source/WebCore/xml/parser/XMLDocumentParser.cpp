@@ -32,7 +32,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"

@@ -40,7 +40,7 @@
 #include "DocumentFragment.h"
 #include "Editing.h"
 #include "EditingBehavior.h"
-#include "ElementIterator.h"
+#include "ElementIteratorInlines.h"
 #include "ElementName.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -67,6 +67,7 @@
 #include "StylePropertiesInlines.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>

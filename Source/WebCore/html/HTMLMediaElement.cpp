@@ -52,7 +52,7 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
