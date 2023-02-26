@@ -69,7 +69,7 @@ static size_t damagedLineIndex(std::optional<DamagedContent> damagedContent, con
         ASSERT_NOT_REACHED();
         return 0;
     };
-    for (auto index = lastDisplayBoxIndexForLayoutBox(); index--;) {
+    for (int index = lastDisplayBoxIndexForLayoutBox(); index >= 0; --index) {
         auto& displayBox = displayBoxes[index];
         if (displayBox.isRootInlineBox() || (displayBox.isInlineBox() && !displayBox.isFirstForLayoutBox())) {
             // Multi line damage includes line leading root inline display boxes (and maybe line spanning inline boxes).

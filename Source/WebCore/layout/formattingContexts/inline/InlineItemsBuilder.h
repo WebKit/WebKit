@@ -43,7 +43,7 @@ private:
     void breakAndComputeBidiLevels(InlineItems&);
     void computeInlineTextItemWidths(InlineItems&);
 
-    void handleTextContent(const InlineTextBox&, InlineItems&);
+    void handleTextContent(const InlineTextBox&, InlineItems&, std::optional<size_t> partialContentOffset);
     void handleInlineBoxStart(const Box&, InlineItems&);
     void handleInlineBoxEnd(const Box&, InlineItems&);
     void handleInlineLevelBox(const Box&, InlineItems&);
