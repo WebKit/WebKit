@@ -477,6 +477,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
+	Shared/DisplayListArgumentCoders.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
 	Shared/FileSystemSyncAccessHandleInfo.serialization.in \

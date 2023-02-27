@@ -1,0 +1,115 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+headers: <WebCore/DisplayListItems.h>
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetState {
+    WebCore::GraphicsContextState state();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetLineDash {
+    WebCore::DashArray dashArray();
+    float dashOffset();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipOutToPath {
+    WebCore::Path path();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipPath {
+    WebCore::Path path();
+    WebCore::WindRule windRule();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawGlyphs {
+    WebCore::RenderingResourceIdentifier fontIdentifier();
+    WebCore::PositionedGlyphs positionedGlyphs();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawSystemImage {
+    Ref<WebCore::SystemImage> systemImage();
+    WebCore::FloatRect destinationRect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawLinesForText {
+    WebCore::FloatPoint blockLocation();
+    WebCore::FloatSize localAnchor();
+    WebCore::DashArray widths();
+    float thickness();
+    bool isPrinting();
+    bool doubleLines();
+    WebCore::StrokeStyle style();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawPath {
+    WebCore::Path path();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawFocusRingPath {
+    WebCore::Path path();
+    float outlineWidth();
+    WebCore::Color color();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawFocusRingRects {
+    Vector<WebCore::FloatRect> rects();
+    float outlineOffset();
+    float outlineWidth();
+    WebCore::Color color();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithColor {
+    WebCore::FloatRect rect();
+    WebCore::Color color();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithGradient {
+    WebCore::FloatRect rect();
+    Ref<WebCore::Gradient> gradient();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillCompositedRect {
+    WebCore::FloatRect rect();
+    WebCore::Color color();
+    WebCore::CompositeOperator compositeOperator();
+    WebCore::BlendMode blendMode();
+};
+
+[CustomHeader] class WebCore::DisplayList::FillRoundedRect {
+    WebCore::FloatRoundedRect roundedRect();
+    WebCore::Color color();
+    WebCore::BlendMode blendMode();
+};
+
+[CustomHeader] class WebCore::DisplayList::FillRectWithRoundedHole {
+    WebCore::FloatRect rect();
+    WebCore::FloatRoundedRect roundedHoleRect();
+    WebCore::Color color();
+};
+
+[CustomHeader] class WebCore::DisplayList::FillPath {
+    WebCore::Path path();
+};
+
+[CustomHeader] class WebCore::DisplayList::StrokePath {
+    WebCore::Path path();
+};

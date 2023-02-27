@@ -259,31 +259,11 @@ public:
 
     const GraphicsContextState& state() const { return m_state; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SetState> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&);
 
 private:
     GraphicsContextState m_state;
 };
-
-template<class Encoder>
-void SetState::encode(Encoder& encoder) const
-{
-    encoder << m_state;
-}
-
-template<class Decoder>
-std::optional<SetState> SetState::decode(Decoder& decoder)
-{
-    std::optional<GraphicsContextState> state;
-    decoder >> state;
-    if (!state)
-        return std::nullopt;
-
-    return SetState(*state);
-}
 
 class SetLineCap {
 public:
@@ -321,36 +301,10 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SetLineDash> decode(Decoder&);
-
 private:
     DashArray m_dashArray;
     float m_dashOffset;
 };
-
-template<class Encoder>
-void SetLineDash::encode(Encoder& encoder) const
-{
-    encoder << m_dashArray;
-    encoder << m_dashOffset;
-}
-
-template<class Decoder>
-std::optional<SetLineDash> SetLineDash::decode(Decoder& decoder)
-{
-    std::optional<DashArray> dashArray;
-    decoder >> dashArray;
-    if (!dashArray)
-        return std::nullopt;
-
-    std::optional<float> dashOffset;
-    decoder >> dashOffset;
-    if (!dashOffset)
-        return std::nullopt;
-
-    return {{ *dashArray, *dashOffset }};
-}
 
 class SetLineJoin {
 public:
@@ -479,31 +433,11 @@ public:
 
     const Path& path() const { return m_path; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ClipOutToPath> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
     Path m_path;
 };
-
-template<class Encoder>
-void ClipOutToPath::encode(Encoder& encoder) const
-{
-    encoder << m_path;
-}
-
-template<class Decoder>
-std::optional<ClipOutToPath> ClipOutToPath::decode(Decoder& decoder)
-{
-    std::optional<Path> path;
-    decoder >> path;
-    if (!path)
-        return std::nullopt;
-
-    return {{ WTFMove(*path) }};
-}
 
 class ClipPath {
 public:
@@ -528,36 +462,10 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ClipPath> decode(Decoder&);
-
 private:
     Path m_path;
     WindRule m_windRule;
 };
-
-template<class Encoder>
-void ClipPath::encode(Encoder& encoder) const
-{
-    encoder << m_path;
-    encoder << m_windRule;
-}
-
-template<class Decoder>
-std::optional<ClipPath> ClipPath::decode(Decoder& decoder)
-{
-    std::optional<Path> path;
-    decoder >> path;
-    if (!path)
-        return std::nullopt;
-
-    std::optional<WindRule> windRule;
-    decoder >> windRule;
-    if (!windRule)
-        return std::nullopt;
-
-    return {{ WTFMove(*path), *windRule }};
-}
 
 class DrawFilteredImageBuffer {
 public:
@@ -584,14 +492,12 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    RenderingResourceIdentifier fontIdentifier() { return m_fontIdentifier; }
+    RenderingResourceIdentifier fontIdentifier() const { return m_fontIdentifier; }
+    PositionedGlyphs positionedGlyphs() const { return m_positionedGlyphs; }
     const FloatPoint& localAnchor() const { return m_positionedGlyphs.localAnchor; }
     FloatPoint anchorPoint() const { return m_positionedGlyphs.localAnchor; }
     FontSmoothingMode fontSmoothingMode() const { return m_positionedGlyphs.smoothingMode; }
     const Vector<GlyphBufferGlyph>& glyphs() const { return m_positionedGlyphs.glyphs; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DrawGlyphs> decode(Decoder&);
 
     WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
     WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, PositionedGlyphs&&);
@@ -602,29 +508,6 @@ private:
     RenderingResourceIdentifier m_fontIdentifier;
     PositionedGlyphs m_positionedGlyphs;
 };
-
-template<class Encoder>
-void DrawGlyphs::encode(Encoder& encoder) const
-{
-    encoder << m_fontIdentifier;
-    encoder << m_positionedGlyphs;
-}
-
-template<class Decoder>
-std::optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
-{
-    std::optional<RenderingResourceIdentifier> fontIdentifier;
-    decoder >> fontIdentifier;
-    if (!fontIdentifier)
-        return std::nullopt;
-
-    std::optional<PositionedGlyphs> positionedGlyphs;
-    decoder >> positionedGlyphs;
-    if (!positionedGlyphs)
-        return std::nullopt;
-
-    return { { *fontIdentifier, WTFMove(*positionedGlyphs) } };
-}
 
 class DrawDecomposedGlyphs {
 public:
@@ -726,40 +609,10 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DrawSystemImage> decode(Decoder&);
-
 private:
     Ref<SystemImage> m_systemImage;
     FloatRect m_destinationRect;
 };
-
-template<class Encoder>
-void DrawSystemImage::encode(Encoder& encoder) const
-{
-    encoder << m_systemImage;
-    encoder << m_destinationRect;
-}
-
-template<class Decoder>
-std::optional<DrawSystemImage> DrawSystemImage::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(systemImage, Ref<SystemImage>)
-    DECODE(destinationRect, FloatRect)
-
-#undef DECODE
-
-    return { {
-        WTFMove(*systemImage),
-        WTFMove(*destinationRect),
-    } };
-}
 
 class DrawPattern {
 public:
@@ -868,7 +721,7 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle);
+    WEBCORE_EXPORT DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle);
 
     void setBlockLocation(const FloatPoint& blockLocation) { m_blockLocation = blockLocation; }
     const FloatPoint& blockLocation() const { return m_blockLocation; }
@@ -882,9 +735,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DrawLinesForText> decode(Decoder&);
-
 private:
     FloatPoint m_blockLocation;
     FloatSize m_localAnchor;
@@ -894,59 +744,6 @@ private:
     bool m_doubleLines;
     StrokeStyle m_style;
 };
-
-template<class Encoder>
-void DrawLinesForText::encode(Encoder& encoder) const
-{
-    encoder << m_blockLocation;
-    encoder << m_localAnchor;
-    encoder << m_widths;
-    encoder << m_thickness;
-    encoder << m_printing;
-    encoder << m_doubleLines;
-    encoder << m_style;
-}
-
-template<class Decoder>
-std::optional<DrawLinesForText> DrawLinesForText::decode(Decoder& decoder)
-{
-    std::optional<FloatPoint> blockLocation;
-    decoder >> blockLocation;
-    if (!blockLocation)
-        return std::nullopt;
-
-    std::optional<FloatSize> localAnchor;
-    decoder >> localAnchor;
-    if (!localAnchor)
-        return std::nullopt;
-
-    std::optional<DashArray> widths;
-    decoder >> widths;
-    if (!widths)
-        return std::nullopt;
-
-    std::optional<float> thickness;
-    decoder >> thickness;
-    if (!thickness)
-        return std::nullopt;
-
-    std::optional<bool> printing;
-    decoder >> printing;
-    if (!printing)
-        return std::nullopt;
-
-    std::optional<bool> doubleLines;
-    decoder >> doubleLines;
-    if (!doubleLines)
-        return std::nullopt;
-
-    std::optional<StrokeStyle> style;
-    decoder >> style;
-    if (!style)
-        return std::nullopt;
-
-    return { { *blockLocation, *localAnchor, *thickness, *widths, *printing, *doubleLines, *style } };
-}
 
 class DrawDotsForDocumentMarker {
 public:
@@ -1007,31 +804,11 @@ public:
 
     const Path& path() const { return m_path; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DrawPath> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
     Path m_path;
 };
-
-template<class Encoder>
-void DrawPath::encode(Encoder& encoder) const
-{
-    encoder << m_path;
-}
-
-template<class Decoder>
-std::optional<DrawPath> DrawPath::decode(Decoder& decoder)
-{
-    std::optional<Path> path;
-    decoder >> path;
-    if (!path)
-        return std::nullopt;
-
-    return {{ WTFMove(*path) }};
-}
 
 class DrawFocusRingPath {
 public:
@@ -1057,9 +834,6 @@ public:
     float outlineWidth() const { return m_outlineWidth; }
     const Color& color() const { return m_color; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DrawFocusRingPath> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
@@ -1067,35 +841,6 @@ private:
     float m_outlineWidth;
     Color m_color;
 };
-
-template<class Encoder>
-void DrawFocusRingPath::encode(Encoder& encoder) const
-{
-    encoder << m_path;
-    encoder << m_outlineWidth;
-    encoder << m_color;
-}
-
-template<class Decoder>
-std::optional<DrawFocusRingPath> DrawFocusRingPath::decode(Decoder& decoder)
-{
-    std::optional<Path> path;
-    decoder >> path;
-    if (!path)
-        return std::nullopt;
-
-    std::optional<float> outlineWidth;
-    decoder >> outlineWidth;
-    if (!outlineWidth)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    return { { WTFMove(*path), *outlineWidth, *color } };
-}
 
 class DrawFocusRingRects {
 public:
@@ -1124,9 +869,6 @@ public:
     float outlineWidth() const { return m_outlineWidth; }
     const Color& color() const { return m_color; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DrawFocusRingRects> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
@@ -1135,41 +877,6 @@ private:
     float m_outlineWidth;
     Color m_color;
 };
-
-template<class Encoder>
-void DrawFocusRingRects::encode(Encoder& encoder) const
-{
-    encoder << m_rects;
-    encoder << m_outlineOffset;
-    encoder << m_outlineWidth;
-    encoder << m_color;
-}
-
-template<class Decoder>
-std::optional<DrawFocusRingRects> DrawFocusRingRects::decode(Decoder& decoder)
-{
-    std::optional<Vector<FloatRect>> rects;
-    decoder >> rects;
-    if (!rects)
-        return std::nullopt;
-
-    std::optional<float> outlineOffset;
-    decoder >> outlineOffset;
-    if (!outlineOffset)
-        return std::nullopt;
-
-    std::optional<float> outlineWidth;
-    decoder >> outlineWidth;
-    if (!outlineWidth)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    return { { WTFMove(*rects), *outlineOffset, *outlineWidth, *color } };
-}
 
 class FillRect {
 public:
@@ -1207,36 +914,10 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FillRectWithColor> decode(Decoder&);
-
 private:
     FloatRect m_rect;
     Color m_color;
 };
-
-template<class Encoder>
-void FillRectWithColor::encode(Encoder& encoder) const
-{
-    encoder << m_rect;
-    encoder << m_color;
-}
-
-template<class Decoder>
-std::optional<FillRectWithColor> FillRectWithColor::decode(Decoder& decoder)
-{
-    std::optional<FloatRect> rect;
-    decoder >> rect;
-    if (!rect)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    return {{ *rect, *color }};
-}
 
 class FillRectWithGradient {
 public:
@@ -1245,42 +926,17 @@ public:
     static constexpr bool isDrawingItem = true;
 
     WEBCORE_EXPORT FillRectWithGradient(const FloatRect&, Gradient&);
+    WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<Gradient>&&);
 
     const FloatRect& rect() const { return m_rect; }
-    const Gradient& gradient() const { return m_gradient.get(); }
+    const Ref<Gradient>& gradient() const { return m_gradient; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FillRectWithGradient> decode(Decoder&);
 
 private:
     FloatRect m_rect;
     mutable Ref<Gradient> m_gradient; // FIXME: Make this not mutable
 };
-
-template<class Encoder>
-void FillRectWithGradient::encode(Encoder& encoder) const
-{
-    encoder << m_rect;
-    encoder << m_gradient.get();
-}
-
-template<class Decoder>
-std::optional<FillRectWithGradient> FillRectWithGradient::decode(Decoder& decoder)
-{
-    std::optional<FloatRect> rect;
-    decoder >> rect;
-    if (!rect)
-        return std::nullopt;
-    
-    std::optional<Ref<Gradient>> gradient;
-    decoder >> gradient;
-    if (!gradient)
-        return std::nullopt;
-
-    return { { *rect, WTFMove(*gradient) } };
-}
 
 class FillCompositedRect {
 public:
@@ -1303,50 +959,12 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FillCompositedRect> decode(Decoder&);
-
 private:
     FloatRect m_rect;
     Color m_color;
     CompositeOperator m_op;
     BlendMode m_blendMode;
 };
-
-template<class Encoder>
-void FillCompositedRect::encode(Encoder& encoder) const
-{
-    encoder << m_rect;
-    encoder << m_color;
-    encoder << m_op;
-    encoder << m_blendMode;
-}
-
-template<class Decoder>
-std::optional<FillCompositedRect> FillCompositedRect::decode(Decoder& decoder)
-{
-    std::optional<FloatRect> rect;
-    decoder >> rect;
-    if (!rect)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    std::optional<CompositeOperator> op;
-    decoder >> op;
-    if (!op)
-        return std::nullopt;
-
-    std::optional<BlendMode> blendMode;
-    decoder >> blendMode;
-    if (!blendMode)
-        return std::nullopt;
-
-    return {{ *rect, *color, *op, *blendMode }};
-}
 
 class FillRoundedRect {
 public:
@@ -1365,9 +983,6 @@ public:
     const Color& color() const { return m_color; }
     BlendMode blendMode() const { return m_blendMode; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FillRoundedRect> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
@@ -1375,35 +990,6 @@ private:
     Color m_color;
     BlendMode m_blendMode;
 };
-
-template<class Encoder>
-void FillRoundedRect::encode(Encoder& encoder) const
-{
-    encoder << m_rect;
-    encoder << m_color;
-    encoder << m_blendMode;
-}
-
-template<class Decoder>
-std::optional<FillRoundedRect> FillRoundedRect::decode(Decoder& decoder)
-{
-    std::optional<FloatRoundedRect> rect;
-    decoder >> rect;
-    if (!rect)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    std::optional<BlendMode> blendMode;
-    decoder >> blendMode;
-    if (!blendMode)
-        return std::nullopt;
-
-    return {{ *rect, *color, *blendMode }};
-}
 
 class FillRectWithRoundedHole {
 public:
@@ -1422,9 +1008,6 @@ public:
     const FloatRoundedRect& roundedHoleRect() const { return m_roundedHoleRect; }
     const Color& color() const { return m_color; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FillRectWithRoundedHole> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
@@ -1432,35 +1015,6 @@ private:
     FloatRoundedRect m_roundedHoleRect;
     Color m_color;
 };
-
-template<class Encoder>
-void FillRectWithRoundedHole::encode(Encoder& encoder) const
-{
-    encoder << m_rect;
-    encoder << m_roundedHoleRect;
-    encoder << m_color;
-}
-
-template<class Decoder>
-std::optional<FillRectWithRoundedHole> FillRectWithRoundedHole::decode(Decoder& decoder)
-{
-    std::optional<FloatRect> rect;
-    decoder >> rect;
-    if (!rect)
-        return std::nullopt;
-
-    std::optional<FloatRoundedRect> roundedHoleRect;
-    decoder >> roundedHoleRect;
-    if (!roundedHoleRect)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    return {{ *rect, *roundedHoleRect, *color }};
-}
 
 #if ENABLE(INLINE_PATH_DATA)
 
@@ -1552,31 +1106,11 @@ public:
 
     const Path& path() const { return m_path; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FillPath> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
     Path m_path;
 };
-
-template<class Encoder>
-void FillPath::encode(Encoder& encoder) const
-{
-    encoder << m_path;
-}
-
-template<class Decoder>
-std::optional<FillPath> FillPath::decode(Decoder& decoder)
-{
-    std::optional<Path> path;
-    decoder >> path;
-    if (!path)
-        return std::nullopt;
-
-    return {{ WTFMove(*path) }};
-}
 
 class FillEllipse {
 public:
@@ -1741,31 +1275,11 @@ public:
 
     const Path& path() const { return m_path; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<StrokePath> decode(Decoder&);
-
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
     Path m_path;
 };
-
-template<class Encoder>
-void StrokePath::encode(Encoder& encoder) const
-{
-    encoder << m_path;
-}
-
-template<class Decoder>
-std::optional<StrokePath> StrokePath::decode(Decoder& decoder)
-{
-    std::optional<Path> path;
-    decoder >> path;
-    if (!path)
-        return std::nullopt;
-
-    return {{ WTFMove(*path) }};
-}
 
 class StrokeEllipse {
 public:
