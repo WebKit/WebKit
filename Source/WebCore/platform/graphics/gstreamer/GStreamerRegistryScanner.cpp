@@ -654,6 +654,12 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
         || parseInteger<unsigned>(contentType.parameter("framerate"_s)).value_or(0) > MEDIA_MAX_FRAMERATE)
         return SupportsType::IsNotSupported;
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    String cryptoblockformat = contentType.parameter("cryptoblockformat"_s);
+    if (!cryptoblockformat.isEmpty() && (!containerType.endsWith("webm"_s) || cryptoblockformat != "subsample"_s))
+        return SupportsType::IsNotSupported;
+#endif
+
     const auto& codecs = contentType.codecs();
 
     // Spec says we should not return "probably" if the codecs string is empty.
