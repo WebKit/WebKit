@@ -82,6 +82,7 @@ RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef, AllowUserInstalledFo
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
 WEBCORE_EXPORT void setOverrideEnhanceTextLegibility(bool);
+bool fontNameIsSystemFont(CFStringRef);
 
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
 WEBCORE_EXPORT void setContentSizeCategory(const String&);
