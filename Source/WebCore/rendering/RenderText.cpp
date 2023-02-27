@@ -1479,7 +1479,7 @@ void RenderText::secureText(UChar maskingCharacter)
 }
 
 #define ALLOW_PARTIAL_CONTENT_INVALIDATION 0
-static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& renderer, size_t offset, size_t length)
+static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& renderer, size_t offset, int delta)
 {
     auto* container = LayoutIntegration::LineLayout::blockContainer(renderer);
     if (!container)
@@ -1494,10 +1494,10 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& re
         return;
     }
 #if ALLOW_PARTIAL_CONTENT_INVALIDATION
-    modernLineLayout->updateTextContent(renderer, offset, length);
+    modernLineLayout->updateTextContent(renderer, offset, delta);
 #else
     UNUSED_PARAM(offset);
-    UNUSED_PARAM(length);
+    UNUSED_PARAM(delta);
     container->invalidateLineLayoutPath();
 #endif
 }
@@ -1541,7 +1541,7 @@ void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsig
     m_linesDirty = m_lineBoxes.dirtyRange(*this, offset, end, delta);
 
     setTextInternal(newText, force || m_linesDirty);
-    invalidateLineLayoutPathOnContentChangeIfNeeded(*this, offset, length);
+    invalidateLineLayoutPathOnContentChangeIfNeeded(*this, offset, delta);
 }
 
 String RenderText::textWithoutConvertingBackslashToYenSymbol() const

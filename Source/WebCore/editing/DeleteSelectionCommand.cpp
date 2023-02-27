@@ -32,6 +32,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "ElementIterator.h"
+#include "ElementTraversal.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
 #include "HTMLLinkElement.h"

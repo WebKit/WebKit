@@ -1017,6 +1017,7 @@ webkit.org/b/238201 media/media-source/media-mp4-hevc-bframes.html [ Failure ]
 
 # WebProcess's MemoryPressureHandler are disabled, test is nonfunctional
 media/media-source/media-managedmse-memorypressure.html [ Timeout ]
+media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
@@ -1745,11 +1746,8 @@ webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
 # this is not enough for the receiver webrtcbin to create its video source pad,
 # because on sender side we need at least a complete GOP... So the tests time
 # out, awaiting forever a remote mediastream.
-webkit.org/b/235885 webrtc/canvas-to-peer-connection.html [ Skip ]
 webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8-2d.html [ Skip ]
 webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Skip ]
-webkit.org/b/235885 webrtc/canvas-to-peer-connection-2d.html [ Skip ]
-webkit.org/b/235885 webrtc/captureCanvas-webrtc.html [ Skip ]
 
 # This is actually a flaky timeout but skipping nonetheless. GStreamer logs
 # highlight a srtpenc protection error when the test times out. Might be

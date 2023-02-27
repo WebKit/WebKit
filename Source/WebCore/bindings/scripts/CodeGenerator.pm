@@ -1104,6 +1104,7 @@ sub GetterExpression
     if ($attribute->extendedAttributes->{"URL"}) {
         $functionName = "getURLAttributeForBindings";
     } elsif ($attributeType->name eq "boolean") {
+        $implIncludes->{"ElementInlines.h"} = 1;
         $functionName = "hasAttributeWithoutSynchronization";
     } elsif ($attributeType->name eq "long") {
         $functionName = "getIntegralAttribute";

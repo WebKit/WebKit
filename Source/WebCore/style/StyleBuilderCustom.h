@@ -40,7 +40,7 @@
 #include "CSSShadowValue.h"
 #include "CounterContent.h"
 #include "CursorList.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "FontVariantBuilder.h"
 #include "Frame.h"
 #include "HTMLElement.h"

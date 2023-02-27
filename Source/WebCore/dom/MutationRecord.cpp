@@ -35,6 +35,7 @@
 #include "CharacterData.h"
 #include "JSNode.h"
 #include "StaticNodeList.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

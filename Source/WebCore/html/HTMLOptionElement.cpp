@@ -30,7 +30,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "DocumentInlines.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"

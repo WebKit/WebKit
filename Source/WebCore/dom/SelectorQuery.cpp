@@ -29,11 +29,12 @@
 
 #include "CSSParser.h"
 #include "CommonAtomStrings.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLNames.h"
 #include "SelectorChecker.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

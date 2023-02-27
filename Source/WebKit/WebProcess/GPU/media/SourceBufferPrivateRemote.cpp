@@ -232,7 +232,7 @@ void SourceBufferPrivateRemote::resetTrackBuffers()
     m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::ResetTrackBuffers(), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::clearTrackBuffers()
+void SourceBufferPrivateRemote::clearTrackBuffers(bool)
 {
     if (!m_gpuProcessConnection)
         return;

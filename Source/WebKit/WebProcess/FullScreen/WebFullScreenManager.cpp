@@ -45,7 +45,7 @@
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
-#include <WebCore/TypedElementDescendantIterator.h>
+#include <WebCore/TypedElementDescendantIteratorInlines.h>
 #include <WebCore/UserGestureIndicator.h>
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

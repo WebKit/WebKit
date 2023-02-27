@@ -98,16 +98,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
             ASSERT_NOT_REACHED();
             return m_formattingState.setInlineItems(WTFMove(inlineItems));
         }
-        auto& lastCleanLayoutBox = currentInlineItems[startPosition.index].layoutBox();
-        auto firstDirtyInlineItemIndex = std::optional<size_t> { };
-        for (auto index = startPosition.index; index < currentInlineItems.size(); ++index) {
-            if (&currentInlineItems[index].layoutBox() != &lastCleanLayoutBox) {
-                firstDirtyInlineItemIndex = index;
-                break;
-            }
-        }
-        if (firstDirtyInlineItemIndex)
-            currentInlineItems.remove(*firstDirtyInlineItemIndex, currentInlineItems.size() - *firstDirtyInlineItemIndex);
+        currentInlineItems.remove(startPosition.index, currentInlineItems.size() - startPosition.index);
         m_formattingState.appendInlineItems(WTFMove(inlineItems));
     };
     adjustInlineFormattingStateWithNewInlineItems();
@@ -124,8 +115,6 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
         layoutQueue.append(root().firstChild());
         if (!startPosition)
             return;
-        // FIXME: This only works well with append case. Insert should not need to process trailing content.
-
         // For partial layout we need to build the layout queue up to the point where the new content is in order
         // to be able to produce non-content type of trailing inline items.
         // e.g <div><span<span>text</span></span> produces
@@ -139,25 +128,23 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             ASSERT_NOT_REACHED();
             return;
         }
-        auto& lastCleanLayoutBox = currentInlineItems[startPosition.index].layoutBox();
+        auto& firstDamagedLayoutBox = currentInlineItems[startPosition.index].layoutBox();
         while (!layoutQueue.isEmpty()) {
             while (true) {
                 auto& layoutBox = *layoutQueue.last();
                 if (layoutBox.establishesFormattingContext() || !is<ElementBox>(layoutBox) || !downcast<ElementBox>(layoutBox).hasChild())
                     break;
                 layoutQueue.append(downcast<ElementBox>(layoutBox).firstChild());
-                if (&layoutBox == &lastCleanLayoutBox)
+                if (&layoutBox == &firstDamagedLayoutBox)
                     return;
             }
 
-            auto nextLayoutBoxIsNewContent = false;
             while (!layoutQueue.isEmpty()) {
+                if (layoutQueue.last() == &firstDamagedLayoutBox)
+                    return;
                 auto& layoutBox = *layoutQueue.takeLast();
-                nextLayoutBoxIsNewContent = nextLayoutBoxIsNewContent || &layoutBox == &lastCleanLayoutBox;
                 if (auto* nextSibling = layoutBox.nextSibling()) {
                     layoutQueue.append(nextSibling);
-                    if (nextLayoutBoxIsNewContent)
-                        return;
                     break;
                 }
             }
@@ -166,6 +153,25 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
         layoutQueue.append(root().firstChild());
     };
     initializeLayoutQueue();
+
+    auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
+        if (!startPosition)
+            return { };
+        auto& currentInlineItems = m_formattingState.inlineItems();
+        if (startPosition.index >= currentInlineItems.size()) {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+        auto& damagedInlineItem = currentInlineItems[startPosition.index];
+        if (&inlineTextBox != &damagedInlineItem.layoutBox())
+            return { };
+        if (is<InlineTextItem>(damagedInlineItem))
+            return downcast<InlineTextItem>(damagedInlineItem).start();
+        if (is<InlineSoftLineBreakItem>(damagedInlineItem))
+            return downcast<InlineSoftLineBreakItem>(damagedInlineItem).position();
+        ASSERT_NOT_REACHED();
+        return { };
+    };
 
     while (!layoutQueue.isEmpty()) {
         while (true) {
@@ -183,9 +189,10 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
 
         while (!layoutQueue.isEmpty()) {
             auto& layoutBox = *layoutQueue.takeLast();
-            if (layoutBox.isInlineTextBox())
-                handleTextContent(downcast<InlineTextBox>(layoutBox), inlineItems);
-            else if (layoutBox.isAtomicInlineLevelBox() || layoutBox.isLineBreakBox())
+            if (layoutBox.isInlineTextBox()) {
+                auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
+                handleTextContent(inlineTextBox, inlineItems, partialContentOffset(inlineTextBox));
+            } else if (layoutBox.isAtomicInlineLevelBox() || layoutBox.isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItems);
             else if (layoutBox.isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItems);
@@ -571,7 +578,7 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItems& inlineItems)
     }
 }
 
-void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems)
+void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItems& inlineItems, std::optional<size_t> partialContentOffset)
 {
     auto text = inlineTextBox.content();
     auto contentLength = text.length();
@@ -586,7 +593,8 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
     auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
-    unsigned currentPosition = 0;
+    auto currentPosition = partialContentOffset.value_or(0lu);
+    ASSERT(currentPosition <= contentLength);
 
     while (currentPosition < contentLength) {
         auto handleSegmentBreak = [&] {

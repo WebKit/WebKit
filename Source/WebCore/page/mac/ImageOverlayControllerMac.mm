@@ -41,7 +41,7 @@
 #import "Page.h"
 #import "PlatformMouseEvent.h"
 #import "SimpleRange.h"
-#import "TypedElementDescendantIterator.h"
+#import "TypedElementDescendantIteratorInlines.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/HashSet.h>
 #import <wtf/text/StringToIntegerConversion.h>

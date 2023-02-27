@@ -48,6 +48,7 @@ private:
     void sizeDidChange() override;
     void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) override;
     void attachToProvisionalFrameProcess(WebProcessProxy&) final { ASSERT_NOT_REACHED(); }
+    bool shouldSendWheelEventsToEventDispatcher() const final { return true; }
 
     // message handers
     void update(uint64_t, const UpdateInfo&) override;

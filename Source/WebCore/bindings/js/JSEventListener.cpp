@@ -39,7 +39,7 @@
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/VMEntryScope.h>
+#include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <JavaScriptCore/Watchdog.h>
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>

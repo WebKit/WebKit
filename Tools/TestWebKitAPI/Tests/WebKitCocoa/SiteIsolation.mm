@@ -234,4 +234,66 @@ TEST(SiteIsolation, IframeNavigatesSelfWithoutChangingOrigin)
     Util::run(&done);
 }
 
+TEST(SiteIsolation, IframeWithConfirm)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>confirm('confirm message')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForConfirm], "confirm message");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = childFrame._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid);
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, IframeWithPrompt)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>prompt('prompt message', 'default input')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForPromptWithReply:@"default input"], "prompt message");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = childFrame._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid);
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 }

@@ -980,7 +980,7 @@ public:
     ExpressionNode* createAssignment(const JSTokenLocation& location, int& assignmentStackDepth, ExpressionNode* rhs, int initialAssignmentCount, int currentAssignmentCount, const JSTextPosition& lastTokenEnd)
     {
         AssignmentInfo& info = m_assignmentInfoStack.last();
-        ExpressionNode* result = makeAssignNode(location, info.m_node, info.m_op, rhs, info.m_initAssignments != initialAssignmentCount, info.m_initAssignments != currentAssignmentCount, info.m_start, info.m_divot + 1, lastTokenEnd);
+        ExpressionNode* result = makeAssignNode(location, info.m_node, info.m_op, rhs, info.m_initAssignments != initialAssignmentCount, info.m_initAssignments + 1 != currentAssignmentCount, info.m_start, info.m_divot + 1, lastTokenEnd);
         m_assignmentInfoStack.removeLast();
         assignmentStackDepth--;
         return result;

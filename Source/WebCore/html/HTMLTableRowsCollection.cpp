@@ -29,7 +29,9 @@
 #include "config.h"
 #include "HTMLTableRowsCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "ElementIterator.h"
+#include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"

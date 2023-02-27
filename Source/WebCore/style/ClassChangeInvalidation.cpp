@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ClassChangeInvalidation.h"
 
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "SpaceSplitString.h"
 #include "StyleInvalidationFunctions.h"

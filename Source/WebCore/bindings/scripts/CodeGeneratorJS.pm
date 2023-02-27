@@ -4293,6 +4293,7 @@ sub GenerateImplementation
     my $implType = GetImplClassName($interface);
 
     AddToImplIncludes("${implType}.h") if $interface->isNamespaceObject;
+    AddToImplIncludes("ElementInlines.h") if $interfaceName eq "Node";
 
     @implContent = ();
 
@@ -4961,7 +4962,7 @@ sub GenerateImplementation
         push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
         if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
             AddToImplIncludes("<wtf/GetPtr.h>");
-            AddToImplIncludes("WebCoreOpaqueRoot.h");
+            AddToImplIncludes("WebCoreOpaqueRootInlines.h");
             my $functionName = $interface->extendedAttributes->{GenerateAddOpaqueRoot};
             $functionName = "opaqueRoot" if $functionName eq "VALUE_IS_MISSING";
             push(@implContent, "    addWebCoreOpaqueRoot(visitor, thisObject->wrapped().${functionName}());\n");
@@ -5068,7 +5069,7 @@ sub GenerateImplementation
             push(@implContent, "        return true;\n");
         }
         if (GetGenerateIsReachable($interface)) {
-           AddToImplIncludes("WebCoreOpaqueRoot.h");
+           AddToImplIncludes("WebCoreOpaqueRootInlines.h");
 
             if (!$emittedJSCast) {
                 push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");

@@ -33,7 +33,7 @@
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
 #include "HTMLIFrameElement.h"

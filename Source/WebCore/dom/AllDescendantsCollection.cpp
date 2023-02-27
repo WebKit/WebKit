@@ -26,10 +26,16 @@
 #include "config.h"
 #include "AllDescendantsCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AllDescendantsCollection);
+
+AllDescendantsCollection::AllDescendantsCollection(ContainerNode& rootNode, CollectionType type)
+    : CachedHTMLCollection(rootNode, type)
+{ }
+
 
 } // namespace WebCore

@@ -40,6 +40,7 @@
 #include "HTMLOptionElement.h"
 #include "IdTargetObserverRegistry.h"
 #include "NodeRareData.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -77,6 +78,11 @@ Ref<HTMLCollection> HTMLDataListElement::options()
 void HTMLDataListElement::optionElementChildrenChanged()
 {
     treeScope().idTargetObserverRegistry().notifyObservers(getIdAttribute());
+}
+
+auto HTMLDataListElement::suggestions() const -> SuggestionRange
+{
+    return filteredDescendants<HTMLOptionElement, isSuggestion>(*this);
 }
 
 bool HTMLDataListElement::isSuggestion(const HTMLOptionElement& descendant)

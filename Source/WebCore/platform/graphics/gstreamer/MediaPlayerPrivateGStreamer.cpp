@@ -1486,7 +1486,7 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     // WebKitMediaSrc) parsebin and decodebin3 emit their own stream-collection messages, but late,
     // and sometimes with duplicated streams. Let's only listen for stream-collection messages from
     // the source to avoid these issues.
-    if (isMediaSource() && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
+    if (GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
         GST_DEBUG_OBJECT(pipeline(), "Ignoring redundant STREAM_COLLECTION from %" GST_PTR_FORMAT, message->src);
         return;
     }
@@ -1499,10 +1499,9 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
             player->updateTracks(owner);
     };
 
-    if (isMediaSource())
-        callOnMainThreadAndWait(WTFMove(callback));
-    else
-        callOnMainThread(WTFMove(callback));
+    GST_DEBUG_OBJECT(pipeline(), "Updating tracks");
+    callOnMainThreadAndWait(WTFMove(callback));
+    GST_DEBUG_OBJECT(pipeline(), "Updating tracks DONE");
 }
 
 bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
@@ -1552,22 +1551,6 @@ bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
 // Returns the size of the video.
 FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
 {
-#if ENABLE(MEDIA_STREAM)
-    if (!m_isLegacyPlaybin && !m_wantedVideoStreamId.isEmpty()) {
-        RefPtr<VideoTrackPrivateGStreamer> videoTrack = m_videoTracks.get(m_wantedVideoStreamId);
-
-        if (videoTrack) {
-            if (auto stream = videoTrack->stream()) {
-                auto tags = adoptGRef(gst_stream_get_tags(stream));
-                gint width, height;
-
-                if (tags && gst_tag_list_get_int(tags.get(), WEBKIT_MEDIA_TRACK_TAG_WIDTH, &width) && gst_tag_list_get_int(tags.get(), WEBKIT_MEDIA_TRACK_TAG_HEIGHT, &height))
-                    return FloatSize(width, height);
-            }
-        }
-    }
-#endif // ENABLE(MEDIA_STREAM)
-
     if (!hasVideo())
         return FloatSize();
 
@@ -2830,10 +2813,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     // In the MSE case stream collection messages are emitted from the main thread right before the
     // initilization segment is parsed and "updateend" is fired. We need therefore to handle these
     // synchronously in the same main thread tick to make the tracks information available to JS no
-    // later than "updateend". There is no such limitation otherwise (if playbin3 is enabled or in
-    // MediaStream cases).
-    auto streamCollectionSignalName = makeString(isMediaSource() ? "sync-" : "", "message::stream-collection");
-    g_signal_connect_swapped(bus.get(), streamCollectionSignalName.ascii().data(), G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
+    // later than "updateend".
+    g_signal_connect_swapped(bus.get(), "sync-message::stream-collection", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
         player->handleStreamCollectionMessage(message);
     }), this);
 

@@ -27,7 +27,7 @@
 
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

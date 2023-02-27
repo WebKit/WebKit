@@ -423,7 +423,7 @@ public:
     Vector<Element*> elementsFromAttribute(const QualifiedName&) const;
 
     // Only if isColorWell()
-    SRGBA<uint8_t> colorValue() const override { return Color::transparentBlack; }
+    SRGBA<uint8_t> colorValue() const override;
 
     AccessibilityRole roleValue() const override { return m_role; }
     String rolePlatformString() const override;

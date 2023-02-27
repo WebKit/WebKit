@@ -1774,7 +1774,6 @@ fast/events/drag-select-when-zoomed-with-header.html [ Failure ]
 fast/events/drag-select-when-zoomed.html [ Failure ]
 fast/events/drag-to-navigate.html [ Skip ] # Crash
 fast/events/dragging-mouse-moves.html [ Skip ] # Crash
-fast/events/drop-handler-should-not-stop-navigate.html [ Failure ]
 fast/events/drop-with-file-paths.html [ Pass Failure ]
 fast/events/dropzone-004.html [ Failure ]
 fast/events/dropzone-005.html [ Failure ]
@@ -1792,7 +1791,6 @@ fast/events/keydown-numpad-keys.html [ Failure ]
 fast/events/media-focus-in-standalone-media-document.html [ Timeout ]
 fast/events/mouseover-button.html [ Failure ]
 fast/events/mouseup-from-button2.html [ Failure ]
-fast/events/only-valid-drop-targets-receive-file-drop.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
 fast/events/page-visibility-iframe-move-test.html [ Skip ] # Crash by assertion failure
 fast/events/page-visibility-iframe-propagation-test.html [ Timeout Pass ]
@@ -1964,7 +1962,6 @@ http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
 http/tests/misc/form-post-textplain.html [ Failure ]
 http/tests/misc/gamepads-insecure.html [ Failure ]
 http/tests/misc/large-js-program.py [ Skip ] # Timeout
-http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]
 http/tests/xmlhttprequest/origin-header-same-origin-get-async.html [ Failure ]
@@ -2003,7 +2000,6 @@ webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Skip ] # Timeout
-webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Failure ]
 webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
@@ -2601,12 +2597,19 @@ webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 js/date-timeClip-large-values.html [ Failure ]
-storage/indexeddb/modern/date-basic-private.html [ Failure ]
-storage/indexeddb/modern/date-basic.html [ Failure ]
-storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
-storage/indexeddb/modern/get-keyrange.html [ Failure ]
-storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
-storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
+
+# Tests depend on the system timezone.
+storage/indexeddb/modern/date-basic-private.html [ Failure Pass ]
+storage/indexeddb/modern/date-basic.html [ Failure Pass ]
+storage/indexeddb/modern/get-keyrange-private.html [ Failure Pass ]
+storage/indexeddb/modern/get-keyrange.html [ Failure Pass ]
+storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure Pass ]
+storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure Pass ]
 
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
+
+editing/inserting/editable-html-element.html [ Failure ]
+editing/style/unbold-in-bold.html [ Failure ]
+
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]

@@ -586,9 +586,19 @@ void LineLayout::constructContent()
             m_inlineContent->lines.clear();
             return;
         }
-        auto& damangedLine = m_inlineContent->lines[damagedLineIndex];
-        m_inlineContent->boxes.remove(damangedLine.firstBoxIndex(), damangedLine.boxCount());
-        m_inlineContent->lines.remove(damagedLineIndex);
+        auto firstDamagedLineIndex = damagedLineIndex;
+        auto lastDamagedLineIndex = m_inlineContent->lines.size() - 1;
+        ASSERT(firstDamagedLineIndex <= lastDamagedLineIndex);
+        auto& damagedLine = m_inlineContent->lines[damagedLineIndex];
+        auto numberOfDamagedBoxes = [&] {
+            size_t boxCount = 0;
+            for (auto index = firstDamagedLineIndex; index <= lastDamagedLineIndex; ++index)
+                boxCount += damagedLine.boxCount();
+            ASSERT(boxCount);
+            return boxCount;
+        };
+        m_inlineContent->boxes.remove(damagedLine.firstBoxIndex(), numberOfDamagedBoxes());
+        m_inlineContent->lines.remove(firstDamagedLineIndex, lastDamagedLineIndex - firstDamagedLineIndex + 1);
     };
     destroyDamagedContent();
 
@@ -1197,12 +1207,16 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, size_t length)
+void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, int delta)
 {
     m_boxTree.updateContent(textRenderer);
     if (m_inlineContent) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
-        invalidation.textInserted(&downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer)), offset, length);
+        auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
+        if (delta >= 0)
+            invalidation.textInserted(&inlineTextBox, offset);
+        else
+            invalidation.textWillBeRemoved(inlineTextBox, offset);
         return;
     }
 }

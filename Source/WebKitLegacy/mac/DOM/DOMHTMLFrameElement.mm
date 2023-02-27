@@ -31,6 +31,7 @@
 #import <WebCore/DOMWindow.h>
 #import <WebCore/Document.h>
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/JSExecState.h>

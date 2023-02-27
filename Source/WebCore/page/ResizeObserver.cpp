@@ -34,7 +34,7 @@
 #include "Logging.h"
 #include "ResizeObserverEntry.h"
 #include "ResizeObserverOptions.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/text/TextStream.h>
 

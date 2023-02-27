@@ -30,6 +30,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLObjectElement.h"
+#include "LiveNodeListInlines.h"
 #include "NodeRareData.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -56,12 +57,12 @@ RadioNodeList::~RadioNodeList()
     ownerNode().nodeLists()->removeCacheWithAtomName(*this, m_name);
 }
 
-static RefPtr<HTMLInputElement> nonEmptyRadioButton(Element& element)
+static RefPtr<HTMLInputElement> nonEmptyRadioButton(Node& node)
 {
-    if (!is<HTMLInputElement>(element))
+    if (!is<HTMLInputElement>(node))
         return nullptr;
 
-    auto& inputElement = downcast<HTMLInputElement>(element);
+    auto& inputElement = downcast<HTMLInputElement>(node);
     if (!inputElement.isRadioButton() || inputElement.value().isEmpty())
         return nullptr;
     return &inputElement;

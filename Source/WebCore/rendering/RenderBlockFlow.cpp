@@ -2306,13 +2306,17 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         lineLayout->updateStyle(*this, *oldStyle);
 
     if (multiColumnFlow())
-        updateStylesForColumnChildren();
+        updateStylesForColumnChildren(oldStyle);
 }
 
-void RenderBlockFlow::updateStylesForColumnChildren()
+void RenderBlockFlow::updateStylesForColumnChildren(const RenderStyle* oldStyle)
 {
-    for (auto* child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox())
+    auto columnsNeedLayout = oldStyle && (oldStyle->columnCount() != style().columnCount() || oldStyle->columnWidth() != style().columnWidth()); 
+    for (auto* child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
         child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), DisplayType::Block));
+        if (columnsNeedLayout)
+            child->setNeedsLayoutAndPrefWidthsRecalc();
+    }
 }
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

@@ -23,8 +23,9 @@
 #include "config.h"
 #include "HTMLCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "HTMLNames.h"
-#include "NodeRareData.h"
+#include "NodeRareDataInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -250,6 +251,14 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
     }
 
     return elements;
+}
+
+size_t HTMLCollection::memoryCost() const
+{
+    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
+    // Hence, we need to guard m_namedElementCache from being replaced while accessing it.
+    Locker locker { m_namedElementCacheAssignmentLock };
+    return m_namedElementCache ? m_namedElementCache->memoryCost() : 0;
 }
 
 } // namespace WebCore

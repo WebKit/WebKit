@@ -26,8 +26,7 @@
 #include "config.h"
 #include "JSWorkerNavigator.h"
 
-#include "WebCoreOpaqueRoot.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

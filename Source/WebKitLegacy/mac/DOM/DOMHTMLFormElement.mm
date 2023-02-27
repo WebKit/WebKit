@@ -28,6 +28,7 @@
 #import "DOMHTMLCollectionInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLNames.h>

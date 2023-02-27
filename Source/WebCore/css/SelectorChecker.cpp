@@ -33,7 +33,7 @@
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
-#include "ElementInlines.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
 #include "Frame.h"
@@ -51,7 +51,7 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "Text.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

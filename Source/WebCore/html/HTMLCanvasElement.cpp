@@ -55,7 +55,7 @@
 #include "InMemoryDisplayList.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
-#include "JSNodeCustom.h"
+#include "JSNodeCustomInlines.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "Navigator.h"

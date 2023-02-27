@@ -27,6 +27,7 @@
 
 // FIXME: Should rename this file AXCoreObject.h.
 
+#include "ColorConversion.h"
 #include "FrameLoaderClient.h"
 #include "HTMLTextFormControlElement.h"
 #include "LayoutRect.h"

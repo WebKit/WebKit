@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLTransformFeedback.h"
 
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextGroup.h"

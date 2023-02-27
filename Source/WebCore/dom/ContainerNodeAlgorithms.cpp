@@ -32,7 +32,7 @@
 #include "InspectorInstrumentation.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

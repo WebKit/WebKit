@@ -30,7 +30,7 @@
 #include "HTMLSlotElement.h"
 #include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

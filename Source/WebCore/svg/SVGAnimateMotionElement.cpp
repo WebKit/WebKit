@@ -24,7 +24,7 @@
 
 #include "AffineTransform.h"
 #include "CommonAtomStrings.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "PathTraversalState.h"
 #include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"

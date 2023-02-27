@@ -49,7 +49,7 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/InternalFunction.h>

@@ -42,6 +42,7 @@
 #include "HTMLStyleElement.h"
 #include "HTMLVideoElement.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "Position.h"
 #include "SimpleRange.h"
 #include "TextBoundaries.h"

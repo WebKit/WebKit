@@ -39,7 +39,7 @@
 #include "JSNodeCustom.h"
 #include "Logging.h"
 #include "Performance.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Vector.h>
 

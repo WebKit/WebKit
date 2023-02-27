@@ -48,6 +48,7 @@
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
 #include <WebCore/DOMWindow.h>
+#include <WebCore/ElementAncestorIteratorInlines.h>
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
 #include <WebCore/Frame.h>

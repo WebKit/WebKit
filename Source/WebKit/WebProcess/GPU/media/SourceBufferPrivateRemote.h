@@ -84,7 +84,7 @@ private:
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime) final;
     void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
     void resetTrackBuffers() final;
-    void clearTrackBuffers() final;
+    void clearTrackBuffers(bool) final;
     void setAllTrackBuffersNeedRandomAccess() final;
     void setGroupStartTimestamp(const MediaTime&) final;
     void setGroupStartTimestampToEndTimestamp() final;

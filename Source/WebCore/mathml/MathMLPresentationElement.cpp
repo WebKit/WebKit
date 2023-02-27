@@ -31,7 +31,7 @@
 #if ENABLE(MATHML)
 
 #include "CommonAtomStrings.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"

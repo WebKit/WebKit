@@ -60,7 +60,7 @@
 #import "SerializedAttachmentData.h"
 #import "Settings.h"
 #import "SocketProvider.h"
-#import "TypedElementDescendantIterator.h"
+#import "TypedElementDescendantIteratorInlines.h"
 #import "UTIUtilities.h"
 #import "WebArchiveResourceFromNSAttributedString.h"
 #import "WebArchiveResourceWebResourceHandler.h"

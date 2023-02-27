@@ -28,7 +28,7 @@
 
 #include "CSSSelectorList.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "ElementRuleCollector.h"
 #include "HTMLSlotElement.h"
@@ -40,6 +40,7 @@
 #include "StyleScope.h"
 #include "StyleScopeRuleSets.h"
 #include "StyleSheetContents.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

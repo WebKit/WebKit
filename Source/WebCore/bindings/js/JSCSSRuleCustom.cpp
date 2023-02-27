@@ -60,7 +60,7 @@
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 
 namespace WebCore {

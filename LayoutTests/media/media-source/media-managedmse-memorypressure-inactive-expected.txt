@@ -1,0 +1,52 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+RUN(source.endOfStream())
+EVENT(sourceended)
+EVENT(change)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+RUN(internals.beginSimulatedMemoryPressure())
+EVENT(bufferedchange)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+RUN(internals.endSimulatedMemoryPressure())
+END OF TEST
+

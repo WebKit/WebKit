@@ -33,7 +33,7 @@
 #if ENABLE(VIDEO)
 
 #include "DOMTokenList.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"

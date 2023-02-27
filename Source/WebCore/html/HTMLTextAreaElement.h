@@ -60,6 +60,7 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
+    static String sanitizeUserInputValue(const String& proposedValue, unsigned maxLength);
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) const;
     void updateValue() const;
     void setNonDirtyValue(const String&, TextControlSetValueSelection);

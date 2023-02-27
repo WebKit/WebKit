@@ -38,6 +38,7 @@
 #include "RenderView.h"
 #include "TextRecognitionOptions.h"
 #include "Timer.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <pal/HysteresisActivity.h>
 
 namespace WebCore {

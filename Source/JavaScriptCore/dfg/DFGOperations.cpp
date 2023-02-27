@@ -83,6 +83,7 @@
 #include "SuperSampler.h"
 #include "Symbol.h"
 #include "TypeProfilerLog.h"
+#include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
 #include "WeakMapImplInlines.h"

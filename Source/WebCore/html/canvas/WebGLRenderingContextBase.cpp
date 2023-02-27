@@ -84,7 +84,7 @@
 #include "RenderBox.h"
 #include "Settings.h"
 #include "WebCodecsVideoFrame.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"

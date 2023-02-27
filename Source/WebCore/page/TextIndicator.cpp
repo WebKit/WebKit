@@ -31,7 +31,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"

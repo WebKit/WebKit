@@ -37,7 +37,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatQuad.h"
@@ -77,6 +77,7 @@
 #include "SpatialNavigation.h"
 #include "StyleProperties.h"
 #include "StyleTreeResolver.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
 #include <stdio.h>

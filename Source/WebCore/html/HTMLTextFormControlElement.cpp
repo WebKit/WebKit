@@ -33,7 +33,7 @@
 #include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"

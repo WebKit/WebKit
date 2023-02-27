@@ -50,39 +50,21 @@ private:
 };
 
 template<typename Visitor>
-ALWAYS_INLINE void addWebCoreOpaqueRoot(Visitor& visitor, WebCoreOpaqueRoot root)
-{
-    visitor.addOpaqueRoot(root.pointer());
-}
+inline void addWebCoreOpaqueRoot(Visitor&, WebCoreOpaqueRoot);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE void addWebCoreOpaqueRoot(Visitor& visitor, ImplType* impl)
-{
-    addWebCoreOpaqueRoot(visitor, root(impl));
-}
+inline void addWebCoreOpaqueRoot(Visitor&, ImplType*);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE void addWebCoreOpaqueRoot(Visitor& visitor, ImplType& impl)
-{
-    addWebCoreOpaqueRoot(visitor, root(&impl));
-}
+inline void addWebCoreOpaqueRoot(Visitor&, ImplType&);
 
 template<typename Visitor>
-ALWAYS_INLINE bool containsWebCoreOpaqueRoot(Visitor& visitor, WebCoreOpaqueRoot root)
-{
-    return visitor.containsOpaqueRoot(root.pointer());
-}
+inline bool containsWebCoreOpaqueRoot(Visitor&, WebCoreOpaqueRoot);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE bool containsWebCoreOpaqueRoot(Visitor& visitor, ImplType& impl)
-{
-    return containsWebCoreOpaqueRoot(visitor, root(&impl));
-}
+inline bool containsWebCoreOpaqueRoot(Visitor&, ImplType&);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE bool containsWebCoreOpaqueRoot(Visitor& visitor, ImplType* impl)
-{
-    return containsWebCoreOpaqueRoot(visitor, root(impl));
-}
+inline bool containsWebCoreOpaqueRoot(Visitor&, ImplType*);
 
 } // namespace WebCore

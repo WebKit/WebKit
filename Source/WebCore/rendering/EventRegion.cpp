@@ -26,7 +26,7 @@
 #include "config.h"
 #include "EventRegion.h"
 
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
 #include "Path.h"

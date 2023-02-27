@@ -68,7 +68,7 @@
 #include "StackFrame.h"
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
-#include "VMEntryScope.h"
+#include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
 #include "VirtualRegister.h"
@@ -838,8 +838,6 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
 
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusyOnCurrentThread())
-        return jsNull();
 
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return throwStackOverflowError(globalObject, throwScope);
@@ -1005,8 +1003,7 @@ failedJSONP:
         {
             CodeBlock* tempCodeBlock;
             program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
             codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
             ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
         }
@@ -1061,8 +1058,6 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
     scope.assertNoException();
 
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
-    if (vm.isCollectorBusyOnCurrentThread())
-        return jsNull();
 
     bool isJSCall = callData.type == CallData::Type::JS;
     JSScope* functionScope = nullptr;
@@ -1100,8 +1095,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
         if (isJSCall) {
             // Compile the callee:
             functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(function), functionScope, CodeForCall, newCodeBlock);
-            RETURN_IF_EXCEPTION(scope, scope.exception());
-
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, scope.exception());
             ASSERT(newCodeBlock);
             newCodeBlock->m_shouldAlwaysBeInlined = false;
         }
@@ -1154,12 +1148,6 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
 
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
-    // We throw in this case because we have to return something "valid" but we're
-    // already in an invalid state.
-    if (UNLIKELY(vm.isCollectorBusyOnCurrentThread())) {
-        throwStackOverflowError(lexicalGlobalObject, throwScope);
-        return nullptr;
-    }
 
     bool isJSConstruct = (constructData.type == CallData::Type::JS);
     JSScope* scope = nullptr;
@@ -1195,8 +1183,7 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         if (isJSConstruct) {
             // Compile the callee:
             constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
-            RETURN_IF_EXCEPTION(throwScope, nullptr);
-
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, nullptr);
             ASSERT(newCodeBlock);
             newCodeBlock->m_shouldAlwaysBeInlined = false;
         }
@@ -1229,9 +1216,6 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     throwScope.assertNoException();
 
-    if (vm.isCollectorBusyOnCurrentThread())
-        return { };
-
     // Compile the callee:
     CodeBlock* newCodeBlock;
     functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, CodeForCall, newCodeBlock);
@@ -1261,8 +1245,6 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSGlobalObject* lexicalGl
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusyOnCurrentThread())
-        return jsNull();
 
     JSGlobalObject* globalObject = scope->globalObject();
     VMEntryScope entryScope(vm, globalObject);
@@ -1303,8 +1285,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSGlobalObject* lexicalGl
     {
         CodeBlock* tempCodeBlock;
         eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-
+        RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
         codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
         ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     }
@@ -1404,8 +1385,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSGlobalObject* lexicalGl
         {
             CodeBlock* tempCodeBlock;
             eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
             codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
             ASSERT(codeBlock && codeBlock->numParameters() == 1); // 1 parameter for 'this'.
         }
@@ -1436,8 +1416,6 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusyOnCurrentThread())
-        return jsNull();
 
     JSGlobalObject* globalObject = scope->globalObject();
     VMEntryScope entryScope(vm, scope->globalObject());
@@ -1472,12 +1450,10 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
         {
             CodeBlock* tempCodeBlock;
             executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(throwScope, throwScope.exception());
             codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
             ASSERT(codeBlock && codeBlock->numParameters() == numberOfArguments + 1);
         }
-
 
         {
             DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.

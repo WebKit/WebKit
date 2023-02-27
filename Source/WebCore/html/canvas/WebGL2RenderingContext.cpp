@@ -50,7 +50,7 @@
 #include "OESTextureFloatLinear.h"
 #include "RenderBox.h"
 #include "WebCodecsVideoFrame.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"

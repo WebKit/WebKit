@@ -52,7 +52,7 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -8642,6 +8642,17 @@ void HTMLMediaElement::setBufferingPolicy(BufferingPolicy policy)
 void HTMLMediaElement::purgeBufferedDataIfPossible()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    bool isPausedAndNoMSE = [&] {
+#if ENABLE(MEDIA_SOURCE)
+        if (m_mediaSource)
+            return false;
+#endif
+        return paused();
+    }();
+
+    if (isPausedAndNoMSE)
+        return;
 
     if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && mediaSession().preferredBufferingPolicy() == BufferingPolicy::Default)
         return;

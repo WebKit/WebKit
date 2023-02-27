@@ -41,7 +41,6 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -111,6 +110,7 @@
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>

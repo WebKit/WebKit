@@ -22,7 +22,7 @@
 
 #include "CSSFontFaceSrcValue.h"
 #include "CSSValueList.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFontFaceElement.h"
 #include "SVGFontFaceNameElement.h"

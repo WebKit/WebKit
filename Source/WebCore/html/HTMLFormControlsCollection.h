@@ -58,11 +58,6 @@ private:
     mutable unsigned m_cachedElementOffsetInArray;
 };
 
-inline HTMLElement* HTMLFormControlsCollection::item(unsigned offset) const
-{
-    return downcast<HTMLElement>(CachedHTMLCollection::item(offset));
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLFormControlsCollection, FormControls)

@@ -27,7 +27,7 @@
 #include "ChangeListTypeCommand.h"
 
 #include "Editing.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"

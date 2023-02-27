@@ -35,7 +35,7 @@
 #import "CommonAtomStrings.h"
 #import "DataDetectionResultsStorage.h"
 #import "Editing.h"
-#import "ElementAncestorIterator.h"
+#import "ElementAncestorIteratorInlines.h"
 #import "ElementRareData.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
@@ -54,6 +54,7 @@
 #import "Text.h"
 #import "TextIterator.h"
 #import "TextRecognitionResult.h"
+#import "TypedElementDescendantIteratorInlines.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import <pal/spi/ios/DataDetectorsUISPI.h>

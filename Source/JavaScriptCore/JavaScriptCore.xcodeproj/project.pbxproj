@@ -2022,6 +2022,7 @@
 		E39E44912748E3F800EDD2A5 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E39E448E2748E3F800EDD2A5 /* Repatch.h */; };
 		E39E44932748E3F800EDD2A5 /* RepatchInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39E44902748E3F800EDD2A5 /* RepatchInlines.h */; };
 		E39EEAF322812450008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */; };
+		E39F87C229AB764200D17E85 /* VMEntryScopeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39F87C129AB764100D17E85 /* VMEntryScopeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39FEBE32339C5D900B40AB0 /* JSAsyncGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */; };
 		E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531621342B660022EC14 /* WasmStreamingParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A0531C21342B680022EC14 /* WasmSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531821342B670022EC14 /* WasmSectionParser.h */; };
@@ -5578,6 +5579,7 @@
 		E39E44902748E3F800EDD2A5 /* RepatchInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepatchInlines.h; sourceTree = "<group>"; };
 		E39EEAF12281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CachedSpecialPropertyAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
+		E39F87C129AB764100D17E85 /* VMEntryScopeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEntryScopeInlines.h; sourceTree = "<group>"; };
 		E39FEBE12339C5D400B40AB0 /* JSAsyncGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAsyncGenerator.cpp; sourceTree = "<group>"; };
 		E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSAsyncGenerator.h; sourceTree = "<group>"; };
 		E3A0531621342B660022EC14 /* WasmStreamingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmStreamingParser.h; sourceTree = "<group>"; };
@@ -8503,6 +8505,7 @@
 				E18E3A560DF9278C00D90B34 /* VM.h */,
 				FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */,
 				FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */,
+				E39F87C129AB764100D17E85 /* VMEntryScopeInlines.h */,
 				FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */,
 				FE6F56DC1E64E92000D17801 /* VMTraps.cpp */,
 				FE6F56DD1E64E92000D17801 /* VMTraps.h */,
@@ -9813,6 +9816,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				0FFA549816B8835300B3A982 /* A64DOpcode.h in Headers */,
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
@@ -10727,7 +10731,6 @@
 				70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
-				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
 				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
@@ -11386,6 +11389,7 @@
 				BC18C4200E16F5CD00B34460 /* VM.h in Headers */,
 				658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */,
 				FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */,
+				E39F87C229AB764200D17E85 /* VMEntryScopeInlines.h in Headers */,
 				0F5AE2C41DF4F2800066EFE1 /* VMInlines.h in Headers */,
 				FE3022D71E42857300BAC493 /* VMInspector.h in Headers */,
 				FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */,

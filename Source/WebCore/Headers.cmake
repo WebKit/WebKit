@@ -537,6 +537,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSExecState.h
     bindings/js/JSMediaListCustom.h
     bindings/js/JSNodeCustom.h
+    bindings/js/JSNodeCustomInlines.h
     bindings/js/JSNodeListCustom.h
     bindings/js/JSPluginElementFunctions.h
     bindings/js/JSShadowRealmGlobalScopeBase.h
@@ -555,6 +556,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/WebAssemblyScriptSourceCode.h
     bindings/js/WebCoreJITOperations.h
     bindings/js/WebCoreOpaqueRoot.h
+    bindings/js/WebCoreOpaqueRootInlines.h
     bindings/js/WebCoreTypedArrayController.h
     bindings/js/WindowProxy.h
     bindings/js/WorkerScriptFetcher.h
@@ -697,14 +699,15 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/AddEventListenerOptions.h
     dom/Attr.h
     dom/Attribute.h
+    dom/BoundaryPoint.h
     dom/BroadcastChannel.h
     dom/BroadcastChannelIdentifier.h
     dom/BroadcastChannelRegistry.h
-    dom/BoundaryPoint.h
     dom/CDATASection.h
     dom/CallbackResult.h
     dom/CharacterData.h
     dom/CollectionIndexCache.h
+    dom/CollectionIndexCacheInlines.h
     dom/Comment.h
     dom/ContainerNode.h
     dom/ContextDestructionObserver.h
@@ -734,13 +737,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DocumentType.h
     dom/Element.h
     dom/ElementAncestorIterator.h
+    dom/ElementAncestorIteratorInlines.h
     dom/ElementChildIterator.h
+    dom/ElementChildIteratorInlines.h
     dom/ElementContext.h
     dom/ElementData.h
     dom/ElementIdentifier.h
     dom/ElementInlines.h
     dom/ElementIterator.h
     dom/ElementIteratorAssertions.h
+    dom/ElementIteratorInlines.h
     dom/ElementTraversal.h
     dom/EpochTimeStamp.h
     dom/Event.h
@@ -768,6 +774,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/InlineStyleSheetOwner.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h
+    dom/LiveNodeListInlines.h
     dom/LoadableScript.h
     dom/LoadableScriptError.h
     dom/MessagePort.h
@@ -831,6 +838,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/TreeScopeOrderedMap.h
     dom/TreeWalker.h
     dom/TypedElementDescendantIterator.h
+    dom/TypedElementDescendantIteratorInlines.h
     dom/UIEvent.h
     dom/UIEventInit.h
     dom/UIEventWithKeyState.h
@@ -920,9 +928,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/AutocapitalizeTypes.h
     html/Autofill.h
     html/CachedHTMLCollection.h
+    html/CachedHTMLCollectionInlines.h
     html/CanvasBase.h
     html/CanvasObserver.h
     html/CollectionTraversal.h
+    html/CollectionTraversalInlines.h
     html/CollectionType.h
     html/CustomElementFormValue.h
     html/DOMFormData.h
@@ -946,6 +956,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLButtonElement.h
     html/HTMLCanvasElement.h
     html/HTMLCollection.h
+    html/HTMLCollectionInlines.h
     html/HTMLDListElement.h
     html/HTMLDataListElement.h
     html/HTMLDirectoryElement.h
@@ -955,7 +966,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLEmbedElement.h
     html/HTMLFieldSetElement.h
     html/HTMLFontElement.h
-    html/HTMLMaybeFormAssociatedCustomElement.h
     html/HTMLFormControlElement.h
     html/HTMLFormElement.h
     html/HTMLFrameElement.h
@@ -976,6 +986,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLLinkElement.h
     html/HTMLMapElement.h
     html/HTMLMarqueeElement.h
+    html/HTMLMaybeFormAssociatedCustomElement.h
     html/HTMLMediaElement.h
     html/HTMLMediaElementEnums.h
     html/HTMLMediaElementIdentifier.h
@@ -988,6 +999,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLOptGroupElement.h
     html/HTMLOptionElement.h
     html/HTMLOptionsCollection.h
+    html/HTMLOptionsCollectionInlines.h
     html/HTMLParagraphElement.h
     html/HTMLParamElement.h
     html/HTMLPlugInElement.h

@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
 #include <WebCore/ScriptController.h>

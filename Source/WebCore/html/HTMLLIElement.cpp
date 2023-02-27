@@ -26,7 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "HTMLParserIdioms.h"

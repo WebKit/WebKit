@@ -26,7 +26,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "HTMLMenuItemElement.h"
 #include "HTMLNames.h"
 #include "Page.h"

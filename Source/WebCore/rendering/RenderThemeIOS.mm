@@ -80,6 +80,7 @@
 #import "RenderView.h"
 #import "Settings.h"
 #import "Theme.h"
+#import "TypedElementDescendantIteratorInlines.h"
 #import "UTIUtilities.h"
 #import "WebCoreThreadRun.h"
 #import <CoreGraphics/CoreGraphics.h>

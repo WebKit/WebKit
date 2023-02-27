@@ -33,6 +33,7 @@
 #include "FormListedElement.h"
 #include "HTMLElement.h"
 #include "ValidationMessage.h"
+#include <wtf/TriState.h>
 
 namespace WebCore {
 

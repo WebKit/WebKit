@@ -24,13 +24,13 @@
 
 #include "Attribute.h"
 #include "Document.h"
-#include "ElementIterator.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
 #include "NodeRareData.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

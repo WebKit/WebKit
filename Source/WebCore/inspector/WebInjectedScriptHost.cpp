@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebInjectedScriptHost.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "DOMException.h"
 #include "JSDOMException.h"
 #include "JSEventListener.h"

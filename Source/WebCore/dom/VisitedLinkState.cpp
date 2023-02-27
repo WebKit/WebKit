@@ -37,6 +37,7 @@
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisitedLinkStore.h"
 #include "XLinkNames.h"
 

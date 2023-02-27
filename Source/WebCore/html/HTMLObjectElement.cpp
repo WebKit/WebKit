@@ -28,7 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "DOMFormData.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementName.h"
 #include "Frame.h"
 #include "FrameLoader.h"
