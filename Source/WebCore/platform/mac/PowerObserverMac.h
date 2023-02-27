@@ -31,11 +31,10 @@
 #import <wtf/Function.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class PowerObserver : public CanMakeWeakPtr<PowerObserver, WeakPtrFactoryInitialization::Eager> {
+class PowerObserver {
     WTF_MAKE_NONCOPYABLE(PowerObserver); WTF_MAKE_FAST_ALLOCATED;
 
 public:
