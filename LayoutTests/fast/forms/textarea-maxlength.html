@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -21,6 +21,14 @@ shouldBe('textArea.maxLength', '-1');
 textArea.setAttribute('maxlength', 'xyz');
 shouldBe('textArea.maxLength', '-1');
 
+// Leading whitespaces in maxlength attributes
+textArea.setAttribute('maxlength', '\t  \n\r1');
+shouldBe('textArea.maxLength', '1');
+textArea.setAttribute('maxlength', "\u20021");
+shouldBe('textArea.maxLength', '-1');
+textArea.setAttribute('maxlength', "\u20091");
+shouldBe('textArea.maxLength', '-1');
+
 // Valid maxlength attributes
 textArea.setAttribute('maxlength', '1');
 shouldBe('textArea.maxLength', '1');
@@ -33,6 +41,11 @@ shouldBe('textArea.getAttribute("maxlength")', '"13"');
 
 shouldThrowErrorName('textArea.maxLength = -1', 'IndexSizeError');
 shouldBe('textArea.getAttribute("maxlength")', '"13"');  // Not changed
+textArea.minLength = 11;
+shouldThrowErrorName('textArea.maxLength = 10', 'IndexSizeError');
+shouldBe('textArea.getAttribute("maxlength")', '"13"');  // Not changed
+shouldBe('textArea.maxLength = 11; textArea.getAttribute("maxlength")', '"11"');
+textArea.minLength = 0;  // Remove the minlength value to get it out of the way of subsequent tests
 
 textArea.maxLength = null;
 shouldBe('textArea.maxLength', '0');
@@ -109,21 +122,23 @@ document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');
-shouldBe('textArea.value', '"\\n\\n\\n"');
+document.execCommand('insertLineBreak');
+document.execCommand('insertLineBreak');
+document.execCommand('insertLineBreak');
+shouldBeEqualToString('textArea.value', '\n\n\n\n\n\n');
 
 // According to the HTML5 specification, maxLength is code-point length.
-// However WebKit handles it as grapheme length.
 
 // fancyX should be treated as 1 grapheme.
 var fancyX = "x\u0305\u0332";// + String.fromCharCode(0x305) + String.fromCharCode(0x332);
 // u10000 is one character consisted of a surrogate pair.
 var u10000 = "\ud800\udc00";
 
-// Inserts 5 code-points in UTF-16
+debug('Inserts 2 normal characters + a combining letter with 3 code points into a maxlength=3 element.')
 createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertText', false, 'AB' + fancyX);
-shouldBe('textArea.value', '"AB" + fancyX');
-shouldBe('textArea.value.length', '5');
+shouldBeEqualToString('textArea.value', 'ABx');
+shouldBe('textArea.value.length', '3');
 
 createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'AB' + fancyX;
@@ -131,11 +146,11 @@ textArea.setSelectionRange(2, 5);  // Select fancyX
 document.execCommand('insertText', false, 'CDE');
 shouldBe('textArea.value', '"ABC"');
 
-// Inserts 4 code-points in UTF-16
+debug('Inserts 2 normal characters + one surrogate pair into a maxlength=3 element');
 createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertText', false, 'AB' + u10000);
-shouldBe('textArea.value', '"AB" + u10000');
-shouldBe('textArea.value.length', '4');
+shouldBeEqualToString('textArea.value', 'AB');
+shouldBe('textArea.value.length', '2');
 
 createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'AB' + u10000;
@@ -161,6 +176,5 @@ textArea.value = '';
 document.execCommand('insertText', false, 'ABC');
 shouldBe('textArea.value', '"ABC"');
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
