@@ -2140,7 +2140,9 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
     auto classifiers = elementClass.split('/');
 
-    if (g_str_has_prefix(elementName.get(), "urisourcebin") && (isMediaSource() || isMediaStreamPlayer()))
+    // In GStreamer 1.20 and older urisourcebin mishandles source elements with dynamic pads. This
+    // is not an issue in 1.22.
+    if (webkitGstCheckVersion(1, 22, 0) && g_str_has_prefix(elementName.get(), "urisourcebin") && (isMediaSource() || isMediaStreamPlayer()))
         g_object_set(element, "use-buffering", FALSE, nullptr);
 
     // Collect processing time metrics for video decoders and converters.
