@@ -551,10 +551,6 @@ void RemoteInspector::pushListingsNow()
     else
         [message setObject:WIRAutomationAvailabilityNotAvailable forKey:WIRAutomationAvailabilityKey];
 
-    // COMPATIBILITY(iOS 13): this key is deprecated and not used by newer versions of webinspectord.
-    BOOL isAllowed = m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed;
-    [message setObject:@(isAllowed) forKey:WIRRemoteAutomationEnabledKey];
-
     m_relayConnection->sendMessage(WIRListingMessage, message.get());
 }
 

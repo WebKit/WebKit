@@ -73,7 +73,6 @@
 #define WIRRawDataKey                           @"WIRRawDataKey"
 #define WIRListingMessage                       @"WIRListingMessage"
 #define WIRListingKey                           @"WIRListingKey"
-#define WIRRemoteAutomationEnabledKey           @"WIRRemoteAutomationEnabledKey"
 #define WIRAutomationAvailabilityKey            @"WIRAutomationAvailabilityKey"
 #define WIRDestinationKey                       @"WIRDestinationKey"
 #define WIRConnectionDiedMessage                @"WIRConnectionDiedMessage"
