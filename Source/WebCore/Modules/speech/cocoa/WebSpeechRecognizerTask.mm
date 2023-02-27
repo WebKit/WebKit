@@ -217,12 +217,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)speechRecognitionTask:(SFSpeechRecognitionTask *)task didFinishRecognition:(SFSpeechRecognitionResult *)recognitionResult
 {
     ASSERT(isMainThread());
+
+    if (task.state == SFSpeechRecognitionTaskStateCanceling || (!_doMultipleRecognitions && task.state == SFSpeechRecognitionTaskStateCompleted))
+        return;
+
     [self callbackWithTranscriptions:recognitionResult.transcriptions isFinal:YES];
 
-    if (!_doMultipleRecognitions) {
-        [self sendSpeechEndIfNeeded];
-        [self sendEndIfNeeded];
-    }
+    if (!_doMultipleRecognitions)
+        [self stop];
 }
 
 - (void)speechRecognitionTaskWasCancelled:(SFSpeechRecognitionTask *)task
