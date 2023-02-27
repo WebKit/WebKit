@@ -58,6 +58,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <input hidden="" aria-hidden="false" id="date-input" type="date">
     AXRole: AXTextField
+    computedRoleString: textbox
 
 <input hidden="" aria-hidden="false" id="color-input" type="color">
     AXRole: AXButton

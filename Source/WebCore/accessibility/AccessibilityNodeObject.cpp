@@ -259,6 +259,11 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
     return determineAccessibilityRoleFromNode();
 }
 
+bool AccessibilityNodeObject::matchesTextAreaRole() const
+{
+    return is<HTMLTextAreaElement>(node()) || hasContentEditableAttributeSet();
+}
+
 AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline treatStyleFormatGroupAsInline) const
 {
     if (!node())
@@ -272,8 +277,6 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         auto& selectElement = downcast<HTMLSelectElement>(*node());
         return selectElement.multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
     }
-    if (is<HTMLTextAreaElement>(*node()))
-        return AccessibilityRole::TextArea;
     if (is<HTMLImageElement>(*node()) && downcast<HTMLImageElement>(*node()).hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
     if (node()->hasTagName(liTag))
@@ -313,7 +316,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::TextField;
     }
 
-    if (hasContentEditableAttributeSet())
+    if (matchesTextAreaRole())
         return AccessibilityRole::TextArea;
 
     if (headingLevel())
@@ -2564,8 +2567,13 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     if (role == AccessibilityRole::Button)
         role = buttonRoleType();
 
-    if (role == AccessibilityRole::TextArea && !ariaIsMultiline())
-        role = AccessibilityRole::TextField;
+    // If ariaRoleToWebCoreRole computed AccessibilityRole::TextField, we need to figure out if we should use the single-line WebCore textbox role (AccessibilityRole::TextField)
+    // or the multi-line WebCore textbox role (AccessibilityRole::TextArea) because the "textbox" ARIA role is overloaded and can mean either.
+    if (role == AccessibilityRole::TextField) {
+        auto ariaMultiline = getAttribute(aria_multilineAttr);
+        if (equalLettersIgnoringASCIICase(ariaMultiline, "true"_s) || (!equalLettersIgnoringASCIICase(ariaMultiline, "false"_s) && matchesTextAreaRole()))
+            role = AccessibilityRole::TextArea;
+    }
 
     role = remapAriaRoleDueToParent(role);
     

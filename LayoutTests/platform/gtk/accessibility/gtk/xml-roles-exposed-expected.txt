@@ -934,7 +934,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: readonly:false, tag:div, xml-roles:textbox
+AXPlatformAttributes: computed-role:textbox, readonly:false, tag:div, xml-roles:textbox
 ------------
 AXRole: AXStatic
 AXParent: AXWebArea

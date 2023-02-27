@@ -136,6 +136,7 @@ public:
     AccessibilityObject* parentObjectIfExists() const override;
 
     void updateRole() override;
+    bool matchesTextAreaRole() const;
 
     void increment() override;
     void decrement() override;
