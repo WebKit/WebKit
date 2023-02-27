@@ -61,7 +61,8 @@ void RemoteScrollingTreeMac::handleWheelEventPhase(ScrollingNodeID, PlatformWhee
 
 void RemoteScrollingTreeMac::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
 {
-    m_scrollingCoordinatorProxy.hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
 }
 
 void RemoteScrollingTreeMac::displayDidRefresh(PlatformDisplayID)
