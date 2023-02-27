@@ -189,10 +189,19 @@ void SourceBufferPrivate::seekToTime(const MediaTime& time)
     }
 }
 
-void SourceBufferPrivate::clearTrackBuffers()
+void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
 {
     for (auto& trackBuffer : m_trackBufferMap.values())
         trackBuffer->clearSamples();
+
+    if (!shouldReportToClient)
+        return;
+
+    updateBufferedFromTrackBuffers(true);
+    updateHighestPresentationTimestamp();
+
+    if (m_client)
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 }
 
 void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -413,7 +422,8 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 
-    m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+    if (m_client)
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
     completionHandler();
 }
@@ -1037,7 +1047,12 @@ void SourceBufferPrivate::append(Vector<unsigned char>&&)
 void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto oldBuffered = m_buffered->ranges();
-    evictFrames(maximumBufferSize, maximumBufferSize, currentTime, isEnded);
+    if (isActive())
+        evictFrames(maximumBufferSize, maximumBufferSize, currentTime, isEnded);
+    else {
+        resetTrackBuffers();
+        clearTrackBuffers(true);
+    }
     completionHandler(m_buffered->ranges() != oldBuffered);
 }
 
