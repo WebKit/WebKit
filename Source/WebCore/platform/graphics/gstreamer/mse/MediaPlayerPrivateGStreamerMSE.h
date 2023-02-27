@@ -96,6 +96,7 @@ private:
     friend class MediaPlayerFactoryGStreamerMSE;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static bool supportsFeatures(const String&);
 
     friend class AppendPipeline;
     friend class SourceBufferPrivateGStreamer;

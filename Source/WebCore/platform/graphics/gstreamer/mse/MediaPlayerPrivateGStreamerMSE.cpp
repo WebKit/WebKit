@@ -468,6 +468,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     if (channels > MEDIA_MAX_AAC_CHANNELS)
         return result;
 
+    String features = parameters.type.parameter("features"_s);
+    if (!features.isEmpty() && !supportsFeatures(features))
+        return result;
+
     bool ok;
     float width = parameters.type.parameter("width"_s).toFloat(&ok);
     if (!ok)
@@ -490,6 +494,16 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
 
     GST_DEBUG("Supported: %s", convertEnumerationToString(result).utf8().data());
     return result;
+}
+
+bool MediaPlayerPrivateGStreamerMSE::supportsFeatures(const String& features)
+{
+    // Apple TV requires this one for DD+.
+    constexpr auto dolbyDigitalPlusJOC = "joc"_s;
+    if (features == dolbyDigitalPlusJOC)
+        return true;
+
+    return false;
 }
 
 MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
