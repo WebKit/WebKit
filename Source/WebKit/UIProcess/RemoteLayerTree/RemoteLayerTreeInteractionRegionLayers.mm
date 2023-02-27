@@ -37,6 +37,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/RemoteLayerTreePropertyApplierInteractionRegionAdditions.mm>
 #else
+static Class interactionRegionLayerClass() { return [CALayer class]; }
 static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
 #endif
 
@@ -176,7 +177,7 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
                 interactionRegionLayer = layerIterator->value;
                 interactionLayers.remove(layerIterator);
             } else {
-                interactionRegionLayer = adoptNS([[CALayer alloc] init]);
+                interactionRegionLayer = adoptNS([[interactionRegionLayerClass() alloc] init]);
                 [interactionRegionLayer setFrame:rect];
                 [interactionRegionLayer setHitTestsAsOpaque:YES];
 
@@ -197,7 +198,7 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
             }
 
             setInteractionRegion(interactionRegionLayer.get(), region);
-            configureLayerForInteractionRegion(interactionRegionLayer.get(), makeString("WKInteractionRegion-"_s, String::number(region.elementIdentifier.toUInt64())));
+            configureLayerForInteractionRegion(interactionRegionLayer.get(), makeString("WKInteractionRegion-"_s, region.elementIdentifier.toUInt64()));
             [interactionRegionLayer setCornerRadius:std::max(region.borderRadius, minimumBorderRadius)];
         }
     }
