@@ -4019,7 +4019,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
               'http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
               ' for more information.')
 
-    # Check for plain bitfields declared without either "singed" or "unsigned".
+    # Check for plain bitfields declared without either "signed" or "unsigned".
     # Most compilers treat such bitfields as signed, but there are still compilers like
     # RVCT 4.0 that use unsigned by default.
     matched = re.match(r'\s*((const|mutable)\s+)?(char|(short(\s+int)?)|int|long(\s+(long|int))?)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*\d+\s*;', line)
@@ -4034,7 +4034,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
     matched = re.match(r'\s*((const|mutable)\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*\d+\s*;', line)
     if matched:
         # Make sure the type is an enum and not an integral type
-        if not match(r'bool|char|(short(\s+int)?)|int|long(\s+(long|int))|(signed|unsigned)(\s+int)?', matched.group(3)):
+        if not match(r'bool|char|(short(\s+int)?)|u?int(8|16|32|64)_t|int|long(\s+(long|int))|(signed|unsigned)(\s+int)?', matched.group(3)):
             error(line_number, 'runtime/enum_bitfields', 5,
                   'Please declare enum bitfields as unsigned integral types.')
 
