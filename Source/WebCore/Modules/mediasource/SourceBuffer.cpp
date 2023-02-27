@@ -1213,7 +1213,7 @@ void SourceBuffer::monitorBufferingRate()
     DEBUG_LOG(LOGIDENTIFIER, m_averageBufferRate);
 }
 
-bool SourceBuffer::canPlayThroughRange(PlatformTimeRanges& ranges)
+bool SourceBuffer::canPlayThroughRange(const PlatformTimeRanges& ranges)
 {
     if (isRemoved())
         return false;
