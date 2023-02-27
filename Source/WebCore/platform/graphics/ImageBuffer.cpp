@@ -279,11 +279,11 @@ RefPtr<NativeImage> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) 
     return nullptr;
 }
 
-RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
     if (auto* backend = ensureBackendCreated()) {
         const_cast<ImageBuffer&>(*this).flushDrawingContext();
-        return backend->copyNativeImageForDrawing(copyBehavior);
+        return backend->copyNativeImageForDrawing(destination);
     }
     return nullptr;
 }
@@ -415,9 +415,15 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
     srcRectScaled.scale(resolutionScale());
 
     if (auto* backend = ensureBackendCreated()) {
-        if (auto image = copyNativeImageForDrawing(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-            destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
-        backend->finalizeDrawIntoContext(destContext);
+        if  (&destContext == &context()) {
+            if (auto image = copyNativeImage(WebCore::CopyBackingStore))
+                destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+        } else {
+            if (auto image = copyNativeImageForDrawing(destContext)) {
+                destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+                backend->finalizeDrawIntoContext(destContext);
+            }
+        }
     }
 }
 

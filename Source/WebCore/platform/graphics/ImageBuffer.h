@@ -167,7 +167,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
-    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) const;
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext& destination) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
     WEBCORE_EXPORT virtual RefPtr<Image> filteredImage(Filter&);

@@ -186,11 +186,11 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy cop
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
-RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
     if (canMapBackingStore())
-        return ImageBuffer::copyNativeImageForDrawing(copyBehavior);
-    return copyNativeImage(copyBehavior);
+        return ImageBuffer::copyNativeImageForDrawing(destination);
+    return copyNativeImage(WebCore::DontCopyBackingStore);
 }
 
 void RemoteImageBufferProxy::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

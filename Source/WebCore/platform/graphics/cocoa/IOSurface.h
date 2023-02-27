@@ -70,34 +70,45 @@ public:
     
     class Locker {
     public:
-        enum class AccessMode {
-            ReadOnly,
-            ReadWrite
+        enum class AccessMode : uint32_t {
+            ReadOnly = kIOSurfaceLockReadOnly,
+            ReadWrite = 0
         };
 
         Locker(IOSurface& surface, AccessMode mode = AccessMode::ReadOnly)
-            : m_surface(surface)
-            , m_flags(flagsFromMode(mode))
+            : m_surface(surface.surface())
+            , m_flags(static_cast<uint32_t>(mode))
         {
-            IOSurfaceLock(m_surface.surface(), m_flags, nullptr);
+            IOSurfaceLock(m_surface, m_flags, nullptr);
+        }
+
+        Locker(Locker&& other)
+            : m_surface(std::exchange(other.m_surface, nullptr))
+            , m_flags(other.m_flags)
+        {
         }
 
         ~Locker()
         {
-            IOSurfaceUnlock(m_surface.surface(), m_flags, nullptr);
+            if (!m_surface)
+                return;
+            IOSurfaceUnlock(m_surface, m_flags, nullptr);
+        }
+
+        Locker& operator=(Locker&& other)
+        {
+            m_surface = std::exchange(other.m_surface, nullptr);
+            m_flags = other.m_flags;
+            return *this;
         }
 
         void * surfaceBaseAddress() const
         {
-            return IOSurfaceGetBaseAddress(m_surface.surface());
+            return IOSurfaceGetBaseAddress(m_surface);
         }
 
     private:
-        static uint32_t flagsFromMode(AccessMode mode)
-        {
-            return mode == AccessMode::ReadOnly ? kIOSurfaceLockReadOnly : 0;
-        }
-        IOSurface& m_surface;
+        IOSurfaceRef m_surface;
         uint32_t m_flags;
     };
 
@@ -164,6 +175,13 @@ public:
 
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
+    struct BitmapConfiguration {
+        CGBitmapInfo bitmapInfo;
+        size_t bitsPerComponent;
+    };
+
+    BitmapConfiguration bitmapConfiguration() const;
+
 private:
     IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
     IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
@@ -172,12 +190,6 @@ private:
     void ensureColorSpace();
     std::optional<DestinationColorSpace> surfaceColorSpace() const;
 
-    struct BitmapConfiguration {
-        CGBitmapInfo bitmapInfo;
-        size_t bitsPerComponent;
-    };
-
-    BitmapConfiguration bitmapConfiguration() const;
 
     std::optional<Format> m_format;
     std::optional<DestinationColorSpace> m_colorSpace;

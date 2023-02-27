@@ -159,9 +159,16 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCop
     return NativeImage::create(m_surface->createImage());
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
-    return NativeImage::create(m_surface->createImage());
+    auto type = CGContextGetType(destination.platformContext());
+    if (type == kCGContextTypeIOSurface || (type == kCGContextTypeUnknown && destination.isCALayerContext()))
+        return ImageBufferIOSurfaceBackend::copyNativeImage();
+
+    auto image = const_cast<ImageBufferIOSurfaceBackend*>(this)->updateBitmapCacheImage();
+    if (!image)
+        return nullptr;
+    return NativeImage::create(image);
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
@@ -169,23 +176,29 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
     return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
 }
 
-void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& destinationContext)
+void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext&)
 {
-    if (destinationContext.needsCachedNativeImageInvalidationWorkaround(ImageBufferIOSurfaceBackend::renderingMode))
-        invalidateCachedNativeImage();
+    // FIXME: When we track writes through context(), we can leave the cache active until write happens.
+    releaseBitmapCache();
 }
 
 RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
-    IOSurface::Locker lock(*m_surface);
-    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress(), allocator);
+    void* data = const_cast<ImageBufferIOSurfaceBackend*>(this)->updateBitmapCacheForRead();
+    if (!data)
+        return nullptr;
+    auto result = ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, data, allocator);
+    const_cast<ImageBufferIOSurfaceBackend*>(this)->releaseBitmapCache();
+    return result;
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    invalidateCachedNativeImageIfNeeded();
-    IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
-    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
+    void* data = updateBitmapCacheForWrite();
+    if (!data)
+        return;
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, data);
+    releaseBitmapCache();
 }
 
 IOSurface* ImageBufferIOSurfaceBackend::surface()
@@ -237,6 +250,49 @@ void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()
         return;
     invalidateCachedNativeImage();
     flushContext();
+}
+
+void* ImageBufferIOSurfaceBackend::updateBitmapCacheForRead()
+{
+    if (!m_bitmapCacheLock.has_value()) {
+        flushContext();
+        m_bitmapCacheLock = IOSurface::Locker { *m_surface, IOSurface::Locker::AccessMode::ReadOnly };
+    }
+    return m_bitmapCacheLock->surfaceBaseAddress();
+}
+
+CGImageRef ImageBufferIOSurfaceBackend::updateBitmapCacheImage()
+{
+    if (m_bitmapCacheImage)
+        return m_bitmapCacheImage.get();
+    void* data = updateBitmapCacheForRead();
+    if (!data)
+        return nullptr;
+    auto configuration = m_surface->bitmapConfiguration();
+    auto size = m_surface->size();
+    // FIXME: we can cache also the context and just use set data operation, in later commits.
+    auto context = adoptCF(CGBitmapContextCreate(data, size.width(), size.height(), configuration.bitsPerComponent, m_surface->bytesPerRow(), m_surface->colorSpace().platformColorSpace(), configuration.bitmapInfo));
+    if (!context)
+        return nullptr;
+    m_bitmapCacheImage = adoptCF(CGBitmapContextCreateImage(context.get()));
+    return m_bitmapCacheImage.get();
+}
+
+void* ImageBufferIOSurfaceBackend::updateBitmapCacheForWrite()
+{
+    releaseBitmapCache();
+    invalidateCachedNativeImageIfNeeded();
+    flushContext();
+    m_bitmapCacheLock = IOSurface::Locker { *m_surface, IOSurface::Locker::AccessMode::ReadWrite };
+    return m_bitmapCacheLock->surfaceBaseAddress();
+}
+
+void ImageBufferIOSurfaceBackend::releaseBitmapCache()
+{
+    // Bitmap image data storage is handled internally by CGBitmapContext and further writes to the cache
+    // or the original IOSurface will not affect the previously created cached image.
+    m_bitmapCacheImage = nullptr;
+    m_bitmapCacheLock = std::nullopt;
 }
 
 } // namespace WebCore

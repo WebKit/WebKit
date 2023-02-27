@@ -55,9 +55,9 @@ ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
 
 ImageBufferBackend::~ImageBufferBackend() = default;
 
-RefPtr<NativeImage> ImageBufferBackend::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBufferBackend::copyNativeImageForDrawing(GraphicsContext&) const
 {
-    return copyNativeImage(copyBehavior);
+    return copyNativeImage(WebCore::DontCopyBackingStore);
 }
 
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
