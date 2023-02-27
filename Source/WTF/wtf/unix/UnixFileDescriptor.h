@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <optional>
 #include <utility>
 #include <wtf/Compiler.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniStdExtras.h>
 
@@ -34,6 +36,8 @@ namespace WTF {
 
 class UnixFileDescriptor {
 public:
+    WTF_MAKE_NONCOPYABLE(UnixFileDescriptor);
+
     UnixFileDescriptor() = default;
 
     enum AdoptionTag { Adopt };
@@ -53,10 +57,6 @@ public:
         m_value = o.release();
     }
 
-    UnixFileDescriptor(const UnixFileDescriptor& o)
-        : UnixFileDescriptor(o.m_value, Duplicate)
-    { }
-
     UnixFileDescriptor& operator=(UnixFileDescriptor&& o)
     {
         if (&o == this)
@@ -64,16 +64,6 @@ public:
 
         this->~UnixFileDescriptor();
         new (this) UnixFileDescriptor(WTFMove(o));
-        return *this;
-    }
-
-    UnixFileDescriptor& operator=(const UnixFileDescriptor& o)
-    {
-        if (&o == this)
-            return *this;
-
-        this->~UnixFileDescriptor();
-        new (this) UnixFileDescriptor(o);
         return *this;
     }
 
@@ -98,6 +88,50 @@ private:
     int m_value { -1 };
 };
 
+class UnixCopyableFileDescriptor : public UnixFileDescriptor {
+public:
+    UnixCopyableFileDescriptor()
+        : UnixFileDescriptor()
+    { }
+
+    UnixCopyableFileDescriptor(UnixFileDescriptor&& fd)
+        : UnixFileDescriptor(WTFMove(fd))
+    { }
+
+    UnixCopyableFileDescriptor(UnixCopyableFileDescriptor&&) = default;
+    UnixCopyableFileDescriptor& operator=(UnixCopyableFileDescriptor&&) = default;
+
+    UnixCopyableFileDescriptor(const UnixCopyableFileDescriptor& o)
+        : UnixCopyableFileDescriptor(o.duplicate())
+    { }
+
+    UnixCopyableFileDescriptor& operator=(const UnixCopyableFileDescriptor& o)
+    {
+        if (&o == this)
+            return *this;
+
+        this->~UnixCopyableFileDescriptor();
+        new (this) UnixCopyableFileDescriptor(o.duplicate());
+        return *this;
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << static_cast<const UnixFileDescriptor&>(*this);
+    }
+
+    template<typename Decoder>
+    static std::optional<UnixCopyableFileDescriptor> decode(Decoder& decoder)
+    {
+        auto fd = decoder.template decode<UnixFileDescriptor>();
+        if (!fd)
+            return std::nullopt;
+        return UnixCopyableFileDescriptor(WTFMove(*fd));
+    }
+};
+
 } // namespace WTF
 
 using WTF::UnixFileDescriptor;
+using WTF::UnixCopyableFileDescriptor;
