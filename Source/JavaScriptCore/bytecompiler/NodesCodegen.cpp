@@ -1295,9 +1295,12 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
     RefPtr<RegisterID> func;
     if (local) {
         generator.emitTDZCheckIfNecessary(var, local.get(), nullptr);
-        func = generator.move(generator.tempDestination(dst), local.get());
+        if (m_args->hasAssignments())
+            func = generator.move(generator.tempDestination(dst), local.get());
+        else
+            func = local;
     } else
-        func = generator.newTemporary();
+        func = generator.tempDestination(dst);
     CallArguments callArguments(generator, m_args);
 
     if (local) {
