@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-static inline bool fontNameIsSystemFont(CFStringRef fontName)
+bool fontNameIsSystemFont(CFStringRef fontName)
 {
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
