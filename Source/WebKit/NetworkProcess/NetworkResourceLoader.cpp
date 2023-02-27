@@ -192,14 +192,13 @@ bool NetworkResourceLoader::isSynchronous() const
 
 void NetworkResourceLoader::start()
 {
-    ASSERT(RunLoop::isMain());
-    LOADER_RELEASE_LOG("start: hasNetworkLoadChecker=%d", !!m_networkLoadChecker);
+    startRequest(originalRequest());
+}
 
-    auto newRequest = ResourceRequest { originalRequest() };
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    if (!startContentFiltering(newRequest))
-        return;
-#endif
+void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
+{
+    ASSERT(RunLoop::isMain());
+    LOADER_RELEASE_LOG("startRequest: hasNetworkLoadChecker=%d", !!m_networkLoadChecker);
 
     m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainFrameLoad());
 
@@ -1901,26 +1900,44 @@ void NetworkResourceLoader::setWorkerStart(MonotonicTime value)
 void NetworkResourceLoader::startWithServiceWorker()
 {
     LOADER_RELEASE_LOG("startWithServiceWorker:");
+
+    auto newRequest = ResourceRequest { originalRequest() };
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (!startContentFiltering(newRequest))
+        return;
+#endif
+
     ASSERT(!m_serviceWorkerFetchTask);
-    m_serviceWorkerFetchTask = m_connection->createFetchTask(*this, originalRequest());
+    m_serviceWorkerFetchTask = m_connection->createFetchTask(*this, newRequest);
     if (m_serviceWorkerFetchTask) {
         LOADER_RELEASE_LOG("startWithServiceWorker: Created a ServiceWorkerFetchTask (fetchIdentifier=%" PRIu64 ")", m_serviceWorkerFetchTask->fetchIdentifier().toUInt64());
         return;
     }
 
-    serviceWorkerDidNotHandle(nullptr);
+    if (abortIfServiceWorkersOnly())
+        return;
+
+    startRequest(newRequest);
+}
+
+bool NetworkResourceLoader::abortIfServiceWorkersOnly()
+{
+    if (m_parameters.serviceWorkersMode != ServiceWorkersMode::Only)
+        return false;
+
+    LOADER_RELEASE_LOG_ERROR("abortIfServiceWorkersOnly: Aborting load because the service worker did not handle the load and serviceWorkerMode only allows service workers");
+    send(Messages::WebResourceLoader::ServiceWorkerDidNotHandle { }, coreIdentifier());
+    abort();
+    return true;
 }
 
 void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fetchTask)
 {
     LOADER_RELEASE_LOG("serviceWorkerDidNotHandle: (fetchIdentifier=%" PRIu64 ")", fetchTask ? fetchTask->fetchIdentifier().toUInt64() : 0);
     RELEASE_ASSERT(m_serviceWorkerFetchTask.get() == fetchTask);
-    if (m_parameters.serviceWorkersMode == ServiceWorkersMode::Only) {
-        LOADER_RELEASE_LOG_ERROR("serviceWorkerDidNotHandle: Aborting load because the service worker did not handle the load and serviceWorkerMode only allows service workers");
-        send(Messages::WebResourceLoader::ServiceWorkerDidNotHandle { }, coreIdentifier());
-        abort();
+
+    if (abortIfServiceWorkersOnly())
         return;
-    }
 
     if (m_serviceWorkerFetchTask) {
         auto newRequest = m_serviceWorkerFetchTask->takeRequest();
@@ -1928,6 +1945,10 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
 
         if (m_networkLoad)
             m_networkLoad->updateRequestAfterRedirection(newRequest);
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+        m_contentFilter = nullptr;
+#endif
 
         LOADER_RELEASE_LOG("serviceWorkerDidNotHandle: Restarting network load for redirect");
         restartNetworkLoad(WTFMove(newRequest));
@@ -1975,6 +1996,27 @@ void NetworkResourceLoader::sendReportToEndpoints(const URL& baseURL, const Vect
 }
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+bool NetworkResourceLoader::continueAfterServiceWorkerReceivedData(const WebCore::SharedBuffer& buffer, uint64_t encodedDataLength)
+{
+    if (!m_contentFilter)
+        return true;
+    return m_contentFilter->continueAfterDataReceived(buffer, encodedDataLength);
+}
+
+bool NetworkResourceLoader::continueAfterServiceWorkerReceivedResponse(const ResourceResponse& response)
+{
+    if (!m_contentFilter)
+        return true;
+    return m_contentFilter->continueAfterResponseReceived(response);
+}
+
+void NetworkResourceLoader::serviceWorkerDidFinish()
+{
+    if (!m_contentFilter)
+        return;
+    m_contentFilter->stopFilteringMainResource();
+}
+
 void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer, size_t encodedDataLength)
 {
     send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(buffer), encodedDataLength));
