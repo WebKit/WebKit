@@ -1093,8 +1093,9 @@ enum class AutoRepeatType : uint8_t {
 };
 
 #if USE(FREETYPE)
-// Maximum allowed font size in Freetype2 is 65535 because x_ppem and y_ppem fields in FreeType structs are of type 'unsigned short'.
-static const float maximumAllowedFontSize = std::numeric_limits<unsigned short>::max();
+// The maximum allowed font size is 32767 because `hb_position_t` is `int32_t`,
+// where the first 16 bits are used to represent the integer part which effectively makes it `signed short`
+static const float maximumAllowedFontSize = std::numeric_limits<short>::max();
 #else
 // Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).
 static const float maximumAllowedFontSize = 1000000.0f;
