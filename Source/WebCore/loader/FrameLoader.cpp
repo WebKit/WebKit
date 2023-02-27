@@ -1186,8 +1186,8 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     if (auto* parentFrame = m_frame.tree().parent(); parentFrame
         && (m_frame.document()->processingLoadEvent() || m_frame.document()->loadEventFinished())
         && !m_frame.document()->securityOrigin().isSameOriginAs(parentFrame->document()->securityOrigin()))
-        m_frame.document()->dispatchWindowLoadEvent();
-    
+        m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
     // FrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
     m_client->didFinishLoad();
 }

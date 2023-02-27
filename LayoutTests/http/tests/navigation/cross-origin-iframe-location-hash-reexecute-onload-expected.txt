@@ -1,0 +1,10 @@
+This tests that the load event is only fired twice when the location hash is changed in an embedded iframe's window.load.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS onload fired twice.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
