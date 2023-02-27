@@ -184,184 +184,81 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         "  td { padding: 15px; }"
         "  td.data { width: 200px; }"
         "  .titlename { font-weight: bold; }"
-        "</style></head><body>");
+        "</style>");
 
-    g_string_append(html,
-        "<h1>Version Information</h1>"
-        "<table>");
+    auto jsonObject = JSON::Object::create();
 
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">WebKit version</div></td>"
-        "  <td>%s %d.%d.%d (%s)</td>"
-        " </tbody></tr>",
-        webkitPortName(), WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION, BUILD_REVISION);
+    auto versionObject = JSON::Object::create();
+    versionObject->setString("WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, BUILD_REVISION, ')'));
 
 #if OS(UNIX)
     struct utsname osName;
     uname(&osName);
-    g_string_append_printf(
-        html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Operating system</div></td>"
-        "  <td>%s %s %s %s</td>"
-        " </tbody></tr>",
-        osName.sysname, osName.release, osName.version, osName.machine);
+    versionObject->setString("Operating system"_s, makeString(osName.sysname, ' ', osName.release, ' ', osName.version, ' ', osName.machine));
 #endif
 
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Desktop</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        g_getenv("XDG_CURRENT_DESKTOP"));
+    versionObject->setString("Desktop"_s, makeString(g_getenv("XDG_CURRENT_DESKTOP")));
 
 #if USE(CAIRO)
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Cairo version</div></td>"
-        "  <td>%s (build) %s (runtime)</td>"
-        " </tbody></tr>",
-        CAIRO_VERSION_STRING, cairo_version_string());
+    versionObject->setString("Cairo version"_s, makeString(CAIRO_VERSION_STRING, " (build) "_s, cairo_version_string(), " (runtime)"_s));
 #endif
 
 #if USE(GSTREAMER)
     GUniquePtr<char> gstVersion(gst_version_string());
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GStreamer version</div></td>"
-        "  <td>%d.%d.%d (build) %s (runtime)</td>"
-        " </tbody></tr>",
-        GST_VERSION_MAJOR, GST_VERSION_MINOR, GST_VERSION_MICRO, gstVersion.get());
+    versionObject->setString("GStreamer version"_s, makeString(GST_VERSION_MAJOR, '.', GST_VERSION_MINOR, '.', GST_VERSION_MICRO, " (build) "_s, gstVersion.get(), " (runtime)"_s));
 #endif
 
 #if PLATFORM(GTK)
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GTK version</div></td>"
-        "  <td>%d.%d.%d (build) %d.%d.%d (runtime)</td>"
-        " </tbody></tr>",
-        GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION,
-        gtk_get_major_version(), gtk_get_minor_version(), gtk_get_micro_version());
+    versionObject->setString("GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
 
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">WPE version</div></td>"
-            "  <td>%d.%d.%d (build) %d.%d.%d (runtime)</td>"
-            " </tbody></tr>",
-            WPE_MAJOR_VERSION, WPE_MINOR_VERSION, WPE_MICRO_VERSION,
-            wpe_get_major_version(), wpe_get_minor_version(), wpe_get_micro_version());
+        versionObject->setString("WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
 
 #if WPE_FDO_CHECK_VERSION(1, 6, 1)
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">WPEBackend-fdo version</div></td>"
-            "  <td>%d.%d.%d (build) %d.%d.%d (runtime)</td>"
-            " </tbody></tr>",
-            WPE_FDO_MAJOR_VERSION, WPE_FDO_MINOR_VERSION, WPE_FDO_MICRO_VERSION,
-            wpe_fdo_get_major_version(), wpe_fdo_get_minor_version(), wpe_fdo_get_micro_version());
+        versionObject->setString("WPEBackend-fdo version"_s, makeString(WPE_FDO_MAJOR_VERSION, '.', WPE_FDO_MINOR_VERSION, '.', WPE_FDO_MICRO_VERSION, " (build) "_s, wpe_fdo_get_major_version(), '.', wpe_fdo_get_minor_version(), '.', wpe_fdo_get_micro_version(), " (runtime)"_s));
 #endif
     }
 #endif
 #endif
 
 #if PLATFORM(WPE)
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">WPE version</div></td>"
-        "  <td>%d.%d.%d (build) %d.%d.%d (runtime)</td>"
-        " </tbody></tr>",
-        WPE_MAJOR_VERSION, WPE_MINOR_VERSION, WPE_MICRO_VERSION,
-        wpe_get_major_version(), wpe_get_minor_version(), wpe_get_micro_version());
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">WPE backend</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        wpe_loader_get_loaded_implementation_library_name());
+    versionObject->setString("WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
+    versionObject->setString("WPE backend"_s, makeString(wpe_loader_get_loaded_implementation_library_name()));
 #endif
-    g_string_append(html, "<table>");
 
-    g_string_append(html,
-        "<h1>Display Information</h1>"
-        "<table>");
+    jsonObject->setObject("Version Information"_s, WTFMove(versionObject));
+
+    auto displayObject = JSON::Object::create();
 
 #if PLATFORM(GTK)
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Type</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
+    auto typeString =
 #if PLATFORM(WAYLAND)
-        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland ? "Wayland" :
+        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland ? "Wayland"_s :
 #endif
 #if PLATFORM(X11)
-        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 ? "X11" :
+        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 ? "X11"_s :
 #endif
-        "Unknown"
-    );
-#endif
+        "Unknown"_s;
+    displayObject->setString("Type"_s, WTFMove(typeString));
+#endif // PLATFORM(GTK)
 
     auto rect = IntRect(screenRect(nullptr));
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Screen geometry</div></td>"
-        "  <td>%d,%d %dx%d</td>"
-        " </tbody></tr>",
-        rect.x(), rect.y(), rect.width(), rect.height());
+    displayObject->setString("Screen geometry"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
 
     rect = IntRect(screenAvailableRect(nullptr));
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Screen work area</div></td>"
-        "  <td>%d,%d %dx%d</td>"
-        " </tbody></tr>",
-        rect.x(), rect.y(), rect.width(), rect.height());
+    displayObject->setString("Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
+    displayObject->setString("Depth"_s, makeString(screenDepth(nullptr)));
+    displayObject->setString("Bits per color component"_s, makeString(screenDepthPerComponent(nullptr)));
+    displayObject->setString("DPI"_s, makeString(screenDPI()));
 
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Depth</div></td>"
-        "  <td>%d</td>"
-        " </tbody></tr>",
-        screenDepth(nullptr));
+    jsonObject->setObject("Display Information"_s, WTFMove(displayObject));
 
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Bits per color component</div></td>"
-        "  <td>%d</td>"
-        " </tbody></tr>",
-        screenDepthPerComponent(nullptr));
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">DPI</div></td>"
-        "  <td>%.2f</td>"
-        " </tbody></tr>",
-        screenDPI());
-
-    g_string_append(html, "<table>");
-
-    g_string_append(html,
-        "<h1>Hardware Acceleration Information</h1>"
-        "<table>");
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Policy</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        hardwareAccelerationPolicy(request));
+    auto hardwareAccelerationObject = JSON::Object::create();
+    hardwareAccelerationObject->setString("Policy"_s, makeString(hardwareAccelerationPolicy(request)));
 
 #if ENABLE(WEBGL)
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">WebGL enabled</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        webGLEnabled(request) ? "Yes" : "No");
+    hardwareAccelerationObject->setString("WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
 #endif
 
 #if USE(EGL) || USE(GLX)
@@ -370,130 +267,85 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
     bool isEGL = glContext->isEGLContext();
 
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">API</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        openGLAPI(isEGL));
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">Native interface</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        isEGL ? "EGL" : "GLX");
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GL_RENDERER</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GL_VENDOR</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GL_VERSION</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GL_SHADING_LANGUAGE_VERSION</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    hardwareAccelerationObject->setString("API"_s, makeString(openGLAPI(isEGL)));
+    hardwareAccelerationObject->setString("Native interface"_s, isEGL ? "EGL"_s : "GLX"_s);
+    hardwareAccelerationObject->setString("GL_RENDERER"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
+    hardwareAccelerationObject->setString("GL_VENDOR"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
+    hardwareAccelerationObject->setString("GL_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+    hardwareAccelerationObject->setString("GL_SHADING_LANGUAGE_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
 #if USE(OPENGL_ES)
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GL_EXTENSIONS</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
+    hardwareAccelerationObject->setString("GL_EXTENSIONS"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
 #else
-    GString* extensions = g_string_new(nullptr);
+    StringBuilder extensionsBuilder;
     GLint numExtensions = 0;
     glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
     for (GLint i = 0; i < numExtensions; ++i) {
         if (i)
-            g_string_append_c(extensions, ' ');
-        g_string_append(extensions, reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            extensionsBuilder.append(' ');
+        extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
     }
-    g_string_append_printf(html,
-        " <tbody><tr>"
-        "  <td><div class=\"titlename\">GL_EXTENSIONS</div></td>"
-        "  <td>%s</td>"
-        " </tbody></tr>",
-        extensions->str);
-    g_string_free(extensions, TRUE);
+    hardwareAccelerationObject->setString("GL_EXTENSIONS"_s, extensionsBuilder.toString());
 #endif
 
 #if USE(GLX)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 && !isEGL) {
         auto* x11Display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">GLX_VERSION</div></td>"
-            "  <td>%s</td>"
-            " </tbody></tr>",
-            glXGetClientString(x11Display, GLX_VERSION));
-
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">GLX_VENDOR</div></td>"
-            "  <td>%s</td>"
-            " </tbody></tr>",
-            glXGetClientString(x11Display, GLX_VENDOR));
-
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">GLX_EXTENSIONS</div></td>"
-            "  <td>%s</td>"
-            " </tbody></tr>",
-            glXGetClientString(x11Display, GLX_EXTENSIONS));
+        hardwareAccelerationObject->setString("GLX_VERSION"_s, makeString(glXGetClientString(x11Display, GLX_VERSION)));
+        hardwareAccelerationObject->setString("GLX_VENDOR"_s, makeString(glXGetClientString(x11Display, GLX_VENDOR)));
+        hardwareAccelerationObject->setString("GLX_EXTENSIONS"_s, makeString(glXGetClientString(x11Display, GLX_EXTENSIONS)));
     }
 #endif
 
 #if USE(EGL)
     if (isEGL) {
         auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
-
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">EGL_VERSION</div></td>"
-            "  <td>%s</td>"
-            " </tbody></tr>",
-            eglQueryString(eglDisplay, EGL_VERSION));
-
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">EGL_VENDOR</div></td>"
-            "  <td>%s</td>"
-            " </tbody></tr>",
-            eglQueryString(eglDisplay, EGL_VENDOR));
-
-        g_string_append_printf(html,
-            " <tbody><tr>"
-            "  <td><div class=\"titlename\">EGL_EXTENSIONS</div></td>"
-            "  <td>%s %s</td>"
-            " </tbody></tr>",
-            eglQueryString(nullptr, EGL_EXTENSIONS),
-            eglQueryString(eglDisplay, EGL_EXTENSIONS));
+        hardwareAccelerationObject->setString("EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
+        hardwareAccelerationObject->setString("EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
+        hardwareAccelerationObject->setString("EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
     }
 #endif
 #endif // USE(EGL) || USE(GLX)
 
-    g_string_append(html, "<table>");
+    jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));
+
+    auto infoAsString = jsonObject->toJSONString();
+    g_string_append_printf(html, "<script>function copyAsJSON() { "
+        "var textArea = document.createElement('textarea');"
+        "textArea.value = JSON.stringify(%s, null, 4);"
+        "document.body.appendChild(textArea);"
+        "textArea.focus();"
+        "textArea.select();"
+        "document.execCommand('copy');"
+        "document.body.removeChild(textArea);"
+        "}</script>", infoAsString.utf8().data());
+
+    g_string_append_printf(html, "<script>function sendToConsole() { "
+        "console.log(JSON.stringify(%s, null, 4));"
+        "}</script>", infoAsString.utf8().data());
+
+    g_string_append(html, "</head><body>");
+#if PLATFORM(GTK)
+    g_string_append(html, "<button onclick=\"copyAsJSON()\">Copy to clipboard</button>");
+#else
+    // WPE doesn't seem to pass clipboard data yet.
+    g_string_append(html, "<button onclick=\"sendToConsole()\">Send to JS console</button>");
+#endif
+
+    for (auto& [header, values] : jsonObject.get()) {
+        g_string_append_printf(html, "<h1>%s</h1><table>", header.utf8().data());
+        auto valuesObject = values->asObject();
+        for (auto& [key, valueObject] : *valuesObject.get()) {
+            auto value = valueObject->asString();
+            g_string_append_printf(html,
+                " <tbody><tr>"
+                "  <td><div class=\"titlename\">%s</div></td>"
+                "  <td>%s</td>"
+                " </tr></tbody>",
+                key.utf8().data(), value.utf8().data());
+        }
+        g_string_append(html, "</table>");
+    }
 
     g_string_append(html, "</body></html>");
     gsize streamLength = html->len;
