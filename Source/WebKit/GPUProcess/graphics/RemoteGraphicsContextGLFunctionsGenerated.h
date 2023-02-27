@@ -1452,6 +1452,11 @@
         assertIsCurrent(workQueue());
         m_context->provokingVertexANGLE(provokeMode);
     }
+    void polygonOffsetClampEXT(float factor, float units, float clamp)
+    {
+        assertIsCurrent(workQueue());
+        m_context->polygonOffsetClampEXT(factor, units, clamp);
+    }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(paramsSize, 0);

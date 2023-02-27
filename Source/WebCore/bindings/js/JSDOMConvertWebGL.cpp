@@ -37,6 +37,7 @@
 #include "JSEXTDisjointTimerQueryWebGL2.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
+#include "JSEXTPolygonOffsetClamp.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
@@ -187,6 +188,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTDisjointTimerQueryWebGL2)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
+        TO_JS(EXTPolygonOffsetClamp)
         TO_JS(EXTShaderTextureLOD)
         TO_JS(EXTTextureCompressionBPTC)
         TO_JS(EXTTextureCompressionRGTC)

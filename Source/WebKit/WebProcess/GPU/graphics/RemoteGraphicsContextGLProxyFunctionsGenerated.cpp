@@ -2994,6 +2994,17 @@ void RemoteGraphicsContextGLProxy::provokingVertexANGLE(GCGLenum provokeMode)
     }
 }
 
+void RemoteGraphicsContextGLProxy::polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::PolygonOffsetClampEXT(factor, units, clamp));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
 void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> params)
 {
     if (isContextLost())

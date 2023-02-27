@@ -65,6 +65,7 @@ public:
         EXTDisjointTimerQueryWebGL2Name,
         EXTFloatBlendName,
         EXTFragDepthName,
+        EXTPolygonOffsetClampName,
         EXTShaderTextureLODName,
         EXTTextureCompressionBPTCName,
         EXTTextureCompressionRGTCName,

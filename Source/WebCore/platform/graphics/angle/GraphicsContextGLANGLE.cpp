@@ -3155,6 +3155,14 @@ void GraphicsContextGLANGLE::provokingVertexANGLE(GCGLenum provokeMode)
     GL_ProvokingVertexANGLE(provokeMode);
 }
 
+void GraphicsContextGLANGLE::polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_PolygonOffsetClampEXT(factor, units, clamp);
+}
+
 bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()
 {
     size_t oldestFrameCompletionFence = m_oldestFrameCompletionFence++ % maxPendingFrames;

@@ -1893,6 +1893,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTDisjointTimerQueryWebGL2.cpp
         html/canvas/EXTFloatBlend.cpp
         html/canvas/EXTFragDepth.cpp
+        html/canvas/EXTPolygonOffsetClamp.cpp
         html/canvas/EXTShaderTextureLOD.cpp
         html/canvas/EXTTextureCompressionBPTC.cpp
         html/canvas/EXTTextureCompressionRGTC.cpp
@@ -1963,6 +1964,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTDisjointTimerQueryWebGL2.idl
     html/canvas/EXTFloatBlend.idl
     html/canvas/EXTFragDepth.idl
+    html/canvas/EXTPolygonOffsetClamp.idl
     html/canvas/EXTShaderTextureLOD.idl
     html/canvas/EXTTextureCompressionBPTC.idl
     html/canvas/EXTTextureCompressionRGTC.idl
