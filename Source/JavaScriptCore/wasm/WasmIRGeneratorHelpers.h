@@ -79,8 +79,17 @@ struct PatchpointExceptionHandle {
 
 static inline void computeExceptionHandlerAndLoopEntrypointLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
 {
-    if (!context.procedure)
+    if (!context.procedure) {
+        unsigned index = 0;
+        for (const UnlinkedHandlerInfo& handlerInfo : function->exceptionHandlers) {
+            if (handlerInfo.m_type == HandlerType::Delegate) {
+                handlers.append({ });
+                continue;
+            }
+            handlers.append(linkBuffer.locationOf<ExceptionHandlerPtrTag>(context.catchEntrypoints[index++]));
+        }
         return;
+    }
 
     unsigned entrypointIndex = 1;
     unsigned numEntrypoints = context.procedure->numEntrypoints();

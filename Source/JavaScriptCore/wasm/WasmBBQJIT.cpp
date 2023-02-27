@@ -730,41 +730,45 @@ public:
                 // Abide by calling convention instead.
                 CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
                 for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
-                    m_arguments.append(Location::fromArgumentLocation(wasmCallInfo.params[i]));
+                    m_argumentLocations.append(Location::fromArgumentLocation(wasmCallInfo.params[i]));
                 for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
-                    m_results.append(Location::fromArgumentLocation(wasmCallInfo.results[i]));
+                    m_resultLocations.append(Location::fromArgumentLocation(wasmCallInfo.results[i]));
                 return;
             }
+
+            // This function is intentionally not using implicitSlots since arguments and results should not include implicit slot.
+            auto allocateArgumentOrResult = [&](BBQJIT& generator, TypeKind type, unsigned i, RegisterSet& remainingGPRs, RegisterSet& remainingFPRs) -> Location {
+                switch (type) {
+                case TypeKind::V128:
+                case TypeKind::F32:
+                case TypeKind::F64: {
+                    if (remainingFPRs.isEmpty())
+                        return generator.canonicalSlot(Value::fromTemp(type, this->enclosedHeight() + i));
+                    auto reg = *remainingFPRs.begin();
+                    remainingFPRs.remove(reg);
+                    return Location::fromFPR(reg.fpr());
+                }
+                default:
+                    if (remainingGPRs.isEmpty())
+                        return generator.canonicalSlot(Value::fromTemp(type, this->enclosedHeight() + i));
+                    auto reg = *remainingGPRs.begin();
+                    remainingGPRs.remove(reg);
+                    return Location::fromGPR(reg.gpr());
+                }
+            };
+
             const auto& functionSignature = signature->as<FunctionSignature>();
             auto gprSetCopy = generator.m_validGPRs;
             auto fprSetCopy = generator.m_validFPRs;
-            for (unsigned i = 0; i < functionSignature->argumentCount(); ++i)
-                m_arguments.append(allocateArgumentOrResult(generator, functionSignature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
+            if (!isAnyCatch(*this)) {
+                for (unsigned i = 0; i < functionSignature->argumentCount(); ++i)
+                    m_argumentLocations.append(allocateArgumentOrResult(generator, functionSignature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
+            }
+
             gprSetCopy = generator.m_validGPRs;
             fprSetCopy = generator.m_validFPRs;
             for (unsigned i = 0; i < functionSignature->returnCount(); ++i)
-                m_results.append(allocateArgumentOrResult(generator, functionSignature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
-        }
-
-        Location allocateArgumentOrResult(BBQJIT& generator, TypeKind type, unsigned i, RegisterSet& remainingGPRs, RegisterSet& remainingFPRs)
-        {
-            switch (type) {
-            case TypeKind::V128:
-            case TypeKind::F32:
-            case TypeKind::F64: {
-                if (remainingFPRs.isEmpty())
-                    return generator.canonicalSlot(Value::fromTemp(type, m_enclosedHeight + i));
-                auto reg = *remainingFPRs.begin();
-                remainingFPRs.remove(reg);
-                return Location::fromFPR(reg.fpr());
-            }
-            default:
-                if (remainingGPRs.isEmpty())
-                    return generator.canonicalSlot(Value::fromTemp(type, m_enclosedHeight + i));
-                auto reg = *remainingGPRs.begin();
-                remainingGPRs.remove(reg);
-                return Location::fromGPR(reg.gpr());
-            }
+                m_resultLocations.append(allocateArgumentOrResult(generator, functionSignature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
         }
 
         template<typename Stack>
@@ -791,7 +795,7 @@ public:
                 // If this is the end of the enclosing wasm block, we know we won't need them again, so this can be skipped.
                 if (value.isConst() && (resultIndex < 0 || !endOfWasmBlock)) {
                     Value constant = value;
-                    value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(m_enclosedHeight + i));
+                    value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(enclosedHeight() + implicitSlots() + i));
                     Location slot = generator.locationOf(value);
                     generator.emitMoveConst(constant, slot);
                 }
@@ -805,17 +809,12 @@ public:
                 }
             }
 
-            unsigned offset = expressionStack.size() - targetArity;
-
             // Finally, we move all passed temporaries to the successor, in its argument slots.
-            auto& targetLocations = target.blockType() == BlockType::Loop || isChildBlock
-                ? target.argumentLocations()
-                : target.resultLocations();
-            if (targetArity == 1) {
-                Value value = expressionStack[offset].value();
-                generator.emitMove(value, targetLocations[0]);
-                generator.consume(value); // We consider a value consumed when we pass it to a successor.
-            } else {
+            if (targetArity) {
+                unsigned offset = expressionStack.size() - targetArity;
+                auto& targetLocations = target.blockType() == BlockType::Loop || isChildBlock
+                    ? target.argumentLocations()
+                    : target.resultLocations();
                 Vector<Value, 8> resultValues;
                 Vector<Location, 8> resultLocations;
                 for (unsigned i = 0; i < targetArity; ++i) {
@@ -823,27 +822,34 @@ public:
                     resultLocations.append(targetLocations[i]);
                 }
                 generator.emitShuffle(resultValues, resultLocations);
+                // We consider a value consumed when we pass it to a successor.
                 for (const Value& value : resultValues)
                     generator.consume(value);
-            }
 
-            // As one final step, we convert any constants into temporaries on the stack, so we don't blindly assume they have
-            // the same constant values in the successor.
-            for (unsigned i = 0; i < targetArity; ++i) {
-                Value& value = expressionStack[i + offset].value();
-                if (value.isConst())
-                    value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(m_enclosedHeight + i));
+                // As one final step, we convert any constants into temporaries on the stack, so we don't blindly assume they have
+                // the same constant values in the successor.
+                for (unsigned i = 0; i < targetArity; ++i) {
+                    Value& value = expressionStack[i + offset].value();
+                    if (value.isConst()) {
+                        if (isChildBlock)
+                            value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(enclosedHeight() + implicitSlots() + i));
+                        else {
+                            // Intentionally not using implicitSlots since results should not include implicit slot.
+                            value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(enclosedHeight() + i));
+                        }
+                    }
+                }
             }
         }
 
         template<typename Stack>
         void startBlock(BBQJIT& generator, Stack& expressionStack)
         {
-            ASSERT(expressionStack.size() >= m_arguments.size());
+            ASSERT(expressionStack.size() >= m_argumentLocations.size());
 
-            for (unsigned i = 0; i < m_arguments.size(); ++i) {
-                ASSERT(!expressionStack[i + expressionStack.size() - m_arguments.size()].value().isConst());
-                generator.bind(expressionStack[i].value(), m_arguments[i]);
+            for (unsigned i = 0; i < m_argumentLocations.size(); ++i) {
+                ASSERT(!expressionStack[i + expressionStack.size() - m_argumentLocations.size()].value().isConst());
+                generator.bind(expressionStack[i].value(), m_argumentLocations[i]);
             }
         }
 
@@ -854,6 +860,7 @@ public:
 
             for (unsigned i = 0; i < predecessor.resultLocations().size(); ++i) {
                 unsigned offset = expressionStack.size() - predecessor.resultLocations().size();
+                // Intentionally not using implicitSlots since results should not include implicit slot.
                 expressionStack[i + offset].value() = Value::fromTemp(expressionStack[i].type().kind, predecessor.enclosedHeight() + i);
                 generator.bind(expressionStack[i + offset].value(), predecessor.resultLocations()[i]);
             }
@@ -898,6 +905,12 @@ public:
                 m_ifBranch.link(masm);
         }
 
+        JumpList releaseJumps()
+        {
+            auto branchList = std::exchange(m_branchList, { });
+            return branchList;
+        }
+
         void dump(PrintStream& out) const
         {
             UNUSED_PARAM(out);
@@ -908,14 +921,16 @@ public:
             return m_enclosedHeight;
         }
 
+        unsigned implicitSlots() const { return isAnyCatch(*this) ? 1 : 0; }
+
         const Vector<Location, 2>& argumentLocations() const
         {
-            return m_arguments;
+            return m_argumentLocations;
         }
 
         const Vector<Location, 2>& resultLocations() const
         {
-            return m_results;
+            return m_resultLocations;
         }
 
         BlockType blockType() const { return m_blockType; }
@@ -942,6 +957,34 @@ public:
             return m_catchKind;
         }
 
+        void setCatchKind(CatchKind catchKind)
+        {
+            ASSERT(m_blockType == BlockType::Catch);
+            m_catchKind = catchKind;
+        }
+
+        unsigned tryStart() const
+        {
+            return m_tryStart;
+        }
+
+        unsigned tryEnd() const
+        {
+            return m_tryEnd;
+        }
+
+        unsigned tryCatchDepth() const
+        {
+            return m_tryCatchDepth;
+        }
+
+        void setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCatchDepth)
+        {
+            m_tryStart = tryStart;
+            m_tryEnd = tryEnd;
+            m_tryCatchDepth = tryCatchDepth;
+        }
+
         void setIfBranch(MacroAssembler::Jump branch)
         {
             ASSERT(m_blockType == BlockType::If);
@@ -963,19 +1006,23 @@ public:
         {
             m_touchedLocals.add(local);
         }
+
     private:
         friend class BBQJIT;
 
         BlockSignature m_signature;
         BlockType m_blockType;
-        CatchKind m_catchKind;
-        Vector<Location, 2> m_arguments; // List of input locations to write values into when entering this block.
-        Vector<Location, 2> m_results; // List of result locations to write values into when exiting this block.
+        CatchKind m_catchKind { CatchKind::Catch };
+        Vector<Location, 2> m_argumentLocations; // List of input locations to write values into when entering this block.
+        Vector<Location, 2> m_resultLocations; // List of result locations to write values into when exiting this block.
         JumpList m_branchList; // List of branch control info for branches targeting the end of this block.
         MacroAssembler::Label m_loopLabel;
         MacroAssembler::Jump m_ifBranch;
         LocalOrTempIndex m_enclosedHeight; // Height of enclosed expression stack, used as the base for all temporary locations.
         BitVector m_touchedLocals; // Number of locals allocated to registers in this block.
+        unsigned m_tryStart { 0 };
+        unsigned m_tryEnd { 0 };
+        unsigned m_tryCatchDepth { 0 };
     };
 
     friend struct ControlData;
@@ -1133,7 +1180,7 @@ private:
 public:
     static constexpr bool tierSupportsSIMD = true;
 
-    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, Callee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, TierUpCount* tierUp)
+    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, Callee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
         : m_jit(jit)
         , m_callee(callee)
         , m_function(function)
@@ -1142,6 +1189,7 @@ public:
         , m_info(info)
         , m_mode(mode)
         , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
+        , m_hasExceptionHandlers(hasExceptionHandlers)
         , m_tierUp(tierUp)
         , m_gprBindings(jit.numberOfRegisters(), RegisterBinding::none())
         , m_fprBindings(jit.numberOfFPRegisters(), RegisterBinding::none())
@@ -1494,7 +1542,13 @@ public:
 
     Value topValue(TypeKind type)
     {
-        return Value::fromTemp(type, currentControlData().enclosedHeight() + m_parser->expressionStack().size());
+        return Value::fromTemp(type, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size());
+    }
+
+    Value exception(const ControlData& control)
+    {
+        ASSERT(ControlData::isAnyCatch(control));
+        return Value::fromTemp(TypeKind::Externref, control.enclosedHeight());
     }
 
     PartialResult WARN_UNUSED_RETURN getGlobal(uint32_t index, Value& result)
@@ -5730,9 +5784,9 @@ public:
             MacroAssembler::Call call = jit.nearCall();
             jit.jump(tierUpResume);
 
-            bool isSIMD = generator.m_isSIMD;
+            bool usesSIMD = generator.m_usesSIMD;
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator(isSIMD)).code()));
+                MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator(usesSIMD)).code()));
             });
         });
     }
@@ -5766,7 +5820,11 @@ public:
         } else
             m_jit.storePairPtr(GPRInfo::wasmContextInstancePointer, m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
 
-        m_frameSizeLabel = m_jit.moveWithPatch(TrustedImmPtr(nullptr), m_scratchGPR);
+        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), m_scratchGPR));
+
+        bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+        if (mayHaveExceptionHandlers)
+            m_jit.store32(CCallHelpers::TrustedImm32(PatchpointExceptionHandle::s_invalidCallSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
         // Because we compile in a single pass, we always need to pessimistically check for stack underflow/overflow.
         ASSERT(m_scratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
@@ -5843,7 +5901,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
     {
-        result = ControlData(*this, BlockType::Block, signature, currentControlData().enclosedHeight() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::Block, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
         currentControlData().endBlock(*this, result, enclosingStack, true, false);
 
         LOG_INSTRUCTION("Block", *signature);
@@ -5855,7 +5913,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t)
     {
-        result = ControlData(*this, BlockType::Loop, signature, currentControlData().enclosedHeight() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::Loop, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
         currentControlData().endBlock(*this, result, enclosingStack, true, false);
 
         LOG_INSTRUCTION("Loop", *signature);
@@ -5873,7 +5931,7 @@ public:
             emitMove(condition, conditionLocation);
         consume(condition);
 
-        result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
         currentControlData().endBlock(*this, result, enclosingStack, true, false);
 
         LOG_INSTRUCTION("If", *signature, condition, conditionLocation);
@@ -5904,7 +5962,7 @@ public:
         expressionStack.clear();
         while (expressionStack.size() < data.signature()->as<FunctionSignature>()->argumentCount()) {
             Type type = data.signature()->as<FunctionSignature>()->argumentType(expressionStack.size());
-            expressionStack.constructAndAppend(type, Value::fromTemp(type.kind, dataElse.enclosedHeight() + expressionStack.size()));
+            expressionStack.constructAndAppend(type, Value::fromTemp(type.kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + expressionStack.size()));
         }
 
         dataElse.startBlock(*this, expressionStack);
@@ -5916,9 +5974,9 @@ public:
     {
         // Since the end of the block was unreachable, we don't need to call endBlock() here, since the
         // block will never actually end.
-        ControlData elseData(*this, BlockType::Block, data.signature(), data.enclosedHeight());
+        ControlData dataElse(*this, BlockType::Block, data.signature(), data.enclosedHeight());
         data.linkJumps(&m_jit);
-        elseData.addBranch(m_jit.jump()); // Still needed even when the parent was unreachable to avoid running code within the else block.
+        dataElse.addBranch(m_jit.jump()); // Still needed even when the parent was unreachable to avoid running code within the else block.
         data.linkIfBranch(&m_jit); // Link specifically the conditional branch of the preceding If
         LOG_DEDENT();
         LOG_INSTRUCTION("Else");
@@ -5927,39 +5985,309 @@ public:
         // We don't have anything left on the expression stack after an unreachable block. So let's make a fake
         // one, containing one temp for each of the parameters we are expecting.
         Stack expressionStack;
-        auto functionSignature = elseData.signature()->as<FunctionSignature>();
+        auto functionSignature = dataElse.signature()->as<FunctionSignature>();
         for (unsigned i = 0; i < functionSignature->argumentCount(); i ++)
-            expressionStack.constructAndAppend(functionSignature->argumentType(i), Value::fromTemp(functionSignature->argumentType(i).kind, data.enclosedHeight() + i));
-        elseData.startBlock(*this, expressionStack);
-        data = elseData;
+            expressionStack.constructAndAppend(functionSignature->argumentType(i), Value::fromTemp(functionSignature->argumentType(i).kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + i));
+        dataElse.startBlock(*this, expressionStack);
+        data = dataElse;
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack&, ControlType&, Stack&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const TypeDefinition&, Stack&, ControlType&, ResultList&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const TypeDefinition&, ControlType&, ResultList&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addThrow(unsigned, Vector<ExpressionType>&, Stack&) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&) BBQ_STUB
+    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
+    {
+        m_usesExceptions = true;
+        ++m_tryCatchDepth;
+        ++m_callSiteIndex;
+        result = ControlData(*this, BlockType::Try, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result.setTryInfo(m_callSiteIndex, m_callSiteIndex, m_tryCatchDepth);
+        currentControlData().endBlock(*this, result, enclosingStack, true, false);
+
+        LOG_INSTRUCTION("Try", *signature);
+        LOG_INDENT();
+        splitStack(signature, enclosingStack, newStack);
+        result.startBlock(*this, newStack);
+        return { };
+    }
+
+    std::tuple<GPRReg, GPRReg> emitCatchPrologue()
+    {
+        JIT_COMMENT(m_jit, "catch prologue");
+        m_jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+        m_jit.move(GPRInfo::regT0, GPRInfo::regT3);
+        m_jit.and64(CCallHelpers::TrustedImm64(JSValue::WasmMask), GPRInfo::regT3);
+        auto isWasmCallee = m_jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+        CCallHelpers::JumpList doneCases;
+        {
+            // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
+            // https://bugs.webkit.org/show_bug.cgi?id=231213
+            auto preciseAllocationCase = m_jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
+            m_jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
+            m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
+            doneCases.append(m_jit.jump());
+
+            preciseAllocationCase.link(&m_jit);
+            m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
+            doneCases.append(m_jit.jump());
+        }
+
+        isWasmCallee.link(&m_jit);
+        m_jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
+        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
+
+        doneCases.link(&m_jit);
+
+        JIT_COMMENT(m_jit, "restore callee saves from vm entry buffer");
+        m_jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
+
+        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()), GPRInfo::callFrameRegister);
+        m_jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()));
+
+        JIT_COMMENT(m_jit, "Configure wasm context instance");
+        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
+        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), GPRInfo::regT0));
+        m_jit.subPtr(GPRInfo::callFrameRegister, GPRInfo::regT0, MacroAssembler::stackPointerRegister);
+
+        restoreWebAssemblyGlobalState();
+        m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+        m_jit.setupArguments<decltype(operationWasmRetrieveAndClearExceptionIfCatchable)>(GPRInfo::wasmContextInstancePointer);
+        m_jit.callOperation(operationWasmRetrieveAndClearExceptionIfCatchable);
+        static_assert(noOverlap(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2));
+        return std::tuple { GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2 };
+    }
+
+    void emitCatchAllImpl(ControlData& dataCatch)
+    {
+        m_catchEntrypoints.append(m_jit.label());
+        auto [exceptionGPR, bufferGPR] = emitCatchPrologue();
+        bind(this->exception(dataCatch), Location::fromGPR(exceptionGPR));
+        Stack emptyStack { };
+        dataCatch.startBlock(*this, emptyStack);
+    }
+
+    void emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results)
+    {
+        m_catchEntrypoints.append(m_jit.label());
+        auto [exceptionGPR, bufferGPR] = emitCatchPrologue();
+        bind(this->exception(dataCatch), Location::fromGPR(exceptionGPR));
+        Stack emptyStack { };
+        dataCatch.startBlock(*this, emptyStack);
+
+        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
+            Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+            Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
+            Location slot = canonicalSlot(result);
+            switch (type.kind) {
+            case TypeKind::I32:
+                m_jit.load32(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchGPR);
+                m_jit.store32(m_scratchGPR, slot.asAddress());
+                break;
+            case TypeKind::I31ref:
+            case TypeKind::I64:
+            case TypeKind::Ref:
+            case TypeKind::RefNull:
+            case TypeKind::Arrayref:
+            case TypeKind::Structref:
+            case TypeKind::Funcref:
+            case TypeKind::Externref:
+            case TypeKind::Rec:
+            case TypeKind::Sub:
+            case TypeKind::Array:
+            case TypeKind::Struct:
+            case TypeKind::Func: {
+                m_jit.load64(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchGPR);
+                m_jit.store64(m_scratchGPR, slot.asAddress());
+                break;
+            }
+            case TypeKind::F32:
+                m_jit.loadFloat(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchFPR);
+                m_jit.storeFloat(m_scratchFPR, slot.asAddress());
+                break;
+            case TypeKind::F64:
+                m_jit.loadDouble(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchFPR);
+                m_jit.storeDouble(m_scratchFPR, slot.asAddress());
+                break;
+            case TypeKind::V128:
+                materializeVectorConstant(v128_t { }, Location::fromFPR(m_scratchFPR));
+                m_jit.storeVector(m_scratchFPR, slot.asAddress());
+                break;
+            case TypeKind::Void:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            bind(result, slot);
+            results.append(result);
+        }
+    }
+
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results)
+    {
+        m_usesExceptions = true;
+        data.endBlock(*this, data, expressionStack, false, true);
+        ControlData dataCatch(*this, BlockType::Catch, data.signature(), data.enclosedHeight());
+        dataCatch.setCatchKind(CatchKind::Catch);
+        if (ControlData::isTry(data)) {
+            ++m_callSiteIndex;
+            data.setTryInfo(data.tryStart(), m_callSiteIndex, data.tryCatchDepth());
+        }
+        dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
+
+        dataCatch.addBranch(data.releaseJumps());
+        dataCatch.addBranch(m_jit.jump());
+        LOG_DEDENT();
+        LOG_INSTRUCTION("Catch");
+        LOG_INDENT();
+        emitCatchImpl(dataCatch, exceptionSignature, results);
+        data = WTFMove(dataCatch);
+        m_exceptionHandlers.append({ HandlerType::Catch, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, exceptionIndex });
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& data, ResultList& results)
+    {
+        m_usesExceptions = true;
+        ControlData dataCatch(*this, BlockType::Catch, data.signature(), data.enclosedHeight());
+        dataCatch.setCatchKind(CatchKind::Catch);
+        if (ControlData::isTry(data)) {
+            ++m_callSiteIndex;
+            data.setTryInfo(data.tryStart(), m_callSiteIndex, data.tryCatchDepth());
+        }
+        dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
+
+        dataCatch.addBranch(data.releaseJumps());
+        LOG_DEDENT();
+        LOG_INSTRUCTION("Catch");
+        LOG_INDENT();
+        emitCatchImpl(dataCatch, exceptionSignature, results);
+        data = WTFMove(dataCatch);
+        m_exceptionHandlers.append({ HandlerType::Catch, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, exceptionIndex });
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addCatchAll(Stack& expressionStack, ControlType& data)
+    {
+        m_usesExceptions = true;
+        data.endBlock(*this, data, expressionStack, false, true);
+        ControlData dataCatch(*this, BlockType::Catch, data.signature(), data.enclosedHeight());
+        dataCatch.setCatchKind(CatchKind::CatchAll);
+        if (ControlData::isTry(data)) {
+            ++m_callSiteIndex;
+            data.setTryInfo(data.tryStart(), m_callSiteIndex, data.tryCatchDepth());
+        }
+        dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
+
+        dataCatch.addBranch(data.releaseJumps());
+        dataCatch.addBranch(m_jit.jump());
+        LOG_DEDENT();
+        LOG_INSTRUCTION("CatchAll");
+        LOG_INDENT();
+        emitCatchAllImpl(dataCatch);
+        data = WTFMove(dataCatch);
+        m_exceptionHandlers.append({ HandlerType::CatchAll, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, 0 });
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType& data)
+    {
+        m_usesExceptions = true;
+        ControlData dataCatch(*this, BlockType::Catch, data.signature(), data.enclosedHeight());
+        dataCatch.setCatchKind(CatchKind::CatchAll);
+        if (ControlData::isTry(data)) {
+            ++m_callSiteIndex;
+            data.setTryInfo(data.tryStart(), m_callSiteIndex, data.tryCatchDepth());
+        }
+        dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
+
+        dataCatch.addBranch(data.releaseJumps());
+        LOG_DEDENT();
+        LOG_INSTRUCTION("CatchAll");
+        LOG_INDENT();
+        emitCatchAllImpl(dataCatch);
+        data = WTFMove(dataCatch);
+        m_exceptionHandlers.append({ HandlerType::CatchAll, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, 0 });
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addDelegate(ControlType& target, ControlType& data)
+    {
+        return addDelegateToUnreachable(target, data);
+    }
+
+    PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType& target, ControlType& data)
+    {
+        unsigned depth = 0;
+        if (ControlType::isTry(target))
+            depth = target.tryCatchDepth();
+
+        if (ControlData::isTry(data)) {
+            ++m_callSiteIndex;
+            data.setTryInfo(data.tryStart(), m_callSiteIndex, data.tryCatchDepth());
+        }
+        m_exceptionHandlers.append({ HandlerType::Delegate, data.tryStart(), m_callSiteIndex, 0, m_tryCatchDepth, depth });
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& arguments, Stack&)
+    {
+        Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), arguments.size() * sizeof(uint64_t));
+        m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
+
+        for (unsigned i = 0; i < arguments.size(); i++) {
+            Location stackLocation = Location::fromStackArgument(i * sizeof(uint64_t));
+            Value argument = arguments[i];
+            if (argument.type() == TypeKind::V128)
+                emitMove(Value::fromF64(0), stackLocation);
+            else
+                emitMove(argument, stackLocation);
+            consume(argument);
+        }
+
+        ++m_callSiteIndex;
+        bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+        if (mayHaveExceptionHandlers) {
+            m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+            flushRegisters();
+        }
+        m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+        emitThrowImpl(m_jit, exceptionIndex);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType& data)
+    {
+        ++m_callSiteIndex;
+        bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+        if (mayHaveExceptionHandlers) {
+            m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+            flushRegisters();
+        }
+        emitMove(this->exception(data), Location::fromGPR(GPRInfo::argumentGPR1));
+        m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+        emitRethrowImpl(m_jit);
+        return { };
+    }
+
+    void prepareForExceptions()
+    {
+        ++m_callSiteIndex;
+        bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+        if (mayHaveExceptionHandlers) {
+            m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+            flushRegistersForException();
+        }
+    }
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData& data, const Stack& returnValues)
     {
         CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*data.signature(), CallRole::Callee);
 
-        if (LIKELY(wasmCallInfo.results.size() == 1)) {
-            ASSERT(returnValues.size() >= 1);
-            emitMove(returnValues.last(), Location::fromArgumentLocation(wasmCallInfo.results[0]));
-            LOG_INSTRUCTION("Return", Location::fromArgumentLocation(wasmCallInfo.results[0]));
-        } else if (wasmCallInfo.results.size()) {
-            // For multi-value return, a parallel move might be necessary. This is comparatively complex
-            // and slow, so we limit it to this slow path.
+        if (!wasmCallInfo.results.isEmpty()) {
+            ASSERT(returnValues.size() >= wasmCallInfo.results.size());
+            unsigned offset = returnValues.size() - wasmCallInfo.results.size();
             Vector<Value, 8> returnValuesForShuffle;
             Vector<Location, 8> returnLocationsForShuffle;
             for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i) {
-                returnValuesForShuffle.append(returnValues[i]);
+                returnValuesForShuffle.append(returnValues[offset + i]);
                 returnLocationsForShuffle.append(Location::fromArgumentLocation(wasmCallInfo.results[i]));
             }
             emitShuffle(returnValuesForShuffle, returnLocationsForShuffle);
@@ -6051,23 +6379,25 @@ public:
 
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry& entry, Stack& stack)
     {
-        return addEndToUnreachable(entry, stack);
+        return addEndToUnreachable(entry, stack, false);
     }
 
-    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry& entry, Stack& stack)
+    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry& entry, Stack& stack, bool unreachable = true)
     {
         ControlData& entryData = entry.controlData;
 
         unsigned returnCount = entryData.signature()->as<FunctionSignature>()->returnCount();
-        unsigned offset = stack.size() - returnCount;
-        for (unsigned i = 0; i < returnCount; ++i) {
-            if (i < stack.size())
-                entry.enclosedExpressionStack.append(stack[i + offset]);
-            else {
+        if (unreachable) {
+            for (unsigned i = 0; i < returnCount; ++i) {
                 Type type = entryData.signature()->as<FunctionSignature>()->returnType(i);
-                entry.enclosedExpressionStack.constructAndAppend(type, Value::fromTemp(type.kind, i + entryData.enclosedHeight()));
+                entry.enclosedExpressionStack.constructAndAppend(type, Value::fromTemp(type.kind, entryData.enclosedHeight() + entryData.implicitSlots() + 1));
             }
+        } else {
+            unsigned offset = stack.size() - returnCount;
+            for (unsigned i = 0; i < returnCount; ++i)
+                entry.enclosedExpressionStack.append(stack[i + offset]);
         }
+
         switch (entryData.blockType()) {
         case BlockType::TopLevel:
             entryData.endBlock(*this, entryData, entry.enclosedExpressionStack, false, true);
@@ -6086,6 +6416,12 @@ public:
             entryData.endBlock(*this, entryData, entry.enclosedExpressionStack, false, true);
             entryData.linkJumpsTo(entryData.loopLabel(), &m_jit);
             break;
+        case BlockType::Try:
+        case BlockType::Catch:
+            --m_tryCatchDepth;
+            entryData.endBlock(*this, entryData, entry.enclosedExpressionStack, false, true);
+            entryData.linkJumps(&m_jit);
+            break;
         default:
             entryData.endBlock(*this, entryData, entry.enclosedExpressionStack, false, true);
             entryData.linkJumps(&m_jit);
@@ -6103,11 +6439,11 @@ public:
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&)
     {
         int frameSize = m_frameSize + m_maxCalleeStackSize;
-        DataLabelPtr frameSizeLabel = m_frameSizeLabel;
         CCallHelpers& jit = m_jit;
-        m_jit.addLinkTask([frameSize, frameSizeLabel, &jit](LinkBuffer& linkBuffer) {
+        m_jit.addLinkTask([frameSize, labels = WTFMove(m_frameSizeLabels), &jit](LinkBuffer& linkBuffer) {
             int roundedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize);
-            jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(frameSizeLabel), bitwise_cast<void*>(static_cast<uintptr_t>(roundedFrameSize)));
+            for (auto label : labels)
+                jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(label), bitwise_cast<void*>(static_cast<uintptr_t>(roundedFrameSize)));
         });
 
         LOG_DEDENT();
@@ -6152,6 +6488,20 @@ public:
         if (!!m_info.memory) {
             m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
             m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        }
+    }
+
+    void flushRegistersForException()
+    {
+        // Flush all locals.
+        for (RegisterBinding& binding : m_gprBindings) {
+            if (binding.toValue().isLocal())
+                flushValue(binding.toValue());
+        }
+
+        for (RegisterBinding& binding : m_fprBindings) {
+            if (binding.toValue().isLocal())
+                flushValue(binding.toValue());
         }
     }
 
@@ -6214,7 +6564,7 @@ public:
     void returnValuesFromCall(Vector<Value, N>& results, const FunctionSignature& functionType, const CallInformation& callInfo)
     {
         for (size_t i = 0; i < callInfo.results.size(); i ++) {
-            Value result = Value::fromTemp(functionType.returnType(i).kind, currentControlData().enclosedHeight() + m_parser->expressionStack().size() + i);
+            Value result = Value::fromTemp(functionType.returnType(i).kind, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size() + i);
             Location returnLocation = Location::fromArgumentLocation(callInfo.results[i]);
             if (returnLocation.isRegister()) {
                 RegisterBinding& currentBinding = returnLocation.isGPR() ? m_gprBindings[returnLocation.asGPR()] : m_fprBindings[returnLocation.asFPR()];
@@ -6251,6 +6601,7 @@ public:
         m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
 
         // Preserve caller-saved registers and other info
+        prepareForExceptions();
         saveValuesAcrossCall(callInfo);
 
         // Move argument values to parameter locations
@@ -6279,6 +6630,7 @@ public:
         m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
 
         // Preserve caller-saved registers and other info
+        prepareForExceptions();
         saveValuesAcrossCall(callInfo);
 
         // Move argument values to parameter locations
@@ -6290,7 +6642,7 @@ public:
         m_jit.call(m_scratchGPR, OperationPtrTag);
 
         // FIXME: Probably we should make CCall more lower level, and we should bind the result to Value separately.
-        result = Value::fromTemp(returnType, currentControlData().enclosedHeight() + m_parser->expressionStack().size());
+        result = Value::fromTemp(returnType, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size());
         Location resultLocation;
         switch (returnType) {
         case TypeKind::I32:
@@ -6336,6 +6688,7 @@ public:
         m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
         // Preserve caller-saved registers and other info
+        prepareForExceptions();
         saveValuesAcrossCall(callInfo);
 
         // Move argument values to parameter locations
@@ -6390,6 +6743,7 @@ public:
 
         // Safe to use across saveValues/passParameters since neither clobber the scratch GPR.
         m_jit.loadPtr(Address(calleeCode), m_scratchGPR);
+        prepareForExceptions();
         saveValuesAcrossCall(wasmCalleeInfo);
         passParametersToCall(arguments, wasmCalleeInfo);
         m_jit.call(m_scratchGPR, WasmEntryPtrTag);
@@ -6500,7 +6854,7 @@ public:
 
     void notifyFunctionUsesSIMD()
     {
-        m_isSIMD = true;
+        m_usesSIMD = true;
     }
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
@@ -7548,6 +7902,16 @@ public:
 #undef BBQ_STUB
 #undef BBQ_CONTROL_STUB
 
+    Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers()
+    {
+        return WTFMove(m_exceptionHandlers);
+    }
+
+    Vector<CCallHelpers::Label>&& takeCatchEntrypoints()
+    {
+        return WTFMove(m_catchEntrypoints);
+    }
+
 private:
     bool isScratch(Location loc)
     {
@@ -7658,7 +8022,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
-            m_jit.storePtr(srcLocation.asGPR(), dst.asAddress());
+            m_jit.store64(srcLocation.asGPR(), dst.asAddress());
             break;
         case TypeKind::V128:
             m_jit.storeVector(srcLocation.asFPR(), dst.asAddress());
@@ -7699,8 +8063,8 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Structref:
         case TypeKind::Arrayref:
-            m_jit.loadPtr(srcLocation.asAddress(), m_dataScratchGPR);
-            m_jit.storePtr(m_dataScratchGPR, dst.asAddress());
+            m_jit.load64(srcLocation.asAddress(), m_dataScratchGPR);
+            m_jit.store64(m_dataScratchGPR, dst.asAddress());
             break;
         case TypeKind::V128: {
             // We do two scalar load/store pairs instead of one vector load/store in order to avoid
@@ -7784,7 +8148,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
-            m_jit.loadPtr(srcLocation.asAddress(), dst.asGPR());
+            m_jit.load64(srcLocation.asAddress(), dst.asGPR());
             break;
         case TypeKind::V128:
             m_jit.loadVector(srcLocation.asAddress(), dst.asFPR());
@@ -7860,6 +8224,13 @@ private:
     {
         ASSERT(srcVector.size() == dstVector.size());
 
+        if (srcVector.size() == 1) {
+            emitMove(srcVector[0], dstVector[0]);
+            return;
+        }
+
+        // For multi-value return, a parallel move might be necessary. This is comparatively complex
+        // and slow, so we limit it to this slow path.
         ScratchScope<1, 1> scratches(*this);
         Location gpTemp = Location::fromGPR(scratches.gpr(0));
         Location fpTemp = Location::fromFPR(scratches.fpr(0));
@@ -8382,6 +8753,8 @@ private:
         return Location::fromStack(-m_frameSize);
     }
 
+    constexpr static int tempSlotSize = 16; // Size of the stack slot for a stack temporary. Currently the size of the largest possible temporary (a v128).
+
 #undef LOG_INSTRUCTION
 #undef RESULT
 
@@ -8393,6 +8766,7 @@ private:
     const ModuleInformation& m_info;
     MemoryMode m_mode;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls;
+    std::optional<bool> m_hasExceptionHandlers;
     TierUpCount* m_tierUp;
     FunctionParser<BBQJIT>* m_parser;
     Vector<uint32_t, 4> m_arguments;
@@ -8411,13 +8785,14 @@ private:
     uint32_t m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.
     Vector<RefPtr<SharedTask<void(BBQJIT&, CCallHelpers&)>>, 8> m_latePaths; // Late paths to emit after the rest of the function body.
 
-    DataLabelPtr m_frameSizeLabel;
+    Vector<DataLabelPtr, 1> m_frameSizeLabels;
     int m_frameSize { 0 };
     int m_maxCalleeStackSize { 0 };
     int m_localStorage { 0 }; // Stack offset pointing to the local with the lowest address.
-    constexpr static int tempSlotSize { 16 }; // Size of the stack slot for a stack temporary. Currently the size of the largest possible temporary (a v128).
-    int m_blockCount;
-    bool m_isSIMD { false }; // Whether the function we are compiling uses SIMD instructions or not.
+    bool m_usesSIMD { false }; // Whether the function we are compiling uses SIMD instructions or not.
+    bool m_usesExceptions { false };
+    Checked<unsigned> m_tryCatchDepth { 0 };
+    Checked<unsigned> m_callSiteIndex { 0 };
 
     RegisterID m_scratchGPR { GPRInfo::nonPreservedNonArgumentGPR0 }; // Scratch registers to hold temporaries in operations.
     FPRegisterID m_scratchFPR { FPRInfo::nonPreservedNonArgumentFPR0 };
@@ -8436,21 +8811,25 @@ private:
     InternalFunction* m_compilation;
 
     std::array<JumpList, numberOfExceptionTypes> m_exceptions { };
+    Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
+    Vector<CCallHelpers::Label> m_catchEntrypoints;
 };
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
     CompilerTimingScope totalTime("BBQ", "Total BBQ");
 
-    UNUSED_PARAM(hasExceptionHandlers);
     UNUSED_PARAM(tierUp);
     auto result = makeUnique<InternalFunction>();
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
-    BBQJIT irGenerator(*compilationContext.wasmEntrypointJIT, signature, callee, function, functionIndex, info, unlinkedWasmToWasmCalls, mode, result.get(), tierUp);
+    BBQJIT irGenerator(*compilationContext.wasmEntrypointJIT, signature, callee, function, functionIndex, info, unlinkedWasmToWasmCalls, mode, result.get(), hasExceptionHandlers, tierUp);
     FunctionParser<BBQJIT> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
+
+    result->exceptionHandlers = irGenerator.takeExceptionHandlers();
+    compilationContext.catchEntrypoints = irGenerator.takeCatchEntrypoints();
 
     return result;
 }
