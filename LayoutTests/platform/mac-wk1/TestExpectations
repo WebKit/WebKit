@@ -2460,5 +2460,3 @@ http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
 
 # Displays blank on WK1
 fullscreen/fullscreen-iframe-navigation.html [ Skip ]
-
-webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [ Pass Failure ]
