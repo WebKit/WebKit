@@ -101,11 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
         [_request setRequiresOnDeviceRecognition:YES];
     [_request setShouldReportPartialResults:interimResults];
     [_request setTaskHint:SFSpeechRecognitionTaskHintDictation];
-
-#if USE(APPLE_INTERNAL_SDK)
     [_request setDetectMultipleUtterances:YES];
     [_request _setMaximumRecognitionDuration:maximumRecognitionDuration];
-#endif
 
     _task = [_recognizer recognitionTaskWithRequest:_request.get() delegate:self];
     return self;
