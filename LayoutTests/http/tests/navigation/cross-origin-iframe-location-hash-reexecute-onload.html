@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This tests that the load event is only fired twice when the location hash is changed in an embedded iframe's window.load.");
+jsTestIsAsync = true;
+
+let onloadCount = 0;
+
+window.addEventListener("message", () => {
+    if (onloadCount == 2)
+        testPassed("onload fired twice.");
+    else
+        testFailed("onload fired " + onloadCount + " time(s).");
+
+    finishJSTest();
+});
+
+function onloadFired() {
+    onloadCount++;
+}
+</script>
+<iframe src="http://localhost:8000/navigation/resources/change-location-hash-onload.html" onload="onloadFired()"></iframe>
+</body>
+</html>
