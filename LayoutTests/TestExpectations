@@ -1015,6 +1015,8 @@ webkit.org/b/217617 imported/w3c/web-platform-tests/service-workers/service-work
 # This test adds a lot of iframes and is slow to run.
 fast/dom/connected-subframe-counter-overflow.html [ Slow ]
 
+http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Skip ]
+
 # Reenable it when having a custom gc exposed in service workers.
 [ Debug ] http/wpt/service-workers/fetchEvent.https.html [ Skip ]
 

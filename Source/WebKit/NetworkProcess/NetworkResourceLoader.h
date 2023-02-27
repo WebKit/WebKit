@@ -172,6 +172,9 @@ public:
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     void ref() const final { RefCounted<NetworkResourceLoader>::ref(); }
     void deref() const final { RefCounted<NetworkResourceLoader>::deref(); }
+    bool continueAfterServiceWorkerReceivedData(const WebCore::SharedBuffer&, uint64_t encodedDataLength);
+    bool continueAfterServiceWorkerReceivedResponse(const WebCore::ResourceResponse&);
+    void serviceWorkerDidFinish();
 #endif
 
     void willSendServiceWorkerRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
@@ -265,6 +268,9 @@ private:
     enum class IsFromServiceWorker : bool { No, Yes };
     void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker);
     std::optional<WebCore::NetworkLoadMetrics> computeResponseMetrics(const WebCore::ResourceResponse&) const;
+
+    void startRequest(const WebCore::ResourceRequest&);
+    bool abortIfServiceWorkersOnly();
 
     NetworkResourceLoadParameters m_parameters;
 
