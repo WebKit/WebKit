@@ -575,6 +575,10 @@ private:
 
     void registerNotificationObservers();
     void unregisterNotificationObservers();
+
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+    static void initializeShouldCrashWhenCreatingWebProcess();
+#endif
 #endif
 
     void setApplicationIsActive(bool);
