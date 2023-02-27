@@ -1258,6 +1258,24 @@ bool LineLayout::hasOutOfFlowContent() const
     return !m_inlineFormattingState.outOfFlowBoxes().isEmpty();
 }
 
+bool LineLayout::contentNeedsVisualReordering() const
+{
+    // We don't tend to have too many renderers, should cache if this gets too hot.
+    for (auto renderer : m_boxTree.renderers()) {
+        if (!renderer)
+            continue;
+        if (is<RenderText>(*renderer) && downcast<RenderText>(*renderer).needsVisualReordering())
+            return true;
+        if (is<RenderInline>(*renderer)) {
+            auto& style = renderer->style();
+            auto contentNeedsBidiReordering = !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+            if (contentNeedsBidiReordering)
+                return true;
+        }
+    }
+    return false;
+}
+
 #if ENABLE(TREE_DEBUGGING)
 void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
 {

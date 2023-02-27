@@ -47,6 +47,7 @@
 #include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "TextUtil.h"
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
@@ -491,6 +492,10 @@ bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& 
     if (rendererWithNewContent.nextSibling())
         return true;
     if (lineLayout.hasOutOfFlowContent())
+        return true;
+    if (Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(rendererWithNewContent).text()))
+        return true;
+    if (lineLayout.contentNeedsVisualReordering())
         return true;
     // Simple text content append only.
     return false;
