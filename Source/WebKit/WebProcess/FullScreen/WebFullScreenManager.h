@@ -58,8 +58,6 @@ public:
     static Ref<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
 
-    void invalidate();
-
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     bool supportsFullScreen(bool withKeyboard);

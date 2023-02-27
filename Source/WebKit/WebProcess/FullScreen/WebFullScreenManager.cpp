@@ -88,19 +88,10 @@ WebFullScreenManager::WebFullScreenManager(WebPage* page)
     
 WebFullScreenManager::~WebFullScreenManager()
 {
-    invalidate();
-}
-
-void WebFullScreenManager::invalidate()
-{
     clearElement();
-#if ENABLE(VIDEO)
-    setMainVideoElement(nullptr);
-#endif
-    m_mainVideoElementTextRecognitionTimer.stop();
 }
 
-WebCore::Element* WebFullScreenManager::element()
+WebCore::Element* WebFullScreenManager::element() 
 { 
     return m_element.get(); 
 }
@@ -375,7 +366,10 @@ void WebFullScreenManager::close()
     m_closing = true;
     LOG(Fullscreen, "WebFullScreenManager %p close()", this);
     m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
-    invalidate();
+#if ENABLE(VIDEO)
+    setMainVideoElement(nullptr);
+#endif
+    clearElement();
     m_closing = false;
 }
 

@@ -1581,8 +1581,7 @@ void WebPage::close()
     m_page->inspectorController().disconnectAllFrontends();
 
 #if ENABLE(FULLSCREEN_API)
-    if (auto manager = std::exchange(m_fullScreenManager, { }))
-        manager->invalidate();
+    m_fullScreenManager = nullptr;
 #endif
 
     if (m_activePopupMenu) {
