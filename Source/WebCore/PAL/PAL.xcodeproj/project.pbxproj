@@ -452,6 +452,8 @@
 		DD20DE6527BC90F90093D175 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
 		DDB04F32278E4F1B008D3678 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE99300278D07B800F60D26 /* libWebKitAdditions.a */; };
 		E34F26F62846D0D90076E549 /* PowerLogSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F26F52846B7550076E549 /* PowerLogSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E57B44B529AB45F4006069DE /* VisionSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = E57B44B329AB45F4006069DE /* VisionSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = E57B44B429AB45F4006069DE /* VisionSoftLink.mm */; };
 		F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44291621FA52670002CC93E /* FileSizeFormatter.cpp */; };
 		F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */; };
 		F44C007B29A06B1C00211F33 /* TranslationUIServicesSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F44C007929A06B1C00211F33 /* TranslationUIServicesSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1001,6 +1003,8 @@
 		DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKitPrivateSPI.h; sourceTree = "<group>"; };
 		E327C0DE260BDC90002281C5 /* NotifySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotifySPI.h; sourceTree = "<group>"; };
 		E34F26F52846B7550076E549 /* PowerLogSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PowerLogSPI.h; sourceTree = "<group>"; };
+		E57B44B329AB45F4006069DE /* VisionSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisionSoftLink.h; sourceTree = "<group>"; };
+		E57B44B429AB45F4006069DE /* VisionSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VisionSoftLink.mm; sourceTree = "<group>"; };
 		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
 		EB8A8DC12509E87E00D1BF90 /* MediaToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSPI.h; sourceTree = "<group>"; };
@@ -1444,6 +1448,8 @@
 				07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */,
 				F46B8C4B267408FA007A6554 /* VisionKitCoreSoftLink.h */,
 				F46B8C4C26740918007A6554 /* VisionKitCoreSoftLink.mm */,
+				E57B44B329AB45F4006069DE /* VisionSoftLink.h */,
+				E57B44B429AB45F4006069DE /* VisionSoftLink.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1958,6 +1964,7 @@
 				DD20DD1927BC90D60093D175 /* VideoToolboxSoftLink.h in Headers */,
 				DD20DD2627BC90D60093D175 /* VisionKitCoreSoftLink.h in Headers */,
 				DD20DE0D27BC90D80093D175 /* VisionKitCoreSPI.h in Headers */,
+				E57B44B529AB45F4006069DE /* VisionSoftLink.h in Headers */,
 				DD20DE0E27BC90D80093D175 /* WebFilterEvaluatorSPI.h in Headers */,
 				DD20DD4027BC90D70093D175 /* WebGPU.h in Headers */,
 				DD20DD4127BC90D70093D175 /* WebGPUAdapter.h in Headers */,
@@ -2299,6 +2306,7 @@
 				07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */,
 				41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */,
 				F46B8C4D26740918007A6554 /* VisionKitCoreSoftLink.mm in Sources */,
+				E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */,
 				1C19E648273F3F82004B17B0 /* WebGPUAdapterImpl.cpp in Sources */,
 				1C19E64C273F3F99004B17B0 /* WebGPUBindGroupImpl.cpp in Sources */,
 				1C19E650273F3FA5004B17B0 /* WebGPUBindGroupLayoutImpl.cpp in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,52 +24,16 @@
  */
 
 #import "config.h"
-#import "_WKContextMenuElementInfo.h"
 
-#import "APIHitTestResult.h"
-#import "APIString.h"
-#import "_WKContextMenuElementInfoInternal.h"
-#import "_WKHitTestResultInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/RetainPtr.h>
+#if HAVE(VISION)
 
-#if !PLATFORM(IOS_FAMILY)
+#import <wtf/SoftLinking.h>
 
-@implementation _WKContextMenuElementInfo
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, Vision, PAL_EXPORT)
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, Vision, VNImageRequestHandler, PAL_EXPORT, true)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, Vision, VNDetectBarcodesRequest, PAL_EXPORT, true)
 
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKContextMenuElementInfo.class, self))
-        return;
-    _contextMenuElementInfoMac->API::ContextMenuElementInfoMac::~ContextMenuElementInfoMac();
-    [super dealloc];
-}
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, Vision, VNBarcodeSymbologyQR, NSString *, PAL_EXPORT)
 
-- (_WKHitTestResult *)hitTestResult
-{
-    auto& hitTestResultData = _contextMenuElementInfoMac->hitTestResultData();
-    auto apiHitTestResult = API::HitTestResult::create(hitTestResultData);
-    return retainPtr(wrapper(apiHitTestResult)).autorelease();
-}
-
-- (NSString *)qrCodePayloadString
-{
-    auto& qrCodePayloadString = _contextMenuElementInfoMac->qrCodePayloadString();
-    return nsStringNilIfEmpty(qrCodePayloadString);
-}
-
-// MARK: WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_contextMenuElementInfoMac;
-}
-
-@end
-
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // HAVE(VISION)

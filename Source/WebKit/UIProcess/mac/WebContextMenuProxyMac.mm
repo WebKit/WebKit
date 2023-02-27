@@ -487,7 +487,34 @@ void WebContextMenuProxyMac::show()
     }
 #endif
 
-    WebContextMenuProxy::show();
+    if (!showAfterPostProcessingContextData())
+        WebContextMenuProxy::show();
+}
+
+bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
+{
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    if (!page()->preferences().contextMenuQRCodeDetectionEnabled())
+        return false;
+
+    ASSERT(m_context.webHitTestResultData());
+    auto hitTestData = m_context.webHitTestResultData().value();
+
+    if (!hitTestData.absoluteLinkURL.isEmpty())
+        return false;
+
+    if (auto bitmap = hitTestData.imageBitmap) {
+        auto image = bitmap->makeCGImage();
+        requestPayloadForQRCode(image.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
+            m_context.setQRCodePayloadString(result);
+            WebContextMenuProxy::show();
+        });
+
+        return true;
+    }
+#endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+
+    return false;
 }
 
 static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
@@ -841,7 +868,7 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
         }
         
         ASSERT(m_context.webHitTestResultData());
-        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context.webHitTestResultData().value(), m_userData.object(), WTFMove(menuFromProposedMenu));
+        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context, m_userData.object(), WTFMove(menuFromProposedMenu));
     });
 }
 

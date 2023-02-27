@@ -26,6 +26,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/TranslationUIServicesSoftLink.h
     cocoa/UsageTrackingSoftLink.h
     cocoa/VisionKitCoreSoftLink.h
+    cocoa/VisionSoftLink.h
 
     mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h

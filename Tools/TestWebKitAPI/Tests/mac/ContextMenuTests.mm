@@ -37,6 +37,7 @@
 #import "Utilities.h"
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKContextMenuElementInfo.h>
 #import <WebKit/_WKHitTestResult.h>
@@ -304,6 +305,79 @@ TEST(ContextMenuTests, HitTestResultDoesNotContainEmptyURLs)
     [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
     Util::run(&gotProposedMenu);
 }
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringDefaultConfiguration)
+{
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        NSString *qrCodePayloadString = elementInfo.qrCodePayloadString;
+        EXPECT_NULL(qrCodePayloadString);
+
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+    [webView mouseDownAtPoint:NSMakePoint(20, 20) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(20, 20) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&gotProposedMenu);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadString)
+{
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        NSString *qrCodePayloadString = elementInfo.qrCodePayloadString;
+        EXPECT_WK_STREQ(qrCodePayloadString, "https://www.webkit.org");
+
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+    [webView mouseDownAtPoint:NSMakePoint(20, 20) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(20, 20) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&gotProposedMenu);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringInsideLink)
+{
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        NSString *qrCodePayloadString = elementInfo.qrCodePayloadString;
+        EXPECT_NULL(qrCodePayloadString);
+
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<a href='https://www.webkit.org'><img src='qr-code.png'></img></a>"];
+    [webView mouseDownAtPoint:NSMakePoint(20, 20) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(20, 20) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&gotProposedMenu);
+}
+
+#endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
 
 } // namespace TestWebKitAPI
 

@@ -164,6 +164,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
+    BOOL _contextMenuQRCodeDetectionEnabled;
 #endif
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
@@ -235,6 +236,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
     _imageControlsEnabled = NO;
+    _contextMenuQRCodeDetectionEnabled = NO;
 #endif
     _waitsForPaintAfterViewDidMoveToWindow = YES;
 
@@ -446,6 +448,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
+    configuration->_contextMenuQRCodeDetectionEnabled = self->_contextMenuQRCodeDetectionEnabled;
     configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -1237,6 +1240,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setImageControlsEnabled:(BOOL)imageControlsEnabled
 {
     _imageControlsEnabled = imageControlsEnabled;
+}
+
+- (BOOL)_contextMenuQRCodeDetectionEnabled
+{
+    return _contextMenuQRCodeDetectionEnabled;
+}
+
+- (void)_setContextMenuQRCodeDetectionEnabled:(BOOL)contextMenuQRCodeDetectionEnabled
+{
+    _contextMenuQRCodeDetectionEnabled = contextMenuQRCodeDetectionEnabled;
 }
 
 - (BOOL)_requiresUserActionForEditingControlsManager
