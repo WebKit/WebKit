@@ -75,7 +75,7 @@ private:
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, const RenderStyle* existingStyle, ResolutionType);
 
     ElementUpdate createAnimatedElementUpdate(ResolvedStyle&&, const Styleable&, Change, const ResolutionContext&);
-    void applyCascadeAfterAnimation(RenderStyle&, const HashSet<AnimatableProperty>&, const MatchResult&, const Element&, const ResolutionContext&);
+    void applyCascadeAfterAnimation(RenderStyle&, const HashSet<AnimatableProperty>&, bool isTransition, const MatchResult&, const Element&, const ResolutionContext&);
 
     std::optional<ElementUpdate> resolvePseudoElement(Element&, PseudoId, const ElementUpdate&);
     std::optional<ElementUpdate> resolveAncestorPseudoElement(Element&, PseudoId, const ElementUpdate&);

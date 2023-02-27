@@ -39,7 +39,7 @@ namespace Style {
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum IncludedProperties { All, InheritedOnly, AfterAnimation };
+    enum IncludedProperties { All, InheritedOnly, AfterAnimation, AfterTransition };
 
     PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, const HashSet<AnimatableProperty>* = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
