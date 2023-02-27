@@ -1746,11 +1746,8 @@ webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
 # this is not enough for the receiver webrtcbin to create its video source pad,
 # because on sender side we need at least a complete GOP... So the tests time
 # out, awaiting forever a remote mediastream.
-webkit.org/b/235885 webrtc/canvas-to-peer-connection.html [ Skip ]
 webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8-2d.html [ Skip ]
 webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Skip ]
-webkit.org/b/235885 webrtc/canvas-to-peer-connection-2d.html [ Skip ]
-webkit.org/b/235885 webrtc/captureCanvas-webrtc.html [ Skip ]
 
 # This is actually a flaky timeout but skipping nonetheless. GStreamer logs
 # highlight a srtpenc protection error when the test times out. Might be
