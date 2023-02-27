@@ -23,14 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if USE(APPKIT)
+
 #import <AppKit/NSColor.h>
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSColor_Private.h>
 #import <AppKit/NSColor_UserAccent.h>
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
 
 @interface NSColor ()
 + (NSColor *)systemRedColor;
@@ -48,6 +50,12 @@
 + (NSColor *)containerBorderColor;
 @end
 
+@interface NSCatalogColor : NSColor
+@end
+
+@interface NSDynamicNamedColor : NSCatalogColor
+@end
+
 typedef NS_ENUM(NSInteger, NSUserAccentColor) {
     NSUserAccentColorRed = 0,
     NSUserAccentColorOrange,
@@ -62,4 +70,6 @@ typedef NS_ENUM(NSInteger, NSUserAccentColor) {
 
 extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // USE(APPKIT)

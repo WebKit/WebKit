@@ -82,6 +82,7 @@
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
+#import <WebCore/PlatformColor.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/PointerCharacteristics.h>
@@ -1063,9 +1064,9 @@ bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const
 
 #if HAVE(APP_ACCENT_COLORS)
 
-void WebPage::setAccentColor(WebCore::Color color)
+void WebPage::setAccentColor(WebCore::PlatformColor color)
 {
-    [NSApp _setAccentColor:cocoaColorOrNil(color).get()];
+    [NSApp _setAccentColor:color.platformColor.get()];
 }
 
 #endif // HAVE(APP_ACCENT_COLORS)

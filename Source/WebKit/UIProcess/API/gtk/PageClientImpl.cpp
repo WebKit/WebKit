@@ -50,6 +50,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PlatformColor.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
@@ -597,28 +598,28 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
     webkitWebViewBaseMakeBlank(WEBKIT_WEB_VIEW_BASE(m_viewWidget), makeBlank);
 }
 
-WebCore::Color PageClientImpl::accentColor()
+WebCore::PlatformColor PageClientImpl::accentColor()
 {
     auto* context = gtk_widget_get_style_context(m_viewWidget);
     GdkRGBA accentColor;
 
     // libadwaita
     if (gtk_style_context_lookup_color(context, "accent_bg_color", &accentColor))
-        return WebCore::Color(accentColor);
+        return { WebCore::Color(accentColor) };
 
     // elementary OS 6.x
     if (gtk_style_context_lookup_color(context, "accent_color", &accentColor))
-        return WebCore::Color(accentColor);
+        return { WebCore::Color(accentColor) };
 
     // elementary OS 5.x
     if (gtk_style_context_lookup_color(context, "accentColor", &accentColor))
-        return WebCore::Color(accentColor);
+        return { WebCore::Color(accentColor) };
 
     // Legacy
     if (gtk_style_context_lookup_color(context, "theme_selected_bg_color", &accentColor))
-        return WebCore::Color(accentColor);
+        return { WebCore::Color(accentColor) };
 
-    return SRGBA<uint8_t> { 52, 132, 228 };
+    return { SRGBA<uint8_t> { 52, 132, 228 } };
 }
 
 WebKitWebResourceLoadManager* PageClientImpl::webResourceLoadManager()

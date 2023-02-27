@@ -49,3 +49,15 @@ struct WebCore::MediaRecorderPrivateOptions {
     std::optional<unsigned> bitsPerSecond;
 };
 #endif // ENABLE(MEDIA_RECORDER)
+
+#if USE(APPKIT)
+header: <AppKit/NSColor.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+header: <UIKit/UIColor.h>
+#endif
+
+struct WebCore::PlatformColor {
+    RetainPtr<WebCore::CocoaColor> platformColor;
+};

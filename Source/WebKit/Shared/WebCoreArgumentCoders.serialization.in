@@ -1313,6 +1313,12 @@ header: <WebCore/ResourceRequest.h>
 };
 #endif
 
+#if !PLATFORM(COCOA)
+struct WebCore::PlatformColor {
+    WebCore::Color platformColor;
+};
+#endif
+
 enum class WebCore::DiagnosticLoggingDomain : uint8_t {
     Media
 };

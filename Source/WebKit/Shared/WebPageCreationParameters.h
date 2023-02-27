@@ -48,6 +48,7 @@
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
+#include <WebCore/PlatformColor.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -192,7 +193,7 @@ struct WebPageCreationParameters {
     Vector<SandboxExtension::Handle> fontMachExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
-    WebCore::Color accentColor;
+    WebCore::PlatformColor accentColor;
 #endif
 #if USE(WPE_RENDERER)
     UnixFileDescriptor hostFileDescriptor;

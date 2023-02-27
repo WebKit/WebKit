@@ -563,7 +563,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 
 #if HAVE(APP_ACCENT_COLORS)
-    SetAccentColor(WebCore::Color color)
+    SetAccentColor(struct WebCore::PlatformColor color)
 #endif
 
 #if PLATFORM(COCOA)

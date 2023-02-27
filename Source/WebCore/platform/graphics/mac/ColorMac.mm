@@ -30,7 +30,9 @@
 
 #import "GraphicsContextCG.h"
 #import "LocalCurrentGraphicsContext.h"
+#import <AppKit/NSAppearance.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -149,6 +151,47 @@ RetainPtr<NSColor> cocoaColor(const Color& color)
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<NSColor>, 32>> cache;
     return cache.get().get(color);
+}
+
+std::pair<Color, Color> lightAndDarkColorsFromNSColor(NSColor *color)
+{
+    Color lightColor;
+    NSAppearance *lightAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    [lightAppearance performAsCurrentDrawingAppearance:[&] {
+        lightColor = colorFromCocoaColor(color);
+    }];
+
+    Color darkColor;
+    NSAppearance *darkAppearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+    [darkAppearance performAsCurrentDrawingAppearance:[&] {
+        darkColor = colorFromCocoaColor(color);
+    }];
+
+    return { lightColor, darkColor };
+}
+
+RetainPtr<NSColor> dynamicNSColorFromLightAndDarkColors(const Color& lightColor, const Color& darkColor)
+{
+    auto lightCocoaColor = cocoaColor(lightColor);
+    auto darkCocoaColor = cocoaColor(darkColor);
+
+    auto provider = makeBlockPtr([lightCocoaColor, darkCocoaColor](NSAppearance *appearance) -> NSColor * {
+        // FIXME (rdar://105555086): We should only have to compare to Aqua and DarkAqua, but AppKit is
+        // sending lower level appearance values when resolving tint colors.
+        BOOL isDarkSystemAppearance = !![appearance bestMatchFromAppearancesWithNames:@[
+            NSAppearanceNameDarkAqua,
+            NSAppearanceNameVibrantDark,
+            NSAppearanceNameAccessibilityHighContrastDarkAqua,
+            NSAppearanceNameAccessibilityHighContrastVibrantDark,
+        ]];
+
+        if (isDarkSystemAppearance)
+            return darkCocoaColor.get();
+
+        return lightCocoaColor.get();
+    });
+
+    return [NSColor colorWithName:nil dynamicProvider:provider.get()];
 }
 
 } // namespace WebCore

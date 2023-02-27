@@ -10678,6 +10678,16 @@ void WebPageProxy::effectiveAppearanceDidChange()
     send(Messages::WebPage::EffectiveAppearanceDidChange(useDarkAppearance(), useElevatedUserInterfaceLevel()));
 }
 
+#if HAVE(APP_ACCENT_COLORS)
+void WebPageProxy::accentColorDidChange()
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetAccentColor(pageClient().accentColor()));
+}
+#endif
+
 #if HAVE(TOUCH_BAR)
 void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)
 {

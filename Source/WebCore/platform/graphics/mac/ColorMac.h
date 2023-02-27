@@ -36,6 +36,9 @@ namespace WebCore {
 
 Color semanticColorFromNSColor(NSColor *);
 
+WEBCORE_EXPORT std::pair<Color, Color> lightAndDarkColorsFromNSColor(NSColor *);
+WEBCORE_EXPORT RetainPtr<NSColor> dynamicNSColorFromLightAndDarkColors(const Color&, const Color&);
+
 WEBCORE_EXPORT bool usesTestModeFocusRingColor();
 WEBCORE_EXPORT void setUsesTestModeFocusRingColor(bool);
 

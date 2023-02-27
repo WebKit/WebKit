@@ -5456,6 +5456,7 @@ bool WebViewImpl::useSystemAppearance()
 
 void WebViewImpl::effectiveAppearanceDidChange()
 {
+    m_page->accentColorDidChange();
     m_page->effectiveAppearanceDidChange();
 }
 
