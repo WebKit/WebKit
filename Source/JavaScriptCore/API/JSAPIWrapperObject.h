@@ -43,14 +43,14 @@ public:
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
     
-    void* wrappedObject() { return m_wrappedObject; }
-    void setWrappedObject(void*);
+    CFTypeRef wrappedObject() { return m_wrappedObject; }
+    void setWrappedObject(CFTypeRef);
 
 protected:
     JSAPIWrapperObject(VM&, Structure*);
 
 private:
-    void* m_wrappedObject { nullptr };
+    CFTypeRef m_wrappedObject { nullptr };
 };
 
 } // namespace JSC

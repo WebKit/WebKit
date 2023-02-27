@@ -119,10 +119,10 @@ void JSAPIWrapperObject::finishCreation(VM& vm)
     WeakSet::allocate(this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
 }
     
-void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
+void JSAPIWrapperObject::setWrappedObject(CFTypeRef wrappedObject)
 {
     ASSERT(!m_wrappedObject);
-    m_wrappedObject = [static_cast<id>(wrappedObject) retain];
+    m_wrappedObject = CFRetain(wrappedObject);
 }
 
 template<typename Visitor>
