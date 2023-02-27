@@ -612,7 +612,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
         if (resolvedStyle.matchResult) {
             // The cascade may override animated properties and have dependencies to them.
-            applyCascadeAfterAnimation(*animatedStyle, animatedProperties, *resolvedStyle.matchResult, element, resolutionContext);
+            // FIXME: This is wrong if there are both transitions and animations running on the same element.
+            applyCascadeAfterAnimation(*animatedStyle, animatedProperties, styleable.hasRunningTransitions(), *resolvedStyle.matchResult, element, resolutionContext);
         }
 
         Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
@@ -648,7 +649,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }
 
-void TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableProperty>& animatedProperties, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
+void TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
 {
     auto builderContext = BuilderContext {
         m_document,
@@ -662,7 +663,7 @@ void TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const 
         WTFMove(builderContext),
         matchResult,
         CascadeLevel::Author,
-        PropertyCascade::IncludedProperties::AfterAnimation,
+        isTransition ? PropertyCascade::IncludedProperties::AfterTransition : PropertyCascade::IncludedProperties::AfterAnimation,
         &animatedProperties
     };
 
