@@ -46,8 +46,9 @@ from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 from webkitcorepy.null_context import NullContext
 from webkitcorepy.filtered_call import filtered_call
+from webkitcorepy.partial_proxy import PartialProxy
 
-version = Version(0, 14, 0)
+version = Version(0, 14, 1)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
