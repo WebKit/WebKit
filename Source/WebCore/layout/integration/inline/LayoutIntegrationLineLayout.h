@@ -86,7 +86,7 @@ public:
     void updateOverflow();
     // Partial invalidation.
     void insertedIntoTree(const RenderElement& parent, RenderObject& child);
-    void updateTextContent(const RenderText&, size_t offset, size_t length);
+    void updateTextContent(const RenderText&, size_t offset, int delta);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 

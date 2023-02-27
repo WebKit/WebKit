@@ -50,6 +50,11 @@ void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& o
 struct DamagedContent {
     const InlineTextBox& inlineTextBox;
     size_t offset { 0 };
+    enum class Type : uint8_t {
+        Insertion,
+        Removal
+    };
+    Type type { Type::Insertion };
 };
 static size_t damagedLineIndex(std::optional<DamagedContent> damagedContent, const DisplayBoxes& displayBoxes)
 {
@@ -69,7 +74,7 @@ static size_t damagedLineIndex(std::optional<DamagedContent> damagedContent, con
         ASSERT_NOT_REACHED();
         return 0;
     };
-    for (int index = lastDisplayBoxIndexForLayoutBox(); index >= 0; --index) {
+    for (auto index = lastDisplayBoxIndexForLayoutBox(); index > 0; --index) {
         auto& displayBox = displayBoxes[index];
         if (displayBox.isRootInlineBox() || (displayBox.isInlineBox() && !displayBox.isFirstForLayoutBox())) {
             // Multi line damage includes line leading root inline display boxes (and maybe line spanning inline boxes).
@@ -82,8 +87,11 @@ static size_t damagedLineIndex(std::optional<DamagedContent> damagedContent, con
         ASSERT(displayBox.isTextOrSoftLineBreak());
         // Find out which display box has the damaged offset position.
         auto startOffset = displayBox.text().start();
-        if (startOffset <= damagedContent->offset)
-            return displayBox.lineIndex();
+        if (startOffset <= damagedContent->offset) {
+            // FIXME: Add support for leading inline boxes deletion too.
+            auto shouldDamagePreviousLine = displayBox.lineIndex() && damagedContent->type == DamagedContent::Type::Removal && displayBoxes[index - 1].isRootInlineBox();
+            return !shouldDamagePreviousLine ? displayBox.lineIndex() : displayBox.lineIndex() - 1;
+        }
     }
     ASSERT_NOT_REACHED();
     return 0ul;
@@ -187,9 +195,8 @@ static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedC
     return leadingInlineItemPositionForDamage(damagedContent, inlineItems, displayBoxes);
 }
 
-void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox, std::optional<size_t> offset, std::optional<size_t> length)
+void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox, std::optional<size_t> offset)
 {
-    UNUSED_PARAM(length);
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
     if (m_displayBoxes.isEmpty())
         return;
@@ -197,7 +204,6 @@ void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox,
     if (!damagedInlineTextBox) {
         // New text box got appended. Let's dirty the last existing line.
         ASSERT(!offset);
-        ASSERT(!length);
         if (auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes))
             m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
         return;
@@ -207,13 +213,15 @@ void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox,
         m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
 }
 
-void InlineInvalidation::textWillBeRemoved(const InlineTextBox& textBox, std::optional<size_t> offset, std::optional<size_t> length)
+void InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
 {
-    UNUSED_PARAM(textBox);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(length);
-
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
+    if (m_displayBoxes.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineFormattingState.inlineItems(), m_displayBoxes))
+        m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
 }
 
 void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)

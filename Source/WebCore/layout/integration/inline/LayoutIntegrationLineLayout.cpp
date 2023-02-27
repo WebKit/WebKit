@@ -1207,12 +1207,16 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, size_t length)
+void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, int delta)
 {
     m_boxTree.updateContent(textRenderer);
     if (m_inlineContent) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
-        invalidation.textInserted(&downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer)), offset, length);
+        auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
+        if (delta >= 0)
+            invalidation.textInserted(&inlineTextBox, offset);
+        else
+            invalidation.textWillBeRemoved(inlineTextBox, offset);
         return;
     }
 }
