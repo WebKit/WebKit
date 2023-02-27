@@ -174,7 +174,9 @@ static constexpr SingleByteDecodeTable ibm866 {
 template<const SingleByteDecodeTable& decodeTable> SingleByteEncodeTable tableForEncoding()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static constexpr auto size = std::size(decodeTable) - std::count(std::begin(decodeTable), std::end(decodeTable), replacementCharacter);
+    // FIXME: With the C++20 version of std::count, we should be able to change this from const to constexpr and compute the size at compile time.
+    // Some platforms do not yet have the constexpr version of std::count despite some support for C++20
+    static const auto size = std::size(decodeTable) - std::count(std::begin(decodeTable), std::end(decodeTable), replacementCharacter);
     static const SingleByteEncodeTableEntry* entries;
     static std::once_flag once;
     std::call_once(once, [&] {
