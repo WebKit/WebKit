@@ -1387,9 +1387,15 @@
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
        (global-name "com.apple.logd")
-       (global-name "com.apple.logd.events")
-       (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
-)
+       (global-name "com.apple.logd.events"))
+
+; Needed for [CAContext remoteContextWithOptions]
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+    (allow mach-lookup (global-name "com.apple.CARenderServer")))
+#else
+(allow mach-lookup (global-name "com.apple.CARenderServer"))
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
