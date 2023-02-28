@@ -640,7 +640,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
 
     Vector<ComputedKeyframe> computedKeyframes;
 
-    if (!m_parsedKeyframes.isEmpty() || m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation || !m_blendingKeyframes.containsAnimatableProperty()) {
+    if (!m_parsedKeyframes.isEmpty() || m_animationType == WebAnimationType::WebAnimation || !m_blendingKeyframes.containsAnimatableProperty()) {
         for (size_t i = 0; i < m_parsedKeyframes.size(); ++i) {
             auto& parsedKeyframe = m_parsedKeyframes[i];
             ComputedKeyframe computedKeyframe { parsedKeyframe };
@@ -692,7 +692,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
     };
 
     auto styleProperties = MutableStyleProperties::create();
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSAnimation) {
+    if (m_animationType == WebAnimationType::CSSAnimation) {
         auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoId, Style::Resolver::AllCSSRules);
         for (auto& matchedRule : matchingRules)
             styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());
@@ -765,7 +765,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
                     addPropertyToKeyframe(cssProperty);
                 },
                 [&] (const AtomString& customProperty) {
-                    if (m_blendingKeyframesSource != BlendingKeyframesSource::CSSAnimation)
+                    if (m_animationType != WebAnimationType::CSSAnimation)
                         addCustomPropertyToKeyframe(customProperty);
                 }
             );
@@ -987,7 +987,7 @@ bool KeyframeEffect::forceLayoutIfNeeded()
 
 void KeyframeEffect::clearBlendingKeyframes()
 {
-    m_blendingKeyframesSource = BlendingKeyframesSource::WebAnimation;
+    m_animationType = WebAnimationType::WebAnimation;
     m_blendingKeyframes.clear();
 }
 
@@ -1054,7 +1054,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
             Style::loadPendingResources(*style, *document(), m_target.get());
     }
 
-    m_blendingKeyframesSource = BlendingKeyframesSource::CSSAnimation;
+    m_animationType = WebAnimationType::CSSAnimation;
     setBlendingKeyframes(WTFMove(keyframeList));
 }
 
@@ -1082,7 +1082,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& ol
     toKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(toKeyframeValue));
 
-    m_blendingKeyframesSource = BlendingKeyframesSource::CSSTransition;
+    m_animationType = WebAnimationType::CSSTransition;
     setBlendingKeyframes(WTFMove(keyframeList));
 }
 
@@ -1163,7 +1163,7 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
     bool animationChanged = animation != this->animation();
     AnimationEffect::setAnimation(animation);
     if (animationChanged) {
-        if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSAnimation)
+        if (m_animationType == WebAnimationType::CSSAnimation)
             clearBlendingKeyframes();
         updateEffectStackMembership();
     }
@@ -1411,7 +1411,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     // In the case of CSS Transitions we already know that there are only two keyframes, one where offset=0 and one where offset=1,
     // and only a single CSS property so we can simply blend based on the style available on those keyframes with the provided iteration
     // progress which already accounts for the transition's timing function.
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition) {
+    if (m_animationType == WebAnimationType::CSSTransition) {
         ASSERT(properties.size() == 1);
         CSSPropertyAnimation::blendProperty(*this, *properties.begin(), targetStyle, *m_blendingKeyframes[0].style(), *m_blendingKeyframes[1].style(), iterationProgress, m_compositeOperation);
         return;
@@ -1784,7 +1784,7 @@ void KeyframeEffect::transformRelatedPropertyDidChange()
 
 std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
 {
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition)
+    if (m_animationType == WebAnimationType::CSSTransition)
         return { };
 
     auto fontSizeChanged = [&]() {
@@ -1853,14 +1853,14 @@ std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyf
     }();
 
     if (logicalPropertyChanged || fontSizeChanged() || fontWeightChanged() || cssVariableChanged() || propertySetToInheritChanged() || propertySetToCurrentColorChanged()) {
-        switch (m_blendingKeyframesSource) {
-        case BlendingKeyframesSource::CSSTransition:
+        switch (m_animationType) {
+        case WebAnimationType::CSSTransition:
             ASSERT_NOT_REACHED();
             break;
-        case BlendingKeyframesSource::CSSAnimation:
+        case WebAnimationType::CSSAnimation:
             computeCSSAnimationBlendingKeyframes(unanimatedStyle, resolutionContext);
             break;
-        case BlendingKeyframesSource::WebAnimation:
+        case WebAnimationType::WebAnimation:
             clearBlendingKeyframes();
             break;
         }
@@ -2201,7 +2201,7 @@ bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& renderer
 
 bool KeyframeEffect::requiresPseudoElement() const
 {
-    return m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation && targetsPseudoElement();
+    return m_animationType == WebAnimationType::WebAnimation && targetsPseudoElement();
 }
 
 std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress) const

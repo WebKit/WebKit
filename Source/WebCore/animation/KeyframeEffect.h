@@ -180,11 +180,12 @@ public:
 
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
+    WebAnimationType animationType() const { return m_animationType; }
+
 private:
     KeyframeEffect(Element*, PseudoId);
 
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
-    enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
     enum class RunningAccelerated : uint8_t { NotStarted, Yes, Prevented, Failed };
 
@@ -256,7 +257,7 @@ private:
     PseudoId m_pseudoId { PseudoId::None };
 
     AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };
-    BlendingKeyframesSource m_blendingKeyframesSource { BlendingKeyframesSource::WebAnimation };
+    WebAnimationType m_animationType { WebAnimationType::WebAnimation };
     IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     AcceleratedProperties m_acceleratedPropertiesState { AcceleratedProperties::None };
