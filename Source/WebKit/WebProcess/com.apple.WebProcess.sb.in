@@ -26,6 +26,8 @@
 
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
+(with-filter (state-flag "LockdownModeEnabled")
+    (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5 65)))
@@ -2130,7 +2132,6 @@
     task_policy_set
     task_restartable_ranges_synchronize
     thread_resume
-    thread_set_exception_ports
     thread_suspend))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
@@ -2157,6 +2158,10 @@
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
+#if HAVE(SANDBOX_STATE_FLAGS)
+            (with-filter (require-not (state-flag "LockdownModeEnabled"))
+                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#endif
             (deny mach-message-send)
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-entitlement "com.apple.security.cs.allow-jit")
