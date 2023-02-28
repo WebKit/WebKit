@@ -1692,7 +1692,6 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 
 # These tests require macOS Monterey.
 [ BigSur ] media/media-source/media-webm-vorbis-partial.html [ Skip ]
-[ BigSur ] media/media-source/media-source-webm-vorbis-partial.html [ Skip ]
 [ BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
 [ BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
 [ BigSur ] webaudio/decode-audio-data-webm-opus.html [ Skip ]
