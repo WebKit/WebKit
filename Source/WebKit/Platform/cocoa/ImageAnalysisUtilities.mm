@@ -122,7 +122,8 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
         VKWKLineInfo *nextLine = nextLineIndex < allLines.count ? allLines[nextLineIndex] : nil;
         // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
         bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
-        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline });
+        bool isVertical = [line respondsToSelector:@selector(layoutDirection)] && [line layoutDirection] == CRLayoutDirectionTopToBottom;
+        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline, isVertical });
         isFirstLine = false;
         nextLineIndex++;
     }

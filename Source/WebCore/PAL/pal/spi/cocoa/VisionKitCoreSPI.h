@@ -138,8 +138,16 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 @property (nonatomic, readonly) VKQuad *quad;
 @end
 
+typedef NS_ENUM(NSUInteger, CRLayoutDirection) {
+    CRLayoutDirectionUnknown = 0,
+    CRLayoutDirectionLeftToRight,
+    CRLayoutDirectionRightToLeft,
+    CRLayoutDirectionTopToBottom,
+};
+
 @interface VKWKLineInfo : VKWKTextInfo
 @property (nonatomic, readonly) NSArray<VKWKTextInfo *> *children;
+@property (nonatomic, readonly) CRLayoutDirection layoutDirection;
 @end
 
 @class DDScannerResult;
@@ -165,6 +173,7 @@ NS_ASSUME_NONNULL_END
 
 @interface VKWKLineInfo (Staging_85139101)
 @property (nonatomic, readonly) BOOL shouldWrap;
+@property (nonatomic, readonly) CRLayoutDirection layoutDirection;
 @end
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

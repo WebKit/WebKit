@@ -319,6 +319,7 @@ enum HEVCParameterCodec {
     required DOMPointReadOnly bottomLeft;
     sequence<ImageOverlayText> children;
     boolean hasTrailingNewline = true;
+    boolean isVertical = false;
 };
 
 [
