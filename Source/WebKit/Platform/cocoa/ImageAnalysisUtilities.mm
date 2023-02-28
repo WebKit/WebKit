@@ -43,6 +43,8 @@
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
+#define CRLayoutDirectionTopToBottom 3
+
 namespace WebKit {
 using namespace WebCore;
 
