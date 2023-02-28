@@ -201,7 +201,7 @@ static void ensureDebugCategoryInitialized()
 std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 {
     ensureDebugCategoryInitialized();
-    GST_DEBUG("Parsing ICE Candidate: %s", sdp.utf8().data());
+    GST_TRACE("Parsing ICE Candidate: %s", sdp.utf8().data());
     if (!sdp.startsWith("candidate:"_s))
         return { };
 
