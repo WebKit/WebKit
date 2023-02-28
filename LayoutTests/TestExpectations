@@ -6281,3 +6281,6 @@ webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [
 
 # This test is checking that WebContent is terminated when performing an invalid IPC operation
 ipc/no-test-only-ipc-expected-crash.html [ Crash ]
+
+#Skipping counter-style-at-rules tests until we rendering of counter-styles get implemented.
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/ [ Skip ]
