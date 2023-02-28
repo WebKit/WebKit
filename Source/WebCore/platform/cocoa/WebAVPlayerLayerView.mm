@@ -100,11 +100,11 @@ static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerV
     auto *playerLayer = (WebAVPlayerLayer *)[playerLayerView playerLayer];
     auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
     [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    [pipPlayerLayer setFullscreenInterface:playerLayer.fullscreenInterface];
     [pipPlayerLayer setVideoSublayer:playerLayer.videoSublayer];
     [pipPlayerLayer setVideoDimensions:playerLayer.videoDimensions];
     [pipPlayerLayer setVideoGravity:playerLayer.videoGravity];
     [pipPlayerLayer setPlayerController:playerLayer.playerController];
-    [pipPlayerLayer setFullscreenInterface:playerLayer.fullscreenInterface];
     [pipPlayerLayer addSublayer:playerLayer.videoSublayer];
     [pipPlayerLayer layoutSublayers];
 }
