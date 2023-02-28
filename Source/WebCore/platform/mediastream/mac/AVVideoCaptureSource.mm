@@ -294,7 +294,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
     return *m_capabilities;
 }
 
-double AVVideoCaptureSource::facingModeFitnessDistanceAdjustment() const
+double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
 {
     ASSERT(isMainThread());
 
@@ -321,9 +321,10 @@ double AVVideoCaptureSource::facingModeFitnessDistanceAdjustment() const
     if (relativePriority == NSNotFound)
         relativePriority = devicePriorities.count;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, captureDevice().label(), " has priority ", relativePriority);
+    auto fitnessScore = devicePriorities.count - relativePriority;
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, captureDevice().label(), " has fitness adjustment ", fitnessScore);
 
-    return relativePriority;
+    return fitnessScore;
 }
 
 bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
