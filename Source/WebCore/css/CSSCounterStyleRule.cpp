@@ -46,9 +46,8 @@ StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, Ref<StylePr
 {
 }
 
-Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name, Ref<StyleProperties>&& properties)
+Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name, Ref<StyleProperties>&& properties, CSSCounterStyleDescriptors&& descriptors)
 {
-    auto descriptors = CSSCounterStyleDescriptors::create(name, properties);
     return adoptRef(*new StyleRuleCounterStyle(name, WTFMove(properties), WTFMove(descriptors)));
 }
 

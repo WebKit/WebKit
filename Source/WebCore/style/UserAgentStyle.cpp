@@ -129,6 +129,7 @@ void static addToCounterStyleRegistry(StyleSheetContents& sheet)
         if (auto* counterStyleRule = dynamicDowncast<StyleRuleCounterStyle>(rule.get()))
             CSSCounterStyleRegistry::addUserAgentCounterStyle(counterStyleRule->descriptors());
     }
+    CSSCounterStyleRegistry::resolveUserAgentReferences();
 }
 
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)

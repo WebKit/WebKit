@@ -34,7 +34,7 @@
 namespace WebCore {
 class StyleRuleCounterStyle final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleCounterStyle> create(const AtomString& name, Ref<StyleProperties>&&);
+    static Ref<StyleRuleCounterStyle> create(const AtomString&, Ref<StyleProperties>&&, CSSCounterStyleDescriptors&&);
     ~StyleRuleCounterStyle();
 
     Ref<StyleRuleCounterStyle> copy() const { RELEASE_ASSERT_NOT_REACHED(); }

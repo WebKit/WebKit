@@ -4766,7 +4766,7 @@ RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange& range)
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
+AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSParserMode mode)
 {
     auto nameToken = prelude.consumeIncludingWhitespace();
     if (!prelude.atEnd())
@@ -4777,7 +4777,8 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
     // In the context of the prelude of an @counter-style rule, a <counter-style-name> must not be an ASCII
     // case-insensitive match for "decimal" or "disc". No <counter-style-name>, prelude or not, may be an ASCII
     // case-insensitive match for "none".
-    if (identMatches<CSSValueDecimal, CSSValueDisc, CSSValueNone>(nameToken.id()))
+    auto id = nameToken.id();
+    if (identMatches<CSSValueNone>(id) || (mode != CSSParserMode::UASheetMode && identMatches<CSSValueDecimal, CSSValueDisc>(id)))
         return AtomString();
     auto name = nameToken.value();
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();

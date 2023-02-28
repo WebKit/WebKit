@@ -42,16 +42,18 @@ public:
     static RefPtr<CSSCounterStyle> decimalCounter();
     static void addUserAgentCounterStyle(const CSSCounterStyleDescriptors&);
     void addCounterStyle(const CSSCounterStyleDescriptors&);
+    static void resolveUserAgentReferences();
     void resolveReferencesIfNeeded();
     bool operator==(const CSSCounterStyleRegistry& other) const;
     CSSCounterStyleRegistry() = default;
 
 private:
     static CounterStyleMap& userAgentCounterStyles();
-    void resolveFallbackReference(CSSCounterStyle&);
-    void resolveExtendsReference(CSSCounterStyle&);
-    void resolveExtendsReference(CSSCounterStyle&, HashSet<CSSCounterStyle*>&);
-    RefPtr<CSSCounterStyle> counterStyle(const AtomString&);
+    // If no map is passed on, user-agent counter styles map will be used
+    static void resolveFallbackReference(CSSCounterStyle&, CounterStyleMap* = nullptr);
+    static void resolveExtendsReference(CSSCounterStyle&, CounterStyleMap* = nullptr);
+    static void resolveExtendsReference(CSSCounterStyle&, HashSet<CSSCounterStyle*>&, CounterStyleMap* = nullptr);
+    static RefPtr<CSSCounterStyle> counterStyle(const AtomString&, CounterStyleMap* = nullptr);
 
     CounterStyleMap m_authorCounterStyles;
     bool hasUnresolvedReferences { true };

@@ -162,7 +162,7 @@ static std::pair<CSSCounterStyleDescriptors::Name, int> extractDataFromSystemDes
     if (!systemValue)
         return { "decimal"_s, 1 };
 
-    std::pair<CSSCounterStyleDescriptors::Name, int> result;
+    std::pair<CSSCounterStyleDescriptors::Name, int> result { "decimal"_s, 1 };
     ASSERT(systemValue->isValueID() || systemValue->isPair());
     if (systemValue->isPair()) {
         // This value must be `fixed` or `extends`, both of which can or must have an additional component.
@@ -227,6 +227,31 @@ CSSCounterStyleDescriptors CSSCounterStyleDescriptors::create(AtomString name, c
     };
     descriptors.setExplicitlySetDescriptors(properties);
     return descriptors;
+}
+
+bool CSSCounterStyleDescriptors::areSymbolsValidForSystem() const
+{
+    switch (m_system) {
+    case System::Cyclic:
+    case System::Fixed:
+    case System::Symbolic:
+        return m_symbols.size();
+    case System::Alphabetic:
+    case System::Numeric:
+        return m_symbols.size() >= 2u;
+    case System::Additive:
+        return m_additiveSymbols.size();
+    case System::Extends:
+        return !m_symbols.size() && !m_additiveSymbols.size();
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+bool CSSCounterStyleDescriptors::isValid() const
+{
+    return areSymbolsValidForSystem();
 }
 
 } // namespace WebCore
