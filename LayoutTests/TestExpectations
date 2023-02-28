@@ -6269,6 +6269,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]
 
 webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
+webkit.org/b/253055 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-floats-adjacent-to-containing-block-should-be-trimmed-only.html [ ImageOnlyFailure ]
 
 #Skipping text-spacing tests until the features get implemented.
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]
