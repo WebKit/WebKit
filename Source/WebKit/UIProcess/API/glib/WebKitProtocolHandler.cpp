@@ -186,50 +186,68 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         "  .titlename { font-weight: bold; }"
         "</style>");
 
+    StringBuilder tablesBuilder;
+
+    auto startTable = [&](auto header) {
+        tablesBuilder.append("<h1>"_s, header, "</h1><table>"_s);
+    };
+
+    auto addTableRow = [&](auto& jsonObject, auto key, auto&& value) {
+        tablesBuilder.append("<tbody><tr><td><div class=\"titlename\">"_s, key, "</div></td><td>"_s, value, "</td></tr></tbody>"_s);
+        jsonObject->setString(key, value);
+    };
+
+    auto stopTable = [&] {
+        tablesBuilder.append("</table>"_s);
+    };
+
     auto jsonObject = JSON::Object::create();
 
+    startTable("Version Information"_s);
     auto versionObject = JSON::Object::create();
-    versionObject->setString("WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, BUILD_REVISION, ')'));
+    addTableRow(versionObject, "WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, BUILD_REVISION, ')'));
 
 #if OS(UNIX)
     struct utsname osName;
     uname(&osName);
-    versionObject->setString("Operating system"_s, makeString(osName.sysname, ' ', osName.release, ' ', osName.version, ' ', osName.machine));
+    addTableRow(versionObject, "Operating system"_s, makeString(osName.sysname, ' ', osName.release, ' ', osName.version, ' ', osName.machine));
 #endif
 
-    versionObject->setString("Desktop"_s, makeString(g_getenv("XDG_CURRENT_DESKTOP")));
+    addTableRow(versionObject, "Desktop"_s, makeString(g_getenv("XDG_CURRENT_DESKTOP")));
 
 #if USE(CAIRO)
-    versionObject->setString("Cairo version"_s, makeString(CAIRO_VERSION_STRING, " (build) "_s, cairo_version_string(), " (runtime)"_s));
+    addTableRow(versionObject, "Cairo version"_s, makeString(CAIRO_VERSION_STRING, " (build) "_s, cairo_version_string(), " (runtime)"_s));
 #endif
 
 #if USE(GSTREAMER)
     GUniquePtr<char> gstVersion(gst_version_string());
-    versionObject->setString("GStreamer version"_s, makeString(GST_VERSION_MAJOR, '.', GST_VERSION_MINOR, '.', GST_VERSION_MICRO, " (build) "_s, gstVersion.get(), " (runtime)"_s));
+    addTableRow(versionObject, "GStreamer version"_s, makeString(GST_VERSION_MAJOR, '.', GST_VERSION_MINOR, '.', GST_VERSION_MICRO, " (build) "_s, gstVersion.get(), " (runtime)"_s));
 #endif
 
 #if PLATFORM(GTK)
-    versionObject->setString("GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
+    addTableRow(versionObject, "GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
 
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
-        versionObject->setString("WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
+        addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
 
 #if WPE_FDO_CHECK_VERSION(1, 6, 1)
-        versionObject->setString("WPEBackend-fdo version"_s, makeString(WPE_FDO_MAJOR_VERSION, '.', WPE_FDO_MINOR_VERSION, '.', WPE_FDO_MICRO_VERSION, " (build) "_s, wpe_fdo_get_major_version(), '.', wpe_fdo_get_minor_version(), '.', wpe_fdo_get_micro_version(), " (runtime)"_s));
+        addTableRow(versionObject, "WPEBackend-fdo version"_s, makeString(WPE_FDO_MAJOR_VERSION, '.', WPE_FDO_MINOR_VERSION, '.', WPE_FDO_MICRO_VERSION, " (build) "_s, wpe_fdo_get_major_version(), '.', wpe_fdo_get_minor_version(), '.', wpe_fdo_get_micro_version(), " (runtime)"_s));
 #endif
     }
 #endif
 #endif
 
 #if PLATFORM(WPE)
-    versionObject->setString("WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
-    versionObject->setString("WPE backend"_s, makeString(wpe_loader_get_loaded_implementation_library_name()));
+    addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
+    addTableRow(versionObject, "WPE backend"_s, makeString(wpe_loader_get_loaded_implementation_library_name()));
 #endif
 
+    stopTable();
     jsonObject->setObject("Version Information"_s, WTFMove(versionObject));
 
     auto displayObject = JSON::Object::create();
+    startTable("Display Information"_s);
 
 #if PLATFORM(GTK)
     auto typeString =
@@ -240,25 +258,27 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 ? "X11"_s :
 #endif
         "Unknown"_s;
-    displayObject->setString("Type"_s, WTFMove(typeString));
+    addTableRow(displayObject, "Type"_s, WTFMove(typeString));
 #endif // PLATFORM(GTK)
 
     auto rect = IntRect(screenRect(nullptr));
-    displayObject->setString("Screen geometry"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
+    addTableRow(displayObject, "Screen geometry"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
 
     rect = IntRect(screenAvailableRect(nullptr));
-    displayObject->setString("Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
-    displayObject->setString("Depth"_s, makeString(screenDepth(nullptr)));
-    displayObject->setString("Bits per color component"_s, makeString(screenDepthPerComponent(nullptr)));
-    displayObject->setString("DPI"_s, makeString(screenDPI()));
+    addTableRow(displayObject, "Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
+    addTableRow(displayObject, "Depth"_s, makeString(screenDepth(nullptr)));
+    addTableRow(displayObject, "Bits per color component"_s, makeString(screenDepthPerComponent(nullptr)));
+    addTableRow(displayObject, "DPI"_s, makeString(screenDPI()));
 
+    stopTable();
     jsonObject->setObject("Display Information"_s, WTFMove(displayObject));
 
     auto hardwareAccelerationObject = JSON::Object::create();
-    hardwareAccelerationObject->setString("Policy"_s, makeString(hardwareAccelerationPolicy(request)));
+    startTable("Hardware Acceleration Information"_s);
+    addTableRow(hardwareAccelerationObject, "Policy"_s, makeString(hardwareAccelerationPolicy(request)));
 
 #if ENABLE(WEBGL)
-    hardwareAccelerationObject->setString("WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
+    addTableRow(hardwareAccelerationObject, "WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
 #endif
 
 #if USE(EGL) || USE(GLX)
@@ -267,15 +287,15 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
     bool isEGL = glContext->isEGLContext();
 
-    hardwareAccelerationObject->setString("API"_s, makeString(openGLAPI(isEGL)));
-    hardwareAccelerationObject->setString("Native interface"_s, isEGL ? "EGL"_s : "GLX"_s);
-    hardwareAccelerationObject->setString("GL_RENDERER"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
-    hardwareAccelerationObject->setString("GL_VENDOR"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
-    hardwareAccelerationObject->setString("GL_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-    hardwareAccelerationObject->setString("GL_SHADING_LANGUAGE_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+    addTableRow(hardwareAccelerationObject, "API"_s, makeString(openGLAPI(isEGL)));
+    addTableRow(hardwareAccelerationObject, "Native interface"_s, isEGL ? "EGL"_s : "GLX"_s);
+    addTableRow(hardwareAccelerationObject, "GL_RENDERER"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
+    addTableRow(hardwareAccelerationObject, "GL_VENDOR"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
+    addTableRow(hardwareAccelerationObject, "GL_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+    addTableRow(hardwareAccelerationObject, "GL_SHADING_LANGUAGE_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
 #if USE(OPENGL_ES)
-    hardwareAccelerationObject->setString("GL_EXTENSIONS"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
+    addTableRow(hardwareAccelerationObject, "GL_EXTENSIONS"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
 #else
     StringBuilder extensionsBuilder;
     GLint numExtensions = 0;
@@ -285,28 +305,29 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             extensionsBuilder.append(' ');
         extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
     }
-    hardwareAccelerationObject->setString("GL_EXTENSIONS"_s, extensionsBuilder.toString());
+    addTableRow(hardwareAccelerationObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
 #endif
 
 #if USE(GLX)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 && !isEGL) {
         auto* x11Display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-        hardwareAccelerationObject->setString("GLX_VERSION"_s, makeString(glXGetClientString(x11Display, GLX_VERSION)));
-        hardwareAccelerationObject->setString("GLX_VENDOR"_s, makeString(glXGetClientString(x11Display, GLX_VENDOR)));
-        hardwareAccelerationObject->setString("GLX_EXTENSIONS"_s, makeString(glXGetClientString(x11Display, GLX_EXTENSIONS)));
+        addTableRow(hardwareAccelerationObject, "GLX_VERSION"_s, makeString(glXGetClientString(x11Display, GLX_VERSION)));
+        addTableRow(hardwareAccelerationObject, "GLX_VENDOR"_s, makeString(glXGetClientString(x11Display, GLX_VENDOR)));
+        addTableRow(hardwareAccelerationObject, "GLX_EXTENSIONS"_s, makeString(glXGetClientString(x11Display, GLX_EXTENSIONS)));
     }
 #endif
 
 #if USE(EGL)
     if (isEGL) {
         auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
-        hardwareAccelerationObject->setString("EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
-        hardwareAccelerationObject->setString("EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
-        hardwareAccelerationObject->setString("EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
+        addTableRow(hardwareAccelerationObject, "EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
+        addTableRow(hardwareAccelerationObject, "EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
+        addTableRow(hardwareAccelerationObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
     }
 #endif
 #endif // USE(EGL) || USE(GLX)
 
+    stopTable();
     jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));
 
     auto infoAsString = jsonObject->toJSONString();
@@ -332,22 +353,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     g_string_append(html, "<button onclick=\"sendToConsole()\">Send to JS console</button>");
 #endif
 
-    for (auto& [header, values] : jsonObject.get()) {
-        g_string_append_printf(html, "<h1>%s</h1><table>", header.utf8().data());
-        auto valuesObject = values->asObject();
-        for (auto& [key, valueObject] : *valuesObject.get()) {
-            auto value = valueObject->asString();
-            g_string_append_printf(html,
-                " <tbody><tr>"
-                "  <td><div class=\"titlename\">%s</div></td>"
-                "  <td>%s</td>"
-                " </tr></tbody>",
-                key.utf8().data(), value.utf8().data());
-        }
-        g_string_append(html, "</table>");
-    }
-
-    g_string_append(html, "</body></html>");
+    g_string_append_printf(html, "%s</body></html>", tablesBuilder.toString().utf8().data());
     gsize streamLength = html->len;
     GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(g_string_free(html, FALSE), streamLength, g_free));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
