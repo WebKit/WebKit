@@ -212,6 +212,11 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
     return adoptRef(*new ArrayBuffer(WTFMove(contents)));
 }
 
+Ref<ArrayBuffer> ArrayBuffer::create(const Vector<uint8_t>& vector)
+{
+    return ArrayBuffer::create(vector.data(), vector.size());
+}
+
 // FIXME: We cannot use this except if the memory comes from the cage.
 // Current this is only used from:
 // - JSGenericTypedArrayView<>::slowDownAndWasteMemory. But in that case, the memory should have already come

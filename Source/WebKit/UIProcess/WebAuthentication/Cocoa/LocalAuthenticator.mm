@@ -66,6 +66,11 @@ static bool shouldUpdateQuery()
 {
     return false;
 }
+static inline RefPtr<ArrayBuffer> alternateBlobIfNecessary(const WebKit::WebAuthenticationRequestData requestData)
+{
+    return nullptr;
+}
+
 #endif
 
 namespace WebKit {
@@ -80,6 +85,8 @@ namespace LocalAuthenticatorInternal {
 const uint16_t credentialIdLength = 20;
 const uint64_t counter = 0;
 const uint8_t aaguid[] = { 0xF2, 0x4A, 0x8E, 0x70, 0xD0, 0xD3, 0xF8, 0x2C, 0x29, 0x37, 0x32, 0x52, 0x3C, 0xC4, 0xDE, 0x5A }; // Randomly generated.
+
+const char kLargeBlobMapKey[] = "largeBlob";
 
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
 {
@@ -191,6 +198,10 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         it = responseMap.find(CBOR(fido::kDisplayNameMapKey));
         if (it != responseMap.end() && it->second.isString())
             response->setDisplayName(it->second.getString());
+
+        it = responseMap.find(CBOR(kLargeBlobMapKey));
+        if (it != responseMap.end() && it->second.isByteString())
+            response->setLargeBlob(ArrayBuffer::create(it->second.getByteString()));
 
         result.uncheckedAppend(WTFMove(response));
     }
@@ -308,17 +319,137 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
     m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
 }
 
-void LocalAuthenticator::processClientExtensions(std::variant<Ref<AuthenticatorAttestationResponse>, Ref<AuthenticatorAssertionResponse>> response)
+std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtension(const WebCore::PublicKeyCredentialCreationOptions& options, WebCore::AuthenticationExtensionsClientOutputs& extensionOutputs)
 {
-    WTF::switchOn(response, [&](const Ref<AuthenticatorAttestationResponse>& response) {
-        auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-        if (creationOptions.extensions && creationOptions.extensions->credProps) {
-            auto extensionOutputs = response->extensions();
-            
-            extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { true /* rk */ };
-            response->setExtensions(WTFMove(extensionOutputs));
+    if (!options.extensions || !options.extensions->largeBlob)
+        return std::nullopt;
+
+    auto largeBlobInput = options.extensions->largeBlob;
+
+    // Step 1.
+    if (largeBlobInput->read || largeBlobInput->write)
+        return WebCore::ExceptionData { NotSupportedError, "Cannot use `read` or `write` with largeBlob during create."_s };
+
+    // Step 2-3.
+    extensionOutputs.largeBlob = AuthenticationExtensionsClientOutputs::LargeBlobOutputs {
+        .supported = true,
+    };
+
+    return std::nullopt;
+}
+
+std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtension(const WebCore::PublicKeyCredentialRequestOptions& options, WebCore::AuthenticationExtensionsClientOutputs& extensionOutputs, const Ref<WebCore::AuthenticatorAssertionResponse>& response)
+{
+    using namespace LocalAuthenticatorInternal;
+    if (!options.extensions || !options.extensions->largeBlob)
+        return std::nullopt;
+
+    auto largeBlobInput = options.extensions->largeBlob;
+    AuthenticationExtensionsClientOutputs::LargeBlobOutputs largeBlobOutput;
+
+    // Step 1.
+    if (!largeBlobInput->support.isNull())
+        return WebCore::ExceptionData { NotSupportedError, "Cannot use `support` with largeBlob during get."_s };
+
+    // Step 2.
+    if (largeBlobInput->read && largeBlobInput->write)
+        return WebCore::ExceptionData { NotSupportedError, "Cannot use `read` and `write` simultaneously with largeBlob."_s };
+
+    // Step 3.
+    if (largeBlobInput->read && largeBlobInput->read.value()) {
+        auto blob = alternateBlobIfNecessary(requestData());
+
+        if (!blob)
+            blob = response->largeBlob();
+
+        if (blob)
+            largeBlobOutput.blob = blob;
+    }
+
+    // Step 4.
+    if (largeBlobInput->write) {
+        auto nsCredentialId = toNSData(response->rawId());
+        NSDictionary *fetchQuery = @{
+            (id)kSecClass: (id)kSecClassKey,
+            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+            (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+            (id)kSecAttrApplicationLabel: nsCredentialId.get(),
+            (id)kSecUseDataProtectionKeychain: @YES,
+            (id)kSecReturnAttributes: @YES,
+            (id)kSecReturnPersistentRef: @YES,
+        };
+
+        CFTypeRef attributesArrayRef = nullptr;
+        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)fetchQuery, &attributesArrayRef);
+        if (status && status != errSecItemNotFound) {
+            ASSERT_NOT_REACHED();
+            return WebCore::ExceptionData { UnknownError, "Attempted to update unknown credential."_s };
         }
-    }, [&](const Ref<AuthenticatorAssertionResponse>& options) { });
+
+        auto retainAttributesArray = adoptCF(attributesArrayRef);
+        NSDictionary *dict = (NSDictionary *)attributesArrayRef;
+
+        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(dict[(id)kSecAttrApplicationTag]));
+        if (!decodedResponse || !decodedResponse->isMap()) {
+            ASSERT_NOT_REACHED();
+            return WebCore::ExceptionData { UnknownError, "Could not read credential."_s };
+        }
+
+        CBOR::MapValue responseMap;
+        for (auto it = decodedResponse->getMap().begin(); it != decodedResponse->getMap().end(); it++)
+            responseMap[it->first.clone()] = it->second.clone();
+
+        responseMap[CBOR(kLargeBlobMapKey)] = CBOR(largeBlobInput->write.value());
+
+        auto outputTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(responseMap)));
+        auto nsOutputTag = toNSData(*outputTag);
+        NSDictionary *updateQuery = @{
+            (id)kSecValuePersistentRef: dict[(id)kSecValuePersistentRef],
+        };
+
+        NSDictionary *updateParams = @{
+            (id)kSecAttrApplicationTag: nsOutputTag.get(),
+        };
+
+        status = SecItemUpdate((__bridge CFDictionaryRef)updateQuery, (__bridge CFDictionaryRef)updateParams);
+        largeBlobOutput.written = status == errSecSuccess;
+    }
+
+    extensionOutputs.largeBlob = largeBlobOutput;
+    return std::nullopt;
+}
+
+std::optional<WebCore::ExceptionData> LocalAuthenticator::processClientExtensions(std::variant<Ref<AuthenticatorAttestationResponse>, Ref<AuthenticatorAssertionResponse>> response)
+{
+    using namespace LocalAuthenticatorInternal;
+    return WTF::switchOn(response, [&](const Ref<AuthenticatorAttestationResponse>& response) -> std::optional<WebCore::ExceptionData> {
+        auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
+        if (!creationOptions.extensions)
+            return std::nullopt;
+
+        auto extensionOutputs = response->extensions();
+        if (creationOptions.extensions->credProps)
+            extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { true /* rk */ };
+
+        auto exception = processLargeBlobExtension(creationOptions, extensionOutputs);
+        if (exception)
+            return exception;
+
+        response->setExtensions(WTFMove(extensionOutputs));
+        return std::nullopt;
+    }, [&](const Ref<AuthenticatorAssertionResponse>& response) -> std::optional<WebCore::ExceptionData> {
+        auto& assertionOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
+        if (!assertionOptions.extensions)
+            return std::nullopt;
+
+        auto extensionOutputs = response->extensions();
+        auto exception = processLargeBlobExtension(assertionOptions, extensionOutputs, response);
+        if (exception)
+            return exception;
+
+        response->setExtensions(WTFMove(extensionOutputs));
+        return std::nullopt;
+    });
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessControlRef accessControlRef, LocalConnection::UserVerification verification, LAContext *context)
@@ -419,8 +550,11 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
         auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports());
-        processClientExtensions(response);
-        receiveRespond(WTFMove(response));
+        auto exception = processClientExtensions(response);
+        if (exception)
+            receiveException(WTFMove(exception.value()));
+        else
+            receiveRespond(WTFMove(response));
         return;
     }
 
@@ -467,8 +601,11 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
 
     deleteDuplicateCredential();
     auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports());
-    processClientExtensions(response);
-    receiveRespond(WTFMove(response));
+    auto exception = processClientExtensions(response);
+    if (exception)
+        receiveException(WTFMove(exception.value()));
+    else
+        receiveRespond(WTFMove(response));
 }
 
 void LocalAuthenticator::getAssertion()
@@ -480,7 +617,6 @@ void LocalAuthenticator::getAssertion()
 
     // The following implements https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
     // Skip Step 2 as requireUserVerification is enforced.
-    // Skip Step 8 as extensions are not supported yet.
     // Skip Step 9 as counter is constantly 0.
     // Step 12 is implicitly captured by all UnknownError exception callbacks.
     // Step 3-5. Unlike the spec, if an allow list is provided and there is no intersection between existing ones and the allow list, we always return NotAllowedError.
@@ -634,8 +770,11 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     // Step 13.
     response->setAuthenticatorData(WTFMove(authData));
     response->setSignature(toArrayBuffer((NSData *)signature.get()));
-    processClientExtensions(response);
-    receiveRespond(WTFMove(response));
+    auto exception = processClientExtensions(response);
+    if (exception)
+        receiveException(WTFMove(exception.value()));
+    else
+        receiveRespond(WTFMove(response));
 }
 
 void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenticationStatus status) const

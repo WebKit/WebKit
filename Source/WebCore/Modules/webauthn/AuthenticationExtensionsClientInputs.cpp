@@ -50,6 +50,28 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
     it = decodedMap.find(cbor::CBORValue("credProps"));
     if (it != decodedMap.end() && it->second.isBool())
         clientInputs.credProps = it->second.getBool();
+    it = decodedMap.find(cbor::CBORValue("largeBlob"));
+    if (it != decodedMap.end() && it->second.isMap()) {
+        const auto& largeBlobMap = it->second.getMap();
+        AuthenticationExtensionsClientInputs::LargeBlobInputs largeBlob;
+        auto largeBlobIt = largeBlobMap.find(cbor::CBORValue("support"));
+
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isString())
+            largeBlob.support = largeBlobIt->second.getString();
+
+        largeBlobIt = largeBlobMap.find(cbor::CBORValue("read"));
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isBool())
+            largeBlob.read = largeBlobIt->second.getBool();
+
+        largeBlobIt = largeBlobMap.find(cbor::CBORValue("write"));
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isByteString()) {
+            RefPtr<ArrayBuffer> write = ArrayBuffer::create(largeBlobIt->second.getByteString());
+            largeBlob.write = BufferSource(write);
+        }
+
+        clientInputs.largeBlob = largeBlob;
+    }
+
     return clientInputs;
 }
 
@@ -62,6 +84,19 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
         clientInputsMap[cbor::CBORValue("googleLegacyAppidSupport")] = cbor::CBORValue(googleLegacyAppidSupport);
     if (credProps)
         clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credProps);
+    if (largeBlob) {
+        cbor::CBORValue::MapValue largeBlobMap;
+        if (!largeBlob->support.isNull())
+            largeBlobMap[cbor::CBORValue("support")] = cbor::CBORValue(largeBlob->support);
+
+        if (largeBlob->read)
+            largeBlobMap[cbor::CBORValue("read")] = cbor::CBORValue(largeBlob->read.value());
+
+        if (largeBlob->write)
+            largeBlobMap[cbor::CBORValue("write")] = cbor::CBORValue(largeBlob->write.value());
+
+        clientInputsMap[cbor::CBORValue("largeBlob")] = cbor::CBORValue(largeBlobMap);
+    }
 
     auto clientInputs = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(clientInputsMap)));
     ASSERT(clientInputs);

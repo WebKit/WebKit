@@ -299,8 +299,10 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     ASSERT(m_pendingCompletionHandler);
 
     auto shouldComplete = std::holds_alternative<Ref<AuthenticatorResponse>>(respond);
-    if (!shouldComplete)
-        shouldComplete = std::get<ExceptionData>(respond).code == InvalidStateError;
+    if (!shouldComplete) {
+        auto code = std::get<ExceptionData>(respond).code;
+        shouldComplete = code == InvalidStateError || code == NotSupportedError;
+    }
     if (shouldComplete) {
         invokePendingCompletionHandler(WTFMove(respond));
         clearStateAsync();

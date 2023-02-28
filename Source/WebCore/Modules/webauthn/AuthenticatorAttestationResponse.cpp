@@ -38,7 +38,7 @@ namespace WebCore {
 
 static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffer> attObj)
 {
-    auto decodedResponse = cbor::CBORReader::read(convertArrayBufferToVector(attObj.ptr()));
+    auto decodedResponse = cbor::CBORReader::read(attObj->toVector());
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
@@ -96,7 +96,7 @@ AuthenticatorResponseData AuthenticatorAttestationResponse::data() const
 
 RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getAuthenticatorData() const
 {
-    auto decodedResponse = cbor::CBORReader::read(convertArrayBufferToVector(m_attestationObject.ptr()));
+    auto decodedResponse = cbor::CBORReader::read(m_attestationObject->toVector());
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return nullptr;
