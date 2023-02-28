@@ -39,13 +39,14 @@ namespace WebCore {
 class CSSPropertyBlendingClient;
 class Document;
 class RenderStyle;
+class Settings;
 
 class CSSPropertyAnimation {
 public:
     static bool isPropertyAnimatable(AnimatableProperty);
     static bool isPropertyAdditiveOrCumulative(AnimatableProperty);
     static bool propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, AnimatableProperty, const RenderStyle& a, const RenderStyle& b);
-    static bool animationOfPropertyIsAccelerated(AnimatableProperty);
+    static bool animationOfPropertyIsAccelerated(AnimatableProperty, const Settings&);
     static bool propertiesEqual(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
     static bool canPropertyBeInterpolated(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);

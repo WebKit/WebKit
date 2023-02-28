@@ -528,6 +528,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Document& document, Element* target, Strong<JSObject>&& keyframes, std::optional<std::variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
+    keyframeEffect->m_document = document;
 
     if (options) {
         OptionalEffectTiming timing;
@@ -588,12 +589,15 @@ KeyframeEffect::KeyframeEffect(Element* target, PseudoId pseudoId)
     , m_target(target)
     , m_pseudoId(pseudoId)
 {
+    if (m_target)
+        m_document = m_target->document();
 }
 
 void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
 {
     m_target = source->m_target;
     m_pseudoId = source->m_pseudoId;
+    m_document = source->m_document;
     m_compositeOperation = source->m_compositeOperation;
     m_iterationCompositeOperation = source->m_iterationCompositeOperation;
 
@@ -1282,7 +1286,11 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
 
 bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID property) const
 {
-    return isRunningAccelerated() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property) && m_blendingKeyframes.properties().contains(property);
+    if (!isRunningAccelerated())
+        return false;
+
+    ASSERT(document());
+    return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
 }
 
 bool KeyframeEffect::isTargetingTransformRelatedProperty() const
@@ -1309,14 +1317,17 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
     bool hasSomeAcceleratedProperties = false;
     bool hasSomeUnacceleratedProperties = false;
 
-    for (auto property : m_blendingKeyframes.properties()) {
-        // If any animated property can be accelerated, then the animation should run accelerated.
-        if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property))
-            hasSomeAcceleratedProperties = true;
-        else
-            hasSomeUnacceleratedProperties = true;
-        if (hasSomeAcceleratedProperties && hasSomeUnacceleratedProperties)
-            break;
+    if (auto* document = this->document()) {
+        auto& settings = document->settings();
+        for (auto property : m_blendingKeyframes.properties()) {
+            // If any animated property can be accelerated, then the animation should run accelerated.
+            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
+                hasSomeAcceleratedProperties = true;
+            else
+                hasSomeUnacceleratedProperties = true;
+            if (hasSomeAcceleratedProperties && hasSomeUnacceleratedProperties)
+                break;
+        }
     }
 
     if (!hasSomeAcceleratedProperties)
@@ -2026,6 +2037,8 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
 
 Document* KeyframeEffect::document() const
 {
+    if (m_document)
+        return m_document.get();
     return m_target ? &m_target->document() : nullptr;
 }
 
@@ -2294,6 +2307,9 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
         if (m_acceleratedPropertiesState == AcceleratedProperties::None)
             return false;
 
+        ASSERT(document());
+        auto& settings = document()->settings();
+
         if (!m_blendingKeyframes.isEmpty()) {
             // We make a list of all animated properties and consider them all
             // implicit until proven otherwise as we iterate through all keyframes.
@@ -2314,11 +2330,11 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // The only properties left are known to be implicit properties, so we must
             // check them for any accelerated property.
             for (auto implicitProperty : implicitZeroProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
                     return true;
             }
             for (auto implicitProperty : implicitOneProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
                     return true;
             }
             return false;
@@ -2351,7 +2367,7 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // At this point all properties left in implicitProperties are known to be implicit,
             // so we must check them for any accelerated property.
             for (auto implicitProperty : implicitProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
                     return true;
             }
         }
@@ -2365,6 +2381,9 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
         if (m_acceleratedPropertiesState == AcceleratedProperties::None)
             return false;
 
+        ASSERT(document());
+        auto& settings = document()->settings();
+
         if (!m_blendingKeyframes.isEmpty()) {
             for (auto& keyframe : m_blendingKeyframes) {
                 // If we find a keyframe with a composite operation, we check whether one
@@ -2372,7 +2391,7 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
                 if (auto keyframeComposite = keyframe.compositeOperation()) {
                     if (*keyframeComposite != CompositeOperation::Replace) {
                         for (auto property : keyframe.properties()) {
-                            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property))
+                            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
                                 return true;
                         }
                     }
@@ -2388,7 +2407,7 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
                 continue;
             auto styleProperties = keyframe.style;
             for (auto property : styleProperties.get()) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property.id()))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property.id(), settings))
                     return true;
             }
         }

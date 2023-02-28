@@ -2407,7 +2407,7 @@ static inline const RenderStyle* computeRenderStyleForProperty(Element& element,
     if (!renderer)
         renderer = element.renderer();
 
-    if (renderer && renderer->isComposited() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(propertyID)) {
+    if (renderer && renderer->isComposited() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(propertyID, element.document().settings())) {
         ownedStyle = renderer->animatedStyle();
         if (pseudoElementSpecifier != PseudoId::None) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.

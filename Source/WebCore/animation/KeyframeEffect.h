@@ -30,6 +30,7 @@
 #include "CSSPropertyBlendingClient.h"
 #include "CompositeOperation.h"
 #include "CompositeOperationOrAuto.h"
+#include "Document.h"
 #include "EffectTiming.h"
 #include "Element.h"
 #include "IterationCompositeOperation.h"
@@ -239,6 +240,8 @@ private:
     bool ticksContinouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
     bool preventsAnimationReadiness() const final;
+
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     AtomString m_keyframesName;
     KeyframeList m_blendingKeyframes { emptyAtom() };

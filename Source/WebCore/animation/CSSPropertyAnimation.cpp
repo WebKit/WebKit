@@ -60,6 +60,7 @@
 #include "QuotesData.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
+#include "Settings.h"
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleFilterImage.h"
@@ -686,7 +687,7 @@ public:
 
     CSSPropertyID property() const { return m_property; }
 
-    virtual bool animationIsAccelerated() const { return false; }
+    virtual bool animationIsAccelerated(const Settings&) const { return false; }
 
 private:
     CSSPropertyID m_property;
@@ -1347,7 +1348,7 @@ public:
     }
 
 private:
-    bool animationIsAccelerated() const final { return true; }
+    bool animationIsAccelerated(const Settings&) const final { return true; }
     bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return this->property() == CSSPropertyTransform; }
 };
 
@@ -1361,7 +1362,7 @@ public:
     }
 
 private:
-    bool animationIsAccelerated() const final { return true; }
+    bool animationIsAccelerated(const Settings&) const final { return true; }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
@@ -1378,7 +1379,7 @@ public:
     }
 
 private:
-    bool animationIsAccelerated() const final
+    bool animationIsAccelerated(const Settings&) const final
     {
         return property() == CSSPropertyFilter
 #if ENABLE(FILTERS_LEVEL_2)
@@ -4103,12 +4104,12 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
     );
 }
 
-bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(AnimatableProperty property)
+bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(AnimatableProperty property, const Settings& settings)
 {
     return WTF::switchOn(property,
-        [] (CSSPropertyID cssProperty) {
+        [&] (CSSPropertyID cssProperty) {
             if (auto* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(cssProperty))
-                return wrapper->animationIsAccelerated();
+                return wrapper->animationIsAccelerated(settings);
             return false;
         }, [] (const AtomString&) { return false; }
     );

@@ -30,6 +30,7 @@
 #include "CSSAnimation.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
+#include "Document.h"
 #include "KeyframeEffect.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
@@ -252,7 +253,7 @@ void KeyframeEffectStack::didApplyCascade(const RenderStyle& styleBeforeCascade,
     HashSet<AnimatableProperty> acceleratedPropertiesOverriddenByCascade;
     if (styleBeforeCascade != styleAfterCascade) {
         for (auto animatedProperty : animatedProperties) {
-            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty))
+            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
                 continue;
             if (!CSSPropertyAnimation::propertiesEqual(animatedProperty, styleBeforeCascade, styleAfterCascade, document))
                 acceleratedPropertiesOverriddenByCascade.add(animatedProperty);
