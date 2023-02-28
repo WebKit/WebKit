@@ -25,8 +25,6 @@
 
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
-(with-filter (state-flag "LockdownModeEnabled")
-    (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 65 67)))
@@ -1399,6 +1397,7 @@
         task_restartable_ranges_synchronize
         thread_get_state_to_user
         thread_resume
+        thread_set_exception_ports
         thread_suspend))
 
 (define (kernel-mig-routine-blocked-in-lockdown-mode)
@@ -1459,9 +1458,6 @@
                 (with telemetry)
                 (with message "kernel mig routine used after launch")
                 (kernel-mig-routine-only-in-use-during-launch)))
-
-        (with-filter (require-not (state-flag "LockdownModeEnabled"))
-            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 #endif
 
         (with-filter (lockdown-mode)
