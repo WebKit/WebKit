@@ -113,3 +113,211 @@ headers: <WebCore/DisplayListItems.h>
 [CustomHeader] class WebCore::DisplayList::StrokePath {
     WebCore::Path path();
 };
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::LineCap : uint8_t {
+    Butt,
+    Round,
+    Square
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::LineJoin : uint8_t {
+    Miter,
+    Round,
+    Bevel
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::StrokeStyle : uint8_t {
+    NoStroke,
+    SolidStroke,
+    DottedStroke,
+    DashedStroke,
+    DoubleStroke,
+    WavyStroke,
+};
+
+[OptionSet, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::TextDrawingMode : uint8_t {
+    Fill,
+    Stroke,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::DecodingMode : uint8_t {
+    Auto,
+    Synchronous,
+    Asynchronous
+};
+
+header: <WebCore/GraphicsTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::CompositeMode {
+    WebCore::CompositeOperator operation;
+    WebCore::BlendMode blendMode;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::DocumentMarkerLineStyleMode : uint8_t {
+    TextCheckingDictationPhraseWithAlternatives,
+    Spelling,
+    Grammar,
+    AutocorrectionReplacement,
+    DictationAlternatives
+};
+
+header: <WebCore/GraphicsTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DocumentMarkerLineStyle {
+    WebCore::DocumentMarkerLineStyleMode mode;
+    WebCore::Color color;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
+
+header: <WebCore/GraphicsTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DropShadow {
+    WebCore::FloatSize offset;
+    float blurRadius;
+    WebCore::Color color;
+    WebCore::ShadowRadiusMode radiusMode;
+};
+
+header: <WebCore/DisplayListItems.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDotsForDocumentMarker {
+    WebCore::FloatRect rect();
+    WebCore::DocumentMarkerLineStyle style();
+};
+
+[Nested] enum class WebCore::ImageOrientation::Orientation : int {
+    FromImage,
+    OriginTopLeft,
+    OriginTopRight,
+    OriginBottomRight,
+    OriginBottomLeft,
+    OriginLeftTop,
+    OriginRightTop,
+    OriginRightBottom,
+    OriginLeftBottom,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageOrientation {
+    WebCore::ImageOrientation::Orientation orientation()
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
+     WebCore::CompositeOperator m_compositeOperator;
+     WebCore::BlendMode m_blendMode;
+     WebCore::DecodingMode m_decodingMode;
+     WebCore::ImageOrientation m_orientation;
+     WebCore::InterpolationQuality m_interpolationQuality;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::CompositeOperator : uint8_t {
+    Clear,
+    Copy,
+    SourceOver,
+    SourceIn,
+    SourceOut,
+    SourceAtop,
+    DestinationOver,
+    DestinationIn,
+    DestinationOut,
+    DestinationAtop,
+    XOR,
+    PlusDarker,
+    PlusLighter,
+    Difference
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::BlendMode : uint8_t {
+    Normal,
+    Multiply,
+    Screen,
+    Darken,
+    Lighten,
+    Overlay,
+    ColorDodge,
+    ColorBurn,
+    HardLight,
+    SoftLight,
+    Difference,
+    Exclusion,
+    Hue,
+    Saturation,
+    Color,
+    Luminosity,
+    PlusDarker,
+    PlusLighter
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GradientSpreadMethod : uint8_t {
+    Pad,
+    Reflect,
+    Repeat
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::InterpolationQuality : uint8_t {
+    Default,
+    DoNotInterpolate,
+    Low,
+    Medium,
+    High
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::LinearData {
+    WebCore::FloatPoint point0;
+    WebCore::FloatPoint point1;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::RadialData {
+    WebCore::FloatPoint point0;
+    WebCore::FloatPoint point1;
+    float startRadius;
+    float endRadius;
+    float aspectRatio;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::ConicData {
+    WebCore::FloatPoint point0;
+    float angleRadians;
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
+    std::variant<WebCore::Gradient::LinearData, WebCore::Gradient::RadialData, WebCore::Gradient::ConicData> data();
+    WebCore::ColorInterpolationMethod colorInterpolationMethod();
+    WebCore::GradientSpreadMethod spreadMethod();
+    WebCore::GradientColorStops stops();
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush::Brush::LogicalGradient {
+    Ref<WebCore::Gradient> gradient;
+    WebCore::AffineTransform spaceTransform;
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Pattern::Parameters {
+    bool repeatX;
+    bool repeatY;
+    WebCore::AffineTransform patternSpaceTransform;
+}
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Pattern {
+    WebCore::SourceImage tileImage();
+    WebCore::Pattern::Parameters parameters();
+}
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush::Brush {
+    std::variant<WebCore::SourceBrush::Brush::LogicalGradient, Ref<WebCore::Pattern>> brush;
+}
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush {
+    WebCore::Color color();
+    std::optional<WebCore::SourceBrush::Brush> brush();
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
+    uint8_t colorData().resolved().red
+    uint8_t colorData().resolved().green
+    uint8_t colorData().resolved().blue
+    uint8_t colorData().resolved().alpha
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineStrokeColor {
+    uint8_t colorData().resolved().red
+    uint8_t colorData().resolved().green
+    uint8_t colorData().resolved().blue
+    uint8_t colorData().resolved().alpha
+}
