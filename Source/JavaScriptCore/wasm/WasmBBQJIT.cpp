@@ -6761,10 +6761,13 @@ public:
                     // will never be live across a call. So far, this is probably true, but it's fragile. Probably the fix here is to
                     // exclude all possible return value registers from ScratchScope so we can guarantee there's never any interference.
                     currentBinding = RegisterBinding::none();
-                    if (returnLocation.isGPR())
-                        m_gprSet.add(returnLocation.asGPR(), Width::Width64);
-                    else
+                    if (returnLocation.isGPR()) {
+                        ASSERT(m_validGPRs.contains(returnLocation.asGPR(), IgnoreVectors));
+                        m_gprSet.add(returnLocation.asGPR(), IgnoreVectors);
+                    } else {
+                        ASSERT(m_validFPRs.contains(returnLocation.asFPR(), Width::Width128));
                         m_fprSet.add(returnLocation.asFPR(), Width::Width128);
+                    }
                 }
             }
             bind(result, returnLocation);
@@ -8605,10 +8608,12 @@ private:
         // Unbind a value from a location. Doesn't touch the LRU, but updates the register set
         // and local/temp tables accordingly.
         if (loc.isFPR()) {
+            ASSERT(m_validFPRs.contains(loc.asFPR(), Width::Width128));
             m_fprSet.add(loc.asFPR(), Width::Width128);
             m_fprBindings[loc.asFPR()] = RegisterBinding::none();
         } else if (loc.isGPR()) {
-            m_gprSet.add(loc.asGPR(), Width::Width64);
+            ASSERT(m_validGPRs.contains(loc.asGPR(), IgnoreVectors));
+            m_gprSet.add(loc.asGPR(), IgnoreVectors);
             m_gprBindings[loc.asGPR()] = RegisterBinding::none();
         }
         if (value.isLocal())
@@ -8741,7 +8746,7 @@ private:
 
     void clobber(RegisterID gpr)
     {
-        if (m_validGPRs.contains(gpr, Width::Width64) && !m_gprSet.contains(gpr, Width::Width64)) {
+        if (m_validGPRs.contains(gpr, IgnoreVectors) && !m_gprSet.contains(gpr, IgnoreVectors)) {
             RegisterBinding& binding = m_gprBindings[gpr];
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tClobbering GPR ", MacroAssembler::gprName(gpr), " currently bound to ", binding);
@@ -8817,6 +8822,8 @@ private:
     private:
         RegisterID bindGPRToScratch(RegisterID reg)
         {
+            if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
+                return reg;
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
             if (m_preserved.contains(reg, Width::Width64) && !binding.isNone()) {
                 if (UNLIKELY(Options::verboseBBQJITAllocation()))
@@ -8834,6 +8841,8 @@ private:
 
         FPRegisterID bindFPRToScratch(FPRegisterID reg)
         {
+            if (!m_generator.m_validFPRs.contains(reg, Width::Width128))
+                return reg;
             RegisterBinding& binding = m_generator.m_fprBindings[reg];
             if (m_preserved.contains(reg, Width::Width128) && !binding.isNone()) {
                 if (UNLIKELY(Options::verboseBBQJITAllocation()))
@@ -8851,6 +8860,8 @@ private:
 
         void unbindGPRFromScratch(RegisterID reg)
         {
+            if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
+                return;
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReleasing GPR ", MacroAssembler::gprName(reg));
@@ -8864,6 +8875,8 @@ private:
 
         void unbindFPRFromScratch(FPRegisterID reg)
         {
+            if (!m_generator.m_validFPRs.contains(reg, Width::Width128))
+                return;
             RegisterBinding& binding = m_generator.m_fprBindings[reg];
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReleasing FPR ", MacroAssembler::fprName(reg));
