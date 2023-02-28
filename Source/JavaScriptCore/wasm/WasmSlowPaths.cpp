@@ -269,6 +269,32 @@ WASM_SLOW_PATH_DECL(loop_osr)
             buffer[index++] = READ(reg).encodedJSValue();
 
         WASM_RETURN_TWO(buffer, bbqCallee->loopEntrypoints()[osrEntryData.loopIndex].taggedPtr());
+    } else if (Options::wasmLLIntTiersUpToBBQ() && Options::useSinglePassBBQJIT()) {
+        if (!jitCompileAndSetHeuristics(callee, instance))
+            WASM_RETURN_TWO(nullptr, nullptr);
+
+        Wasm::BBQCallee* bbqCallee;
+        {
+            Locker locker { instance->calleeGroup()->m_lock };
+            bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
+        }
+        RELEASE_ASSERT(bbqCallee);
+
+        size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
+        RELEASE_ASSERT(osrEntryScratchBufferSize >= osrEntryData.values.size());
+        uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
+        if (!buffer)
+            WASM_RETURN_TWO(nullptr, nullptr);
+
+        uint32_t index = 0;
+        buffer[index ++] = osrEntryData.loopIndex; // First entry is the loop index.
+        for (VirtualRegister reg : osrEntryData.values)
+            buffer[index++] = READ(reg).encodedJSValue();
+
+        auto sharedLoopEntrypoint = bbqCallee->sharedLoopEntrypoint();
+        RELEASE_ASSERT(sharedLoopEntrypoint);
+
+        WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
     } else {
         const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
             if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)

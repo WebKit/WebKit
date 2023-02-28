@@ -80,6 +80,11 @@ struct PatchpointExceptionHandle {
 static inline void computeExceptionHandlerAndLoopEntrypointLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
 {
     if (!context.procedure) {
+        ASSERT(Options::useSinglePassBBQJIT());
+
+        for (auto label : function->bbqLoopEntrypoints)
+            loopEntrypoints.append(linkBuffer.locationOf<WasmEntryPtrTag>(label));
+
         unsigned index = 0;
         for (const UnlinkedHandlerInfo& handlerInfo : function->exceptionHandlers) {
             if (handlerInfo.m_type == HandlerType::Delegate) {

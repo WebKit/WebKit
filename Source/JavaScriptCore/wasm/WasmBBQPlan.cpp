@@ -184,8 +184,12 @@ void BBQPlan::work(CompilationEffort effort)
         WTFMove(context.wasmEntrypointByproducts));
 
     CodePtr<WasmEntryPtrTag> entrypoint;
+    std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint;
+    if (Options::useSinglePassBBQJIT() && function->bbqSharedLoopEntrypoint)
+        sharedLoopEntrypoint = linkBuffer.locationOf<WasmEntryPtrTag>(*function->bbqSharedLoopEntrypoint);
+
     {
-        callee->setEntrypoint(WTFMove(function->entrypoint), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations), WTFMove(loopEntrypointLocations), function->osrEntryScratchBufferSize);
+        callee->setEntrypoint(WTFMove(function->entrypoint), WTFMove(unlinkedWasmToWasmCalls), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(exceptionHandlerLocations), WTFMove(loopEntrypointLocations), sharedLoopEntrypoint, function->osrEntryScratchBufferSize);
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)
@@ -276,7 +280,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     if (!planGeneratesLoopOSREntrypoints(m_moduleInformation.get())) {
 #if ENABLE(WEBASSEMBLY_BBQJIT)
         if (Options::useSinglePassBBQJIT())
-            parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
+            parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
         else
 #endif
             parseAndCompileResult = parseAndCompileB3(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
@@ -372,7 +376,7 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
         }
 
         InternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
-        wasmEntrypointCallee->setEntrypoint(WTFMove(function->entrypoint), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]), WTFMove(m_allLoopEntrypoints[internalFunctionIndex]), function->osrEntryScratchBufferSize);
+        wasmEntrypointCallee->setEntrypoint(WTFMove(function->entrypoint), WTFMove(m_unlinkedWasmToWasmCalls[internalFunctionIndex]), WTFMove(function->stackmaps), WTFMove(function->exceptionHandlers), WTFMove(m_exceptionHandlerLocations[internalFunctionIndex]), WTFMove(m_allLoopEntrypoints[internalFunctionIndex]), { }, function->osrEntryScratchBufferSize);
 
         if (m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap)
             CalleeRegistry::singleton().addPCToCodeOriginMap(wasmEntrypointCallee.get(), WTFMove(m_compilationContexts[internalFunctionIndex].pcToCodeOriginMap));

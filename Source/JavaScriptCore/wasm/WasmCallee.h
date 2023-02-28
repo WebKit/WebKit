@@ -235,6 +235,8 @@ private:
 
 class BBQCallee final : public OptimizingJITCallee {
 public:
+    static constexpr unsigned extraOSRValuesForLoopIndex = 1;
+
     static Ref<BBQCallee> create(size_t index, std::pair<const Name*,
         RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, SavedFPWidth savedFPWidth)
     {
@@ -258,13 +260,15 @@ public:
 
     TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
 
+    std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint() { return m_sharedLoopEntrypoint; }
     const Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints() { return m_loopEntrypoints; }
 
     unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
     SavedFPWidth savedFPWidth() const { return m_savedFPWidth; }
 
-    void setEntrypoint(Wasm::Entrypoint&& entrypoint, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations, Vector<CodeLocationLabel<WasmEntryPtrTag>>&& loopEntrypoints, unsigned osrEntryScratchBufferSize)
+    void setEntrypoint(Wasm::Entrypoint&& entrypoint, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations, Vector<CodeLocationLabel<WasmEntryPtrTag>>&& loopEntrypoints, std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint, unsigned osrEntryScratchBufferSize)
     {
+        m_sharedLoopEntrypoint = sharedLoopEntrypoint;
         m_loopEntrypoints = WTFMove(loopEntrypoints);
         m_osrEntryScratchBufferSize = osrEntryScratchBufferSize;
         OptimizingJITCallee::setEntrypoint(WTFMove(entrypoint), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations));
@@ -281,6 +285,7 @@ private:
     RefPtr<OSREntryCallee> m_osrEntryCallee;
     RefPtr<OMGCallee> m_replacement;
     std::unique_ptr<TierUpCount> m_tierUpCount;
+    std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
     Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;
     unsigned m_osrEntryScratchBufferSize { 0 };
     bool m_didStartCompilingOSREntryCallee { false };
