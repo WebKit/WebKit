@@ -462,6 +462,9 @@ public:
 #if PLATFORM(COCOA)
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) = 0;
     virtual void layerTreeCommitComplete() = 0;
+
+    virtual double minimumZoomScale() const = 0;
+    virtual WebCore::FloatRect documentRect() const = 0;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -485,8 +488,7 @@ public:
     virtual void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&) = 0;
     virtual void disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier) = 0;
     virtual void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel) = 0;
-    virtual double minimumZoomScale() const = 0;
-    virtual WebCore::FloatRect documentRect() const = 0;
+
     virtual void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) = 0;
     virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
     virtual void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) = 0;

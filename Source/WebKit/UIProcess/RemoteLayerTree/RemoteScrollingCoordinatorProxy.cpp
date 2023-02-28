@@ -64,6 +64,11 @@ ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
     return m_scrollingTree->rootNode()->scrollingNodeID();
 }
 
+FloatPoint RemoteScrollingCoordinatorProxy::mainFrameScrollPosition() const
+{
+    return m_scrollingTree->mainFrameScrollPosition();
+}
+
 const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() const
 {
     auto* drawingArea = m_webPageProxy.drawingArea();
@@ -256,11 +261,6 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
 {
     auto* rootNode = m_scrollingTree->rootNode();
     return rootNode && rootNode->canHaveScrollbars();
-}
-
-ScrollingTreeScrollingNode* RemoteScrollingCoordinatorProxy::rootNode() const
-{
-    return m_scrollingTree->rootNode();
 }
 
 void RemoteScrollingCoordinatorProxy::displayDidRefresh(PlatformDisplayID displayID)

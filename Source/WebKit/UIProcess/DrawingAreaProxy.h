@@ -96,8 +96,8 @@ public:
     virtual void sizeToContentAutoSizeMaximumSizeDidChange() { }
     virtual void windowKindDidChange() { }
 
-    virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
-    virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
+    virtual void adjustTransientZoom(double, WebCore::FloatPoint, WebCore::FloatPoint) { }
+    virtual void commitTransientZoom(double, WebCore::FloatPoint, WebCore::FloatPoint) { }
 
 #if PLATFORM(MAC)
     virtual void didChangeViewExposedRect();

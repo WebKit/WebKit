@@ -136,6 +136,10 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
     }
+
+    m_lastCommittedTotalContentsSize = transaction.contentsSize();
+    m_lastCommittedpageScaleFactor = transaction.pageScaleFactor();
+    m_lastCommittedScrollPosition = m_webPageProxy.scrollingCoordinatorProxy()->mainFrameScrollPosition();
 }
 
 static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix& transform)
@@ -185,7 +189,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeTransientZoomFromLayer()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, FloatPoint origin)
+void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, FloatPoint origin, FloatPoint zoomOriginInContentCoordinates)
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom - scale " << scale << " origin " << origin);
 
@@ -194,14 +198,17 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
 
     applyTransientZoomToLayer();
 
-    if (auto* rootNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(m_webPageProxy.scrollingCoordinatorProxy()->rootNode()))
-        m_webPageProxy.adjustLayersForLayoutViewport(rootNode->currentScrollPosition(), rootNode->layoutViewport(), scale);
+    auto unobscuredContentRect = computeUnobscuredContentRect(scale, origin, zoomOriginInContentCoordinates);
+    auto currentScrollPosition = unobscuredContentRect.location();
+    auto currentLayoutViewport = m_webPageProxy.computeLayoutViewportRect(unobscuredContentRect, unobscuredContentRect, m_webPageProxy.layoutViewportRect(), scale);
+
+    m_webPageProxy.adjustLayersForLayoutViewport(currentScrollPosition, currentLayoutViewport, scale);
     
     // FIXME: Only send these messages as fast as the web process is responding to them.
     m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
+void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin, FloatPoint zoomOriginInContentCoordinates)
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - scale " << scale << " origin " << origin);
 
@@ -238,6 +245,21 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     [CATransaction commit];
     if (layerForPageScale && renderViewAnimationCA) { }
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+WebCore::FloatPoint RemoteLayerTreeDrawingAreaProxyMac::currentScrollPosition() const
+{
+    return m_webPageProxy.scrollingCoordinatorProxy()->mainFrameScrollPosition();
+}
+
+FloatRect RemoteLayerTreeDrawingAreaProxyMac::computeUnobscuredContentRect(double scale, WebCore::FloatPoint origin, FloatPoint zoomOriginInContentCoordinates)
+{
+    auto scrollPosition = currentScrollPosition();
+    auto unobscuredRect = FloatRect { scrollPosition, FloatSize(size()) };
+
+    LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac " << this << " computeUnobscuredContentRect returning " << unobscuredRect);
+
+    return unobscuredRect;
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()

@@ -195,12 +195,12 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
     }, m_identifier);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)
+void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin, FloatPoint)
 {
     m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, FloatPoint origin)
+void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, FloatPoint origin, FloatPoint)
 {
     m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
 }

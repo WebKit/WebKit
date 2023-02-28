@@ -38,6 +38,7 @@
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
+#import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "StringUtilities.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
@@ -761,6 +762,25 @@ void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerT
 
 void PageClientImpl::layerTreeCommitComplete()
 {
+}
+
+double PageClientImpl::minimumZoomScale() const
+{
+    // FIXME: Get from ViewGestureController
+    return 1;
+}
+
+WebCore::FloatRect PageClientImpl::documentRect() const
+{
+    auto webPageProxy = m_webView.get()->_page;
+    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy->drawingArea());
+    if (!drawingArea)
+        return { };
+
+    ASSERT(drawingArea->isRemoteLayerTreeDrawingAreaProxyMac());
+    auto* drawingAreaMac = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(drawingArea);
+    
+    return FloatRect { { }, FloatSize { drawingAreaMac->lastCommittedTotalContentsSize() } };
 }
 
 #if ENABLE(FULLSCREEN_API)

@@ -50,6 +50,8 @@ public:
 
     DisplayLink& displayLink();
 
+    WebCore::IntSize lastCommittedTotalContentsSize() const { return m_lastCommittedTotalContentsSize; }
+
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
@@ -58,8 +60,8 @@ private:
 
     void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
 
-    void adjustTransientZoom(double, WebCore::FloatPoint) override;
-    void commitTransientZoom(double, WebCore::FloatPoint) override;
+    void adjustTransientZoom(double scale, WebCore::FloatPoint origin, WebCore::FloatPoint zoomOriginInContentCoordinates) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin, WebCore::FloatPoint zoomOriginInContentCoordinates) override;
     
     void applyTransientZoomToLayer();
     void removeTransientZoomFromLayer();
@@ -73,6 +75,9 @@ private:
     void didChangeViewExposedRect() override;
 
     void setDisplayLinkWantsFullSpeedUpdates(bool) override;
+    
+    WebCore::FloatPoint currentScrollPosition() const;
+    WebCore::FloatRect computeUnobscuredContentRect(double scale, WebCore::FloatPoint origin, WebCore::FloatPoint zoomOriginInContentCoordinates);
 
     void removeObserver(std::optional<DisplayLinkObserverID>&);
 
@@ -92,6 +97,11 @@ private:
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
     std::optional<double> m_transientZoomScale;
     std::optional<WebCore::FloatPoint> m_transientZoomOrigin;
+    
+    // FIXME: Need to clear these on WebProcess crash.
+    WebCore::IntSize m_lastCommittedTotalContentsSize;
+    WebCore::FloatPoint m_lastCommittedScrollPosition;
+    double m_lastCommittedpageScaleFactor { 1 };
 };
 
 } // namespace WebKit
