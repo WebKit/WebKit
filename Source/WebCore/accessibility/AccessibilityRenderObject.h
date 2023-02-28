@@ -122,7 +122,7 @@ public:
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String text() const override;
-    int textLength() const override;
+    unsigned textLength() const override;
     String selectedText() const override;
     String accessKey() const override;
 

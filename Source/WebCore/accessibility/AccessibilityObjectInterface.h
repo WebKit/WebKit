@@ -1139,7 +1139,7 @@ public:
     virtual String stringValue() const = 0;
     virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const = 0;
     virtual String text() const = 0;
-    virtual int textLength() const = 0;
+    virtual unsigned textLength() const = 0;
 #if PLATFORM(COCOA)
     enum class SpellCheck : bool { No, Yes };
     virtual RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const = 0;
@@ -1242,9 +1242,11 @@ public:
     virtual std::optional<String> attributeValue(const String&) const = 0;
     virtual AtomString tagName() const = 0;
 
+    virtual std::optional<SimpleRange> simpleRange() const = 0;
     virtual VisiblePositionRange visiblePositionRange() const = 0;
+    virtual AXTextMarkerRange textMarkerRange() const = 0;
+
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const = 0;
-    virtual std::optional<SimpleRange> elementRange() const = 0;
     virtual VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const = 0;
     virtual VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange positionOfRightWord(const VisiblePosition&) const = 0;

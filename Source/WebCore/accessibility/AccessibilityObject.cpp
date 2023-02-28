@@ -31,6 +31,7 @@
 
 #include "AXLogger.h"
 #include "AXObjectCache.h"
+#include "AXTextMarker.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"
@@ -732,12 +733,17 @@ std::optional<SimpleRange> AccessibilityObject::selectionRange() const
     return { { { document, 0 }, { document, 0 } } };
 }
 
-std::optional<SimpleRange> AccessibilityObject::elementRange() const
+std::optional<SimpleRange> AccessibilityObject::simpleRange() const
 {
-    auto node = this->node();
+    auto* node = this->node();
     if (!node)
-        return { };
+        return std::nullopt;
     return AXObjectCache::rangeForNodeContents(*node);
+}
+
+AXTextMarkerRange AccessibilityObject::textMarkerRange() const
+{
+    return simpleRange();
 }
 
 Vector<BoundaryPoint> AccessibilityObject::previousLineStartBoundaryPoints(const VisiblePosition& startingPosition, const SimpleRange& targetRange, unsigned positionsToRetrieve) const
@@ -796,7 +802,7 @@ bool AccessibilityObject::boundaryPointsContainedInRect(const BoundaryPoint& sta
 
 std::optional<SimpleRange> AccessibilityObject::visibleCharacterRange() const
 {
-    auto range = elementRange();
+    auto range = simpleRange();
     auto contentRect = unobscuredContentRect();
     auto elementRect = snappedIntRect(this->elementRect());
     auto inputs = std::make_tuple(range, contentRect, elementRect);
@@ -934,7 +940,7 @@ Vector<SimpleRange> AccessibilityObject::findTextRanges(const AccessibilitySearc
     if (criteria.start == AccessibilitySearchTextStartFrom::Selection)
         range = selectionRange();
     else
-        range = elementRange();
+        range = simpleRange();
     if (!range)
         return { };
 

@@ -160,6 +160,10 @@ public:
     operator AXTextMarkerRangeRef() const { return platformData().autorelease(); }
 #endif
 
+#if PLATFORM(COCOA)
+    std::optional<NSRange> nsRange() const;
+#endif
+
     AXTextMarker start() const { return m_start; }
     AXTextMarker end() const { return m_end; }
 private:
