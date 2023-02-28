@@ -70,37 +70,55 @@ struct DMABufObject {
 template<class Encoder>
 void DMABufObject::encode(Encoder& encoder) &&
 {
-    encoder << handle << uint32_t(format.fourcc) << uint32_t(colorSpace) << width << height;
-    encoder << WTFMove(releaseFlag.fd);
-
-    for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
-        encoder << WTFMove(fd[i]);
-        encoder << offset[i] << stride[i] << modifierPresent[i] << modifierValue[i];
-    }
+    encoder << handle << uint32_t(format.fourcc) << uint32_t(colorSpace) << width << height
+        << WTFMove(releaseFlag) << WTFMove(fd) << offset << stride << modifierPresent << modifierValue;
 }
 
 template<class Decoder>
 std::optional<DMABufObject> DMABufObject::decode(Decoder& decoder)
 {
-    std::optional<uintptr_t> handle;
-    decoder >> handle;
+    auto handle = decoder.template decode<uintptr_t>();
     if (!handle)
         return std::nullopt;
-    std::optional<uint32_t> fourcc;
-    decoder >> fourcc;
+
+    auto fourcc = decoder.template decode<uint32_t>();
     if (!fourcc)
         return std::nullopt;
-    std::optional<uint32_t> colorSpace;
-    decoder >> colorSpace;
+
+    auto colorSpace = decoder.template decode<uint32_t>();
     if (!colorSpace)
         return std::nullopt;
-    std::optional<uint32_t> width;
-    decoder >> width;
+
+    auto width = decoder.template decode<uint32_t>();
     if (!width)
         return std::nullopt;
-    std::optional<uint32_t> height;
-    decoder >> height;
+
+    auto height = decoder.template decode<uint32_t>();
     if (!height)
+        return std::nullopt;
+
+    auto releaseFlag = decoder.template decode<DMABufReleaseFlag>();
+    if (!releaseFlag)
+        return std::nullopt;
+
+    auto fd = decoder.template decode<std::array<UnixFileDescriptor, DMABufFormat::c_maxPlanes>>();
+    if (!fd)
+        return std::nullopt;
+
+    auto offset = decoder.template decode<std::array<size_t, DMABufFormat::c_maxPlanes>>();
+    if (!offset)
+        return std::nullopt;
+
+    auto stride = decoder.template decode<std::array<uint32_t, DMABufFormat::c_maxPlanes>>();
+    if (!stride)
+        return std::nullopt;
+
+    auto modifierPresent = decoder.template decode<std::array<bool, DMABufFormat::c_maxPlanes>>();
+    if (!modifierPresent)
+        return std::nullopt;
+
+    auto modifierValue = decoder.template decode<std::array<uint64_t, DMABufFormat::c_maxPlanes>>();
+    if (!modifierValue)
         return std::nullopt;
 
     DMABufObject dmabufObject(*handle);
@@ -108,45 +126,12 @@ std::optional<DMABufObject> DMABufObject::decode(Decoder& decoder)
     dmabufObject.colorSpace = DMABufColorSpace { *colorSpace };
     dmabufObject.width = *width;
     dmabufObject.height = *height;
-
-    std::optional<WTF::UnixFileDescriptor> releaseFlag;
-    decoder >> releaseFlag;
-    if (!releaseFlag)
-        return std::nullopt;
-    dmabufObject.releaseFlag.fd = WTFMove(*releaseFlag);
-
-    for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
-        std::optional<WTF::UnixFileDescriptor> fd;
-        decoder >> fd;
-        if (!fd)
-            return std::nullopt;
-        dmabufObject.fd[i] = WTFMove(*fd);
-
-        std::optional<size_t> offset;
-        decoder >> offset;
-        if (!offset)
-            return std::nullopt;
-        dmabufObject.offset[i] = *offset;
-
-        std::optional<uint32_t> stride;
-        decoder >> stride;
-        if (!stride)
-            return std::nullopt;
-        dmabufObject.stride[i] = *stride;
-
-        std::optional<bool> modifierPresent;
-        decoder >> modifierPresent;
-        if (!modifierPresent)
-            return std::nullopt;
-        dmabufObject.modifierPresent[i] = *modifierPresent;
-
-        std::optional<uint64_t> modifierValue;
-        decoder >> modifierValue;
-        if (!modifierValue)
-            return std::nullopt;
-        dmabufObject.modifierValue[i] = *modifierValue;
-    }
-
+    dmabufObject.releaseFlag = WTFMove(*releaseFlag);
+    dmabufObject.fd = WTFMove(*fd);
+    dmabufObject.offset = WTFMove(*offset);
+    dmabufObject.stride = WTFMove(*stride);
+    dmabufObject.modifierPresent = WTFMove(*modifierPresent);
+    dmabufObject.modifierValue = WTFMove(*modifierValue);
     return dmabufObject;
 }
 
