@@ -51,12 +51,14 @@ class FeatureDefinesSearch(object):
         """ Retrieves any references to the define found. """
         return self._defines[define]
 
-    def single_use_definitions(self):
-        definitions = set()
+    def definitions_count(self):
+        definitions = {}
         for k, v in self._defines.items():
-            if len(v) == 1:
-                definitions.add(k)
-        
+            if k not in definitions:
+                definitions[k] = len(v)
+            
+            definitions[k] = definitions[k] + len(v)
+
         return definitions
 
     @abstractmethod
