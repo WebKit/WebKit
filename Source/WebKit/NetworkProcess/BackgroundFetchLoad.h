@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(SERVICE_WORKER)
+
 #include "NetworkDataTask.h"
 #include "NetworkResourceLoadParameters.h"
 #include <WebCore/BackgroundFetchRecordLoader.h>
@@ -84,3 +86,5 @@ private:
 };
 
 }
+
+#endif

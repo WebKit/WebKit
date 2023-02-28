@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BackgroundFetchLoad.h"
 
+#if ENABLE(SERVICE_WORKER)
+
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "Logging.h"
@@ -217,3 +219,5 @@ const URL& BackgroundFetchLoad::currentURL() const
 } // namespace WebKit
 
 #undef BGLOAD_RELEASE_LOG
+
+#endif
