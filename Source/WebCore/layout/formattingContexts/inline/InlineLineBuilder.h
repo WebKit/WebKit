@@ -52,8 +52,7 @@ public:
     struct LineContent {
         InlineItemRange committedRange;
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        FloatList placedFloats;
-        FloatList overflowingFloats;
+        FloatList suspendedFloats;
         bool hasIntrusiveFloat { false };
         InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
@@ -113,8 +112,8 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox);
-    enum LineBoxConstraintApplies : uint8_t { Yes, No };
-    bool tryPlacingFloatBox(const InlineItem&, LineBoxConstraintApplies);
+    enum MayOverConstrainLine : uint8_t { Yes, No };
+    bool tryPlacingFloatBox(const InlineItem&, MayOverConstrainLine);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
@@ -132,7 +131,9 @@ private:
 
     TextDirection inlineBaseDirectionForLineContent() const;
     InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
-    bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, LineBoxConstraintApplies) const;
+
+    bool isFloatLayoutSuspended() const { return !m_suspendedFloats.isEmpty(); }
+    bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
@@ -160,7 +161,7 @@ private:
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     const InlineItems& m_inlineItems;
     FloatList m_placedFloats;
-    FloatList m_overflowingFloats;
+    FloatList m_suspendedFloats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;

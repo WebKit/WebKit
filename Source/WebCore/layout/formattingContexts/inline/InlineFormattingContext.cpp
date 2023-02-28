@@ -266,12 +266,12 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const InlineI
 
         auto lineContentEnd = lineContent.committedRange.end;
         leadingInlineItemPosition = leadingInlineItemPositionForNextLine(lineContentEnd, previousLineEnd, needsLayoutRange.end);
-        auto isLastLine = leadingInlineItemPosition == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty();
+        auto isLastLine = leadingInlineItemPosition == needsLayoutRange.end && lineContent.suspendedFloats.isEmpty();
         if (isLastLine)
             break;
 
         lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext);
-        previousLine = PreviousLine { lineIndex, lineContent.trailingOverflowingContentWidth, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, WTFMove(lineContent.overflowingFloats) };
+        previousLine = PreviousLine { lineIndex, lineContent.trailingOverflowingContentWidth, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, WTFMove(lineContent.suspendedFloats) };
         previousLineEnd = lineContentEnd;
     }
 }
@@ -506,9 +506,9 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(size_t lineIndex
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(formattingState.lines().last().lineBoxRect(), root().style().writingMode());
 }
 
-void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft)
+void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& suspendedFloats, LayoutPoint topleft)
 {
-    if (needsDisplayContentRange.isEmpty() && overflowingFloats.isEmpty())
+    if (needsDisplayContentRange.isEmpty() && suspendedFloats.isEmpty())
         return;
 
     auto& inlineItems = formattingState().inlineItems();
