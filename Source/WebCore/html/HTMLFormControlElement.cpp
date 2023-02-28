@@ -27,6 +27,7 @@
 
 #include "Autofill.h"
 #include "ControlStates.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"

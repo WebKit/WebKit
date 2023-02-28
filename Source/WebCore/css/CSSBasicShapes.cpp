@@ -32,6 +32,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"

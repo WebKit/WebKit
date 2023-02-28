@@ -23,6 +23,10 @@
 #include "ExceptionOr.h"
 #include "SVGPropertyTraits.h"
 
+namespace IPC {
+template<typename T, typename> struct ArgumentCoder;
+}
+
 namespace WebCore {
 
 class AffineTransform;

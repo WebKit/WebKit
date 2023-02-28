@@ -29,6 +29,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePair.h"
 
 #include <utility>
 

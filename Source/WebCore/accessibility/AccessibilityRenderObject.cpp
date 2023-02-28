@@ -41,6 +41,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"

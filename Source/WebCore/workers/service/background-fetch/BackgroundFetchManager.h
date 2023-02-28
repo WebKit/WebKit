@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchRegistration.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/RefCounted.h>

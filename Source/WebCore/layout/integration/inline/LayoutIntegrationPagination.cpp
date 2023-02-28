@@ -27,6 +27,7 @@
 #include "LayoutIntegrationPagination.h"
 
 #include "FontCascade.h"
+#include "InlineIteratorLineBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderTableCell.h"
 

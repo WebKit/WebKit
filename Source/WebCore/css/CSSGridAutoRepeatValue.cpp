@@ -31,6 +31,7 @@
 #include "config.h"
 #include "CSSGridAutoRepeatValue.h"
 
+#include "CSSValueKeywords.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLTextAreaElement.h"

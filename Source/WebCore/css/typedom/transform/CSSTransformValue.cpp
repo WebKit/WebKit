@@ -41,6 +41,7 @@
 #include "CSSTransformComponent.h"
 #include "CSSTransformListValue.h"
 #include "CSSTranslate.h"
+#include "CSSValueKeywords.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>

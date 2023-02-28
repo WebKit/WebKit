@@ -34,6 +34,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"

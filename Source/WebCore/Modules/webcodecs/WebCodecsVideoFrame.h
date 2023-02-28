@@ -50,6 +50,8 @@ class OffscreenCanvas;
 class SVGImageElement;
 class VideoColorSpace;
 
+template<typename> class ExceptionOr;
+
 class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public ContextDestructionObserver {
 public:
     ~WebCodecsVideoFrame();

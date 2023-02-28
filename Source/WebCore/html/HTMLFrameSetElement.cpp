@@ -27,7 +27,7 @@
 #include "CSSPropertyNames.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"

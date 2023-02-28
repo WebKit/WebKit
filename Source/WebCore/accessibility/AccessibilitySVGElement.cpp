@@ -29,7 +29,7 @@
 #include "AccessibilitySVGElement.h"
 
 #include "AXObjectCache.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "HTMLNames.h"
 #include "RenderIterator.h"
 #include "RenderText.h"

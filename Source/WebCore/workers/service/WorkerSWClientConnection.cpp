@@ -30,6 +30,7 @@
 
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchOptions.h"
+#include "BackgroundFetchRecordInformation.h"
 #include "BackgroundFetchRequest.h"
 #include "CacheQueryOptions.h"
 #include "NotificationData.h"

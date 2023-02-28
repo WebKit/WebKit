@@ -22,7 +22,7 @@
 #include "config.h"
 #include "RenderSVGResourcePattern.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGRoot.h"
