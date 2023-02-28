@@ -1,0 +1,10 @@
+PASS if no red
+(repaint rects
+  (rect 8 8 100 40)
+  (rect 203 26 80 80)
+  (rect 108 26 80 80)
+  (rect 108 26 80 80)
+  (rect 8 8 100 40)
+  (rect 0 26 10 10)
+)
+
