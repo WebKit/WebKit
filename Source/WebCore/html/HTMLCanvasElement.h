@@ -141,6 +141,9 @@ public:
 #endif
     WEBCORE_EXPORT void setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
 
+    void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
+    void dispatchEvent(Event&) final;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 

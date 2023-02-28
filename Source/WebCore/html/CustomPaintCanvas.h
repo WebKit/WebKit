@@ -67,6 +67,9 @@ public:
 
     void replayDisplayList(GraphicsContext*) const;
 
+    void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final { };
+    void dispatchEvent(Event&) final { }
+
     using RefCounted::ref;
     using RefCounted::deref;
 
