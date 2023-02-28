@@ -811,7 +811,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (WebCoreNSURLSession *)session
 {
-    return _session.get().get();
+    return _session.get().autorelease();
 }
 
 - (void)setSession:(WebCoreNSURLSession *)session
