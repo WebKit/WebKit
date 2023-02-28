@@ -128,9 +128,17 @@ public:
 
         const char* method = webkit_uri_scheme_request_get_http_method(request);
         g_assert_nonnull(method);
-        if (!g_strcmp0(scheme, "post"))
+        if (!g_strcmp0(scheme, "post")) {
             g_assert_cmpstr(method, ==, "POST");
-        else
+
+            GRefPtr<GInputStream> body = adoptGRef(webkit_uri_scheme_request_get_http_body(request));
+            g_assert_nonnull(body);
+            char readBuffer[8] = { 0 };
+            gsize read_count, bytes_read;
+            read_count = sizeof(readBuffer);
+            g_input_stream_read_all(body.get(), readBuffer, read_count, &bytes_read, NULL, NULL);
+            g_assert_cmpstr(readBuffer, ==, "X-Test=A");
+        } else
             g_assert_cmpstr(method, ==, "GET");
 
         if (!g_strcmp0(scheme, "headers")) {
@@ -337,7 +345,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
-    static const char* formHTML = "<html><body><form id=\"test-form\" method=\"POST\" action=\"post:data\"></form></body></html>";
+    static const char* formHTML = "<html><body><form id=\"test-form\" method=\"POST\" action=\"post:data\"><input type='text' id='X-Test' name='X-Test' value='A'></form></body></html>";
     test->registerURISchemeHandler("post", nullptr, 0, "application/json", 204);
     test->m_loadEvents.clear();
     test->loadHtml(formHTML, "post:form");

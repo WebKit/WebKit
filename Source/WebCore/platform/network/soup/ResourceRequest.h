@@ -78,6 +78,7 @@ public:
     }
 
     GRefPtr<SoupMessage> createSoupMessage(BlobRegistryImpl&) const;
+    GRefPtr<GInputStream> createBodyStream() const;
 
     void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest);
 
