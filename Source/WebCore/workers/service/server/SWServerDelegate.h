@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchRecordLoader.h"
 #include "ProcessIdentifier.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CompletionHandler.h>
@@ -35,8 +36,12 @@
 
 namespace WebCore {
 
+class BackgroundFetchRecordLoader;
+class BackgroundFetchStore;
 class RegistrableDomain;
 class ResourceRequest;
+
+struct BackgroundFetchRequest;
 struct ServiceWorkerJobData;
 struct WorkerFetchResult;
 
@@ -50,6 +55,9 @@ public:
     virtual void addAllowedFirstPartyForCookies(ProcessIdentifier, std::optional<ProcessIdentifier>, RegistrableDomain&&) = 0;
     
     virtual void requestBackgroundFetchPermission(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
+    virtual std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client&, ResourceRequest&&, FetchOptions&&, const WebCore::ClientOrigin&) = 0;
+    virtual void requestBackgroundFetchSpace(const ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&) = 0;
+    virtual Ref<BackgroundFetchStore> createBackgroundFetchStore() = 0;
 };
 
 } // namespace WebCore

@@ -100,6 +100,7 @@ private:
     void matchAllCompleted(uint64_t requestIdentifier, const Vector<WebCore::ServiceWorkerClientData>&) final;
     void firePushEvent(WebCore::ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&&) final;
     void fireNotificationEvent(WebCore::ServiceWorkerIdentifier, const WebCore::NotificationData&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&) final;
+    void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
     void close() final;
     void focus(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
     void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, const URL&, CompletionHandler<void(Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&)>&&);

@@ -268,11 +268,15 @@ protected:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+    // SWServerDelegate
     void softUpdate(WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&&) final;
     void createContextConnection(const WebCore::RegistrableDomain&, std::optional<WebCore::ProcessIdentifier>, std::optional<WebCore::ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&) final;
     void appBoundDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&) final;
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, std::optional<WebCore::ProcessIdentifier>, WebCore::RegistrableDomain&&) final;
     void requestBackgroundFetchPermission(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&) final;
+    std::unique_ptr<WebCore::BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(WebCore::BackgroundFetchRecordLoader::Client&, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, const WebCore::ClientOrigin&) final;
+    void requestBackgroundFetchSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&) final;
+    Ref<WebCore::BackgroundFetchStore> createBackgroundFetchStore() final;
 #endif // ENABLE(SERVICE_WORKER)
 
     PAL::SessionID m_sessionID;

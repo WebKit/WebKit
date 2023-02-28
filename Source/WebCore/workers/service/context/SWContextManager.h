@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchInformation.h"
 #include "ExceptionOr.h"
 #include "PageIdentifier.h"
 #include "PushSubscriptionData.h"
@@ -105,6 +106,7 @@ public:
     WEBCORE_EXPORT void firePushEvent(ServiceWorkerIdentifier, std::optional<Vector<uint8_t>>&&, CompletionHandler<void(bool)>&&);
     WEBCORE_EXPORT void firePushSubscriptionChangeEvent(ServiceWorkerIdentifier, std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData);
     WEBCORE_EXPORT void fireNotificationEvent(ServiceWorkerIdentifier, NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT void fireBackgroundFetchEvent(ServiceWorkerIdentifier, BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
 
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
 

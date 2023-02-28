@@ -51,6 +51,7 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+class BackgroundFetchStore;
 class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;

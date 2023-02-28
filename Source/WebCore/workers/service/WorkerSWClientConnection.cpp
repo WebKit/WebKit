@@ -490,15 +490,14 @@ void WorkerSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIde
     });
 }
 
-using CrossThreadResponseDataOrException = ExceptionOr<ResourceResponse::CrossThreadData>;
-static CrossThreadResponseDataOrException toCrossThreadData(ExceptionOr<ResourceResponse>&& data)
+static ExceptionOr<ResourceResponse::CrossThreadData> toCrossThreadData(ExceptionOr<ResourceResponse>&& data)
 {
     if (data.hasException())
         return data.releaseException().isolatedCopy();
     return data.releaseReturnValue().crossThreadData();
 }
 
-static ExceptionOr<ResourceResponse> fromCrossThreadData(CrossThreadResponseDataOrException&& data)
+static ExceptionOr<ResourceResponse> fromCrossThreadData(ExceptionOr<ResourceResponse::CrossThreadData>&& data)
 {
     if (data.hasException())
         return data.releaseException();

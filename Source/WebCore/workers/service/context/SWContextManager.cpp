@@ -144,6 +144,15 @@ void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier,
     serviceWorker->fireNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
 }
 
+void SWContextManager::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    if (!serviceWorker)
+        return;
+
+    serviceWorker->fireBackgroundFetchEvent(WTFMove(info), WTFMove(callback));
+}
+
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)
 {
     RELEASE_LOG(ServiceWorker, "SWContextManager::terminateWorker");

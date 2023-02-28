@@ -893,6 +893,7 @@
 		411B89C927B2B75D00F9EBD3 /* WKQueryPermissionResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B89C727B2B75C00F9EBD3 /* WKQueryPermissionResultCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		411B89CC27B2B89800F9EBD3 /* QueryPermissionResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B89CB27B2B89600F9EBD3 /* QueryPermissionResultCallback.h */; };
 		41287D4E225D1ECB009A3E26 /* WebSocketTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */; };
+		412915A129A8C7A300BE3091 /* BackgroundFetchStoreImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129159F29A8C7A300BE3091 /* BackgroundFetchStoreImpl.h */; };
 		413075AC1DE85F370039EC69 /* NetworkRTCMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4130759B1DE84FB00039EC69 /* NetworkRTCMonitor.h */; };
 		413075AD1DE85F580039EC69 /* LibWebRTCSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A01DE85EE70039EC69 /* LibWebRTCSocket.h */; };
 		413075B01DE85F580039EC69 /* WebRTCMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A31DE85EE70039EC69 /* WebRTCMonitor.h */; };
@@ -4422,6 +4423,8 @@
 		41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketTaskCocoa.mm; sourceTree = "<group>"; };
 		41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTaskCocoa.h; sourceTree = "<group>"; };
 		41287D4D225C161F009A3E26 /* WebSocketTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTask.h; sourceTree = "<group>"; };
+		4129159F29A8C7A300BE3091 /* BackgroundFetchStoreImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundFetchStoreImpl.h; sourceTree = "<group>"; };
+		412915A029A8C7A300BE3091 /* BackgroundFetchStoreImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundFetchStoreImpl.cpp; sourceTree = "<group>"; };
 		412FF91625373F9D001DF036 /* RemoteAudioSourceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSourceProvider.cpp; sourceTree = "<group>"; };
 		412FF91725373F9D001DF036 /* RemoteAudioSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSourceProvider.h; sourceTree = "<group>"; };
 		412FF92325382BD3001DF036 /* RemoteAudioSourceProviderManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSourceProviderManager.cpp; sourceTree = "<group>"; };
@@ -4541,6 +4544,8 @@
 		41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibWebRTCCodecsProxy.mm; sourceTree = "<group>"; };
 		41E242DE26E0C8D6009A8C64 /* NetworkRTCUtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCUtilitiesCocoa.h; sourceTree = "<group>"; };
 		41E242DF26E0C904009A8C64 /* NetworkRTCUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCUtilitiesCocoa.mm; sourceTree = "<group>"; };
+		41E4C3F429A3E38800EA6B3A /* BackgroundFetchLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundFetchLoad.h; sourceTree = "<group>"; };
+		41E4C3F529A3E38900EA6B3A /* BackgroundFetchLoad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundFetchLoad.cpp; sourceTree = "<group>"; };
 		41E67A8C25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeAudioSource.h; sourceTree = "<group>"; };
 		41E67A8D25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeAudioSource.cpp; sourceTree = "<group>"; };
 		41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNavigationPreloader.h; sourceTree = "<group>"; };
@@ -10423,6 +10428,8 @@
 				468386652763FA1B00CF9182 /* SharedWorker */,
 				93085DC226E1BB65000EC6A7 /* storage */,
 				413075971DE84ED70039EC69 /* webrtc */,
+				41E4C3F529A3E38900EA6B3A /* BackgroundFetchLoad.cpp */,
+				41E4C3F429A3E38800EA6B3A /* BackgroundFetchLoad.h */,
 				5C826D6E26D58A16008AEC91 /* DatabaseUtilities.cpp */,
 				5C826D6F26D58A16008AEC91 /* DatabaseUtilities.h */,
 				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
@@ -11458,6 +11465,8 @@
 		93085DC226E1BB65000EC6A7 /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				412915A029A8C7A300BE3091 /* BackgroundFetchStoreImpl.cpp */,
+				4129159F29A8C7A300BE3091 /* BackgroundFetchStoreImpl.h */,
 				935BF7FB2936BF1A00B41326 /* CacheStorageCache.cpp */,
 				935BF7F22936BF1700B41326 /* CacheStorageCache.h */,
 				934CF814294B884B00304F7D /* CacheStorageDiskStore.cpp */,
@@ -14057,6 +14066,7 @@
 				E1513C67166EABB200149FCB /* AuxiliaryProcessProxy.h in Headers */,
 				290F4272172A0C7400939FF0 /* AuxiliaryProcessSupplement.h in Headers */,
 				CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */,
+				412915A129A8C7A300BE3091 /* BackgroundFetchStoreImpl.h in Headers */,
 				46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */,
 				95C943912523C0D00054F3D5 /* BaseBoardSPI.h in Headers */,
 				E164A2F2191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h in Headers */,
