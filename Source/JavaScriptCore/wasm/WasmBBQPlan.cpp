@@ -70,7 +70,7 @@ bool BBQPlan::planGeneratesLoopOSREntrypoints(const ModuleInformation& moduleInf
     // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
     if (Options::webAssemblyBBQAirModeThreshold() && moduleInformation.codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
         return false;
-    if (Options::useSinglePassBBQJIT())
+    if (!Options::wasmBBQUsesAir() || Options::useSinglePassBBQJIT())
         return false;
     return true;
 }
