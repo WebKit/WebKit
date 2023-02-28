@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "NotImplemented.h"
 #include "PaymentComplete.h"
 #include "PaymentCompleteDetails.h"

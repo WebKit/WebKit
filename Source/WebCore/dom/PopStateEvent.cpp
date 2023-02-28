@@ -29,6 +29,7 @@
 
 #include "EventNames.h"
 #include "History.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/IsoMallocInlines.h>
 

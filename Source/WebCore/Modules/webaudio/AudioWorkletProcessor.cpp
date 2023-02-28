@@ -37,6 +37,7 @@
 #include "AudioWorkletProcessorConstructionData.h"
 #include "JSCallbackData.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "MessagePort.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSTypedArrays.h>

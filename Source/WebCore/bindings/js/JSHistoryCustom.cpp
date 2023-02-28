@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSHistory.h"
 
+#include "JSValueInWrappedObjectInlines.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCInlines.h>
 

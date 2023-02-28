@@ -32,6 +32,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "JSDOMException.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Exception.h>

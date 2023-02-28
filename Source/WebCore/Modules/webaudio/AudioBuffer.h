@@ -34,12 +34,14 @@
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Forward.h>
 #include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class AudioBus;
+class JSDOMGlobalObject;
 class WebCoreOpaqueRoot;
 
 class AudioBuffer : public RefCounted<AudioBuffer> {

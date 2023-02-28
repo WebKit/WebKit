@@ -34,6 +34,7 @@
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
 #include <variant>
+#include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
 public:
     static Ref<IDBCursor> create(IDBObjectStore&, const IDBCursorInfo&);
     static Ref<IDBCursor> create(IDBIndex&, const IDBCursorInfo&);
-    
+
     virtual ~IDBCursor();
 
     using Source = std::variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>>;

@@ -41,6 +41,7 @@
 #include "JSDOMConvertIndexedDB.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertSequences.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
