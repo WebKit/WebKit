@@ -36,25 +36,21 @@ namespace Nicosia {
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {
-#if (ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)) || USE(GTK4)
-#if USE(GTK4)
-    unsigned numThreads = 1;
-#else
+    // numThreads defaults to 0 because neither the WPE nor the GTK painting
+    // code is thread safe.
+    // https://bugs.webkit.org/show_bug.cgi?id=251977#c8
     unsigned numThreads = 0;
-#endif
     if (const char* numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS")) {
         if (sscanf(numThreadsEnv, "%u", &numThreads) == 1) {
             if (numThreads > 8) {
-                WTFLogAlways("The number of Nicosia painting threads is not between 1 and 8. Using the default value 4\n");
-                numThreads = 4;
+                WTFLogAlways("The number of Nicosia painting threads is not between 0 and 8. Using the default value 0\n");
+                numThreads = 0;
             }
         }
     }
 
     if (numThreads)
         return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
-#endif
-
     return std::unique_ptr<PaintingEngine>(new PaintingEngineBasic);
 }
 
