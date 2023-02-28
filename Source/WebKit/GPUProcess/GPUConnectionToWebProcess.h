@@ -145,6 +145,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
 
     Logger& logger();
 
@@ -385,6 +386,7 @@ private:
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };
     bool m_isLockdownModeEnabled { false };
+    bool m_allowTestOnlyIPC { false };
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     UniqueRef<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;

@@ -502,6 +502,9 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 #endif
 
     parameters.isLockdownModeEnabled = webProcessProxy.lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
+    
+    parameters.allowTestOnlyIPC = webProcessProxy.allowTestOnlyIPC();
+    
     ensureGPUProcess().createGPUProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 #endif
@@ -1117,6 +1120,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     RefPtr<WebUserContentControllerProxy> userContentController = pageConfiguration->userContentController();
     
     ASSERT(process);
+    
+    process->setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
 

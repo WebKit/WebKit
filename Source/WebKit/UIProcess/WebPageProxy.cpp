@@ -893,6 +893,9 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))
         m_process->setIgnoreInvalidMessageForTesting();
 #endif
+    
+    if (m_configuration->allowTestOnlyIPC())
+        m_process->setAllowTestOnlyIPC(true);
 
     finishAttachingToWebProcess(reason);
 

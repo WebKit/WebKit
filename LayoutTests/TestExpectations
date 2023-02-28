@@ -6277,3 +6277,6 @@ imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Skip ]
 
 webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [ Pass Failure ]
+
+# This test is checking that WebContent is terminated when performing an invalid IPC operation
+ipc/no-test-only-ipc-expected-crash.html [ Crash ]

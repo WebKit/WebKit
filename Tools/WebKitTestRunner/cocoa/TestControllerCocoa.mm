@@ -206,6 +206,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         NSString *text = [NSString stringWithContentsOfFile:manifestPath usedEncoding:nullptr error:nullptr];
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
+    
+    [copiedConfiguration _setAllowTestOnlyIPC:options.allowTestOnlyIPC()];
 
     m_mainWebView = makeUnique<PlatformWebView>(copiedConfiguration.get(), options);
     finishCreatingPlatformWebView(m_mainWebView.get(), options);

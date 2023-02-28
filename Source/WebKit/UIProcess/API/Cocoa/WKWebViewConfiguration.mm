@@ -1396,6 +1396,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #endif
 }
 
+- (BOOL)_allowTestOnlyIPC
+{
+    return _pageConfiguration->allowTestOnlyIPC();
+}
+
+- (void)_setAllowTestOnlyIPC:(BOOL)allowTestOnlyIPC
+{
+    _pageConfiguration->setAllowTestOnlyIPC(allowTestOnlyIPC);
+}
+
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking
 {
     return _pageConfiguration->shouldRelaxThirdPartyCookieBlocking() == WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes;
