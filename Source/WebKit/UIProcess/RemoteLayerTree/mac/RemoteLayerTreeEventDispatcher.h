@@ -68,6 +68,10 @@ public:
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 
     void didRefreshDisplay(WebCore::PlatformDisplayID);
+    void mainThreadDisplayDidRefresh(WebCore::PlatformDisplayID);
+
+    void hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls);
+
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>);
 
 private:

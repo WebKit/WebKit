@@ -133,6 +133,12 @@ void RemoteLayerTreeEventDispatcher::wheelEventHysteresisUpdated(PAL::Hysteresis
     startOrStopDisplayLink();
 }
 
+void RemoteLayerTreeEventDispatcher::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
+{
+    ASSERT(isMainRunLoop());
+    startOrStopDisplayLink();
+}
+
 void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const NativeWebWheelEvent& wheelEvent)
 {
     ASSERT(isMainRunLoop());
@@ -148,6 +154,7 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const NativeWebWheelEvent&
     willHandleWheelEvent(nativeWheelEvent);
 
     ScrollingThread::dispatch([dispatcher = Ref { *this }, platformWheelEvent = platform(nativeWheelEvent), rubberBandableEdges] {
+        LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::handleWheelEvent on scrolling thread " << platformWheelEvent);
         auto handlingResult = dispatcher->internalHandleWheelEvent(platformWheelEvent, rubberBandableEdges);
 
         RunLoop::main().dispatch([dispatcher, handlingResult] {
@@ -159,6 +166,8 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const NativeWebWheelEvent&
 void RemoteLayerTreeEventDispatcher::wheelEventWasHandledByScrollingThread(WheelEventHandlingResult handlingResult)
 {
     ASSERT(isMainRunLoop());
+
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::wheelEventWasHandledByScrollingThread - result " << handlingResult);
 
     if (!m_scrollingCoordinator)
         return;
@@ -181,7 +190,7 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEven
         scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
     auto processingSteps = scrollingTree->determineWheelEventProcessing(wheelEvent);
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::handleWheelEvent " << wheelEvent << " - steps " << processingSteps);
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::internalHandleWheelEvent " << wheelEvent << " - steps " << processingSteps);
     if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
         return WheelEventHandlingResult::unhandled(processingSteps);
 
@@ -278,6 +287,11 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
         return;
 
     scrollingTree->displayDidRefresh(displayID);
+}
+
+void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(WebCore::PlatformDisplayID)
+{
+    scrollingTree()->applyLayerPositions();
 }
 
 void RemoteLayerTreeEventDispatcher::windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>)

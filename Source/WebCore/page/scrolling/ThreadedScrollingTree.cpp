@@ -173,8 +173,6 @@ void ThreadedScrollingTree::didCommitTreeOnScrollingThread()
 
         downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
     }
-
-    m_nodesWithPendingScrollAnimations.clear();
 }
 
 bool ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)

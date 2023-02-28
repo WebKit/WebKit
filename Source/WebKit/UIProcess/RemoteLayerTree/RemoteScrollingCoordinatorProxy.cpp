@@ -101,6 +101,7 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
 
 void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
+#if !(PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING))
     if (!m_scrollingTree)
         return;
 
@@ -112,7 +113,6 @@ void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent
         m_scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(platformWheelEvent);
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::handleWheelEvent " << platformWheelEvent << " - steps " << processingSteps);
     if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread)) {
         continueWheelEventHandling(wheelEvent, { processingSteps, false });
         return;
@@ -125,6 +125,10 @@ void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent
     didReceiveWheelEvent(result.wasHandled);
 
     continueWheelEventHandling(wheelEvent, result);
+#else
+    UNUSED_PARAM(wheelEvent);
+    UNUSED_PARAM(rubberBandableEdges);
+#endif
 }
 
 void RemoteScrollingCoordinatorProxy::continueWheelEventHandling(const NativeWebWheelEvent& wheelEvent, WheelEventHandlingResult result)
