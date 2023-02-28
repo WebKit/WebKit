@@ -235,7 +235,7 @@ public:
     bool isContaining() const { return m_isContaining; }
 
     bool canBlend(const PathOperation&) const final;
-    RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
+    WEBCORE_EXPORT RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
 
     double lengthForPath() const;
     double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;
