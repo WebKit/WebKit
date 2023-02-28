@@ -76,7 +76,6 @@ class PopoverData;
 class PseudoElement;
 class RenderStyle;
 class RenderTreePosition;
-class ResizeObserverSize;
 class SpaceSplitString;
 class StylePropertyMap;
 class StylePropertyMapReadOnly;
@@ -700,9 +699,12 @@ public:
     ResizeObserverData& ensureResizeObserverData();
     ResizeObserverData* resizeObserverData();
 
-    ResizeObserverSize* lastRememberedSize() const;
-    void setLastRememberedSize(Ref<ResizeObserverSize>&&);
-    void clearLastRememberedSize();
+    std::optional<LayoutUnit> lastRememberedLogicalWidth() const;
+    std::optional<LayoutUnit> lastRememberedLogicalHeight() const;
+    void setLastRememberedLogicalWidth(LayoutUnit);
+    void clearLastRememberedLogicalWidth();
+    void setLastRememberedLogicalHeight(LayoutUnit);
+    void clearLastRememberedLogicalHeight();
 
     Element* findAnchorElementForLink(String& outAnchorName);
 

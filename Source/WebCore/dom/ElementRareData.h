@@ -35,13 +35,25 @@
 #include "PseudoElement.h"
 #include "RenderElement.h"
 #include "ResizeObserver.h"
-#include "ResizeObserverSize.h"
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
 #include "StylePropertyMap.h"
 #include "StylePropertyMapReadOnly.h"
+#include <wtf/Markable.h>
 
 namespace WebCore {
+
+struct LayoutUnitMarkableTraits {
+    static bool isEmptyValue(LayoutUnit value)
+    {
+        return value == LayoutUnit(-1);
+    }
+
+    static LayoutUnit emptyValue()
+    {
+        return LayoutUnit(-1);
+    }
+};
 
 class ElementRareData : public NodeRareData {
 public:
@@ -112,9 +124,12 @@ public:
     ResizeObserverData* resizeObserverData() { return m_resizeObserverData.get(); }
     void setResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { m_resizeObserverData = WTFMove(data); }
 
-    ResizeObserverSize* lastRememberedSize() const { return m_lastRememberedSize.get(); }
-    void setLastRememberedSize(RefPtr<ResizeObserverSize>&& size) { m_lastRememberedSize = WTFMove(size); }
-    void clearLastRememberedSize() { m_lastRememberedSize = nullptr; }
+    std::optional<LayoutUnit> lastRememberedLogicalWidth() const { return m_lastRememberedLogicalWidth; }
+    std::optional<LayoutUnit> lastRememberedLogicalHeight() const { return m_lastRememberedLogicalHeight; }
+    void setLastRememberedLogicalWidth(LayoutUnit width) { m_lastRememberedLogicalWidth = width; }
+    void setLastRememberedLogicalHeight(LayoutUnit height) { m_lastRememberedLogicalHeight = height; }
+    void clearLastRememberedLogicalWidth() { m_lastRememberedLogicalWidth.reset(); }
+    void clearLastRememberedLogicalHeight() { m_lastRememberedLogicalHeight.reset(); }
 
     const AtomString& nonce() const { return m_nonce; }
     void setNonce(const AtomString& value) { m_nonce = value; }
@@ -158,7 +173,7 @@ public:
             result.add(UseType::AttributeMap);
         if (m_intersectionObserverData)
             result.add(UseType::InteractionObserver);
-        if (m_resizeObserverData || m_lastRememberedSize)
+        if (m_resizeObserverData || m_lastRememberedLogicalWidth || m_lastRememberedLogicalHeight)
             result.add(UseType::ResizeObserver);
         if (!m_animationRareData.isEmpty())
             result.add(UseType::Animations);
@@ -199,7 +214,9 @@ private:
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
-    RefPtr<ResizeObserverSize> m_lastRememberedSize;
+
+    Markable<LayoutUnit, LayoutUnitMarkableTraits> m_lastRememberedLogicalWidth;
+    Markable<LayoutUnit, LayoutUnitMarkableTraits> m_lastRememberedLogicalHeight;
 
     Vector<std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 

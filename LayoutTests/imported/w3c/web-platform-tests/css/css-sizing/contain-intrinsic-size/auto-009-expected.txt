@@ -1,4 +1,4 @@
 
-FAIL Only recording last remembered inline size assert_equals: Using last remembered inline size - clientHeight expected 1 but got 50
-FAIL Only recording last remembered block size assert_equals: Using last remembered block size - clientWidth expected 2 but got 100
+PASS Only recording last remembered inline size
+PASS Only recording last remembered block size
 

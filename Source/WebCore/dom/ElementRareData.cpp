@@ -40,7 +40,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* intersectionObserverData;
     void* typedOMData[2];
     void* resizeObserverData;
-    void* resizeObserverSize;
+    Markable<LayoutUnit, LayoutUnitMarkableTraits> lastRemembedSize[2];
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
 };
 

@@ -5624,8 +5624,8 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
         return std::nullopt;
 
     if (element() && style().containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndLength && shouldSkipContent()) {
-        if (auto lastRememberedSize = element()->lastRememberedSize())
-            return isHorizontalWritingMode() ? LayoutUnit(lastRememberedSize->inlineSize()) : LayoutUnit(lastRememberedSize->blockSize());
+        if (auto width = isHorizontalWritingMode() ? element()->lastRememberedLogicalWidth() : element()->lastRememberedLogicalHeight())
+            return width;
     }
 
     auto width = style().containIntrinsicWidth();
@@ -5640,8 +5640,8 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
         return std::nullopt;
 
     if (element() && style().containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndLength && shouldSkipContent()) {
-        if (auto lastRememberedSize = element()->lastRememberedSize())
-            return isHorizontalWritingMode() ? LayoutUnit(lastRememberedSize->blockSize()) : LayoutUnit(lastRememberedSize->inlineSize());
+        if (auto height = isHorizontalWritingMode() ? element()->lastRememberedLogicalHeight() : element()->lastRememberedLogicalWidth())
+            return height;
     }
 
     auto height = style().containIntrinsicHeight();
