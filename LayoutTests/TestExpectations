@@ -3959,6 +3959,9 @@ webgl/2.0.y/conformance2/transform_feedback/transform_feedback.html [ Pass ]
 webgl/2.0.y/conformance2/transform_feedback/simultaneous_binding.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
 
+webgl/2.0.y/conformance/offscreencanvas [ Pass ]
+webgl/2.0.y/conformance2/offscreencanvas [ Pass ]
+
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]

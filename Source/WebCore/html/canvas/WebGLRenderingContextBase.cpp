@@ -5514,18 +5514,14 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
 
 void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 {
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
     // It is safe to capture |this| because we keep the canvas element alive and it owns |this|.
-    queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [this, canvas] {
+    canvasBase().queueTaskKeepingObjectAlive(TaskSource::WebGL, [this] {
         if (isContextStopped())
             return;
         if (!isContextLost())
             return;
         auto event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString());
-        canvas->dispatchEvent(event);
+        canvasBase().dispatchEvent(event);
         m_contextLostState->restoreRequested = event->defaultPrevented();
         if (m_contextLostState->mode == RealLostContext && m_contextLostState->restoreRequested)
             m_restoreTimer.startOneShot(0_s);
@@ -5566,12 +5562,8 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     setupFlags();
     initializeNewContext();
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
     if (!isContextLost()) {
-        canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
+        canvasBase().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
         // Notify the render layer to reconfigure the structure of the backing. This causes the backing to
         // start using the new layer contents display delegate from the new context.
         notifyCanvasContentChanged();

@@ -27,6 +27,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "ActiveDOMObject.h"
 #include "AffineTransform.h"
 #include "CanvasBase.h"
 #include "ContextDestructionObserver.h"
@@ -97,7 +98,7 @@ private:
     WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_placeholderCanvas;
 };
 
-class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTarget, private ContextDestructionObserver {
+class OffscreenCanvas final : public ActiveDOMObject, public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(OffscreenCanvas);
 public:
 
@@ -147,6 +148,10 @@ public:
 
     void commitToPlaceholderCanvas();
 
+    const char* activeDOMObjectName() const final { return "OffscreenCanvas"_s; }
+
+    void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
+    void dispatchEvent(Event&) final;
     using RefCounted::ref;
     using RefCounted::deref;
 

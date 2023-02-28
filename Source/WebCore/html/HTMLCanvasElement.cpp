@@ -1062,6 +1062,16 @@ bool HTMLCanvasElement::isControlledByOffscreen() const
     return m_context && m_context->isPlaceholder();
 }
 
+void HTMLCanvasElement::queueTaskKeepingObjectAlive(TaskSource source, Function<void()>&& task)
+{
+    ActiveDOMObject::queueTaskKeepingObjectAlive(*this, source, WTFMove(task));
+}
+
+void HTMLCanvasElement::dispatchEvent(Event& event)
+{
+    Node::dispatchEvent(event);
+}
+
 WebCoreOpaqueRoot root(HTMLCanvasElement* canvas)
 {
     return root(static_cast<Node*>(canvas));
