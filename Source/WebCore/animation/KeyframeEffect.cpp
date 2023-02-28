@@ -1686,6 +1686,11 @@ bool KeyframeEffect::preventsAcceleration() const
 
 void KeyframeEffect::updateAcceleratedActions()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited())
         return;
@@ -1726,6 +1731,11 @@ void KeyframeEffect::updateAcceleratedActions()
 
 void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
     if (m_runningAccelerated == RunningAccelerated::Prevented || m_runningAccelerated == RunningAccelerated::Failed)
         return;
 
@@ -1881,6 +1891,11 @@ void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended
 
 void KeyframeEffect::applyPendingAcceleratedActions()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
     CanBeAcceleratedMutationScope mutationScope(this);
 
     // Once an accelerated animation has been committed, we no longer want to force a layout.
@@ -2505,5 +2520,13 @@ bool KeyframeEffect::preventsAnimationReadiness() const
     // context since this will prevent the first frame of the animmation from being rendered.
     return document() && !document()->hasBrowsingContext();
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+bool KeyframeEffect::threadedAnimationResolutionEnabled() const
+{
+    auto* document = this->document();
+    return document && document->settings().threadedAnimationResolutionEnabled();
+}
+#endif
 
 } // namespace WebCore

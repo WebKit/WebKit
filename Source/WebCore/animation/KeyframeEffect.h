@@ -228,6 +228,10 @@ private:
     void abilityToBeAcceleratedDidChange();
     void updateAcceleratedAnimationIfNecessary();
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    bool threadedAnimationResolutionEnabled() const;
+#endif
+
     // AnimationEffect
     bool isKeyframeEffect() const final { return true; }
     void animationDidTick() final;
