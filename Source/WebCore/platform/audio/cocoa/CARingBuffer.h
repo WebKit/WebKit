@@ -39,6 +39,8 @@ typedef struct AudioBufferList AudioBufferList;
 
 namespace WebCore {
 
+class CAAudioStreamDescription;
+
 class CARingBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -113,7 +115,6 @@ inline CARingBuffer::FetchMode CARingBuffer::fetchModeForMixing(AudioStreamDescr
         return MixFloat64;
     }
 }
-
 
 class InProcessCARingBuffer final : public CARingBuffer {
 public:
