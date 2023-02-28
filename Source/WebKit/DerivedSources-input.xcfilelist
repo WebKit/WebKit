@@ -52,6 +52,7 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteComputePipeline.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteDevice.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteExternalTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteGPU.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemotePipelineLayout.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemotePresentationContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteQuerySet.messages.in
@@ -67,6 +68,7 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSwapChain.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
 $(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
+$(PROJECT_DIR)/GPUProcess/media/AudioTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/InitializationSegmentInfo.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/MediaDescriptionInfo.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioDestinationManager.messages.in
@@ -93,6 +95,8 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteTextTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in
+$(PROJECT_DIR)/GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
@@ -418,6 +422,7 @@ $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebFileSystemStorageConnection.messages
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebPermissionController.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebScreenOrientationManager.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.messages.in
+$(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in

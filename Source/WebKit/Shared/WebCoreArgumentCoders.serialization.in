@@ -4490,6 +4490,16 @@ struct WebCore::PasteboardItemInfo {
     WebCore::PasteboardItemPresentationStyle preferredPresentationStyle;
 };
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+struct WebCore::MediaControlsContextMenuItem {
+    uint64_t id;
+    String title;
+    String icon;
+    bool checked;
+    Vector<WebCore::MediaControlsContextMenuItem> children;
+};
+#endif
+
 struct WebCore::WorkerOptions {
     WebCore::WorkerType type;
     WebCore::FetchRequestCredentials credentials;
