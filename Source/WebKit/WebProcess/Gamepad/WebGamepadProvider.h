@@ -49,9 +49,9 @@ public:
 
     void gamepadConnected(const GamepadData&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(unsigned index);
-    void gamepadActivity(const Vector<GamepadData>&, WebCore::EventMakesGamepadsVisible);
+    void gamepadActivity(const Vector<std::optional<GamepadData>>&, WebCore::EventMakesGamepadsVisible);
 
-    void setInitialGamepads(const Vector<GamepadData>&);
+    void setInitialGamepads(const Vector<std::optional<GamepadData>>&);
 
 private:
     friend NeverDestroyed<WebGamepadProvider>;

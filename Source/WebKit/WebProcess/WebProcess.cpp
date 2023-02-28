@@ -1102,7 +1102,7 @@ void WebProcess::setHasStylusDevice(bool hasStylusDevice)
 
 #if ENABLE(GAMEPAD)
 
-void WebProcess::setInitialGamepads(const Vector<WebKit::GamepadData>& gamepadDatas)
+void WebProcess::setInitialGamepads(const Vector<std::optional<GamepadData>>& gamepadDatas)
 {
     WebGamepadProvider::singleton().setInitialGamepads(gamepadDatas);
 }

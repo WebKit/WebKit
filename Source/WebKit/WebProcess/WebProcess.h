@@ -459,7 +459,7 @@ private:
     void backgroundResponsivenessPing();
 
 #if ENABLE(GAMEPAD)
-    void setInitialGamepads(const Vector<GamepadData>&);
+    void setInitialGamepads(const Vector<std::optional<GamepadData>>&);
     void gamepadConnected(const GamepadData&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(unsigned index);
 #endif
