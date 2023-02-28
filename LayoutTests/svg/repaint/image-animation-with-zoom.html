@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+<style>
+html {
+    zoom: 2.2
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+img {
+    width: 50px;
+    height: 50px;
+}
+</style>
+<body onload="runRepaintTest()">
+    <img src="resources/animate-center.svg" width="200px" height="200px"></img>
+    <script>
+        function repaintTest() {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            setTimeout(function() {
+                if (window.testRunner)
+                testRunner.notifyDone();
+            }, 100);
+        };
+    </script>
+</body>
