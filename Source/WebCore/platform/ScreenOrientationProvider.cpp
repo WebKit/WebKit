@@ -75,7 +75,7 @@ ScreenOrientationType ScreenOrientationProvider::currentOrientation()
     if (m_currentOrientation)
         return *m_currentOrientation;
 
-    auto orientation = platformCurrentOrientation().value_or(ScreenOrientationType::PortraitPrimary);
+    auto orientation = platformCurrentOrientation().value_or(WebCore::naturalScreenOrientationType());
     if (!m_observers.isEmptyIgnoringNullReferences())
         m_currentOrientation = orientation;
     return orientation;
