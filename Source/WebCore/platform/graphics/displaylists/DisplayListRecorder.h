@@ -190,9 +190,7 @@ private:
     const DestinationColorSpace& colorSpace() const final { return m_colorSpace; }
 
 #if USE(CG)
-    void setIsCALayerContext(bool) final { }
     bool isCALayerContext() const final { return false; }
-    void setIsAcceleratedContext(bool) final { }
 #endif
 
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { ASSERT_NOT_REACHED(); }

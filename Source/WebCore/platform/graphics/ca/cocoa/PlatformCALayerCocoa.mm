@@ -1208,7 +1208,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
 #if PLATFORM(IOS_FAMILY)
         std::optional<FontAntialiasingStateSaver> fontAntialiasingState;
 #endif
-
         // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
         ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
 
@@ -1220,8 +1219,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
             fontAntialiasingState.emplace(context, !![platformCALayer->platformLayer() isOpaque]);
             fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
 #endif
-            graphicsContext.setIsCALayerContext(true);
-            graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
         }
 
         {

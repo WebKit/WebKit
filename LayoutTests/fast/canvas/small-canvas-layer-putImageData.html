@@ -1,0 +1,33 @@
+<body style="margin:0px">
+<canvas width="50" height="50" style="width:50px; height:50px; display:block; transform:translateZ(0)" id="canvas"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+var ctx = canvas.getContext('2d');
+var width = 50;
+var height = 50;
+canvas.width = width;
+canvas.height= height;
+ctx.fillStyle = "red";
+ctx.fillRect(0, 0, 50, 50);
+window.requestAnimationFrame(newFrame);
+function newFrame() {
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(0, 0, 50, 50);
+    window.requestAnimationFrame(newFrame2);
+}
+function newFrame2() {
+    let imageData = ctx.createImageData(width, height);
+    let data = imageData.data;
+    for (let i = 0; i < width * height; ++i) {
+        data[4 * i + 0] = 0;
+        data[4 * i + 1] = 255;
+        data[4 * i + 2] = 0;
+        data[4 * i + 3] = 255;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</html>

@@ -34,7 +34,11 @@ namespace WebCore {
 
 class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext {
 public:
-    GraphicsContextCG(CGContextRef);
+    enum CGContextSource {
+        Unknown,
+        CGContextFromCALayer
+    };
+    GraphicsContextCG(CGContextRef, CGContextSource = CGContextSource::Unknown);
 
     ~GraphicsContextCG();
 
@@ -72,10 +76,8 @@ public:
     void fillEllipse(const FloatRect& ellipse) final;
     void strokeEllipse(const FloatRect& ellipse) final;
 
-    void setIsCALayerContext(bool) final;
     bool isCALayerContext() const final;
 
-    void setIsAcceleratedContext(bool) final;
     RenderingMode renderingMode() const final;
 
     void clip(const FloatRect&) final;
@@ -123,10 +125,6 @@ public:
 
     virtual bool canUseShadowBlur() const;
 
-#if OS(WINDOWS)
-    GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
-#endif
-
     virtual FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) const;
 
 protected:
@@ -138,7 +136,10 @@ private:
 
     void clearCGShadow();
 
-    GraphicsContextPlatformPrivate* m_data { nullptr };
+    const RetainPtr<CGContextRef> m_cgContext;
+    const RenderingMode m_renderingMode : 1; // NOLINT
+    const bool m_isLayerCGContext : 1;
+    mutable bool m_userToDeviceTransformKnownToBeIdentity : 1 { false };
     mutable std::optional<DestinationColorSpace> m_colorSpace;
 };
 

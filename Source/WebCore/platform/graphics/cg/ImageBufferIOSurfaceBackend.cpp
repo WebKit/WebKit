@@ -111,7 +111,6 @@ GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 {
     if (!m_context) {
         m_context = makeUnique<GraphicsContextCG>(m_surface->ensurePlatformContext());
-        m_context->setIsAcceleratedContext(true);
         applyBaseTransform(*m_context);
     }
     return *m_context;

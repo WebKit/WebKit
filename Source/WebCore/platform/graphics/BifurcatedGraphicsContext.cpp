@@ -244,26 +244,12 @@ void BifurcatedGraphicsContext::strokeEllipse(const FloatRect& ellipse)
 }
 
 #if USE(CG)
-void BifurcatedGraphicsContext::setIsCALayerContext(bool isCALayerContext)
-{
-    m_primaryContext.setIsCALayerContext(isCALayerContext);
-    m_secondaryContext.setIsCALayerContext(isCALayerContext);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
 
 bool BifurcatedGraphicsContext::isCALayerContext() const
 {
     return m_primaryContext.isCALayerContext();
 }
 
-void BifurcatedGraphicsContext::setIsAcceleratedContext(bool isAcceleratedContext)
-{
-    m_primaryContext.setIsAcceleratedContext(isAcceleratedContext);
-    m_secondaryContext.setIsAcceleratedContext(isAcceleratedContext);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
 #endif
 
 RenderingMode BifurcatedGraphicsContext::renderingMode() const

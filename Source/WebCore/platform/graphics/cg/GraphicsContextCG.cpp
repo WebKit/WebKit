@@ -34,7 +34,6 @@
 #include "DisplayListRecorder.h"
 #include "FloatConversion.h"
 #include "Gradient.h"
-#include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"
 #include "Logging.h"
@@ -184,21 +183,29 @@ static void setCGBlendMode(CGContextRef context, CompositeOperator op, BlendMode
     CGContextSetBlendMode(context, selectCGBlendMode(op, blendMode));
 }
 
-GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext)
+static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsContextCG::CGContextSource source)
+{
+    if (!cgContext)
+        return RenderingMode::Unaccelerated;
+    auto type = CGContextGetType(cgContext);
+    if (type == kCGContextTypeIOSurface || (source == GraphicsContextCG::CGContextFromCALayer && type == kCGContextTypeUnknown))
+        return RenderingMode::Accelerated;
+    return RenderingMode::Unaccelerated;
+}
+
+GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source)
     : GraphicsContext(GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
+    , m_cgContext(cgContext)
+    , m_renderingMode(renderingModeForCGContext(cgContext, source))
+    , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
 {
     if (!cgContext)
         return;
-
-    m_data = new GraphicsContextPlatformPrivate(cgContext);
     // Make sure the context starts in sync with our state.
     didUpdateState(m_state);
 }
 
-GraphicsContextCG::~GraphicsContextCG()
-{
-    delete m_data;
-}
+GraphicsContextCG::~GraphicsContextCG() = default;
 
 bool GraphicsContextCG::hasPlatformContext() const
 {
@@ -207,8 +214,8 @@ bool GraphicsContextCG::hasPlatformContext() const
 
 CGContextRef GraphicsContextCG::platformContext() const
 {
-    ASSERT(m_data->m_cgContext);
-    return m_data->m_cgContext.get();
+    ASSERT(m_cgContext);
+    return m_cgContext.get();
 }
 
 const DestinationColorSpace& GraphicsContextCG::colorSpace() const
@@ -235,9 +242,6 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
 void GraphicsContextCG::save()
 {
     GraphicsContext::save();
-
-    // Note: Do not use this function within this class implementation, since we want to avoid the extra
-    // save of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextSaveGState(platformContext());
 }
 
@@ -247,11 +251,8 @@ void GraphicsContextCG::restore()
         return;
 
     GraphicsContext::restore();
-
-    // Note: Do not use this function within this class implementation, since we want to avoid the extra
-    // restore of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextRestoreGState(platformContext());
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -1016,7 +1017,7 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
     CGContextBeginTransparencyLayer(context, 0);
     
     m_state.didBeginTransparencyLayer();
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::endTransparencyLayer()
@@ -1327,31 +1328,31 @@ void GraphicsContextCG::setLineJoin(LineJoin join)
 void GraphicsContextCG::scale(const FloatSize& size)
 {
     CGContextScaleCTM(platformContext(), size.width(), size.height());
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::rotate(float angle)
 {
     CGContextRotateCTM(platformContext(), angle);
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::translate(float x, float y)
 {
     CGContextTranslateCTM(platformContext(), x, y);
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::concatCTM(const AffineTransform& transform)
 {
     CGContextConcatCTM(platformContext(), transform);
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::setCTM(const AffineTransform& transform)
 {
     CGContextSetCTM(platformContext(), transform);
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+    m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
@@ -1372,12 +1373,12 @@ FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect, Rounding
     // rotating image like the hands of the world clock widget. We just need the scale, so
     // we get the affine transform matrix and extract the scale.
 
-    if (m_data->m_userToDeviceTransformKnownToBeIdentity)
+    if (m_userToDeviceTransformKnownToBeIdentity)
         return roundedIntRect(rect);
 
     CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
     if (CGAffineTransformIsIdentity(deviceMatrix)) {
-        m_data->m_userToDeviceTransformKnownToBeIdentity = true;
+        m_userToDeviceTransformKnownToBeIdentity = true;
         return roundedIntRect(rect);
     }
 
@@ -1482,26 +1483,14 @@ void GraphicsContextCG::setURLForRect(const URL& link, const FloatRect& destRect
     CGPDFContextSetURLForRect(context, urlRef.get(), CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
 }
 
-void GraphicsContextCG::setIsCALayerContext(bool isLayerContext)
-{
-    // Should be called for CA Context.
-    m_data->m_contextFlags.set(GraphicsContextCGFlag::IsLayerCGContext, isLayerContext);
-}
-
 bool GraphicsContextCG::isCALayerContext() const
 {
-    return m_data && m_data->m_contextFlags.contains(GraphicsContextCGFlag::IsLayerCGContext);
-}
-
-void GraphicsContextCG::setIsAcceleratedContext(bool isAccelerated)
-{
-    // Should be called for CA Context.
-    m_data->m_contextFlags.set(GraphicsContextCGFlag::IsAcceleratedCGContext, isAccelerated);
+    return m_isLayerCGContext;
 }
 
 RenderingMode GraphicsContextCG::renderingMode() const
 {
-    return m_data->m_contextFlags.contains(GraphicsContextCGFlag::IsAcceleratedCGContext) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    return m_renderingMode;
 }
 
 void GraphicsContextCG::applyDeviceScaleFactor(float deviceScaleFactor)

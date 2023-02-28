@@ -1914,10 +1914,8 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
 #endif
 
-    GraphicsContextCG graphicsContext(context);
+    GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
     GraphicsContextStateSaver stateSaver(graphicsContext);
-
-    graphicsContext.setIsCALayerContext(true);
 
     if (layer == m_scrollCornerLayer) {
         IntRect scrollCornerRect = this->scrollCornerRect();

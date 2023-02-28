@@ -190,11 +190,7 @@ public:
     virtual void applyFillPattern() = 0;
 
     // FIXME: Can we make this a why instead of a what, and then have it exist cross-platform?
-    virtual void setIsCALayerContext(bool) = 0;
     virtual bool isCALayerContext() const = 0;
-
-    // FIXME: Can this be a GraphicsContextCG constructor parameter? Or just be read off the context?
-    virtual void setIsAcceleratedContext(bool) = 0;
 #endif
 
     virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
