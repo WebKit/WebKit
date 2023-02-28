@@ -23,6 +23,8 @@
 #include "config.h"
 #include "NameNodeList.h"
 
+#include "ElementInlines.h"
+#include "LiveNodeList.h"
 #include "NodeRareData.h"
 #include <wtf/IsoMallocInlines.h>
 

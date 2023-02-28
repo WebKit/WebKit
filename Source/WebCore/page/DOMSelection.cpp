@@ -36,6 +36,7 @@
 #include "FrameSelection.h"
 #include "Range.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StaticRange.h"
 #include "TextIterator.h"
 

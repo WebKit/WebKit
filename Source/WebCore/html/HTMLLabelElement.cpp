@@ -27,13 +27,13 @@
 #include "HTMLLabelElement.h"
 
 #include "Document.h"
-#include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormListedElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "SelectionRestorationMode.h"
+#include "TypedElementDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 

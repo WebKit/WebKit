@@ -27,6 +27,7 @@
 
 #if ENABLE(JIT)
 
+#include "BytecodeIndex.h"
 #include "CodeLocation.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

@@ -28,6 +28,7 @@
 #include "HTMLDocumentParser.h"
 #include "HTMLDocumentParserFastPath.h"
 #include "Page.h"
+#include "TypedElementDescendantIterator.h"
 #include "XMLDocumentParser.h"
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>

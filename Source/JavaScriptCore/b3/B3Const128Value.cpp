@@ -24,9 +24,11 @@
   */
 
 #include "config.h"
-#include "B3Const128Value.h"
 
 #if ENABLE(B3_JIT)
+#include "B3Const128Value.h"
+
+#include "B3Procedure.h"
 
 namespace JSC { namespace B3 {
 

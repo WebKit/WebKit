@@ -38,6 +38,7 @@
 #include "DocumentLoader.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"

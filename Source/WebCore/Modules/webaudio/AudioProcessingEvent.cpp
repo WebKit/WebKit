@@ -31,6 +31,8 @@
 #include "AudioBuffer.h"
 #include "AudioProcessingEventInit.h"
 #include "EventNames.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/TypedArrayAdaptors.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

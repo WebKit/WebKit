@@ -41,6 +41,7 @@
 #include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
+#include "ElementInlines.h"
 #include "ElementIterator.h"
 #include "Event.h"
 #include "EventDispatcher.h"

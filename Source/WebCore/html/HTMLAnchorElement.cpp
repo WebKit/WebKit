@@ -27,7 +27,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"

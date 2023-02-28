@@ -22,7 +22,7 @@
 #include "config.h"
 #include "SVGFEMergeElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIterator.h"
 #include "FEMerge.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEMergeNodeElement.h"

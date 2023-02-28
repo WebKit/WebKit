@@ -28,6 +28,7 @@
 #include "HTMLParserScheduler.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLDocumentParser.h"

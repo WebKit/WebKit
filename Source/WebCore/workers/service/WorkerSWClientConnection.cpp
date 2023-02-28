@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "CacheQueryOptions.h"
 #include "NotificationData.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerClientData.h"

@@ -22,13 +22,13 @@
 #include "HTMLProgressElement.h"
 
 #include "AXObjectCache.h"
-#include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ProgressShadowElement.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderProgress.h"
 #include "ShadowRoot.h"
+#include "TypedElementDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

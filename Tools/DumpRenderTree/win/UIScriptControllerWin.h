@@ -27,8 +27,6 @@
 
 #include "UIScriptController.h"
 
-namespace WTR {
-
 class UIScriptControllerWin : public UIScriptController {
 public:
     explicit UIScriptControllerWin(UIScriptContext& context)

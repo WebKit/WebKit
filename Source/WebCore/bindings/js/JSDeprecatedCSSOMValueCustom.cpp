@@ -30,7 +30,7 @@
 #include "JSDeprecatedCSSOMPrimitiveValue.h"
 #include "JSDeprecatedCSSOMValueList.h"
 #include "JSNode.h"
-
+#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 using namespace JSC;

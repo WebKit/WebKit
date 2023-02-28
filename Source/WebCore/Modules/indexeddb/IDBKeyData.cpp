@@ -27,6 +27,7 @@
 #include "IDBKeyData.h"
 
 #include "KeyedCoding.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

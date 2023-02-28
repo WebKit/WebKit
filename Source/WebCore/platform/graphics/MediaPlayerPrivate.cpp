@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "VideoFrame.h"
 #include "VideoFrameMetadata.h"
 
 namespace WebCore {

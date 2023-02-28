@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CSSFunctionValue.h"
 
+#include "CSSValueKeywords.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

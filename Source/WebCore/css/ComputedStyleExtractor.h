@@ -21,6 +21,7 @@
 #pragma once
 
 #include <wtf/RefPtr.h>
+#include <wtf/Span.h>
 
 namespace WebCore {
 

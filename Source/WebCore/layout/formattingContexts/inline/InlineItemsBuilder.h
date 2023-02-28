@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InlineFormattingState.h"
+#include "InlineLineTypes.h"
 #include "LayoutElementBox.h"
 #include <wtf/text/StringBuilder.h>
 

@@ -36,6 +36,9 @@
 #include "VideoDecoderGStreamer.h"
 #endif
 
+#include <wtf/UniqueRef.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 VideoDecoder::CreatorFunction VideoDecoder::s_customCreator = nullptr;

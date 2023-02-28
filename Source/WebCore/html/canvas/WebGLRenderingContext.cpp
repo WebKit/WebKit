@@ -56,6 +56,7 @@
 #include "OESVertexArrayObject.h"
 #include "RenderBox.h"
 #include "WebCodecsVideoFrame.h"
+#include "WebCoreOpaqueRoot.h"
 #include "WebGLBuffer.h"
 #include "WebGLColorBufferFloat.h"
 #include "WebGLCompressedTextureASTC.h"
