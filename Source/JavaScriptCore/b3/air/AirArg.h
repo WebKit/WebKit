@@ -1340,7 +1340,7 @@ public:
         case MoveFloat:
             if (!std::is_signed<Int>::value)
                 return !((offset & 3) || (offset > (255 * 4)));
-            return !((offset & 3) || (offset > (255 * 4)) || (static_cast<std::make_signed<Int>::type>(offset) < -(255 * 4)));
+            return !((offset & 3) || (offset > (255 * 4)) || (static_cast<typename std::make_signed<Int>::type>(offset) < -(255 * 4)));
         default:
             return false;
         }

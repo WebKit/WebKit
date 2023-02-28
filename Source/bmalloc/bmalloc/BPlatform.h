@@ -227,7 +227,9 @@
 || defined(__ARM_ARCH_7K__) \
 || defined(__ARM_ARCH_7M__) \
 || defined(__ARM_ARCH_7R__) \
-|| defined(__ARM_ARCH_7S__)
+|| defined(__ARM_ARCH_7S__) \
+|| defined(__ARM_ARCH_8__) \
+|| defined(__ARM_ARCH_8A__)
 #define BTHUMB_ARCH_VERSION 4
 
 /* RVCT sets __TARGET_ARCH_THUMB */

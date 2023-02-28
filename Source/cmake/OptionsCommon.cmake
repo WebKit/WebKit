@@ -18,9 +18,20 @@ if (WTF_CPU_ARM)
     #error \"Thumb2 instruction set isn't available\"
     #endif
     int main() {}
-   ")
+    ")
 
+    if (COMPILER_IS_CLANG AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+        set(CLANG_EXTRA_ARM_ARGS " -mthumb")
+    endif ()
+
+    set(CMAKE_REQUIRED_FLAGS "${CLANG_EXTRA_ARM_ARGS}")
     CHECK_CXX_SOURCE_COMPILES("${ARM_THUMB2_TEST_SOURCE}" ARM_THUMB2_DETECTED)
+    unset(CMAKE_REQUIRED_FLAGS)
+
+    if (ARM_THUMB2_DETECTED AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+        string(APPEND CMAKE_C_FLAGS " ${CLANG_EXTRA_ARM_ARGS}")
+        string(APPEND CMAKE_CXX_FLAGS " ${CLANG_EXTRA_ARM_ARGS}")
+    endif ()
 endif ()
 
 # Use ld.lld when building with LTO, or for debug builds, if available.
