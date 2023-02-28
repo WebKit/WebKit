@@ -66,6 +66,7 @@ def _parse_args(argv):
     parser.add_argument("find", help="the code to search", choices=_CHOICES, nargs="*")
     parser.add_argument("--diff", choices=_CHOICES, action="append")
     parser.add_argument("--macro", choices=["ENABLE", "USE", "HAVE"], default="ENABLE")
+    parser.add_argument("--uncommon", action='store_true', help="returns defines only used once in the code, not to be used when --diff is defined")
     return parser.parse_args(argv)
 
 
@@ -85,24 +86,33 @@ def _choice_set(choices):
     return choices_set
 
 
-def _search_for(choices, macro):
+def _search_for(choices, macro, uncommon_flag):
     found = set()
+    found_single_use = set()
 
     for choice in _choice_set(choices):
         search_with = _search_with(choice)
         search_with.search(_ROOT, macro)
         found.update(search_with.definitions())
+    
+    if uncommon_flag:
+        for choice in {"native-code", "cmake-code", "idl-code"}:
+            search_with = _search_with(choice)
+            search_with.search(_ROOT, macro)
+            single_use = set()
+            single_use.update(search_with.single_use_definitions())
+            found_single_use = found.intersection(single_use)
 
-    return found
+    return found, found_single_use
 
 
 def main(argv):
     args = _parse_args(argv)
 
-    find_defines = _search_for(args.find, args.macro)
+    find_defines, find_defines_single_use = _search_for(args.find, args.macro, args.uncommon)
 
     if args.diff:
-        diff_defines = _search_for(args.diff, args.macro)
+        diff_defines, find_defines_single_use = _search_for(args.diff, args.macro, False)
 
         only_find = find_defines.difference(diff_defines)
 
@@ -114,6 +124,19 @@ def main(argv):
 
         print("Only in Diff (" + ",".join(args.diff) + ")")
         for item in sorted(only_diff):
+            print(item)
+    elif args.uncommon:
+        print("All defines:")
+        for item in sorted(find_defines):
+            print(item)
+        
+        print("\nDefines only used once:")
+        for item in sorted(find_defines_single_use):
+            print(item)
+
+        only_multi_use = find_defines.difference(find_defines_single_use)
+        print("\nDefines used more than once:")
+        for item in sorted(only_multi_use):
             print(item)
     else:
         for item in sorted(find_defines):
