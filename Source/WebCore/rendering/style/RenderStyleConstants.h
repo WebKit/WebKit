@@ -1258,6 +1258,11 @@ enum class ContentVisibility : uint8_t {
     Hidden,
 };
 
+enum class BlockStepInsert : uint8_t {
+    Margin,
+    Padding
+};
+
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 extern const float defaultMiterLimit;

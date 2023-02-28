@@ -174,6 +174,7 @@ public:
     float zoom;
 
     std::optional<Length> blockStepSize;
+    unsigned blockStepInsert : 1; // BlockStepInsert
 
     unsigned overscrollBehaviorX : 2; // OverscrollBehavior
     unsigned overscrollBehaviorY : 2; // OverscrollBehavior

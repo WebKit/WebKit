@@ -33,6 +33,7 @@ PASS background-repeat
 PASS background-size
 PASS baseline-shift
 PASS block-size
+PASS block-step-insert
 PASS block-step-size
 PASS border-block-end-color
 PASS border-block-end-style

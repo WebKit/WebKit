@@ -2058,6 +2058,10 @@ public:
     std::optional<Length> blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; } 
     void setBlockStepSize(std::optional<Length> length) { SET_NESTED_VAR(m_nonInheritedData, rareData, blockStepSize, length); } 
 
+    static BlockStepInsert initialBlockStepInsert() { return BlockStepInsert::Margin; }
+    BlockStepInsert blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
+    void setBlockStepInsert(BlockStepInsert newBlockStepInsert) { SET_NESTED_VAR(m_nonInheritedData, rareData, blockStepInsert, static_cast<unsigned>(newBlockStepInsert)); }
+
 private:
     struct NonInheritedFlags {
         bool operator==(const NonInheritedFlags&) const;
