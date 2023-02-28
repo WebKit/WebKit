@@ -42,12 +42,8 @@ static String adapterName(WGPUAdapter adapter)
     return String::fromLatin1(properties.name);
 }
 
-static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
+static Ref<SupportedFeatures> supportedFeatures(const Vector<WGPUFeatureName>& features)
 {
-    auto featureCount = wgpuAdapterEnumerateFeatures(adapter, nullptr);
-    Vector<WGPUFeatureName> features(featureCount);
-    wgpuAdapterEnumerateFeatures(adapter, features.data());
-
     Vector<String> result;
     for (auto feature : features) {
         switch (feature) {
@@ -92,6 +88,15 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
         }
     }
     return SupportedFeatures::create(WTFMove(result));
+}
+
+static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
+{
+    auto featureCount = wgpuAdapterEnumerateFeatures(adapter, nullptr);
+    Vector<WGPUFeatureName> features(featureCount);
+    wgpuAdapterEnumerateFeatures(adapter, features.data());
+
+    return supportedFeatures(features);
 }
 
 static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
@@ -335,8 +340,10 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.maxComputeWorkgroupSizeY,
         limits.maxComputeWorkgroupSizeZ,
         limits.maxComputeWorkgroupsPerDimension);
-    wgpuAdapterRequestDeviceWithBlock(m_backing, &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
-        callback(DeviceImpl::create(device, Ref { protectedThis->features() }, WTFMove(requestedLimits), convertToBackingContext));
+
+    auto requestedFeatures = supportedFeatures(features);
+    wgpuAdapterRequestDeviceWithBlock(m_backing, &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
+        callback(DeviceImpl::create(device, WTFMove(requestedFeatures), WTFMove(requestedLimits), convertToBackingContext));
     }).get());
 }
 
