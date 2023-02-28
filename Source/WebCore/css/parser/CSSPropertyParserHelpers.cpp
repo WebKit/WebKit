@@ -8287,7 +8287,7 @@ RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, 
             return nullptr;
         lastWeight = weight;
 
-        return CSSValueList::createSpaceSeparated(integer.releaseNonNull(), symbol.releaseNonNull());
+        return CSSValuePair::create(integer.releaseNonNull(), symbol.releaseNonNull());
     }, context);
 
     if (!range.atEnd() || !values || !values->length())
