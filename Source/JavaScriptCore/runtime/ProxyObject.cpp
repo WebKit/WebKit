@@ -143,17 +143,17 @@ void ProxyObject::validateGetTrapResult(JSGlobalObject* globalObject, JSValue tr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     PropertyDescriptor descriptor;
-    bool result = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
+    bool hasProperty = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
     RETURN_IF_EXCEPTION(scope, void());
-    if (result) {
-        if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
+    if (hasProperty && !descriptor.configurable()) {
+        if (descriptor.isDataDescriptor() && !descriptor.writable()) {
             bool isSame = sameValue(globalObject, descriptor.value(), trapResult);
             RETURN_IF_EXCEPTION(scope, void());
             if (!isSame) {
                 throwTypeError(globalObject, scope, "Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"_s);
                 return;
             }
-        } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.getter().isUndefined()) {
+        } else if (descriptor.isAccessorDescriptor() && descriptor.getter().isUndefined()) {
             if (!trapResult.isUndefined()) {
                 throwTypeError(globalObject, scope, "Proxy handler's 'get' result of a non-configurable accessor property without a getter should be undefined"_s);
                 return;
@@ -463,15 +463,15 @@ bool ProxyObject::validateSetTrapResult(JSGlobalObject* globalObject, JSValue tr
     PropertyDescriptor descriptor;
     bool hasProperty = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
+    if (hasProperty && !descriptor.configurable()) {
+        if (descriptor.isDataDescriptor() && !descriptor.writable()) {
             bool isSame = sameValue(globalObject, descriptor.value(), putValue);
             RETURN_IF_EXCEPTION(scope, false);
             if (!isSame) {
                 throwTypeError(globalObject, scope, "Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"_s);
                 return false;
             }
-        } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.setter().isUndefined()) {
+        } else if (descriptor.isAccessorDescriptor() && descriptor.setter().isUndefined()) {
             throwTypeError(globalObject, scope, "Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false"_s);
             return false;
         }
