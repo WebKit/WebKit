@@ -120,7 +120,6 @@ function mac_process_gpu_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 140000 ))
         then
             plistbuddy add :com.apple.private.disable.screencapturekit.alert bool YES
-            plistbuddy add :com.apple.private.mediaexperience.recordingWebsite.allow bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
@@ -406,6 +405,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.mediaexperience.startrecordinginthebackground.allow bool YES
     plistbuddy Add :com.apple.private.mediaexperience.processassertionaudittokens.allow bool YES
+    plistbuddy add :com.apple.private.mediaexperience.recordingWebsite.allow bool YES
     plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
