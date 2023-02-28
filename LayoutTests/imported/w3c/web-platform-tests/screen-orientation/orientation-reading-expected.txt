@@ -2,7 +2,7 @@
 Harness Error (FAIL), message = Test named 'Test the orientations and associated angles' specified 1 'cleanup' function, and 1 failed.
 
 PASS Test screen.orientation properties
-FAIL Test screen.orientation default values. assert_true: expected true got false
+PASS Test screen.orientation default values.
 PASS Test the orientations and associated angles
 PASS Test that screen.orientation properties are not writable
 PASS Test that screen.orientation is always the same object

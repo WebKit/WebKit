@@ -1,0 +1,11 @@
+Natural screen orientation should be landcape-primary on Desktop
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default orientation is portrait-primary.
+Default angle is 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

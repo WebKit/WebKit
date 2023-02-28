@@ -46,6 +46,16 @@ constexpr bool isLandscape(ScreenOrientationType type)
     return type == ScreenOrientationType::LandscapePrimary || type == ScreenOrientationType::LandscapeSecondary;
 }
 
+constexpr ScreenOrientationType naturalScreenOrientationType()
+{
+#if PLATFORM(IOS_FAMILY)
+    return ScreenOrientationType::PortraitPrimary;
+#else
+    // On Desktop, the natural orientation must be landscape-primary.
+    return ScreenOrientationType::LandscapePrimary;
+#endif
+}
+
 } // namespace WebCore
 
 namespace WTF {
