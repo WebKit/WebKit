@@ -703,11 +703,15 @@ std::optional<String> URLParser::maybeCanonicalizeScheme(StringView scheme)
     if (scheme.isEmpty())
         return std::nullopt;
 
-    if (!isASCIIAlpha(scheme[0]))
+    size_t i = 0;
+    while (i < scheme.length() && isTabOrNewline(scheme[i]))
+        ++i;
+
+    if (i >= scheme.length() || !isASCIIAlpha(scheme[i++]))
         return std::nullopt;
 
-    for (size_t i = 1; i < scheme.length(); ++i) {
-        if (isASCIIAlphanumeric(scheme[i]) || scheme[i] == '+' || scheme[i] == '-' || scheme[i] == '.')
+    for (; i < scheme.length(); ++i) {
+        if (isASCIIAlphanumeric(scheme[i]) || scheme[i] == '+' || scheme[i] == '-' || scheme[i] == '.' || isTabOrNewline(scheme[i]))
             continue;
         return std::nullopt;
     }
