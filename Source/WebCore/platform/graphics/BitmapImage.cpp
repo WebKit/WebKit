@@ -117,7 +117,12 @@ EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
         m_source->destroyIncompleteDecodedData();
 
     m_currentFrameDecodingStatus = DecodingStatus::Invalid;
-    return m_source->dataChanged(data(), allDataReceived);
+    auto status = m_source->dataChanged(data(), allDataReceived);
+
+    if (allDataReceived && !shouldAnimate() && frameCount() > 1)
+        m_currentFrame = primaryFrameIndex();
+
+    return status;
 }
 
 void BitmapImage::setCurrentFrameDecodingStatusIfNecessary(DecodingStatus decodingStatus)
@@ -559,7 +564,7 @@ void BitmapImage::stopAnimation()
 void BitmapImage::resetAnimation()
 {
     stopAnimation();
-    m_currentFrame = 0;
+    m_currentFrame = primaryFrameIndex();
     m_repetitionsComplete = RepetitionCountNone;
     m_desiredFrameStartTime = { };
     m_animationFinished = false;

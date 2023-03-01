@@ -456,8 +456,8 @@ if (ENABLE_WAYLAND_TARGET)
         message(FATAL_ERROR "EGL is required to use ENABLE_WAYLAND_TARGET")
     endif ()
 
-    find_package(Wayland REQUIRED)
-    find_package(WaylandProtocols 1.12 REQUIRED)
+    find_package(Wayland 1.15 REQUIRED)
+    find_package(WaylandProtocols 1.15 REQUIRED)
 endif ()
 
 if (USE_JPEGXL)

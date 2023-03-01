@@ -87,7 +87,7 @@ bool CSSParser::parseSupportsCondition(const String& condition)
     CSSParserImpl parser(m_context, condition);
     if (!parser.tokenizer())
         return false;
-    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS) == CSSSupportsParser::Supported;
+    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS, CSSParserEnum::IsNestedContext::No) == CSSSupportsParser::Supported;
 }
 
 static Color color(const RefPtr<CSSValue>& value)
@@ -160,7 +160,7 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return CSSParserImpl::parseValue(&declaration, propertyID, string, important, m_context);
 }
 
-std::optional<CSSSelectorList> CSSParser::parseSelector(const String& string, StyleSheetContents* styleSheet, CSSSelectorParser::IsNestedContext isNestedContext)
+std::optional<CSSSelectorList> CSSParser::parseSelector(const String& string, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
 {
     return parseCSSSelector(CSSTokenizer(string).tokenRange(), m_context, styleSheet, isNestedContext);
 }

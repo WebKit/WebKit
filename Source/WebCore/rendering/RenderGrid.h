@@ -148,6 +148,7 @@ private:
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
     bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
+    bool shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     std::optional<LayoutUnit> explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 

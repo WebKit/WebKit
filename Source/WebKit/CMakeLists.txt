@@ -540,6 +540,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/LayerTreeContext.serialization.in
     Shared/Model.serialization.in
     Shared/NavigationActionData.serialization.in
+    Shared/NetworkProcessConnectionParameters.serialization.in
     Shared/PALArgumentCoders.serialization.in
     Shared/Pasteboard.serialization.in
     Shared/PlatformPopupMenuData.serialization.in

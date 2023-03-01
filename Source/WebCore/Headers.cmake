@@ -668,6 +668,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h
+    css/parser/CSSParserEnum.h
     css/parser/CSSParserMode.h
     css/parser/CSSParserSelector.h
     css/parser/CSSParserToken.h

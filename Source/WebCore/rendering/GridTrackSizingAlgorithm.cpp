@@ -795,7 +795,7 @@ double GridTrackSizingAlgorithm::findFrUnitSize(const GridSpan& tracksSpan, Layo
 
 void GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes()
 {
-    if (m_direction == ForColumns && m_strategy->isComputingSizeContainment()) {
+    if (m_direction == ForColumns && m_strategy->isComputingSizeOrInlineSizeContainment()) {
         if (auto size = m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction)) {
             m_minContentSize = size.value();
             m_maxContentSize = size.value();
@@ -807,7 +807,7 @@ void GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes()
 
     Vector<GridTrack>& allTracks = tracks(m_direction);
     for (auto& track : allTracks) {
-        ASSERT(m_strategy->isComputingSizeContainment() || m_strategy->isComputingInlineSizeContainment() || !track.infiniteGrowthPotential());
+        ASSERT(m_strategy->isComputingSizeOrInlineSizeContainment() || !track.infiniteGrowthPotential());
         m_minContentSize += track.baseSize();
         m_maxContentSize += track.growthLimitIsInfinite() ? track.baseSize() : track.growthLimit();
         // The growth limit caps must be cleared now in order to properly sort
@@ -1073,6 +1073,7 @@ private:
     LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
     bool isComputingSizeContainment() const override { return renderGrid()->shouldApplySizeContainment(); }
     bool isComputingInlineSizeContainment() const override { return renderGrid()->shouldApplyInlineSizeContainment(); }
+    bool isComputingSizeOrInlineSizeContainment() const override { return renderGrid()->shouldApplySizeOrInlineSizeContainment(); }
     void accumulateFlexFraction(double& flexFraction, GridIterator&, GridTrackSizingDirection outermostDirection, HashSet<RenderBox*>& itemsSet) const;
 };
 
@@ -1186,6 +1187,7 @@ private:
     LayoutUnit minLogicalSizeForChild(RenderBox&, const Length& childMinSize, std::optional<LayoutUnit> availableSize) const override;
     bool isComputingSizeContainment() const override { return false; }
     bool isComputingInlineSizeContainment() const override { return false; }
+    bool isComputingSizeOrInlineSizeContainment() const override { return false; }
 };
 
 LayoutUnit IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
@@ -1670,7 +1672,7 @@ void GridTrackSizingAlgorithm::run()
 
     // Step 3.
     m_strategy->maximizeTracks(tracks(m_direction), m_direction == ForColumns ? m_freeSpaceColumns : m_freeSpaceRows);
-    if (m_strategy->isComputingSizeContainment() && !m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction))
+    if (m_strategy->isComputingSizeOrInlineSizeContainment() && !m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction))
         return;
 
     // Step 4.

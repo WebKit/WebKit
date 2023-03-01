@@ -521,11 +521,13 @@ static inline Layout::BlockLayoutState::LeadingTrim leadingTrim(const RenderBloc
     return leadingTrimForIFC;
 }
 
-void LineLayout::layout()
+std::optional<LayoutRect> LineLayout::layout()
 {
     auto& rootLayoutBox = this->rootLayoutBox();
-    if (!rootLayoutBox.hasInFlowOrFloatingChild())
-        return;
+    if (!rootLayoutBox.hasInFlowOrFloatingChild()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 
     prepareLayoutState();
     prepareFloatingState();
@@ -558,18 +560,27 @@ void LineLayout::layout()
     };
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
     Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
-
-    constructContent();
+    auto repaintRect = LayoutRect { constructContent() };
 
     auto adjustments = adjustContent();
 
     updateRenderTreePositions(adjustments);
 
     m_lineDamage = { };
+
+    return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
 }
 
-void LineLayout::constructContent()
+FloatRect LineLayout::constructContent()
 {
+    auto damagedRect = FloatRect { };
+    auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lastLineIndex) {
+        ASSERT(firstLineIndex <= lastLineIndex);
+        ASSERT(m_inlineContent && m_inlineContent->lines.size() > lastLineIndex);
+        for (auto index = firstLineIndex; index <= lastLineIndex; ++index)
+            damagedRect.unite(m_inlineContent->lines[index].inkOverflow());
+    };
+
     auto destroyDamagedContent = [&] {
         if (!m_inlineContent || !m_lineDamage)
             return;
@@ -582,6 +593,7 @@ void LineLayout::constructContent()
             return;
         }
         if (!damagedLineIndex) {
+            adjustDamagedRectWithLineRange(0, m_inlineContent->lines.size() - 1);
             m_inlineContent->boxes.clear();
             m_inlineContent->lines.clear();
             return;
@@ -593,10 +605,12 @@ void LineLayout::constructContent()
         auto numberOfDamagedBoxes = [&] {
             size_t boxCount = 0;
             for (auto index = firstDamagedLineIndex; index <= lastDamagedLineIndex; ++index)
-                boxCount += damagedLine.boxCount();
+                boxCount += m_inlineContent->lines[index].boxCount();
             ASSERT(boxCount);
             return boxCount;
         };
+
+        adjustDamagedRectWithLineRange(firstDamagedLineIndex, lastDamagedLineIndex);
         m_inlineContent->boxes.remove(damagedLine.firstBoxIndex(), numberOfDamagedBoxes());
         m_inlineContent->lines.remove(firstDamagedLineIndex, lastDamagedLineIndex - firstDamagedLineIndex + 1);
     };
@@ -607,6 +621,8 @@ void LineLayout::constructContent()
             return;
 
         InlineContentBuilder { flow(), m_boxTree }.build(m_inlineFormattingState, ensureInlineContent());
+        if (!m_inlineContent->lines.isEmpty())
+            adjustDamagedRectWithLineRange(!m_lineDamage || !m_lineDamage->contentPosition() ? 0 : m_lineDamage->contentPosition()->lineIndex, m_inlineContent->lines.size() - 1);
 
         m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
         m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
@@ -617,6 +633,11 @@ void LineLayout::constructContent()
     m_inlineFormattingState.resetNestedListMarkerOffsets();
     m_inlineFormattingState.shrinkToFit();
     m_blockFormattingState.shrinkToFit();
+
+    // FIXME: These needs to be incorporated into the partial damage.
+    auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
+    damagedRect.expand({ 0, additionalHeight });
+    return damagedRect;
 }
 
 void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments)

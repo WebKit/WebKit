@@ -83,6 +83,7 @@ public:
 
     EncodedDataStatus encodedDataStatus() const { return m_source->encodedDataStatus(); }
     size_t frameCount() const { return m_source->frameCount(); }
+    size_t primaryFrameIndex() const { return m_source->primaryFrameIndex(); }
     RepetitionCount repetitionCount() const { return m_source->repetitionCount(); }
     String uti() const override { return m_source->uti(); }
     String filenameExtension() const override { return m_source->filenameExtension(); }

@@ -24,8 +24,13 @@
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
+(define (lockdown-mode)
+    (require-not (require-entitlement "com.apple.security.cs.allow-jit")))
+
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
+(with-filter (lockdown-mode)
+    (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5 65)))
@@ -2136,7 +2141,6 @@
     task_policy_set
     task_restartable_ranges_synchronize
     thread_resume
-    thread_set_exception_ports
     thread_suspend))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
@@ -2172,6 +2176,9 @@
 #else
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
 #endif
+            (with-filter (require-not (lockdown-mode))
+                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+
             (allow mach-message-send (kernel-mig-routines-common)))))
 
 (define (syscall-mach-common) (machtrap-number

@@ -287,6 +287,7 @@ public:
     virtual LayoutUnit freeSpaceForStretchAutoTracksStep() const = 0;
     virtual bool isComputingSizeContainment() const = 0;
     virtual bool isComputingInlineSizeContainment() const = 0;
+    virtual bool isComputingSizeOrInlineSizeContainment() const = 0;
 
 protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)

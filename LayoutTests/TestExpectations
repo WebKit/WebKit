@@ -2298,6 +2298,9 @@ fast/images/webp-as-image.html [ Skip ]
 fast/images/animated-webp-as-image.html [ Skip ]
 fast/images/animated-webp.html [ Skip ]
 
+# AVIF overlay images are only supported on macOS and iOS post Ventura.
+fast/images/image-overlay-mutiple-frames.html [ Skip ]
+
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 
@@ -6272,7 +6275,8 @@ imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Sk
 webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [ Pass Failure ]
 
 # This test is checking that WebContent is terminated when performing an invalid IPC operation
-ipc/no-test-only-ipc-expected-crash.html [ Crash ]
+ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
+ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
 
 #Skipping counter-style-at-rules tests until we rendering of counter-styles get implemented.
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/ [ Skip ]

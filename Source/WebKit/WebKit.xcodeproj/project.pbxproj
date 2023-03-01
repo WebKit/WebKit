@@ -1521,6 +1521,7 @@
 		8644890B27B47020007A1C66 /* _WKSystemPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890A27B47020007A1C66 /* _WKSystemPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8644890F27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */; };
 		86760A6B28DB30DE00D07D06 /* GeneratedSerializers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */; };
+		86D1970929AE4E930083B077 /* NetworkProcessConnectionParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */; };
 		86DD519028EF28E800DF2A58 /* WebEventModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 86DD518F28EF28E800DF2A58 /* WebEventModifier.h */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
 		86EB7204298D310A00C1DC77 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EB7202298D310900C1DC77 /* SecItemShim.h */; };
@@ -5841,8 +5842,10 @@
 		86D1968229A516270083B077 /* PlatformPopupMenuData.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlatformPopupMenuData.serialization.in; sourceTree = "<group>"; };
 		86D1968329A517A20083B077 /* TouchBarMenuItemData.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TouchBarMenuItemData.serialization.in; sourceTree = "<group>"; };
 		86D1968429A51D070083B077 /* WebsiteDataType.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebsiteDataType.serialization.in; sourceTree = "<group>"; };
-		86D196CE29A8D0D60083B077 /* DisplayListArgumentCoders.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DisplayListArgumentCoders.serialization.in; sourceTree = "<group>"; };
 		86D196BF29A7890F0083B077 /* GPUProcessConnectionParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessConnectionParameters.serialization.in; sourceTree = "<group>"; };
+		86D196CE29A8D0D60083B077 /* DisplayListArgumentCoders.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DisplayListArgumentCoders.serialization.in; sourceTree = "<group>"; };
+		86D1970729AE4E8A0083B077 /* NetworkProcessConnectionParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkProcessConnectionParameters.serialization.in; sourceTree = "<group>"; };
+		86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessConnectionParameters.h; sourceTree = "<group>"; };
 		86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusedElementInformation.serialization.in; sourceTree = "<group>"; };
 		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
 		86DD518B28EF028500DF2A58 /* TextFlags.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextFlags.serialization.in; sourceTree = "<group>"; };
@@ -7898,6 +7901,8 @@
 				4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */,
 				1ADCB869189831B30022EE5A /* NavigationActionData.h */,
 				86D1968129A512590083B077 /* NavigationActionData.serialization.in */,
+				86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */,
+				86D1970729AE4E8A0083B077 /* NetworkProcessConnectionParameters.serialization.in */,
 				5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */,
 				7B5A3DC527AE501A006C6F97 /* ObjectIdentifierReferenceTracker.h */,
 				5CE77805297CB484000BA9CF /* PALArgumentCoders.serialization.in */,
@@ -14320,6 +14325,7 @@
 				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
 				5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */,
 				517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */,
+				86D1970929AE4E930083B077 /* NetworkProcessConnectionParameters.h in Headers */,
 				5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
