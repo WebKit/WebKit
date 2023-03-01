@@ -399,10 +399,19 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
     }
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/AlternativeTextControllerAdditions.cpp>
+#else
+static inline void removeCorrectionIndicatorMarkers(Document& document)
+{
+    document.markers().removeMarkers(DocumentMarker::CorrectionIndicator);
+}
+#endif
+
 void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* command)
 {
     if (command->isTopLevelCommand() && !command->shouldRetainAutocorrectionIndicator())
-        m_document.markers().removeMarkers(DocumentMarker::CorrectionIndicator);
+        removeCorrectionIndicatorMarkers(m_document);
 
     markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(command);
     m_originalStringForLastDeletedAutocorrection = String();
