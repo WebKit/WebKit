@@ -521,6 +521,11 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
         for (unsigned j = 0; j < gst_caps_get_size(formatCaps); j++) {
             auto* structure = gst_caps_get_structure(formatCaps, j);
             gst_structure_set_name(structure, "application/x-rtp");
+
+            // Remove attributes unrelated with codec preferences, potentially leading to internal
+            // webrtcbin confusions such as duplicated RTP direction attributes for instance.
+            gst_structure_remove_fields(structure, "a-setup", "a-ice-ufrag", "a-ice-pwd", "a-sendrecv", "a-inactive",
+                "a-sendonly", "a-recvonly", nullptr);
         }
 
         gst_caps_append(caps.get(), formatCaps);
