@@ -103,10 +103,6 @@
 #define NSAccessibilityTextChangeElement @"AXTextChangeElement"
 #endif
 
-#ifndef NSAccessibilitySelectedTextMarkerRangeAttribute
-#define NSAccessibilitySelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
-#endif
-
 #ifndef kAXDraggingSourceDragBeganNotification
 #define kAXDraggingSourceDragBeganNotification CFSTR("AXDraggingSourceDragBegan")
 #endif
@@ -509,7 +505,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
     }
     if (!selection.isNone()) {
         if (auto textMarkerRange = textMarkerRangeFromVisiblePositions(this, selection.visibleStart(), selection.visibleEnd()))
-            [userInfo setObject:(id)textMarkerRange forKey:NSAccessibilitySelectedTextMarkerRangeAttribute];
+            [userInfo setObject:(id)textMarkerRange forKey:AXSelectedTextMarkerRangeAttribute];
     }
 
     if (id wrapper = object->wrapper()) {
