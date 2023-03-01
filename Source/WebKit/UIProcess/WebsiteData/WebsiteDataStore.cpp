@@ -2044,7 +2044,7 @@ String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDi
 
 String WebsiteDataStore::defaultHSTSStorageDirectory(const String& baseCacheDirectory)
 {
-#if USE(GLIB) && ENABLE(2022_GLIB_API)
+#if USE(GLIB) && !ENABLE(2022_GLIB_API)
     // Bug: HSTS storage goes in the data directory when baseCacheDirectory is not specified, but
     // it should go in the cache directory. Do not fix this because it would cause the old HSTS
     // cache to be leaked on disk.
