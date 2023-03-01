@@ -27,7 +27,7 @@ import six
 
 from webkitbugspy import Tracker, bugzilla, github, radar
 from webkitcorepy import decorators
-from webkitscmpy import ScmBase, Contributor
+from webkitscmpy import ScmBase, Contributor, CommitClassifier
 
 
 class Scm(ScmBase):
@@ -55,12 +55,11 @@ class Scm(ScmBase):
             return local.Svn(path, contributors=contributors, **kwargs)
         raise OSError("'{}' is not a known SCM type".format(path))
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         if not isinstance(path, six.string_types):
             raise ValueError("Expected 'path' to be a string type, not '{}'".format(type(path)))
         self.path = path
 
-        root_path = self.root_path
         if not contributors and self.metadata:
             for candidate in [
                 os.path.join(self.metadata, 'contributors.json'),
@@ -70,7 +69,22 @@ class Scm(ScmBase):
                 with open(candidate, 'r') as file:
                     contributors = Contributor.Mapping.load(file)
 
-        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
+        if not classifier and self.metadata:
+            for candidate in [
+                os.path.join(self.metadata, 'commit_classes.json'),
+            ]:
+                if not os.path.isfile(candidate):
+                    continue
+                with open(candidate, 'r') as file:
+                    classifier = CommitClassifier.load(file)
+
+        super(Scm, self).__init__(
+            dev_branches=dev_branches,
+            prod_branches=prod_branches,
+            contributors=contributors,
+            classifier=classifier,
+            id=id,
+        )
 
         trackers = []
         if self.metadata:

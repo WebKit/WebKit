@@ -357,7 +357,7 @@ class GitHub(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, proxies=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, proxies=None, classifier=None):
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
@@ -378,6 +378,7 @@ class GitHub(Scm):
             dev_branches=dev_branches, prod_branches=prod_branches,
             contributors=contributors,
             id=id or self.name.lower(),
+            classifier=classifier,
         )
 
         self.pull_requests = self.PRGenerator(self)

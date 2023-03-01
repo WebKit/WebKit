@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -386,8 +386,23 @@ class Git(Scm):
 
         return result
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=sys.version_info > (3, 0)):
-        super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
+    def __init__(
+            self, path,
+            dev_branches=None,
+            prod_branches=None,
+            contributors=None,
+            id=None,
+            cached=sys.version_info > (3, 0),
+            classifier=None,
+    ):
+        super(Git, self).__init__(
+            path,
+            dev_branches=dev_branches,
+            prod_branches=prod_branches,
+            contributors=contributors,
+            id=id,
+            classifier=classifier,
+        )
         self._branch = None
         self.cache = self.Cache(self) if self.root_path and cached else None
         self.default_remote = 'origin'

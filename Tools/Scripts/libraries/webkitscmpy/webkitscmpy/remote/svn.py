@@ -44,7 +44,7 @@ class Svn(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, cache_path=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, cache_path=None, classifier=None):
         if url[-1] != '/':
             url += '/'
         if not self.is_webserver(url):
@@ -55,6 +55,7 @@ class Svn(Scm):
             dev_branches=dev_branches, prod_branches=prod_branches,
             contributors=contributors,
             id=id or url.split('/')[-2].lower(),
+            classifier=classifier,
         )
 
         if not cache_path:
