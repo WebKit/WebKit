@@ -49,22 +49,24 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     , m_request(WTFMove(request))
     , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, nullptr, nullptr, WTFMove(options), m_sessionID, WebPageProxyIdentifier { }, WebCore::HTTPHeaderMap { }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, m_request.httpReferrer(), true, OptionSet<NetworkConnectionIntegrity> { }))
 {
+    if (!m_request.url().protocolIsInHTTPFamily()) {
+        didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });
+        return;
+    }
+
     m_networkLoadChecker->enableContentExtensionsCheck();
+
     m_networkLoadChecker->check(ResourceRequest { m_request }, nullptr, [this, weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
         if (!weakThis)
             return;
-        WTF::switchOn(result,
-            [this] (ResourceError& error) {
-                this->didFinish(error);
-            },
-            [] (NetworkLoadChecker::RedirectionTriplet& triplet) {
-                // We should never send a synthetic redirect for BackgroundFetchLoads.
-                ASSERT_NOT_REACHED();
-            },
-            [&] (ResourceRequest& request) {
-                this->loadRequest(networkProcess, WTFMove(request));
-            }
-        );
+        WTF::switchOn(result, [this] (ResourceError& error) {
+            this->didFinish(error);
+        }, [] (NetworkLoadChecker::RedirectionTriplet& triplet) {
+            // We should never send a synthetic redirect for BackgroundFetchLoads.
+            ASSERT_NOT_REACHED();
+        }, [&] (ResourceRequest& request) {
+            this->loadRequest(networkProcess, WTFMove(request));
+        });
     });
 }
 

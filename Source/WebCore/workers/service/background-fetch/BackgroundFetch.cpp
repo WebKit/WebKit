@@ -319,6 +319,11 @@ void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRe
         return;
     }
 
+    if (m_isCompleted) {
+        callback(makeUnexpected(ExceptionData { TypeError, "Fetch failed"_s }));
+        return;
+    }
+
     m_responseCallbacks.append(WTFMove(callback));
 }
 

@@ -3,8 +3,8 @@ PASS https: fetch should register ok
 PASS loopback IPv4 http: fetch should register ok
 PASS loopback IPv6 http: fetch should register ok
 PASS localhost http: fetch should register ok
-FAIL wss: fetch should reject assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL file: fetch should reject assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL data: fetch should reject assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL unknown scheme fetch should reject assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS wss: fetch should reject
+PASS file: fetch should reject
+PASS data: fetch should reject
+PASS unknown scheme fetch should reject
 
