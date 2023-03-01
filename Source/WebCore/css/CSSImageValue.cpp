@@ -36,12 +36,23 @@
 
 namespace WebCore {
 
+CSSImageValue::CSSImageValue()
+    : CSSValue(ImageClass)
+    , m_isInvalid(true)
+{
+}
+
 CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorType)
     : CSSValue(ImageClass)
     , m_location(WTFMove(location))
     , m_initiatorType(WTFMove(initiatorType))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
+}
+
+Ref<CSSImageValue> CSSImageValue::create()
+{
+    return adoptRef(*new CSSImageValue);
 }
 
 Ref<CSSImageValue> CSSImageValue::create(ResolvedURL location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString initiatorType)
@@ -119,6 +130,8 @@ bool CSSImageValue::equals(const CSSImageValue& other) const
 
 String CSSImageValue::customCSSText() const
 {
+    if (m_isInvalid)
+        return ""_s;
     return serializeURL(m_location.specifiedURLString);
 }
 

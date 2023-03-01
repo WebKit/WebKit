@@ -113,6 +113,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (layer.anchorPointZ)
         ts.dumpProperty("layer anchorPointZ", makeString(layer.anchorPointZ));
 
+    if (layer.opacity != 1.0)
+        ts.dumpProperty("layer opacity", makeString(layer.opacity));
+
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "sublayers";

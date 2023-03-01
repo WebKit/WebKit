@@ -442,7 +442,14 @@ void EventRegion::dump(TextStream& ts) const
     
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (!m_interactionRegions.isEmpty()) {
-        ts.dumpProperty("interaction regions", m_interactionRegions);
+        auto sortedInteractionRegions = copyToVector(m_interactionRegions);
+        std::sort(sortedInteractionRegions.begin(), sortedInteractionRegions.end(),
+            [&] (const auto& a, const auto& b) -> bool {
+                return a.regionInLayerCoordinates.bounds().y() == b.regionInLayerCoordinates.bounds().y()
+                    ? a.regionInLayerCoordinates.bounds().x() < b.regionInLayerCoordinates.bounds().x()
+                    : a.regionInLayerCoordinates.bounds().y() < b.regionInLayerCoordinates.bounds().y();
+        });
+        ts.dumpProperty("interaction regions", sortedInteractionRegions);
         ts << "\n";
     }
 #endif

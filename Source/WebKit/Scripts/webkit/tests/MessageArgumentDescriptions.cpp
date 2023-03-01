@@ -117,6 +117,7 @@
 #include <WebCore/SleepDisablerIdentifier.h>
 #include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <WebCore/TextCheckingRequestIdentifier.h>
+#include <WebCore/TextManipulationItemIdentifier.h>
 #include <WebCore/TextManipulationToken.h>
 #include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/WebSocketIdentifier.h>
@@ -436,6 +437,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::SleepDisablerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::SpeechRecognitionConnectionClientIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::TextCheckingRequestIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::TextManipulationItemIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::TextManipulationTokenIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::UserMediaRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::WebSocketIdentifier));
@@ -534,6 +536,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::SleepDisablerIdentifier"_s,
         "WebCore::SpeechRecognitionConnectionClientIdentifier"_s,
         "WebCore::TextCheckingRequestIdentifier"_s,
+        "WebCore::TextManipulationItemIdentifier"_s,
         "WebCore::TextManipulationTokenIdentifier"_s,
         "WebCore::UserMediaRequestIdentifier"_s,
         "WebCore::WebSocketIdentifier"_s,

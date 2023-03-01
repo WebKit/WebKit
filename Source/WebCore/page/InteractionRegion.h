@@ -53,9 +53,6 @@ struct InteractionRegion {
     Type type;
 
     WEBCORE_EXPORT ~InteractionRegion();
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<InteractionRegion> decode(Decoder&);
 };
 
 inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
@@ -69,45 +66,5 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
-
-template<class Encoder>
-void InteractionRegion::encode(Encoder& encoder) const
-{
-    encoder << elementIdentifier;
-    encoder << regionInLayerCoordinates;
-    encoder << borderRadius;
-    encoder << type;
-}
-
-template<class Decoder>
-std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
-{
-    std::optional<ElementIdentifier> elementIdentifier;
-    decoder >> elementIdentifier;
-    if (!elementIdentifier)
-        return std::nullopt;
-
-    std::optional<Region> regionInLayerCoordinates;
-    decoder >> regionInLayerCoordinates;
-    if (!regionInLayerCoordinates)
-        return std::nullopt;
-    
-    std::optional<float> borderRadius;
-    decoder >> borderRadius;
-    if (!borderRadius)
-        return std::nullopt;
-
-    std::optional<Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*elementIdentifier),
-        WTFMove(*regionInLayerCoordinates),
-        WTFMove(*borderRadius),
-        WTFMove(*type)
-    } };
-}
 
 }

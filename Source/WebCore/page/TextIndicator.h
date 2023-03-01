@@ -170,36 +170,3 @@ private:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::TextIndicatorOption> {
-    using values = EnumValues<
-        WebCore::TextIndicatorOption,
-        WebCore::TextIndicatorOption::RespectTextColor,
-        WebCore::TextIndicatorOption::PaintBackgrounds,
-        WebCore::TextIndicatorOption::PaintAllContent,
-        WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight,
-        WebCore::TextIndicatorOption::TightlyFitContent,
-        WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
-        WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection,
-        WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
-        WebCore::TextIndicatorOption::DoNotClipToVisibleRect,
-        WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
-        WebCore::TextIndicatorOption::UseSelectionRectForSizing,
-        WebCore::TextIndicatorOption::ComputeEstimatedBackgroundColor,
-        WebCore::TextIndicatorOption::UseUserSelectAllCommonAncestor
-    >;
-};
-
-template<> struct EnumTraits<WebCore::TextIndicatorPresentationTransition> {
-    using values = EnumValues<
-        WebCore::TextIndicatorPresentationTransition,
-        WebCore::TextIndicatorPresentationTransition::None,
-        WebCore::TextIndicatorPresentationTransition::Bounce,
-        WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade,
-        WebCore::TextIndicatorPresentationTransition::FadeIn
-    >;
-};
-
-} // namespace WTF

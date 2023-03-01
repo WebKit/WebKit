@@ -48,6 +48,12 @@ Region::Region(const IntRect& rect)
 {
 }
 
+Region::Region(IntRect&& bounds, std::unique_ptr<Region::Shape>&& shape)
+    : m_bounds(WTFMove(bounds))
+    , m_shape(WTFMove(shape))
+{
+}
+
 Region::Region(const Region& other)
     : m_bounds(other.m_bounds)
     , m_shape(other.copyShape())
@@ -267,6 +273,12 @@ struct Region::Shape::CompareIntersectsOperation {
 Region::Shape::Shape(const IntRect& rect)
     : m_segments({ rect.x(), rect.maxX() })
     , m_spans({ { rect.y(), 0 }, { rect.maxY(), 2 } })
+{
+}
+
+Region::Shape::Shape(Vector<int, 32>&& segments, Vector<Span, 16>&& spans)
+    : m_segments(WTFMove(segments))
+    , m_spans(WTFMove(spans))
 {
 }
 

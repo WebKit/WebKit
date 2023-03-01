@@ -34,19 +34,6 @@ class CSSPrimitiveValue;
 
 class CSSImageSetOptionValue final : public CSSValue {
 public:
-    class Type {
-    public:
-        Type(String);
-
-        bool isSupported() const { return m_isSupported; }
-        String mimeType() const { return m_mimeType; }
-        String cssText() const;
-
-    private:
-        bool m_isSupported;
-        String m_mimeType;
-    };
-
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&);
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String);
@@ -54,23 +41,21 @@ public:
     bool equals(const CSSImageSetOptionValue&) const;
     String customCSSText() const;
 
-    Ref<CSSValue> image() const;
+    Ref<CSSValue> image() const { return m_image; }
 
-    RefPtr<CSSPrimitiveValue> resolution() const;
+    Ref<CSSPrimitiveValue> resolution() const { return m_resolution; }
     void setResolution(Ref<CSSPrimitiveValue>&&);
 
-    std::optional<Type> type() const;
-    void setType(Type&&);
-    void setType(String&&);
+    String type() const { return m_mimeType; }
+    void setType(String);
 
 private:
-    CSSImageSetOptionValue(Ref<CSSValue>&&);
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String&&);
 
     Ref<CSSValue> m_image;
-    RefPtr<CSSPrimitiveValue> m_resolution;
-    std::optional<Type> m_type;
+    Ref<CSSPrimitiveValue> m_resolution;
+    String m_mimeType;
 };
 
 } // namespace WebCore

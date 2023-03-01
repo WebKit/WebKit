@@ -2053,6 +2053,8 @@ platform/VideoPixelFormat.cpp
 platform/WebCoreCrossThreadCopier.cpp
 platform/WebCorePersistentCoders.cpp
 platform/Widget.cpp
+platform/animation/AcceleratedEffect.cpp
+platform/animation/AcceleratedEffectValues.cpp
 platform/animation/Animation.cpp
 platform/animation/AnimationList.cpp
 platform/animation/TimingFunction.cpp
@@ -2624,6 +2626,7 @@ rendering/style/StyleGridData.cpp
 rendering/style/StyleGridItemData.cpp
 rendering/style/StyleImageSet.cpp
 rendering/style/StyleInheritedData.cpp
+rendering/style/StyleInvalidImage.cpp
 rendering/style/StyleMarqueeData.cpp
 rendering/style/StyleMiscNonInheritedData.cpp
 rendering/style/StyleMultiColData.cpp
