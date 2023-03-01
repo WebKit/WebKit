@@ -140,3 +140,9 @@ removed. WebKit will draw scrollbars that match the Adwaita GTK theme.
 been removed. Instead, [method@WebKit.UserContentManager.register_script_message_handler]
 and [method@WebKit.UserContentManager.unregister_script_message_handler] have
 gained parameters to specify the script world to use.
+
+## Download Destination
+
+[method@WebKit.Download.set_destination], [method@WebKit.Download.get_destination],
+[property@WebKit.Download:destination], and [signal@WebKit.Download::created-destination]
+now all use a filesystem path rather than a URI. All uses must be updated accordingly.

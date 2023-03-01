@@ -78,7 +78,10 @@ struct _WebKitDownloadPrivate {
     GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
     GWeakPtr<WebKitWebView> webView;
-    CString destinationURI;
+#if !ENABLE(2022_GLIB_API)
+    GUniquePtr<char> destinationURI;
+#endif
+    GUniquePtr<char> destination;
     guint64 currentSize;
     bool isCancelled;
     GUniquePtr<GTimer> timer;
@@ -128,7 +131,7 @@ static void webkitDownloadGetProperty(GObject* object, guint propId, GValue* val
 
 static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const gchar* suggestedFilename)
 {
-    if (!download->priv->destinationURI.isNull())
+    if (download->priv->destination)
         return FALSE;
 
     GUniquePtr<char> filename(g_strdelimit(g_strdup(suggestedFilename), G_DIR_SEPARATOR_S, '_'));
@@ -137,9 +140,10 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
         // If we don't have XDG user dirs info, set just to HOME.
         downloadsDir = g_get_home_dir();
     }
-    GUniquePtr<char> destination(g_build_filename(downloadsDir, filename.get(), NULL));
-    GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
-    download->priv->destinationURI = destinationURI.get();
+    download->priv->destination.reset(g_build_filename(downloadsDir, filename.get(), nullptr));
+#if !ENABLE(2022_GLIB_API)
+    download->priv->destinationURI.reset(g_filename_to_uri(download->priv->destination.get(), nullptr, nullptr));
+#endif
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
     return TRUE;
 }
@@ -155,7 +159,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     /**
      * WebKitDownload:destination:
      *
-     * The local URI to where the download will be saved.
+     * The local path to where the download will be saved.
      */
     sObjProperties[PROP_DESTINATION] =
         g_param_spec_string(
@@ -272,7 +276,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * @suggested_filename: the filename suggested for the download
      *
      * This signal is emitted after response is received to
-     * decide a destination URI for the download. If this signal is not
+     * decide a destination for the download. If this signal is not
      * handled the file will be downloaded to %G_USER_DIRECTORY_DOWNLOAD
      * directory using @suggested_filename.
      *
@@ -292,7 +296,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     /**
      * WebKitDownload::created-destination:
      * @download: the #WebKitDownload
-     * @destination: the destination URI
+     * @destination: the destination
      *
      * This signal is emitted after #WebKitDownload::decide-destination and before
      * #WebKitDownload::received-data to notify that destination file has been
@@ -407,23 +411,26 @@ void webkitDownloadFinished(WebKitDownload* download)
 String webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename, bool& allowOverwrite)
 {
     if (download->priv->isCancelled)
-        return emptyString();
+        return { };
+
     gboolean returnValue;
     g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &returnValue);
     allowOverwrite = download->priv->allowOverwrite;
-    GUniquePtr<char> destinationPath(g_filename_from_uri(download->priv->destinationURI.data(), nullptr, nullptr));
-    if (!destinationPath)
-        return emptyString();
-    return String::fromUTF8(destinationPath.get());
+    return String::fromUTF8(download->priv->destination.get());
 }
 
 void webkitDownloadDestinationCreated(WebKitDownload* download, const String& destinationPath)
 {
     if (download->priv->isCancelled)
         return;
+
+#if ENABLE(2022_GLIB_API)
+    g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationPath.utf8().data());
+#else
     GUniquePtr<char> destinationURI(g_filename_to_uri(destinationPath.utf8().data(), nullptr, nullptr));
     ASSERT(destinationURI);
     g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.get());
+#endif
 }
 
 /**
@@ -449,52 +456,73 @@ WebKitURIRequest* webkit_download_get_request(WebKitDownload* download)
  * webkit_download_get_destination:
  * @download: a #WebKitDownload
  *
- * Obtains the URI to which the downloaded file will be written.
+ * Obtains the destination to which the downloaded file will be written.
  *
- * You
- * can connect to #WebKitDownload::created-destination to make
+ * You can connect to #WebKitDownload::created-destination to make
  * sure this method returns a valid destination.
  *
- * Returns: the destination URI or %NULL
+ * Returns: (nullable): the destination or %NULL
  */
 const gchar* webkit_download_get_destination(WebKitDownload* download)
 {
-    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), nullptr);
 
-    return download->priv->destinationURI.data();
+#if !ENABLE(2022_GLIB_API)
+    if (download->priv->destinationURI)
+        return download->priv->destinationURI.get();
+#endif
+    return download->priv->destination.get();
 }
 
 /**
  * webkit_download_set_destination:
  * @download: a #WebKitDownload
- * @uri: the destination URI
+ * @destination: the destination
  *
- * Sets the URI to which the downloaded file will be written.
+ * Sets the destination to which the downloaded file will be written.
  *
  * This method should be called before the download transfer
  * starts or it will not have any effect on the ongoing download
  * operation. To set the destination using the filename suggested
  * by the server connect to #WebKitDownload::decide-destination
  * signal and call webkit_download_set_destination(). If you want to
- * set a fixed destination URI that doesn't depend on the suggested
+ * set a fixed destination that doesn't depend on the suggested
  * filename you can connect to notify::response signal and call
  * webkit_download_set_destination().
  * If #WebKitDownload::decide-destination signal is not handled
- * and destination URI is not set when the download transfer starts,
+ * and destination is not set when the download transfer starts,
  * the file will be saved with the filename suggested by the server in
  * %G_USER_DIRECTORY_DOWNLOAD directory.
  */
-void webkit_download_set_destination(WebKitDownload* download, const gchar* uri)
+void webkit_download_set_destination(WebKitDownload* download, const gchar* destination)
 {
     g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
-    g_return_if_fail(uri);
-    g_return_if_fail(uri[0] != '\0');
+    g_return_if_fail(destination);
+    g_return_if_fail(destination[0] != '\0');
+#if ENABLE(2022_GLIB_API)
+    g_return_if_fail(g_path_is_absolute(destination));
+#else
+    g_return_if_fail(g_str_has_prefix(destination, "file://") || g_path_is_absolute(destination));
 
-    WebKitDownloadPrivate* priv = download->priv;
-    if (priv->destinationURI == uri)
+    GUniquePtr<char> destinationPath;
+    if (g_str_has_prefix(destination, "file://")) {
+        download->priv->destinationURI.reset(g_strdup(destination));
+        destinationPath.reset(g_filename_from_uri(destination, nullptr, nullptr));
+        destination = destinationPath.get();
+    }
+#endif
+
+    if (!g_strcmp0(download->priv->destination.get(), destination))
         return;
 
-    priv->destinationURI = uri;
+#if ENABLE(2022_GLIB_API)
+    download->priv->destination.reset(g_strdup(destination));
+#else
+    if (destinationPath)
+        download->priv->destination = WTFMove(destinationPath);
+    else
+        download->priv->destination.reset(g_strdup(destination));
+#endif
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
 }
 
