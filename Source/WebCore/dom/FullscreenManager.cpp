@@ -334,8 +334,11 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
     }
 
     auto element = exitingDocument->fullscreenManager().fullscreenElement();
-    if (element && !element->isConnected())
+    if (element && !element->isConnected()) {
         addDocumentToFullscreenChangeEventQueue(exitingDocument);
+        element->setFullscreenFlag(false);
+        element->removeFromTopLayer();
+    }
 
     m_pendingExitFullscreen = true;
 
