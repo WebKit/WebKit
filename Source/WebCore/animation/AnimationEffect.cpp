@@ -33,7 +33,7 @@
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 
-namespace WebCore {
+amespace WebCore {
 
 AnimationEffect::AnimationEffect()
     : m_timingFunction(LinearTimingFunction::create())

@@ -690,7 +690,7 @@ FAILED (failures=1, errors=0)''')
                         logEnviron=False,
                         command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
-                        timeout=120,
+                        timeout=1200,
                         ) +
             ExpectShell.log('json', stdout=self.json_with_failure) +
             2,
