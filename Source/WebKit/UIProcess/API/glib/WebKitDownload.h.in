@@ -64,7 +64,7 @@ webkit_download_get_destination          (WebKitDownload *download);
 
 WEBKIT_API void
 webkit_download_set_destination          (WebKitDownload *download,
-                                          const gchar    *uri);
+                                          const gchar    *destination);
 
 WEBKIT_API WebKitURIResponse*
 webkit_download_get_response             (WebKitDownload *download);
