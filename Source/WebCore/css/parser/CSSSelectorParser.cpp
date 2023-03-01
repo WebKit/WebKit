@@ -43,12 +43,12 @@ namespace WebCore {
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSSelectorParser::IsNestedContext isNestedContext)
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
 {
     CSSSelectorParser parser(context, styleSheet, isNestedContext);
     range.consumeWhitespace();
     auto consume = [&] () {
-        if (context.cssNestingEnabled && isNestedContext == CSSSelectorParser::IsNestedContext::Yes)
+        if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
             return parser.consumeNestedSelectorList(range);
 
         return parser.consumeComplexSelectorList(range);
@@ -59,7 +59,7 @@ std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const
     return result;
 }
 
-CSSSelectorParser::CSSSelectorParser(const CSSParserContext& context, StyleSheetContents* styleSheet, CSSSelectorParser::IsNestedContext isNestedContext)
+CSSSelectorParser::CSSSelectorParser(const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
     : m_context(context)
     , m_styleSheet(styleSheet)
     , m_isNestedContext(isNestedContext)
@@ -106,12 +106,7 @@ CSSSelectorList CSSSelectorParser::consumeRelativeSelectorList(CSSParserTokenRan
 CSSSelectorList CSSSelectorParser::consumeNestedSelectorList(CSSParserTokenRange& range)
 {
     return consumeSelectorList(range, [&] (CSSParserTokenRange& range) {
-        auto selector = consumeComplexSelector(range);
-        if (selector)
-            return selector;
-
-        selector = consumeRelativeNestedSelector(range);
-        return selector;
+        return consumeNestedComplexSelector(range);
     });
 }
 
@@ -162,17 +157,22 @@ CSSSelectorList CSSSelectorParser::consumeForgivingComplexSelectorList(CSSParser
     });
 }
 
-bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSParserContext& context)
+bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSParserContext& context, CSSParserEnum::IsNestedContext isNestedContext)
 {
     range.consumeWhitespace();
-    CSSSelectorParser parser(context, nullptr);
+    CSSSelectorParser parser(context, nullptr, isNestedContext);
 
     // @supports requires that all arguments parse.
     parser.m_disableForgivingParsing = true;
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215635
     // Unknown css selector combinator is not addressed correctly in |CSSSelectorParser::consumeComplexSelector|.
-    auto parserSelector = parser.consumeComplexSelector(range);
+    std::unique_ptr<CSSParserSelector> parserSelector;
+    if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
+        parserSelector = parser.consumeNestedComplexSelector(range);
+    else
+        parserSelector = parser.consumeComplexSelector(range);
+
     if (parser.m_failedParsing || !range.atEnd() || !parserSelector)
         return false;
 
@@ -250,6 +250,16 @@ static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const CSSParserSelec
 static bool isDescendantCombinator(CSSSelector::RelationType relation)
 {
     return relation == CSSSelector::DescendantSpace;
+}
+
+std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNestedComplexSelector(CSSParserTokenRange& range)
+{
+    auto selector = consumeComplexSelector(range);
+    if (selector)
+        return selector;
+
+    selector = consumeRelativeNestedSelector(range);
+    return selector;
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSSParserTokenRange& range)
@@ -509,7 +519,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeSimpleSelector(CSSP
         selector = consumeId(range);
     else if (token.type() == DelimiterToken && token.delimiter() == '.')
         selector = consumeClass(range);
-    else if (token.type() == DelimiterToken && token.delimiter() == '&' && m_context.cssNestingEnabled && m_isNestedContext == IsNestedContext::Yes) // FIXME: handle top-level nesting selector
+    else if (token.type() == DelimiterToken && token.delimiter() == '&' && m_context.cssNestingEnabled && m_isNestedContext == CSSParserEnum::IsNestedContext::Yes) // FIXME: handle top-level nesting selector
         selector = consumeNesting(range);
     else if (token.type() == LeftBracketToken)
         selector = consumeAttribute(range);
