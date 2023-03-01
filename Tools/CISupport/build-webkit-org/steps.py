@@ -1157,7 +1157,7 @@ class RunBenchmarkTests(shell.Test):
     name = "benchmark-test"
     description = ["benchmark tests running"]
     descriptionDone = ["benchmark tests"]
-    command = ["python3", "Tools/Scripts/browserperfdash-benchmark", "--allplans",
+    command = ["python3", "Tools/Scripts/browserperfdash-benchmark", "--plans-from-config",
                "--config-file", "../../browserperfdash-benchmark-config.txt",
                "--browser-version", WithProperties("%(archive_revision)s")]
 
