@@ -88,6 +88,8 @@ CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
 WEBCORE_EXPORT void setContentSizeCategory(const String&);
 WEBCORE_EXPORT CFStringRef contentSizeCategory();
 
+RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames);
+FontTag fontTagForVariationAxisIdentifier(CFNumberRef axisIdentifier);
 VariationDefaultsMap defaultVariationValues(CTFontRef, ShouldLocalizeAxisNames);
 
 } // namespace WebCore

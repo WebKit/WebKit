@@ -57,7 +57,7 @@ bool fontNameIsSystemFont(CFStringRef fontName)
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
 
-static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
+RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
 {
 #if defined(HAVE_CTFontCopyVariationAxesInternal) // This macro is defined inside CoreText, not WebKit.
     if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
@@ -76,6 +76,19 @@ static RetainPtr<CFArrayRef> variationAxes(CTFontDescriptorRef fontDescriptor)
 }
 #endif
 
+FontTag fontTagForVariationAxisIdentifier(CFNumberRef axisIdentifier)
+{
+    uint32_t rawAxisIdentifier = 0;
+    Boolean success = CFNumberGetValue(axisIdentifier, kCFNumberSInt32Type, &rawAxisIdentifier);
+    ASSERT_UNUSED(success, success);
+
+    auto b1 = rawAxisIdentifier >> 24;
+    auto b2 = (rawAxisIdentifier & 0xFF0000) >> 16;
+    auto b3 = (rawAxisIdentifier & 0xFF00) >> 8;
+    auto b4 = rawAxisIdentifier & 0xFF;
+    return {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
+}
+
 VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
 {
     VariationDefaultsMap result;
@@ -90,9 +103,7 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
         CFNumberRef defaultValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisDefaultValueKey));
         CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
         CFNumberRef maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMaximumValueKey));
-        uint32_t rawAxisIdentifier = 0;
-        Boolean success = CFNumberGetValue(axisIdentifier, kCFNumberSInt32Type, &rawAxisIdentifier);
-        ASSERT_UNUSED(success, success);
+
         float rawDefaultValue = 0;
         float rawMinimumValue = 0;
         float rawMaximumValue = 0;
@@ -103,11 +114,7 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
         if (rawMinimumValue > rawMaximumValue)
             std::swap(rawMinimumValue, rawMaximumValue);
 
-        auto b1 = rawAxisIdentifier >> 24;
-        auto b2 = (rawAxisIdentifier & 0xFF0000) >> 16;
-        auto b3 = (rawAxisIdentifier & 0xFF00) >> 8;
-        auto b4 = rawAxisIdentifier & 0xFF;
-        FontTag resultKey = {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
+        FontTag resultKey = fontTagForVariationAxisIdentifier(axisIdentifier);
         VariationDefaults resultValues = { axisName, rawDefaultValue, rawMinimumValue, rawMaximumValue };
         result.set(resultKey, resultValues);
     }

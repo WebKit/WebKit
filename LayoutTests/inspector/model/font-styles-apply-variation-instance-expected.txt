@@ -1,0 +1,57 @@
+Tests for WI.FontStyles.ApplyFontVariationInstance
+
+
+== Running test suite: WI.FontStyles.ApplyFontVariationInstance
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.ApplyFontVariationInstance.InstanceDefault.Create
+PASS: Font has variation instance named Default
+INFO: Applying Default
+PASS: Applied variation instance name matches Default.
+PASS: Inline style has CSS property font-stretch
+PASS: Found expected CSS declaration font-stretch: 100%
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "trac" 0, "hght" 750, "desc" 0
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Create
+PASS: Font has variation instance named ThinShort
+INFO: Applying ThinShort
+PASS: Applied variation instance name matches ThinShort.
+PASS: Inline style has CSS property font-stretch
+PASS: Found expected CSS declaration font-stretch: 0%
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "trac" 0, "hght" 0, "desc" 0
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Update
+PASS: Font has variation instance named ThinShort
+INFO: Applying ThinShort
+PASS: Applied variation instance name matches ThinShort.
+PASS: Inline style has CSS property font-stretch
+PASS: Found expected CSS declaration font-stretch: 0%
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "trac" 0, "hght" 0, "desc" 0
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Update.VariationSettings
+PASS: Font has variation instance named ThinShort
+INFO: Applying ThinShort
+PASS: Applied variation instance name matches ThinShort.
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "wdth" 0, "trac" 0, "hght" 0, "desc" 0
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: WI.FontStyles.ApplyFontVariationInstance.InstanceThinShort.Replace.VariationSettings
+PASS: Font has variation instance named ThinShort
+INFO: Applying ThinShort
+PASS: Applied variation instance name matches ThinShort.
+PASS: Inline style has CSS property font-stretch
+PASS: Found expected CSS declaration font-stretch: 0%
+PASS: Inline style has CSS property font-variation-settings
+PASS: Found expected CSS declaration font-variation-settings: "trac" 0, "hght" 0, "desc" 0
+

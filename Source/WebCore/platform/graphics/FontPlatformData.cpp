@@ -103,4 +103,12 @@ Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(Shou
 }
 #endif
 
+#if !PLATFORM(COCOA) || !HAVE(CTFONT_COPY_LOCALIZED_NAME_BY_ID)
+Vector<FontPlatformData::FontVariationInstance> FontPlatformData::variationInstances() const
+{
+    // FIXME: <webkit.org/b/251990> Not implemented yet.
+    return { };
+}
+#endif
+
 }

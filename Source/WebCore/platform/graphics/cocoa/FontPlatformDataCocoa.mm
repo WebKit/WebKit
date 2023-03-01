@@ -67,5 +67,84 @@ Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(Shou
     });
 }
 
+#if HAVE(CTFONT_COPY_LOCALIZED_NAME_BY_ID)
+Vector<FontPlatformData::FontVariationInstance> FontPlatformData::variationInstances() const
+{
+    auto platformFont = ctFont();
+    if (!platformFont)
+        return { };
+
+    RetainPtr<CFDataRef> variationTable = adoptCF(CTFontCopyTable(platformFont, kCTFontTableFvar, kCTFontTableOptionNoOptions));
+    if (!variationTable)
+        return { };
+
+    auto variationTableLength = CFDataGetLength(variationTable.get());
+
+    static constexpr auto openTypeFontVariationTableHeaderLength = 16;
+    if (variationTableLength < openTypeFontVariationTableHeaderLength)
+        return { };
+
+    const uint8_t* variationTableBytes = CFDataGetBytePtr(variationTable.get());
+
+    uint16_t axesArrayOffset = variationTableBytes[5] | (variationTableBytes[4] << 8);
+    uint16_t axisCount = variationTableBytes[9] | (variationTableBytes[8] << 8);
+    uint16_t axisSize = variationTableBytes[11] | (variationTableBytes[10] << 8);
+    uint16_t instanceCount = variationTableBytes[13] | (variationTableBytes[12] << 8);
+    uint16_t instanceSize = variationTableBytes[15] | (variationTableBytes[14] << 8);
+
+    if (variationTableLength != axesArrayOffset + (axisCount * axisSize) + (instanceCount * instanceSize))
+        return { };
+
+    // An instance entry must be at least enough bytes for all known axes.
+    static constexpr auto openTypeFontVariationTableInstanceNameIdAndFlagsLength = 4;
+    static constexpr auto openTypeFontVariationTableInstanceAxisValueLength = 4;
+    if (instanceSize < openTypeFontVariationTableInstanceNameIdAndFlagsLength + (openTypeFontVariationTableInstanceAxisValueLength * axisCount))
+        return { };
+
+    auto axes = WebCore::variationAxes(platformFont, ShouldLocalizeAxisNames::No);
+    if (!axes)
+        return { };
+
+    if (CFArrayGetCount(axes.get()) != axisCount)
+        return { };
+
+    // Axis values in a variation instance are in the same order the variation axes are defined.
+    Vector<String> variationTags;
+    for (CFIndex i = 0; i < axisCount; ++i) {
+        CFDictionaryRef axis = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(axes.get(), i));
+        CFNumberRef axisIdentifier = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey));
+        auto tag = fontTagForVariationAxisIdentifier(axisIdentifier);
+
+        variationTags.append(String(tag.data(), tag.size()));
+    }
+
+    Vector<FontPlatformData::FontVariationInstance> result;
+    for (auto instanceOffset = axesArrayOffset + (axisCount * axisSize); instanceOffset < variationTableLength; instanceOffset += instanceSize) {
+        ASSERT_WITH_SECURITY_IMPLICATION(instanceOffset + instanceSize <= variationTableLength);
+
+        uint16_t subfamilyNameId = variationTableBytes[instanceOffset + 1] | (variationTableBytes[instanceOffset] << 8);
+        String subfamilyName = static_cast<CFStringRef>(CTFontCopyLocalizedNameByIDWithLanguages(platformFont, subfamilyNameId, CFArrayCreate(NULL, NULL, 0, NULL), NULL));
+        if (subfamilyName.isEmpty())
+            continue;
+
+        Vector<FontPlatformData::FontVariationAxisValue> axisValues;
+        for (auto axisIndex = 0; axisIndex < axisCount; ++axisIndex) {
+            auto axisOffset = instanceOffset + openTypeFontVariationTableInstanceNameIdAndFlagsLength + (axisIndex * openTypeFontVariationTableInstanceAxisValueLength);
+
+            // TODO: [PCA] Before submitting for review, see if there is a better way to take these four bytes that represent a "fixed" number, and turn them into a float. I'm also not confident in the bit order for the decimal part of the value yet, not that it is obviously wrong, but I didn't bother to check the order for it yet.
+            // axisValue is a 4-byte "fixed" number.
+            uint16_t axisValueWhole = variationTableBytes[axisOffset + 1] | (variationTableBytes[axisOffset] << 8);
+            uint16_t axisValueDecimal = variationTableBytes[axisOffset + 3] | (variationTableBytes[axisOffset + 2] << 8);
+            float axisValue = axisValueWhole + ((float)axisValueDecimal / 0xFFFF);
+
+            axisValues.append({ variationTags[axisIndex], axisValue });
+        }
+
+        result.append({ WTFMove(subfamilyName), WTFMove(axisValues) });
+    }
+
+    return result;
+}
+#endif // HAVE(CTFONT_COPY_LOCALIZED_NAME_BY_ID)
 
 } // namespace WebCore

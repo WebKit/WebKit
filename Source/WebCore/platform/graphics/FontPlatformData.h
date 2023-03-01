@@ -104,6 +104,36 @@ public:
         float m_maximumValue;
     };
 
+    struct FontVariationAxisValue {
+        FontVariationAxisValue(const String& tag, float value)
+            : m_tag(tag)
+            , m_value(value)
+        {
+        }
+
+        const String& tag() const { return m_tag; }
+        float value() const { return m_value; }
+
+    private:
+        const String m_tag;
+        float m_value;
+    };
+
+    struct FontVariationInstance {
+        FontVariationInstance(const String& name, const Vector<FontVariationAxisValue>&& values)
+            : m_name(name)
+            , m_values(values)
+        {
+        }
+
+        const String& name() const { return m_name; }
+        const Vector<FontVariationAxisValue>& values() const { return m_values; }
+
+    private:
+        const String m_name;
+        const Vector<FontVariationAxisValue> m_values;
+    };
+
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
 
@@ -166,6 +196,7 @@ public:
 
     String familyName() const;
     Vector<FontVariationAxis> variationAxes(ShouldLocalizeAxisNames) const;
+    Vector<FontVariationInstance> variationInstances() const;
 
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }

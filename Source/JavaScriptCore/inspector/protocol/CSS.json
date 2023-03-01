@@ -256,6 +256,7 @@
             "properties": [
                 { "name": "displayName", "type": "string", "description": "The display name defined by the font." },
                 { "name": "variationAxes", "type": "array", "items": { "$ref": "FontVariationAxis" }, "description": "The variation axes defined by the font." },
+                { "name": "variationInstances", "type": "array", "items": { "$ref": "FontVariationInstance" }, "optional": true, "description": "The variation instances defined by the font." },
                 { "name": "synthesizedBold", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its boldness or not." },
                 { "name": "synthesizedOblique", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its obliqueness or not" }
             ]
@@ -270,6 +271,24 @@
                 { "name": "minimumValue", "type": "number", "description": "The minimum value that will affect the axis." },
                 { "name": "maximumValue", "type": "number", "description": "The maximum value that will affect the axis." },
                 { "name": "defaultValue", "type": "number", "description": "The value that is used for the axis when it is not otherwise controlled." }
+            ]
+        },
+        {
+            "id": "FontVariationAxisValue",
+            "type": "object",
+            "description": "A predefined value for a variation axis associated with a FontVariationInstance.",
+            "properties": [
+                { "name": "tag", "type": "string", "description": "The four character tag for the variation axis." },
+                { "name": "value", "type": "number", "description": "The value for the axis." }
+            ]
+        },
+        {
+            "id": "FontVariationInstance",
+            "type": "object",
+            "description": "A single variation instance associated with a Font.",
+            "properties": [
+                { "name": "name", "type": "string", "description": "The name, generally human-readable, of the variation instance." },
+                { "name": "values", "type": "array", "items": { "$ref": "FontVariationAxisValue" }, "description": "The values for each variation axis for this instance." }
             ]
         },
         {

@@ -556,11 +556,28 @@ static Ref<Protocol::CSS::Font> buildObjectForFont(const Font& font)
         resultVariationAxes->addItem(WTFMove(axis));
     }
 
+    auto resultVariationInstances = JSON::ArrayOf<Protocol::CSS::FontVariationInstance>::create();
+    for (auto& variationInstance : fontPlatformData.variationInstances()) {
+        auto protocolInstanceAxisValues = JSON::ArrayOf<Protocol::CSS::FontVariationAxisValue>::create();
+        for (auto& axisValue : variationInstance.values()) {
+            protocolInstanceAxisValues->addItem(Protocol::CSS::FontVariationAxisValue::create()
+                .setTag(axisValue.tag())
+                .setValue(axisValue.value())
+                .release());
+        }
+
+        resultVariationInstances->addItem(Protocol::CSS::FontVariationInstance::create()
+            .setName(variationInstance.name())
+            .setValues(WTFMove(protocolInstanceAxisValues))
+            .release());
+    }
+
     auto protocolFont = Protocol::CSS::Font::create()
         .setDisplayName(font.platformData().familyName())
         .setVariationAxes(WTFMove(resultVariationAxes))
         .release();
 
+    protocolFont->setVariationInstances(WTFMove(resultVariationInstances));
     protocolFont->setSynthesizedBold(fontPlatformData.syntheticBold());
     protocolFont->setSynthesizedOblique(fontPlatformData.syntheticOblique());
 

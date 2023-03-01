@@ -35,6 +35,8 @@ WI.FontStyles = class FontStyles
 
         this._authoredFontVariationSettingsMap = new Map;
         this._effectiveWritablePropertyForNameMap = new Map;
+        this._appliedVariationsMap = new Map;
+        this._matchingVariationInstanceName = null;
 
         // A change in the number of axes or their tags is considered a significant change.
         // A change to the value of a known axis is not considered a significant change.
@@ -51,11 +53,15 @@ WI.FontStyles = class FontStyles
 
     get featuresMap() { return this._featuresMap; }
 
+    get variationInstancesMap() { return this._nodeStyles.computedPrimaryFont?.variationInstancesMap ?? new Map; }
+
     get variationsMap() { return this._variationsMap; }
 
     get propertiesMap() { return this._propertiesMap; }
 
     get significantChangeSinceLastRefresh() { return this._significantChangeSinceLastRefresh; }
+
+    get matchingVariationInstanceName() { return this._matchingVariationInstanceName; }
 
     // Static
 
@@ -80,7 +86,7 @@ WI.FontStyles = class FontStyles
         case "ital":
             return value >= 1 ? "italic" : "normal";
         default:
-            return value;
+            return String(value);
         }
     }
 
@@ -119,8 +125,29 @@ WI.FontStyles = class FontStyles
 
     // Public
 
-    writeFontVariation(tag, value)
+    applyFontVariationInstance(variationInstance)
     {
+        console.assert(variationInstance instanceof WI.FontVariationInstance, "Can't apply unexpected font variation instance", variationInstance);
+
+        for (let tag of this._authoredFontVariationSettingsMap.keys()) {
+            if (!variationInstance.variationAxisValuesMap.has(tag))
+                this._authoredFontVariationSettingsMap.delete(tag);
+        }
+
+        this._appliedVariationsMap.clear();
+
+        const skipCalculateMatchingVariationInstanceName = true;
+        for (let [tag, value] of variationInstance.variationAxisValuesMap)
+            this.writeFontVariation(tag, value, skipCalculateMatchingVariationInstanceName);
+
+        this._matchingVariationInstanceName = variationInstance.name;
+    }
+
+    writeFontVariation(tag, value, skipCalculateMatchingVariationInstanceName = false)
+    {
+        console.assert(typeof value === "number", "Font variation value expected as a number", value);
+        console.assert(typeof tag === "string" && tag.length === 4, "Invalid font variation axis tag", tag);
+
         let targetPropertyName = WI.FontStyles.fontPropertyForAxisTag(tag);
         let targetPropertyValue;
         if (targetPropertyName && !this._authoredFontVariationSettingsMap.has(tag))
@@ -139,6 +166,11 @@ WI.FontStyles = class FontStyles
         const createIfMissing = true;
         let cssProperty = this._effectiveWritablePropertyForName(targetPropertyName, createIfMissing);
         cssProperty.rawValue = targetPropertyValue;
+
+        this._appliedVariationsMap.set(tag, value);
+
+        if (!skipCalculateMatchingVariationInstanceName)
+            this._calculateMatchingVariationInstanceName();
     }
 
     refresh(forceSignificantChange)
@@ -151,6 +183,7 @@ WI.FontStyles = class FontStyles
         this._registeredAxesTags = [];
 
         this._calculateFontProperties();
+        this._calculateMatchingVariationInstanceName();
 
         if (forceSignificantChange)
             this._significantChangeSinceLastRefresh = true;
@@ -218,8 +251,34 @@ WI.FontStyles = class FontStyles
         return this._parseFontFeatureOrVariationSettings(domNodeStyle, "font-feature-settings");
     }
 
+    _calculateMatchingVariationInstanceName()
+    {
+        this._matchingVariationInstanceName = null;
+
+        if (!this.variationInstancesMap.size)
+            return;
+
+        for (let [name, instance] of this.variationInstancesMap) {
+            let match = true;
+            for (let [tag, value] of instance.variationAxisValuesMap) {
+                // Floating point numbers in computed styles have a precision clamped at 6 decimals.
+                // Some variation axis values defined in variation instances have much higher precision.
+                if (parseFloat(this._appliedVariationsMap.get(tag)).toFixed(6) !== parseFloat(value).toFixed(6)) {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match) {
+                this._matchingVariationInstanceName = name;
+                break;
+            }
+        }
+    }
+
     _calculateFontVariationAxes(domNodeStyle)
     {
+        this._appliedVariationsMap = new Map;
         this._authoredFontVariationSettingsMap = this._parseFontFeatureOrVariationSettings(domNodeStyle, "font-variation-settings");
         let resultAxes = new Map;
 
@@ -228,16 +287,18 @@ WI.FontStyles = class FontStyles
 
         for (let axis of this._nodeStyles.computedPrimaryFont.variationAxes) {
             // `value` can be undefined.
+            let value = this._authoredFontVariationSettingsMap.get(axis.tag);
             resultAxes.set(axis.tag, {
                 tag: axis.tag,
                 name: axis.name,
                 minimumValue: axis.minimumValue,
                 maximumValue: axis.maximumValue,
                 defaultValue: axis.defaultValue,
-                value: this._authoredFontVariationSettingsMap.get(axis.tag),
+                value,
             });
 
             this._variationAxesTags.push(axis.tag);
+            this._appliedVariationsMap.set(axis.tag, value ?? axis.defaultValue);
         }
 
         return resultAxes;
@@ -298,6 +359,9 @@ WI.FontStyles = class FontStyles
                 style.variationsMap.delete(fontVariationTag);
 
                 this._registeredAxesTags.push(fontVariationTag);
+
+                if (!this._authoredFontVariationSettingsMap.has(fontVariationTag))
+                    this._appliedVariationsMap.set(fontVariationTag, WI.FontStyles.fontPropertyValueToAxisValue(fontVariationTag, value));
             }
         }
 
