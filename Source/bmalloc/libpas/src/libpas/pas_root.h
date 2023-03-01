@@ -50,6 +50,8 @@ struct pas_thread_local_cache_node;
 struct pas_tiny_large_map_hashtable;
 struct pas_tiny_large_map_hashtable_in_flux_stash;
 struct pas_tiny_large_map_second_level_hashtable_in_flux_stash;
+struct pas_ptr_hash_map;
+struct pas_ptr_hash_map_in_flux_stash;
 typedef struct pas_baseline_allocator pas_baseline_allocator;
 typedef struct pas_enumerable_range_list pas_enumerable_range_list;
 typedef struct pas_heap_config pas_heap_config;
@@ -65,6 +67,8 @@ typedef struct pas_thread_local_cache_layout_segment pas_thread_local_cache_layo
 typedef struct pas_tiny_large_map_hashtable pas_tiny_large_map_hashtable;
 typedef struct pas_tiny_large_map_hashtable_in_flux_stash pas_tiny_large_map_hashtable_in_flux_stash;
 typedef struct pas_tiny_large_map_second_level_hashtable_in_flux_stash pas_tiny_large_map_second_level_hashtable_in_flux_stash;
+typedef struct pas_ptr_hash_map pas_ptr_hash_map;
+typedef struct pas_ptr_hash_map_in_flux_stash pas_ptr_hash_map_in_flux_stash;
 
 struct pas_root {
     uintptr_t magic;
@@ -95,6 +99,8 @@ struct pas_root {
     size_t page_malloc_alignment;
     pas_baseline_allocator** baseline_allocator_table;
     size_t num_baseline_allocators;
+    pas_ptr_hash_map* pas_pgm_hash_map_instance;
+    pas_ptr_hash_map_in_flux_stash* pas_pgm_hash_map_instance_in_flux_stash;
 };
 
 #define PAS_ROOT_MAGIC 0xbeeeeeeeeflu

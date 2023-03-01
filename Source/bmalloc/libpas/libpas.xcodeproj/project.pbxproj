@@ -552,6 +552,7 @@
 		2B2E2FD12949A41100F85C38 /* pas_malloc_stack_logging.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B2E2FCF2949A41100F85C38 /* pas_malloc_stack_logging.c */; };
 		2B2E2FD22949A41100F85C38 /* pas_malloc_stack_logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B2E2FD02949A41100F85C38 /* pas_malloc_stack_logging.h */; };
 		2B6055E42805368B00C8BDAC /* BmallocTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B6055E32805368B00C8BDAC /* BmallocTests.cpp */; };
+		2BF3F5B529A0051F005361FD /* EnumerationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */; };
 		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
 		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
 		2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E8902728A893002162D0 /* bmalloc_type.c */; };
@@ -1256,6 +1257,7 @@
 		2B2E2FCF2949A41100F85C38 /* pas_malloc_stack_logging.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_malloc_stack_logging.c; sourceTree = "<group>"; };
 		2B2E2FD02949A41100F85C38 /* pas_malloc_stack_logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_malloc_stack_logging.h; sourceTree = "<group>"; };
 		2B6055E32805368B00C8BDAC /* BmallocTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BmallocTests.cpp; sourceTree = "<group>"; };
+		2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerationTests.cpp; sourceTree = "<group>"; };
 		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
 		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
 		2C11E8902728A893002162D0 /* bmalloc_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_type.c; sourceTree = "<group>"; };
@@ -1394,6 +1396,7 @@
 				2B6055E32805368B00C8BDAC /* BmallocTests.cpp */,
 				0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */,
 				0FC682362129D4EB003C6A13 /* CoalignTests.cpp */,
+				2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */,
 				2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */,
 				0FC6822F2129CB43003C6A13 /* ExtendedGCDTests.cpp */,
 				0FC6821321248A77003C6A13 /* HashtableTests.cpp */,
@@ -2656,6 +2659,7 @@
 				2B6055E42805368B00C8BDAC /* BmallocTests.cpp in Sources */,
 				0F31A66823E8B336002C0CA3 /* CartesianTreeTests.cpp in Sources */,
 				0FC682382129D4EE003C6A13 /* CoalignTests.cpp in Sources */,
+				2BF3F5B529A0051F005361FD /* EnumerationTests.cpp in Sources */,
 				2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */,
 				0FC682312129CB46003C6A13 /* ExtendedGCDTests.cpp in Sources */,
 				0FC6821521248A79003C6A13 /* HashtableTests.cpp in Sources */,

@@ -28,6 +28,7 @@
 
 #include "pas_utils.h"
 #include "pas_large_heap.h"
+#include "pas_ptr_hash_map.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -57,6 +58,9 @@ struct pas_pgm_storage {
  * including guard pages and wasted memory
  */
 #define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
+
+extern PAS_API pas_ptr_hash_map pas_pgm_hash_map;
+extern PAS_API pas_ptr_hash_map_in_flux_stash pas_pgm_hash_map_in_flux_stash;
 
 /*
  * We want a fast way to determine if we can call PGM or not.
