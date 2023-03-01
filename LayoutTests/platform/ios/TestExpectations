@@ -4225,7 +4225,7 @@ webkit.org/b/251533 imported/w3c/web-platform-tests/workers/baseurl/alpha/import
 
 webkit.org/b/251876 editing/selection/selection-scrolling-in-multiple-nested-subframes.html [ Pass Crash ]
 
-webkit.org/b/251889 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-ancestors.https.sub.html [ Pass Crash ]
+webkit.org/b/251889 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-ancestors.https.sub.html [ Failure ]
 
 webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [ Pass Failure ]
 
