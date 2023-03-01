@@ -23,8 +23,13 @@
 
 #include "Shared/Sandbox/iOS/common.sb"
 
+(define (lockdown-mode)
+    (require-not (require-entitlement "com.apple.private.verified-jit")))
+
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
+(with-filter (lockdown-mode)
+    (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 65 67)))
@@ -1158,9 +1163,6 @@
 
 (with-filter (system-attribute apple-internal)
     (allow syscall-unix (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
-
-(define (lockdown-mode)
-    (require-not (require-entitlement "com.apple.private.verified-jit")))
     
 (with-filter (lockdown-mode)
     (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
@@ -1397,7 +1399,6 @@
         task_restartable_ranges_synchronize
         thread_get_state_to_user
         thread_resume
-        thread_set_exception_ports
         thread_suspend))
 
 (define (kernel-mig-routine-blocked-in-lockdown-mode)
@@ -1459,6 +1460,9 @@
                 (with message "kernel mig routine used after launch")
                 (kernel-mig-routine-only-in-use-during-launch)))
 #endif
+
+        (with-filter (require-not (lockdown-mode))
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 
         (with-filter (lockdown-mode)
             (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
