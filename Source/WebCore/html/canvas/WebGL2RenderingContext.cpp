@@ -53,6 +53,7 @@
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLAnyInlines.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"
 #include "WebGLCompressedTextureASTC.h"

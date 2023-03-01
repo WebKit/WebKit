@@ -1052,6 +1052,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     html/canvas/ImageBitmapRenderingContextSettings.h
     html/canvas/WebGLAny.h
+    html/canvas/WebGLAnyInlines.h
     html/canvas/WebGLContextAttributes.h
     html/canvas/WebGLStateTracker.h
 

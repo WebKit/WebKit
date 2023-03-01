@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 
 #include <JavaScriptCore/Forward.h>
-#include <JavaScriptCore/TypedArrayInlines.h>
 
 namespace JSC {
 class CallFrame;

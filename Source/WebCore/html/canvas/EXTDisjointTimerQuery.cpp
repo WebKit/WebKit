@@ -30,6 +30,7 @@
 
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
+#include "WebGLAnyInlines.h"
 #include "WebGLRenderingContext.h"
 
 #include <wtf/IsoMallocInlines.h>

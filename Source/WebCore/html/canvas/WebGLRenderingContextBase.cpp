@@ -88,6 +88,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLAnyInlines.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"
 #include "WebGLColorBufferFloat.h"
