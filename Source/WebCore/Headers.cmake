@@ -1549,6 +1549,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Widget.h
     platform/WindowsKeyboardCodes.h
 
+    platform/animation/AcceleratedEffect.h
+    platform/animation/AcceleratedEffectValues.h
     platform/animation/Animation.h
     platform/animation/AnimationList.h
     platform/animation/AnimationUtilities.h
