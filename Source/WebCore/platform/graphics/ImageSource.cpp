@@ -468,6 +468,7 @@ void ImageSource::clearMetadata()
     m_cachedMetadata.remove({
         MetadataType::EncodedDataStatus,
         MetadataType::FrameCount,
+        MetadataType::PrimaryFrameIndex,
         MetadataType::RepetitionCount,
         MetadataType::SinglePixelSolidColor,
         MetadataType::UTI
@@ -529,6 +530,11 @@ EncodedDataStatus ImageSource::encodedDataStatus()
 size_t ImageSource::frameCount()
 {
     return metadataCacheIfNeeded(m_frameCount, m_frames.size(), MetadataType::FrameCount, &ImageDecoder::frameCount);
+}
+
+size_t ImageSource::primaryFrameIndex()
+{
+    return metadataCacheIfNeeded(m_primaryFrameIndex, static_cast<size_t>(0), MetadataType::PrimaryFrameIndex, &ImageDecoder::primaryFrameIndex);
 }
 
 RepetitionCount ImageSource::repetitionCount()
@@ -709,6 +715,7 @@ void ImageSource::dump(TextStream& ts)
 {
     ts.dumpProperty("type", filenameExtension());
     ts.dumpProperty("frame-count", frameCount());
+    ts.dumpProperty("primary-frame-index", primaryFrameIndex());
     ts.dumpProperty("repetitions", repetitionCount());
     ts.dumpProperty("solid-color", singlePixelSolidColor());
 

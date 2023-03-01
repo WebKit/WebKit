@@ -345,6 +345,11 @@ size_t ImageDecoderCG::frameCount() const
     return CGImageSourceGetCount(m_nativeDecoder.get());
 }
 
+size_t ImageDecoderCG::primaryFrameIndex() const
+{
+    return CGImageSourceGetPrimaryImageIndex(m_nativeDecoder.get());
+}
+
 RepetitionCount ImageDecoderCG::repetitionCount() const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceOptions().get()));

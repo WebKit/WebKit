@@ -2795,6 +2795,9 @@ webkit.org/b/252839 media/video-object-fit.html [ ImageOnlyFailure ]
 [ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]
 [ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
 
+# AVIF overlay images are only supported on macOS and iOS post Ventura.
+[ Ventura+ ] fast/images/image-overlay-mutiple-frames.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
 
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]

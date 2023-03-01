@@ -2306,6 +2306,9 @@ fast/images/webp-as-image.html [ Skip ]
 fast/images/animated-webp-as-image.html [ Skip ]
 fast/images/animated-webp.html [ Skip ]
 
+# AVIF overlay images are only supported on macOS and iOS post Ventura.
+fast/images/image-overlay-mutiple-frames.html [ Skip ]
+
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 

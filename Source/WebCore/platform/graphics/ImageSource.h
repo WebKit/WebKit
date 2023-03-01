@@ -89,6 +89,7 @@ public:
     EncodedDataStatus encodedDataStatus();
     bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     WEBCORE_EXPORT size_t frameCount();
+    size_t primaryFrameIndex();
     RepetitionCount repetitionCount();
     String uti();
     String filenameExtension();
@@ -135,13 +136,14 @@ private:
         EncodedDataStatus           = 1 << 2,
         FileNameExtension           = 1 << 3,
         FrameCount                  = 1 << 4,
-        HotSpot                     = 1 << 5,
-        MaximumSubsamplingLevel     = 1 << 6,
-        Orientation                 = 1 << 7,
-        RepetitionCount             = 1 << 8,
-        SinglePixelSolidColor       = 1 << 9,
-        Size                        = 1 << 10,
-        UTI                         = 1 << 11
+        PrimaryFrameIndex           = 1 << 5,
+        HotSpot                     = 1 << 6,
+        MaximumSubsamplingLevel     = 1 << 7,
+        Orientation                 = 1 << 8,
+        RepetitionCount             = 1 << 9,
+        SinglePixelSolidColor       = 1 << 10,
+        Size                        = 1 << 11,
+        UTI                         = 1 << 12
     };
 
     template<typename T>
@@ -204,6 +206,7 @@ private:
     // Image metadata.
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     size_t m_frameCount { 0 };
+    size_t m_primaryFrameIndex { 0 };
     RepetitionCount m_repetitionCount { RepetitionCountNone };
     String m_uti;
     String m_filenameExtension;

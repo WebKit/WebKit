@@ -87,6 +87,7 @@ public:
     virtual bool isSizeAvailable() const { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     virtual IntSize size() const = 0;
     virtual size_t frameCount() const = 0;
+    virtual size_t primaryFrameIndex() const { return 0; }
     virtual RepetitionCount repetitionCount() const = 0;
     virtual String uti() const { return emptyString(); }
     virtual String filenameExtension() const = 0;
