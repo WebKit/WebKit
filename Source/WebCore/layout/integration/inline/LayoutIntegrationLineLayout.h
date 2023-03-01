@@ -90,7 +90,7 @@ public:
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
-    void layout();
+    std::optional<LayoutRect> layout();
     void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* layerRenderer = nullptr);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderInline* layerRenderer = nullptr);
     void adjustForPagination();
@@ -141,7 +141,7 @@ private:
 
     void prepareLayoutState();
     void prepareFloatingState();
-    void constructContent();
+    FloatRect constructContent();
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
