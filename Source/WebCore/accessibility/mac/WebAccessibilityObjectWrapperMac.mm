@@ -741,10 +741,8 @@ static RetainPtr<AXTextMarkerRef> previousTextMarker(AXObjectCache* cache, const
     if (!textMarkerRangeRef)
         return nil;
 
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<NSAttributedString *>([textMarkerRange = retainPtr(textMarkerRangeRef), &spellCheck, protectedSelf = retainPtr(self)] () -> RetainPtr<NSAttributedString> {
-        RefPtr<AXCoreObject> object = protectedSelf.get().axBackingObject;
-        return object ? object->attributedStringForTextMarkerRange(AXTextMarkerRange(textMarkerRange.get()), spellCheck) : nil;
-    });
+    RefPtr<AXCoreObject> object = self.axBackingObject;
+    return object ? object->attributedStringForTextMarkerRange({ textMarkerRangeRef }, spellCheck).autorelease() : nil;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -1672,12 +1670,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if (backingObject->isTextControl()) {
-        if ([attributeName isEqualToString: NSAccessibilityNumberOfCharactersAttribute]) {
-            int length = backingObject->textLength();
-            if (length < 0)
-                return nil;
-            return @(length);
-        }
+        if ([attributeName isEqualToString:NSAccessibilityNumberOfCharactersAttribute])
+            return @(backingObject->textLength());
+
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
             String selectedText = backingObject->selectedText();
             if (selectedText.isNull())
@@ -2420,7 +2415,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (NSArray* )accessibilityParameterizedAttributeNames
+- (NSArray *)accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
@@ -2894,10 +2889,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 // The RTF representation of the text associated with this accessibility object that is
 // specified by the given range.
-- (NSData*)doAXRTFForRange:(NSRange)range
+- (NSData *)doAXRTFForRange:(NSRange)range
 {
-    NSAttributedString* attrString = [self doAXAttributedStringForRange:range];
-    return [attrString RTFFromRange: NSMakeRange(0, [attrString length]) documentAttributes:@{ }];
+    NSAttributedString *attrString = [self doAXAttributedStringForRange:range];
+    return [attrString RTFFromRange:NSMakeRange(0, attrString.length) documentAttributes:@{ }];
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -3331,9 +3326,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXTextMarkerRangeForUIElement"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&uiElement] () -> RetainPtr<id> {
-            return (id)textMarkerRangeFromRange(uiElement->axObjectCache(), uiElement->elementRange());
-        });
+        if (uiElement) {
+            if (auto markerRange = uiElement->textMarkerRange())
+                return markerRange.platformData().bridgingAutorelease();
+        }
+        return nil;
     }
 
     if ([attribute isEqualToString:@"AXLineForTextMarker"]) {

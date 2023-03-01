@@ -28,6 +28,10 @@
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperGL.h"
 
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+#include <gst/gl/egl/gstglmemoryegl.h>
+#endif
+
 namespace WebCore {
 
 GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, TextureMapperGL::Flags flags, bool gstGLEnabled)

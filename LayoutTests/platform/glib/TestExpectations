@@ -134,6 +134,7 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
 # WTR should allow background-fetch permission.
+http/wpt/background-fetch [ Skip ]
 imported/w3c/web-platform-tests/background-fetch [ Pass Failure ]
 
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
@@ -1624,6 +1625,8 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canva
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Failure ]
+# WebGL on GTK renders pixels with opacity slightly differently
+fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 webgl/webgl2-primitive-restart.html [ Failure ]
 

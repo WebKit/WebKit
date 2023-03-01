@@ -32,11 +32,12 @@
 #include "TreeScopeOrderedMap.h"
 
 #include "ContainerNodeAlgorithms.h"
-#include "ElementIterator.h"
+#include "ElementInlines.h"
 #include "HTMLImageElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

@@ -4587,20 +4587,40 @@ ResizeObserverData* Element::resizeObserverData()
     return hasRareData() ? elementRareData()->resizeObserverData() : nullptr;
 }
 
-ResizeObserverSize* Element::lastRememberedSize() const
+std::optional<LayoutUnit> Element::lastRememberedLogicalWidth() const
 {
-    return hasRareData() ? elementRareData()->lastRememberedSize() : nullptr;
+    return hasRareData() ? elementRareData()->lastRememberedLogicalWidth() : std::nullopt;
 }
 
-void Element::setLastRememberedSize(Ref<ResizeObserverSize>&& size)
+std::optional<LayoutUnit> Element::lastRememberedLogicalHeight() const
 {
-    ensureElementRareData().setLastRememberedSize(WTFMove(size));
+    return hasRareData() ? elementRareData()->lastRememberedLogicalHeight() : std::nullopt;
 }
 
-void Element::clearLastRememberedSize()
+void Element::setLastRememberedLogicalWidth(LayoutUnit width)
 {
-    if (hasRareData())
-        elementRareData()->clearLastRememberedSize();
+    ASSERT(width >= 0);
+    ensureElementRareData().setLastRememberedLogicalWidth(width);
+}
+
+void Element::clearLastRememberedLogicalWidth()
+{
+    if (!hasRareData())
+        return;
+    elementRareData()->clearLastRememberedLogicalWidth();
+}
+
+void Element::setLastRememberedLogicalHeight(LayoutUnit height)
+{
+    ASSERT(height >= 0);
+    ensureElementRareData().setLastRememberedLogicalHeight(height);
+}
+
+void Element::clearLastRememberedLogicalHeight()
+{
+    if (!hasRareData())
+        return;
+    elementRareData()->clearLastRememberedLogicalHeight();
 }
 
 bool Element::isSpellCheckingEnabled() const

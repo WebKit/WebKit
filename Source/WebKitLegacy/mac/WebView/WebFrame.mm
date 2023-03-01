@@ -634,16 +634,6 @@ static NSURL *createUniqueWebDataURL();
     CGContextRef ctx = WKGetCurrentGraphicsContext();
 #endif
     WebCore::GraphicsContextCG context(ctx);
-
-#if PLATFORM(IOS_FAMILY)
-    WebCore::Frame *frame = core(self);
-    if (WebCore::Page* page = frame->page())
-        context.setIsAcceleratedContext(page->settings().acceleratedDrawingEnabled());
-#elif PLATFORM(MAC)
-    if (WebHTMLView *htmlDocumentView = [self _webHTMLDocumentView])
-        context.setIsAcceleratedContext([htmlDocumentView _web_isDrawingIntoAcceleratedLayer]);
-#endif
-
     auto* view = _private->coreFrame->view();
     
     OptionSet<WebCore::PaintBehavior> oldBehavior = view->paintBehavior();

@@ -1575,6 +1575,18 @@ ContentDispositionAttachmentSandboxEnabled:
     WebCore:
       default: false
 
+ContextMenuQRCodeDetectionEnabled:
+  type: bool
+  status: embedder
+  condition: ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CookieConsentAPIEnabled:
   type: bool
   status: unstable

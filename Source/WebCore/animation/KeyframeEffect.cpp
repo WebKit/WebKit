@@ -528,6 +528,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Document& document, Element* target, Strong<JSObject>&& keyframes, std::optional<std::variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
+    keyframeEffect->m_document = document;
 
     if (options) {
         OptionalEffectTiming timing;
@@ -588,12 +589,15 @@ KeyframeEffect::KeyframeEffect(Element* target, PseudoId pseudoId)
     , m_target(target)
     , m_pseudoId(pseudoId)
 {
+    if (m_target)
+        m_document = m_target->document();
 }
 
 void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
 {
     m_target = source->m_target;
     m_pseudoId = source->m_pseudoId;
+    m_document = source->m_document;
     m_compositeOperation = source->m_compositeOperation;
     m_iterationCompositeOperation = source->m_iterationCompositeOperation;
 
@@ -636,7 +640,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
 
     Vector<ComputedKeyframe> computedKeyframes;
 
-    if (!m_parsedKeyframes.isEmpty() || m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation || !m_blendingKeyframes.containsAnimatableProperty()) {
+    if (!m_parsedKeyframes.isEmpty() || m_animationType == WebAnimationType::WebAnimation || !m_blendingKeyframes.containsAnimatableProperty()) {
         for (size_t i = 0; i < m_parsedKeyframes.size(); ++i) {
             auto& parsedKeyframe = m_parsedKeyframes[i];
             ComputedKeyframe computedKeyframe { parsedKeyframe };
@@ -688,7 +692,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
     };
 
     auto styleProperties = MutableStyleProperties::create();
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSAnimation) {
+    if (m_animationType == WebAnimationType::CSSAnimation) {
         auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoId, Style::Resolver::AllCSSRules);
         for (auto& matchedRule : matchingRules)
             styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());
@@ -761,7 +765,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
                     addPropertyToKeyframe(cssProperty);
                 },
                 [&] (const AtomString& customProperty) {
-                    if (m_blendingKeyframesSource != BlendingKeyframesSource::CSSAnimation)
+                    if (m_animationType != WebAnimationType::CSSAnimation)
                         addCustomPropertyToKeyframe(customProperty);
                 }
             );
@@ -983,7 +987,7 @@ bool KeyframeEffect::forceLayoutIfNeeded()
 
 void KeyframeEffect::clearBlendingKeyframes()
 {
-    m_blendingKeyframesSource = BlendingKeyframesSource::WebAnimation;
+    m_animationType = WebAnimationType::WebAnimation;
     m_blendingKeyframes.clear();
 }
 
@@ -1050,7 +1054,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
             Style::loadPendingResources(*style, *document(), m_target.get());
     }
 
-    m_blendingKeyframesSource = BlendingKeyframesSource::CSSAnimation;
+    m_animationType = WebAnimationType::CSSAnimation;
     setBlendingKeyframes(WTFMove(keyframeList));
 }
 
@@ -1078,7 +1082,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& ol
     toKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(toKeyframeValue));
 
-    m_blendingKeyframesSource = BlendingKeyframesSource::CSSTransition;
+    m_animationType = WebAnimationType::CSSTransition;
     setBlendingKeyframes(WTFMove(keyframeList));
 }
 
@@ -1158,8 +1162,11 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
 {
     bool animationChanged = animation != this->animation();
     AnimationEffect::setAnimation(animation);
-    if (animationChanged)
+    if (animationChanged) {
+        if (m_animationType == WebAnimationType::CSSAnimation)
+            clearBlendingKeyframes();
         updateEffectStackMembership();
+    }
 }
 
 const std::optional<const Styleable> KeyframeEffect::targetStyleable() const
@@ -1279,7 +1286,11 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
 
 bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID property) const
 {
-    return isRunningAccelerated() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property) && m_blendingKeyframes.properties().contains(property);
+    if (!isRunningAccelerated())
+        return false;
+
+    ASSERT(document());
+    return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
 }
 
 bool KeyframeEffect::isTargetingTransformRelatedProperty() const
@@ -1306,14 +1317,17 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
     bool hasSomeAcceleratedProperties = false;
     bool hasSomeUnacceleratedProperties = false;
 
-    for (auto property : m_blendingKeyframes.properties()) {
-        // If any animated property can be accelerated, then the animation should run accelerated.
-        if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property))
-            hasSomeAcceleratedProperties = true;
-        else
-            hasSomeUnacceleratedProperties = true;
-        if (hasSomeAcceleratedProperties && hasSomeUnacceleratedProperties)
-            break;
+    if (auto* document = this->document()) {
+        auto& settings = document->settings();
+        for (auto property : m_blendingKeyframes.properties()) {
+            // If any animated property can be accelerated, then the animation should run accelerated.
+            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
+                hasSomeAcceleratedProperties = true;
+            else
+                hasSomeUnacceleratedProperties = true;
+            if (hasSomeAcceleratedProperties && hasSomeUnacceleratedProperties)
+                break;
+        }
     }
 
     if (!hasSomeAcceleratedProperties)
@@ -1397,7 +1411,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     // In the case of CSS Transitions we already know that there are only two keyframes, one where offset=0 and one where offset=1,
     // and only a single CSS property so we can simply blend based on the style available on those keyframes with the provided iteration
     // progress which already accounts for the transition's timing function.
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition) {
+    if (m_animationType == WebAnimationType::CSSTransition) {
         ASSERT(properties.size() == 1);
         CSSPropertyAnimation::blendProperty(*this, *properties.begin(), targetStyle, *m_blendingKeyframes[0].style(), *m_blendingKeyframes[1].style(), iterationProgress, m_compositeOperation);
         return;
@@ -1672,6 +1686,11 @@ bool KeyframeEffect::preventsAcceleration() const
 
 void KeyframeEffect::updateAcceleratedActions()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited())
         return;
@@ -1712,6 +1731,11 @@ void KeyframeEffect::updateAcceleratedActions()
 
 void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
     if (m_runningAccelerated == RunningAccelerated::Prevented || m_runningAccelerated == RunningAccelerated::Failed)
         return;
 
@@ -1760,7 +1784,7 @@ void KeyframeEffect::transformRelatedPropertyDidChange()
 
 std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
 {
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition)
+    if (m_animationType == WebAnimationType::CSSTransition)
         return { };
 
     auto fontSizeChanged = [&]() {
@@ -1829,14 +1853,14 @@ std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyf
     }();
 
     if (logicalPropertyChanged || fontSizeChanged() || fontWeightChanged() || cssVariableChanged() || propertySetToInheritChanged() || propertySetToCurrentColorChanged()) {
-        switch (m_blendingKeyframesSource) {
-        case BlendingKeyframesSource::CSSTransition:
+        switch (m_animationType) {
+        case WebAnimationType::CSSTransition:
             ASSERT_NOT_REACHED();
             break;
-        case BlendingKeyframesSource::CSSAnimation:
+        case WebAnimationType::CSSAnimation:
             computeCSSAnimationBlendingKeyframes(unanimatedStyle, resolutionContext);
             break;
-        case BlendingKeyframesSource::WebAnimation:
+        case WebAnimationType::WebAnimation:
             clearBlendingKeyframes();
             break;
         }
@@ -1867,6 +1891,11 @@ void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended
 
 void KeyframeEffect::applyPendingAcceleratedActions()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
     CanBeAcceleratedMutationScope mutationScope(this);
 
     // Once an accelerated animation has been committed, we no longer want to force a layout.
@@ -2023,6 +2052,8 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
 
 Document* KeyframeEffect::document() const
 {
+    if (m_document)
+        return m_document.get();
     return m_target ? &m_target->document() : nullptr;
 }
 
@@ -2170,7 +2201,7 @@ bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& renderer
 
 bool KeyframeEffect::requiresPseudoElement() const
 {
-    return m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation && targetsPseudoElement();
+    return m_animationType == WebAnimationType::WebAnimation && targetsPseudoElement();
 }
 
 std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress) const
@@ -2291,6 +2322,9 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
         if (m_acceleratedPropertiesState == AcceleratedProperties::None)
             return false;
 
+        ASSERT(document());
+        auto& settings = document()->settings();
+
         if (!m_blendingKeyframes.isEmpty()) {
             // We make a list of all animated properties and consider them all
             // implicit until proven otherwise as we iterate through all keyframes.
@@ -2311,11 +2345,11 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // The only properties left are known to be implicit properties, so we must
             // check them for any accelerated property.
             for (auto implicitProperty : implicitZeroProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
                     return true;
             }
             for (auto implicitProperty : implicitOneProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
                     return true;
             }
             return false;
@@ -2348,7 +2382,7 @@ void KeyframeEffect::computeHasImplicitKeyframeForAcceleratedProperty()
             // At this point all properties left in implicitProperties are known to be implicit,
             // so we must check them for any accelerated property.
             for (auto implicitProperty : implicitProperties) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(implicitProperty, settings))
                     return true;
             }
         }
@@ -2362,6 +2396,9 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
         if (m_acceleratedPropertiesState == AcceleratedProperties::None)
             return false;
 
+        ASSERT(document());
+        auto& settings = document()->settings();
+
         if (!m_blendingKeyframes.isEmpty()) {
             for (auto& keyframe : m_blendingKeyframes) {
                 // If we find a keyframe with a composite operation, we check whether one
@@ -2369,7 +2406,7 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
                 if (auto keyframeComposite = keyframe.compositeOperation()) {
                     if (*keyframeComposite != CompositeOperation::Replace) {
                         for (auto property : keyframe.properties()) {
-                            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property))
+                            if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings))
                                 return true;
                         }
                     }
@@ -2385,7 +2422,7 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
                 continue;
             auto styleProperties = keyframe.style;
             for (auto property : styleProperties.get()) {
-                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property.id()))
+                if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(property.id(), settings))
                     return true;
             }
         }
@@ -2483,5 +2520,13 @@ bool KeyframeEffect::preventsAnimationReadiness() const
     // context since this will prevent the first frame of the animmation from being rendered.
     return document() && !document()->hasBrowsingContext();
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+bool KeyframeEffect::threadedAnimationResolutionEnabled() const
+{
+    auto* document = this->document();
+    return document && document->settings().threadedAnimationResolutionEnabled();
+}
+#endif
 
 } // namespace WebCore

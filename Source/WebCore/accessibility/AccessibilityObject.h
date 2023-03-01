@@ -396,10 +396,10 @@ public:
 
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
-    String stringValue() const override { return String(); }
-    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
+    String stringValue() const override { return { }; }
+    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return { }; }
     String text() const override { return { }; }
-    int textLength() const override { return 0; }
+    unsigned textLength() const override { return 0; }
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
     // textruns and replacement nodes included in the given range.
@@ -536,11 +536,13 @@ public:
     AtomString tagName() const override;
     bool hasDisplayContents() const;
 
+    std::optional<SimpleRange> simpleRange() const override;
+    VisiblePositionRange visiblePositionRange() const override { return { }; }
+    AXTextMarkerRange textMarkerRange() const override;
+
     std::optional<SimpleRange> visibleCharacterRange() const override;
-    VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
 
-    std::optional<SimpleRange> elementRange() const override;
     static bool replacedNodeNeedsCharacter(Node* replacedNode);
 
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;

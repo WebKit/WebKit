@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <pal/spi/cf/CoreTextSPI.h>
+
 using CharacterClass = uint8_t;
 
 namespace CompositionRules {

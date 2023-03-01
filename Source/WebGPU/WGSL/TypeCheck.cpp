@@ -118,33 +118,8 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
 
-    // FIXME: Add all other overloads
-    // FIXME: we should make this a lot more convenient
-    // operator + [T<:Number](T, T) -> T
-    OverloadCandidate plus1;
-    {
-        TypeVariable T { 0, TypeVariable::Number };
-        plus1.typeVariables.append(T);
-        plus1.parameters.append(T);
-        plus1.parameters.append(T);
-        plus1.result = T;
-    }
-    // operator + [T<:Number, N](vector<T, N>, T) -> vector<T, N>
-    OverloadCandidate plus2;
-    {
-        TypeVariable T { 0, TypeVariable::Number };
-        NumericVariable N { 0 };
-        plus2.typeVariables.append(T);
-        plus2.numericVariables.append(N);
-        plus2.parameters.append(AbstractVector { T, N });
-        plus2.parameters.append(T);
-        plus2.result = AbstractVector { T, N };
-    }
-
-    m_overloadedOperations.add("+"_s, WTF::Vector<OverloadCandidate> ({
-        WTFMove(plus1),
-        WTFMove(plus2),
-    }));
+    // This file contains the declarations generated from `TypeDeclarations.rb`
+#include "TypeDeclarations.h" // NOLINT
 }
 
 void TypeChecker::check()

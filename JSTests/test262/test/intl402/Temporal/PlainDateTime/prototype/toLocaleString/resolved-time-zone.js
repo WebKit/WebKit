@@ -8,10 +8,23 @@ locale: [en]
 features: [Temporal]
 ---*/
 
+// Using 24-hour clock to avoid format differences between Node 19 (which puts
+// "\u{202f}" before AM/PM) and previous versions that use regular spaces.
+const options = {
+  timeZone: "Pacific/Apia",
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  hourCycle: "h23"
+};
+
 const datetime1 = new Temporal.PlainDateTime(2021, 8, 4, 0, 30, 45, 123, 456, 789);
-const result1 = datetime1.toLocaleString("en", { timeZone: "Pacific/Apia" });
-assert.sameValue(result1, "8/4/2021, 12:30:45 AM");
+const result1 = datetime1.toLocaleString("en", options);
+assert.sameValue(result1, "8/4/2021, 00:30:45");
 
 const datetime2 = new Temporal.PlainDateTime(2021, 8, 4, 23, 30, 45, 123, 456, 789);
-const result2 = datetime2.toLocaleString("en", { timeZone: "Pacific/Apia" });
-assert.sameValue(result2, "8/4/2021, 11:30:45 PM");
+const result2 = datetime2.toLocaleString("en", options);
+assert.sameValue(result2, "8/4/2021, 23:30:45");

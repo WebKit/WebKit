@@ -60,6 +60,8 @@ enum class AnimationImpact : uint8_t {
 
 enum class UseAcceleratedAction : uint8_t { Yes, No };
 
+enum class WebAnimationType : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
+
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
 using AnimationCollection = ListHashSet<Ref<WebAnimation>>;

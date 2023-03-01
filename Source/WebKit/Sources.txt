@@ -87,6 +87,7 @@ GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
+NetworkProcess/BackgroundFetchLoad.cpp
 NetworkProcess/DatabaseUtilities.cpp
 NetworkProcess/NetworkActivityTracker.cpp
 NetworkProcess/NetworkBroadcastChannelRegistry.cpp
@@ -149,6 +150,8 @@ NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
 
+NetworkProcess/storage/BackgroundFetchStoreManager.cpp
+NetworkProcess/storage/BackgroundFetchStoreImpl.cpp
 NetworkProcess/storage/CacheStorageCache.cpp
 NetworkProcess/storage/CacheStorageMemoryStore.cpp
 NetworkProcess/storage/CacheStorageManager.cpp

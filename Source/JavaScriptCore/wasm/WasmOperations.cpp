@@ -457,6 +457,60 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     return returnWithoutOSREntry();
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context& context))
+{
+    TierUpCount& tierUp = *context.arg<TierUpCount*>();
+    uint64_t* osrEntryScratchBuffer = bitwise_cast<uint64_t*>(context.gpr(GPRInfo::argumentGPR0));
+    unsigned loopIndex = osrEntryScratchBuffer[0]; // First entry in scratch buffer is the loop index when tiering up to BBQ.
+
+    // We just populated the callee in the frame before we entered this operation, so let's use it.
+    CalleeBits calleeBits = *bitwise_cast<CalleeBits*>(bitwise_cast<uint8_t*>(context.fp()) + (unsigned)CallFrameSlot::callee * sizeof(Register));
+    BBQCallee& callee = *bitwise_cast<BBQCallee*>(calleeBits.asWasmCallee());
+
+    OSREntryData& entryData = tierUp.osrEntryData(loopIndex);
+    RELEASE_ASSERT(entryData.loopIndex() == loopIndex);
+    
+    const StackMap& stackMap = entryData.values();
+    auto writeValueToRep = [&](uint64_t encodedValue, const OSREntryValue& value) {
+        B3::Type type = value.type();
+        if (value.isGPR()) {
+            ASSERT(!type.isFloat() && !type.isVector());
+            context.gpr(value.gpr()) = encodedValue;
+        } else if (value.isFPR()) {
+            ASSERT(type.isFloat()); // We don't expect vectors from LLInt right now.
+            context.fpr(value.fpr()) = encodedValue;
+        } else if (value.isStack()) {
+            auto* baseStore = bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
+            switch (type.kind()) {
+            case B3::Int32:
+                *bitwise_cast<uint32_t*>(baseStore) = static_cast<uint32_t>(encodedValue);
+                break;
+            case B3::Int64:
+                *bitwise_cast<uint64_t*>(baseStore) = encodedValue;
+                break;
+            case B3::Float:
+                *bitwise_cast<float*>(baseStore) = bitwise_cast<float>(static_cast<uint32_t>(encodedValue));
+                break;
+            case B3::Double:
+                *bitwise_cast<double*>(baseStore) = bitwise_cast<double>(encodedValue);
+                break;
+            case B3::V128:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("We shouldn't be receiving v128 values when tiering up from LLInt into BBQ.");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    };
+
+    unsigned indexInScratchBuffer = BBQCallee::extraOSRValuesForLoopIndex;
+    for (const auto& entry : stackMap)
+        writeValueToRep(osrEntryScratchBuffer[indexInScratchBuffer ++], entry);
+
+    context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = bitwise_cast<UCPURegister>(callee.loopEntrypoints()[loopIndex].taggedPtr());
+}
+
 JSC_DEFINE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance* instance, uint32_t functionIndex))
 {
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();

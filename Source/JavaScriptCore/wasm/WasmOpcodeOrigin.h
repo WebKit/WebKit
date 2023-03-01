@@ -38,8 +38,11 @@ class OpcodeOrigin {
     WTF_FORBID_HEAP_ALLOCATION;
 
     OpcodeOrigin() = default;
-#if USE(JSVALUE64)
+
 public:
+    void dump(PrintStream&) const;
+
+#if USE(JSVALUE64)
     OpcodeOrigin(OpType opcode, size_t offset)
     {
         ASSERT(static_cast<uint32_t>(offset) == offset);
@@ -50,8 +53,6 @@ public:
     {
     }
 
-    void dump(PrintStream&) const;
-
     OpType opcode() const { return static_cast<OpType>(packedData >> 32); }
     size_t location() const { return static_cast<uint32_t>(packedData); }
 
@@ -60,7 +61,7 @@ private:
     uint64_t packedData { 0 };
 
 #elif USE(JSVALUE32_64)
-    void dump(PrintStream&) const;
+    OpcodeOrigin(B3::Origin) { UNREACHABLE_FOR_PLATFORM(); }
 
     OpType opcode() const { UNREACHABLE_FOR_PLATFORM(); }
     size_t location() const { UNREACHABLE_FOR_PLATFORM(); }

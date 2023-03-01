@@ -1,7 +1,9 @@
 
-FAIL Matching to a single request should work promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Matching to a non-existing request should work promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Matching multiple times on the same request works as expected. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Access to active fetches is supported. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Match with query options. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+Harness Error (TIMEOUT), message = null
+
+FAIL Matching to a single request should work assert_equals: expected "Background Fetch" but got ""
+TIMEOUT Matching to a non-existing request should work Test timed out
+NOTRUN Matching multiple times on the same request works as expected.
+NOTRUN Access to active fetches is supported.
+NOTRUN Match with query options.
 

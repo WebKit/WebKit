@@ -394,7 +394,8 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
         if (auto* target = entry->target()) {
             if (!target->isConnected()) {
                 observer.unobserve(*target);
-                target->clearLastRememberedSize();
+                target->clearLastRememberedLogicalWidth();
+                target->clearLastRememberedLogicalHeight();
                 continue;
             }
 
@@ -407,7 +408,10 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
             ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
-            target->setLastRememberedSize(ResizeObserverSize::create(contentBoxSize->inlineSize(), contentBoxSize->blockSize()));
+            if (box->style().containIntrinsicLogicalWidthType() == ContainIntrinsicSizeType::AutoAndLength)
+                target->setLastRememberedLogicalWidth(LayoutUnit(contentBoxSize->inlineSize()));
+            if (box->style().containIntrinsicLogicalHeightType() == ContainIntrinsicSizeType::AutoAndLength)
+                target->setLastRememberedLogicalHeight(LayoutUnit(contentBoxSize->blockSize()));
         }
     }
 }

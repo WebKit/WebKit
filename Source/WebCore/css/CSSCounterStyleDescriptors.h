@@ -59,7 +59,7 @@ struct CSSCounterStyleDescriptors {
     };
     struct Pad {
         unsigned m_padMinimumLength = 0;
-        Symbol m_padSymbol = "-"_s;
+        Symbol m_padSymbol;
         bool operator==(const Pad& other) const { return m_padMinimumLength == other.m_padMinimumLength && m_padSymbol == other.m_padSymbol; }
         bool operator!=(const Pad& other) const { return !(*this == other); }
     };
@@ -103,6 +103,8 @@ struct CSSCounterStyleDescriptors {
     }
     bool operator!=(const CSSCounterStyleDescriptors& other) const { return !(*this == other); }
     void setExplicitlySetDescriptors(const StyleProperties&);
+    bool isValid() const;
+    bool areSymbolsValidForSystem() const;
 
     Name m_name;
     System m_system;

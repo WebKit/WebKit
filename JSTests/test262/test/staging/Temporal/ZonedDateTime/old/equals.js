@@ -14,6 +14,7 @@ var tz = {
 var cal = {
   dateFromFields(...args) { return Temporal.Calendar.from("iso8601").dateFromFields(...args); },
   toString() { return "gregory"; },
+  fields(fieldNames) { return fieldNames; },
 };
 var zdt = new Temporal.ZonedDateTime(0n, tz, cal);
 

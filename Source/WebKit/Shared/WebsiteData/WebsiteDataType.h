@@ -51,6 +51,9 @@ enum class WebsiteDataType : uint32_t {
     AlternativeServices = 1 << 18,
 #endif
     FileSystem = 1 << 19,
+#if ENABLE(SERVICE_WORKER)
+    BackgroundFetchStorage = 1 << 20,
+#endif
 };
 
 } // namespace WebKit

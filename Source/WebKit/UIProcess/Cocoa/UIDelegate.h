@@ -74,7 +74,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const WebHitTestResultData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
+        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const ContextMenuContextData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };

@@ -238,8 +238,8 @@ if (USE_WOFF2)
     # The WOFF2 libraries don't compile as DLLs on Windows, so add in
     # the additional libraries WOFF2::dec requires
     list(APPEND WebCore_LIBRARIES
+        Brotli::dec
         WOFF2::common
-        brotlidec
     )
 endif ()
 

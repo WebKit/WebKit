@@ -10,10 +10,11 @@ info: |
       MemberExpression [PrimaryExpression literal] OptionalChain
 features: [optional-chaining]
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 async function checkAssertions() {
   assert.sameValue(await "hello"?.[0], 'h');
   assert.sameValue(await null?.a, undefined);
 }
-checkAssertions().then($DONE, $DONE);
+asyncTest(checkAssertions);

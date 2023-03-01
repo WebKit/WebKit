@@ -89,7 +89,7 @@ bool ImageBufferRemoteIOSurfaceBackend::hasBackendHandle() const
     return std::holds_alternative<MachSendRight>(m_handle);
 }
 
-GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context() const
+GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
 {
     RELEASE_ASSERT_NOT_REACHED();
     return *(GraphicsContext*)nullptr;
@@ -106,13 +106,13 @@ unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const
     return ImageBufferIOSurfaceBackend::calculateBytesPerRow(backendSize);
 }
 
-RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-RefPtr<PixelBuffer> ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&, const ImageBufferAllocator&) const
+RefPtr<PixelBuffer> ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&, const ImageBufferAllocator&)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

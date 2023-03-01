@@ -2815,6 +2815,13 @@
    },
    {
       "emails" : [
+         "garrett_davidson@apple.com"
+      ],
+      "github" : "g-davidson",
+      "name" : "Garrett Davidson"
+   },
+   {
+      "emails" : [
          "barraclough@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",
@@ -5106,7 +5113,8 @@
       "name" : "Matthew Finkel",
       "nicks" : [
          "sysrqb"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

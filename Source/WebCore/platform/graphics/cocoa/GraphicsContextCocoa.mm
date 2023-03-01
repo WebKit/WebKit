@@ -28,7 +28,6 @@
 
 #import "DisplayListRecorder.h"
 #import "GraphicsContextCG.h"
-#import "GraphicsContextPlatformPrivateCG.h"
 #import "IOSurface.h"
 #import "IntRect.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>

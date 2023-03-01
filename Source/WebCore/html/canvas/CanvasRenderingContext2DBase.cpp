@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -1155,6 +1155,9 @@ bool CanvasRenderingContext2DBase::isPointInStroke(Path2D& path, double x, doubl
 
 bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, double x, double y, CanvasFillRule windingRule)
 {
+    if (!std::isfinite(x) || !std::isfinite(y))
+        return false;
+    
     if (!drawingContext())
         return false;
     auto& state = this->state();
@@ -1162,14 +1165,16 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, doubl
         return false;
 
     auto transformedPoint = valueOrDefault(state.transform.inverse()).mapPoint(FloatPoint(x, y));
-    if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
-        return false;
+    ASSERT(std::isfinite(transformedPoint.x()) && std::isfinite(transformedPoint.y()));
 
     return path.contains(transformedPoint, toWindRule(windingRule));
 }
 
 bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, double x, double y)
 {
+    if (!std::isfinite(x) || !std::isfinite(y))
+        return false;
+
     if (!drawingContext())
         return false;
     auto& state = this->state();
@@ -1177,8 +1182,7 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, dou
         return false;
 
     auto transformedPoint = valueOrDefault(state.transform.inverse()).mapPoint(FloatPoint(x, y));
-    if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
-        return false;
+    ASSERT(std::isfinite(transformedPoint.x()) && std::isfinite(transformedPoint.y()));
 
     return path.strokeContains(transformedPoint, [&state] (GraphicsContext& context) {
         context.setStrokeThickness(state.lineWidth);

@@ -126,7 +126,7 @@ TextStream& operator<<(TextStream& ts, ViewportRectStability stability)
 
 TextStream& operator<<(TextStream& ts, WheelEventHandlingResult result)
 {
-    ts << "steps" << result.steps << " was handled " << result.wasHandled;
+    ts << "steps " << result.steps << " was handled " << result.wasHandled;
     return ts;
 }
 

@@ -34,6 +34,7 @@
 #include "JSBackgroundFetchRegistration.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerProvider.h"
+#include "ServiceWorkerRegistration.h"
 
 namespace WebCore {
 

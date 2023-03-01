@@ -853,6 +853,9 @@ public:
     static constexpr GCGLenum LAST_VERTEX_CONVENTION_ANGLE = 0x8E4E;
     static constexpr GCGLenum PROVOKING_VERTEX_ANGLE = 0x8E4F;
 
+    // GL_EXT_polygon_offset_clamp
+    static constexpr GCGLenum POLYGON_OFFSET_CLAMP_EXT = 0x8E1B;
+
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
     static constexpr GCGLenum DRAW_BUFFER0_EXT = 0x8825;
@@ -1506,6 +1509,9 @@ public:
 
     // GL_ANGLE_provoking_vertex
     virtual void provokingVertexANGLE(GCGLenum provokeMode) = 0;
+
+    // GL_EXT_polygon_offset_clamp
+    virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);

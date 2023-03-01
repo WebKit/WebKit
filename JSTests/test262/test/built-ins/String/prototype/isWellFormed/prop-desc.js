@@ -11,7 +11,6 @@ info: |
 includes: [propertyHelper.js]
 features: [String.prototype.isWellFormed]
 ---*/
-assert.sameValue(typeof String.prototype.isWellFormed, 'function');
 
 assert.sameValue(
   typeof String.prototype.isWellFormed,

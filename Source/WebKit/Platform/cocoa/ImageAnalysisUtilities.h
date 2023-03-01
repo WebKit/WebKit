@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)
 
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 #import <wtf/CompletionHandler.h>
@@ -37,7 +37,7 @@ OBJC_CLASS NSData;
 using CocoaImageAnalysis = VKCImageAnalysis;
 using CocoaImageAnalyzer = VKCImageAnalyzer;
 using CocoaImageAnalyzerRequest = VKCImageAnalyzerRequest;
-#else
+#elif ENABLE(IMAGE_ANALYSIS)
 using CocoaImageAnalysis = VKImageAnalysis;
 using CocoaImageAnalyzer = VKImageAnalyzer;
 using CocoaImageAnalyzerRequest = VKImageAnalyzerRequest;
@@ -48,6 +48,8 @@ struct TextRecognitionResult;
 }
 
 namespace WebKit {
+
+#if ENABLE(IMAGE_ANALYSIS)
 
 bool isLiveTextAvailableAndEnabled();
 bool languageIdentifierSupportsLiveText(NSString *);
@@ -88,6 +90,12 @@ using PlatformImageAnalysisObject = VKCImageAnalysisOverlayView;
 void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *);
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+#if HAVE(VISION)
+void requestPayloadForQRCode(CGImageRef, CompletionHandler<void(NSString *)>&&);
+#endif
+
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)

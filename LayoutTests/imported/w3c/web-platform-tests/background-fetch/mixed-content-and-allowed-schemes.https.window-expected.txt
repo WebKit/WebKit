@@ -1,18 +1,10 @@
 
-FAIL https: fetch should register ok promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL loopback IPv4 http: fetch should register ok promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL loopback IPv6 http: fetch should register ok promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL localhost http: fetch should register ok promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL wss: fetch should reject promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL file: fetch should reject promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL data: fetch should reject promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL unknown scheme fetch should reject promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS https: fetch should register ok
+PASS loopback IPv4 http: fetch should register ok
+PASS loopback IPv6 http: fetch should register ok
+PASS localhost http: fetch should register ok
+PASS wss: fetch should reject
+PASS file: fetch should reject
+PASS data: fetch should reject
+PASS unknown scheme fetch should reject
 

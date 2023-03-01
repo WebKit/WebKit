@@ -245,7 +245,6 @@ private:
     AXCoreObject* scrollBar(AccessibilityOrientation) override;
     AccessibilityRole ariaRoleAttribute() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::ARIARoleAttribute)); }
     String computedLabel() override;
-    int textLength() const override { return intAttributeValue(AXPropertyName::TextLength); }
     const String placeholderValue() const override { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const override { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
     bool supportsExpandedTextValue() const override { return boolAttributeValue(AXPropertyName::SupportsExpandedTextValue); }
@@ -372,11 +371,13 @@ private:
     VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
 
+    std::optional<SimpleRange> simpleRange() const override;
+    VisiblePositionRange visiblePositionRange() const override;
+    AXTextMarkerRange textMarkerRange() const override;
+
     // TODO: Text ranges and selection.
     String selectedText() const override;
-    VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
-    std::optional<SimpleRange> elementRange() const override;
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
     VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const override;
     VisiblePositionRange positionOfRightWord(const VisiblePosition&) const override;
@@ -493,8 +494,10 @@ private:
     String accessibilityDescription() const override { return stringAttributeValue(AXPropertyName::AccessibilityDescription); }
     String title() const override { return stringAttributeValue(AXPropertyName::Title); }
     String text() const override;
+    unsigned textLength() const override;
 #if PLATFORM(COCOA)
-    RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const override { return nil; }
+    RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const override;
+    NSAttributedString *cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange&, SpellCheck) const;
 #endif
     AXObjectCache* axObjectCache() const override;
     Element* actionElement() const override;

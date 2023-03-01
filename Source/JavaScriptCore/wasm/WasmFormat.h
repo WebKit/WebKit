@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CCallHelpers.h"
 #include "CodeLocation.h"
 #include "Identifier.h"
 #include "JSString.h"
@@ -546,6 +547,8 @@ struct InternalFunction {
     StackMaps stackmaps;
 #endif
     Vector<UnlinkedHandlerInfo> exceptionHandlers;
+    Vector<CCallHelpers::Label> bbqLoopEntrypoints;
+    std::optional<CCallHelpers::Label> bbqSharedLoopEntrypoint;
     Entrypoint entrypoint;
     unsigned osrEntryScratchBufferSize { 0 };
 };

@@ -27,8 +27,7 @@ import re
 import sys
 
 from flask import current_app, json as fjson, request
-from reporelaypy import Database
-from webkitflaskpy import AuthedBlueprint
+from webkitflaskpy import AuthedBlueprint, Database
 from webkitcorepy import Environment, string_utils
 
 TIMEOUT = 30 * 60

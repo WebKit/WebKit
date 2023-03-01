@@ -51,6 +51,7 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+class BackgroundFetchStore;
 class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;
@@ -108,6 +109,10 @@ public:
     void resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
 #endif
 
 private:

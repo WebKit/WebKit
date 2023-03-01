@@ -46,6 +46,7 @@ enum OffscreenRenderingContextType
 };
 
 [
+    ActiveDOMObject,
     GenerateIsReachable=Impl,
     EnabledBySetting=OffscreenCanvasEnabled,
     Conditional=OFFSCREEN_CANVAS,

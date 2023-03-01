@@ -340,9 +340,7 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(JSGlobalObject* lexicalGlobalObject,
 }
     moveGlobalExceptionToExecState(lexicalGlobalObject);
 
-    // Work around problem in some versions of GCC where result gets marked volatile and
-    // it can't handle copying from a volatile to non-volatile.
-    return const_cast<JSValue&>(result);
+    return result;
 }
 
 JSC::JSValue ObjcInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -391,9 +389,7 @@ JSC::JSValue ObjcInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObje
 }
     moveGlobalExceptionToExecState(lexicalGlobalObject);
 
-    // Work around problem in some versions of GCC where result gets marked volatile and
-    // it can't handle copying from a volatile to non-volatile.
-    return const_cast<JSValue&>(result);
+    return result;
 }
 
 bool ObjcInstance::setValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue aValue)
@@ -456,9 +452,7 @@ JSC::JSValue ObjcInstance::getValueOfUndefinedField(JSGlobalObject* lexicalGloba
         moveGlobalExceptionToExecState(lexicalGlobalObject);
     }
 
-    // Work around problem in some versions of GCC where result gets marked volatile and
-    // it can't handle copying from a volatile to non-volatile.
-    return const_cast<JSValue&>(result);
+    return result;
 }
 
 JSC::JSValue ObjcInstance::defaultValue(JSGlobalObject* lexicalGlobalObject, PreferredPrimitiveType hint) const

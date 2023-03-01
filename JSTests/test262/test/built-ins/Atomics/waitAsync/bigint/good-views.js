@@ -6,7 +6,7 @@ esid: sec-atomics.waitasync
 description: >
   Test Atomics.waitAsync on arrays that allow atomic operations
 flags: [async]
-includes: [atomicsHelper.js]
+includes: [atomicsHelper.js, asyncHelpers.js]
 features: [Atomics.waitAsync, Atomics, BigInt]
 ---*/
 assert.sameValue(typeof Atomics.waitAsync, 'function', 'The value of `typeof Atomics.waitAsync` is "function"');
@@ -44,7 +44,7 @@ $262.agent.start(`
 `);
 
 
-(async () => {
+asyncTest(async () => {
   const outcomes = [];
 
   for (let i = 0; i < 3; i++) {
@@ -67,4 +67,4 @@ $262.agent.start(`
     'C not-equal,not-equal,not-equal,not-equal,not-equal',
     'The value of outcomes[2] is "C not-equal,not-equal,not-equal,not-equal,not-equal"'
   );
-})().then($DONE, $DONE);
+});

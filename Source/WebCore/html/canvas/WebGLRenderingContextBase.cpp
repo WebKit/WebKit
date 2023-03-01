@@ -42,6 +42,7 @@
 #include "EXTDisjointTimerQueryWebGL2.h"
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
+#include "EXTPolygonOffsetClamp.h"
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureCompressionBPTC.h"
 #include "EXTTextureCompressionRGTC.h"
@@ -2450,6 +2451,11 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_disjoint_timer_query or EXT_disjoint_timer_query_webgl2 not enabled");
         return nullptr;
+    case GraphicsContextGL::POLYGON_OFFSET_CLAMP_EXT:
+        if (m_extPolygonOffsetClamp)
+            return getFloatParameter(GraphicsContextGL::POLYGON_OFFSET_CLAMP_EXT);
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_polygon_offset_clamp not enabled");
+        return nullptr;
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers || isWebGL2())
             return getMaxColorAttachments();
@@ -2995,6 +3001,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extDisjointTimerQueryWebGL2, "EXT_disjoint_timer_query_webgl2");
     CHECK_EXTENSION(m_extFloatBlend, "EXT_float_blend");
     CHECK_EXTENSION(m_extFragDepth, "EXT_frag_depth");
+    CHECK_EXTENSION(m_extPolygonOffsetClamp, "EXT_polygon_offset_clamp");
     CHECK_EXTENSION(m_extShaderTextureLOD, "EXT_shader_texture_lod");
     CHECK_EXTENSION(m_extTextureCompressionBPTC, "EXT_texture_compression_bptc");
     CHECK_EXTENSION(m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc");
@@ -5507,18 +5514,14 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
 
 void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 {
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
     // It is safe to capture |this| because we keep the canvas element alive and it owns |this|.
-    queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [this, canvas] {
+    canvasBase().queueTaskKeepingObjectAlive(TaskSource::WebGL, [this] {
         if (isContextStopped())
             return;
         if (!isContextLost())
             return;
         auto event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString());
-        canvas->dispatchEvent(event);
+        canvasBase().dispatchEvent(event);
         m_contextLostState->restoreRequested = event->defaultPrevented();
         if (m_contextLostState->mode == RealLostContext && m_contextLostState->restoreRequested)
             m_restoreTimer.startOneShot(0_s);
@@ -5559,12 +5562,8 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     setupFlags();
     initializeNewContext();
 
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
     if (!isContextLost()) {
-        canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
+        canvasBase().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
         // Notify the render layer to reconfigure the structure of the backing. This causes the backing to
         // start using the new layer contents display delegate from the new context.
         notifyCanvasContentChanged();
@@ -5814,6 +5813,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extDisjointTimerQueryWebGL2);
     LOSE_EXTENSION(m_extFloatBlend);
     LOSE_EXTENSION(m_extFragDepth);
+    LOSE_EXTENSION(m_extPolygonOffsetClamp);
     LOSE_EXTENSION(m_extShaderTextureLOD);
     LOSE_EXTENSION(m_extTextureCompressionBPTC);
     LOSE_EXTENSION(m_extTextureCompressionRGTC);

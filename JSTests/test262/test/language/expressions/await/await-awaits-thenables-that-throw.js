@@ -7,6 +7,7 @@ esid: pending
 description: >
   Await can await any thenable.
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 var error = {};
@@ -27,5 +28,5 @@ async function foo() {
   assert(caught);
 }
 
-foo().then($DONE, $DONE);
+asyncTest(foo);
 

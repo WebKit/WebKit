@@ -108,15 +108,14 @@ ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& paramet
 
 ImageBufferCGBitmapBackend::~ImageBufferCGBitmapBackend() = default;
 
-GraphicsContext& ImageBufferCGBitmapBackend::context() const
+GraphicsContext& ImageBufferCGBitmapBackend::context()
 {
     return *m_context;
 }
 
 IntSize ImageBufferCGBitmapBackend::backendSize() const
 {
-    CGContextRef cgContext = context().platformContext();
-    return { static_cast<int>(CGBitmapContextGetWidth(cgContext)), static_cast<int>(CGBitmapContextGetHeight(cgContext)) };
+    return calculateBackendSize(m_parameters);
 }
 
 unsigned ImageBufferCGBitmapBackend::bytesPerRow() const
@@ -125,7 +124,7 @@ unsigned ImageBufferCGBitmapBackend::bytesPerRow() const
     return calculateBytesPerRow(backendSize);
 }
 
-RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior)
 {
     switch (copyBehavior) {
     case CopyBackingStore:
@@ -143,7 +142,7 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
     return nullptr;
 }
 
-RefPtr<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
+RefPtr<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data, allocator);
 }

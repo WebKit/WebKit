@@ -190,7 +190,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
 
-    if (auto* model = _fullscreenInterface->videoFullscreenModel())
+    if (auto* model = _fullscreenInterface ? _fullscreenInterface->videoFullscreenModel() : nullptr)
         model->setVideoLayerFrame(_targetVideoFrame);
 
     _previousVideoGravity = _videoGravity;
@@ -226,7 +226,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     else
         ASSERT_NOT_REACHED();
 
-    if (auto* model = _fullscreenInterface->videoFullscreenModel())
+    if (auto* model = _fullscreenInterface ? _fullscreenInterface->videoFullscreenModel() : nullptr)
         model->setVideoLayerGravity(gravity);
 
     [self setNeedsLayout];

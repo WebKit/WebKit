@@ -937,18 +937,32 @@ struct WebCore::WebLockManagerSnapshot {
 };
 
 #if ENABLE(WEB_AUTHN)
+[Nested] struct WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs {
+    String support;
+    std::optional<bool> read;
+    std::optional<WebCore::BufferSource> write;
+}
+
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
     bool googleLegacyAppidSupport;
+    std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
 }
 
 [Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
     bool rk;
 };
 
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs {
+    std::optional<bool> supported;
+    RefPtr<JSC::ArrayBuffer> blob;
+    std::optional<bool> written;
+};
+
 struct WebCore::AuthenticationExtensionsClientOutputs {
     std::optional<bool> appid;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput> credProps;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs> largeBlob;
 }
 
 [Nested] struct WebCore::PublicKeyCredentialCreationOptions::Parameters {
@@ -4476,6 +4490,16 @@ struct WebCore::PasteboardItemInfo {
     WebCore::PasteboardItemPresentationStyle preferredPresentationStyle;
 };
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+struct WebCore::MediaControlsContextMenuItem {
+    uint64_t id;
+    String title;
+    String icon;
+    bool checked;
+    Vector<WebCore::MediaControlsContextMenuItem> children;
+};
+#endif
+
 struct WebCore::WorkerOptions {
     WebCore::WorkerType type;
     WebCore::FetchRequestCredentials credentials;
@@ -4561,3 +4585,8 @@ struct WebCore::ServiceWorkerContextData {
 };
 
 #endif
+
+header: <JavaScriptCore/ArrayBuffer.h>
+[RefCounted, CustomHeader] class JSC::ArrayBuffer {
+    Vector<uint8_t> toVector();
+}

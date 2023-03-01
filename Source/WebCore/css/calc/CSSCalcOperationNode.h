@@ -27,6 +27,7 @@
 
 #include "CSSCalcExpressionNode.h"
 #include "CalcOperator.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

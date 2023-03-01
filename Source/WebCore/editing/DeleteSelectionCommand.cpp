@@ -31,6 +31,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementInlines.h"
 #include "ElementIterator.h"
 #include "ElementTraversal.h"
 #include "Frame.h"

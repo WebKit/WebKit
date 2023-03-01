@@ -216,6 +216,13 @@ template<> constexpr OutlineIsAuto fromCSSValueID(CSSValueID valueID)
     return OutlineIsAuto::Off;
 }
 
+template<> constexpr BlockStepInsert fromCSSValueID(CSSValueID valueID)
+{
+    if (valueID == CSSValueMargin)
+        return BlockStepInsert::Margin;
+    return BlockStepInsert::Padding;
+}
+
 constexpr CSSValueID toCSSValueID(CompositeOperator e, CSSPropertyID propertyID)
 {
     if (propertyID == CSSPropertyMaskComposite) {

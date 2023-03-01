@@ -52,17 +52,17 @@ public:
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
     IOSurface* surface();
-    GraphicsContext& context() const override;
+    GraphicsContext& context() override;
     void flushContext() override;
 
 protected:
     IntSize backendSize() const override;
     
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
-    RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) const override;
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) override;
+    RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) const override;
+    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     bool isInUse() const override;
@@ -80,11 +80,11 @@ protected:
     unsigned bytesPerRow() const override;
 
     void finalizeDrawIntoContext(GraphicsContext& destinationContext) override;
-    void invalidateCachedNativeImage() const;
-    void invalidateCachedNativeImageIfNeeded() const;
+    void invalidateCachedNativeImage();
+    void invalidateCachedNativeImageIfNeeded();
 
     std::unique_ptr<IOSurface> m_surface;
-    mutable bool m_mayHaveOutstandingBackingStoreReferences { false };
+    bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
 
     RefPtr<IOSurfacePool> m_ioSurfacePool;

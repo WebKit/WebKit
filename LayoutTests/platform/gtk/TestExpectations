@@ -1015,8 +1015,6 @@ webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
 
 webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
 
-webkit.org/b/229740 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure Crash ]
-
 webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
 
 webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
@@ -2171,9 +2169,6 @@ webkit.org/b/234782 imported/w3c/web-platform-tests/css/css-writing-modes/text-s
 
 # WPT css/css-pseudo import (webkit.org/b/235197)
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
-
-# WebGL on GTK renders pixels with opacity slightly differently
-fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 # Failing preload tests
 imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html [ Failure ]

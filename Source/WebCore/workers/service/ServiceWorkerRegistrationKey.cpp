@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ClientOrigin.h"
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
 #include <wtf/URLHash.h>
@@ -133,6 +134,11 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
 
     SecurityOriginData topOrigin { scheme.toString(), host.toString(), shortPort };
     return ServiceWorkerRegistrationKey { WTFMove(topOrigin), WTFMove(scope) };
+}
+
+ClientOrigin ServiceWorkerRegistrationKey::clientOrigin() const
+{
+    return ClientOrigin { m_topOrigin, SecurityOriginData::fromURL(m_scope) };
 }
 
 #if !LOG_DISABLED

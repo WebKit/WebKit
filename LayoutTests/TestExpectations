@@ -508,6 +508,12 @@ imported/w3c/web-platform-tests/x-frame-options/invalid.html [ DumpJSConsoleLogI
 imported/w3c/web-platform-tests/x-frame-options/multiple.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/x-frame-options/sameorigin.sub.html [ DumpJSConsoleLogInStdErr ]
 
+# Timing out tests.
+imported/w3c/web-platform-tests/background-fetch/fetch-uploads.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/background-fetch/match.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/background-fetch/update-ui.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/background-fetch/fetch.https.window.html [ Skip ]
+
 # Skip some WPT that require cross-origin testrunner features we don't yet support, causing timeouts.
 imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/opt-in/xhr.https.html [ Skip ]
 imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp/opt-in/xhr.https.html [ Skip ]
@@ -1006,6 +1012,8 @@ webkit.org/b/217617 imported/w3c/web-platform-tests/service-workers/service-work
 
 # This test adds a lot of iframes and is slow to run.
 fast/dom/connected-subframe-counter-overflow.html [ Slow ]
+
+http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Skip ]
 
 # Reenable it when having a custom gc exposed in service workers.
 [ Debug ] http/wpt/service-workers/fetchEvent.https.html [ Skip ]
@@ -3916,6 +3924,7 @@ webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
 webgl/1.0.x/conformance/textures/misc/exif-orientation.html [ Pass ]
 webgl/1.0.x/conformance/extensions/ext-color-buffer-half-float.html [ Pass ]
+webgl/1.0.x/conformance/extensions/ext-polygon-offset-clamp.html [ Pass ]
 webgl/1.0.x/conformance/extensions/ext-sRGB.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-texture-float.html [ Pass ]
 webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Pass ]
@@ -3936,6 +3945,7 @@ webgl/2.0.y/conformance/misc/expando-loss.html [ Pass ]
 webgl/2.0.y/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/2.0.y/conformance/textures/misc/exif-orientation.html [ Pass ]
+webgl/2.0.y/conformance/extensions/ext-polygon-offset-clamp.html [ Pass ]
 webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/2.0.y/conformance/programs/program-test.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-filter-anisotropic.html [ Pass ]
@@ -3946,6 +3956,9 @@ webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html [ Pass ]
 webgl/2.0.y/conformance2/transform_feedback/transform_feedback.html [ Pass ]
 webgl/2.0.y/conformance2/transform_feedback/simultaneous_binding.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
+
+webgl/2.0.y/conformance/offscreencanvas [ Pass ]
+webgl/2.0.y/conformance2/offscreencanvas [ Pass ]
 
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
@@ -6248,6 +6261,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]
 
 webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
+webkit.org/b/253055 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-floats-adjacent-to-containing-block-should-be-trimmed-only.html [ ImageOnlyFailure ]
 
 #Skipping text-spacing tests until the features get implemented.
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]
@@ -6255,3 +6269,10 @@ imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-valid.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Skip ]
 
+webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [ Pass Failure ]
+
+# This test is checking that WebContent is terminated when performing an invalid IPC operation
+ipc/no-test-only-ipc-expected-crash.html [ Crash ]
+
+#Skipping counter-style-at-rules tests until we rendering of counter-styles get implemented.
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/ [ Skip ]

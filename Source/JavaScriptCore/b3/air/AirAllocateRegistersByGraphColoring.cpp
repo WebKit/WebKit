@@ -74,7 +74,7 @@ public:
                 dataLogIf(unspillableTmps.quickGet(i), TmpMapper::tmpFromAbsoluteIndex(i), ", ");
             dataLogLn("]");
         }
-        
+
         m_adjacencyList.resize(tmpArraySize);
         m_moveList.resize(tmpArraySize);
         m_isOnSelectStack.ensureSize(tmpArraySize);
@@ -208,6 +208,9 @@ protected:
         ASSERT(u != v);
         ASSERT(!isPrecolored(u));
         ASSERT(!isPrecolored(v));
+
+        if (m_unspillableTmps.get(u) != m_unspillableTmps.get(v))
+            return false;
 
         const auto& adjacentsOfU = m_adjacencyList[u];
         const auto& adjacentsOfV = m_adjacencyList[v];

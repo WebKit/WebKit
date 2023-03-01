@@ -107,11 +107,10 @@ ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
-GraphicsContext& ImageBufferIOSurfaceBackend::context() const
+GraphicsContext& ImageBufferIOSurfaceBackend::context()
 {
     if (!m_context) {
         m_context = makeUnique<GraphicsContextCG>(m_surface->ensurePlatformContext());
-        m_context->setIsAcceleratedContext(true);
         applyBaseTransform(*m_context);
     }
     return *m_context;
@@ -137,7 +136,7 @@ void ImageBufferIOSurfaceBackend::transferToNewContext(const ImageBufferCreation
     m_ioSurfacePool = creationContext.surfacePool;
 }
 
-void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
+void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
 {
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
     // This is necessary in cases where we know (a priori) that the IOSurface has been
@@ -148,19 +147,19 @@ void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
     m_mayHaveOutstandingBackingStoreReferences = false;
 }
 
-void ImageBufferIOSurfaceBackend::invalidateCachedNativeImageIfNeeded() const
+void ImageBufferIOSurfaceBackend::invalidateCachedNativeImageIfNeeded()
 {
     if (m_mayHaveOutstandingBackingStoreReferences)
         invalidateCachedNativeImage();
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
 {
     m_mayHaveOutstandingBackingStoreReferences = true;
     return NativeImage::create(m_surface->createImage());
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(BackingStoreCopy)
 {
     return NativeImage::create(m_surface->createImage());
 }
@@ -176,7 +175,7 @@ void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& desti
         invalidateCachedNativeImage();
 }
 
-RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
+RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
 {
     IOSurface::Locker lock(*m_surface);
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress(), allocator);

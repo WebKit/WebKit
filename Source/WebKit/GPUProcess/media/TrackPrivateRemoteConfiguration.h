@@ -37,26 +37,6 @@ struct TrackPrivateRemoteConfiguration {
     AtomString language;
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << trackId;
-        encoder << label;
-        encoder << language;
-        encoder << startTimeVariance;
-        encoder << trackIndex;
-    }
-
-    template <class Decoder>
-    static bool decode(Decoder& decoder, TrackPrivateRemoteConfiguration& configuration)
-    {
-        return decoder.decode(configuration.trackId)
-            && decoder.decode(configuration.label)
-            && decoder.decode(configuration.language)
-            && decoder.decode(configuration.startTimeVariance)
-            && decoder.decode(configuration.trackIndex);
-    }
 };
 
 } // namespace WebKit

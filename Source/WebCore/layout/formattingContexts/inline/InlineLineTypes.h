@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "LayoutUnits.h"
+
 namespace WebCore {
 namespace Layout {
 
@@ -64,7 +66,7 @@ struct PreviousLine {
     std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     bool endsWithLineBreak { false };
     TextDirection inlineBaseDirection { TextDirection::LTR };
-    Vector<const InlineItem*> overflowingFloats;
+    Vector<const InlineItem*> suspendedFloats;
 };
 
 inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosition end)

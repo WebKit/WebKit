@@ -20,6 +20,7 @@ info: |
         (Expression[+In, ?Yield, ?Await])
 flags: [async]
 features: [dynamic-import]
+includes: [asyncHelpers.js]
 ---*/
 
 async function fn() {
@@ -34,4 +35,4 @@ async function fn() {
     assert.sameValue(ns2.default, 1612);
 }
 
-fn().then($DONE, $DONE).catch($DONE);
+asyncTest(fn);

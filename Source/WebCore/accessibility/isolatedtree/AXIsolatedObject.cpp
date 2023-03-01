@@ -111,7 +111,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsSelected, object.isSelected());
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
-    setProperty(AXPropertyName::IsTextControl, object.isTextControl());
     setProperty(AXPropertyName::IsUnvisited, object.isUnvisited());
     setProperty(AXPropertyName::IsValueAutofillAvailable, object.isValueAutofillAvailable());
     setProperty(AXPropertyName::IsVisited, object.isVisited());
@@ -256,7 +255,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     }
 
     if (object.isTextControl())
-        setProperty(AXPropertyName::TextLength, object.textLength());
+        setProperty(AXPropertyName::IsTextControl, true);
 
     if (object.isRadioButton()) {
         if (auto nameAttribute = object.attributeValue("name"_s))
@@ -669,6 +668,15 @@ void AXIsolatedObject::setFocused(bool value)
 {
     performFunctionOnMainThread([&value](AXCoreObject* object) {
         object->setFocused(value);
+    });
+}
+
+String AXIsolatedObject::selectedText() const
+{
+    return Accessibility::retrieveValueFromMainThread<String>([this] () -> String {
+        if (auto* object = associatedAXObject())
+            return object->selectedText().isolatedCopy();
+        return { };
     });
 }
 
@@ -1358,20 +1366,11 @@ FloatRect AXIsolatedObject::unobscuredContentRect() const
     });
 }
 
-std::optional<SimpleRange> AXIsolatedObject::elementRange() const
+std::optional<SimpleRange> AXIsolatedObject::simpleRange() const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->elementRange() : std::nullopt;
-}
-
-String AXIsolatedObject::selectedText() const
-{
-    return Accessibility::retrieveValueFromMainThread<String>([this] () -> String {
-        if (auto* object = associatedAXObject())
-            return object->selectedText().isolatedCopy();
-        return { };
-    });
+    return axObject ? axObject->simpleRange() : std::nullopt;
 }
 
 VisiblePositionRange AXIsolatedObject::visiblePositionRange() const
@@ -1379,6 +1378,16 @@ VisiblePositionRange AXIsolatedObject::visiblePositionRange() const
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->visiblePositionRange() : VisiblePositionRange();
+}
+
+AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
+{
+    // FIXME: create AXTextMarkerRange without hitting the main thread.
+
+    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([this] () {
+        auto* axObject = associatedAXObject();
+        return axObject ? axObject->textMarkerRange() : AXTextMarkerRange();
+    });
 }
 
 VisiblePositionRange AXIsolatedObject::visiblePositionRangeForLine(unsigned index) const
@@ -1670,6 +1679,14 @@ String AXIsolatedObject::text() const
     ASSERT_NOT_REACHED();
     return String();
 }
+
+#if !PLATFORM(COCOA)
+unsigned AXIsolatedObject::textLength() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+#endif
 
 AXObjectCache* AXIsolatedObject::axObjectCache() const
 {

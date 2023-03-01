@@ -84,7 +84,7 @@ void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebC
     m_surface->setOwnershipIdentity(resourceOwner);
 }
 
-RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior)
 {
     auto currentSeed = m_surface->seed();
 

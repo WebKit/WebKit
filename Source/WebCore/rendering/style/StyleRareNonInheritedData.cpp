@@ -86,6 +86,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollSnapStop
     , zoom(RenderStyle::initialZoom())
     , blockStepSize(RenderStyle::initialBlockStepSize())
+    , blockStepInsert(static_cast<unsigned>(RenderStyle::initialBlockStepInsert()))
     , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
     , overscrollBehaviorY(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorY()))
     , pageSizeType(PAGE_SIZE_AUTO)
@@ -167,6 +168,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollSnapStop(o.scrollSnapStop)
     , zoom(o.zoom)
     , blockStepSize(o.blockStepSize)
+    , blockStepInsert(o.blockStepInsert)
     , overscrollBehaviorX(o.overscrollBehaviorX)
     , overscrollBehaviorY(o.overscrollBehaviorY)
     , pageSizeType(o.pageSizeType)
@@ -255,6 +257,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollSnapStop == o.scrollSnapStop
         && zoom == o.zoom
         && blockStepSize == o.blockStepSize
+        && blockStepInsert == o.blockStepInsert
         && overscrollBehaviorX == o.overscrollBehaviorX
         && overscrollBehaviorY == o.overscrollBehaviorY
         && pageSizeType == o.pageSizeType

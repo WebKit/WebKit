@@ -2260,13 +2260,17 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/ServiceWorkerTypes.h
     workers/service/ServiceWorkerUpdateViaCache.h
 
+    workers/service/background-fetch/BackgroundFetch.h
+    workers/service/background-fetch/BackgroundFetchEngine.h
     workers/service/background-fetch/BackgroundFetchFailureReason.h
     workers/service/background-fetch/BackgroundFetchInformation.h
     workers/service/background-fetch/BackgroundFetchOptions.h
     workers/service/background-fetch/BackgroundFetchRecordIdentifier.h
     workers/service/background-fetch/BackgroundFetchRecordInformation.h
+    workers/service/background-fetch/BackgroundFetchRecordLoader.h
     workers/service/background-fetch/BackgroundFetchRequest.h
     workers/service/background-fetch/BackgroundFetchResult.h
+    workers/service/background-fetch/BackgroundFetchStore.h
     workers/service/background-fetch/BackgroundFetchUIOptions.h
     workers/service/background-fetch/ImageResource.h
 

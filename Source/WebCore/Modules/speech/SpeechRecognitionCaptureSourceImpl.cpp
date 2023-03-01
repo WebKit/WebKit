@@ -99,7 +99,7 @@ void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(AudioSam
 }
 #endif
 
-void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
+void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const WTF::MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
     if (isMainThread())
         return m_dataCallback(time, data, description, sampleCount);

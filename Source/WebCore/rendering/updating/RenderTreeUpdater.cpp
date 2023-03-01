@@ -348,8 +348,12 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     else
         element.clearDisplayContentsStyle();
 
-    if (!hasDisplayContents && !elementUpdateStyle.hasAutoLengthContainIntrinsicSize())
-        element.clearLastRememberedSize();
+    if (!hasDisplayContents) {
+        if (elementUpdateStyle.containIntrinsicLogicalWidthType() != ContainIntrinsicSizeType::AutoAndLength)
+            element.clearLastRememberedLogicalWidth();
+        if (elementUpdateStyle.containIntrinsicLogicalHeightType() != ContainIntrinsicSizeType::AutoAndLength)
+            element.clearLastRememberedLogicalHeight();
+    }
     auto scopeExit = makeScopeExit([&] {
         if (!hasDisplayContents) {
             auto* box = element.renderBox();

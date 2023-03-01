@@ -89,6 +89,11 @@ public:
     String controlledImageMIMEType() const { return m_controlledImageMIMEType; }
 #endif // ENABLE(SERVICE_CONTROLS)
 
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    const String& qrCodePayloadString() const { return m_qrCodePayloadString; }
+    void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
+#endif
+
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ContextMenuContextData&);
 
@@ -112,6 +117,10 @@ private:
     String m_controlledImageAttachmentID;
     std::optional<WebCore::ElementContext> m_controlledImageElementContext;
     String m_controlledImageMIMEType;
+#endif
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    String m_qrCodePayloadString;
 #endif
 };
 

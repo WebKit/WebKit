@@ -58,6 +58,7 @@ bool pas_probabilistic_guard_malloc_is_initialized = false;
  * value : metadata for tracking that allocation (pas_pgm_storage)
  */
 pas_ptr_hash_map pas_pgm_hash_map = PAS_HASHTABLE_INITIALIZER;
+pas_ptr_hash_map_in_flux_stash pas_pgm_hash_map_in_flux_stash;
 
 static void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_storage* value, const char* operation);
 
@@ -178,8 +179,10 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     int mprotect_res = mprotect( (void *) value->start_of_data_pages, value->size_of_data_pages, PROT_NONE);
     PAS_ASSERT(!mprotect_res);
 
-    // ensure physical addresses are released
-    // TODO: investigate using MADV_FREE_REUSABLE instead
+    /*
+     * ensure physical addresses are released
+     * TODO: investigate using MADV_FREE_REUSABLE instead
+     */
     int madvise_res = madvise((void *) value->start_of_data_pages, value->size_of_data_pages, MADV_FREE);
     PAS_ASSERT(!madvise_res);
 

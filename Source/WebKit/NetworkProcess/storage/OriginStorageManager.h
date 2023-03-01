@@ -37,6 +37,9 @@ struct StorageEstimate;
 
 namespace WebKit {
 
+#if ENABLE(SERVICE_WORKER)
+class BackgroundFetchStoreManager;
+#endif
 class CacheStorageManager;
 class CacheStorageRegistry;
 class FileSystemStorageHandleRegistry;
@@ -73,6 +76,9 @@ public:
     IDBStorageManager* existingIDBStorageManager();
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager();
+#if ENABLE(SERVICE_WORKER)
+    BackgroundFetchStoreManager& backgroundFetchManager(Ref<WTF::WorkQueue>&&);
+#endif
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
     String resolvedPath(WebsiteDataType);

@@ -47,11 +47,11 @@ using namespace WebCore;
 
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
-    , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
 #if ENABLE(SCROLLING_THREAD)
     , m_wheelEventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
 #endif
 {
+    m_wheelEventDispatcher->setScrollingTree(scrollingTree());
 }
 
 RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
@@ -61,28 +61,14 @@ RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 #endif
 }
 
-PlatformWheelEvent RemoteScrollingCoordinatorProxyMac::filteredWheelEvent(const PlatformWheelEvent& wheelEvent)
+void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const NativeWebWheelEvent& nativeWheelEvent, RectEdges<bool> rubberBandableEdges)
 {
-    m_recentWheelEventDeltaFilter->updateFromEvent(wheelEvent);
-
-    auto filteredEvent = wheelEvent;
-    if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(wheelEvent))
-        filteredEvent = m_recentWheelEventDeltaFilter->eventCopyWithFilteredDeltas(wheelEvent);
-    else if (WheelEventDeltaFilter::shouldIncludeVelocityForEvent(wheelEvent))
-        filteredEvent = m_recentWheelEventDeltaFilter->eventCopyWithVelocity(wheelEvent);
-
-    return filteredEvent;
-}
-
-void RemoteScrollingCoordinatorProxyMac::didReceiveWheelEvent(bool /* wasHandled */)
-{
-    scrollingTree()->applyLayerPositions();
-}
-
-void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
-{
-    RemoteScrollingCoordinatorProxy::displayDidRefresh(displayID);
-    scrollingTree()->applyLayerPositions();
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->handleWheelEvent(nativeWheelEvent, rubberBandableEdges);
+#else
+    UNUSED_PARAM(nativeWheelEvent);
+    UNUSED_PARAM(rubberBandableEdges);
+#endif
 }
 
 bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID, const RequestedScrollData&)
@@ -93,11 +79,15 @@ bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(Scrolli
 
 void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
 {
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
+#else
     auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
     if (!drawingArea)
         return;
 
     drawingArea->setDisplayLinkWantsFullSpeedUpdates(hasAnimatedScrolls);
+#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
@@ -172,6 +162,13 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
 
 void RemoteScrollingCoordinatorProxyMac::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&)
 {
+}
+
+void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->mainThreadDisplayDidRefresh(displayID);
+#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)

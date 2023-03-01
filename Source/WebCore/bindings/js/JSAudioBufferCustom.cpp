@@ -24,9 +24,13 @@
  */
 
 #include "config.h"
+
 #include "JSAudioBuffer.h"
 
 #if ENABLE(WEB_AUDIO)
+
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/TypedArrayAdaptors.h>
 
 namespace WebCore {
 using namespace JSC;

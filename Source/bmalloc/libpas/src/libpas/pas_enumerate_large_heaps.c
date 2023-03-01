@@ -32,6 +32,8 @@
 #include "pas_enumerator_internal.h"
 #include "pas_large_map.h"
 #include "pas_range_begin_min_heap.h"
+#include "pas_ptr_hash_map.h"
+#include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_root.h"
 
 static bool range_list_iterate_add_large_payload_callback(pas_enumerator* enumerator,
@@ -67,6 +69,17 @@ static bool large_map_hashtable_entry_callback(
     
     return true;
 }
+
+static bool pas_hash_map_entry_callback(pas_enumerator* enumerator, pas_ptr_hash_map_entry* entry, void* arg)
+{
+    PAS_ASSERT_WITH_DETAIL(!arg);
+
+    pas_enumerator_record(enumerator, (void*)((char*)entry->key - pas_page_malloc_alignment()), ((pas_pgm_storage*) entry->value)->mem_to_alloc, pas_enumerator_object_record);
+    pas_enumerator_record(enumerator, (void*)entry->value, sizeof(pas_pgm_storage), pas_enumerator_meta_record);
+
+    return true;
+}
+
 
 static bool small_large_map_hashtable_entry_callback(
     pas_enumerator* enumerator, pas_small_large_map_entry* entry, void* arg)
@@ -141,6 +154,16 @@ static PAS_NEVER_INLINE bool enumerate_tiny_large_map(pas_enumerator* enumerator
         NULL);
 }
 
+static PAS_NEVER_INLINE bool enumerate_pgm_map(pas_enumerator* enumerator)
+{
+    return pas_ptr_hash_map_for_each_entry_remote(
+        enumerator,
+        enumerator->root->pas_pgm_hash_map_instance,
+        enumerator->root->pas_pgm_hash_map_instance_in_flux_stash,
+        pas_hash_map_entry_callback,
+        NULL);
+}
+
 bool pas_enumerate_large_heaps(pas_enumerator* enumerator)
 {
     static const bool verbose = false;
@@ -194,6 +217,9 @@ bool pas_enumerate_large_heaps(pas_enumerator* enumerator)
             return false;
 
         if (!enumerate_tiny_large_map(enumerator))
+            return false;
+
+        if (!enumerate_pgm_map(enumerator))
             return false;
     }
 

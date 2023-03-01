@@ -64,7 +64,7 @@ protected:
     // WebContextMenuListenerProxy::Client
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) override;
 
-    const ContextMenuContextData m_context;
+    ContextMenuContextData m_context;
     const UserData m_userData;
 
 private:

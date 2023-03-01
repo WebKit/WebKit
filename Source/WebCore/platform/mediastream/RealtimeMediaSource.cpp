@@ -509,7 +509,7 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         auto supportedModes = capabilities.facingMode().map([](auto& mode) {
             return RealtimeMediaSourceSettings::facingMode(mode);
         });
-        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes) + facingModeFitnessDistanceAdjustment();
+        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
         break;
     }
 
@@ -895,8 +895,10 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
         double distance = fitnessDistance(variant);
         switch (variant.constraintType()) {
         case MediaConstraintType::DeviceId:
-        case MediaConstraintType::FacingMode:
             m_fitnessScore += distance ? 1 : 32;
+            break;
+        case MediaConstraintType::FacingMode:
+            m_fitnessScore += facingModeFitnessScoreAdjustment() + (distance ? 1 : 32);
             break;
 
         case MediaConstraintType::Width:

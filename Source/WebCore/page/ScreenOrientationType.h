@@ -25,6 +25,12 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
+#if PLATFORM(IOS)
+#include "Device.h"
+#endif
+
 namespace WebCore {
 
 enum class ScreenOrientationType : uint8_t {
@@ -34,7 +40,7 @@ enum class ScreenOrientationType : uint8_t {
     LandscapeSecondary
 };
 
-constexpr bool isPortait(ScreenOrientationType type)
+constexpr bool isPortrait(ScreenOrientationType type)
 {
     return type == ScreenOrientationType::PortraitPrimary || type == ScreenOrientationType::PortraitSecondary;
 }
@@ -42,6 +48,20 @@ constexpr bool isPortait(ScreenOrientationType type)
 constexpr bool isLandscape(ScreenOrientationType type)
 {
     return type == ScreenOrientationType::LandscapePrimary || type == ScreenOrientationType::LandscapeSecondary;
+}
+
+inline ScreenOrientationType naturalScreenOrientationType()
+{
+#if PLATFORM(IOS)
+    if (deviceHasIPadCapability())
+        return ScreenOrientationType::LandscapePrimary;
+    return ScreenOrientationType::PortraitPrimary;
+#elif PLATFORM(WATCHOS)
+    return ScreenOrientationType::PortraitPrimary;
+#else
+    // On Desktop and TV, the natural orientation must be landscape-primary.
+    return ScreenOrientationType::LandscapePrimary;
+#endif
 }
 
 } // namespace WebCore

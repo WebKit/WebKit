@@ -219,7 +219,7 @@ void RecorderImpl::recordDrawLine(const FloatPoint& point1, const FloatPoint& po
 
 void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
 {
-    append<DrawLinesForText>(blockLocation, localAnchor, thickness, widths, printing, doubleLines, style);
+    append<DrawLinesForText>(blockLocation, localAnchor, widths, thickness, printing, doubleLines, style);
 }
 
 void RecorderImpl::recordDrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)

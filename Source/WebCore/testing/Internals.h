@@ -1006,6 +1006,7 @@ public:
         RefPtr<DOMPointReadOnly> bottomLeft;
         Vector<ImageOverlayText> children;
         bool hasTrailingNewline { true };
+        bool isVertical { false };
 
         ~ImageOverlayLine();
     };

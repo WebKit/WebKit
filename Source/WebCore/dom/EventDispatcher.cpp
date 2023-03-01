@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "EventPath.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"

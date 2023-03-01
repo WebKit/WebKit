@@ -363,8 +363,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
 
     return { committedRange
         , committedContent.overflowLogicalWidth
-        , WTFMove(m_placedFloats)
-        , WTFMove(m_overflowingFloats)
+        , WTFMove(m_suspendedFloats)
         , m_lineIsConstrainedByFloat
         , m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth
         , m_lineLogicalRect.topLeft()
@@ -398,11 +397,11 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
 
 void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
 {
-    ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->overflowingFloats.isEmpty()));
+    ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
 
     m_previousLine = previousLine;
     m_placedFloats.clear();
-    m_overflowingFloats.clear();
+    m_suspendedFloats.clear();
     m_lineSpanningInlineBoxes.clear();
     m_wrapOpportunityList.clear();
     m_overflowingLogicalWidth = { };
@@ -476,18 +475,21 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
 
 CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
 {
-    size_t overflowingFloatCount = 0;
-    auto placeOverflowingFloatsFromPreviousLine = [&] {
+    size_t resumedFloatCount = 0;
+    auto layoutPreviouslySuspendedFloats = [&] {
         if (!m_previousLine)
             return;
-        while (!m_previousLine->overflowingFloats.isEmpty()) {
-            auto isPlaced = tryPlacingFloatBox(*m_previousLine->overflowingFloats[0], LineBoxConstraintApplies::No);
+        // FIXME: Note that committedItemCount is not incremented here as these floats are already accounted for (at previous line)
+        // as CommittedContent only takes one range -meaning that inline layout may continue while float layout is being suspended
+        // and the placed InlineItem range ends at the last inline item placed on the current line.
+        resumedFloatCount = m_previousLine->suspendedFloats.size();
+        for (auto* suspendedFloat : m_previousLine->suspendedFloats) {
+            auto isPlaced = tryPlacingFloatBox(*suspendedFloat, MayOverConstrainLine::Yes);
             ASSERT_UNUSED(isPlaced, isPlaced);
-            ++overflowingFloatCount;
-            m_previousLine->overflowingFloats.remove(0);
         }
+        m_previousLine->suspendedFloats.clear();
     };
-    placeOverflowingFloatsFromPreviousLine();
+    layoutPreviouslySuspendedFloats();
 
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
     auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
@@ -503,9 +505,12 @@ CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLay
         // Now check if we can put this content on the current line.
         if (auto* floatItem = lineCandidate.floatItem) {
             ASSERT(lineCandidate.inlineContent.isEmpty());
-            auto evenOverflowingFloatShouldBePlaced = m_line.runs().isEmpty();
-            if (!tryPlacingFloatBox(*floatItem, evenOverflowingFloatShouldBePlaced ? LineBoxConstraintApplies::No : LineBoxConstraintApplies::Yes))
-                m_overflowingFloats.append(floatItem);
+            if (!tryPlacingFloatBox(*floatItem, m_line.runs().isEmpty() ? MayOverConstrainLine::Yes : MayOverConstrainLine::No)) {
+                // This float overconstrains the line (it simply means shrinking the line box by the float would cause inline content overflow.)
+                // At this point we suspend float layout but continue with inline layout.
+                // Such suspended float will be placed at the next available vertical positon when this line "closes".
+                m_suspendedFloats.append(floatItem);
+            }
             ++committedItemCount;
         } else {
             auto result = handleInlineContent(inlineContentBreaker, needsLayoutRange, lineCandidate);
@@ -542,7 +547,7 @@ CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLay
         currentItemIndex = needsLayoutRange.startIndex() + committedItemCount;
     }
     // Looks like we've run out of runs.
-    ASSERT_UNUSED(overflowingFloatCount, committedItemCount || overflowingFloatCount);
+    ASSERT_UNUSED(resumedFloatCount, committedItemCount || resumedFloatCount);
     return { committedItemCount, { } };
 }
 
@@ -1051,20 +1056,12 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     return initialLetterCapHeightOffset.value_or(0_lu);
 }
 
-bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, LineBoxConstraintApplies lineBoxConstraintApplies) const
+bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine mayOverConstrainLine) const
 {
-    // Floats never terminate the line. If a float does not fit the current line
-    // we can still continue placing inline content on the line, but we have to save all the upcoming floats for subsequent lines.
-    auto lineHasSkippedFloats = !m_overflowingFloats.isEmpty();
-    if (lineHasSkippedFloats) {
-        // Overflowing floats must have been constrained by the current line box.
-        ASSERT(lineBoxConstraintApplies == LineBoxConstraintApplies::Yes);
-        return false;
-    }
-    if (lineBoxConstraintApplies == LineBoxConstraintApplies::No) {
-        // This is an overflowing float from previous line. Now we need to find a place for it.
-        // (which also means that the current line can't have any floats that we couldn't place yet i.e. overflown)
-        ASSERT(m_overflowingFloats.isEmpty());
+    if (mayOverConstrainLine == MayOverConstrainLine::Yes) {
+        // This is a resumed float from a previous vertical position. Now we need to find a place for it.
+        // (which also means that the current line can't have any floats that we couldn't place yet)
+        ASSERT(m_suspendedFloats.isEmpty());
         return true;
     }
     auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
@@ -1089,21 +1086,22 @@ static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox
     return contentLogicalWidth <= availableSpaceForContentWithPlacedFloat;
 }
 
-bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstraintApplies lineBoxConstraintApplies)
+bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, MayOverConstrainLine mayOverConstrainLine)
 {
     if (isInIntrinsicWidthMode()) {
         ASSERT_NOT_REACHED();
-        // Just ignore floats by pretending they have been placed.
+        // Floats are not supposed to be added to FloatingState in intrinsic mode.
+        m_placedFloats.append(&floatItem);
         return true;
     }
     ASSERT(formattingState());
+    if (isFloatLayoutSuspended())
+        return false;
 
     auto& floatBox = floatItem.layoutBox();
     auto& boxGeometry = formattingState()->boxGeometry(floatBox);
-    if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), lineBoxConstraintApplies)) {
-        // This float needs to go somewhere else on a subsequent line.
+    if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
-    }
 
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
     auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
@@ -1397,7 +1395,7 @@ bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, 
     if (hasPartialTrailingContent)
         return false;
     if (lineRange.endIndex() == lastInlineItemIndex) {
-        // We must have only committed trailing overflowing floats on the line when the range is empty.
+        // We must have only committed trailing (overconstraining) floats on the line when the range is empty.
         return !lineRange.isEmpty();
     }
     // Omit floats to see if this is the last line with inline content.

@@ -61,7 +61,6 @@ const Vector<SharedGamepadValue>& WebGamepad::buttonValues() const
 
 void WebGamepad::updateValues(const GamepadData& gamepadData)
 {
-    ASSERT(!gamepadData.isNull());
     ASSERT(gamepadData.index() == index());
     ASSERT(m_axisValues.size() == gamepadData.axisValues().size());
     ASSERT(m_buttonValues.size() == gamepadData.buttonValues().size());

@@ -41,6 +41,7 @@ class ResourceRequest;
 struct ClientOrigin;
 struct CrossOriginEmbedderPolicy;
 struct FetchOptions;
+struct ImageResource;
 struct ImportedScriptAttributes;
 struct NavigationPreloadState;
 class SecurityOriginData;
@@ -70,6 +71,7 @@ DECLARE_CODER(WebCore::FetchOptions);
 DECLARE_CODER(WebCore::HTTPHeaderMap);
 #if ENABLE(SERVICE_WORKER)
 DECLARE_CODER(WebCore::ImportedScriptAttributes);
+DECLARE_CODER(WebCore::ImageResource);
 #endif
 DECLARE_CODER(WebCore::ResourceResponse);
 DECLARE_CODER(WebCore::ResourceRequest);

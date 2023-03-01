@@ -8643,15 +8643,15 @@ void HTMLMediaElement::purgeBufferedDataIfPossible()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    bool isPausedAndNoMSE = [&] {
+    bool isPausedOrMSE = [&] {
 #if ENABLE(MEDIA_SOURCE)
         if (m_mediaSource)
-            return false;
+            return true;
 #endif
         return paused();
     }();
 
-    if (isPausedAndNoMSE)
+    if (!isPausedOrMSE)
         return;
 
     if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && mediaSession().preferredBufferingPolicy() == BufferingPolicy::Default)

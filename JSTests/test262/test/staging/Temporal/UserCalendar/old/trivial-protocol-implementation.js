@@ -40,6 +40,7 @@ var obj = {
   toString() {
     return "decimal";
   },
+  fields(fieldNames) { return fieldNames; },
   dateFromFields(fields, options) {
     var {
       overflow = "constrain"
@@ -83,7 +84,14 @@ var obj = {
   day(date) {
     var {days} = isoToDecimal(date);
     return days % 10 + 1;
+  },
+  mergeFields(fields, additionalFields) {
+  if ("month" in additionalFields || "monthCode" in additionalFields) {
+    let {month, monthCode, ...rest} = fields;
+    return {...rest, ...additionalFields};
   }
+  return {...fields, ...additionalFields};
+}
 };
 var date = Temporal.PlainDate.from({
   year: 184,

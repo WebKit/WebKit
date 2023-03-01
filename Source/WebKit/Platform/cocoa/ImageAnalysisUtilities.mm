@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ImageAnalysisUtilities.h"
 
-#if ENABLE(IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)
 
 #import "CocoaImage.h"
 #import "Logging.h"
@@ -41,9 +41,14 @@
 #endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <pal/cocoa/VisionSoftLink.h>
+
+#define CRLayoutDirectionTopToBottom 3
 
 namespace WebKit {
 using namespace WebCore;
+
+#if ENABLE(IMAGE_ANALYSIS)
 
 RetainPtr<CocoaImageAnalyzer> createImageAnalyzer()
 {
@@ -119,7 +124,8 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
         VKWKLineInfo *nextLine = nextLineIndex < allLines.count ? allLines[nextLineIndex] : nil;
         // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
         bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
-        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline });
+        bool isVertical = [line respondsToSelector:@selector(layoutDirection)] && [line layoutDirection] == CRLayoutDirectionTopToBottom;
+        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline, isVertical });
         isFirstLine = false;
         nextLineIndex++;
     }
@@ -370,6 +376,63 @@ std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackgroun
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+#if HAVE(VISION)
+
+static RetainPtr<CGImageRef> imageFilledWithWhiteBackground(CGImageRef image)
+{
+    CGRect imageRect = CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
+
+    RetainPtr colorSpace = CGImageGetColorSpace(image);
+    if (!CGColorSpaceSupportsOutput(colorSpace.get()))
+        colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+
+    auto context = adoptCF(CGBitmapContextCreate(nil, CGRectGetWidth(imageRect), CGRectGetHeight(imageRect), 8, 4 * CGRectGetWidth(imageRect), colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    CGContextSetFillColorWithColor(context.get(), cachedCGColor(WebCore::Color::white).get());
+    CGContextFillRect(context.get(), imageRect);
+    CGContextDrawImage(context.get(), imageRect, image);
+
+    return adoptCF(CGBitmapContextCreateImage(context.get()));
+}
+
+void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *)>&& completion)
+{
+    if (!image || !PAL::isVisionFrameworkAvailable())
+        return completion(nil);
+
+    auto adjustedImage = imageFilledWithWhiteBackground(image);
+
+    auto completionHandler = makeBlockPtr([completion = WTFMove(completion)](VNRequest *request, NSError *error) mutable {
+        if (error) {
+            completion(nil);
+            return;
+        }
+
+        for (VNBarcodeObservation *result in request.results) {
+            if (![result.symbology isEqualToString:VNBarcodeSymbologyQR])
+                continue;
+
+            completion(result.payloadStringValue);
+            return;
+        }
+
+        completion(nil);
+    });
+
+    auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
+    [request setSymbologies:@[ VNBarcodeSymbologyQR ]];
+
+    NSError *error = nil;
+    auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);
+    [handler performRequests:@[ request.get() ] error:&error];
+
+    if (error)
+        completionHandler(nil, error);
+}
+
+#endif // HAVE(VISION)
+
 } // namespace WebKit
 
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)

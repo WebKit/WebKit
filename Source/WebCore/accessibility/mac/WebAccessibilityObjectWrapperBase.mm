@@ -507,7 +507,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         if (!backingObject)
             return NSMakeRange(NSNotFound, 0);
 
-        auto elementRange = makeNSRange(backingObject->elementRange());
+        auto elementRange = makeNSRange(backingObject->simpleRange());
         if (elementRange.location == NSNotFound)
             return elementRange;
         
@@ -600,7 +600,7 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
     if (!backingObject)
         return nil;
 
-    auto range = backingObject->elementRange();
+    auto range = backingObject->simpleRange();
     if (!range)
         return nil;
 

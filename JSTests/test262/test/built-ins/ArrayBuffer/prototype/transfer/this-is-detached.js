@@ -13,7 +13,7 @@ info: |
   4. If IsDetachedBuffer(O) is true, throw a TypeError exception.
   [...]
 includes: [detachArrayBuffer.js]
-features: [resizable-arraybuffer]
+features: [resizable-arraybuffer, arraybuffer-transfer]
 ---*/
 
 assert.sameValue(typeof ArrayBuffer.prototype.transfer, 'function');

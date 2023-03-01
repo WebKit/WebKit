@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+struct ClientOrigin;
 class RegistrableDomain;
 
 class ServiceWorkerRegistrationKey {
@@ -40,15 +41,16 @@ public:
     ServiceWorkerRegistrationKey() = default;
     WEBCORE_EXPORT ServiceWorkerRegistrationKey(SecurityOriginData&& topOrigin, URL&& scope);
 
-    static ServiceWorkerRegistrationKey emptyKey();
+    WEBCORE_EXPORT static ServiceWorkerRegistrationKey emptyKey();
 
-    bool operator==(const ServiceWorkerRegistrationKey&) const;
+    WEBCORE_EXPORT bool operator==(const ServiceWorkerRegistrationKey&) const;
     bool operator!=(const ServiceWorkerRegistrationKey& key) const { return !(*this == key); }
     bool isEmpty() const { return *this == emptyKey(); }
     WEBCORE_EXPORT bool isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
     bool originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
     size_t scopeLength() const { return m_scope.string().length(); }
 
+    WEBCORE_EXPORT ClientOrigin clientOrigin() const;
     const SecurityOriginData& topOrigin() const { return m_topOrigin; }
     WEBCORE_EXPORT RegistrableDomain firstPartyForCookies() const;
     const URL& scope() const { return m_scope; }
@@ -56,7 +58,7 @@ public:
 
     bool relatesToOrigin(const SecurityOriginData&) const;
 
-    ServiceWorkerRegistrationKey isolatedCopy() const &;
+    WEBCORE_EXPORT ServiceWorkerRegistrationKey isolatedCopy() const &;
     ServiceWorkerRegistrationKey isolatedCopy() &&;
 
     String toDatabaseKey() const;

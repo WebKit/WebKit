@@ -32,6 +32,7 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "Document.h"
+#include "EventDispatcher.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
@@ -100,7 +101,9 @@ bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
 {
-    return adoptRef(*new OffscreenCanvas(scriptExecutionContext, width, height));
+    auto canvas = adoptRef(*new OffscreenCanvas(scriptExecutionContext, width, height));
+    canvas->suspendIfNeeded();
+    return canvas;
 }
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
@@ -120,6 +123,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
         }
     });
 
+    clone->suspendIfNeeded();
     return clone;
 }
 
@@ -127,12 +131,13 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 {
     auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, canvas.width(), canvas.height()));
     offscreen->setPlaceholderCanvas(canvas);
+    offscreen->suspendIfNeeded();
     return offscreen;
 }
 
 OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
-    : CanvasBase(IntSize(width, height))
-    , ContextDestructionObserver(&scriptExecutionContext)
+    : ActiveDOMObject(&scriptExecutionContext)
+    , CanvasBase(IntSize(width, height))
     , m_placeholderData(PlaceholderData::create())
 {
 }
@@ -337,8 +342,8 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
     }
 
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(*m_context)) {
-        auto webGLContext = &downcast<WebGLRenderingContext>(*m_context);
+    if (is<WebGLRenderingContextBase>(*m_context)) {
+        auto webGLContext = &downcast<WebGLRenderingContextBase>(*m_context);
 
         // FIXME: We're supposed to create an ImageBitmap using the backing
         // store from this canvas (or its context), but for now we'll just
@@ -507,7 +512,8 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
 
     Locker locker { m_placeholderData->bufferLock };
     bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
-    m_placeholderData->pendingCommitBuffer = ImageBuffer::sinkIntoSerializedImageBuffer(imageBuffer->clone());
+    if (auto clone = imageBuffer->clone())
+        m_placeholderData->pendingCommitBuffer = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
     if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)
         pushBufferToPlaceholder();
 }
@@ -564,6 +570,17 @@ void OffscreenCanvas::reset()
 
     notifyObserversCanvasResized();
     scheduleCommitToPlaceholderCanvas();
+}
+
+
+void OffscreenCanvas::queueTaskKeepingObjectAlive(TaskSource source, Function<void()>&& task)
+{
+    ActiveDOMObject::queueTaskKeepingObjectAlive(*this, source, WTFMove(task));
+}
+
+void OffscreenCanvas::dispatchEvent(Event& event)
+{
+    EventDispatcher::dispatchEvent({ this }, event);
 }
 
 }

@@ -165,6 +165,7 @@ NS_ASSUME_NONNULL_END
 
 @interface VKWKLineInfo (Staging_85139101)
 @property (nonatomic, readonly) BOOL shouldWrap;
+@property (nonatomic, readonly) NSUInteger layoutDirection;
 @end
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

@@ -606,6 +606,8 @@ public:
 
     ContainIntrinsicSizeType containIntrinsicWidthType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicWidthType); }
     ContainIntrinsicSizeType containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicHeightType); }
+    ContainIntrinsicSizeType containIntrinsicLogicalWidthType() const { return isHorizontalWritingMode() ? containIntrinsicWidthType() : containIntrinsicHeightType(); }
+    ContainIntrinsicSizeType containIntrinsicLogicalHeightType() const { return isHorizontalWritingMode() ? containIntrinsicHeightType() : containIntrinsicWidthType(); }
     std::optional<Length> containIntrinsicWidth() const { return m_nonInheritedData->rareData->containIntrinsicWidth; }
     std::optional<Length> containIntrinsicHeight() const { return m_nonInheritedData->rareData->containIntrinsicHeight; }
     bool hasAutoLengthContainIntrinsicSize() const { return containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndLength || containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndLength; }
@@ -2055,6 +2057,10 @@ public:
     static std::optional<Length> initialBlockStepSize() { return { }; }
     std::optional<Length> blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; } 
     void setBlockStepSize(std::optional<Length> length) { SET_NESTED_VAR(m_nonInheritedData, rareData, blockStepSize, length); } 
+
+    static BlockStepInsert initialBlockStepInsert() { return BlockStepInsert::Margin; }
+    BlockStepInsert blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
+    void setBlockStepInsert(BlockStepInsert newBlockStepInsert) { SET_NESTED_VAR(m_nonInheritedData, rareData, blockStepInsert, static_cast<unsigned>(newBlockStepInsert)); }
 
 private:
     struct NonInheritedFlags {

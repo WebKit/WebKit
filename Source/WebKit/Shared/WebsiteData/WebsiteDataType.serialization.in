@@ -46,4 +46,7 @@ headers: "WebsiteDataType.h"
     AlternativeServices,
 #endif
     FileSystem,
+#if ENABLE(SERVICE_WORKER)
+    BackgroundFetchStorage,
+#endif
 };

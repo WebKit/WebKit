@@ -1600,8 +1600,6 @@ webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/cs
 
 webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.html [ Pass Crash ]
 
-webkit.org/b/239308 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
-
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
 # [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
@@ -1806,6 +1804,18 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canva
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Skip ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-creation-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-lost-restored-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-lost-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/methods-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/context-creation-worker.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/methods-2-worker.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-query.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-sync.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-timer-query.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
 

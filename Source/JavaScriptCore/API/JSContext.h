@@ -179,7 +179,7 @@ JSC_CLASS_AVAILABLE(macos(10.9), ios(7.0))
 @property
 @discussion Controls whether this @link JSContext @/link is inspectable in Web Inspector. The default value is NO.
 */
-@property (nonatomic, getter=isInspectable) BOOL inspectable JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA)) NS_SWIFT_NAME(isInspectable);
+@property (nonatomic, getter=isInspectable) BOOL inspectable JSC_API_AVAILABLE(macos(13.3), ios(16.4)) NS_SWIFT_NAME(isInspectable);
 
 @end
 

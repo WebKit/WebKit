@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntSize.h"
+#include "TaskSource.h"
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
@@ -37,6 +38,7 @@ class CanvasBase;
 class CanvasObserver;
 class CanvasRenderingContext;
 class Element;
+class Event;
 class GraphicsClient;
 class GraphicsContext;
 class GraphicsContextStateSaver;
@@ -119,6 +121,9 @@ public:
     WEBCORE_EXPORT static size_t maxActivePixelMemory();
     WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(std::optional<size_t>);
     WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
+
+    virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
+    virtual void dispatchEvent(Event&) = 0;
 
 protected:
     explicit CanvasBase(IntSize);

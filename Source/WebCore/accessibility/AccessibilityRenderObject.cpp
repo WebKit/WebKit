@@ -41,6 +41,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -975,7 +976,7 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
      may not belong to the link element and thus may not activate the link.
      Hence, return the middle point of the first character in the link if exists.
      */
-    if (auto range = elementRange()) {
+    if (auto range = simpleRange()) {
         auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
         auto end = start.next();
         if (contains<ComposedTree>(*range, makeBoundaryPoint(end)))
@@ -1572,17 +1573,12 @@ String AccessibilityRenderObject::text() const
 {
     if (isPasswordField())
         return passwordFieldValue();
-
     return AccessibilityNodeObject::text();
 }
-    
-int AccessibilityRenderObject::textLength() const
+
+unsigned AccessibilityRenderObject::textLength() const
 {
     ASSERT(isTextControl());
-    
-    if (isPasswordField())
-        return passwordFieldValue().length();
-
     return text().length();
 }
 
@@ -1706,7 +1702,7 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
     } else if (m_renderer) {
         ASSERT(node());
         auto& node = *this->node();
-        auto elementRange = this->elementRange();
+        auto elementRange = simpleRange();
         auto start = visiblePositionForIndexUsingCharacterIterator(node, range.start);
         if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(start)))
             start = makeContainerOffsetPosition(elementRange->start);
@@ -2262,7 +2258,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
             setTextSelectionIntent(axObjectCache(), AXTextStateChangeTypeSelectionMove);
 
             auto start = range.start;
-            if (auto elementRange = this->elementRange()) {
+            if (auto elementRange = simpleRange()) {
                 if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(start)))
                     start = makeContainerOffsetPosition(elementRange->start);
             }

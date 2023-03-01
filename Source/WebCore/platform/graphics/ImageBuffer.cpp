@@ -518,13 +518,6 @@ void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& 
     }
 }
 
-PlatformLayer* ImageBuffer::platformLayer() const
-{
-    if (auto* backend = ensureBackendCreated())
-        return backend->platformLayer();
-    return nullptr;
-}
-
 bool ImageBuffer::copyToPlatformTexture(GraphicsContextGL& context, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const
 {
     if (auto* backend = ensureBackendCreated())

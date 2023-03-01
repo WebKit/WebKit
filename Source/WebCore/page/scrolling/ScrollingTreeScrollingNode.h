@@ -83,6 +83,9 @@ public:
     bool isScrollSnapInProgress() const;
     void setScrollSnapInProgress(bool);
 
+    virtual bool startAnimatedScrollToPosition(FloatPoint);
+    virtual void stopAnimatedScroll();
+
     virtual void serviceScrollAnimation(MonotonicTime);
 
     // These are imperative; they adjust the scrolling layers.
@@ -137,9 +140,6 @@ protected:
     virtual void willDoProgrammaticScroll(const FloatPoint&) { }
     
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
-    
-    virtual bool startAnimatedScrollToPosition(FloatPoint);
-    virtual void stopAnimatedScroll();
 
     void willStartAnimatedScroll();
     void didStopAnimatedScroll();

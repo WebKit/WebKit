@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Document;
 class KeyframeEffect;
 class RenderStyle;
 

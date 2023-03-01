@@ -51,6 +51,7 @@ typedef int64_t EncodedWasmValue;
 #if ENABLE(WEBASSEMBLY_B3JIT)
 void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, SavedFPWidth);
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
+JSC_DECLARE_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void*, (Instance*));

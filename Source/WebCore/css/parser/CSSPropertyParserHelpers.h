@@ -190,7 +190,7 @@ struct FontRaw {
 };
 
 RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&);
+AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
 std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);

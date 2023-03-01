@@ -2247,7 +2247,7 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    return [self textMarkersForRange:self.axBackingObject->elementRange()];
+    return [self textMarkersForRange:self.axBackingObject->simpleRange()];
 }
 
 // A method to get the normalized text cursor range of an element. Used in DumpRenderTree.

@@ -1,0 +1,10 @@
+
+PASS @counter-style 'range: auto' is valid
+PASS @counter-style 'range: infinite infinite' is valid
+PASS @counter-style 'range: infinite 0' is valid
+PASS @counter-style 'range: 0 infinite' is valid
+PASS @counter-style 'range: infinite 0, 5 10, 100 infinite' is valid
+PASS @counter-style 'range: infinite 10, 5 20, 15 infinite' is valid
+PASS @counter-style 'range: ' is invalid
+PASS @counter-style 'range: 0 -1' is invalid
+

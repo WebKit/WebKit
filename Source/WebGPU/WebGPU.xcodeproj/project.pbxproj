@@ -117,6 +117,7 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */ = {isa = PBXBuildFile; fileRef = 97296765299C09B0001C8BD4 /* TypeDeclarations.rb */; };
 		9776BE732992A236002D6D93 /* Overload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9776BE712992A236002D6D93 /* Overload.cpp */; };
 		9776BE742992A236002D6D93 /* Overload.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE722992A236002D6D93 /* Overload.h */; };
 		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
@@ -144,6 +145,24 @@
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		9729675F299BF1BE001C8BD4 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.rb";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(SRCROOT)/WGSL/generator/main.rb",
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WGSL/TypeDeclarations.h",
+			);
+			runOncePerArchitecture = 0;
+			script = "/usr/bin/env ruby \"${SCRIPT_INPUT_FILE_0}\" \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		1CEBD8272716CACC00A5254D /* PBXContainerItemProxy */ = {
@@ -324,6 +343,8 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		97296764299BFB72001C8BD4 /* main.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = main.rb; sourceTree = "<group>"; };
+		97296765299C09B0001C8BD4 /* TypeDeclarations.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = TypeDeclarations.rb; sourceTree = "<group>"; };
 		9776BE712992A236002D6D93 /* Overload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Overload.cpp; sourceTree = "<group>"; };
 		9776BE722992A236002D6D93 /* Overload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Overload.h; sourceTree = "<group>"; };
 		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
@@ -466,6 +487,7 @@
 			isa = PBXGroup;
 			children = (
 				33EA185C27BC193D00A1DD52 /* AST */,
+				97296763299BFB72001C8BD4 /* generator */,
 				979240B1297018290050EA2C /* Metal */,
 				3AD0D2362988D3F90080D728 /* API.h */,
 				9789C318297EA105009E9006 /* CallGraph.cpp */,
@@ -496,6 +518,7 @@
 				338BB2CD27B6B60200E066AB /* Token.h */,
 				978A912E298AD3DA00B37E5E /* TypeCheck.cpp */,
 				978A912D298AD3DA00B37E5E /* TypeCheck.h */,
+				97296765299C09B0001C8BD4 /* TypeDeclarations.rb */,
 				978A9132298BBFD300B37E5E /* Types.cpp */,
 				978A9131298BBFD300B37E5E /* Types.h */,
 				978A9136298D40F100B37E5E /* TypeStore.cpp */,
@@ -603,6 +626,14 @@
 				3A12AE9828FCE94B00C1B975 /* ASTWorkgroupSizeAttribute.h */,
 			);
 			path = AST;
+			sourceTree = "<group>";
+		};
+		97296763299BFB72001C8BD4 /* generator */ = {
+			isa = PBXGroup;
+			children = (
+				97296764299BFB72001C8BD4 /* main.rb */,
+			);
+			path = generator;
 			sourceTree = "<group>";
 		};
 		979240B1297018290050EA2C /* Metal */ = {
@@ -751,6 +782,7 @@
 				1CEBD7F02716B2CC00A5254D /* Frameworks */,
 			);
 			buildRules = (
+				9729675F299BF1BE001C8BD4 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -881,6 +913,7 @@
 				979240C4297558F10050EA2C /* ResolveTypeReferences.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */,
+				97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */,
 				978A9134298BBFD300B37E5E /* Types.cpp in Sources */,
 				978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,

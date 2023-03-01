@@ -128,6 +128,7 @@ public:
 
     // This is temporary, required by partial bailout check.
     bool hasOutOfFlowContent() const;
+    bool contentNeedsVisualReordering() const;
 
 private:
     void updateReplacedDimensions(const RenderBox&);

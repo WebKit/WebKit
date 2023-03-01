@@ -24,6 +24,7 @@ info: |
   3. If func is either undefined or null, return undefined.
 flags: [async]
 features: [async-iteration]
+includes: [asyncHelpers.js]
 ---*/
 
 var iterationCount = 0;
@@ -42,7 +43,7 @@ var syncIterator = {
   },
 };
 
-(async function() {
+asyncTest(async function() {
   for await (let _ of syncIterator) {
     iterationCount += 1;
     break;
@@ -50,4 +51,4 @@ var syncIterator = {
 
   assert.sameValue(iterationCount, 1);
   assert.sameValue(returnGets, 1);
-}()).then($DONE, $DONE);
+});

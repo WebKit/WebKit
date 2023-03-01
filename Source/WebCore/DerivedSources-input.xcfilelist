@@ -1367,6 +1367,7 @@ $(PROJECT_DIR)/html/canvas/EXTDisjointTimerQuery.idl
 $(PROJECT_DIR)/html/canvas/EXTDisjointTimerQueryWebGL2.idl
 $(PROJECT_DIR)/html/canvas/EXTFloatBlend.idl
 $(PROJECT_DIR)/html/canvas/EXTFragDepth.idl
+$(PROJECT_DIR)/html/canvas/EXTPolygonOffsetClamp.idl
 $(PROJECT_DIR)/html/canvas/EXTShaderTextureLOD.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionBPTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionRGTC.idl

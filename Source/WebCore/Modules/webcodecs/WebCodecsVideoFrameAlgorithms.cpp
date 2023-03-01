@@ -29,6 +29,7 @@
 #if ENABLE(WEB_CODECS)
 
 #include "DOMRectReadOnly.h"
+#include "ExceptionOr.h"
 #include "VideoColorSpace.h"
 
 namespace WebCore {

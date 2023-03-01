@@ -1430,6 +1430,7 @@ html/canvas/EXTDisjointTimerQuery.cpp
 html/canvas/EXTDisjointTimerQueryWebGL2.cpp
 html/canvas/EXTFloatBlend.cpp
 html/canvas/EXTFragDepth.cpp
+html/canvas/EXTPolygonOffsetClamp.cpp
 html/canvas/EXTShaderTextureLOD.cpp
 html/canvas/EXTTextureCompressionBPTC.cpp
 html/canvas/EXTTextureCompressionRGTC.cpp
@@ -2947,6 +2948,8 @@ workers/service/ServiceWorkerRegistrationKey.cpp
 workers/service/ServiceWorkerRegistrationOptions.cpp
 workers/service/ServiceWorkerWindowClient.cpp
 workers/service/WorkerSWClientConnection.cpp
+workers/service/background-fetch/BackgroundFetch.cpp
+workers/service/background-fetch/BackgroundFetchEngine.cpp
 workers/service/background-fetch/BackgroundFetchEvent.cpp
 workers/service/background-fetch/BackgroundFetchManager.cpp
 workers/service/background-fetch/BackgroundFetchRecord.cpp
@@ -3308,6 +3311,7 @@ JSEXTDisjointTimerQuery.cpp
 JSEXTDisjointTimerQueryWebGL2.cpp
 JSEXTFloatBlend.cpp
 JSEXTFragDepth.cpp
+JSEXTPolygonOffsetClamp.cpp
 JSEXTShaderTextureLOD.cpp
 JSEXTTextureCompressionBPTC.cpp
 JSEXTTextureCompressionRGTC.cpp

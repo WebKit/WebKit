@@ -33,13 +33,13 @@ struct BlendingContext;
 
 class OffsetRotation {
 public:
-    OffsetRotation(bool hasAuto = false, float angle = 0);
+    WEBCORE_EXPORT OffsetRotation(bool hasAuto = false, float angle = 0);
 
     bool hasAuto() const { return m_hasAuto; }
     float angle() const { return m_angle; }
 
     bool canBlend(const OffsetRotation&) const;
-    OffsetRotation blend(const OffsetRotation&, const BlendingContext&) const;
+    WEBCORE_EXPORT OffsetRotation blend(const OffsetRotation&, const BlendingContext&) const;
 
     bool operator==(const OffsetRotation&) const;
     bool operator!=(const OffsetRotation& o) const { return !(*this == o); }

@@ -96,7 +96,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     BackgroundResponsivenessPing()
 
 #if ENABLE(GAMEPAD)
-    SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)
+    SetInitialGamepads(Vector<std::optional<WebKit::GamepadData>> gamepadDatas)
     GamepadConnected(WebKit::GamepadData gamepadData, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
     GamepadDisconnected(unsigned index)
 #endif

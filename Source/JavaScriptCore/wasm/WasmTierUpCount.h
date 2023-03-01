@@ -70,6 +70,7 @@ public:
     Lock& getLock() { return m_lock; }
 
     OSREntryData& addOSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&&);
+    OSREntryData& osrEntryData(uint32_t loopIndex);
 
     void optimizeAfterWarmUp(uint32_t functionIndex)
     {

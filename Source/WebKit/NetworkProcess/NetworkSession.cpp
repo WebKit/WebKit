@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkSession.h"
 
+#include "BackgroundFetchLoad.h"
+#include "BackgroundFetchStoreImpl.h"
 #include "CacheStorageEngine.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
@@ -737,6 +739,21 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
         return;
     }
     m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
+}
+
+std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client& client, ResourceRequest&& request, FetchOptions&& options, const ClientOrigin& clientOrigin)
+{
+    return makeUnique<BackgroundFetchLoad>(m_networkProcess.get(), m_sessionID, client, WTFMove(request), WTFMove(options), clientOrigin);
+}
+
+void NetworkSession::requestBackgroundFetchSpace(const ClientOrigin& origin, uint64_t size, CompletionHandler<void(bool)>&& callback)
+{
+    m_storageManager->requestSpace(origin, size, WTFMove(callback));
+}
+
+Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
+{
+    return BackgroundFetchStoreImpl::create(m_storageManager.get());
 }
 #endif // ENABLE(SERVICE_WORKER)
 

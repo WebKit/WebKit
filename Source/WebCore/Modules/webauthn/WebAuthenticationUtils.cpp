@@ -44,11 +44,6 @@ Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t len
     return { byteArray, length };
 }
 
-Vector<uint8_t> convertArrayBufferToVector(ArrayBuffer* buffer)
-{
-    return convertBytesToVector(static_cast<uint8_t*>(buffer->data()), buffer->byteLength());
-}
-
 Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);

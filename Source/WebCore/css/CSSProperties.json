@@ -334,6 +334,16 @@
                 "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
             }
         },
+        "block-step-insert": {
+            "values": [
+                "margin",
+                "padding"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssRhythmicSizingEnabled",
+                "parser-grammar": "<<values>>"
+            }
+        },
         "caret-color": {
             "inherited": true,
             "values": [

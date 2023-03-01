@@ -218,7 +218,7 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
             return;
         }
         if (m_isAppId)
-            response->setExtensions({ m_isAppId, std::nullopt });
+            response->setExtensions({ m_isAppId, std::nullopt, std::nullopt });
 
         receiveRespond(response.releaseNonNull());
         return;

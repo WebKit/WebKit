@@ -40,12 +40,15 @@ public:
     }
 
     const WebKit::WebHitTestResultData& hitTestResultData() const { return m_hitTestResultData; }
+    const WTF::String& qrCodePayloadString() const { return m_qrCodePayloadString; };
 
 private:
-    ContextMenuElementInfoMac(const WebKit::WebHitTestResultData& hitTestResultData)
-        : m_hitTestResultData(hitTestResultData) { }
+    ContextMenuElementInfoMac(const WebKit::WebHitTestResultData& hitTestResultData, const WTF::String& qrCodePayloadString)
+        : m_hitTestResultData(hitTestResultData)
+        , m_qrCodePayloadString(qrCodePayloadString) { }
 
     WebKit::WebHitTestResultData m_hitTestResultData;
+    WTF::String m_qrCodePayloadString;
 };
 
 } // namespace API

@@ -297,16 +297,24 @@ static void logProcessPoolState(const WebProcessPool& pool)
 }
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
-static bool determineIfWeShouldCrashWhenCreatingWebProcess()
+void WebProcessPool::initializeShouldCrashWhenCreatingWebProcess()
 {
-    if (!isInternalBuild())
-        return false;
+    ASSERT(!s_didGlobalStaticInitialization);
 
-    auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
+    // Do the check on a background queue to avoid an app launch time regression. Note that this means we're racing with the
+    // construction of the first WebProcess. However, the race is OK, we just want to make sure a WebProcess will crash in
+    // the future, it doesn't have to be the very first one.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        if (!isInternalBuild())
+            return;
 
-    RELEASE_LOG(Process, "shouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
-
-    return ![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"] && !canaryInBaseState();
+        auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
+        RELEASE_LOG(Process, "initializeShouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
+        bool shouldCrashWhenCreatingWebProcess = ![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"] && !canaryInBaseState();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            s_shouldCrashWhenCreatingWebProcess = shouldCrashWhenCreatingWebProcess;
+        });
+    });
 }
 #endif
 
@@ -350,7 +358,7 @@ void WebProcessPool::platformInitialize()
     bool isSafari = WebCore::MacApplication::isSafari();
 #endif
     if (isSafari)
-        s_shouldCrashWhenCreatingWebProcess = determineIfWeShouldCrashWhenCreatingWebProcess();
+        initializeShouldCrashWhenCreatingWebProcess();
 #endif
 }
 

@@ -888,7 +888,7 @@ RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTo
         return nullptr;
 
     auto rangeCopy = prelude; // For inspector callbacks
-    auto name = CSSPropertyParserHelpers::consumeCounterStyleNameInPrelude(rangeCopy);
+    auto name = CSSPropertyParserHelpers::consumeCounterStyleNameInPrelude(rangeCopy, m_context.mode);
     if (name.isNull())
         return nullptr;
 
@@ -900,7 +900,11 @@ RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTo
     }
 
     auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::CounterStyle);
-    return StyleRuleCounterStyle::create(name, createStyleProperties(declarations, m_context.mode));
+    auto properties = createStyleProperties(declarations, m_context.mode);
+    auto descriptors = CSSCounterStyleDescriptors::create(name, properties);
+    if (!descriptors.isValid())
+        return nullptr;
+    return StyleRuleCounterStyle::create(name, WTFMove(properties), WTFMove(descriptors));
 }
 
 RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)
