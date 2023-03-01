@@ -22,6 +22,7 @@
 
 import calendar
 import re
+import subprocess
 import sys
 import time
 import webkitcorepy
@@ -145,17 +146,20 @@ class Tracker(GenericTracker):
             return user
         if not name or not username or not email:
             found = None
-            if isinstance(username, int):
-                found = self.library.AppleDirectoryQuery.user_entry_for_dsid(int(username))
-            elif username:
-                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('uid', '{}@APPLECONNECT.APPLE.COM'.format(username))
-            elif email:
-                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('mail', email)
-            elif name:
-                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('cn', name)
+            try:
+                if isinstance(username, int):
+                    found = self.library.AppleDirectoryQuery.user_entry_for_dsid(int(username))
+                elif username:
+                    found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('uid', '{}@APPLECONNECT.APPLE.COM'.format(username))
+                elif email:
+                    found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('mail', email)
+                elif name:
+                    found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('cn', name)
+            except subprocess.CalledProcessError:
+                pass
             if not found:
                 return self.users.create(
-                    name=name,
+                    name=name or username,
                     username=None,
                     emails=[email],
                 )
