@@ -1634,6 +1634,10 @@ void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentif
             callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
             return;
         }
+        if (!registration->activeWorker()) {
+            callback(makeUnexpected(ExceptionData { TypeError, "No active worker"_s }));
+            return;
+        }
 
         server->backgroundFetchEngine().startBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), WTFMove(callback));
     });
