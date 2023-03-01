@@ -1386,6 +1386,9 @@ public:
         LOG_INSTRUCTION("TableSet", tableIndex, index, value);
 
         throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
         return { };
     }
 
@@ -1410,6 +1413,9 @@ public:
         LOG_INSTRUCTION("TableInit", tableIndex, dstOffset, srcOffset, length);
 
         throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
         return { };
     }
 
@@ -1469,6 +1475,9 @@ public:
         LOG_INSTRUCTION("TableFill", tableIndex, fill, offset, count);
 
         throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
         return { };
     }
 
@@ -1491,6 +1500,9 @@ public:
         LOG_INSTRUCTION("TableCopy", dstTableIndex, srcTableIndex, dstOffset, srcOffset, length);
 
         throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
         return { };
     }
 
@@ -2054,6 +2066,8 @@ public:
 
         LOG_INSTRUCTION("MemoryFill", dstAddress, targetValue, count);
 
+        consume(shouldThrow);
+
         return { };
     }
 
@@ -2074,6 +2088,8 @@ public:
         throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryCopy", dstAddress, srcAddress, count);
+
+        consume(shouldThrow);
 
         return { };
     }
@@ -2096,6 +2112,8 @@ public:
         throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryInit", dataSegmentIndex, dstAddress, srcAddress, length);
+
+        consume(shouldThrow);
 
         return { };
     }
@@ -3841,8 +3859,8 @@ public:
             flag,
             []() {
                 RegisterSetBuilder builder;
-                builder.add(X86Registers::eax, Width::Width64);
-                builder.add(X86Registers::edx, Width::Width64);
+                builder.add(X86Registers::eax, IgnoreVectors);
+                builder.add(X86Registers::edx, IgnoreVectors);
                 x86DivClobbers = builder.buildAndValidate();
             });
         return x86DivClobbers;
@@ -8475,13 +8493,15 @@ private:
         // The most common example of this is returned values (that use registers from the calling convention) or
         // values passed between control blocks. In these cases, we just leave it in its register unmoved.
         Location existingLocation = locationOf(value);
-        if (existingLocation.isRegister())
+        if (existingLocation.isRegister()) {
+            ASSERT(value.isFloat() == existingLocation.isFPR());
             return existingLocation;
+        }
 
         Location reg = hint;
         if (reg.kind() == Location::None
             || value.isFloat() != reg.isFPR()
-            || (reg.isGPR() && !m_gprSet.contains(reg.asGPR(), Width::Width64))
+            || (reg.isGPR() && !m_gprSet.contains(reg.asGPR(), IgnoreVectors))
             || (reg.isFPR() && !m_fprSet.contains(reg.asFPR(), Width::Width128)))
             reg = allocateRegister(value);
         increaseKey(reg);
@@ -8584,7 +8604,7 @@ private:
                 m_fprSet.remove(loc.asFPR());
                 m_fprBindings[loc.asFPR()] = RegisterBinding::fromValue(value);
             } else {
-                ASSERT(m_gprSet.contains(loc.asGPR(), Width::Width64));
+                ASSERT(m_gprSet.contains(loc.asGPR(), IgnoreVectors));
                 m_gprSet.remove(loc.asGPR());
                 m_gprBindings[loc.asGPR()] = RegisterBinding::fromValue(value);
             }
@@ -8723,7 +8743,7 @@ private:
             dataLogLn("BBQ\tEvicting GPR ", MacroAssembler::gprName(lruGPR), " currently bound to ", lruBinding);
         flushValue(lruBinding.toValue());
 
-        ASSERT(m_gprSet.contains(lruGPR, Width::Width64));
+        ASSERT(m_gprSet.contains(lruGPR, IgnoreVectors));
         ASSERT(m_gprBindings[lruGPR].m_kind == RegisterBinding::None);
         return lruGPR;
     }
@@ -8825,7 +8845,7 @@ private:
             if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
                 return reg;
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
-            if (m_preserved.contains(reg, Width::Width64) && !binding.isNone()) {
+            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isNone()) {
                 if (UNLIKELY(Options::verboseBBQJITAllocation()))
                     dataLogLn("BBQ\tPreserving GPR ", MacroAssembler::gprName(reg), " currently bound to ", binding);
                 return reg; // If the register is already bound, we don't need to preserve it ourselves.
@@ -8865,11 +8885,11 @@ private:
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReleasing GPR ", MacroAssembler::gprName(reg));
-            if (m_preserved.contains(reg, Width::Width64) && !binding.isScratch())
+            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isScratch())
                 return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
             ASSERT(binding.isScratch());
             binding = RegisterBinding::none();
-            m_generator.m_gprSet.add(reg, Width::Width64);
+            m_generator.m_gprSet.add(reg, IgnoreVectors);
             m_generator.m_gprLRU.unlock(reg);
         }
 
@@ -8892,7 +8912,7 @@ private:
         void initializedPreservedSet(Location location, Args... args)
         {
             if (location.isGPR())
-                m_preserved.add(location.asGPR(), Width::Width64);
+                m_preserved.add(location.asGPR(), IgnoreVectors);
             else if (location.isFPR())
                 m_preserved.add(location.asFPR(), Width::Width128);
             initializedPreservedSet(args...);
@@ -8903,7 +8923,7 @@ private:
         {
             for (JSC::Reg reg : registers) {
                 if (reg.isGPR())
-                    m_preserved.add(reg.gpr(), Width::Width64);
+                    m_preserved.add(reg.gpr(), IgnoreVectors);
                 else
                     m_preserved.add(reg.fpr(), Width::Width128);
             }
