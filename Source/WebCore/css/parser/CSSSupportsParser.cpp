@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, SupportsParsingMode mode)
+CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, SupportsParsingMode mode, CSSParserEnum::IsNestedContext isNestedContext)
 {
     // FIXME: The spec allows leading whitespace in @supports but not CSS.supports,
     // but major browser vendors allow it in CSS.supports also.
     range.consumeWhitespace();
-    CSSSupportsParser supportsParser(parser);
+    CSSSupportsParser supportsParser(parser, isNestedContext);
 
     auto result = supportsParser.consumeCondition(range);
     if (mode != ForWindowCSS || result != Invalid)
@@ -144,7 +144,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
     auto block = range.consumeBlock();
     block.consumeWhitespace();
 
-    return CSSSelectorParser::supportsComplexSelector(block, m_parser.context()) ? Supported : Unsupported;
+    return CSSSelectorParser::supportsComplexSelector(block, m_parser.context(), m_isNestedContext) ? Supported : Unsupported;
 }
 
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeConditionInParenthesis(CSSParserTokenRange& range,  CSSParserTokenType startTokenType)

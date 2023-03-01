@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "CSSParserEnum.h"
 #include "CSSParserToken.h"
 
 namespace WebCore {
@@ -49,11 +50,13 @@ public:
         ForWindowCSS,
     };
 
-    static SupportsResult supportsCondition(CSSParserTokenRange, CSSParserImpl&, SupportsParsingMode);
+    static SupportsResult supportsCondition(CSSParserTokenRange, CSSParserImpl&, SupportsParsingMode, CSSParserEnum::IsNestedContext);
 
 private:
-    CSSSupportsParser(CSSParserImpl& parser)
-        : m_parser(parser) { }
+    CSSSupportsParser(CSSParserImpl& parser, CSSParserEnum::IsNestedContext isNestedContext = CSSParserEnum::IsNestedContext::No)
+        : m_parser(parser)
+        , m_isNestedContext(isNestedContext)
+    { }
 
     SupportsResult consumeCondition(CSSParserTokenRange);
     SupportsResult consumeNegation(CSSParserTokenRange);
@@ -65,6 +68,7 @@ private:
     SupportsResult consumeConditionInParenthesis(CSSParserTokenRange&, CSSParserTokenType);
 
     CSSParserImpl& m_parser;
+    CSSParserEnum::IsNestedContext m_isNestedContext;
 };
 
 } // namespace WebCore

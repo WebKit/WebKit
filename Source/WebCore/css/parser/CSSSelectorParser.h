@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include "CSSParserEnum.h"
 #include "CSSParserSelector.h"
 #include "CSSParserTokenRange.h"
 #include "CSSSelectorList.h"
@@ -44,19 +45,15 @@ class StyleRule;
 
 struct CSSParserContext;
 
+
 class CSSSelectorParser {
 public:
-    enum class IsNestedContext : bool {
-        Yes,
-        No
-    };
-
-    CSSSelectorParser(const CSSParserContext&, StyleSheetContents*, IsNestedContext = IsNestedContext::No);
+    CSSSelectorParser(const CSSParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
     CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
 
-    static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
+    static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
 
 private:
@@ -68,6 +65,7 @@ private:
     CSSSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);
 
     std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
+    std::unique_ptr<CSSParserSelector> consumeNestedComplexSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeCompoundSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeRelativeScopeSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeRelativeNestedSelector(CSSParserTokenRange&);
@@ -98,7 +96,7 @@ private:
 
     const CSSParserContext& m_context;
     const RefPtr<StyleSheetContents> m_styleSheet;
-    IsNestedContext m_isNestedContext { IsNestedContext::No };
+    CSSParserEnum::IsNestedContext m_isNestedContext { CSSParserEnum::IsNestedContext::No };
     bool m_failedParsing { false };
     bool m_disallowPseudoElements { false };
     bool m_disallowHasPseudoClass { false };
@@ -109,6 +107,6 @@ private:
 };
 
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*, CSSSelectorParser::IsNestedContext);
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext);
 
 } // namespace WebCore
