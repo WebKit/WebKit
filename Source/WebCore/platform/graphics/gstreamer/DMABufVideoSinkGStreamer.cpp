@@ -166,9 +166,14 @@ static void webkit_dmabuf_video_sink_class_init(WebKitDMABufVideoSinkClass* klas
 bool webKitDMABufVideoSinkIsEnabled()
 {
     static bool s_disabled = false;
-#if USE(LIBGBM)
     static std::once_flag s_flag;
     std::call_once(s_flag, [&] {
+        const char* useHeadlessBackend = g_getenv("WPE_USE_HEADLESS_VIEW_BACKEND");
+        if (useHeadlessBackend && equalLettersIgnoringASCIICase(useHeadlessBackend, "1"_s)) {
+            s_disabled = true;
+            return;
+        }
+#if USE(LIBGBM)
         const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED");
         s_disabled = value && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
         if (!s_disabled) {
@@ -178,10 +183,10 @@ bool webKitDMABufVideoSinkIsEnabled()
                 s_disabled = true;
             }
         }
-    });
 #else
-    s_disabled = true;
+        s_disabled = true;
 #endif
+    });
     return !s_disabled;
 }
 
