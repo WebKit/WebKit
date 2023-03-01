@@ -923,6 +923,11 @@ ResourceError EmptyFrameLoaderClient::fileDoesNotExistError(const ResourceRespon
     return { };
 }
 
+ResourceError EmptyFrameLoaderClient::httpsUpgradeRedirectLoopError(const ResourceRequest&) const
+{
+    return { };
+}
+
 ResourceError EmptyFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse&) const
 {
     return { };

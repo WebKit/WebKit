@@ -245,6 +245,7 @@ public:
 
     virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&) const = 0;
     virtual ResourceError fileDoesNotExistError(const ResourceResponse&) const = 0;
+    virtual ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest&) const = 0;
     virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&) const = 0;
 
     virtual bool shouldFallBack(const ResourceError&) const = 0;

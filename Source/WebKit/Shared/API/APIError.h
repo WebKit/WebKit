@@ -49,7 +49,8 @@ public:
 
     enum Network {
         Cancelled = 302,
-        FileDoesNotExist = 303
+        FileDoesNotExist = 303,
+        HTTPSUpgradeRedirectLoop = 304,
     };
     static const WTF::String& webKitNetworkErrorDomain();
 

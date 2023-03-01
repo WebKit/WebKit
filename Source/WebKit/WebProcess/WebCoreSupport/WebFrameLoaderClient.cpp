@@ -1416,6 +1416,12 @@ ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse
     return WebKit::fileDoesNotExistError(response);
 }
 
+ResourceError WebFrameLoaderClient::httpsUpgradeRedirectLoopError(const ResourceRequest& request) const
+{
+    return WebKit::httpsUpgradeRedirectLoopError(request);
+}
+
+
 ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response) const
 {
     return WebKit::pluginWillHandleLoadError(response);

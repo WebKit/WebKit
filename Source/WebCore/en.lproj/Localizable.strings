@@ -343,6 +343,9 @@
 /* WebKitErrorCannotShowMIMEType description */
 "Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
 
+/* WebKitErrorHTTPSUpgradeRedirectLoop description */
+"HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
+
 /* Continue */
 "Continue" = "Continue";
 

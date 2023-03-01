@@ -410,6 +410,19 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         return;
     }
 
+    if (frameLoader() && frameLoader()->frame().isMainFrame() && cachedResource() && cachedResource()->type() == CachedResource::Type::MainResource && !redirectResponse.isNull()) {
+        auto requestURL { redirectResponse.url() };
+        auto redirectURL { request.url() };
+        if (frameLoader()->upgradeRequestforHTTPSOnlyIfNeeded(requestURL, redirectURL) && requestURL == redirectURL) {
+            RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of entering same-URL redirect loop");
+            cancel(httpsUpgradeRedirectLoopError());
+            completionHandler({ });
+            return;
+        }
+        if (request.url() != redirectURL)
+            request.setURL(redirectURL);
+    }
+
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier)
             frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
@@ -713,6 +726,11 @@ ResourceError ResourceLoader::blockedByContentBlockerError()
 ResourceError ResourceLoader::cannotShowURLError()
 {
     return frameLoader()->client().cannotShowURLError(m_request);
+}
+
+ResourceError ResourceLoader::httpsUpgradeRedirectLoopError()
+{
+    return frameLoader()->client().httpsUpgradeRedirectLoopError(m_request);
 }
 
 void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)

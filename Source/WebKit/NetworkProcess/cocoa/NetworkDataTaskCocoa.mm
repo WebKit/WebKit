@@ -415,6 +415,10 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
+    // FIXME: Make this timeout adaptive based on network conditions
+    if (url.protocolIs("https"_s) && networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::HTTPSOnly))
+        mutableRequest.get().timeoutInterval = 3;
+
     // FIXME: Remove hadMainFrameMainResourcePrivateRelayed, PrivateRelayed, and all the associated piping.
     
     nsRequest = mutableRequest;

@@ -88,6 +88,7 @@ public:
     WEBCORE_EXPORT ResourceError blockedError();
     ResourceError blockedByContentBlockerError();
     ResourceError cannotShowURLError();
+    ResourceError httpsUpgradeRedirectLoopError();
     
     virtual void setDefersLoading(bool);
     bool defersLoading() const { return m_defersLoading; }

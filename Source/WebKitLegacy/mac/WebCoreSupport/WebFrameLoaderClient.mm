@@ -1138,6 +1138,11 @@ WebCore::ResourceError WebFrameLoaderClient::fileDoesNotExistError(const WebCore
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:response.url()];    
 }
 
+WebCore::ResourceError WebFrameLoaderClient::httpsUpgradeRedirectLoopError(const WebCore::ResourceRequest& request) const
+{
+    RELEASE_ASSERT_NOT_REACHED(); // This error should never be created in WebKit1 because HTTPSOnly/First aren't available.
+}
+
 WebCore::ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const WebCore::ResourceResponse& response) const
 {
     return adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
