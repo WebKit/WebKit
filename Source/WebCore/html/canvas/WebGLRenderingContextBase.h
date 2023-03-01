@@ -439,7 +439,7 @@ public:
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
     RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer();
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
 #endif
 

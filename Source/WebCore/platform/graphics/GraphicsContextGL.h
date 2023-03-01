@@ -1564,7 +1564,7 @@ public:
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
     virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
 #endif
 

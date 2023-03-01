@@ -79,7 +79,7 @@ public:
     bool isExtensionEnabled(const String&) final;
     void paintRenderingResultsToCanvas(WebCore::ImageBuffer&) final;
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&) final;
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
     void synthesizeGLError(GCGLenum error) final;
