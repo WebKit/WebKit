@@ -345,10 +345,12 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
 
 void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    bool needAdjustIntrinsicLogicalWidthsForColumns = true;
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
+            needAdjustIntrinsicLogicalWidthsForColumns = false;
         }
     } else if (childrenInline())
         computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
@@ -357,7 +359,8 @@ void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth,
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 
-    adjustIntrinsicLogicalWidthsForColumns(minLogicalWidth, maxLogicalWidth);
+    if (needAdjustIntrinsicLogicalWidthsForColumns)
+        adjustIntrinsicLogicalWidthsForColumns(minLogicalWidth, maxLogicalWidth);
 
     if (!style().autoWrap() && childrenInline()) {
         // A horizontal marquee with inline children has no minimum width.
