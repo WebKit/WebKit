@@ -1820,3 +1820,7 @@ webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.h
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
 
 webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
+
+webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Pass Failure ]
+webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm-init-inside-segment.html [ Pass Failure ]
+webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm.html [ Pass Failure ]
