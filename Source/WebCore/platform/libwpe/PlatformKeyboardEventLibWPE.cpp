@@ -758,6 +758,12 @@ String PlatformKeyboardEvent::keyCodeForHardwareKeyCode(unsigned keyCode)
         return "F24"_s;
     case 0x00E1:
         return "BrowserSearch"_s;
+    case 0x00E7:
+        return "Cancel"_s;
+    case 0x00F8:
+        return "Unknown"_s;
+    case 0x016B:
+        return "Clear"_s;
     default:
         break;
     }
