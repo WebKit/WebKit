@@ -278,7 +278,7 @@ OptionSet<WebEventModifier> modifiersForNavigationAction(const NavigationAction&
 {
     OptionSet<WebEventModifier> modifiers;
     auto keyStateEventData = navigationAction.keyStateEventData();
-    if (keyStateEventData && keyStateEventData->isTrusted) {
+    if (keyStateEventData /*&& keyStateEventData->isTrusted*/) {
         if (keyStateEventData->shiftKey)
             modifiers.add(WebEventModifier::ShiftKey);
         if (keyStateEventData->ctrlKey)
