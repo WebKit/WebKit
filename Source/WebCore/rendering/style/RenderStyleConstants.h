@@ -778,10 +778,11 @@ enum class TextGroupAlign : uint8_t {
 };
 
 enum class TextUnderlinePosition : uint8_t {
-    // FIXME: Implement support for 'under left' and 'under right' values.
     Auto,
     Under,
-    FromFont
+    FromFont,
+    Left,
+    Right
 };
 
 enum class LeadingTrim : uint8_t {
