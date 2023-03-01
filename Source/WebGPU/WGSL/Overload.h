@@ -52,7 +52,7 @@ struct TypeVariable {
     };
 
     unsigned id;
-    Constraint constraints;
+    Constraint constraints { None };
 };
 
 struct AbstractVector;
