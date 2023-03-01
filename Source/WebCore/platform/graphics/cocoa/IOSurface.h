@@ -164,6 +164,12 @@ public:
 
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
+    struct BitmapConfiguration {
+        CGBitmapInfo bitmapInfo;
+        size_t bitsPerComponent;
+    };
+
+    BitmapConfiguration bitmapConfiguration() const;
 private:
     IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
     IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
@@ -172,12 +178,6 @@ private:
     void ensureColorSpace();
     std::optional<DestinationColorSpace> surfaceColorSpace() const;
 
-    struct BitmapConfiguration {
-        CGBitmapInfo bitmapInfo;
-        size_t bitsPerComponent;
-    };
-
-    BitmapConfiguration bitmapConfiguration() const;
 
     std::optional<Format> m_format;
     std::optional<DestinationColorSpace> m_colorSpace;

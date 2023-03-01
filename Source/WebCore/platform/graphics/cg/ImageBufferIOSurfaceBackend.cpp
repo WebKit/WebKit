@@ -43,6 +43,40 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
 
+static RetainPtr<CGImageRef> createIOSurfaceBitmapImageReference(IOSurface& surface)
+{
+    static CGDataProviderDirectCallbacks callbacks = {
+        // version
+        0,
+        // CGDataProviderGetBytePointerCallback
+        [] (void* info) -> const void* {
+            auto surface = static_cast<IOSurfaceRef>(info);
+            IOSurfaceLock(surface, kIOSurfaceLockReadOnly, nullptr);
+            return IOSurfaceGetBaseAddress(surface);
+        },
+        // CGDataProviderReleaseBytePointerCallback
+        [] (void* info, const void*) {
+            auto surface = static_cast<IOSurfaceRef>(info);
+            IOSurfaceUnlock(surface, kIOSurfaceLockReadOnly, nullptr);
+        },
+        // CGDataProviderGetBytesAtPositionCallback
+        nullptr,
+        // CGDataProviderReleaseInfoCallback
+        [] (void* info) {
+            auto surface = static_cast<IOSurfaceRef>(info);
+            CFRelease(surface);
+        }
+    };
+    auto rawSurface = surface.surface();
+    auto bytesPerRow = surface.bytesPerRow();
+    auto size = surface.size();
+    size_t byteLength = bytesPerRow * size.height();
+    auto configuration = surface.bitmapConfiguration();
+    CFRetain(rawSurface); // Owned by `dataProvider` below, released by the callback above.
+    auto dataProvider = adoptCF(CGDataProviderCreateDirect(rawSurface, byteLength, &callbacks));
+    return adoptCF(CGImageCreate(size.width(), size.height(), configuration.bitsPerComponent, 4 * configuration.bitsPerComponent, surface.bytesPerRow(), surface.colorSpace().platformColorSpace(), configuration.bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+}
+
 IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
     IntSize backendSize = calculateBackendSize(parameters);
@@ -158,15 +192,15 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCop
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(GraphicsContext& destination)
 {
     if (destination.hasPlatformContext() && CGContextGetType(destination.platformContext()) == kCGContextTypeBitmap) {
+        prepareForExternalRead();
         // The destination backend is not deferred, so we can return a reference.
         // The destination backend needs to read the actual pixels. Returning non-refence will
         // copy the pixels and but still cache the image to the context. This means we must
         // return the reference or cleanup later if we return the non-reference.
-        return NativeImage::create(adoptCF(CGIOSurfaceContextCreateImageReference(m_surface->ensurePlatformContext())));
+        return NativeImage::create(createIOSurfaceBitmapImageReference(*m_surface));
     }
     // Other backends are deferred (iosurface, display list) or potentially deferred. Must copy for drawing.
     return ImageBufferIOSurfaceBackend::copyNativeImage(CopyBackingStore);
-
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
