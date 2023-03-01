@@ -1145,6 +1145,11 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
 
 void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingArea)
 {
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    // The scrolling coordinator needs to do cleanup before the drawing area goes away.
+    m_scrollingCoordinatorProxy = nullptr;
+#endif
+
     m_drawingArea = WTFMove(drawingArea);
     if (!m_drawingArea)
         return;
@@ -8380,7 +8385,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
             m_frozenRemoteLayerTreeHost = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea).detachRemoteLayerTreeHost();
         }
 #endif
-        m_drawingArea = nullptr;
+        setDrawingArea(nullptr);
     }
     closeOverlayedViews();
 
