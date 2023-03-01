@@ -23,6 +23,7 @@ function formatPropertyName(propertyKey, objectName = "") {
       return objectName ? `${objectName}.${propertyKey}` : propertyKey;
   }
 }
+const SKIP_SYMBOL = Symbol("Skip");
 
 var TemporalHelpers = {
   /*
@@ -1382,6 +1383,52 @@ var TemporalHelpers = {
   },
 
   /*
+   * observeMethod(calls, object, propertyName, value):
+   *
+   * Defines an own property @object.@propertyName with value @value, that
+   * will log any calls of @value to the array @calls.
+   */
+  observeMethod(calls, object, propertyName, objectName = "") {
+    const method = object[propertyName];
+    object[propertyName] = function () {
+      calls.push(`call ${formatPropertyName(propertyName, objectName)}`);
+      return method.apply(object, arguments);
+    };
+  },
+
+  /*
+   * Used for substituteMethod to indicate default behavior instead of a
+   * substituted value
+   */
+  SUBSTITUTE_SKIP: SKIP_SYMBOL,
+
+  /*
+   * substituteMethod(object, propertyName, values):
+   *
+   * Defines an own property @object.@propertyName that will, for each
+   * subsequent call to the method previously defined as
+   * @object.@propertyName:
+   *  - Call the method, if no more values remain
+   *  - Call the method, if the value in @values for the corresponding call
+   *    is SUBSTITUTE_SKIP
+   *  - Otherwise, return the corresponding value in @value
+   */
+  substituteMethod(object, propertyName, values) {
+    let calls = 0;
+    const method = object[propertyName];
+    object[propertyName] = function () {
+      if (calls >= values.length) {
+        return method.apply(object, arguments);
+      } else if (values[calls] === SKIP_SYMBOL) {
+        calls++;
+        return method.apply(object, arguments);
+      } else {
+        return values[calls++];
+      }
+    };
+  },
+
+  /*
    * calendarObserver:
    * A custom calendar that behaves exactly like the ISO 8601 calendar but
    * tracks calls to any of its methods, and Get/Has operations on its
@@ -1451,7 +1498,7 @@ var TemporalHelpers = {
     // Automatically generate the other methods that don't need any custom code
     ["toString", "dateUntil", "era", "eraYear", "year", "month", "monthCode", "day", "daysInMonth", "fields", "mergeFields"].forEach((methodName) => {
       trackingMethods[methodName] = function (...args) {
-        actual.push(`call ${formatPropertyName(methodName, objectName)}`);
+        calls.push(`call ${formatPropertyName(methodName, objectName)}`);
         if (methodName in methodOverrides) {
           const value = methodOverrides[methodName];
           return typeof value === "function" ? value(...args) : value;
@@ -1462,11 +1509,11 @@ var TemporalHelpers = {
     return new Proxy(trackingMethods, {
       get(target, key, receiver) {
         const result = Reflect.get(target, key, receiver);
-        actual.push(`get ${formatPropertyName(key, objectName)}`);
+        calls.push(`get ${formatPropertyName(key, objectName)}`);
         return result;
       },
       has(target, key) {
-        actual.push(`has ${formatPropertyName(key, objectName)}`);
+        calls.push(`has ${formatPropertyName(key, objectName)}`);
         return Reflect.has(target, key);
       },
     });
@@ -1747,7 +1794,7 @@ var TemporalHelpers = {
     // Automatically generate the methods
     ["getOffsetNanosecondsFor", "getPossibleInstantsFor", "toString"].forEach((methodName) => {
       trackingMethods[methodName] = function (...args) {
-        actual.push(`call ${formatPropertyName(methodName, objectName)}`);
+        calls.push(`call ${formatPropertyName(methodName, objectName)}`);
         if (methodName in methodOverrides) {
           const value = methodOverrides[methodName];
           return typeof value === "function" ? value(...args) : value;
@@ -1758,11 +1805,11 @@ var TemporalHelpers = {
     return new Proxy(trackingMethods, {
       get(target, key, receiver) {
         const result = Reflect.get(target, key, receiver);
-        actual.push(`get ${formatPropertyName(key, objectName)}`);
+        calls.push(`get ${formatPropertyName(key, objectName)}`);
         return result;
       },
       has(target, key) {
-        actual.push(`has ${formatPropertyName(key, objectName)}`);
+        calls.push(`has ${formatPropertyName(key, objectName)}`);
         return Reflect.has(target, key);
       },
     });

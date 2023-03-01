@@ -14,7 +14,7 @@ info: |
      O.[[ArrayBufferByteLength]].
   6. Else, let newByteLength be ? ToIntegerOrInfinity(newLength).
   [...]
-features: [resizable-arraybuffer]
+features: [resizable-arraybuffer, arraybuffer-transfer]
 ---*/
 
 var log = [];

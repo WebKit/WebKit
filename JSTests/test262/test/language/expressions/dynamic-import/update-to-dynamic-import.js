@@ -16,6 +16,7 @@ info: |
         f. Otherwise, perform ! Call(promiseCapability.[[Resolve]], undefined, « namespace.[[Value]] »).
 flags: [async]
 features: [dynamic-import]
+includes: [asyncHelpers.js]
 ---*/
 
 async function fn() {
@@ -28,4 +29,4 @@ async function fn() {
     assert.sameValue(other.default, 42);
 }
 
-fn().then($DONE, $DONE);
+asyncTest(fn);

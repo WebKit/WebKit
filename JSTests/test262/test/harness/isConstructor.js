@@ -13,16 +13,16 @@ features: [generators, Reflect.construct]
 
 assert.sameValue(typeof isConstructor, "function");
 
-assert.sameValue(isConstructor(), false);
-assert.sameValue(isConstructor(undefined), false);
-assert.sameValue(isConstructor(null), false);
-assert.sameValue(isConstructor(123), false);
-assert.sameValue(isConstructor(true), false);
-assert.sameValue(isConstructor(false), false);
-assert.sameValue(isConstructor("string"), false);
+assert.throws(Test262Error, () => isConstructor(), "no argument");
+assert.throws(Test262Error, () => isConstructor(undefined), "undefined");
+assert.throws(Test262Error, () => isConstructor(null), "null");
+assert.throws(Test262Error, () => isConstructor(123), "number");
+assert.throws(Test262Error, () => isConstructor(true), "boolean - true");
+assert.throws(Test262Error, () => isConstructor(false), "boolean - false");
+assert.throws(Test262Error, () => isConstructor("string"), "string");
 
-assert.sameValue(isConstructor({}), false);
-assert.sameValue(isConstructor([]), false);
+assert.throws(Test262Error, () => isConstructor({}), "Object instance");
+assert.throws(Test262Error, () => isConstructor([]), "Array instance");
 
 assert.sameValue(isConstructor(function(){}), true);
 assert.sameValue(isConstructor(function*(){}), false);

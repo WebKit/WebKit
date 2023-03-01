@@ -8,6 +8,13 @@ features: [Intl.DateTimeFormat-fractionalSecondDigits, Intl.DateTimeFormat-forma
 locale: [en-US]
 ---*/
 
+// Tolerate implementation variance by expecting consistency without being prescriptive.
+// TODO: can we change tests to be less reliant on CLDR formats while still testing that
+// Temporal and Intl are behaving as expected?
+const usDateRangeSeparator = new Intl.DateTimeFormat("en-US", { dateStyle: "short" })
+  .formatRangeToParts(1 * 86400 * 1000, 366 * 86400 * 1000)
+  .find((part) => part.type === "literal" && part.source === "shared").value;
+
 function* zip(a, b) {
   assert.sameValue(a.length, b.length);
   for (let i = 0; i < a.length; ++i) {
@@ -50,7 +57,7 @@ compare(dtf.formatRangeToParts(d1, d3), [
   { type: "minute", value: "02", source: "startRange" },
   { type: "literal", value: ":", source: "startRange" },
   { type: "second", value: "03", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "13", source: "endRange" }
@@ -65,7 +72,7 @@ compare(dtf.formatRangeToParts(d1, d2), [
   { type: "second", value: "03", source: "startRange" },
   { type: "literal", value: ".", source: "startRange" },
   { type: "fractionalSecond", value: "2", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "03", source: "endRange" },
@@ -79,7 +86,7 @@ compare(dtf.formatRangeToParts(d1, d3), [
   { type: "second", value: "03", source: "startRange" },
   { type: "literal", value: ".", source: "startRange" },
   { type: "fractionalSecond", value: "2", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "13", source: "endRange" },
@@ -96,7 +103,7 @@ compare(dtf.formatRangeToParts(d1, d2), [
   { type: "second", value: "03", source: "startRange" },
   { type: "literal", value: ".", source: "startRange" },
   { type: "fractionalSecond", value: "23", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "03", source: "endRange" },
@@ -110,7 +117,7 @@ compare(dtf.formatRangeToParts(d1, d3), [
   { type: "second", value: "03", source: "startRange" },
   { type: "literal", value: ".", source: "startRange" },
   { type: "fractionalSecond", value: "23", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "13", source: "endRange" },
@@ -127,7 +134,7 @@ compare(dtf.formatRangeToParts(d1, d2), [
   { type: "second", value: "03", source: "startRange" },
   { type: "literal", value: ".", source: "startRange" },
   { type: "fractionalSecond", value: "234", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "03", source: "endRange" },
@@ -141,7 +148,7 @@ compare(dtf.formatRangeToParts(d1, d3), [
   { type: "second", value: "03", source: "startRange" },
   { type: "literal", value: ".", source: "startRange" },
   { type: "fractionalSecond", value: "234", source: "startRange" },
-  { type: "literal", value: "\u2009\u2013\u2009", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "minute", value: "02", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "13", source: "endRange" },

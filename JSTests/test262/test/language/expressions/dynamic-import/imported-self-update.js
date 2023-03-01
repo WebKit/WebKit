@@ -29,4 +29,5 @@ async function fn() {
   assert.sameValue(imported.y, 1, 'updated value, indirect binding');
 }
 
+// Do not use asyncTest: when self imported, $DONE is not defined, asyncTest will throw
 fn().then($DONE, $DONE);

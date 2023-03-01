@@ -18,7 +18,7 @@ info: |
   7. If IsConstructor(constructor) is false, throw a TypeError exception.
   ...
 includes: [isConstructor.js]
-features: [Reflect.construct, FinalizationRegistry, arrow-function]
+features: [Reflect.construct, FinalizationRegistry, FinalizationRegistry.prototype.cleanupSome, arrow-function]
 ---*/
 
 assert.sameValue(
