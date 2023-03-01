@@ -1376,7 +1376,6 @@ static void testCFStrings(void)
     JSStringRelease(jsCFIStringWithCharacters);
     JSStringRelease(jsCFEmptyIStringWithCharacters);
     CFRelease(cfString);
-    CFRelease(cfEmptyString);
 
     JSGlobalContextRelease(context);
     context = oldContext;
