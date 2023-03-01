@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "BackgroundFetch.h"
+#include <wtf/Span.h>
 
 namespace WebCore {
 
@@ -55,6 +56,8 @@ public:
     void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&);
 
     void remove(SWServerRegistration&);
+
+    WEBCORE_EXPORT void addFetchFromStore(Span<const uint8_t>, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&&);
 
 private:
     void notifyBackgroundFetchUpdate(BackgroundFetchInformation&&);

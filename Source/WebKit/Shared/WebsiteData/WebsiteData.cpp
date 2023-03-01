@@ -66,6 +66,7 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
 #if ENABLE(SERVICE_WORKER)
     case WebsiteDataType::ServiceWorkerRegistrations:
+    case WebsiteDataType::BackgroundFetchStorage:
         return WebsiteDataProcessType::Network;
 #endif
     case WebsiteDataType::DOMCache:

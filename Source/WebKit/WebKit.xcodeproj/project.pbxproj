@@ -4528,6 +4528,8 @@
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41D5C6D8238EB20D00B9B3CB /* ServiceWorkerSoftUpdateLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerSoftUpdateLoader.h; sourceTree = "<group>"; };
 		41D5C6D9238EB20E00B9B3CB /* ServiceWorkerSoftUpdateLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerSoftUpdateLoader.cpp; sourceTree = "<group>"; };
+		41D8D37C29A6637700A570BB /* BackgroundFetchStoreManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundFetchStoreManager.cpp; sourceTree = "<group>"; };
+		41D8D37D29A6637800A570BB /* BackgroundFetchStoreManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundFetchStoreManager.h; sourceTree = "<group>"; };
 		41DC04F827A816BB008CF968 /* SharedVideoFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedVideoFrame.h; sourceTree = "<group>"; };
 		41DC04F927A816BB008CF968 /* SharedVideoFrame.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedVideoFrame.cpp; sourceTree = "<group>"; };
 		41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkRTCProvider.h; sourceTree = "<group>"; };
@@ -11471,6 +11473,8 @@
 			children = (
 				412915A029A8C7A300BE3091 /* BackgroundFetchStoreImpl.cpp */,
 				4129159F29A8C7A300BE3091 /* BackgroundFetchStoreImpl.h */,
+				41D8D37C29A6637700A570BB /* BackgroundFetchStoreManager.cpp */,
+				41D8D37D29A6637800A570BB /* BackgroundFetchStoreManager.h */,
 				935BF7FB2936BF1A00B41326 /* CacheStorageCache.cpp */,
 				935BF7F22936BF1700B41326 /* CacheStorageCache.h */,
 				934CF814294B884B00304F7D /* CacheStorageDiskStore.cpp */,

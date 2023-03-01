@@ -36,13 +36,15 @@ class WorkQueue;
 
 namespace WebKit {
 
+class NetworkStorageManager;
+
 class BackgroundFetchStoreImpl :  public WebCore::BackgroundFetchStore {
 public:
-    static Ref<BackgroundFetchStoreImpl> create() { return adoptRef(*new BackgroundFetchStoreImpl()); }
+    static Ref<BackgroundFetchStoreImpl> create(WeakPtr<NetworkStorageManager>&& manager) { return adoptRef(*new BackgroundFetchStoreImpl(WTFMove(manager))); }
     ~BackgroundFetchStoreImpl();
 
 private:
-    BackgroundFetchStoreImpl();
+    explicit BackgroundFetchStoreImpl(WeakPtr<NetworkStorageManager>&&);
 
     void initializeFetches(WebCore::BackgroundFetchEngine&, const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
     void clearFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, CompletionHandler<void()>&&) final;
@@ -50,6 +52,17 @@ private:
     void storeFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) final;
     void storeFetchResponseBodyChunk(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&) final;
     void retrieveResponseBody(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) final;
+
+    String getFilename(const WebCore::ServiceWorkerRegistrationKey&, const String&);
+
+    WeakPtr<NetworkStorageManager> m_manager;
+
+    using FetchIdentifier = std::pair<String, String>; // < service worker registration scope, background fetch identifier >
+    struct PerClientOriginFetches {
+        HashMap<FetchIdentifier, String> fetchToFilenames;
+        Vector<CompletionHandler<void()>> initializationCallbacks;
+    };
+    HashMap<WebCore::ClientOrigin, PerClientOriginFetches> m_perClientOriginFetches;
 };
 
 } // namespace WebKit

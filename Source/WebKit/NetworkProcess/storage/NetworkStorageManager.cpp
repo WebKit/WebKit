@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageManager.h"
 
+#include "BackgroundFetchStoreManager.h"
 #include "CacheStorageCache.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
@@ -47,6 +48,7 @@
 #include "StorageUtilities.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
@@ -1320,6 +1322,22 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
     builder.append("]}");
     callback(builder.toString());
 }
+
+#if ENABLE(SERVICE_WORKER)
+void NetworkStorageManager::dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin& origin, Function<void(BackgroundFetchStoreManager*)>&& callback)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_closed) {
+        callback(nullptr);
+        return;
+    }
+    m_queue->dispatch([this, protectedThis = Ref { *this }, queue = Ref { m_queue }, origin = crossThreadCopy(origin), callback = WTFMove(callback)]() mutable {
+        auto& originStorageManager = this->originStorageManager(origin);
+        callback(&originStorageManager.backgroundFetchManager(WTFMove(queue)));
+    });
+}
+#endif
 
 } // namespace WebKit
 

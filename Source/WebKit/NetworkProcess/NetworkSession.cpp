@@ -753,7 +753,7 @@ void NetworkSession::requestBackgroundFetchSpace(const ClientOrigin& origin, uin
 
 Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
 {
-    return BackgroundFetchStoreImpl::create();
+    return BackgroundFetchStoreImpl::create(m_storageManager.get());
 }
 #endif // ENABLE(SERVICE_WORKER)
 

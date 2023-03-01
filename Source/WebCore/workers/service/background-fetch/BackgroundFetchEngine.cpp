@@ -265,6 +265,29 @@ void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIden
     record->retrieveRecordResponseBody(m_store.get(), WTFMove(callback));
 }
 
+void BackgroundFetchEngine::addFetchFromStore(Span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
+{
+    auto fetch = BackgroundFetch::createFromStore(data, *m_server, m_store.get(), [weakThis = WeakPtr { *this }](auto&& information) {
+        if (weakThis)
+            weakThis->notifyBackgroundFetchUpdate(WTFMove(information));
+    });
+    if (!fetch) {
+        RELEASE_LOG_ERROR(ServiceWorker, "BackgroundFetchEngine failed adding fetch entry as registration is missing");
+        callback({ }, { });
+        return;
+    }
+
+    callback(fetch->registrationKey(), fetch->identifier());
+
+    auto& fetchMap = m_fetches.ensure(fetch->registrationKey(), [] {
+        return FetchesMap();
+    }).iterator->value;
+
+    auto backgroundFetchIdentifier = fetch->identifier();
+    ASSERT(!fetchMap.contains(backgroundFetchIdentifier));
+    fetchMap.add(WTFMove(backgroundFetchIdentifier), WTFMove(fetch));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

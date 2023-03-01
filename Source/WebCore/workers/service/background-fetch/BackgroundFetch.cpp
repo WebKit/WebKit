@@ -32,9 +32,14 @@
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
 #include "ExceptionData.h"
+#include "Logging.h"
 #include "SWServerRegistration.h"
+#include "WebCorePersistentCoders.h"
+#include <wtf/persistence/PersistentCoders.h>
 
 namespace WebCore {
+
+static const unsigned backgroundFetchCurrentVersion = 1;
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
     : m_identifier(identifier)
@@ -50,6 +55,17 @@ BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const Strin
     for (auto& request : requests)
         m_records.uncheckedAppend(Record::create(*this, WTFMove(request), index++));
     doStore();
+}
+
+BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
+    : m_identifier(WTFMove(identifier))
+    , m_options(WTFMove(options))
+    , m_registrationKey(registration.key())
+    , m_registrationIdentifier(registration.identifier())
+    , m_store(WTFMove(store))
+    , m_notificationCallback(WTFMove(notificationCallback))
+    , m_origin { m_registrationKey.topOrigin(), SecurityOriginData::fromURL(m_registrationKey.scope()) }
+{
 }
 
 BackgroundFetch::~BackgroundFetch()
@@ -130,11 +146,10 @@ void BackgroundFetch::didSendData(uint64_t size)
     updateBackgroundFetchStatus(m_result, m_failureReason);
 }
 
-void BackgroundFetch::didFinishRecord(size_t index, const ResourceError& error)
+void BackgroundFetch::didFinishRecord(const ResourceError& error)
 {
-    ASSERT(index < m_records.size());
     if (error.isNull()) {
-        recordIsCompleted(index);
+        recordIsCompleted();
         return;
     }
     // FIXME: We probably want to handle recoverable errors (We could use NetworkStateNotifier). For now, all errors are terminal.
@@ -155,9 +170,8 @@ void BackgroundFetch::handleStoreResult(BackgroundFetchStore::StoreResult result
     }
 }
 
-void BackgroundFetch::recordIsCompleted(size_t index)
+void BackgroundFetch::recordIsCompleted()
 {
-    m_records[index]->setAsCompleted();
     if (anyOf(m_records, [](auto& record) { return !record->isCompleted(); }))
         return;
     updateBackgroundFetchStatus(BackgroundFetchResult::Success, BackgroundFetchFailureReason::EmptyString);
@@ -275,6 +289,8 @@ void BackgroundFetch::Record::didReceiveResponseBodyChunk(const SharedBuffer& da
 
 void BackgroundFetch::Record::didFinish(const ResourceError& error)
 {
+    setAsCompleted();
+
     auto callbacks = std::exchange(m_responseCallbacks, { });
     for (auto& callback : callbacks)
         callback(makeUnexpected(ExceptionData { TypeError, "Fetch failed"_s }));
@@ -288,7 +304,7 @@ void BackgroundFetch::Record::didFinish(const ResourceError& error)
     }
 
     if (m_fetch)
-        m_fetch->didFinishRecord(m_index, error);
+        m_fetch->didFinishRecord(error);
 }
 
 void BackgroundFetch::Record::retrieveResponse(BackgroundFetchStore&, RetrieveRecordResponseCallback&& callback)
@@ -343,7 +359,132 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
 
 void BackgroundFetch::doStore()
 {
-    // FIXME: TODO.
+    WTF::Persistence::Encoder encoder;
+    encoder << backgroundFetchCurrentVersion;
+    encoder << m_registrationKey.topOrigin();
+    encoder << m_registrationKey.scope();
+    encoder << m_identifier;
+    encoder << m_options.downloadTotal;
+    encoder << m_options.title;
+    encoder << m_options.icons;
+
+    encoder << (uint64_t)m_records.size();
+    for (auto& record : m_records) {
+        encoder << record->request().internalRequest;
+        encoder << record->request().options;
+        encoder << record->request().guard;
+        encoder << record->request().httpHeaders;
+        encoder << record->request().referrer;
+        encoder << record->response();
+        encoder << record->isCompleted();
+    }
+
+    m_store->storeFetch(m_registrationKey, m_identifier, { encoder.buffer(), encoder.bufferSize() }, [weakThis = WeakPtr { *this }](auto result) {
+        if (weakThis)
+            weakThis->handleStoreResult(result);
+    });
+}
+
+std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uint8_t> data, SWServer& server, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
+{
+    WTF::Persistence::Decoder decoder(data);
+    std::optional<unsigned> version;
+    decoder >> version;
+    if (!version)
+        return nullptr;
+    if (version != backgroundFetchCurrentVersion) {
+        RELEASE_LOG_ERROR(ServiceWorker, "BackgroundFetch::createFromStore version mismatch");
+        return nullptr;
+    }
+
+    std::optional<SecurityOriginData> registrationKeyOrigin;
+    decoder >> registrationKeyOrigin;
+    if (!registrationKeyOrigin)
+        return nullptr;
+
+    std::optional<URL> registrationKeyScope;
+    decoder >> registrationKeyScope;
+    if (!registrationKeyScope)
+        return nullptr;
+
+    auto* registration = server.getRegistration({ WTFMove(*registrationKeyOrigin), WTFMove(*registrationKeyScope) });
+    if (!registration) {
+        RELEASE_LOG_ERROR(ServiceWorker, "BackgroundFetch::createFromStore missing registration");
+        return nullptr;
+    }
+
+    std::optional<String> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return nullptr;
+
+    std::optional<uint64_t> downloadTotal;
+    decoder >> downloadTotal;
+    if (!downloadTotal)
+        return nullptr;
+
+    std::optional<String> title;
+    decoder >> title;
+    if (!title)
+        return nullptr;
+
+    std::optional<Vector<ImageResource>> icons;
+    decoder >> icons;
+
+    BackgroundFetchOptions options { WTFMove(*icons), WTFMove(*title), *downloadTotal };
+
+    auto fetch = makeUnique<BackgroundFetch>(*registration, WTFMove(*identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback));
+
+    std::optional<uint64_t> recordSize;
+    decoder >> recordSize;
+    if (!recordSize)
+        return nullptr;
+
+    Vector<Ref<Record>> records;
+    records.reserveInitialCapacity(*recordSize);
+
+    for (uint64_t index = 0; index < *recordSize; ++index) {
+        std::optional<WebCore::ResourceRequest> internalRequest;
+        decoder >> internalRequest;
+        if (!internalRequest)
+            return nullptr;
+
+        WebCore::FetchOptions options;
+        if (!WebCore::FetchOptions::decodePersistent(decoder, options))
+            return nullptr;
+
+        std::optional<WebCore::FetchHeaders::Guard> requestHeadersGuard;
+        decoder >> requestHeadersGuard;
+        if (!requestHeadersGuard)
+            return nullptr;
+
+        std::optional<WebCore::HTTPHeaderMap> httpHeaders;
+        decoder >> httpHeaders;
+        if (!httpHeaders)
+            return nullptr;
+
+        std::optional<String> referrer;
+        decoder >> referrer;
+        if (!referrer)
+            return nullptr;
+
+        WebCore::ResourceResponse response;
+        if (!WebCore::ResourceResponse::decode(decoder, response))
+            return nullptr;
+
+        std::optional<bool> isCompleted;
+        decoder >> isCompleted;
+        if (!isCompleted)
+            return nullptr;
+
+        auto record = Record::create(*fetch, { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer) }, index);
+        if (*isCompleted)
+            record->setAsCompleted();
+        records.uncheckedAppend(WTFMove(record));
+    }
+    fetch->setRecords(WTFMove(records));
+
+    return fetch;
 }
 
 } // namespace WebCore

@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class BackgroundFetchRecordLoader;
+class SWServer;
 class SharedBuffer;
 
 struct BackgroundFetchRequest;
@@ -53,10 +54,14 @@ class BackgroundFetch : public CanMakeWeakPtr<BackgroundFetch> {
 public:
     using NotificationCallback = Function<void(BackgroundFetchInformation&&)>;
     BackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
+    BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
     ~BackgroundFetch();
+
+    static std::unique_ptr<BackgroundFetch> createFromStore(Span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
     String identifier() const { return m_identifier; }
     BackgroundFetchInformation information() const;
+    const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
 
     using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
@@ -73,6 +78,9 @@ public:
 
         void setAsCompleted() { m_isCompleted = true; }
         bool isCompleted() const { return m_isCompleted; }
+
+        const BackgroundFetchRequest& request() const { return m_request; }
+        const ResourceResponse& response() const { return m_response; }
 
         uint64_t responseDataSize() const { return m_responseDataSize; }
         bool isMatching(const ResourceRequest&, const CacheQueryOptions&) const;
@@ -122,13 +130,14 @@ private:
     void didSendData(uint64_t);
     void storeResponse(size_t, ResourceResponse&&);
     void storeResponseBodyChunk(size_t, const SharedBuffer&);
-    void didFinishRecord(size_t, const ResourceError&);
+    void didFinishRecord(const ResourceError&);
 
-    void recordIsCompleted(size_t);
+    void recordIsCompleted();
     void handleStoreResult(BackgroundFetchStore::StoreResult);
     void updateBackgroundFetchStatus(BackgroundFetchResult, BackgroundFetchFailureReason);
 
     void doStore();
+    void setRecords(Vector<Ref<Record>>&& records) { m_records = WTFMove(records); }
 
     String m_identifier;
     Vector<Ref<Record>> m_records;
