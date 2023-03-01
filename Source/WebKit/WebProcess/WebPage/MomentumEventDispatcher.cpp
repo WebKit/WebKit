@@ -294,6 +294,9 @@ void MomentumEventDispatcher::startDisplayLink()
 
 void MomentumEventDispatcher::stopDisplayLink()
 {
+    if (!m_currentGesture.active)
+        return;
+
     auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
     if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to stop display link");

@@ -28,6 +28,7 @@
 #if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
 
 #include "DisplayLinkObserverID.h"
+#include "MomentumEventDispatcher.h"
 #include "NativeWebWheelEvent.h"
 #include <pal/HysteresisActivity.h>
 #include <wtf/Deque.h>
@@ -52,7 +53,7 @@ class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 
 // This class exists to act as a threadsafe DisplayLink::Client client, allowing RemoteScrollingCoordinatorProxyMac to
 // be main-thread only. It's the UI-process analogue of WebPage/EventDispatcher.
-class RemoteLayerTreeEventDispatcher : public ThreadSafeRefCounted<RemoteLayerTreeEventDispatcher> {
+class RemoteLayerTreeEventDispatcher : public ThreadSafeRefCounted<RemoteLayerTreeEventDispatcher>, public MomentumEventDispatcher::Client {
     WTF_MAKE_FAST_ALLOCATED();
     friend class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 public:
@@ -63,7 +64,7 @@ public:
     
     void invalidate();
 
-    void handleWheelEvent(const NativeWebWheelEvent&, RectEdges<bool> rubberBandableEdges);
+    void handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 
@@ -75,9 +76,12 @@ public:
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>);
 
 private:
-    WebCore::WheelEventHandlingResult internalHandleWheelEvent(const PlatformWheelEvent&, RectEdges<bool> rubberBandableEdges);
-    WebCore::WheelEventHandlingResult scrollingTreeHandleWheelEvent(RemoteScrollingTree&, const PlatformWheelEvent&);
-    PlatformWheelEvent filteredWheelEvent(const PlatformWheelEvent&);
+    OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const WebCore::PlatformWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+
+    WebCore::WheelEventHandlingResult scrollingThreadHandleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    WebCore::WheelEventHandlingResult internalHandleWheelEvent(const WebCore::PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>);
+
+    WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent&);
 
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 
@@ -90,6 +94,16 @@ private:
     void stopDisplayLinkObserver();
 
     void startOrStopDisplayLink();
+    void startOrStopDisplayLinkOnMainThread();
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID);
+    void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID);
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+    void flushMomentumEventLoggingSoon();
+#endif
+#endif
 
     RefPtr<RemoteScrollingTree> scrollingTree();
 
@@ -105,6 +119,11 @@ private:
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
+    bool m_momentumEventDispatcherNeedsDisplayLink { false };
+#endif
 };
 
 } // namespace WebKit
