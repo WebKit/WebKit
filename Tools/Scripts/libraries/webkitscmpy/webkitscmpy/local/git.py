@@ -323,6 +323,7 @@ class Git(Scm):
         'webkitscmpy.auto-check': ['true', 'false'],
         'webkitscmpy.auto-create-commit': ['true', 'false'],
         'webkitscmpy.auto-prune': ['only-source', 'true', 'false'],
+        'webkitscmpy.cc-radar': ['true', 'false'],
     }
     CONFIG_LOCATIONS = ['global', 'repository', 'project']
 
