@@ -251,6 +251,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/Atomics.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
@@ -322,7 +323,6 @@
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
-#import <libkern/OSAtomic.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/FastMalloc.h>
@@ -2282,10 +2282,8 @@ static NSMutableSet *knownPluginMIMETypes()
         return;
     }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (!OSAtomicCompareAndSwap32(0, 1, &_private->didDrawTiles))
+    if (!__sync_bool_compare_and_swap(&_private->didDrawTiles, NO, YES))
         return;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebThreadLock();
 
@@ -3449,7 +3447,7 @@ IGNORE_WARNINGS_END
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
     if (frame == [self mainFrame])
-        _private->didDrawTiles = 0;
+        _private->didDrawTiles = NO;
 }
 
 #endif // PLATFORM(IOS_FAMILY)
