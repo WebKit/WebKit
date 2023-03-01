@@ -5212,8 +5212,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addI64Eqz(Value operand, Value& result)
     {
         EMIT_UNARY(
-            "I64Eqz", TypeKind::I64,
-            BLOCK(Value::fromI64(!operand.asI64())),
+            "I64Eqz", TypeKind::I32,
+            BLOCK(Value::fromI32(!operand.asI64())),
             BLOCK(
                 m_jit.test64(ResultCondition::Zero, operandLocation.asGPR(), operandLocation.asGPR(), resultLocation.asGPR());
             )
