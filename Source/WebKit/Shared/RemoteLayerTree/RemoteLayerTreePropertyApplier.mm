@@ -179,6 +179,9 @@ static void applyCommonPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTr
         layer.rasterizationScale = properties.contentsScale;
     }
 
+    if (properties.changedProperties & LayerChange::OpacityChanged)
+        layer.opacity = properties.opacity;
+
     if (properties.changedProperties & LayerChange::MasksToBoundsChanged)
         layer.masksToBounds = properties.masksToBounds;
 }
@@ -198,9 +201,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
     if (properties.changedProperties & LayerChange::BorderWidthChanged)
         layer.borderWidth = properties.borderWidth;
-
-    if (properties.changedProperties & LayerChange::OpacityChanged)
-        layer.opacity = properties.opacity;
 
     if (properties.changedProperties & LayerChange::DoubleSidedChanged)
         layer.doubleSided = properties.doubleSided;
