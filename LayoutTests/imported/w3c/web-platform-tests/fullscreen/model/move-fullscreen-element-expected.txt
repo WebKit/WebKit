@@ -1,0 +1,4 @@
+Fullscreen element
+
+PASS Moving the fullscreen element should not leave the fullscreen flag
+
