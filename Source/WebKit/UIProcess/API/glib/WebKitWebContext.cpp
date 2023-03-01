@@ -655,7 +655,11 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
         g_signal_new("initialize-web-extensions",
             G_TYPE_FROM_CLASS(gObjectClass),
             G_SIGNAL_RUN_LAST,
+#if ENABLE(2022_GLIB_API)
+            0,
+#else
             G_STRUCT_OFFSET(WebKitWebContextClass, initialize_web_extensions),
+#endif
             nullptr, nullptr,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
@@ -679,7 +683,11 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
         g_signal_new("initialize-notification-permissions",
             G_TYPE_FROM_CLASS(gObjectClass),
             G_SIGNAL_RUN_LAST,
+#if ENABLE(2022_GLIB_API)
+            0,
+#else
             G_STRUCT_OFFSET(WebKitWebContextClass, initialize_notification_permissions),
+#endif
             nullptr, nullptr,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
@@ -699,7 +707,11 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
         g_signal_new("automation-started",
             G_TYPE_FROM_CLASS(gObjectClass),
             G_SIGNAL_RUN_LAST,
+#if ENABLE(2022_GLIB_API)
+            0,
+#else
             G_STRUCT_OFFSET(WebKitWebContextClass, automation_started),
+#endif
             nullptr, nullptr,
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
@@ -725,7 +737,11 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
         "user-message-received",
         G_TYPE_FROM_CLASS(gObjectClass),
         G_SIGNAL_RUN_LAST,
+#if ENABLE(2022_GLIB_API)
+        0,
+#else
         G_STRUCT_OFFSET(WebKitWebContextClass, user_message_received),
+#endif
         g_signal_accumulator_true_handled, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,

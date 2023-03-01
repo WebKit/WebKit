@@ -154,7 +154,9 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     objectClass->set_property = webkitDownloadSetProperty;
     objectClass->get_property = webkitDownloadGetProperty;
 
+#if !ENABLE(2022_GLIB_API)
     downloadClass->decide_destination = webkitDownloadDecideDestination;
+#endif
 
     /**
      * WebKitDownload:destination:
@@ -287,8 +289,12 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
         "decide-destination",
         G_TYPE_FROM_CLASS(objectClass),
         G_SIGNAL_RUN_LAST,
+#if ENABLE(2022_GLIB_API)
+        0,
+#else
         G_STRUCT_OFFSET(WebKitDownloadClass, decide_destination),
-        g_signal_accumulator_true_handled, NULL,
+#endif
+        g_signal_accumulator_true_handled, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
         G_TYPE_STRING);
@@ -311,6 +317,10 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
             g_cclosure_marshal_VOID__STRING,
             G_TYPE_NONE, 1,
             G_TYPE_STRING);
+
+#if ENABLE(2022_GLIB_API)
+    g_signal_override_class_handler("decide-destination", WEBKIT_TYPE_DOWNLOAD, G_CALLBACK(webkitDownloadDecideDestination));
+#endif
 }
 
 GRefPtr<WebKitDownload> webkitDownloadCreate(DownloadProxy& downloadProxy, WebKitWebView* webView)
