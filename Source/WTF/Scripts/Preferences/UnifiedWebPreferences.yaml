@@ -5489,17 +5489,17 @@ SelectTrailingWhitespaceEnabled:
 
 SelectionAPIForShadowDOMEnabled:
   type: bool
-  status: testable
+  status: preview
   category: dom
   humanReadableName: "Selection API for shadow DOM"
   humanReadableDescription: "Enable selection API for shadow DOM"
   defaultValue:
     WebKit:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 SelectionFlippingEnabled:
   type: bool
