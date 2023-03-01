@@ -74,7 +74,12 @@ std::optional<RTCRtpTransceiverDirection> GStreamerRtpTransceiverBackend::curren
 
 void GStreamerRtpTransceiverBackend::setDirection(RTCRtpTransceiverDirection direction)
 {
-    g_object_set(m_rtcTransceiver.get(), "direction", fromRTCRtpTransceiverDirection(direction), nullptr);
+    auto gstDirection = fromRTCRtpTransceiverDirection(direction);
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> directionString(g_enum_to_string(GST_TYPE_WEBRTC_RTP_TRANSCEIVER_DIRECTION, gstDirection));
+    GST_DEBUG_OBJECT(m_rtcTransceiver.get(), "Setting direction to %s", directionString.get());
+#endif
+    g_object_set(m_rtcTransceiver.get(), "direction", gstDirection, nullptr);
 }
 
 String GStreamerRtpTransceiverBackend::mid()
