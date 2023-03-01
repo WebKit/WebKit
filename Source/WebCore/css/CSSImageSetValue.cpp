@@ -31,6 +31,7 @@
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderState.h"
 #include "StyleImageSet.h"
+#include <numeric>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -69,23 +70,19 @@ RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state
     for (size_t i = 0; i < length; ++i) {
         ASSERT(is<CSSImageSetOptionValue>(item(i)));
         auto option = downcast<CSSImageSetOptionValue>(item(i));
-
-        if (option->type() && !option->type()->isSupported())
-            continue;
-
-        float scaleFactor = 1.0;
-        if (option->resolution())
-            scaleFactor = option->resolution()->floatValue(CSSUnitType::CSS_DPPX);
-
-        images.uncheckedAppend(ImageWithScale { state.createStyleImage(option->image()), scaleFactor, option->type() ? option->type()->mimeType() : String() });
+        images.uncheckedAppend(ImageWithScale { state.createStyleImage(option->image()), option->resolution()->floatValue(CSSUnitType::CSS_DPPX), option->type() });
     }
 
     // Sort the images so that they are stored in order from lowest resolution to highest.
-    std::stable_sort(images.begin(), images.end(), [](auto& a, auto& b) -> bool {
-        return a.scaleFactor < b.scaleFactor;
+    // We want to maintain the authored order for serialization so we create a sorted indexing vector.
+    Vector<size_t> sortedIndices(length);
+    std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
+
+    std::stable_sort(sortedIndices.begin(), sortedIndices.end(), [&images](size_t lhs, size_t rhs) {
+        return images[lhs].scaleFactor < images[rhs].scaleFactor;
     });
 
-    return StyleImageSet::create(WTFMove(images));
+    return StyleImageSet::create(WTFMove(images), WTFMove(sortedIndices));
 }
 
 } // namespace WebCore

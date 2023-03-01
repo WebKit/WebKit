@@ -2625,6 +2625,7 @@ rendering/style/StyleGridData.cpp
 rendering/style/StyleGridItemData.cpp
 rendering/style/StyleImageSet.cpp
 rendering/style/StyleInheritedData.cpp
+rendering/style/StyleInvalidImage.cpp
 rendering/style/StyleMarqueeData.cpp
 rendering/style/StyleMiscNonInheritedData.cpp
 rendering/style/StyleMultiColData.cpp

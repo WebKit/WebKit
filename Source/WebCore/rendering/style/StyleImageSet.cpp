@@ -29,18 +29,22 @@
 #include "CSSImageSetValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Document.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "StyleInvalidImage.h"
 
 namespace WebCore {
 
-Ref<StyleImageSet> StyleImageSet::create(Vector<ImageWithScale> images)
-{ 
-    return adoptRef(*new StyleImageSet(WTFMove(images)));
+Ref<StyleImageSet> StyleImageSet::create(Vector<ImageWithScale>&& images, Vector<size_t>&& sortedIndices)
+{
+    ASSERT(images.size() == sortedIndices.size());
+    return adoptRef(*new StyleImageSet(WTFMove(images), WTFMove(sortedIndices)));
 }
 
-StyleImageSet::StyleImageSet(Vector<ImageWithScale>&& images)
+StyleImageSet::StyleImageSet(Vector<ImageWithScale>&& images, Vector<size_t>&& sortedIndices)
     : StyleMultiImage { Type::ImageSet }
     , m_images { WTFMove(images) }
+    , m_sortedIndices { WTFMove(sortedIndices) }
 {
 }
 
@@ -82,11 +86,19 @@ ImageWithScale StyleImageSet::selectBestFitImage(const Document& document)
 ImageWithScale StyleImageSet::bestImageForScaleFactor()
 {
     ImageWithScale result;
-    for (auto& image : m_images) {
+    for (auto index : m_sortedIndices) {
+        const auto& image = m_images[index];
+        if (!image.mimeType.isNull() && !MIMETypeRegistry::isSupportedImageMIMEType(image.mimeType))
+            continue;
+
         if (image.scaleFactor >= m_deviceScaleFactor)
             return image;
         result = image;
     }
+
+    if (!result.image)
+        result = ImageWithScale { StyleInvalidImage::create(), 1, String() };
+
     return result;
 }
 
