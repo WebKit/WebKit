@@ -63,67 +63,6 @@ public:
 
     String toJSONString() const;
 
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_presentationTime;
-        encoder << m_duration;
-        encoder << m_sourceID;
-        encoder << m_identifier;
-        encoder << m_originalStartTime;
-        encoder << m_settings;
-        encoder << m_cueText;
-    }
-
-    template <class Decoder>
-    static std::optional<ISOWebVTTCue> decode(Decoder& decoder)
-    {
-        std::optional<MediaTime> presentationTime;
-        decoder >> presentationTime;
-        if (!presentationTime)
-            return std::nullopt;
-
-        std::optional<MediaTime> duration;
-        decoder >> duration;
-        if (!duration)
-            return std::nullopt;
-
-        std::optional<String> sourceID;
-        decoder >> sourceID;
-        if (!sourceID)
-            return std::nullopt;
-
-        std::optional<AtomString> identifier;
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-
-        std::optional<String> originalStartTime;
-        decoder >> originalStartTime;
-        if (!originalStartTime)
-            return std::nullopt;
-
-        std::optional<String> settings;
-        decoder >> settings;
-        if (!settings)
-            return std::nullopt;
-
-        std::optional<String> cueText;
-        decoder >> cueText;
-        if (!cueText)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*presentationTime),
-            WTFMove(*duration),
-            WTFMove(*identifier),
-            WTFMove(*cueText),
-            WTFMove(*settings),
-            WTFMove(*sourceID),
-            WTFMove(*originalStartTime)
-        }};
-    }
-
 private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 

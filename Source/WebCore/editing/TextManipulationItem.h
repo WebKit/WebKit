@@ -24,12 +24,10 @@
  */
 
 #pragma once
+#include "TextManipulationItemIdentifier.h"
 #include "TextManipulationToken.h"
 
 namespace WebCore {
-
-enum TextManipulationItemIdentifierType { };
-using TextManipulationItemIdentifier = ObjectIdentifier<TextManipulationItemIdentifierType>;
 
 struct TextManipulationItem {
     TextManipulationItemIdentifier identifier;

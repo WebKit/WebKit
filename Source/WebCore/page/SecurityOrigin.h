@@ -214,9 +214,6 @@ public:
 
     const SecurityOriginData& data() const { return m_data; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
-
 private:
     friend struct IPC::ArgumentCoder<SecurityOrigin, void>;
     WEBCORE_EXPORT SecurityOrigin();

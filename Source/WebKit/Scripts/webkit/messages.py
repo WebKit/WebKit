@@ -259,6 +259,7 @@ def serialized_identifiers():
         'WebCore::SleepDisablerIdentifier',
         'WebCore::SpeechRecognitionConnectionClientIdentifier',
         'WebCore::TextCheckingRequestIdentifier',
+        'WebCore::TextManipulationItemIdentifier',
         'WebCore::TextManipulationTokenIdentifier',
         'WebCore::UserMediaRequestIdentifier',
         'WebCore::WebSocketIdentifier',

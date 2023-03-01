@@ -1555,6 +1555,7 @@ header: <WebCore/ScreenProperties.h>
 #endif
 };
 
+using WebCore::PlatformDisplayID = uint32_t;
 struct WebCore::ScreenProperties {
     WebCore::PlatformDisplayID primaryDisplayID;
     HashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
@@ -4590,3 +4591,170 @@ header: <JavaScriptCore/ArrayBuffer.h>
 [RefCounted, CustomHeader] class JSC::ArrayBuffer {
     Vector<uint8_t> toVector();
 }
+
+enum class WebCore::TextIndicatorPresentationTransition : uint8_t {
+    None,
+    Bounce,
+    BounceAndCrossfade,
+    FadeIn,
+};
+
+[OptionSet] enum class WebCore::TextIndicatorOption : uint16_t {
+    RespectTextColor,
+    PaintBackgrounds,
+    PaintAllContent,
+    IncludeSnapshotWithSelectionHighlight,
+    TightlyFitContent,
+    UseBoundingRectAndPaintAllContentForComplexRanges,
+    IncludeMarginIfRangeMatchesSelection,
+    ExpandClipBeyondVisibleRect,
+    DoNotClipToVisibleRect,
+    IncludeSnapshotOfAllVisibleContentWithoutSelection,
+    UseSelectionRectForSizing,
+    ComputeEstimatedBackgroundColor,
+    UseUserSelectAllCommonAncestor,
+};
+
+using WebCore::IDBConnectionIdentifier = WebCore::ProcessIdentifier;
+
+using WebCore::TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
+
+struct WebCore::GlobalFrameIdentifier {
+    WebCore::PageIdentifier pageID;
+    WebCore::FrameIdentifier frameID;
+};
+
+struct WebCore::GlobalWindowIdentifier {
+    WebCore::ProcessIdentifier processIdentifier;
+    WebCore::WindowIdentifier windowIdentifier;
+};
+
+[Nested] enum class WebCore::InteractionRegion::Type : bool;
+
+struct WebCore::InteractionRegion {
+    WebCore::ElementIdentifier elementIdentifier;
+    WebCore::Region regionInLayerCoordinates;
+    float borderRadius;
+    WebCore::InteractionRegion::Type type;
+};
+
+[Nested] struct WebCore::Region::Span {
+    int y;
+    size_t segmentIndex;
+};
+
+[Nested] class WebCore::Region::Shape {
+    Vector<int, 32> m_segments;
+    Vector<WebCore::Region::Span, 16> m_spans;
+};
+
+class WebCore::Region {
+    WebCore::IntRect bounds();
+    std::unique_ptr<WebCore::Region::Shape> copyShape();
+}
+
+[Nested, OptionSet] enum class WebCore::FilterEffectGeometry::Flags : uint8_t {
+    HasX,
+    HasY,
+    HasWidth,
+    HasHeight
+};
+    
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FilterEffectGeometry {
+    WebCore::FloatRect m_boundaries;
+    OptionSet<WebCore::FilterEffectGeometry::Flags> m_flags;
+};
+
+header: <WebCore/ISOVTTCue.h>
+[CustomHeader] class WebCore::ISOWebVTTCue {
+    MediaTime presentationTime();
+    MediaTime duration();
+    AtomString id();
+    String cueText();
+    String settings();
+    String sourceID();
+    String originalStartTime();
+}
+
+#if ENABLE(WEB_AUTHN)
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::UserVerification : uint8_t {
+    No,
+    Yes,
+    Cancel,
+    Presence
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::LocalConfiguration {
+    WebCore::MockWebAuthenticationConfiguration::UserVerification userVerification;
+    bool acceptAttestation;
+    String privateKeyBase64;
+    String userCertificateBase64;
+    String intermediateCACertificateBase64;
+    String preferredCredentialIdBase64;
+};
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::HidStage : bool;
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::HidSubStage : bool;
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::HidError : uint8_t {
+    Success,
+    DataNotSent,
+    EmptyReport,
+    WrongChannelId,
+    MaliciousPayload,
+    UnsupportedOptions,
+    WrongNonce
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::HidConfiguration {
+    Vector<String> payloadBase64;
+    WebCore::MockWebAuthenticationConfiguration::HidStage stage;
+    WebCore::MockWebAuthenticationConfiguration::HidSubStage subStage;
+    WebCore::MockWebAuthenticationConfiguration::HidError error;
+    bool isU2f;
+    bool keepAlive;
+    bool fastDataArrival;
+    bool continueAfterErrorData;
+    bool canDowngrade;
+    bool expectCancel;
+    bool supportClientPin;
+    bool supportInternalUV;
+};
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::NfcError : uint8_t {
+    Success,
+    NoTags,
+    WrongTagType,
+    NoConnections,
+    MaliciousPayload
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::NfcConfiguration {
+    WebCore::MockWebAuthenticationConfiguration::NfcError error;
+    Vector<String> payloadBase64;
+    bool multipleTags;
+    bool multiplePhysicalTags;
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::CcidConfiguration {
+    Vector<String> payloadBase64;
+};
+
+struct WebCore::MockWebAuthenticationConfiguration {
+    bool silentFailure;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::LocalConfiguration> local;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::HidConfiguration> hid;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::NfcConfiguration> nfc;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::CcidConfiguration> ccid;
+};
+
+#endif // ENABLE(WEB_AUTHN)
+
+header: <WebCore/StorageType.h>
+enum class WebCore::StorageType : uint8_t {
+    Session,
+    Local,
+    TransientLocal,
+};

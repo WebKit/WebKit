@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,9 @@
 
 #pragma once
 
-#include "ElementIdentifier.h"
-#include "FloatRect.h"
-#include "Region.h"
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
-namespace WTF {
-class TextStream;
-}
-
 namespace WebCore {
 
-class Element;
-class Page;
-class RenderObject;
+enum TextManipulationItemIdentifierType { };
+using TextManipulationItemIdentifier = ObjectIdentifier<TextManipulationItemIdentifierType>;
 
-struct InteractionRegion {
-    enum class Type : bool { Interaction, Occlusion };
-
-    ElementIdentifier elementIdentifier;
-    Region regionInLayerCoordinates;
-    float borderRadius { 0 };
-    Type type;
-
-    WEBCORE_EXPORT ~InteractionRegion();
-};
-
-inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
-{
-    return a.elementIdentifier == b.elementIdentifier
-        && a.regionInLayerCoordinates == b.regionInLayerCoordinates
-        && a.borderRadius == b.borderRadius
-        && a.type == b.type;
-}
-
-WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
-
-}
+} // namespace WebCore
