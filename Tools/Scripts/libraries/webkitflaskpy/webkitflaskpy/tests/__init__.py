@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -19,46 +19,3 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-from setuptools import setup
-
-
-def readme():
-    with open('README.md') as f:
-        return f.read()
-
-
-setup(
-    name='reporelaypy',
-    version='0.8.0',
-    description='Library for visualizing, processing and storing test results.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Framework :: Flask',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3 :: Only',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Software Development :: Version Control :: Git',
-    ],
-    keywords='git hook mirror webkit',
-    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/reporelaypy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'reporelaypy',
-        'reporelaypy.test',
-    ],
-    install_requires=[
-        'xmltodict',
-        'webkitcorepy',
-        'webkitscmpy',
-        'webkitflaskpy',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)

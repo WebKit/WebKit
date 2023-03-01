@@ -22,10 +22,10 @@
 
 import unittest
 
-from reporelaypy import Database
+from webkitflaskpy import Database
 
 
-class DatabaseUnittest(unittest.TestCase):
+class DatabaseTest(unittest.TestCase):
     PARTITION_1 = 'partition_1:'
     PARTITION_2 = 'partition_2;'
     EMPTY_PARTITION = None

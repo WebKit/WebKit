@@ -72,5 +72,5 @@ class Database(object):
         return self._redis.delete(*names_to_delete)
 
     def scan_iter(self, match=None, **kwargs):
-        for key in self._redis.scan_iter(match=self.partition + match, **kwargs):
+        for key in self._redis.scan_iter(match=self.partition + (match or '*'), **kwargs):
             yield key[len(self.partition):]
