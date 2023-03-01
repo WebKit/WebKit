@@ -87,6 +87,24 @@
     if (_focusWebView)
         _focusWebView(webView);
 }
+
+- (_WKContextMenuElementInfo *)waitForContextMenu
+{
+    EXPECT_FALSE(self.getContextMenuFromProposedMenu);
+
+    __block bool finished = false;
+    __block RetainPtr<_WKContextMenuElementInfo> result;
+    self.getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        result = elementInfo;
+        finished = true;
+        completionHandler(nil);
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.getContextMenuFromProposedMenu = nil;
+    return result.autorelease();
+}
 #endif // PLATFORM(MAC)
 
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
@@ -203,5 +221,17 @@
     [uiDelegate waitForInspectorToShow];
     self.UIDelegate = nil;
 }
+
+#if PLATFORM(MAC)
+- (_WKContextMenuElementInfo *)_test_waitForContextMenu
+{
+    EXPECT_FALSE(self.UIDelegate);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    self.UIDelegate = uiDelegate.get();
+    _WKContextMenuElementInfo *result = [uiDelegate waitForContextMenu];
+    self.UIDelegate = nil;
+    return result;
+}
+#endif
 
 @end

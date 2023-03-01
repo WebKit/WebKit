@@ -512,6 +512,26 @@ bool WebContextMenuProxyMac::showAfterPostProcessingContextData()
 
         return true;
     }
+
+    if (auto potentialQRCodeNodeSnapshotImage = m_context.potentialQRCodeNodeSnapshotImage()) {
+        auto image = potentialQRCodeNodeSnapshotImage->makeCGImage();
+        requestPayloadForQRCode(image.get(), [this, protectedThis = Ref { *this }](NSString *result) mutable {
+            auto potentialQRCodeViewportSnapshotImage = m_context.potentialQRCodeViewportSnapshotImage();
+            if (!potentialQRCodeViewportSnapshotImage || result.length) {
+                m_context.setQRCodePayloadString(result);
+                WebContextMenuProxy::show();
+                return;
+            }
+
+            auto fallbackImage = potentialQRCodeViewportSnapshotImage->makeCGImage();
+            requestPayloadForQRCode(fallbackImage.get(), [this, protectedThis = WTFMove(protectedThis)](NSString *result) mutable {
+                m_context.setQRCodePayloadString(result);
+                WebContextMenuProxy::show();
+            });
+        });
+
+        return true;
+    }
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
 
     return false;

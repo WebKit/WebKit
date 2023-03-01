@@ -90,6 +90,9 @@ public:
 #endif // ENABLE(SERVICE_CONTROLS)
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    ShareableBitmap* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+
     const String& qrCodePayloadString() const { return m_qrCodePayloadString; }
     void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
 #endif
@@ -107,7 +110,7 @@ private:
     String m_selectedText;
 
 #if ENABLE(SERVICE_CONTROLS)
-    void setImage(WebCore::Image*);
+    void setImage(WebCore::Image&);
     
     RefPtr<ShareableBitmap> m_controlledImage;
     Vector<uint8_t> m_controlledSelectionData;
@@ -120,6 +123,12 @@ private:
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    void setPotentialQRCodeNodeSnapshotImage(WebCore::Image&);
+    void setPotentialQRCodeViewportSnapshotImage(WebCore::Image&);
+
+    RefPtr<ShareableBitmap> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<ShareableBitmap> m_potentialQRCodeViewportSnapshotImage;
+
     String m_qrCodePayloadString;
 #endif
 };

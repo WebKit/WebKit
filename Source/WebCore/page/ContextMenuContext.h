@@ -67,6 +67,14 @@ public:
     Image* controlledImage() const { return m_controlledImage.get(); }
 #endif
 
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    void setPotentialQRCodeNodeSnapshotImage(Image* image) { m_potentialQRCodeNodeSnapshotImage = image; }
+    Image* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+
+    void setPotentialQRCodeViewportSnapshotImage(Image* image) { m_potentialQRCodeViewportSnapshotImage = image; }
+    Image* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+#endif
+
 private:
     Type m_type { Type::ContextMenu };
     HitTestResult m_hitTestResult;
@@ -75,6 +83,11 @@ private:
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;
+#endif
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    RefPtr<Image> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<Image> m_potentialQRCodeViewportSnapshotImage;
 #endif
 };
 
