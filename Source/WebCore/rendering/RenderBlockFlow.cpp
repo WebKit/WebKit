@@ -345,17 +345,15 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
 
 void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (shouldApplySizeContainment()) {
+    if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
         }
-    } else if (!shouldApplyInlineSizeContainment()) {
-        if (childrenInline())
-            computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
-        else
-            computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
-    }
+    } else if (childrenInline())
+        computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    else
+        computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 

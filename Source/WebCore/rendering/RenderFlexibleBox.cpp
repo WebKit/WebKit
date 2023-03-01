@@ -103,14 +103,11 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         minLogicalWidth += scrollbarWidth;
     };
 
-    bool needsSizeContainment = shouldApplySizeContainment();
-    if (needsSizeContainment) {
+    if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
         }
-    }
-    if (needsSizeContainment || shouldApplyInlineSizeContainment()) {
         addScrollbarWidth();
         return;
     }

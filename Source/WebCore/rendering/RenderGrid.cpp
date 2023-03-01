@@ -670,9 +670,14 @@ void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& al
     ASSERT(algorithm.tracksAreWiderThanMinTrackBreadth());
 }
 
+bool RenderGrid::shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection direction) const
+{
+    return direction == ForColumns ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment();
+}
+
 std::optional<LayoutUnit> RenderGrid::explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection direction) const
 {
-    if (!shouldApplySizeContainment())
+    if (!shouldCheckExplicitIntrinsicInnerLogicalSize(direction))
         return std::nullopt;
     if (direction == ForColumns)
         return explicitIntrinsicInnerLogicalWidth();
@@ -791,7 +796,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     unsigned firstAutoRepeatTrack = insertionPoint + currentGrid().explicitGridStart(direction);
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + currentGrid().autoRepeatTracks(direction);
 
-    if (!currentGrid().hasGridItems() || shouldApplyInlineSizeContainment() || (shouldApplySizeContainment() && !explicitIntrinsicInnerLogicalSize(direction))) {
+    if (!currentGrid().hasGridItems() || (shouldCheckExplicitIntrinsicInnerLogicalSize(direction) && !explicitIntrinsicInnerLogicalSize(direction))) {
         emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);

@@ -5619,7 +5619,7 @@ bool RenderBox::shouldIgnoreMinMaxSizes() const
 
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 {
-    ASSERT(shouldApplySizeContainment());
+    ASSERT(isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment());
     if (style().containIntrinsicWidthType() == ContainIntrinsicSizeType::None)
         return std::nullopt;
 
@@ -5635,7 +5635,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 
 std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
 {
-    ASSERT(shouldApplySizeContainment());
+    ASSERT(isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment());
     if (style().containIntrinsicHeightType() == ContainIntrinsicSizeType::None)
         return std::nullopt;
 
