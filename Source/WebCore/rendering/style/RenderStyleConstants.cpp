@@ -1169,6 +1169,8 @@ TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
     case TextUnderlinePosition::Auto: ts << "Auto"; break;
     case TextUnderlinePosition::Under: ts << "Under"; break;
     case TextUnderlinePosition::FromFont: ts << "FromFont"; break;
+    case TextUnderlinePosition::Left: ts << "Left"; break;
+    case TextUnderlinePosition::Right: ts << "Right"; break;
     }
     return ts;
 }

@@ -1235,6 +1235,20 @@ CSSTextSpacingEnabled:
     WebCore:
       default: false
 
+CSSTextUnderlinePositionLeftRight:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS text-underline-position: left right"
+  humanReadableDescription: "Enable the property text-underline-position left and right value support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextWrapEnabled:
   type: bool
   status: testable
