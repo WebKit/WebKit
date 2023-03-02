@@ -1,0 +1,203 @@
+#!/bin/sh
+# Copyright (C) 2023 Igalia S.L. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+STATUS_FILE_FAIL="F"
+STATUS_FILE_PASS="P"
+STATUS_FILE_PREFIX="test_status_"
+
+TESTCASE_PATH="$1"
+# If the argument to '.' does not contain a slash, the default is to look for
+# the name in PATH. Instead, we want to look for it in the current directory, so
+# prepend ./ if the argument does not contain a slash.
+if echo $TESTCASE_PATH | grep -vq /; then
+    TESTCASE_PATH="./$1"
+fi
+. "$TESTCASE_PATH"
+
+for name in $EXPORT_VARS; do
+    export "$name=$(eval echo \$\{$name\})"
+done
+
+# Split on underscores and get the last component.
+INDEX="${1##*_}"
+DISPATCHER_SUBCOMMAND="$2"
+shift 2
+if [ "xtest" = "x$DISPATCHER_SUBCOMMAND" ]; then
+    verbosity=0
+    progress_meter=0
+    report_execution_time=0
+    while getopts vpr opt; do
+        case $opt in
+            v) verbosity=$((verbosity + 1)) ;;
+            p) progress_meter=1 ;;
+            r) report_execution_time=1 ;;
+            ?) echo "Unrecognized flag: $0"; exit 3;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+    runID="$1"
+    if [ "x$runID" = "x" ]; then
+        echo "Need to specify a run ID" 1>&2
+        exit 3
+    fi
+    if [ "$report_execution_time" -gt 0 -a "x$SECONDS" != "x" ]; then
+        START_TIME=$SECONDS
+    fi
+    echo "Running $TESTNAME"
+    cd "$(dirname "$1")"
+    outputFilename="\"../${TESTNAME}.out\""
+    diffFilename="\"../${TESTNAME}.diff\""
+    redirectAndPrefix="awk \"{ printf \\\"${TESTNAME}: \\\" ; print }\" 2>&1"
+    if [ "$OUTPUT_HANDLER" = "silent" ]; then
+        outh="tee ${outputFilename} | $redirectAndPrefix"
+    elif [ "$OUTPUT_HANDLER" = "noisy" ]; then
+        outh="cat >${outputFilename}"
+    else
+        echo "No valid OUTPUT_HANDLER defined in $1" 1>&2
+        exit 3
+    fi
+    executionTime=""
+    if [ "$report_execution_time" -gt 0 -a "x$SECONDS" != "x" ]; then
+        executionTime=" \$((\$SECONDS - $START_TIME))"
+    fi
+    successCommandPrefix=""
+    if [ "$progress_meter" -gt 0 -o  "$report_execution_time" -gt 0 -o "$verbosity" -ge 2 ]; then
+        successCommandPrefix="echo PASS: \"${TESTNAME}${executionTime}\";"
+    fi
+    successCommand="$successCommandPrefix echo $runID \$exitCode $STATUS_FILE_PASS > ${STATUS_FILE_PREFIX}${INDEX}"
+    failCommand="echo $runID \$exitCode $STATUS_FILE_FAIL > ${STATUS_FILE_PREFIX}${INDEX}; echo FAIL: \"$TESTNAME\""
+    unexpectedExitCode="echo \"${TESTNAME}\": ERROR: Unexpected exit code: \$exitCode 2>&1"
+    mozillaDetectedFailures="(echo Detected failures: && cat $outputFilename) | $redirectAndPrefix"
+    if [ "$ERROR_HANDLER" = "simple" ]; then
+        errh="if [ \$exitCode -ne 0 ]; then $unexpectedExitCode; $failCommand; else $successCommand; fi"
+    elif [ "$ERROR_HANDLER" = "expectedFail" ]; then
+        errh="if [ \$exitCode -eq 0 ]; then $unexpectedExitCode; $failCommand; else $successCommand; fi"
+    elif [ "$ERROR_HANDLER" = "noisy" ]; then
+        errh="if [ \$exitCode -ne 0 ]; then cat $outputFilename | $redirectAndPrefix ; $unexpectedExitCode ; $failCommand; else $successCommand; fi"
+    elif [ "${ERROR_HANDLER%% *}" = "diff" ]; then
+        expectedFilename="../$(echo "$ERROR_HANDLER" | sed 's/^diff //')"
+        errh=`cat <<-EOF
+        if [ \\$exitCode -ne 0 ]; then
+            (cat $outputFilename | $redirectAndPrefix) && $unexpectedExitCode; $failCommand
+        elif [ -e $expectedFilename ]; then
+            diff --strip-trailing-cr -u $expectedFilename $outputFilename > $diffFilename
+            if [ \\$? -eq 0 ]; then
+                $successCommand
+            else
+                (echo DIFF FAILURE! && cat $diffFilename) | $redirectAndPrefix
+                $failCommand
+            fi
+        else
+            (echo NO EXPECTATION! && cat $outputFilename) | $redirectAndPrefix
+            $failCommand
+        fi
+EOF
+        `
+    elif [ "$ERROR_HANDLER" = "mozilla" ]; then
+        errh="if [ \$exitCode -ne 0 ]; then cat $outputFilename | $redirectAndPrefix; $unexpectedExitCode; $failCommand; elif grep -i -q failed! $outputFilename; then $mozillaDetectedFailures; $failCommand; else $successCommand; fi"
+    elif [ "$ERROR_HANDLER" = "mozillaFail" ]; then
+        errh="if [ \$exitCode -ne 0 ]; then $successCommand; elif grep -i -q failed! $outputFilename; then $successCommand; else echo NOTICE: You made this test pass, but it was expected to fail | $redirectAndPrefix; $failCommand; fi"
+    elif [ "$ERROR_HANDLER" = "mozillaExit3" ]; then
+        errh=`cat <<-EOF
+        if [ \\$exitCode -ne 0 ]; then
+            if [ \\$exitCode -eq 3 ]; then
+                if grep -i -q failed! $outputFilename; then
+                    $mozillaDetectedFailures; $failCommand
+                else
+                    $successCommand
+                fi
+            else
+                cat $outputFilename | $redirectAndPrefix; $unexpectedExitCode
+                $failCommand
+            fi
+        else
+            (cat $outputFilename && echo ERROR: Test expected to fail, but returned successfully) | $redirectAndPrefix
+            $failCommand
+        fi
+EOF
+    `
+    elif [ "$ERROR_HANDLER" = "chakraPassFail" ]; then
+         errh=`cat <<-EOF
+         if [ \\$exitCode -ne 0 ]; then
+             (cat $outputFilename && echo ERROR: Unexpected exit code: \\$exitCode) | $redirectAndPrefix
+             $failCommand
+         elif grep -i -q FAILED $outputFilename; then
+             (echo Detected failures: && cat $outputFilename) | $redirectAndPrefix
+             $failCommand
+         else
+             $successCommand
+         fi
+EOF
+    `
+    else
+        echo "No valid ERROR_HANDLER defined in $TESTCASE_PATH" 1>&2
+        exit 3
+    fi
+
+    # +--------------------------------------------------------------------+
+    # | +-----------------------------------------------+                  |
+    # | | +--------------+     +-------------------+    |                  |
+    # | | | cmd 1 ----> 1|---> |0 --> outH 1 ---> 4|-> 4|---------------> 1|
+    # | | |     2 /      |     +-------------------+    |   +-----------+  |
+    # | | |echo $? 0 -> 3|---------------------------> 1|-> |0 read xs  |  |
+    # | | +--------------+                              |   |  exit $xs |  |
+    # | |                                               |   +-----------+  |
+    # | +-----------------------------------------------+                  |
+    # +--------------------------------------------------------------------+
+    # From the top down (i.e. reading from the outer expression inwards):
+    #
+    # - Redirect FD 4 to our stdout
+    #
+    # - Build a pipe of two command sequences. The
+    #   right-hand-side sequence reads a number from stdin and
+    #   exits with it. Since it's the last command in the
+    #   pipeline, this will be the value of $? after the
+    #   pipeline completes.
+    #
+    # - In the left-hand-side sequence, redirect FD 3 to FD 1.
+    #
+    # - Build a pipe of two commands
+    #   - run shellCommand, writing its exit code to FD 3.
+    #   - run the outputHandler, with its stdin coming from
+    #     the pipe, redirecting its output to FD 4. The
+    #     outputHandler needs to be in a command sequence
+    #     (i.e. in { cmd; ...}) as it may do its own
+    #     redirections.
+    #
+    # We do all this
+    # - to avoid having to use a temporary file for the exit code
+    # - to keep within the bounds of POSIX sh (i.e. can't use
+    #   PIPESTATUS)
+
+    eval "cd \"$(dirname $TESTCASE_PATH)\" && { { { { (cd \"../$DIRECTORY\" && $CMD) 2>&1; echo \$? >&3; } | { $outh ;} >&4; } 3>&1; } | { read xs; exit \$xs; } } 4>&1; exitCode=\$?; $errh"
+    exit $?
+elif [ "xrun" = "x$DISPATCHER_SUBCOMMAND" ]; then
+    # Change directory to the directory of the testace first, so that the user
+    # can run the testcase regardless of their CWD.
+    cd "$(dirname "$TESTCASE_PATH")" && cd "../$DIRECTORY" && eval "$CMD" "$@"
+    exit $?
+else
+    echo "Unknown action `$2`"
+    exit 3
+fi

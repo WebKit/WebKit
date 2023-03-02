@@ -22,6 +22,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 originalTestList="$1"
+shift
 
 numProcs=`sysctl -n hw.activecpu 2>/dev/null`
 if [ $? -gt 0 ]
@@ -44,7 +45,7 @@ trap "kill -9 0" INT HUP TERM
 echo 0 > ${indexFile}
 if [ -z "$originalTestList" ]
 then
-    find . -maxdepth 1 -name 'test_script_*' | sort -t '_' -k3nr > ${testList}
+    find . -maxdepth 1 -name 'testcase_*' | sort -t '_' -k3nr > ${testList}
 else
     cp "$originalTestList" "$testList"
 fi
@@ -93,7 +94,7 @@ do
             mv ${tempFile} ${testList}
             unlock_test_list
 
-            sh ${nextTest}
+            $(eval echo ${nextTest})
 
             lock_test_list
         done

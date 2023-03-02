@@ -1,0 +1,1422 @@
+
+
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:58:57.251190044 -0800
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +0,0 @@
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): -hello
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:58:57.379193324 -0800
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1 @@
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +testval
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js._-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:58:58.315217301 -0800
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +0,0 @@
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): -hello
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:58:58.435220375 -0800
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1 @@
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +testval
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js._-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js._-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js._-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:03.623353273 -0800
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1,2 @@
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses):  hello
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:04.699380834 -0800
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1,2 @@
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +testval
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses):  hello
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): hello
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): hello
+test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_hello_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:09.795511361 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1 @@
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:09.855512898 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1,2 @@
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:10.811537384 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1 @@
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:10.871538921 -0800
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1,2 @@
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): failed!
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): failed!
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): failed!
+test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_failed!_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlersimpleErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:16.011670561 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1 @@
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:16.075672199 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1,2 @@
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses): +FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 0
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:17.047697092 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1 @@
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): DIFF FAILURE!
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): --- ../../test-expected.txt	2023-02-28 05:58:56.531171601 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +++ ../test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses).out	2023-02-28 05:59:17.115698833 -0800
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): @@ -1 +1,2 @@
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): -hello
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses): +FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses): NOTICE: You made this test pass, but it was expected to fail
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Test expected to fail, but returned successfully
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): Detected failures:
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_0-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 1
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_1-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerexpectedFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaFailErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlermozillaExit3ErrorHandler(test-parentheses): FAILED
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-silentOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlersimpleErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerexpectedFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlernoisyErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerdiffErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlermozillaExit3ErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+Running test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): testval
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): FAILED
+test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses): ERROR: Unexpected exit code: 3
+FAIL: test-handlers.yaml/test.js.-O_FAILED_-e_3-noisyOutputHandlerchakraPassFailErrorHandler(test-parentheses)
