@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+</style>
+<body>
+<div aria-role="button">This works like a button</div>
+<ul role="menu">
+    <li role="menuitem">Menu option 1</li>
+    <li role="menuitem">Menu option 2</li>
+</ul>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>
