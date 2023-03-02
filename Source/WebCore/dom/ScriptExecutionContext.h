@@ -128,6 +128,8 @@ public:
 
     virtual SocketProvider* socketProvider() = 0;
 
+    virtual std::optional<uint64_t> noiseInjectionHashSalt() const = 0;
+
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
     virtual String resourceRequestIdentifier() const { return String(); };

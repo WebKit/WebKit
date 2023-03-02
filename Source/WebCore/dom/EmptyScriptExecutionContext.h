@@ -70,6 +70,8 @@ public:
 
     SecurityOrigin& topOrigin() const final { return m_origin.get(); };
 
+    std::optional<uint64_t> noiseInjectionHashSalt() const { return std::nullopt; }
+
     void postTask(Task&&) final { ASSERT_NOT_REACHED(); }
     EventTarget* errorEventTarget() final { return nullptr; };
 

@@ -269,6 +269,7 @@ enum class FocusTrigger : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMutedState : uint8_t;
+enum class NoiseInjectionPolicy : bool;
 enum class ParserContentPolicy : uint8_t;
 enum class PlatformEventType : uint8_t;
 enum class ReferrerPolicySource : uint8_t;
@@ -1269,6 +1270,9 @@ public:
 #if ENABLE(POINTER_LOCK)
     WEBCORE_EXPORT void exitPointerLock();
 #endif
+
+    std::optional<uint64_t> noiseInjectionHashSalt() const final;
+    NoiseInjectionPolicy noiseInjectionPolicy() const;
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
     void incrementLoadEventDelayCount() { ++m_loadEventDelayCount; }

@@ -94,19 +94,6 @@
 #include "GStreamerCommon.h"
 #endif
 
-#if __has_include(<WebKitAdditions/BaseAudioContextAdditions.cpp>)
-#include <WebKitAdditions/BaseAudioContextAdditions.cpp>
-#else
-namespace WebCore {
-
-static NoiseInjectionPolicy noiseInjectionPolicy(const Document&)
-{
-    return NoiseInjectionPolicy::None;
-}
-
-} // namespace WebCore
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BaseAudioContext);
@@ -139,7 +126,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
     , m_contextID(generateContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_listener(AudioListener::create(*this))
-    , m_noiseInjectionPolicy(WebCore::noiseInjectionPolicy(document))
+    , m_noiseInjectionPolicy(document.noiseInjectionPolicy())
 {
     liveAudioContexts().add(m_contextID);
 

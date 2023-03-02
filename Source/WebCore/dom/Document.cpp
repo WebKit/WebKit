@@ -169,6 +169,7 @@
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
+#include "NoiseInjectionPolicy.h"
 #include "NotificationController.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
@@ -9546,6 +9547,22 @@ void Document::resetObservationSizeForContainIntrinsicSize(Element& target)
     if (!m_resizeObserverForContainIntrinsicSize)
         return;
     m_resizeObserverForContainIntrinsicSize->resetObservationSize(target);
+}
+
+#if __has_include(<WebKitAdditions/DocumentAdditions.cpp>)
+#include <WebKitAdditions/DocumentAdditions.cpp>
+#else
+NoiseInjectionPolicy Document::noiseInjectionPolicy() const
+{
+    return NoiseInjectionPolicy::None;
+}
+#endif
+
+std::optional<uint64_t> Document::noiseInjectionHashSalt() const
+{
+    if (!page() || noiseInjectionPolicy() == NoiseInjectionPolicy::None)
+        return std::nullopt;
+    return page()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
 }
 
 } // namespace WebCore

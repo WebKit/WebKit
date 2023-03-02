@@ -813,6 +813,8 @@ public:
     VisitedLinkStore& visitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
 
+    std::optional<uint64_t> noiseInjectionHashSaltForDomain(const RegistrableDomain&);
+
     WEBCORE_EXPORT PAL::SessionID sessionID() const;
     WEBCORE_EXPORT void setSessionID(PAL::SessionID);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
@@ -1382,6 +1384,8 @@ private:
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
 
     Ref<BadgeClient> m_badgeClient;
+
+    HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
 };
 
 inline PageGroup& Page::group()
