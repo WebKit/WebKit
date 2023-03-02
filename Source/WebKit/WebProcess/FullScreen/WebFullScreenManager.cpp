@@ -234,6 +234,11 @@ void WebFullScreenManager::willEnterFullScreen()
         return;
     }
 
+    if (!m_element) {
+        close();
+        return;
+    }
+
 #if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
 #endif
