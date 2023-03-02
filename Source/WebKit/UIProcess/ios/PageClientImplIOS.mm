@@ -431,7 +431,17 @@ IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
         rootViewRect = [m_contentView accessibilityConvertRectToSceneReferenceCoordinates:rootViewRect];
     return enclosingIntRect(rootViewRect);
 }
-    
+
+IPC::DataReference PageClientImpl::remoteWindowTokenForAccessibility()
+{
+    return IPC::DataReference();
+}
+
+IPC::DataReference PageClientImpl::remoteElementTokenForAccessibility()
+{
+    return IPC::DataReference();
+}
+
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
     [m_contentView _didHandleKeyEvent:event.nativeEvent() eventWasHandled:eventWasHandled];

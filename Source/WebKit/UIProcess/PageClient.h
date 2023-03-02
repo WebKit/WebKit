@@ -321,6 +321,11 @@ public:
 #endif
 #endif
 
+#if PLATFORM(COCOA)
+    virtual IPC::DataReference remoteWindowTokenForAccessibility() = 0;
+    virtual IPC::DataReference remoteElementTokenForAccessibility() = 0;
+#endif
+
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     virtual void selectionDidChange() = 0;
 #endif

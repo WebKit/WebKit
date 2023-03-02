@@ -125,6 +125,9 @@ private:
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
 
+    IPC::DataReference remoteWindowTokenForAccessibility() override;
+    IPC::DataReference remoteElementTokenForAccessibility() override;
+
     void pinnedStateWillChange() final;
     void pinnedStateDidChange() final;
         

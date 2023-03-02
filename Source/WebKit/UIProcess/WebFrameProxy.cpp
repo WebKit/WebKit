@@ -31,6 +31,7 @@
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
 #include "FrameTreeNodeData.h"
+#include "PageClient.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "SubframePageProxy.h"
@@ -408,6 +409,11 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
     if (m_page) {
         m_subframePage = makeUnique<SubframePageProxy>(*this, *m_page, m_process);
         m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
+#if PLATFORM(COCOA)
+        auto elementToken = m_page->pageClient().remoteElementTokenForAccessibility();
+        auto windowToken = m_page->pageClient().remoteWindowTokenForAccessibility();
+        m_subframePage->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken));
+#endif
     }
 }
 

@@ -691,6 +691,9 @@ public:
     void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullscreen();
 
+    IPC::DataReference remoteElementToken();
+    IPC::DataReference remoteWindowToken();
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
