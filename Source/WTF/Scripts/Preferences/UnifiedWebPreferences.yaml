@@ -3618,6 +3618,21 @@ LinkPreconnect:
     WebCore:
       default: false
 
+LinkPreconnectEarlyHintsEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Link rel=preconnect via HTTP early hints"
+  humanReadableDescription: "Enable link rel=preconnect via early hints"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(SERVER_PRECONNECT)": true
+      default: false
+    WebCore:
+      default: false
+
 LinkPrefetchEnabled:
   type: bool
   status: testable

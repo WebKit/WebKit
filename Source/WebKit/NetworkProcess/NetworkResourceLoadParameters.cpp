@@ -71,6 +71,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , URL&& mainDocumentURL
     , std::optional<UserContentControllerIdentifier> userContentControllerIdentifier
 #endif
+    , bool linkPreconnectEarlyHintsEnabled
     ) : NetworkLoadParameters(WTFMove(networkLoadParameters))
         , identifier(identifier)
         , maximumBufferingTime(maximumBufferingTime)
@@ -107,6 +108,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , mainDocumentURL(WTFMove(mainDocumentURL))
         , userContentControllerIdentifier(userContentControllerIdentifier)
 #endif
+        , linkPreconnectEarlyHintsEnabled(linkPreconnectEarlyHintsEnabled)
 {
     if (httpBody) {
         request.setHTTPBody(WTFMove(httpBody));

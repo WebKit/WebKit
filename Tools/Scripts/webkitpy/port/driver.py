@@ -195,8 +195,10 @@ class Driver(object):
         self.web_platform_test_server_doc_root = self._port.web_platform_test_server_doc_root()
         self.web_platform_test_server_base_http_url = self._port.web_platform_test_server_base_http_url()
         self.web_platform_test_server_base_https_url = self._port.web_platform_test_server_base_https_url()
-        self.web_platform_test_server_localhost_base_https_url = self._port.web_platform_test_server_base_https_url(localhost_only=True)
+        self.web_platform_test_server_base_h2_url = self._port.web_platform_test_server_base_h2_url()
         self.web_platform_test_server_localhost_base_http_url = self._port.web_platform_test_server_base_http_url(localhost_only=True)
+        self.web_platform_test_server_localhost_base_https_url = self._port.web_platform_test_server_base_https_url(localhost_only=True)
+        self.web_platform_test_server_localhost_base_h2_url = self._port.web_platform_test_server_base_h2_url(localhost_only=True)
 
     def __del__(self):
         self.stop()
@@ -362,7 +364,12 @@ class Driver(object):
 
     def wpt_webkit_test_path_to_uri(self, path):
         # Our custom test cases currently hardcode localhost/127.0.0.1 for all tests.
-        return self.web_platform_test_server_localhost_base_https_url + path if ".https." in path else self.web_platform_test_server_localhost_base_http_url + path
+        if ".h2." in path:
+            return self.web_platform_test_server_localhost_base_h2_url + path
+        elif ".https." in path:
+            return self.web_platform_test_server_localhost_base_https_url + path
+        else:
+            return self.web_platform_test_server_localhost_base_http_url + path
 
     def http_test_path_to_uri(self, path):
         path = path.replace(os.sep, '/')

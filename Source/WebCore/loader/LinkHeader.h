@@ -85,7 +85,7 @@ private:
 
 class LinkHeaderSet {
 public:
-    LinkHeaderSet(const String& header);
+    WEBCORE_EXPORT LinkHeaderSet(const String& header);
 
     Vector<LinkHeader>::const_iterator begin() const { return m_headerSet.begin(); }
     Vector<LinkHeader>::const_iterator end() const { return m_headerSet.end(); }

@@ -6288,3 +6288,6 @@ ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html 
 
 #Skipping counter-style-at-rules tests until we rendering of counter-styles get implemented.
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/ [ Skip ]
+
+# Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
+http/wpt/loading/early-hints [ Skip ]

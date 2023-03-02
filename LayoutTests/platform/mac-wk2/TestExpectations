@@ -1824,3 +1824,6 @@ webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ Ima
 webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Pass Failure ]
 webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm-init-inside-segment.html [ Pass Failure ]
 webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm.html [ Pass Failure ]
+
+# Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
+[ Monterey+ ] http/wpt/loading/early-hints [ Pass ]

@@ -104,4 +104,5 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     std::optional<WebKit::UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
 
+    bool linkPreconnectEarlyHintsEnabled;
 };

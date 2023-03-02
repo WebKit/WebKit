@@ -89,6 +89,7 @@ GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
 NetworkProcess/BackgroundFetchLoad.cpp
 NetworkProcess/DatabaseUtilities.cpp
+NetworkProcess/EarlyHintsResourceLoader.cpp
 NetworkProcess/NetworkActivityTracker.cpp
 NetworkProcess/NetworkBroadcastChannelRegistry.cpp
 NetworkProcess/NetworkCORSPreflightChecker.cpp

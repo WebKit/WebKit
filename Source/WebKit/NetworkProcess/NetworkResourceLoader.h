@@ -51,6 +51,7 @@ namespace WebCore {
 class BlobDataFileReference;
 class ContentFilter;
 class FormData;
+class LinkHeader;
 class NetworkStorageSession;
 class Report;
 class ResourceRequest;
@@ -58,6 +59,7 @@ class ResourceRequest;
 
 namespace WebKit {
 
+class EarlyHintsResourceLoader;
 class NetworkConnectionToWebProcess;
 class NetworkLoad;
 class NetworkLoadChecker;
@@ -126,6 +128,7 @@ public:
     bool isSynchronous() const final;
     bool isAllowedToAskUserForCredentials() const final { return m_isAllowedToAskUserForCredentials; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) final;
+    void didReceiveInformationalResponse(WebCore::ResourceResponse&&) final;
     void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) final;
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) final;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
@@ -306,6 +309,7 @@ private:
     ResponseCompletionHandler m_responseCompletionHandler;
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
+    std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
 #if ENABLE(SERVICE_WORKER)

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+async function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        const element = document.createElement("img");
+        element.src = url;
+        element.onload = resolve;
+        element.onerror = reject;
+        document.body.appendChild(element);
+    });
+}
+
+promise_test(async (t) => {
+    const params = new URLSearchParams(window.location.search);
+    const imageURL = params.get("image_url");
+    await loadImage(imageURL);
+
+    // FIXME: looking at connection establishment duration can be flaky when running multiple tests
+    // in a row, since a subsequent test might reuse a socket from a previous test. In that case,
+    // the connection establishment duration will be 0 even though a preconnect wasn't issued.
+    //
+    // It's still useful to have this check enabled in the test cases where we do an early
+    // preconnect (e.g. when we don't block the preconnect via CSP). This check can be used when
+    // running tests singly to make sure that the early preconnect is actually used.
+    if (params.get("csp") != "allow-self") {
+        const entries = performance.getEntriesByName(imageURL);
+        assert_equals(entries.length, 1);
+        assert_equals(entries[0].connectStart, entries[0].connectEnd, "Connection establishment duration should be 0 when loading a resource over a preconnected socket.");
+    }
+}, "Early hints preconnect");
+</script>
+</body>

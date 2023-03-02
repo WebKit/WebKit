@@ -527,6 +527,9 @@ class TestPort(Port):
     def web_platform_test_server_base_https_url(self, localhost_only=False):
         return "https://localhost:8800/"
 
+    def web_platform_test_server_base_h2_url(self, localhost_only=False):
+        return "https://localhost:9000/"
+
     def _path_to_lighttpd(self):
         return "/usr/sbin/lighttpd"
 
