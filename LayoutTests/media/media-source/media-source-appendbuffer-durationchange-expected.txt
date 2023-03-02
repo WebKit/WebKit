@@ -1,0 +1,16 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(durationchange)
+EVENT(durationchange)
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = source.duration)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(durationchange)
+EVENT(durationchange)
+EVENT(update)
+EXPECTED (2 == '2') OK
+END OF TEST
+

@@ -137,12 +137,14 @@ void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampCha
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
+void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_connectionToWebProcess)
+    if (!m_connectionToWebProcess) {
+        completionHandler();
         return;
+    }
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier);
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), WTFMove(completionHandler), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDuration)

@@ -79,9 +79,6 @@ public:
 
     void setInitialVideoSize(const FloatSize&);
 
-    void blockDurationChanges();
-    void unblockDurationChanges();
-
     void asyncStateChangeDone() override;
 
     bool hasAllTracks() const { return m_hasAllTracks; }
@@ -109,8 +106,6 @@ private:
     WeakPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
-    bool m_areDurationChangesBlocked = false;
-    bool m_shouldReportDurationWhenUnblocking = false;
     bool m_isPipelinePlaying = true;
     bool m_hasAllTracks = false;
     Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;
