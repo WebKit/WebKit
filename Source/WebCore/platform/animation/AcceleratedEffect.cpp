@@ -90,6 +90,11 @@ Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect)
     return adoptRef(*new AcceleratedEffect(effect));
 }
 
+Ref<AcceleratedEffect> AcceleratedEffect::create(Vector<AcceleratedEffectKeyframe>&& keyframes, WebAnimationType type, FillMode fill, PlaybackDirection direction, CompositeOperation composite, RefPtr<TimingFunction>&& timingFunction, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double iterationStart, double iterations, double playbackRate, Seconds delay, Seconds endDelay, Seconds iterationDuration, Seconds activeDuration, Seconds endTime, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+{
+    return adoptRef(*new AcceleratedEffect(WTFMove(keyframes), type, fill, direction, composite, WTFMove(timingFunction), WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, iterationStart, iterations, playbackRate, delay, endDelay, iterationDuration, activeDuration, endTime, startTime, holdTime));
+}
+
 AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect)
 {
     m_fill = effect.fill();
@@ -153,6 +158,29 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect)
 
         m_keyframes.append(WTFMove(acceleratedKeyframe));
     }
+}
+
+AcceleratedEffect::AcceleratedEffect(Vector<AcceleratedEffectKeyframe>&& keyframes, WebAnimationType type, FillMode fill, PlaybackDirection direction, CompositeOperation composite, RefPtr<TimingFunction>&& timingFunction, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double iterationStart, double iterations, double playbackRate, Seconds delay, Seconds endDelay, Seconds iterationDuration, Seconds activeDuration, Seconds endTime, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+    : m_keyframes(WTFMove(keyframes))
+    , m_animationType(type)
+    , m_fill(fill)
+    , m_direction(direction)
+    , m_compositeOperation(composite)
+    , m_timingFunction(WTFMove(timingFunction))
+    , m_defaultKeyframeTimingFunction(WTFMove(defaultKeyframeTimingFunction))
+    , m_animatedProperties(WTFMove(animatedProperties))
+    , m_paused(paused)
+    , m_iterationStart(iterationStart)
+    , m_iterations(iterations)
+    , m_playbackRate(playbackRate)
+    , m_delay(delay)
+    , m_endDelay(endDelay)
+    , m_iterationDuration(iterationDuration)
+    , m_activeDuration(activeDuration)
+    , m_endTime(endTime)
+    , m_startTime(startTime)
+    , m_holdTime(holdTime)
+{
 }
 
 } // namespace WebCore
