@@ -919,9 +919,14 @@ public:
     
     void sub64(RegisterID a, RegisterID b, RegisterID dest)
     {
-        ASSERT(b != dest);
-        move(a, dest);
-        sub64(b, dest);
+        if (b != dest) {
+            move(a, dest);
+            sub64(b, dest);
+        } else if (a != b) {
+            neg64(b);
+            add64(a, b);
+        } else
+            move(TrustedImm32(0), dest);
     }
 
     void sub64(TrustedImm32 imm, RegisterID dest)
