@@ -920,6 +920,29 @@ TEST(WebKit, FindInPDFAfterReload)
     searchForText();
 }
 
+TEST(WebKit, FindInPDFAfterFindInPage)
+{
+    auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+
+    auto *findInteraction = [webView findInteraction];
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+    [webView waitForNextPresentationUpdate];
+
+    [findInteraction dismissFindNavigator];
+    [webView waitForNextPresentationUpdate];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+    [webView waitForNextPresentationUpdate];
+
+    [findInteraction dismissFindNavigator];
+    [webView waitForNextPresentationUpdate];
+}
+
 TEST(WebKit, FindInteractionSupportsTextReplacement)
 {
     auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
