@@ -68,16 +68,3 @@ public:
 };
     
 } // namespace WebCore
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AlternativeTextType> {
-    using values = EnumValues<
-        WebCore::AlternativeTextType,
-        WebCore::AlternativeTextType::Correction,
-        WebCore::AlternativeTextType::Reversion,
-        WebCore::AlternativeTextType::SpellingSuggestions,
-        WebCore::AlternativeTextType::DictationAlternatives
-    >;
-};
-
-}

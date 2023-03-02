@@ -38,18 +38,3 @@ enum class RTCErrorDetailType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::RTCErrorDetailType> {
-    using values = EnumValues<
-        WebCore::RTCErrorDetailType,
-        WebCore::RTCErrorDetailType::DataChannelFailure,
-        WebCore::RTCErrorDetailType::DtlsFailure,
-        WebCore::RTCErrorDetailType::FingerprintFailure,
-        WebCore::RTCErrorDetailType::SctpFailure,
-        WebCore::RTCErrorDetailType::SdpSyntaxError
-    >;
-};
-
-}

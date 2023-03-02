@@ -37,17 +37,4 @@ enum class MediaSessionPlaybackState : uint8_t {
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaSessionPlaybackState> {
-    using values = EnumValues<
-        WebCore::MediaSessionPlaybackState,
-        WebCore::MediaSessionPlaybackState::None,
-        WebCore::MediaSessionPlaybackState::Paused,
-        WebCore::MediaSessionPlaybackState::Playing
-    >;
-};
-
-}
-
 #endif // ENABLE(MEDIA_SESSION)

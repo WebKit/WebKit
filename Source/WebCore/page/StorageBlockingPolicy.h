@@ -36,16 +36,3 @@ enum class StorageBlockingPolicy : uint8_t {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::StorageBlockingPolicy> {
-    using values = EnumValues<
-        WebCore::StorageBlockingPolicy,
-        WebCore::StorageBlockingPolicy::AllowAll,
-        WebCore::StorageBlockingPolicy::BlockThirdParty,
-        WebCore::StorageBlockingPolicy::BlockAll
-    >;
-};
-
-} // namespace WTF

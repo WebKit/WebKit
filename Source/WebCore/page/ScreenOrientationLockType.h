@@ -41,21 +41,3 @@ enum class ScreenOrientationLockType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ScreenOrientationLockType> {
-    using values = EnumValues<
-        WebCore::ScreenOrientationLockType,
-        WebCore::ScreenOrientationLockType::Any,
-        WebCore::ScreenOrientationLockType::Natural,
-        WebCore::ScreenOrientationLockType::Landscape,
-        WebCore::ScreenOrientationLockType::Portrait,
-        WebCore::ScreenOrientationLockType::PortraitPrimary,
-        WebCore::ScreenOrientationLockType::PortraitSecondary,
-        WebCore::ScreenOrientationLockType::LandscapePrimary,
-        WebCore::ScreenOrientationLockType::LandscapeSecondary
-    >;
-};
-
-} // namespace WTF

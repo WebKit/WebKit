@@ -140,17 +140,6 @@ protected:
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::MediaProducerMediaCaptureKind> {
-    using values = EnumValues<
-        WebCore::MediaProducerMediaCaptureKind,
-        WebCore::MediaProducerMediaCaptureKind::Microphone,
-        WebCore::MediaProducerMediaCaptureKind::Camera,
-        WebCore::MediaProducerMediaCaptureKind::Display,
-        WebCore::MediaProducerMediaCaptureKind::SystemAudio,
-        WebCore::MediaProducerMediaCaptureKind::EveryKind
-    >;
-};
-
 template<> struct EnumTraits<WebCore::MediaProducerMediaState> {
     using values = EnumValues<
         WebCore::MediaProducerMediaState,

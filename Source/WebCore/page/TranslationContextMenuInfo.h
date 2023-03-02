@@ -43,70 +43,8 @@ struct TranslationContextMenuInfo {
     IntPoint locationInRootView;
     TranslationContextMenuMode mode { TranslationContextMenuMode::NonEditable };
     TranslationContextMenuSource source { TranslationContextMenuSource::Unspecified };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<TranslationContextMenuInfo> decode(Decoder&);
 };
-
-template<class Encoder> void TranslationContextMenuInfo::encode(Encoder& encoder) const
-{
-    encoder << text;
-    encoder << selectionBoundsInRootView;
-    encoder << locationInRootView;
-    encoder << mode;
-    encoder << source;
-}
-
-template<class Decoder> std::optional<TranslationContextMenuInfo> TranslationContextMenuInfo::decode(Decoder& decoder)
-{
-    std::optional<String> text;
-    decoder >> text;
-    if (!text)
-        return std::nullopt;
-
-    std::optional<IntRect> selectionBoundsInRootView;
-    decoder >> selectionBoundsInRootView;
-    if (!selectionBoundsInRootView)
-        return std::nullopt;
-
-    std::optional<IntPoint> locationInRootView;
-    decoder >> locationInRootView;
-    if (!locationInRootView)
-        return std::nullopt;
-
-    std::optional<TranslationContextMenuMode> mode;
-    decoder >> mode;
-    if (!mode)
-        return std::nullopt;
-
-    std::optional<TranslationContextMenuSource> source;
-    decoder >> source;
-    if (!source)
-        return std::nullopt;
-
-    return { { WTFMove(*text), WTFMove(*selectionBoundsInRootView), WTFMove(*locationInRootView), *mode, *source } };
-}
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::TranslationContextMenuMode> {
-    using values = EnumValues<
-        WebCore::TranslationContextMenuMode,
-        WebCore::TranslationContextMenuMode::NonEditable,
-        WebCore::TranslationContextMenuMode::Editable
-    >;
-};
-
-template<> struct EnumTraits<WebCore::TranslationContextMenuSource> {
-    using values = EnumValues<
-        WebCore::TranslationContextMenuSource,
-        WebCore::TranslationContextMenuSource::Unspecified,
-        WebCore::TranslationContextMenuSource::Image
-    >;
-};
-
-} // namespace WTF
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
