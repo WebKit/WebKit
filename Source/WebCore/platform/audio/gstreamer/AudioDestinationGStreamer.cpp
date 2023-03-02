@@ -63,7 +63,7 @@ static unsigned long maximumNumberOfOutputChannels()
         auto monitor = adoptGRef(gst_device_monitor_new());
         auto caps = adoptGRef(gst_caps_new_empty_simple("audio/x-raw"));
         gst_device_monitor_add_filter(monitor.get(), "Audio/Sink", caps.get());
-        gst_device_monitor_start(monitor.get());
+        bool started = gst_device_monitor_start(monitor.get());
         auto* devices = gst_device_monitor_get_devices(monitor.get());
         while (devices) {
             auto device = adoptGRef(GST_DEVICE_CAST(devices->data));
@@ -81,7 +81,8 @@ static unsigned long maximumNumberOfOutputChannels()
             devices = g_list_delete_link(devices, devices);
         }
         GST_DEBUG("maximumNumberOfOutputChannels: %d", count);
-        gst_device_monitor_stop(monitor.get());
+        if (started)
+            gst_device_monitor_stop(monitor.get());
     });
 
     return count;
