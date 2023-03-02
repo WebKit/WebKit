@@ -115,10 +115,10 @@ template<> FunctionExecutable* JSTestJSBuiltinConstructorDOMConstructor::initial
 
 static const HashTableValue JSTestJSBuiltinConstructorPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestJSBuiltinConstructorConstructor, 0 } },
-    { "testAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::Accessor | JSC::PropertyAttribute::Builtin), NoIntrinsic, { HashTableValue::BuiltinAccessorType, testJSBuiltinConstructorTestAttributeCodeGenerator, setTestJSBuiltinConstructorTestAttributeCodeGenerator } },
-    { "testAttributeCustom"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestJSBuiltinConstructor_testAttributeCustom, 0 } },
-    { "testAttributeRWCustom"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestJSBuiltinConstructor_testAttributeRWCustom, setJSTestJSBuiltinConstructor_testAttributeRWCustom } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestJSBuiltinConstructorConstructor, 0 } },
+    { "testAttribute"_s, JSC::PropertyAttribute::Accessor | JSC::PropertyAttribute::Builtin, NoIntrinsic, { HashTableValue::BuiltinAccessorType, testJSBuiltinConstructorTestAttributeCodeGenerator, setTestJSBuiltinConstructorTestAttributeCodeGenerator } },
+    { "testAttributeCustom"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestJSBuiltinConstructor_testAttributeCustom, 0 } },
+    { "testAttributeRWCustom"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestJSBuiltinConstructor_testAttributeRWCustom, setJSTestJSBuiltinConstructor_testAttributeRWCustom } },
     { "testFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Builtin), NoIntrinsic, { HashTableValue::BuiltinGeneratorType, testJSBuiltinConstructorTestFunctionCodeGenerator, 0 } },
     { "testCustomFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestJSBuiltinConstructorPrototypeFunction_testCustomFunction, 0 } },
 };

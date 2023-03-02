@@ -72,7 +72,7 @@ static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
     { "PaintWorkletGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSPaintWorkletGlobalScopeTable = { 2, 3, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
+static const HashTable JSPaintWorkletGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
 template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
 
 template<> JSValue JSPaintWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,10 +99,10 @@ static const struct CompactHashIndex JSPaintWorkletGlobalScopePrototypeTableInde
 
 static const HashTableValue JSPaintWorkletGlobalScopePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScopeConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsPaintWorkletGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSPaintWorkletGlobalScopePrototypeTable = { 1, 1, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopePrototypeTableValues, JSPaintWorkletGlobalScopePrototypeTableIndex };
+static const HashTable JSPaintWorkletGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopePrototypeTableValues, JSPaintWorkletGlobalScopePrototypeTableIndex };
 const ClassInfo JSPaintWorkletGlobalScopePrototype::s_info = { "PaintWorkletGlobalScope"_s, &Base::s_info, &JSPaintWorkletGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopePrototype) };
 
 void JSPaintWorkletGlobalScopePrototype::finishCreation(VM& vm)
