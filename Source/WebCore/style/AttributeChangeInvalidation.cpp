@@ -76,6 +76,10 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
     for (auto& invalidationRuleSet : *invalidationRuleSets) {
         for (auto* selector : invalidationRuleSet.invalidationSelectors) {
+            if (!selector->isAttributeSelector()) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
             bool oldMatches = !oldValue.isNull() && SelectorChecker::attributeSelectorMatches(m_element, attributeName, oldValue, *selector);
             bool newMatches = !newValue.isNull() && SelectorChecker::attributeSelectorMatches(m_element, attributeName, newValue, *selector);
             if (oldMatches != newMatches) {
