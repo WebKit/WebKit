@@ -30,7 +30,7 @@
 
 #include "AddEventListenerOptions.h"
 #include "AttachmentElementClient.h"
-#include "CustomEvent.h"
+#include "DOMRectReadOnly.h"
 #include "DOMURL.h"
 #include "Document.h"
 #include "Editor.h"
@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "MIMETypeRegistry.h"
+#include "MouseEvent.h"
 #include "RenderAttachment.h"
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
@@ -201,15 +202,17 @@ public:
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
         if (event.type() == eventNames().clickEvent) {
+            auto& mouseEvent = downcast<MouseEvent>(event);
+            auto copiedEvent = MouseEvent::create(
+                m_attachment->attributeWithoutSynchronization(saveAttr()), Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::No,
+                mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenX(), mouseEvent.screenY(), mouseEvent.clientX(), mouseEvent.clientY(),
+                mouseEvent.modifierKeys(), mouseEvent.button(), mouseEvent.buttons(), mouseEvent.syntheticClickType(), nullptr);
+
             event.preventDefault();
             event.stopPropagation();
             event.stopImmediatePropagation();
 
-            CustomEvent::Init init;
-            init.bubbles = true;
-            init.cancelable = true;
-            init.composed = true;
-            m_attachment->dispatchEvent(CustomEvent::create(m_attachment->attributeWithoutSynchronization(saveAttr()), init, event.isTrusted() ? Event::IsTrusted::Yes : Event::IsTrusted::No));
+            m_attachment->dispatchEvent(copiedEvent);
         } else
             ASSERT_NOT_REACHED();
     }
@@ -243,6 +246,16 @@ void HTMLAttachmentElement::updateSaveButton(const AtomString& eventTypeName)
     }
 }
 
+DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
+{
+    if (!m_saveButton)
+        return nullptr;
+
+    bool unusedIsReplaced;
+    auto rect = m_saveButton->pixelSnappedRenderRect(&unusedIsReplaced);
+    m_saveButtonClientRect = DOMRectReadOnly::create(rect.x(), rect.y(), rect.width(), rect.height());
+    return m_saveButtonClientRect.get();
+}
 
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
