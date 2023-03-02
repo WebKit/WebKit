@@ -686,12 +686,53 @@ template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t value)
 
 template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<EnumNamespace2::OptionSetEnumType> value)
 {
-    constexpr uint8_t allValidBitsValue =
-        static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue)
+    constexpr uint8_t allValidBitsValue = 0
+        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue)
 #if ENABLE(OPTION_SET_SECOND_VALUE)
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue)
 #endif
-        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue);
+        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue)
+        | 0;
+    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
+}
+
+template<> bool isValidOptionSet<OptionSetEnumFirstCondition>(OptionSet<OptionSetEnumFirstCondition> value)
+{
+    constexpr uint32_t allValidBitsValue = 0
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+        | static_cast<uint32_t>(OptionSetEnumFirstCondition::OptionSetFirstValue)
+#endif
+        | static_cast<uint32_t>(OptionSetEnumFirstCondition::OptionSetSecondValue)
+        | static_cast<uint32_t>(OptionSetEnumFirstCondition::OptionSetThirdValue)
+        | 0;
+    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
+}
+
+template<> bool isValidOptionSet<OptionSetEnumLastCondition>(OptionSet<OptionSetEnumLastCondition> value)
+{
+    constexpr uint32_t allValidBitsValue = 0
+        | static_cast<uint32_t>(OptionSetEnumLastCondition::OptionSetFirstValue)
+        | static_cast<uint32_t>(OptionSetEnumLastCondition::OptionSetSecondValue)
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+        | static_cast<uint32_t>(OptionSetEnumLastCondition::OptionSetThirdValue)
+#endif
+        | 0;
+    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
+}
+
+template<> bool isValidOptionSet<OptionSetEnumAllCondition>(OptionSet<OptionSetEnumAllCondition> value)
+{
+    constexpr uint32_t allValidBitsValue = 0
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+        | static_cast<uint32_t>(OptionSetEnumAllCondition::OptionSetFirstValue)
+#endif
+#if ENABLE(OPTION_SET_SECOND_VALUE)
+        | static_cast<uint32_t>(OptionSetEnumAllCondition::OptionSetSecondValue)
+#endif
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+        | static_cast<uint32_t>(OptionSetEnumAllCondition::OptionSetThirdValue)
+#endif
+        | 0;
     return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
 }
 

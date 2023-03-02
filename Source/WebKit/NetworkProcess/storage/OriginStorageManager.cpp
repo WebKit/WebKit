@@ -190,8 +190,10 @@ String OriginStorageManager::StorageBucket::toStorageIdentifier(StorageType type
         return "IndexedDB"_s;
     case StorageType::CacheStorage:
         return "CacheStorage"_s;
+#if ENABLE(SERVICE_WORKER)
     case StorageType::BackgroundFetchStorage:
         return "BackgroundFetchStorage"_s;
+#endif
     default:
         break;
     }
@@ -591,8 +593,10 @@ String OriginStorageManager::StorageBucket::resolvedPath(WebsiteDataType webiste
         return resolvedIDBStoragePath();
     case StorageType::CacheStorage:
         return resolvedCacheStoragePath();
+#if ENABLE(SERVICE_WORKER)
     case StorageType::BackgroundFetchStorage:
         return resolvedBackgroundFetchStoragePath();
+#endif
     case StorageType::SessionStorage:
     case StorageType::FileSystem:
         return typeStoragePath(*type);

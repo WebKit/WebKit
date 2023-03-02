@@ -209,6 +209,31 @@ Vector<SerializedEnumInfo> allSerializedEnums()
 #endif
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue),
         } },
+        { "OptionSetEnumFirstCondition"_s, sizeof(OptionSetEnumFirstCondition), true, {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+            static_cast<uint64_t>(OptionSetEnumFirstCondition::OptionSetFirstValue),
+#endif
+            static_cast<uint64_t>(OptionSetEnumFirstCondition::OptionSetSecondValue),
+            static_cast<uint64_t>(OptionSetEnumFirstCondition::OptionSetThirdValue),
+        } },
+        { "OptionSetEnumLastCondition"_s, sizeof(OptionSetEnumLastCondition), true, {
+            static_cast<uint64_t>(OptionSetEnumLastCondition::OptionSetFirstValue),
+            static_cast<uint64_t>(OptionSetEnumLastCondition::OptionSetSecondValue),
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+            static_cast<uint64_t>(OptionSetEnumLastCondition::OptionSetThirdValue),
+#endif
+        } },
+        { "OptionSetEnumAllCondition"_s, sizeof(OptionSetEnumAllCondition), true, {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+            static_cast<uint64_t>(OptionSetEnumAllCondition::OptionSetFirstValue),
+#endif
+#if ENABLE(OPTION_SET_SECOND_VALUE)
+            static_cast<uint64_t>(OptionSetEnumAllCondition::OptionSetSecondValue),
+#endif
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+            static_cast<uint64_t>(OptionSetEnumAllCondition::OptionSetThirdValue),
+#endif
+        } },
     };
 }
 

@@ -604,14 +604,15 @@ def generate_impl(serialized_types, serialized_enums, headers):
         result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ' value)')
         result.append('{')
         if enum.is_option_set():
-            result.append('    constexpr ' + enum.underlying_type + ' allValidBitsValue =')
+            result.append('    constexpr ' + enum.underlying_type + ' allValidBitsValue = 0')
             for i in range(0, len(enum.valid_values)):
                 valid_value = enum.valid_values[i]
                 if valid_value.condition is not None:
                     result.append('#if ' + valid_value.condition)
-                result.append('        ' + ('' if i == 0 else '| ') + 'static_cast<' + enum.underlying_type + '>(' + enum.namespace_and_name() + '::' + valid_value.name + ')' + (';' if i == len(enum.valid_values) - 1 else ''))
+                result.append('        | static_cast<' + enum.underlying_type + '>(' + enum.namespace_and_name() + '::' + valid_value.name + ')')
                 if valid_value.condition is not None:
                     result.append('#endif')
+            result.append('        | 0;')
             result.append('    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;')
         else:
             result.append('    switch (static_cast<' + enum.namespace_and_name() + '>(value)) {')

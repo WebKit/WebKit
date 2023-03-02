@@ -109,4 +109,33 @@ struct NullableSoftLinkedMember {
   WebCore::SpringTimingFunction
 }
 
+[OptionSet] enum class OptionSetEnumFirstCondition : uint32_t {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+    OptionSetFirstValue,
+#endif
+    OptionSetSecondValue,
+    OptionSetThirdValue,
+}
+
+[OptionSet] enum class OptionSetEnumLastCondition : uint32_t {
+    OptionSetFirstValue,
+    OptionSetSecondValue,
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+    OptionSetThirdValue,
+#endif
+}
+
+[OptionSet] enum class OptionSetEnumAllCondition : uint32_t {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+    OptionSetFirstValue,
+#endif
+#if ENABLE(OPTION_SET_SECOND_VALUE)
+    OptionSetSecondValue,
+#endif
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+    OptionSetThirdValue,
+#endif
+}
+
 using WebCore::SharedStringHash = uint32_t
+
