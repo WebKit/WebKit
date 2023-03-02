@@ -2402,11 +2402,13 @@ FetchMetadataEnabled:
   humanReadableDescription: "Enable Fetch Metadata headers"
   defaultValue:
     WebCore:
+      "PLATFORM(COCOA)" : false
       default: true
     WebKit:
+      "PLATFORM(COCOA)" : false
       default: true
     WebKitLegacy:
-      default: true
+      default: false
 
 FileReaderAPIEnabled:
   type: bool
