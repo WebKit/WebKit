@@ -78,9 +78,15 @@ if (ENABLE_WEBCORE)
         OPTIONAL_COMPONENTS ${WebKitRequirements_OPTIONAL_COMPONENTS}
     )
 
+    set(Brotli_NAMES SceVshBrotli)
+    set(Brotli_DEC_NAMES ${Brotli_NAMES})
+    set(Cairo_NAMES SceCairoForWebKit)
+    set(HarfBuzz_NAMES SceVshHarfbuzz)
+    set(HarfBuzz_ICU_NAMES ${HarfBuzz_NAMES})
     # The OpenGL ES implementation is in the same library as the EGL implementation
     set(OpenGLES2_NAMES ${EGL_NAMES})
 
+    find_package(Brotli OPTIONAL_COMPONENTS dec)
     find_package(CURL 7.77.0 REQUIRED)
     find_package(Cairo REQUIRED)
     find_package(EGL REQUIRED)
@@ -92,6 +98,7 @@ if (ENABLE_WEBCORE)
     find_package(PNG REQUIRED)
 
     list(APPEND PlayStationModule_TARGETS
+        Brotli::dec
         CURL::libcurl
         Cairo::Cairo
         Fontconfig::Fontconfig
@@ -108,6 +115,7 @@ if (ENABLE_WEBCORE)
     endif ()
 
     if (NOT TARGET LibPSL::LibPSL)
+        set(LibPSL_NAMES SceVshPsl)
         find_package(LibPSL 0.20.2 REQUIRED)
         list(APPEND PlayStationModule_TARGETS LibPSL::LibPSL)
     endif ()
