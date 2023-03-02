@@ -890,6 +890,8 @@ static WebCore::AttestationConveyancePreference attestationConveyancePreference(
         return WebCore::AttestationConveyancePreference::Indirect;
     case _WKAttestationConveyancePreferenceDirect:
         return WebCore::AttestationConveyancePreference::Direct;
+    case _WKAttestationConveyancePreferenceEnterprise:
+        return WebCore::AttestationConveyancePreference::Enterprise;
     default:
         ASSERT_NOT_REACHED();
         return WebCore::AttestationConveyancePreference::None;

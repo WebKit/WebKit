@@ -79,6 +79,8 @@ static inline RetainPtr<NSString> toNSString(AttestationConveyancePreference att
         return @"indirect";
     case AttestationConveyancePreference::None:
         return @"none";
+    case AttestationConveyancePreference::Enterprise:
+        return @"enterprise";
     }
 
     return @"none";
