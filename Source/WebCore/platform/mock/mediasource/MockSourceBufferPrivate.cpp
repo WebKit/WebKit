@@ -135,10 +135,10 @@ MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
 
 void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
 {
-    m_inputBuffer.appendVector(data);
-    SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendResult::AppendSucceeded;
+    m_inputBuffer.appendVector(WTFMove(data));
+    bool parsingSucceeded = true;
 
-    while (m_inputBuffer.size() && result == SourceBufferPrivateClient::AppendResult::AppendSucceeded) {
+    while (m_inputBuffer.size() && parsingSucceeded) {
         auto buffer = ArrayBuffer::create(m_inputBuffer.data(), m_inputBuffer.size());
         uint64_t boxLength = MockBox::peekLength(buffer.ptr());
         if (boxLength > buffer->byteLength())
@@ -152,17 +152,11 @@ void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
             MockSampleBox sampleBox = MockSampleBox(buffer.ptr());
             didReceiveSample(sampleBox);
         } else
-            result = SourceBufferPrivateClient::AppendResult::ParsingFailed;
-
+            parsingSucceeded = false;
         m_inputBuffer.remove(0, boxLength);
     }
 
-    // Resolve the changes in TrackBuffers' buffered ranges
-    // into the SourceBuffer's buffered ranges
-    updateBufferedFromTrackBuffers(m_mediaSource->isEnded());
-
-    if (m_client)
-        m_client->sourceBufferPrivateAppendComplete(result);
+    SourceBufferPrivate::appendCompleted(parsingSucceeded, m_mediaSource->isEnded());
 }
 
 void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitializationBox& initBox)

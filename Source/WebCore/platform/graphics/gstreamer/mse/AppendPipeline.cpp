@@ -553,17 +553,12 @@ void AppendPipeline::consumeAppsinksAvailableSamples()
 
     GRefPtr<GstSample> sample;
     int batchedSampleCount = 0;
-    // In some cases each frame increases the duration of the movie.
-    // Batch duration changes so that if we pick 100 of such samples we don't have to run 100 times
-    // layout for the video controls, but only once.
-    m_playerPrivate->blockDurationChanges();
     for (std::unique_ptr<Track>& track : m_tracks) {
         while ((sample = adoptGRef(gst_app_sink_try_pull_sample(GST_APP_SINK(track->appsink.get()), 0)))) {
             appsinkNewSample(*track, WTFMove(sample));
             batchedSampleCount++;
         }
     }
-    m_playerPrivate->unblockDurationChanges();
 
     GST_TRACE_OBJECT(pipeline(), "batchedSampleCount = %d", batchedSampleCount);
 }

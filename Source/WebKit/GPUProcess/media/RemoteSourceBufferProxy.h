@@ -74,7 +74,7 @@ private:
     void sourceBufferPrivateAppendError(bool decodeError) final;
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
-    void sourceBufferPrivateDurationChanged(const MediaTime&) final;
+    void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;

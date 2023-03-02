@@ -83,7 +83,7 @@ public:
         ParsingFailed
     };
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
-    virtual void sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
+    virtual void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;

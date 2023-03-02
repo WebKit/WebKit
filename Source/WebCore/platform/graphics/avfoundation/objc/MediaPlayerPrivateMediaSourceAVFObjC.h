@@ -350,6 +350,7 @@ private:
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     bool m_readyStateIsWaitingForAvailableFrame { false };
+    MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     MediaTime m_lastSeekTime;
     FloatSize m_naturalSize;
     double m_rate;

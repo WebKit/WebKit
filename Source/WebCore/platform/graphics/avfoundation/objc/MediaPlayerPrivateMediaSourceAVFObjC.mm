@@ -1055,8 +1055,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
 
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
-    m_player->durationChanged();
-
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
 
@@ -1064,6 +1062,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
         return;
 
     MediaTime duration = m_mediaSourcePrivate->duration();
+    // Avoid emiting durationchanged in the case where the previous duration was unkniwn as that case is already handled
+    // by the HTMLMediaElement.
+    if (m_mediaTimeDuration != duration && m_mediaTimeDuration.isValid())
+        m_player->durationChanged();
+    m_mediaTimeDuration = duration;
+
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(duration)]];
 
     auto logSiteIdentifier = LOGIDENTIFIER;
