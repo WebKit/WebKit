@@ -525,6 +525,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
     }), pipeline);
 }
 
+template<>
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
     return { data(), size() };

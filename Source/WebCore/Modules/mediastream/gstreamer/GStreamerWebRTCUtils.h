@@ -21,6 +21,7 @@
 
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
+#include "GStreamerCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "MediaEndpointConfiguration.h"
 #include "PeerConnectionBackend.h"
@@ -35,6 +36,8 @@
 #include "RTCRtpTransceiverDirection.h"
 #include "RTCSdpType.h"
 #include "RTCSignalingState.h"
+
+#include <gst/rtp/rtp.h>
 
 #define GST_USE_UNSTABLE_API
 #include <gst/webrtc/webrtc.h>
@@ -268,5 +271,19 @@ WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabili
 GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia*);
 WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia*);
 
+inline gboolean mapRtpBuffer(GstBuffer* buffer, GstRTPBuffer* rtpBuffer, GstMapFlags flags)
+{
+    *rtpBuffer = GST_RTP_BUFFER_INIT;
+    return gst_rtp_buffer_map(buffer, flags, rtpBuffer);
 }
-#endif
+
+inline void unmapRtpBuffer(GstBuffer*, GstRTPBuffer* rtpBuffer)
+{
+    gst_rtp_buffer_unmap(rtpBuffer);
+}
+
+using GstMappedRtpBuffer = GstBufferMapper<GstRTPBuffer, mapRtpBuffer, unmapRtpBuffer>;
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
