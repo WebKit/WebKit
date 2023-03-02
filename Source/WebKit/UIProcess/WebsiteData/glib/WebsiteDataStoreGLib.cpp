@@ -85,4 +85,12 @@ UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 #endif
 }
 
-} // namespace API
+void WebsiteDataStore::platformInitialize()
+{
+}
+
+void WebsiteDataStore::platformDestroy()
+{
+}
+
+} // namespace WebKit
