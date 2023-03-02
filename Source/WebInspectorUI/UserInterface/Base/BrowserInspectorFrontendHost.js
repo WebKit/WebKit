@@ -362,6 +362,11 @@ if (!window.InspectorFrontendHost) {
             throw "unimplemented";
         }
 
+        engineeringSettingsAllowed()
+        {
+            return false;
+        }
+
         // Private
 
         _sendPendingMessagesToBackendIfNeeded()
