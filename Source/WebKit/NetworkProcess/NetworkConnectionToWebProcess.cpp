@@ -1433,6 +1433,34 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 }
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(const String& logString, bool error)
+{
+    CString string = logString.ascii();
+
+    constexpr unsigned maxLength = 128;
+    auto stringLength = string.length();
+
+    if (stringLength > maxLength) {
+        string.mutableData()[maxLength] = 0;
+        stringLength = maxLength;
+    }
+
+    for (unsigned i = 0; i < stringLength; i++) {
+        char c = logString[i];
+        if (c >= 32 && c <= 126)
+            continue;
+
+        string.mutableData()[i] = ' ';
+    }
+
+    if (error)
+        RELEASE_LOG_ERROR(WebContent, "%s", string.data());
+    else
+        RELEASE_LOG(WebContent, "%s", string.data());
+}
+#endif
+
 } // namespace WebKit
 
 #undef CONNECTION_RELEASE_LOG

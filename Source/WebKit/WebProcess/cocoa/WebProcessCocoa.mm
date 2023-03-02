@@ -243,25 +243,10 @@ static void softlinkDataDetectorsFrameworks()
 #endif // ENABLE(DATA_DETECTION)
 }
 
-static void initializeLogd()
-{
-    os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
-
-    // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
-    // This is needed to block launchd after the WebContent process has launched, since access to launchd is
-    // required when opening new XPC connections.
-    char stringWithSpaces[1024];
-    memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
-    stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
-    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
-}
-
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
 
-    initializeLogd();
-    
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
@@ -655,8 +640,31 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void deliberateCrashForTesting()
 }
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+static void registerLogHook()
+{
+    if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
+        return;
+
+    os_log_set_hook(OS_LOG_TYPE_DEFAULT, ^(os_log_type_t type, os_log_message_t msg) {
+        char* logString = os_log_copy_message_string(msg);
+        bool isError = (type == OS_LOG_TYPE_ERROR);
+        callOnMainRunLoop([logString, isError] {
+            auto* connection = WebProcess::singleton().existingNetworkProcessConnection();
+            if (connection)
+                connection->connection().send(Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(String::fromUTF8(logString), isError), 0);
+            free(logString);
+        });
+    });
+}
+#endif
+
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    registerLogHook();
+#endif
+
 #if PLATFORM(MAC)
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
