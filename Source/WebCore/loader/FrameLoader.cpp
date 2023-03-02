@@ -854,18 +854,10 @@ void FrameLoader::subresourceLoadDone(LoadCompletionType type)
         scheduleCheckLoadComplete();
 }
 
-bool FrameLoader::preventsParentFromBeingComplete(const AbstractFrame& frame) const
-{
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-    if (!localFrame)
-        return false;
-    return !localFrame->loader().m_isComplete && (!localFrame->ownerElement() || !localFrame->ownerElement()->isLazyLoadObserverActive());
-}
-
 bool FrameLoader::allChildrenAreComplete() const
 {
     for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (preventsParentFromBeingComplete(*child))
+        if (child->preventsParentFromBeingComplete())
             return false;
     }
     return true;

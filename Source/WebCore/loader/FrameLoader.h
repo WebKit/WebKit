@@ -438,8 +438,6 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    bool preventsParentFromBeingComplete(const AbstractFrame&) const;
-
     Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;
 

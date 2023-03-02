@@ -66,6 +66,7 @@ private:
 
     FrameType frameType() const final { return FrameType::Remote; }
     void frameDetached() final;
+    bool preventsParentFromBeingComplete() const final;
 
     AbstractFrameView* virtualView() const final;
     AbstractDOMWindow* virtualWindow() const final;
@@ -75,6 +76,7 @@ private:
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
     LayerHostingContextIdentifier m_layerHostingContextIdentifier;
+    bool m_preventsParentFromBeingComplete { true };
 };
 
 } // namespace WebCore

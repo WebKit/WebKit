@@ -59,6 +59,7 @@ public:
     WEBCORE_EXPORT void disconnectOwnerElement();
 
     virtual void frameDetached() = 0;
+    virtual bool preventsParentFromBeingComplete() const = 0;
 
 protected:
     AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*);

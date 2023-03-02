@@ -31,6 +31,8 @@
 #include "FrameInfoData.h"
 #include "HandleMessage.h"
 #include "LoadParameters.h"
+#include "LoadedWebArchive.h"
+#include "NetworkProcessMessages.h"
 #include "WebFrameProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
@@ -77,7 +79,12 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
     // FIXME: Add more parameters as appropriate.
 
-    // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
+    // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
+    auto giveAllCookieAccess = LoadedWebArchive::Yes;
+    page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), pageID = m_pageID] () mutable {
+        // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
+        process->send(Messages::WebPage::LoadRequest(loadParameters), pageID);
+    });
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
 }
 
