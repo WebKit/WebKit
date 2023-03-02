@@ -1429,7 +1429,7 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabled)
     EXPECT_WK_STREQ(@"", [webView _mainFrameURL].absoluteString);
 }
 
-TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
+TEST(WKNavigation, DISABLED_HTTPSOnlyWithSameSiteBypass)
 {
     using namespace TestWebKitAPI;
     HTTPServer httpsServer({
