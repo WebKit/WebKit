@@ -44,9 +44,16 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_webrtc_pc_backend_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_pc_backend_debug
+
 static std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
     ensureGStreamerInitialized();
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_pc_backend_debug, "webkitwebrtcpeerconnection", 0, "WebKit WebRTC PeerConnection");
+    });
     if (!isGStreamerPluginAvailable("webrtc")) {
         WTFLogAlways("GstWebRTC plugin not found. Make sure to install gst-plugins-bad >= 1.20 with the webrtc plugin enabled.");
         return nullptr;
@@ -248,17 +255,20 @@ static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtp
 
 ExceptionOr<Ref<RTCRtpSender>> GStreamerPeerConnectionBackend::addTrack(MediaStreamTrack& track, FixedVector<String>&& mediaStreamIds)
 {
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Adding new track.");
     auto senderBackend = WTF::makeUnique<GStreamerRtpSenderBackend>(*this, nullptr, nullptr);
     if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
         return Exception { TypeError, "Unable to add track"_s };
 
     if (auto sender = findExistingSender(m_peerConnection.currentTransceivers(), *senderBackend)) {
+        GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Existing sender found, associating track to it.");
         backendFromRTPSender(*sender).takeSource(*senderBackend);
         sender->setTrack(track);
         sender->setMediaStreamIds(mediaStreamIds);
         return sender.releaseNonNull();
     }
 
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Creating new transceiver.");
     auto transceiverBackend = m_endpoint->transceiverBackendFromSender(*senderBackend);
 
     auto sender = RTCRtpSender::create(m_peerConnection, track, WTFMove(senderBackend));
@@ -272,10 +282,12 @@ ExceptionOr<Ref<RTCRtpSender>> GStreamerPeerConnectionBackend::addTrack(MediaStr
 template<typename T>
 ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit& init)
 {
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Adding new transceiver.");
     auto backends = m_endpoint->addTransceiver(trackOrKind, init);
     if (!backends)
         return Exception { InvalidAccessError, "Unable to add transceiver"_s };
 
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Creating new transceiver.");
     auto sender = RTCRtpSender::create(m_peerConnection, WTFMove(trackOrKind), WTFMove(backends->senderBackend));
     auto receiver = createReceiver(WTFMove(backends->receiverBackend), sender->trackKind(), sender->trackId());
     auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver), WTFMove(backends->transceiverBackend));
@@ -314,6 +326,7 @@ RTCRtpTransceiver* GStreamerPeerConnectionBackend::existingTransceiver(WTF::Func
 
 RTCRtpTransceiver& GStreamerPeerConnectionBackend::newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&& transceiverBackend, RealtimeMediaSource::Type type)
 {
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "New remote transceiver.");
     auto trackKind = type == RealtimeMediaSource::Type::Audio ? "audio"_s : "video"_s;
     auto sender = RTCRtpSender::create(m_peerConnection, trackKind, transceiverBackend->createSenderBackend(*this, nullptr, nullptr));
     auto receiver = createReceiver(transceiverBackend->createReceiverBackend(), trackKind, sender->trackId());
