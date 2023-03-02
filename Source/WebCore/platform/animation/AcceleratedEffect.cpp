@@ -85,6 +85,11 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatablePr
     }
 }
 
+Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter)
+{
+    return adoptRef(*new AcceleratedEffect(*this, propertyFilter));
+}
+
 Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect)
 {
     return adoptRef(*new AcceleratedEffect(effect));
@@ -181,6 +186,44 @@ AcceleratedEffect::AcceleratedEffect(Vector<AcceleratedEffectKeyframe>&& keyfram
     , m_startTime(startTime)
     , m_holdTime(holdTime)
 {
+}
+
+AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<AcceleratedEffectProperty>& propertyFilter)
+{
+    m_animationType = source.m_animationType;
+    m_fill = source.m_fill;
+    m_direction = source.m_direction;
+    m_compositeOperation = source.m_compositeOperation;
+    m_paused = source.m_paused;
+    m_iterationStart = source.m_iterationStart;
+    m_iterations = source.m_iterations;
+    m_playbackRate = source.m_playbackRate;
+    m_delay = source.m_delay;
+    m_endDelay = source.m_endDelay;
+    m_iterationDuration = source.m_iterationDuration;
+    m_activeDuration = source.m_activeDuration;
+    m_endTime = source.m_endTime;
+    m_startTime = source.m_startTime;
+    m_holdTime = source.m_holdTime;
+
+    m_timingFunction = source.m_timingFunction.copyRef();
+    m_defaultKeyframeTimingFunction = source.m_defaultKeyframeTimingFunction.copyRef();
+
+    for (auto& srcKeyframe : source.m_keyframes) {
+        auto& animatedProperties = srcKeyframe.animatedProperties;
+        if (!animatedProperties.containsAny(propertyFilter))
+            continue;
+
+        AcceleratedEffectKeyframe keyframe;
+        keyframe.offset = srcKeyframe.offset;
+        keyframe.values = srcKeyframe.values;
+        keyframe.compositeOperation = srcKeyframe.compositeOperation;
+        keyframe.animatedProperties = srcKeyframe.animatedProperties & propertyFilter;
+        keyframe.timingFunction = srcKeyframe.timingFunction.copyRef();
+
+        m_animatedProperties.add(keyframe.animatedProperties);
+        m_keyframes.append(WTFMove(keyframe));
+    }
 }
 
 } // namespace WebCore
