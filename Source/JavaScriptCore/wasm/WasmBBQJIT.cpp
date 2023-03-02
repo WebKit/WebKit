@@ -6868,13 +6868,22 @@ public:
         case TypeKind::Array:
         case TypeKind::Struct:
         case TypeKind::Func: {
-            resultLocation = Location::fromGPR(GPRInfo::returnValueGPR);
+            resultLocation = Location::fromGPR(GPRInfo::argumentGPR0);
+            if constexpr (GPRInfo::argumentGPR0 != GPRInfo::returnValueGPR) {
+                ASSERT(m_dataScratchGPR == GPRInfo::returnValueGPR);
+                m_jit.move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
+            }
             break;
         }
         case TypeKind::F32:
-        case TypeKind::F64:
+        case TypeKind::F64: {
+            resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+            ASSERT(m_validFPRs.contains(FPRInfo::returnValueFPR, Width::Width128));
+            break;
+        }
         case TypeKind::V128: {
             resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+            ASSERT(m_validFPRs.contains(FPRInfo::returnValueFPR, Width::Width128));
             break;
         }
         case TypeKind::Void:
