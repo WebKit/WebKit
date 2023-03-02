@@ -506,6 +506,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range)
     RequestAcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    SetCaretAnimatorType(enum:uint8_t WebCore::CaretAnimatorType caretType)
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

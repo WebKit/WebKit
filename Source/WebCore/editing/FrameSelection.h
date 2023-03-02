@@ -271,7 +271,9 @@ public:
     CaretAnimator& caretAnimator() { return m_caretAnimator.get(); }
 
     const CaretAnimator& caretAnimator() const { return m_caretAnimator.get(); }
-
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT void caretAnimatorInvalidated(CaretAnimatorType);
+#endif
 private:
     void updateSelectionAppearanceNow();
     void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent, ForceCenterScrollOption = ForceCenterScrollOption::DoNotForceCenterScroll);
@@ -320,7 +322,6 @@ private:
     void invalidateCaretRect();
 
     void caretAnimationDidUpdate(CaretAnimator&) final;
-    void caretAnimatorInvalidated(CaretAnimator&, CaretAnimatorType) final;
 
     Document* document() final;
 

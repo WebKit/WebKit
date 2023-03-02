@@ -693,6 +693,7 @@ def headers_for_type(type):
         'WebCore::BezierCurveData': ['<WebCore/InlinePathData.h>'],
         'WebCore::BlendMode': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::BrowsingContextGroupSwitchDecision': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::CaretAnimatorType': ['<WebCore/CaretAnimator.h>'],
         'WebCore::COEPDisposition': ['<WebCore/CrossOriginEmbedderPolicy.h>'],
         'WebCore::ColorSchemePreference': ['<WebCore/DocumentLoader.h>'],
         'WebCore::CompositeOperator': ['<WebCore/GraphicsTypes.h>'],

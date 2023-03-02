@@ -5699,6 +5699,11 @@ void WebPage::stopSpeaking()
 #endif
 
 #if PLATFORM(MAC)
+void WebPage::setCaretAnimatorType(WebCore::CaretAnimatorType caretType)
+{
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    frame->selection().caretAnimatorInvalidated(caretType);
+}
 
 RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 {

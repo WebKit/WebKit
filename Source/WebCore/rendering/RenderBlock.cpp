@@ -85,7 +85,7 @@ namespace WebCore {
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderBlockAdditions.h>)
 #include <WebKitAdditions/RenderBlockAdditions.h>
 #else
-static bool renderCaretInsideContentsClip()
+inline static bool renderCaretInsideContentsClip()
 {
     return true;
 }

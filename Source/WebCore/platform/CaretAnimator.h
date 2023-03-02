@@ -31,21 +31,24 @@
 
 namespace WebCore {
 
-class CaretAnimator;
-class Document;
-class Page;
-
-enum class CaretAnimatorType {
+enum class CaretAnimatorType : uint8_t {
     Default,
     Alternate
 };
+
+class CaretAnimator;
+class Color;
+class Document;
+class FloatRect;
+class GraphicsContext;
+class Node;
+class Page;
 
 class CaretAnimationClient {
 public:
     virtual ~CaretAnimationClient() = default;
 
     virtual void caretAnimationDidUpdate(CaretAnimator&) { }
-    virtual void caretAnimatorInvalidated(CaretAnimator&, CaretAnimatorType) { }
     virtual LayoutRect localCaretRect() const = 0;
 
     virtual Document* document() = 0;
@@ -86,7 +89,9 @@ public:
     virtual void setVisible(bool) = 0;
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
-    virtual CaretAnimatorType type() const { return CaretAnimatorType::Default; }
+    virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
+    virtual LayoutRect repaintCaretRectForLocalRect(LayoutRect) const;
+    virtual void addLine(float, float, TextDirection) const { }
 
 protected:
     explicit CaretAnimator(CaretAnimationClient& client)

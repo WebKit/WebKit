@@ -10280,6 +10280,11 @@ void WebPageProxy::handleAutoplayEvent(WebCore::AutoplayEvent event, OptionSet<A
 }
 
 #if PLATFORM(MAC)
+void WebPageProxy::setCaretAnimatorType(WebCore::CaretAnimatorType caretType)
+{
+    send(Messages::WebPage::SetCaretAnimatorType(caretType));
+}
+
 void WebPageProxy::performImmediateActionHitTestAtLocation(FloatPoint point)
 {
     send(Messages::WebPage::PerformImmediateActionHitTestAtLocation(point));

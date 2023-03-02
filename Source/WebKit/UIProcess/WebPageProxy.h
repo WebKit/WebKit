@@ -275,6 +275,7 @@ class TextIndicator;
 class ValidationBubble;
 
 enum class AutoplayEvent : uint8_t;
+enum class CaretAnimatorType : uint8_t;
 enum class CookieConsentDecisionResult : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
 enum class DataOwnerType : uint8_t;
@@ -1030,6 +1031,7 @@ public:
     void changeFont(WebCore::FontChanges&&);
 
 #if PLATFORM(MAC)
+    void setCaretAnimatorType(WebCore::CaretAnimatorType);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
 
     void startWindowDrag();
