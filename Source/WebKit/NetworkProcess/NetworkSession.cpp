@@ -746,11 +746,6 @@ std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFet
     return makeUnique<BackgroundFetchLoad>(m_networkProcess.get(), m_sessionID, client, request, clientOrigin);
 }
 
-void NetworkSession::requestBackgroundFetchSpace(const ClientOrigin& origin, uint64_t size, CompletionHandler<void(bool)>&& callback)
-{
-    m_storageManager->requestSpace(origin, size, WTFMove(callback));
-}
-
 Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
 {
     return BackgroundFetchStoreImpl::create(m_storageManager.get());

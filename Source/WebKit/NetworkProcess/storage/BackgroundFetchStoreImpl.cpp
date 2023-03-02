@@ -182,7 +182,7 @@ void BackgroundFetchStoreImpl::clearAllFetches(const ServiceWorkerRegistrationKe
     });
 }
 
-void BackgroundFetchStoreImpl::storeFetch(const ServiceWorkerRegistrationKey& key, const String& identifier, Vector<uint8_t>&& fetch, CompletionHandler<void(StoreResult)>&& callback)
+void BackgroundFetchStoreImpl::storeFetch(const ServiceWorkerRegistrationKey& key, const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&& fetch, CompletionHandler<void(StoreResult)>&& callback)
 {
     if (!m_manager) {
         callback(StoreResult::InternalError);
@@ -209,14 +209,14 @@ void BackgroundFetchStoreImpl::storeFetch(const ServiceWorkerRegistrationKey& ke
         callback(result);
     };
 
-    m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifier = crossThreadCopy(fetchStorageIdentifier), fetch = WTFMove(fetch), internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
+    m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifier = crossThreadCopy(fetchStorageIdentifier), downloadTotal, uploadTotal, fetch = WTFMove(fetch), internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
             callOnMainRunLoop([internalCallback = WTFMove(internalCallback)]() mutable {
                 internalCallback(StoreResult::InternalError);
             });
             return;
         }
-        backgroundFetchManager->storeFetch(fetchStorageIdentifier, WTFMove(fetch), [internalCallback = WTFMove(internalCallback)](auto result) mutable {
+        backgroundFetchManager->storeFetch(fetchStorageIdentifier, downloadTotal, uploadTotal, WTFMove(fetch), [internalCallback = WTFMove(internalCallback)](auto result) mutable {
             callOnMainRunLoop([result, internalCallback = WTFMove(internalCallback)]() mutable {
                 internalCallback(result);
             });

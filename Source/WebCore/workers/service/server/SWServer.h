@@ -282,7 +282,6 @@ public:
 
     void requestBackgroundFetchPermission(const ClientOrigin& clientOrigin, CompletionHandler<void(bool)>&& callback) { m_delegate->requestBackgroundFetchPermission(clientOrigin, WTFMove(callback)); }
     std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client& client, const BackgroundFetchRequest& request, const WebCore::ClientOrigin& origin) { return m_delegate->createBackgroundFetchRecordLoader(client, request, origin); }
-    void requestBackgroundFetchSpace(const ClientOrigin& origin, uint64_t size, CompletionHandler<void(bool)>&& callback) { m_delegate->requestBackgroundFetchSpace(origin, size, WTFMove(callback)); }
     Ref<BackgroundFetchStore> createBackgroundFetchStore() { return m_delegate->createBackgroundFetchStore(); }
 
 private:

@@ -53,10 +53,11 @@ String BackgroundFetchStoreManager::createNewStorageIdentifier()
     return makeString(createVersion4UUIDString(), fetchSuffix);
 }
 
-BackgroundFetchStoreManager::BackgroundFetchStoreManager(const String& path, Ref<WorkQueue>&& taskQueue)
+BackgroundFetchStoreManager::BackgroundFetchStoreManager(const String& path, Ref<WorkQueue>&& taskQueue, QuotaCheckFunction&& quotaCheckFunction)
     : m_path(path)
     , m_taskQueue(WTFMove(taskQueue))
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.BackgroundFetchStoreManager"))
+    , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
 {
     m_ioQueue->dispatch([directoryPath = m_path.isolatedCopy()]() mutable {
         FileSystem::makeAllDirectories(directoryPath);
@@ -142,7 +143,32 @@ void BackgroundFetchStoreManager::clearAllFetches(const Vector<String>& identifi
     });
 }
 
-void BackgroundFetchStoreManager::storeFetch(const String& identifier, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
+void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
+{
+    assertIsCurrent(m_taskQueue.get());
+    
+    uint64_t expectedSpace;
+    bool isSafe = WTF::safeAdd(downloadTotal, uploadTotal, expectedSpace)
+        && WTF::safeAdd(expectedSpace, data.size(), expectedSpace);
+    if (!isSafe) {
+        callback(StoreResult::QuotaError);
+        return;
+    }
+
+    m_quotaCheckFunction(expectedSpace, [weakThis = WeakPtr { *this }, identifier, downloadTotal, uploadTotal, data = WTFMove(data), callback = WTFMove(callback)](bool result) mutable {
+        if (!weakThis) {
+            callback(StoreResult::InternalError);
+            return;
+        }
+        if (!result) {
+            callback(StoreResult::QuotaError);
+            return;
+        }
+        weakThis->storeFetchAfterQuotaCheck(identifier, downloadTotal, uploadTotal, WTFMove(data), WTFMove(callback));
+    });
+}
+
+void BackgroundFetchStoreManager::storeFetchAfterQuotaCheck(const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
 {
     assertIsCurrent(m_taskQueue.get());
 

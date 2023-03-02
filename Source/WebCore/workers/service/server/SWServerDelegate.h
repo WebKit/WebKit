@@ -56,7 +56,6 @@ public:
 
     virtual void requestBackgroundFetchPermission(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
     virtual std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, const WebCore::ClientOrigin&) = 0;
-    virtual void requestBackgroundFetchSpace(const ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&) = 0;
     virtual Ref<BackgroundFetchStore> createBackgroundFetchStore() = 0;
 };
 

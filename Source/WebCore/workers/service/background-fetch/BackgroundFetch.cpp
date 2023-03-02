@@ -55,7 +55,6 @@ BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const Strin
     m_records.reserveInitialCapacity(requests.size());
     for (auto& request : requests)
         m_records.uncheckedAppend(Record::create(*this, WTFMove(request), index++));
-    doStore();
 }
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
@@ -122,7 +121,10 @@ void BackgroundFetch::storeResponse(size_t index, ResourceResponse&& response)
         updateBackgroundFetchStatus(BackgroundFetchResult::Failure, BackgroundFetchFailureReason::BadStatus);
         return;
     }
-    doStore();
+    doStore([weakThis = WeakPtr { *this }](auto result) {
+        if (weakThis)
+            weakThis->handleStoreResult(result);
+    });
 }
 
 void BackgroundFetch::storeResponseBodyChunk(size_t index, const SharedBuffer& data)
@@ -363,7 +365,7 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
     });
 }
 
-void BackgroundFetch::doStore()
+void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&& callback)
 {
     WTF::Persistence::Encoder encoder;
     encoder << backgroundFetchCurrentVersion;
@@ -386,10 +388,7 @@ void BackgroundFetch::doStore()
         encoder << record->isCompleted();
     }
 
-    m_store->storeFetch(m_registrationKey, m_identifier, { encoder.buffer(), encoder.bufferSize() }, [weakThis = WeakPtr { *this }](auto result) {
-        if (weakThis)
-            weakThis->handleStoreResult(result);
-    });
+    m_store->storeFetch(m_registrationKey, m_identifier, m_options.downloadTotal, m_uploadTotal, { encoder.buffer(), encoder.bufferSize() }, WTFMove(callback));
 }
 
 std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uint8_t> data, SWServer& server, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)

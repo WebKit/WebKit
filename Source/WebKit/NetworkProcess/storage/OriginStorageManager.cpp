@@ -80,7 +80,7 @@ public:
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, CacheStorageManager::QuotaCheckFunction&&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager() { return m_cacheStorageManager.get(); }
 #if ENABLE(SERVICE_WORKER)
-    BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&);
+    BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&, BackgroundFetchStoreManager::QuotaCheckFunction&&);
 #endif
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
@@ -255,10 +255,10 @@ CacheStorageManager& OriginStorageManager::StorageBucket::cacheStorageManager(Ca
 }
 
 #if ENABLE(SERVICE_WORKER)
-BackgroundFetchStoreManager& OriginStorageManager::StorageBucket::backgroundFetchManager(Ref<WorkQueue>&& queue)
+BackgroundFetchStoreManager& OriginStorageManager::StorageBucket::backgroundFetchManager(Ref<WorkQueue>&& queue, BackgroundFetchStoreManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_backgroundFetchManager)
-        m_backgroundFetchManager = makeUnique<BackgroundFetchStoreManager>(resolvedBackgroundFetchStoragePath(), WTFMove(queue));
+        m_backgroundFetchManager = makeUnique<BackgroundFetchStoreManager>(resolvedBackgroundFetchStoragePath(), WTFMove(queue), WTFMove(quotaCheckFunction));
 
     return *m_backgroundFetchManager;
 }
@@ -746,7 +746,14 @@ CacheStorageManager& OriginStorageManager::cacheStorageManager(CacheStorageRegis
 #if ENABLE(SERVICE_WORKER)
 BackgroundFetchStoreManager& OriginStorageManager::backgroundFetchManager(Ref<WorkQueue>&& queue)
 {
-    return defaultBucket().backgroundFetchManager(WTFMove(queue));
+    return defaultBucket().backgroundFetchManager(WTFMove(queue), [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+        if (!quotaManager.get())
+            return completionHandler(false);
+
+        quotaManager.get()->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
+            completionHandler(decision == QuotaManager::Decision::Grant);
+        });
+    });
 }
 #endif
 
