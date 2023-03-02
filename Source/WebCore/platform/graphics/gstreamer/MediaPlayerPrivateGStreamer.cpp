@@ -3310,6 +3310,12 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 
     // Destination helper struct, maps the gbm_bo object into CPU-memory space and copies from the accompanying Source in fill().
     struct Destination {
+        static Lock& mappingLock()
+        {
+            static Lock s_mappingLock;
+            return s_mappingLock;
+        }
+
         Destination(struct gbm_bo* bo, uint32_t width, uint32_t height)
             : bo(bo)
         {
@@ -3357,9 +3363,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         if (gst_buffer_find_memory(buffer, offset, 1, &memid, &length, &skip)) {
             auto* mem = gst_buffer_peek_memory(buffer, memid);
 
+            Locker locker { Destination::mappingLock() };
+
             Source source(mem, offset, stride, planeData.height);
             Destination destination(planeData.bo, planeData.width, planeData.height);
-
             if (source.valid && destination.valid)
                 destination.fill(source);
         }
