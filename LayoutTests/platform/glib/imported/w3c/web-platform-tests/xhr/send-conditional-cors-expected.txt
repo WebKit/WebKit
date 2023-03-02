@@ -1,4 +1,0 @@
-
-PASS 304 without appropriate CORS header
-PASS 304 with appropriate CORS header
-

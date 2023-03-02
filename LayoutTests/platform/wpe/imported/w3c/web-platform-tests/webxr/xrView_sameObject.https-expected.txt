@@ -1,4 +1,0 @@
-
-PASS XRView attributes meet [SameObject] requirement - webgl
-PASS XRView attributes meet [SameObject] requirement - webgl2
-

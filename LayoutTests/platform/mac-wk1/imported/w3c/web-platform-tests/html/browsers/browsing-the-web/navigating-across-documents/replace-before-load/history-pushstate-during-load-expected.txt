@@ -1,4 +1,0 @@
-
-
-PASS history.pushState() during the load event must NOT replace
-
