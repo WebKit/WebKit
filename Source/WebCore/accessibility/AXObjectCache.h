@@ -177,6 +177,7 @@ public:
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
+    void onFocusChange(Node* oldFocusedNode, Node* newFocusedNode);
     void onSelectedChanged(Node*);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
@@ -208,7 +209,6 @@ public:
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>>;
-    void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
@@ -601,7 +601,8 @@ private:
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     HashMap<Element*, String> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
-    Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;
+    std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_deferredRegenerateIsolatedTree { false };
 #endif
@@ -671,7 +672,7 @@ inline void AXObjectCache::onSelectedChanged(Node*) { }
 inline void AXObjectCache::onTitleChange(Document&) { }
 inline void AXObjectCache::onValidityChange(Element&) { }
 inline void AXObjectCache::valueChanged(Element*) { }
-inline void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node*, Node*) { }
+inline void AXObjectCache::onFocusChange(Node*, Node*) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
 inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }
 inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }

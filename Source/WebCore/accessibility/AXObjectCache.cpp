@@ -962,15 +962,6 @@ void AXObjectCache::remove(Node& node)
     }
     m_deferredNodeAddedOrRemovedList.remove(&node);
     m_deferredTextChangedList.remove(&node);
-    // Remove the entry if the new focused node is being removed.
-    m_deferredFocusedNodeChange.removeAllMatching([&node](auto& entry) -> bool {
-        return entry.second == &node;
-    });
-    // Set nullptr to the old focused node if it is being removed.
-    std::for_each(m_deferredFocusedNodeChange.begin(), m_deferredFocusedNodeChange.end(), [&node](auto& entry) {
-        if (entry.first == &node)
-            entry.first = nullptr;
-    });
 }
 
 void AXObjectCache::remove(Widget* view)
@@ -1381,10 +1372,25 @@ void AXObjectCache::handleRowCountChanged(AccessibilityObject* axObject, Documen
     postNotification(axObject, document, AXRowCountChanged);
 }
 
-void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* newNode)
+void AXObjectCache::onFocusChange(Node* oldNode, Node* newNode)
 {
     if (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer())) {
-        m_deferredFocusedNodeChange.append({ oldNode, newNode });
+        if (m_deferredFocusedNodeChange) {
+            // If we got a focus change notification but haven't committed a previously deferred focus change:
+            if (m_deferredFocusedNodeChange->first == newNode) {
+                // Cancel the focus change entirely if the new focused node will be the same as the old one (i.e. there is no effective focus change).
+                m_deferredFocusedNodeChange = std::nullopt;
+                return;
+            }
+            // Otherwise, recompute is-ignored for the node that was slated to become the AX focused element.
+            // This is important because we may have computed is-ignored for this node after it gained DOM focus,
+            // meaning it could be unignored solely because it was DOM focused.
+            recomputeIsIgnored(m_deferredFocusedNodeChange->second.get());
+            // And now we can update the new deferred focus node to be |newNode|.
+            m_deferredFocusedNodeChange->second = newNode;
+        } else
+            m_deferredFocusedNodeChange = { oldNode, newNode };
+
         if (!newNode->renderer()->needsLayout() && !m_performCacheUpdateTimer.isActive())
             m_performCacheUpdateTimer.startOneShot(0_s);
     } else
@@ -1848,7 +1854,7 @@ void AXObjectCache::focusCurrentModal()
         return;
 
     // Don't focus the current modal if focus has been requested to be put elsewhere (e.g. via JS).
-    if (!m_deferredFocusedNodeChange.isEmpty())
+    if (m_deferredFocusedNodeChange)
         return;
     
     // Don't set focus if we are already focusing onto some element within
@@ -3429,7 +3435,7 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     filterWeakHashSetForRemoval(m_deferredModalChangedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredMenuListChange, document, nodesToRemove);
     filterMapForRemoval(m_deferredTextFormControlValue, document, nodesToRemove);
-    filterVectorPairForRemoval(m_deferredFocusedNodeChange, document, nodesToRemove);
+    m_deferredFocusedNodeChange = std::nullopt;
 
     for (const auto& entry : m_deferredAttributeChange) {
         if (entry.element && (!entry.element->isConnected() || &entry.element->document() == &document))
@@ -3526,18 +3532,23 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleAttributeChange(attributeChange.element, attributeChange.attrName, attributeChange.oldValue, attributeChange.newValue);
     m_deferredAttributeChange.clear();
 
-    AXLOGDeferredCollection("FocusedNodeChange"_s, m_deferredFocusedNodeChange);
-    for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange) {
-        // Don't recompute the active modal for each individal focus change, as that could cause a lot of expensive tree rebuilding. Instead, we do it once below.
-        handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second, UpdateModal::No);
+    if (m_deferredFocusedNodeChange) {
+        AXLOG(makeString(
+            "Processing deferred focused node change. Old node ",
+            m_deferredFocusedNodeChange->first ? m_deferredFocusedNodeChange->first->debugDescription() : "nullptr"_s,
+            ", new node ",
+            m_deferredFocusedNodeChange->second ? m_deferredFocusedNodeChange->second->debugDescription() : "nullptr"_s
+        ));
+        // Don't update the modal with this focus change since it may need to be updated again as a result of processing m_deferredModalChangedList below.
+        handleFocusedUIElementChanged(m_deferredFocusedNodeChange->first.get(), m_deferredFocusedNodeChange->second.get(), UpdateModal::No);
         // Recompute isIgnored after a focus change in case that altered visibility.
-        recomputeIsIgnored(deferredFocusedChangeContext.first);
-        recomputeIsIgnored(deferredFocusedChangeContext.second);
+        recomputeIsIgnored(m_deferredFocusedNodeChange->first.get());
+        recomputeIsIgnored(m_deferredFocusedNodeChange->second.get());
     }
-    bool updatedFocusedElement = !m_deferredFocusedNodeChange.isEmpty();
+    bool updatedFocusedElement = m_deferredFocusedNodeChange.has_value();
+    m_deferredFocusedNodeChange = std::nullopt;
     // If we changed the focused element, that could affect what modal should be active, so recompute it.
     bool shouldRecomputeModal = updatedFocusedElement;
-    m_deferredFocusedNodeChange.clear();
 
     AXLOGDeferredCollection("ModalChangedList"_s, m_deferredModalChangedList);
     for (auto& element : m_deferredModalChangedList) {

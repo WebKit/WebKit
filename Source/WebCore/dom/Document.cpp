@@ -4953,9 +4953,13 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
     }
 
     if (m_focusedElement) {
-        // Create the AXObject cache in a focus change because GTK relies on it.
-        if (AXObjectCache* cache = axObjectCache())
-            cache->deferFocusedUIElementChangeIfNeeded(oldFocusedElement.get(), newFocusedElement.get());
+#if PLATFORM(GTK)
+        // GTK relies on creating the AXObjectCache when a focus change happens.
+        if (auto* cache = axObjectCache())
+#else
+        if (auto* cache = existingAXObjectCache())
+#endif
+            cache->onFocusChange(oldFocusedElement.get(), newFocusedElement.get());
     }
 
     if (page())
