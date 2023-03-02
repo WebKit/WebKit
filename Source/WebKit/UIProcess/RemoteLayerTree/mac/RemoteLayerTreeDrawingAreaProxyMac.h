@@ -86,6 +86,7 @@ private:
     std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
     WebCore::GraphicsLayer::PlatformLayerID m_pageScalingLayerID;
 
+    std::optional<TransactionID> m_transactionIDForSentTransientZoomUpdate;
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
     std::optional<double> m_transientZoomScale;
     std::optional<WebCore::FloatPoint> m_transientZoomOrigin;

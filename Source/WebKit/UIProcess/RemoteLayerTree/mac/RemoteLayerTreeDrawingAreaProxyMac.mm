@@ -136,6 +136,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
     }
+    
+    if (m_transactionIDForSentTransientZoomUpdate && transaction.transactionID() >= m_transactionIDForSentTransientZoomUpdate)
+        m_transactionIDForSentTransientZoomUpdate = { };
 }
 
 static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix& transform)
@@ -196,9 +199,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
 
     if (auto* rootNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(m_webPageProxy.scrollingCoordinatorProxy()->rootNode()))
         m_webPageProxy.adjustLayersForLayoutViewport(rootNode->currentScrollPosition(), rootNode->layoutViewport(), scale);
-    
-    // FIXME: Only send these messages as fast as the web process is responding to them.
-    m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
+        
+    if (!m_transactionIDForSentTransientZoomUpdate) {
+        m_transactionIDForSentTransientZoomUpdate = nextLayerTreeTransactionID();
+        m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
+    }
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
@@ -207,6 +212,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
 
     auto transientZoomScale = std::exchange(m_transientZoomScale, { });
     auto transientZoomOrigin = std::exchange(m_transientZoomOrigin, { });
+    m_transactionIDForSentTransientZoomUpdate = { };
     
     if (transientZoomScale == scale && roundedIntPoint(*transientZoomOrigin) == roundedIntPoint(origin)) {
         // We're already at the right scale and position, so we don't need to animate.
