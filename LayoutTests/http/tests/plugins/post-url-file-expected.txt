@@ -1,7 +1,0 @@
-
-
-
---------
-Frame: 'result'
---------
-SUCCESS

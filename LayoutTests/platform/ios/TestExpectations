@@ -155,44 +155,6 @@ fast/selectors/text-field-selection-window-inactive-stroke-color.html  [ WontFix
 fast/selectors/text-field-selection-window-inactive-text-shadow.html  [ WontFix ]
 fast/text/selection-with-text-decorations.html  [ WontFix ]
 
-# Plugins are not supported on iOS
-plugins
-compositing/plugins
-http/tests/plugins
-fast/frames/sandboxed-iframe-plugins.html
-fast/loader/reload-zero-byte-plugin.html
-http/tests/download/convert-cached-load-to-download.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html
-http/tests/security/contentSecurityPolicy/embed-redirect-blocked2.html
-http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html
-http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star.html
-http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star.html
-http/tests/security/contentSecurityPolicy/object-redirect-blocked2.html
-http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html
-http/tests/security/contentSecurityPolicy/object-src-param-code-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html
-http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html
-http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html
-http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html
-http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html
-http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html
-http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html
-http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py
-http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html
-
 # Pointer-lock not supported on iOS
 pointer-lock
 http/tests/pointer-lock
@@ -1247,17 +1209,8 @@ http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/navigation/response204.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Failure ]
 http/tests/security/cross-frame-access-put.html [ Failure ]
-http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
-http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
-http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
-http/tests/security/cross-origin-plugin.html [ Failure ]
 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
-http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
-http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
 
 # HTTP tests that are flaky:
@@ -1502,9 +1455,6 @@ svg/zoom/text/zoom-svg-float-border-padding.xml [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
 
-# Userscript tests that fail:
-userscripts/user-script-plugin-document.html [ Failure ]
-
 # Webarchive tests that fail:
 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
@@ -1686,8 +1636,6 @@ fast/frames/calculate-relative.html [ Failure ]
 fast/frames/hidpi-position-iframe-on-device-pixel.html [ ImageOnlyFailure ]
 fast/frames/iframe-scaling-with-scroll.html [ Failure ]
 fast/frames/invalid.html [ Failure ]
-fast/frames/sandboxed-iframe-about-blank.html [ Failure ]
-fast/frames/sandboxed-iframe-navigation-allowed.html [ Failure ]
 fast/frames/valid.html [ Failure ]
 fast/gradients/background-clipped.html [ Failure ]
 fast/hidpi/image-srcset-data-srcset.html [ Failure ]
@@ -1740,7 +1688,6 @@ fast/parser/nested-fragment-parser-crash.html [ Failure ]
 fast/preloader/document-write-2.html [ Failure ]
 fast/preloader/document-write.html [ Failure ]
 fast/preloader/image-srcset.html [ Failure ]
-fast/replaced/invalid-object-with-fallback.html [ Failure ]
 fast/ruby/ruby-block-style-not-updated-with-before-after-content.html [ Failure ]
 fast/ruby/ruby-block-style-not-updated.html [ Failure ]
 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
@@ -2266,8 +2213,6 @@ imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailu
 imported/blink/fast/text/soft-hyphen-simple-text.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/transforms/mirror-transform-tiled-scaled-background.html [ ImageOnlyFailure Pass ]
 imported/blink/fullscreen/full-screen-detached-document.html [ Skip ]
-imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
-imported/blink/plugins/empty-per-context-data.html [ Skip ]
 imported/blink/svg/as-background-image/overflow-auto.html [ ImageOnlyFailure Pass ]
 imported/blink/svg/as-image/overflow-auto.html [ ImageOnlyFailure Pass ]
 imported/blink/svg/custom/focus-ring-text.svg [ ImageOnlyFailure Pass ]
@@ -3565,7 +3510,6 @@ css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 # Passing only on iOS
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
-fast/replaced/border-radius-clip.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-001.html [ Pass ]

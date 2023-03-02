@@ -1,4 +1,0 @@
-Test that loading a javascript URL works correctly.
-
-
-PASS, no assertion failure.

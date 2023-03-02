@@ -20,42 +20,6 @@ fast/images/mac [ Pass ]
 # Display list logging is only available in debug
 [ Debug ] displaylists [ Pass ]
 
-# Disable plug-in tests on Apple Silicon
-[ arm64 ] compositing/plugins [ Skip ]
-[ arm64 ] http/tests/plugins [ Skip ]
-[ arm64 ] imported/blink/plugins [ Skip ]
-[ arm64 ] platform/mac-wk2/plugins [ Skip ]
-[ arm64 ] platform/mac/plugins [ Skip ]
-[ arm64 ] plugins [ Skip ]
-[ arm64 ] fullscreen/full-screen-plugin.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
-[ arm64 ] http/tests/security/cross-origin-plugin-allowed.html [ Skip ]
-[ arm64 ] http/tests/security/cross-origin-plugin.html [ Skip ]
-[ arm64 ] http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
-[ arm64 ] http/tests/security/storage-blocking-loosened-plugin.html [ Skip ]
-[ arm64 ] http/tests/security/storage-blocking-strengthened-plugin.html [ Skip ]
-[ arm64 ] userscripts/user-script-plugin-document.html [ Skip ]
-[ arm64 ] fast/frames/sandboxed-iframe-about-blank.html [ Skip ]
-[ arm64 ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Skip ]
-[ arm64 ] fast/replaced/invalid-object-with-fallback.html [ Skip ]
-[ arm64 ] fast/replaced/no-focus-ring-embed.html [ Skip ]
-[ arm64 ] fast/replaced/no-focus-ring-object.html [ Skip ]
-
-
 # Tests that rely on custom domain names.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
 
@@ -146,18 +110,12 @@ accessibility/multiselect-list-reports-active-option.html
 accessibility/aria-listbox-clear-selection-crash.html
 accessibility/listbox-clear-selection.html
 
-# Need to implement this in plugins code in WebKit
-plugins/reloadplugins-and-pages.html
-
 # These tests require touch support
 fast/events/touch [ Skip ]
 imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 # No button tracked
 fast/events/mouseover-button.html
-
-# eventSender needs to propagate the event to the calling window, not the main frame always.
-http/tests/plugins/plugin-document-has-focus.html
 
 # Requires testRunner.setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
@@ -168,8 +126,6 @@ fast/autoresize
 # Uses testRunner.titleTextDirection, which is Chromium-only
 webkit.org/b/58845 fast/dom/title-directionality-removeChild.html
 webkit.org/b/58845 fast/dom/title-directionality.html
-
-webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Pass Failure ]
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 fast/overflow/scrollbar-restored-and-then-locked.html
@@ -213,8 +169,6 @@ webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 # viewport meta tag support
 fast/viewport [ Skip ]
 
-webkit.org/b/116640 plugins/plugin-initiate-popup-window.html
-
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
@@ -231,8 +185,6 @@ editing/selection/caret-mode-paragraph-keys-navigation.html
 
 # Non-premultiplied-alpha currently broken on mac.
 webkit.org/b/55509 compositing/webgl/webgl-nonpremultiplied-blend.html
-
-webkit.org/b/114321 compositing/plugins/invalidate_rect.html [ Failure Pass ]
 
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
@@ -328,11 +280,6 @@ webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failur
 
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 
-webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
-webkit.org/b/82972 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Pass Failure ]
-webkit.org/b/82972 plugins/mouse-events-fixedpos.html [ Pass Failure ]
-webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
-
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 
 http/tests/security/video-cross-origin-accessfailure.html
@@ -346,10 +293,6 @@ fast/forms/file/file-input-capture.html
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
-
-webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
-webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
-webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 
 # Implement textInputController.setComposition()
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Pass Failure ]
@@ -429,24 +372,6 @@ fast/events/mousedown-in-subframe-scrollbar.html [ Skip ]
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 
-# --- Plugins ---
-# Out-of-process plug-ins are disallowed from evaluating JavaScript from NPP_Destroy().
-plugins/attach-during-destroy.html [ WontFix ]
-plugins/destroy-reentry.html [ WontFix ]
-plugins/document-open.html [ WontFix ]
-webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html [ WontFix ]
-plugins/geturlnotify-during-document-teardown.html [ WontFix ]
-plugins/js-from-destroy.html [ WontFix ]
-plugins/nested-plugin-objects.html [ WontFix ]
-plugins/netscape-destroy-plugin-script-objects.html [ WontFix ]
-plugins/open-and-close-window-with-plugin.html [ WontFix ]
-
-# WebKit1 OOP plug-ins: No support for getting the form value.
-plugins/form-value.html
-
-# WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
-plugins/npruntime/invoke-failure.html
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 
@@ -461,11 +386,6 @@ mhtml [ Skip ]
 webkit.org/b/57688 fast/text/international/bidi-AN-after-empty-run.html [ Failure Pass ]
 webkit.org/b/57688 fast/text/international/bidi-CS-after-AN.html [ Failure Pass ]
 webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass ]
-
-webkit.org/b/112616 plugins/plugin-clip-subframe.html [ Failure Pass ]
-
-# Flakey plugin tests
-webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
@@ -575,8 +495,6 @@ webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass
 
 webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
 
-webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
-
 inspector/debugger/didSampleProbe-multiple-probes.html
 inspector/debugger/nested-inspectors.html
 
@@ -662,9 +580,6 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 
 webkit.org/b/187408 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker.html [ Slow ]
 
-# This tests an iOS-only feature and the test sometimes asserts in debug macOS builds, so
-# don't run the test on macOS.
-plugins/quicktime-plugin-replacement.html [ Skip ]
 
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
@@ -1074,8 +989,6 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/158101 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout ]
 
 webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ Pass ImageOnlyFailure ]
 
@@ -2286,11 +2199,6 @@ webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-s
 # Note: These tests were previously marked as flaky failures for Big Sur Release WK2 for webkit.org/b/235681, this may need to be re-added once webkit.org/b/248067 is resolved
 webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
 webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
-
-# Plugins
-# FIXME: Remove these tests.
-platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]
-platform/mac/plugins/convert-point.html [ Skip ]
 
 webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
 

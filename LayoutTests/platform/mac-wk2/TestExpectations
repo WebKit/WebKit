@@ -505,8 +505,6 @@ webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Skip ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
-webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
-
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 # Flaky everywhere.
@@ -727,7 +725,6 @@ webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Pass ]
 # Imported Blink tests which have not been investigated. Partially covered with rdar://problem/23023848.
 imported/blink/fast/multicol/basic-rtl.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/add-spanner-inside-overflow-hidden.html [ Pass ImageOnlyFailure ]
-imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout ]
 imported/blink/fast/multicol/newmulticol/multicol-becomes-regular-block.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass ImageOnlyFailure ]
 
@@ -823,8 +820,6 @@ webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
 webkit.org/b/171763 compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
 
-webkit.org/b/171837 [ Debug ] http/tests/security/storage-blocking-loosened-plugin.html [ Pass Failure ]
-
 webkit.org/b/168937  tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html [ Pass Failure ]
 
 webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
@@ -914,8 +909,6 @@ webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.htm
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Skip ]
 
-webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
-
 webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
 
 http/wpt/cache-storage/cache-put-keys.https.any.html [ Slow ]
@@ -972,8 +965,6 @@ webkit.org/b/198195 fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnly
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
-
-webkit.org/b/199089 [ Debug ] plugins/window-open.html [ Skip ]
 
 webkit.org/b/205808 fast/text/international/unicode-bidi-other-neutrals.html [ Pass Failure ]
 
@@ -1171,9 +1162,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 
 # <rdar://problem/64700658> imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html is a flaky timeout and flaky failure
 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Pass Failure Timeout ]
-
-# rdar://66703773 (REGRESSION (20A2316-20A2348b): http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html is a constant failure)
-[ arm64 ] http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html [ Skip ]
 
 # rdar://66706867 (REGRESSION (20A2321a-20A2348b): fast/table/hidpi-collapsed-border-with-odd-pixel-width.html is a flaky image failure)
 [ arm64 ] fast/table/hidpi-collapsed-border-with-odd-pixel-width.html [ Pass ImageOnlyFailure ]
@@ -1581,12 +1569,6 @@ webkit.org/b/231083 [ Debug ] imported/w3c/web-platform-tests/content-security-p
 webkit.org/b/231386 [ BigSur ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Pass Timeout ]
 
 webkit.org/b/235605 [ arm64 ] fast/scrolling/mac/j-shaped-scroll-rubberband.html [ Failure ]
-
-# Plugins
-# FIXME: Remove these tests.
-platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
-platform/mac-wk2/plugins/npp-setwindow-called-on-scroll.html [ Skip ]
-platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 
 webkit.org/b/232492 [ BigSur Debug ] webrtc/video-receivers.html [ Pass Crash ]
 

@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: PLUGIN: SUCCESS!
-
-This tests that we can get a user agent when calling NPN_UserAgent with a null NPP from NPP_New.

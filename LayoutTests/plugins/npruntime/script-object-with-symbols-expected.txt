@@ -1,7 +1,0 @@
-This tests that NPAPI plugin object can accept ES6 symbols without crash.
-SUCCESS
-
-
-
-
-

@@ -646,9 +646,6 @@ webkit.org/b/204001 imported/w3c/web-platform-tests/pointerevents/pointerlock/po
 Bug(WPE) fast/images/embed-image.html [ Skip ]
 Bug(WPE) fast/images/object-image.html [ Skip ]
 
-Bug(WPE) fast/replaced/invalid-object-with-fallback.html [ Skip ]
-Bug(WPE) fast/replaced/no-focus-ring-embed.html [ Skip ]
-Bug(WPE) fast/replaced/no-focus-ring-object.html [ Skip ]
 Bug(WPE) fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
 Bug(WPE) fast/fixed-layout [ Skip ]
