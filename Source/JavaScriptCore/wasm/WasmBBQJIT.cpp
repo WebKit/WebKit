@@ -5640,8 +5640,9 @@ public:
             BLOCK(Value::fromF32(-operand.asF32())),
             BLOCK(
 #if CPU(X86_64)
-                m_jit.xorFloat(m_scratchFPR, m_scratchFPR);
-                m_jit.subFloat(operandLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
+                m_jit.moveFloatTo32(operandLocation.asFPR(), m_scratchGPR);
+                m_jit.xor32(TrustedImm32(bitwise_cast<uint32_t>(static_cast<float>(-0.0))), m_scratchGPR);
+                m_jit.move32ToFloat(m_scratchGPR, resultLocation.asFPR());
 #else
                 m_jit.negateFloat(operandLocation.asFPR(), resultLocation.asFPR());
 #endif
@@ -5656,8 +5657,9 @@ public:
             BLOCK(Value::fromF64(-operand.asF64())),
             BLOCK(
 #if CPU(X86_64)
-                m_jit.xorDouble(m_scratchFPR, m_scratchFPR);
-                m_jit.subDouble(operandLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
+                m_jit.moveDoubleTo64(operandLocation.asFPR(), m_scratchGPR);
+                m_jit.xor64(TrustedImm64(bitwise_cast<uint64_t>(static_cast<double>(-0.0))), m_scratchGPR);
+                m_jit.move64ToDouble(m_scratchGPR, resultLocation.asFPR());
 #else
                 m_jit.negateDouble(operandLocation.asFPR(), resultLocation.asFPR());
 #endif
