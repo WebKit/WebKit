@@ -155,7 +155,7 @@ void BBQPlan::work(CompilationEffort effort)
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-    bool usesSIMD = m_moduleInformation->isSIMDFunction(m_functionIndex);
+    bool usesSIMD = m_moduleInformation->usesSIMD(m_functionIndex);
     SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
     auto* tierUpPointer = tierUp.get();
     Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
@@ -240,7 +240,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
         tierUp = makeUnique<TierUpCount>();
 
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
-    bool usesSIMD = m_moduleInformation->isSIMDFunction(functionIndex);
+    bool usesSIMD = m_moduleInformation->usesSIMD(functionIndex);
     SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
     auto* tierUpPointer = tierUp.get();
     auto& context = m_compilationContexts[functionIndex];

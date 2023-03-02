@@ -108,7 +108,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
     void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
 
-    bool isSIMDFunction(uint32_t index) const
+    bool usesSIMD(uint32_t index) const
     {
         ASSERT(index <= internalFunctionCount());
         ASSERT(functions[index].finishedValidating);
@@ -121,9 +121,15 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
         // The LLInt discovers this value.
         ASSERT(Options::useWasmLLInt());
 
-        return functions[index].isSIMDFunction;
+        return functions[index].usesSIMD;
     }
-    void addSIMDFunction(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].isSIMDFunction = true; }
+    void markUsesSIMD(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
+
+    bool usesExceptions(uint32_t index) const { ASSERT(index <= internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
+    void markUsesExceptions(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
+    bool usesAtomics(uint32_t index) const { ASSERT(index <= internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
+    void markUsesAtomics(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
+
     void doneSeeingFunction(uint32_t index) { ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
 
     uint32_t typeCount() const { return typeSignatures.size(); }
