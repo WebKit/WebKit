@@ -3544,6 +3544,7 @@ fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
 # This is a crash test.
 fast/editing/apply-relative-font-style-change-crash-004.html [ Pass Failure ]
+webkit.org/b/253182 fast/editing/ruby-with-edited-text-crash.html [ Skip ] 
 
 # wpt css-images failures
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html [ ImageOnlyFailure ]
