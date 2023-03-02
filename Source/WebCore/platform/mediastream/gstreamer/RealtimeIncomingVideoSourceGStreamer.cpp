@@ -23,9 +23,9 @@
 #include "RealtimeIncomingVideoSourceGStreamer.h"
 
 #include "GStreamerCommon.h"
+#include "GStreamerWebRTCUtils.h"
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
-#include <gst/rtp/rtp.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
@@ -51,11 +51,12 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
         videoFrameTimeMetadata->receiveTime = MonotonicTime::now().secondsSinceEpoch();
 
         auto* buffer = GST_BUFFER_CAST(GST_PAD_PROBE_INFO_DATA(info));
-        GstRTPBuffer rtpBuffer GST_RTP_BUFFER_INIT;
-        if (gst_rtp_buffer_map(buffer, GST_MAP_READ, &rtpBuffer)) {
-            videoFrameTimeMetadata->rtpTimestamp = gst_rtp_buffer_get_timestamp(&rtpBuffer);
-            gst_rtp_buffer_unmap(&rtpBuffer);
+        {
+            GstMappedRtpBuffer rtpBuffer(buffer, GST_MAP_READ);
+            if (rtpBuffer)
+                videoFrameTimeMetadata->rtpTimestamp = gst_rtp_buffer_get_timestamp(rtpBuffer.mappedData());
         }
+
         buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(videoFrameTimeMetadata));
         GST_PAD_PROBE_INFO_DATA(info) = buffer;
         return GST_PAD_PROBE_OK;
