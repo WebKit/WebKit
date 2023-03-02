@@ -699,6 +699,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return nil;
 }
 
+- (BOOL)supportsTextReplacement
+{
+    return NO;
+}
+
+- (void)scrollRangeToVisible:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document
+{
+    // Intentionally empty. PDFHostViewController has a single method for decoration and scrolling, so scrolling is performed in `decorateFoundTextRange`.
+}
+
 - (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(UITextSearchDocumentIdentifier)document
 {
     auto from = dynamic_objc_cast<WKPDFFoundTextPosition>(fromRange.start);
