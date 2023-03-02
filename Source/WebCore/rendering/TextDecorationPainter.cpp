@@ -161,22 +161,22 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
 {
-    StrokeStyle strokeStyle = StrokeStyle::SolidStroke;
+    StrokeStyle strokeStyle = SolidStroke;
     switch (decorationStyle) {
     case TextDecorationStyle::Solid:
-        strokeStyle = StrokeStyle::SolidStroke;
+        strokeStyle = SolidStroke;
         break;
     case TextDecorationStyle::Double:
-        strokeStyle = StrokeStyle::DoubleStroke;
+        strokeStyle = DoubleStroke;
         break;
     case TextDecorationStyle::Dotted:
-        strokeStyle = StrokeStyle::DottedStroke;
+        strokeStyle = DottedStroke;
         break;
     case TextDecorationStyle::Dashed:
-        strokeStyle = StrokeStyle::DashedStroke;
+        strokeStyle = DashedStroke;
         break;
     case TextDecorationStyle::Wavy:
-        strokeStyle = StrokeStyle::WavyStroke;
+        strokeStyle = WavyStroke;
         break;
     }
 

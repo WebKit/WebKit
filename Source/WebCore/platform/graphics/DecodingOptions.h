@@ -146,3 +146,16 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DecodingMode> {
+    using values = EnumValues<
+    WebCore::DecodingMode,
+    WebCore::DecodingMode::Auto,
+    WebCore::DecodingMode::Synchronous,
+    WebCore::DecodingMode::Asynchronous
+    >;
+};
+
+} // namespace WTF

@@ -172,7 +172,7 @@ private:
 
     SourceBrush m_strokeBrush { Color::black };
     float m_strokeThickness { 0 };
-    StrokeStyle m_strokeStyle { StrokeStyle::SolidStroke };
+    StrokeStyle m_strokeStyle { SolidStroke };
 
     CompositeMode m_compositeMode { CompositeOperator::SourceOver, BlendMode::Normal };
     DropShadow m_dropShadow;

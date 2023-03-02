@@ -43,6 +43,6 @@ class WTF::URL {
 }
 
 header: <wtf/text/AtomString.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomString {
+[CustomHeader] class WTF::AtomString {
     String string()
 }

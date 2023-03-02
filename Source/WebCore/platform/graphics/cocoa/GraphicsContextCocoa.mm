@@ -132,18 +132,18 @@ static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phas
     CGContextSetPatternPhase(context, CGSizeMake(phase.x, phase.y));
 }
 
-static RetainPtr<CGColorRef> colorForMarkerLineStyle(DocumentMarkerLineStyleMode style, bool useDarkMode)
+static RetainPtr<CGColorRef> colorForMarkerLineStyle(DocumentMarkerLineStyle::Mode style, bool useDarkMode)
 {
     switch (style) {
     // Red
-    case DocumentMarkerLineStyleMode::Spelling:
+    case DocumentMarkerLineStyle::Mode::Spelling:
         return cachedCGColor(useDarkMode ? SRGBA<uint8_t> { 255, 140, 140, 217 } : SRGBA<uint8_t> { 255, 59, 48, 191 });
     // Blue
-    case DocumentMarkerLineStyleMode::DictationAlternatives:
-    case DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives:
-    case DocumentMarkerLineStyleMode::AutocorrectionReplacement:
+    case DocumentMarkerLineStyle::Mode::DictationAlternatives:
+    case DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyle::Mode::AutocorrectionReplacement:
         return cachedCGColor(useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 });
-    case DocumentMarkerLineStyleMode::Grammar:
+    case DocumentMarkerLineStyle::Mode::Grammar:
         return grammarColor(useDarkMode);
     }
 }

@@ -96,7 +96,7 @@ void FELighting::encode(Encoder& encoder) const
     encoder << m_lightSource->type();
     switch (m_lightSource->type()) {
     case LS_DISTANT:
-        encoder << downcast<DistantLightSource>(m_lightSource.get());
+        downcast<DistantLightSource>(m_lightSource.get()).encode(encoder);
         break;
     case LS_POINT:
         downcast<PointLightSource>(m_lightSource.get()).encode(encoder);
@@ -151,11 +151,9 @@ std::optional<Ref<ClassName>> FELighting::decode(Decoder& decoder)
         return std::nullopt;
 
     std::optional<Ref<LightSource>> lightSource;
-    std::optional<Ref<DistantLightSource>> distantLightSource;
     switch (*lightSourceType) {
     case LS_DISTANT:
-        decoder >> distantLightSource;
-        lightSource = WTFMove(distantLightSource);
+        lightSource = DistantLightSource::decode(decoder);
         break;
     case LS_POINT:
         lightSource = PointLightSource::decode(decoder);
