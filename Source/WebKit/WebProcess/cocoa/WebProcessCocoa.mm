@@ -90,6 +90,7 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <mach/mach.h>
+#import <malloc/malloc.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
@@ -972,6 +973,22 @@ void WebProcess::destroyRenderingResources()
     MonotonicTime endTime = MonotonicTime::now();
 #endif
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "destroyRenderingResources: took %.2fms", (endTime - startTime).milliseconds());
+}
+
+void WebProcess::releaseSystemMallocMemory()
+{
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+#if !RELEASE_LOG_DISABLED
+        MonotonicTime startTime = MonotonicTime::now();
+#endif
+        malloc_zone_pressure_relief(NULL, 0);
+#if !RELEASE_LOG_DISABLED
+        MonotonicTime endTime = MonotonicTime::now();
+#endif
+        WEBPROCESS_RELEASE_LOG(ProcessSuspension, "releaseSystemMallocMemory: took %.2fms", (endTime - startTime).milliseconds());
+    });
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)

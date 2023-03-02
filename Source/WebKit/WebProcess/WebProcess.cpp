@@ -253,7 +253,7 @@
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
 // This should be greater than tileRevalidationTimeout in TileController.
-static const Seconds nonVisibleProcessGraphicsCleanupDelay { 10_s };
+static const Seconds nonVisibleProcessEarlyMemoryCleanupDelay { 10_s };
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
 // This should be long enough to support a workload where a user is actively switching between multiple tabs,
@@ -305,7 +305,7 @@ WebProcess::WebProcess()
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
     , m_cookieJar(WebCookieJar::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
-    , m_nonVisibleProcessGraphicsCleanupTimer(*this, &WebProcess::nonVisibleProcessGraphicsCleanupTimerFired)
+    , m_nonVisibleProcessEarlyMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired)
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
 #endif
@@ -1642,7 +1642,7 @@ void WebProcess::sendPrewarmInformation(const URL& url)
 void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.add(pageID);
-    m_nonVisibleProcessGraphicsCleanupTimer.stop();
+    m_nonVisibleProcessEarlyMemoryCleanupTimer.stop();
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     m_nonVisibleProcessMemoryCleanupTimer.stop();
@@ -1654,8 +1654,8 @@ void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
     m_pagesInWindows.remove(pageID);
 
     if (m_pagesInWindows.isEmpty()) {
-        if (!m_nonVisibleProcessGraphicsCleanupTimer.isActive())
-            m_nonVisibleProcessGraphicsCleanupTimer.startOneShot(nonVisibleProcessGraphicsCleanupDelay);
+        if (!m_nonVisibleProcessEarlyMemoryCleanupTimer.isActive())
+            m_nonVisibleProcessEarlyMemoryCleanupTimer.startOneShot(nonVisibleProcessEarlyMemoryCleanupDelay);
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
         if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
@@ -1664,7 +1664,7 @@ void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
     }
 }
     
-void WebProcess::nonVisibleProcessGraphicsCleanupTimerFired()
+void WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired()
 {
     ASSERT(m_pagesInWindows.isEmpty());
     if (!m_pagesInWindows.isEmpty())
@@ -1672,6 +1672,7 @@ void WebProcess::nonVisibleProcessGraphicsCleanupTimerFired()
 
 #if PLATFORM(COCOA)
     destroyRenderingResources();
+    releaseSystemMallocMemory();
 #endif
 }
 
