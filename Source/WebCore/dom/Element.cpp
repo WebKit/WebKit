@@ -2763,6 +2763,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 
     if (UNLIKELY(isInTopLayer()))
         removeFromTopLayer();
+
+    document().userActionElements().clearAllForElement(*this);
 }
 
 PopoverData* Element::popoverData() const
