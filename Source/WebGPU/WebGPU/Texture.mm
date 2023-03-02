@@ -2683,6 +2683,7 @@ bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureA
     case WGPUTextureFormat_ASTC12x10UnormSrgb:
     case WGPUTextureFormat_ASTC12x12Unorm:
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
+        return false;
     case WGPUTextureFormat_Force32:
         ASSERT_NOT_REACHED();
         return false;
