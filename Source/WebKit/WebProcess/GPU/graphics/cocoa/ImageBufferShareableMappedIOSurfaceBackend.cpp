@@ -56,7 +56,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), creationContext.surfacePool);
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), 0, creationContext.surfacePool);
 }
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
@@ -71,7 +71,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
         return nullptr;
 
     ASSERT(surface->colorSpace() == parameters.colorSpace);
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), nullptr);
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), 0, nullptr);
 }
 
 ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const

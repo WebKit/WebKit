@@ -46,7 +46,7 @@ public:
 
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);
 
-    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&, IOSurfacePool*);
+    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&, PlatformDisplayID, IOSurfacePool*);
     ~ImageBufferIOSurfaceBackend();
     
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
@@ -86,7 +86,7 @@ protected:
     std::unique_ptr<IOSurface> m_surface;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
-
+    const PlatformDisplayID m_displayID;
     RefPtr<IOSurfacePool> m_ioSurfacePool;
 };
 
