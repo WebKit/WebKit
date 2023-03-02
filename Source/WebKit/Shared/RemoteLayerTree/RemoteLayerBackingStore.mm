@@ -238,7 +238,7 @@ SetNonVolatileResult RemoteLayerBackingStore::swapToValidFrontBuffer()
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_displayListBuffer)
-        m_displayListBuffer->clearContents();
+        m_displayListBuffer->releaseGraphicsContext();
 #endif
 
     m_contentsBufferHandle = std::nullopt;

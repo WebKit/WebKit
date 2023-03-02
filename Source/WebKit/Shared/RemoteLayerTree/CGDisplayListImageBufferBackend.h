@@ -48,7 +48,7 @@ public:
     WebCore::IntSize backendSize() const final;
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
-    void clearContents() final;
+    void releaseGraphicsContext() final;
 
     // NOTE: These all ASSERT_NOT_REACHED().
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;

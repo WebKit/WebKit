@@ -178,7 +178,7 @@ unsigned CGDisplayListImageBufferBackend::bytesPerRow() const
     return calculateBytesPerRow(backendSize());
 }
 
-void CGDisplayListImageBufferBackend::clearContents()
+void CGDisplayListImageBufferBackend::releaseGraphicsContext()
 {
     m_context = nullptr;
 }
