@@ -108,8 +108,13 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
         return;
     }
 
-    auto requests = map(generatedRequests.releaseReturnValue(), [](auto&& fetchRequest) -> BackgroundFetchRequest {
-        return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer() };
+    auto requests = map(generatedRequests.releaseReturnValue(), [&](auto&& fetchRequest) -> BackgroundFetchRequest {
+        Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> responseHeaders;
+        if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
+            if (auto* policy = context.contentSecurityPolicy())
+                responseHeaders = policy->responseHeaders();
+        }
+        return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer(), WTFMove(responseHeaders) };
     });
     SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTFMove(requests), WTFMove(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& result) mutable {
         if (!weakContext)

@@ -27,22 +27,26 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "FetchHeadersGuard.h"
 #include "FetchOptions.h"
 #include "HTTPHeaderMap.h"
 #include "ResourceRequest.h"
+#include <wtf/CrossThreadCopier.h>
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
 struct BackgroundFetchRequest {
-    BackgroundFetchRequest isolatedCopy() const & { return { internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), referrer.isolatedCopy() }; }
-    BackgroundFetchRequest isolatedCopy() && { return { WTFMove(internalRequest).isolatedCopy(), WTFMove(options).isolatedCopy(), guard, WTFMove(httpHeaders).isolatedCopy(), WTFMove(referrer).isolatedCopy() }; }
+    BackgroundFetchRequest isolatedCopy() const & { return { internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), referrer.isolatedCopy(), crossThreadCopy(cspResponseHeaders) }; }
+    BackgroundFetchRequest isolatedCopy() && { return { WTFMove(internalRequest).isolatedCopy(), WTFMove(options).isolatedCopy(), guard, WTFMove(httpHeaders).isolatedCopy(), WTFMove(referrer).isolatedCopy(), crossThreadCopy(WTFMove(cspResponseHeaders)) }; }
 
     ResourceRequest internalRequest;
     FetchOptions options;
     FetchHeadersGuard guard;
     HTTPHeaderMap httpHeaders;
     String referrer;
+    Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
 };
 
 } // namespace WebCore

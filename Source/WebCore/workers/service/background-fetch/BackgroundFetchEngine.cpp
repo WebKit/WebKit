@@ -89,8 +89,8 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
             return;
         }
 
-        fetch->perform([server = WTFMove(server)](auto& client, auto&& request, auto&& options, auto& origin) mutable {
-            return server ? server->createBackgroundFetchRecordLoader(client, WTFMove(request), WTFMove(options), origin) : nullptr;
+        fetch->perform([server = WTFMove(server)](auto& client, auto& request, auto& origin) mutable {
+            return server ? server->createBackgroundFetchRecordLoader(client, request, origin) : nullptr;
         });
 
         callback(fetch->information());

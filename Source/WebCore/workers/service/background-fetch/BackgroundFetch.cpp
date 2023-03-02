@@ -31,6 +31,7 @@
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "ExceptionData.h"
 #include "Logging.h"
 #include "SWServerRegistration.h"
@@ -232,7 +233,7 @@ void BackgroundFetch::Record::complete(const CreateLoaderCallback& createLoaderC
 {
     ASSERT(!m_loader);
     // FIXME: Handle Range headers
-    m_loader = createLoaderCallback(*this, ResourceRequest { m_request.internalRequest }, FetchOptions { m_request.options }, m_fetch->m_origin);
+    m_loader = createLoaderCallback(*this, m_request, m_fetch->m_origin);
     if (!m_loader)
         abort();
 }
@@ -380,6 +381,7 @@ void BackgroundFetch::doStore()
         encoder << record->request().guard;
         encoder << record->request().httpHeaders;
         encoder << record->request().referrer;
+        encoder << record->request().cspResponseHeaders.value();
         encoder << record->response();
         encoder << record->isCompleted();
     }
@@ -473,6 +475,11 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uin
         if (!referrer)
             return nullptr;
 
+        std::optional<ContentSecurityPolicyResponseHeaders> responseHeaders;
+        decoder >> responseHeaders;
+        if (!responseHeaders)
+            return nullptr;
+
         WebCore::ResourceResponse response;
         if (!WebCore::ResourceResponse::decode(decoder, response))
             return nullptr;
@@ -482,7 +489,7 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uin
         if (!isCompleted)
             return nullptr;
 
-        auto record = Record::create(*fetch, { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer) }, index);
+        auto record = Record::create(*fetch, { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer), WTFMove(*responseHeaders) }, index);
         if (*isCompleted)
             record->setAsCompleted();
         records.uncheckedAppend(WTFMove(record));
