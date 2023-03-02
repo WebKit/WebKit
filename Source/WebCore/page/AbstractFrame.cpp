@@ -61,16 +61,6 @@ void AbstractFrame::resetWindowProxy()
     m_windowProxy = WindowProxy::create(*this);
 }
 
-Page* AbstractFrame::page() const
-{
-    return m_page.get();
-}
-
-HTMLFrameOwnerElement* AbstractFrame::ownerElement() const
-{
-    return m_ownerElement.get();
-}
-
 void AbstractFrame::detachFromPage()
 {
     m_page = nullptr;

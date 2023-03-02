@@ -53,9 +53,9 @@ public:
     AbstractDOMWindow* window() const { return virtualWindow(); }
     FrameTree& tree() const { return m_treeNode; }
     FrameIdentifier frameID() const { return m_frameID; }
-    WEBCORE_EXPORT Page* page() const;
+    inline Page* page() const; // Defined in Page.h.
     WEBCORE_EXPORT void detachFromPage();
-    WEBCORE_EXPORT HTMLFrameOwnerElement* ownerElement() const;
+    inline HTMLFrameOwnerElement* ownerElement() const; // Defined in HTMLFrameOwnerElement.h.
     WEBCORE_EXPORT void disconnectOwnerElement();
 
     virtual void frameDetached() = 0;

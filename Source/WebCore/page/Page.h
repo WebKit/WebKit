@@ -1395,6 +1395,11 @@ inline PageGroup& Page::group()
     return *m_group;
 }
 
+inline Page* AbstractFrame::page() const
+{
+    return m_page.get();
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);
 
 } // namespace WebCore

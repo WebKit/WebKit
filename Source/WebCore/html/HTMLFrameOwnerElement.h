@@ -106,6 +106,11 @@ private:
     ContainerNode* m_root;
 };
 
+inline HTMLFrameOwnerElement* AbstractFrame::ownerElement() const
+{
+    return m_ownerElement.get();
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFrameOwnerElement)
