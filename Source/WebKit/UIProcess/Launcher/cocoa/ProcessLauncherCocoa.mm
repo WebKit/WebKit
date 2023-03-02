@@ -56,10 +56,6 @@
 #import "CodeSigning.h"
 #endif
 
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-#include <WebKitAdditions/InternalBuildAdditions.h>
-#endif
-
 namespace WebKit {
 
 static const char* webContentServiceName(bool nonValidInjectedCodeAllowed, ProcessLauncher::Client* client)
@@ -182,15 +178,6 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
-
-    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
-        bool disableLogging = true;
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-        if (isInternalBuild())
-            disableLogging = false;
-#endif
-        xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
-    }
 
     bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:FileSystem::systemDirectoryPath()];
     if (isWebKitDevelopmentBuild) {
