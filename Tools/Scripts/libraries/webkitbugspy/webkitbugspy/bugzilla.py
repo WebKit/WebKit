@@ -232,7 +232,7 @@ class Tracker(GenericTracker):
 
             # Attempt to match radar importer first
             if self.radar_importer:
-                for comment in issue.comments:
+                for comment in (issue.comments or []):
                     if not comment:
                         continue
                     if comment.user != self.radar_importer:
@@ -243,7 +243,7 @@ class Tracker(GenericTracker):
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-            for text in [issue.description] + [comment.content for comment in issue.comments if comment]:
+            for text in [issue.description] + [comment.content for comment in (issue.comments or []) if comment]:
                 if not text:
                     continue
                 for match in self.REFERENCE_RE.findall(text):
@@ -489,9 +489,9 @@ class Tracker(GenericTracker):
 
         keyword_to_add = None
         comment_to_make = None
-        user_to_cc = self.radar_importer.name if self.radar_importer not in issue.watchers else None
+        user_to_cc = self.radar_importer.name if self.radar_importer not in (issue.watchers or []) else None
         if radar and isinstance(radar.tracker, RadarTracker):
-            if radar not in issue.references:
+            if radar not in (issue.references or []):
                 comment_to_make = '<rdar://problem/{}>'.format(radar.id)
             if user_to_cc:
                 keyword_to_add = 'InRadar'
@@ -539,7 +539,7 @@ class Tracker(GenericTracker):
 
         start = time.time()
         while start + (timeout or 60) > time.time():
-            for reference in issue.references:
+            for reference in (issue.references or []):
                 if isinstance(reference.tracker, RadarTracker):
                     return reference
             if not block or not did_modify_cc:
