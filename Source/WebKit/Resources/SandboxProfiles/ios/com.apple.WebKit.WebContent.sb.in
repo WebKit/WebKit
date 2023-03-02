@@ -304,7 +304,9 @@
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
-    (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+    (with-filter (require-all
+        (require-not (state-flag "EnableExperimentalSandbox"))
+        (require-not (state-flag "EnableExperimentalSandboxWithProbability")))
         (allow mach-lookup (global-name "com.apple.CARenderServer")))
 
     ; UIKit-required IOKit nodes.
