@@ -2026,6 +2026,12 @@ public:
         store64(dataTempRegister, address);
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        load32(src, getCachedDataTempRegisterIDAndInvalidate());
+        store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
+    }
+
     void transfer64(Address src, Address dest)
     {
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
@@ -2638,6 +2644,14 @@ public:
         m_assembler.vorr<128>(dest, src, src);
     }
 
+    void materializeVector(v128_t value, FPRegisterID dest)
+    {
+        move(TrustedImm64(value.u64x2[0]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
+        move(TrustedImm64(value.u64x2[1]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(1), scratchRegister(), dest);
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         m_assembler.fmov<64>(reg, ARM64Registers::zr);
@@ -2663,9 +2677,21 @@ public:
         m_assembler.fmov<64>(dest, src);
     }
 
+    void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
+    {
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.fmov<64>(dest, dataTempRegister);
+    }
+
     void move32ToFloat(RegisterID src, FPRegisterID dest)
     {
         m_assembler.fmov<32>(dest, src);
+    }
+
+    void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
+    {
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.fmov<32>(dest, dataTempRegister);
     }
 
     void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)

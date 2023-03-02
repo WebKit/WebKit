@@ -1600,12 +1600,6 @@ public:
             move(imm.asTrustedImm64(), dest);
     }
 
-    void moveDouble(Imm64 imm, FPRegisterID dest)
-    {
-        move(imm, scratchRegister());
-        move64ToDouble(scratchRegister(), dest);
-    }
-
     void and64(Imm32 imm, RegisterID dest)
     {
         if (shouldBlind(imm)) {
@@ -1617,6 +1611,34 @@ public:
     }
 
 #endif // USE(JSVALUE64)
+
+#if CPU(X86_64)
+    void moveFloat(Imm32 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        move32ToFloat(scratchRegister(), dest);
+    }
+
+    void moveDouble(Imm64 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        move64ToDouble(scratchRegister(), dest);
+    }
+#endif
+
+#if CPU(ARM64)
+    void moveFloat(Imm32 imm, FPRegisterID dest)
+    {
+        move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
+        move32ToFloat(getCachedMemoryTempRegisterIDAndInvalidate(), dest);
+    }
+
+    void moveDouble(Imm64 imm, FPRegisterID dest)
+    {
+        move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
+        move64ToDouble(getCachedMemoryTempRegisterIDAndInvalidate(), dest);
+    }
+#endif
 
 #if !CPU(X86) && !CPU(X86_64) && !CPU(ARM64)
     // We should implement this the right way eventually, but for now, it's fine because it arises so

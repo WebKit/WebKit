@@ -1193,6 +1193,12 @@ public:
         store64(src2, Address(dest, offset.m_value + 8));
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        load32(src, scratchRegister());
+        store32(scratchRegister(), dest);
+    }
+
     void transfer64(Address src, Address dest)
     {
         load64(src, scratchRegister());
@@ -1229,12 +1235,30 @@ public:
             m_assembler.movd_rr(src, dest);
     }
 
+    void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        if (supportsAVX())
+            m_assembler.vmovd_rr(scratchRegister(), dest);
+        else
+            m_assembler.movd_rr(scratchRegister(), dest);
+    }
+
     void move64ToDouble(RegisterID src, FPRegisterID dest)
     {
         if (supportsAVX())
             m_assembler.vmovq_rr(src, dest);
         else
             m_assembler.movq_rr(src, dest);
+    }
+
+    void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        if (supportsAVX())
+            m_assembler.vmovq_rr(scratchRegister(), dest);
+        else
+            m_assembler.movq_rr(scratchRegister(), dest);
     }
 
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
@@ -1252,7 +1276,15 @@ public:
         else
             m_assembler.movaps_rr(src, dest);
     }
-    
+
+    void materializeVector(v128_t value, FPRegisterID dest)
+    {
+        move(TrustedImm64(value.u64x2[0]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
+        move(TrustedImm64(value.u64x2[1]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(1), scratchRegister(), dest);
+    }
+
     void loadVector(TrustedImmPtr address, FPRegisterID dest)
     {
         move(address, scratchRegister());
