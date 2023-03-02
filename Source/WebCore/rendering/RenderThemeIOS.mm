@@ -477,8 +477,8 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
     if (style.effectiveAppearance() == StyleAppearance::PushButton || style.effectiveAppearance() == StyleAppearance::MenulistButton)
         return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
 
-    if (style.effectiveAppearance() == StyleAppearance::TextField || style.effectiveAppearance() == StyleAppearance::TextArea)
-        return style.backgroundLayers() != userAgentStyle.backgroundLayers();
+    if (style.effectiveAppearance() == StyleAppearance::TextField || style.effectiveAppearance() == StyleAppearance::TextArea || style.effectiveAppearance() == StyleAppearance::SearchField)
+        return !style.borderAndBackgroundEqual(userAgentStyle);
 
 #if ENABLE(DATALIST_ELEMENT)
     if (style.effectiveAppearance() == StyleAppearance::ListButton)
