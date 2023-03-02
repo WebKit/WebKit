@@ -130,12 +130,12 @@ template<> void JSTestSerializedScriptValueInterfaceDOMConstructor::initializePr
 
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterfaceConstructor, 0 } },
-    { "value"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_value, setJSTestSerializedScriptValueInterface_value } },
-    { "readonlyValue"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_readonlyValue, 0 } },
-    { "cachedValue"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_cachedValue, setJSTestSerializedScriptValueInterface_cachedValue } },
-    { "ports"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_ports, 0 } },
-    { "cachedReadonlyValue"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_cachedReadonlyValue, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterfaceConstructor, 0 } },
+    { "value"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_value, setJSTestSerializedScriptValueInterface_value } },
+    { "readonlyValue"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_readonlyValue, 0 } },
+    { "cachedValue"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_cachedValue, setJSTestSerializedScriptValueInterface_cachedValue } },
+    { "ports"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_ports, 0 } },
+    { "cachedReadonlyValue"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestSerializedScriptValueInterface_cachedReadonlyValue, 0 } },
     { "function"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSerializedScriptValueInterfacePrototypeFunction_function, 1 } },
     { "functionReturning"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestSerializedScriptValueInterfacePrototypeFunction_functionReturning, 0 } },
 };

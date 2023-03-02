@@ -1,6 +1,0 @@
-
-PASS Test drawing color managed OffscreenCanvas: Canvas color params: srgb, uint8;  OffscreenCanvas color params: srgb, uint8
-PASS Test drawing color managed OffscreenCanvas: Canvas color params: srgb, uint8;  OffscreenCanvas color params: srgb, float16
-PASS Test drawing color managed OffscreenCanvas: Canvas color params: srgb, float16;  OffscreenCanvas color params: srgb, uint8
-PASS Test drawing color managed OffscreenCanvas: Canvas color params: srgb, float16;  OffscreenCanvas color params: srgb, float16
-

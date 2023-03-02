@@ -40,6 +40,7 @@
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "FormState.h"
@@ -48,9 +49,13 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
+#include "FrameSnapshotting.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLTableElement.h"
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
 #include "InspectorController.h"
@@ -63,6 +68,8 @@
 #include "RenderImage.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "TranslationContextMenuInfo.h"
@@ -155,6 +162,55 @@ void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& p
     showContextMenu(event);
 }
 
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+
+static void prepareContextForQRCode(ContextMenuContext& context)
+{
+    auto& result = context.hitTestResult();
+
+    RefPtr node = result.innerNonSharedNode();
+    if (!node || !node->document().settings().contextMenuQRCodeDetectionEnabled())
+        return;
+
+    if (result.image() || !result.absoluteLinkURL().isEmpty())
+        return;
+
+    RefPtr<Element> element;
+    for (auto& lineage : lineageOfType<Element>(is<Element>(*node) ? downcast<Element>(*node) : *node->parentElement())) {
+        if (is<HTMLTableElement>(lineage) || is<HTMLCanvasElement>(lineage) || is<HTMLImageElement>(lineage) || is<SVGSVGElement>(lineage)) {
+            element = &lineage;
+            break;
+        }
+    }
+
+    if (!element || !element->renderer())
+        return;
+
+    auto elementRect = element->renderer()->absoluteBoundingBoxRect();
+
+    // Constant chosen to be larger than we think any QR code would be, matching the original Safari implementation.
+    constexpr auto maxQRCodeContainerDimension = 800;
+    if (elementRect.width() > maxQRCodeContainerDimension || elementRect.height() > maxQRCodeContainerDimension)
+        return;
+
+    RefPtr frame = element->document().frame();
+    if (!frame)
+        return;
+
+    auto nodeSnapshotImageBuffer = snapshotNode(*frame, *element, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto nodeSnapshotImage = ImageBuffer::sinkIntoImage(WTFMove(nodeSnapshotImageBuffer), PreserveResolution::Yes);
+    context.setPotentialQRCodeNodeSnapshotImage(nodeSnapshotImage.get());
+
+    // FIXME: Node snapshotting does not take transforms into account, making it unreliable for QR code detection.
+    // As a fallback, also take a viewport-level snapshot. A node snapshot is still required to capture partially
+    // obscured elements. This workaround can be removed once rdar://87204215 is fixed.
+    auto viewportSnapshotImageBuffer = snapshotFrameRect(*frame, elementRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto viewportSnapshotImage = ImageBuffer::sinkIntoImage(WTFMove(viewportSnapshotImageBuffer), PreserveResolution::Yes);
+    context.setPotentialQRCodeViewportSnapshotImage(viewportSnapshotImage.get());
+}
+
+#endif
+
 std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type contextType)
 {
     if (!is<MouseEvent>(event))
@@ -173,6 +229,9 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
         return nullptr;
 
     m_context = { contextType, result, &event };
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    prepareContextForQRCode(m_context);
+#endif
     
     return makeUnique<ContextMenu>();
 }

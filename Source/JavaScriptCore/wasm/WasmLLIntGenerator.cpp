@@ -559,6 +559,7 @@ private:
     Checked<unsigned> m_maxStackSize { 0 };
     Checked<unsigned> m_tryDepth { 0 };
     bool m_usesExceptions { false };
+    bool m_usesAtomics { false };
     bool m_usesSIMD { false };
 };
 
@@ -1362,7 +1363,11 @@ auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
 {
     RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
     if (m_usesSIMD)
-        m_info.addSIMDFunction(m_functionIndex);
+        m_info.markUsesSIMD(m_functionIndex);
+    if (m_usesExceptions)
+        m_info.markUsesExceptions(m_functionIndex);
+    if (m_usesAtomics)
+        m_info.markUsesAtomics(m_functionIndex);
     m_info.doneSeeingFunction(m_functionIndex);
 
     if (!signature->as<FunctionSignature>()->returnCount()) {
@@ -1687,6 +1692,7 @@ auto LLIntGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionTyp
 
 auto LLIntGenerator::atomicLoad(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicLoad8U:
@@ -1713,6 +1719,7 @@ auto LLIntGenerator::atomicLoad(ExtAtomicOpType op, Type, ExpressionType pointer
 
 auto LLIntGenerator::atomicStore(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType value, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     auto result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicStore8U:
@@ -1740,6 +1747,7 @@ auto LLIntGenerator::atomicStore(ExtAtomicOpType op, Type, ExpressionType pointe
 
 auto LLIntGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicRmw8AddU:
@@ -1842,6 +1850,7 @@ auto LLIntGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type, ExpressionType po
 
 auto LLIntGenerator::atomicCompareExchange(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicRmw8CmpxchgU:
@@ -1869,6 +1878,7 @@ auto LLIntGenerator::atomicCompareExchange(ExtAtomicOpType op, Type, ExpressionT
 
 auto LLIntGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::MemoryAtomicWait32:
@@ -1886,6 +1896,7 @@ auto LLIntGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, Expr
 
 auto LLIntGenerator::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     RELEASE_ASSERT(op == ExtAtomicOpType::MemoryAtomicNotify);
     WasmMemoryAtomicNotify::emit(this, result, pointer, offset, count);
@@ -1894,6 +1905,7 @@ auto LLIntGenerator::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, Ex
 
 auto LLIntGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
 {
+    m_usesAtomics = true;
     WasmAtomicFence::emit(this);
     return { };
 }

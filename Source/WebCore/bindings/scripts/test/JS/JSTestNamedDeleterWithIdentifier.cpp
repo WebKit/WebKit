@@ -113,7 +113,7 @@ template<> void JSTestNamedDeleterWithIdentifierDOMConstructor::initializeProper
 
 static const HashTableValue JSTestNamedDeleterWithIdentifierPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedDeleterWithIdentifierConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedDeleterWithIdentifierConstructor, 0 } },
     { "namedDeleter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedDeleterWithIdentifierPrototypeFunction_namedDeleter, 1 } },
 };
 

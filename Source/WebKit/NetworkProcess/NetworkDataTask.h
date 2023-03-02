@@ -63,6 +63,7 @@ class NetworkDataTaskClient {
 public:
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
+    virtual void didReceiveInformationalResponse(WebCore::ResourceResponse&&) { };
     virtual void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&) = 0;
     virtual void didReceiveData(const WebCore::SharedBuffer&) = 0;
     virtual void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) = 0;
@@ -95,6 +96,7 @@ public:
     virtual void resume() = 0;
     virtual void invalidateAndCancel() = 0;
 
+    void didReceiveInformationalResponse(WebCore::ResourceResponse&&);
     void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
     bool shouldCaptureExtraNetworkLoadMetrics() const;
 

@@ -882,7 +882,7 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
     if (UNLIKELY(Options::breakOnThrow())) {
         CodeBlock* codeBlock = throwOriginFrame && !throwOriginFrame->isWasmFrame() ? throwOriginFrame->codeBlock() : nullptr;
         dataLog("Throwing exception in call frame ", RawPointer(throwOriginFrame), " for code block ", codeBlock, "\n");
-        CRASH();
+        WTFBreakpointTrap();
     }
 
     interpreter.notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exceptionToThrow);

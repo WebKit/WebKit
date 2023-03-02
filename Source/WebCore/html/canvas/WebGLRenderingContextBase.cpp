@@ -88,6 +88,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLAnyInlines.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"
 #include "WebGLColorBufferFloat.h"
@@ -1089,7 +1090,7 @@ RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffe
     return m_context->paintRenderingResultsToPixelBuffer();
 }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> WebGLRenderingContextBase::paintCompositedResultsToVideoFrame()
 {
     if (isContextLost())

@@ -1130,6 +1130,8 @@ static NSTrackingAreaOptions trackingAreaOptions()
     return options;
 }
 
+static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*);
+
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
     , m_pageClient(makeUnique<PageClientImpl>(view, outerWebView))
@@ -1207,6 +1209,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
     m_lastScrollViewFrame = scrollViewFrame();
 #endif
+
+    _textInputNotifications = subscribeToTextInputNotifications(this);
 
     WebProcessPool::statistics().wkViewCount++;
 }
@@ -3151,6 +3155,14 @@ NSTextCheckingTypes WebViewImpl::getTextCheckingTypes() const
     return NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
 }
 #endif
+
+#ifndef WEB_VIEW_IMPL_ADDITIONS_SUSCRIBE_TO_TEXT_INPUT_NOTIFICATIONS_DEFINED
+static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*)
+{
+    return nullptr;
+}
+#endif //  WEB_VIEW_IMPL_ADDITIONS_SUSCRIBE_TO_TEXT_INPUT_NOTIFICATIONS_DEFINED
+
 
 void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 {

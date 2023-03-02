@@ -8475,7 +8475,16 @@
             "values": [
                 "auto",
                 "under",
-                "from-font"
+                "from-font",
+                {
+                    "value": "left",
+                    "settings-flag": "cssTextUnderlinePositionLeftRightEnabled"
+
+                },
+                {
+                    "value": "right",
+                    "settings-flag": "cssTextUnderlinePositionLeftRightEnabled"
+                }
             ],
             "codegen-properties": {
                 "aliases": [
@@ -8484,7 +8493,7 @@
                 "parser-grammar": "<<values>>",
                 "parser-grammar-unused": "auto | [ [ under | from-font ] || [ left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
-                "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font'."
+                "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font | left | right'."
             },
             "specification": {
                 "category": "css-text-decor",

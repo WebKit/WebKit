@@ -370,7 +370,7 @@ Total elements to be tested: 122.
 <input aria-hidden="true">
     exists: true
     label:
-    role:
+    role: textbox
     focused: false
     ignored: true
     ignoredByDefault: true
@@ -753,7 +753,7 @@ Total elements to be tested: 122.
 <div role="textbox" tabindex="0" aria-disabled="true">disabled</div>
     exists: true
     label:
-    role:
+    role: textbox
     disabled: true
     focused: false
     parentNodeId: exists
@@ -762,7 +762,7 @@ Total elements to be tested: 122.
 <input disabled="" value="disabled">
     exists: true
     label:
-    role:
+    role: textbox
     childNodeIds.length: 1
     disabled: true
     parentNodeId: exists
@@ -771,7 +771,7 @@ Total elements to be tested: 122.
 <div role="textbox" tabindex="0" aria-readonly="true">readonly</div>
     exists: true
     label:
-    role:
+    role: textbox
     focused: false
     parentNodeId: exists
     readonly: true
@@ -780,7 +780,7 @@ Total elements to be tested: 122.
 <input readonly="" value="readonly">
     exists: true
     label:
-    role:
+    role: textbox
     childNodeIds.length: 1
     focused: false
     parentNodeId: exists
@@ -790,7 +790,7 @@ Total elements to be tested: 122.
 <input aria-invalid="foo" value="fake value will eval to true">
     exists: true
     label:
-    role:
+    role: textbox
     childNodeIds.length: 1
     focused: false
     invalid: true
@@ -800,7 +800,7 @@ Total elements to be tested: 122.
 <input aria-invalid="spelling" value="invalid spelling">
     exists: true
     label:
-    role:
+    role: textbox
     childNodeIds.length: 1
     focused: false
     invalid: spelling
@@ -810,7 +810,7 @@ Total elements to be tested: 122.
 <input aria-required="true" value="required">
     exists: true
     label:
-    role:
+    role: textbox
     childNodeIds.length: 1
     focused: false
     parentNodeId: exists
@@ -819,15 +819,16 @@ Total elements to be tested: 122.
 <input required="">
     exists: true
     label:
-    role:
+    role: textbox
     focused: false
+    invalid: true
     parentNodeId: exists
     required: true
 
 <input>
     exists: true
     label:
-    role:
+    role: textbox
     focused: false
     parentNodeId: exists
     required: false

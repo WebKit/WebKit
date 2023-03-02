@@ -144,6 +144,7 @@
 - (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags;
 - (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks;
 - (void)sendClickAtPoint:(NSPoint)pointInWindow;
+- (void)rightClickAtPoint:(NSPoint)pointInWindow;
 - (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta;
 - (BOOL)acceptsFirstMouseAtPoint:(NSPoint)pointInWindow;
 - (NSWindow *)hostWindow;

@@ -1,15 +1,15 @@
 
 (scrolling tree
   (frame scrolling node
-    (scrollable area size width=768 height=1004)
-    (total content size width=768 height=1004)
+    (scrollable area size width=810 height=1060)
+    (total content size width=810 height=1060)
     (last committed scroll position (0,0))
     (scrollable area parameters
       (horizontal scroll elasticity 1)
       (vertical scroll elasticity 1)
       (horizontal scrollbar mode 0)
       (vertical scrollbar mode 0))
-    (layout viewport (0,0) width=768 height=1004)
+    (layout viewport (0,0) width=810 height=1060)
     (min layoutViewport origin (0,0))
     (max layoutViewport origin (0,0))
     (behavior for fixed 1)
@@ -25,6 +25,6 @@
         (allows vertical scrolling 1)))
     (fixed node
       (fixed constraints
-        (viewport-rect-at-last-layout (0,0) width=768 height=1004)
+        (viewport-rect-at-last-layout (0,0) width=810 height=1060)
         (layer-position-at-last-layout (19,211)))
       (layer top left (19,211)))))

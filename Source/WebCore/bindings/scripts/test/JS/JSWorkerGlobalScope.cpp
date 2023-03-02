@@ -98,7 +98,7 @@ static const HashTableValue JSWorkerGlobalScopeTableValues[] =
     { "WorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_WorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSWorkerGlobalScopeTable = { 6, 15, true, JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues, JSWorkerGlobalScopeTableIndex };
+static const HashTable JSWorkerGlobalScopeTable = { 6, 15, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues, JSWorkerGlobalScopeTableIndex };
 template<> const ClassInfo JSWorkerGlobalScopeDOMConstructor::s_info = { "WorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -125,10 +125,10 @@ static const struct CompactHashIndex JSWorkerGlobalScopePrototypeTableIndex[2] =
 
 static const HashTableValue JSWorkerGlobalScopePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScopeConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSWorkerGlobalScopePrototypeTable = { 1, 1, true, JSWorkerGlobalScope::info(), JSWorkerGlobalScopePrototypeTableValues, JSWorkerGlobalScopePrototypeTableIndex };
+static const HashTable JSWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSWorkerGlobalScope::info(), JSWorkerGlobalScopePrototypeTableValues, JSWorkerGlobalScopePrototypeTableIndex };
 const ClassInfo JSWorkerGlobalScopePrototype::s_info = { "WorkerGlobalScope"_s, &Base::s_info, &JSWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopePrototype) };
 
 void JSWorkerGlobalScopePrototype::finishCreation(VM& vm)

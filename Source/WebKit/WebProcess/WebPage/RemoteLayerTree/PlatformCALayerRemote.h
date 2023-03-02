@@ -32,6 +32,10 @@
 
 namespace WebCore {
 class LayerPool;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+class AcceleratedEffect;
+struct AcceleratedEffectValues;
+#endif
 }
 
 namespace WebKit {
@@ -77,6 +81,11 @@ public:
     RefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
     void animationStarted(const String& key, MonotonicTime beginTime) override;
     void animationEnded(const String& key) override;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void clearAcceleratedEffectsAndBaseValues() override;
+    void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, WebCore::AcceleratedEffectValues&) override;
+#endif
 
     void setMask(WebCore::PlatformCALayer*) override;
 

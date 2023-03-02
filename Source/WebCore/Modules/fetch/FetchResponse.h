@@ -45,6 +45,7 @@ namespace WebCore {
 
 class AbortSignal;
 class FetchRequest;
+class FetchResponseBodyLoader;
 class ReadableStreamSource;
 
 class FetchResponse final : public FetchBodyOwner {
@@ -90,7 +91,7 @@ public:
     ResponseData consumeBody();
     void setBodyData(ResponseData&&, uint64_t bodySizeWithPadding);
 
-    bool isLoading() const { return !!m_bodyLoader; }
+    bool isLoading() const { return !!m_loader; }
     bool isBodyReceivedByChunk() const { return isLoading() || hasReadableStreamBody(); }
     bool isBlobBody() const { return !isBodyNull() && body().isBlob(); }
     bool isBlobFormData() const { return !isBodyNull() && body().isFormData(); }
@@ -118,27 +119,36 @@ public:
     void startLoader(ScriptExecutionContext&, FetchRequest&, const String& initiator);
 
     void setIsNavigationPreload(bool isNavigationPreload) { m_isNavigationPreload = isNavigationPreload; }
-    bool isAvailableNavigationPreload() const { return m_isNavigationPreload && m_bodyLoader && !m_bodyLoader->hasLoader() && !hasReadableStreamBody(); }
+    bool isAvailableNavigationPreload() const { return m_isNavigationPreload && m_loader && !m_loader->hasLoader() && !hasReadableStreamBody(); }
     void markAsUsedForPreload();
     bool isUsedForPreload() const { return m_isUsedForPreload; }
+
+    void setBodyLoader(UniqueRef<FetchResponseBodyLoader>&&);
+    void receivedError(Exception&&);
+    void receivedError(ResourceError&&);
+    void didSucceed(const NetworkLoadMetrics&);
+    void receivedData(Ref<SharedBuffer>&&);
 
 private:
     FetchResponse(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
+    // FetchBodyOwner
     void stop() final;
     const char* activeDOMObjectName() const final;
+    void loadBody() final;
 
     const ResourceResponse& filteredResponse() const;
     void setNetworkLoadMetrics(const NetworkLoadMetrics& metrics) { m_networkLoadMetrics = metrics; }
     void closeStream();
 
     void addAbortSteps(Ref<AbortSignal>&&);
+    void processReceivedError();
 
-    class BodyLoader final : public FetchLoaderClient {
+    class Loader final : public FetchLoaderClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        BodyLoader(FetchResponse&, NotificationCallback&&);
-        ~BodyLoader();
+        Loader(FetchResponse&, NotificationCallback&&);
+        ~Loader();
 
         bool start(ScriptExecutionContext&, const FetchRequest&, const String& initiator);
         void stop();
@@ -169,7 +179,8 @@ private:
 
     mutable std::optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;
-    std::unique_ptr<BodyLoader> m_bodyLoader;
+    std::unique_ptr<Loader> m_loader;
+    std::unique_ptr<FetchResponseBodyLoader> m_bodyLoader;
     mutable String m_responseURL;
     // Opaque responses will padd their body size when used with Cache API.
     uint64_t m_bodySizeWithPadding { 0 };

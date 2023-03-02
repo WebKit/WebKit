@@ -83,7 +83,7 @@ public:
 #if ENABLE(VIDEO)
     GraphicsContextGLCV* asCV() final;
 #endif
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
     void setContextVisibility(bool) final;

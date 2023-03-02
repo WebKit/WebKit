@@ -3193,8 +3193,14 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         }
     }
 
+    ++m_sampleCount;
+
     auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
     ASSERT(is<TextureMapperPlatformLayerProxyDMABuf>(proxy));
+
+    Locker locker { proxy.lock() };
+    if (!proxy.isActive())
+        return;
 
     // Currently we have to cover two ways of detecting a DMABuf memory. The most reliable is by detecting
     // the memory:DMABuf feature on the GstCaps object. All sensible decoders yielding DMABufs specify this.
@@ -3205,11 +3211,6 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     if (isDMABufMemory) {
         // In case of a hardware decoder that's yielding dmabuf memory, we can take the relevant data and
         // push it into the composition process.
-
-        ++m_sampleCount;
-        Locker locker { proxy.lock() };
-        if (!proxy.isActive())
-            return;
 
         // Provide the DMABufObject with a relevant handle (memory address). When provided for the first time,
         // the lambda will be invoked and all dmabuf data is filled in.
@@ -3269,6 +3270,8 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         return;
 
     auto swapchainBuffer = m_swapchain->getBuffer(bufferDescription);
+    if (!swapchainBuffer)
+        return;
 
     // Source helper struct, maps the raw memory and exposes the mapped data for copying.
     struct Source {
@@ -3300,6 +3303,12 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 
     // Destination helper struct, maps the gbm_bo object into CPU-memory space and copies from the accompanying Source in fill().
     struct Destination {
+        static Lock& mappingLock()
+        {
+            static Lock s_mappingLock;
+            return s_mappingLock;
+        }
+
         Destination(struct gbm_bo* bo, uint32_t width, uint32_t height)
             : bo(bo)
         {
@@ -3347,18 +3356,14 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         if (gst_buffer_find_memory(buffer, offset, 1, &memid, &length, &skip)) {
             auto* mem = gst_buffer_peek_memory(buffer, memid);
 
+            Locker locker { Destination::mappingLock() };
+
             Source source(mem, offset, stride, planeData.height);
             Destination destination(planeData.bo, planeData.width, planeData.height);
-
             if (source.valid && destination.valid)
                 destination.fill(source);
         }
     }
-
-    ++m_sampleCount;
-    Locker locker { proxy.lock() };
-    if (!proxy.isActive())
-        return;
 
     // The updated buffer is pushed into the composition stage. The DMABufObject handle uses the swapchain address as the handle base.
     // When the buffer is pushed for the first time, the lambda will be invoked to retrieve a more complete DMABufObject for the

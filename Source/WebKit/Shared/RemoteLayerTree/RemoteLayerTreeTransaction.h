@@ -51,6 +51,11 @@
 #include "DynamicViewportSizeUpdate.h"
 #endif
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include <WebCore/AcceleratedEffect.h>
+#include <WebCore/AcceleratedEffectValues.h>
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -166,6 +171,10 @@ public:
 
         Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
         HashSet<String> keysOfAnimationsToRemove;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        Vector<Ref<WebCore::AcceleratedEffect>> effects;
+        WebCore::AcceleratedEffectValues baseValues;
+#endif
 
         WebCore::FloatPoint3D position;
         WebCore::FloatPoint3D anchorPoint { 0.5, 0.5, 0 };

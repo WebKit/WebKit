@@ -264,7 +264,7 @@ public:
     void pageDidEnterWindow(WebCore::PageIdentifier);
     void pageWillLeaveWindow(WebCore::PageIdentifier);
 
-    void nonVisibleProcessGraphicsCleanupTimerFired();
+    void nonVisibleProcessEarlyMemoryCleanupTimerFired();
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     void nonVisibleProcessMemoryCleanupTimerFired();
@@ -277,6 +277,7 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void destroyRenderingResources();
+    void releaseSystemMallocMemory();
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
     std::optional<audit_token_t> auditTokenForSelf();
 #endif
@@ -675,7 +676,7 @@ private:
     bool m_processIsSuspended { false };
 
     HashSet<WebCore::PageIdentifier> m_pagesInWindows;
-    WebCore::Timer m_nonVisibleProcessGraphicsCleanupTimer;
+    WebCore::Timer m_nonVisibleProcessEarlyMemoryCleanupTimer;
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     WebCore::Timer m_nonVisibleProcessMemoryCleanupTimer;

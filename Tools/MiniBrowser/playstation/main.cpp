@@ -62,6 +62,9 @@ static void initialize()
     loadLibraryOrExit(Cairo_LOAD_AT);
     loadLibraryOrExit(ToolKitten_LOAD_AT);
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
+#if defined(LibPSL_LOAD_AT)
+    loadLibraryOrExit(LibPSL_LOAD_AT);
+#endif
 #if defined(WPE_LOAD_AT)
     loadLibraryOrExit(WPE_LOAD_AT);
 #endif

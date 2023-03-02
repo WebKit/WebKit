@@ -34,7 +34,8 @@ namespace WebCore {
 enum class AttestationConveyancePreference : uint8_t {
     None,
     Indirect,
-    Direct
+    Direct,
+    Enterprise,
 };
 
 } // namespace WebCore

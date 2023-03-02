@@ -222,7 +222,7 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& b
     }
 }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::paintCompositedResultsToVideoFrame()
 {
     ASSERT(isMainRunLoop());

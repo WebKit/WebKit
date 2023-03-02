@@ -59,6 +59,12 @@ int main(int argc, char** argv)
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
     loadLibraryOrExit(Cairo_LOAD_AT);
+#if defined(LibPSL_LOAD_AT)
+    loadLibraryOrExit(LibPSL_LOAD_AT);
+#endif
+#if defined(LibXml2_LOAD_AT)
+    loadLibraryOrExit(LibXml2_LOAD_AT);
+#endif
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
 #if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");

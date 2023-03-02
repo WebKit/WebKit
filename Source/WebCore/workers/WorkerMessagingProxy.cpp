@@ -146,7 +146,8 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 #if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
 #endif
-        initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { })
+        initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { }),
+        m_scriptExecutionContext->noiseInjectionHashSalt()
     };
     auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, *this, startMode, m_scriptExecutionContext->topOrigin(), proxy, socketProvider, runtimeFlags);
 

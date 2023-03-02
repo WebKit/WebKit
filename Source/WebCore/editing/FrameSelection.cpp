@@ -163,39 +163,19 @@ static inline bool isPageActive(Document* document)
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/FrameSelectionAdditions.cpp>
 #else
-#if ENABLE(TEXT_CARET)
-static void fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color&color, const LayoutPoint&, CaretAnimator*)
-{
-    context.fillRect(caret, color);
-}
-#endif
 
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType = CaretAnimatorType::Default)
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection)
 {
     return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
 }
 #endif // USE(APPLE_INTERNAL_SDK)
 
-// FIXME: Remove staging once repaintCaretRectForLocalRect is defined in FrameSelectionAdditions.cpp
-#ifndef FRAME_SELECTION_ADDITIONS_REPAINT_CARET_RECT_FOR_LOCAL_RECT_DEFINED
-static LayoutRect repaintCaretRectForLocalRect(LayoutRect rect, CaretAnimator*)
-{
-    return rect;
-}
-
-#if USE(APPLE_INTERNAL_SDK)
-#if ENABLE(TEXT_CARET)
-static void fillCaretRect(const Node& node, GraphicsContext& context, const FloatRect& caret, const Color& color, const LayoutPoint&, CaretAnimator* animator)
-{
-    fillCaretRect(node, context, caret, color, animator ? animator->presentationProperties() : CaretAnimator::PresentationProperties());
-}
-#endif
+#if !defined(FRAME_SELECTION_ADDITIONS_CREATE_CARET_ANIMATOR_WITH_TYPE_DEFINED) && PLATFORM(MAC)
 static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType)
 {
     return createCaretAnimator(frameSelection);
 }
 #endif
-#endif // FRAME_SELECTION_ADDITIONS_REPAINT_CARET_RECT_FOR_LOCAL_RECT_DEFINED
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
@@ -1791,7 +1771,7 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
 static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect, CaretAnimator* caretAnimator)
 {
     if (auto* caretPainter = rendererForCaretPainting(node))
-        caretPainter->repaintRectangle(repaintCaretRectForLocalRect(rect, caretAnimator));
+        caretPainter->repaintRectangle(caretAnimator ? caretAnimator->repaintCaretRectForLocalRect(rect) : rect);
 }
 
 bool FrameSelection::recomputeCaretRect()
@@ -1942,7 +1922,14 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
-    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, paintOffset, caretAnimator);
+#if !defined(FRAME_SELECTION_ADDITIONS_CREATE_CARET_ANIMATOR_WITH_TYPE_DEFINED) && USE(APPLE_INTERNAL_SDK)
+    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, caretPresentationProperties);
+#else
+    if (caretAnimator)
+        caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset);
+    else
+        context.fillRect(pixelSnappedCaretRect, caretColor);
+#endif
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
@@ -1967,10 +1954,13 @@ void FrameSelection::caretAnimationDidUpdate(CaretAnimator&)
     invalidateCaretRect();
 }
 
-void FrameSelection::caretAnimatorInvalidated(CaretAnimator&, CaretAnimatorType newCaretType)
+#if PLATFORM(MAC)
+void FrameSelection::caretAnimatorInvalidated(CaretAnimatorType caretType)
 {
-    m_caretAnimator = createCaretAnimator(this, newCaretType);
+    m_caretAnimator = createCaretAnimator(this, caretType);
+    caretAnimationDidUpdate(m_caretAnimator);
 }
+#endif
 
 Document* FrameSelection::document()
 {

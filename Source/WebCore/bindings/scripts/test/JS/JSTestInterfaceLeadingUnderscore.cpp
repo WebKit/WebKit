@@ -107,8 +107,8 @@ template<> void JSTestInterfaceLeadingUnderscoreDOMConstructor::initializeProper
 
 static const HashTableValue JSTestInterfaceLeadingUnderscorePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestInterfaceLeadingUnderscoreConstructor, 0 } },
-    { "readonly"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestInterfaceLeadingUnderscore_readonly, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestInterfaceLeadingUnderscoreConstructor, 0 } },
+    { "readonly"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestInterfaceLeadingUnderscore_readonly, 0 } },
 };
 
 const ClassInfo JSTestInterfaceLeadingUnderscorePrototype::s_info = { "TestInterfaceLeadingUnderscore"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscorePrototype) };

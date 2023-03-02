@@ -121,7 +121,7 @@ using JSTestCallTracerDOMConstructor = JSDOMConstructorNotConstructable<JSTestCa
 
 static const HashTableValue JSTestCallTracerConstructorTableValues[] =
 {
-    { "testConstValue"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, false } },
+    { "testConstValue"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, false } },
 };
 
 static_assert(TestCallTracer::testConstValue == false, "testConstValue in TestCallTracer does not match value from IDL");
@@ -148,11 +148,11 @@ template<> void JSTestCallTracerDOMConstructor::initializeProperties(VM& vm, JSD
 
 static const HashTableValue JSTestCallTracerPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracerConstructor, 0 } },
-    { "testAttributeInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testAttributeInterface, setJSTestCallTracer_testAttributeInterface } },
-    { "testAttributeSpecified"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testAttributeSpecified, setJSTestCallTracer_testAttributeSpecified } },
-    { "testAttributeWithVariant"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testAttributeWithVariant, setJSTestCallTracer_testAttributeWithVariant } },
-    { "testReadonlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testReadonlyAttribute, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracerConstructor, 0 } },
+    { "testAttributeInterface"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testAttributeInterface, setJSTestCallTracer_testAttributeInterface } },
+    { "testAttributeSpecified"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testAttributeSpecified, setJSTestCallTracer_testAttributeSpecified } },
+    { "testAttributeWithVariant"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testAttributeWithVariant, setJSTestCallTracer_testAttributeWithVariant } },
+    { "testReadonlyAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestCallTracer_testReadonlyAttribute, 0 } },
     { "testOperationInterface"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCallTracerPrototypeFunction_testOperationInterface, 0 } },
     { "testOperationSpecified"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCallTracerPrototypeFunction_testOperationSpecified, 0 } },
     { "testOperationWithArguments"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCallTracerPrototypeFunction_testOperationWithArguments, 3 } },
@@ -161,7 +161,7 @@ static const HashTableValue JSTestCallTracerPrototypeTableValues[] =
     { "testOperationWithNullableVariantArgument"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCallTracerPrototypeFunction_testOperationWithNullableVariantArgument, 1 } },
     { "testOperationWithOptionalVariantArgument"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCallTracerPrototypeFunction_testOperationWithOptionalVariantArgument, 0 } },
     { "testOperationWithDefaultVariantArgument"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestCallTracerPrototypeFunction_testOperationWithDefaultVariantArgument, 0 } },
-    { "testConstValue"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, false } },
+    { "testConstValue"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, false } },
 };
 
 const ClassInfo JSTestCallTracerPrototype::s_info = { "TestCallTracer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerPrototype) };

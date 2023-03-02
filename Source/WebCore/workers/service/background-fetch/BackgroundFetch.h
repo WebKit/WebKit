@@ -65,7 +65,7 @@ public:
 
     using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
-    using CreateLoaderCallback = Function<std::unique_ptr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoader::Client&, ResourceRequest&&, FetchOptions&&, const ClientOrigin&)>;
+    using CreateLoaderCallback = Function<std::unique_ptr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, const ClientOrigin&)>;
 
     class Record final : public BackgroundFetchRecordLoader::Client, public RefCounted<Record> {
         WTF_MAKE_FAST_ALLOCATED;
@@ -124,6 +124,7 @@ public:
     uint64_t downloadTotal() const { return  m_options.downloadTotal; }
     uint64_t uploadTotal() const { return m_uploadTotal; }
 
+    void doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&&);
     void unsetRecordsAvailableFlag();
 
 private:
@@ -136,7 +137,6 @@ private:
     void handleStoreResult(BackgroundFetchStore::StoreResult);
     void updateBackgroundFetchStatus(BackgroundFetchResult, BackgroundFetchFailureReason);
 
-    void doStore();
     void setRecords(Vector<Ref<Record>>&& records) { m_records = WTFMove(records); }
 
     String m_identifier;

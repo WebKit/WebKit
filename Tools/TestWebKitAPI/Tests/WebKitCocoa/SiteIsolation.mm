@@ -28,6 +28,7 @@
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKFeature.h>
@@ -79,15 +80,20 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
             if (path == "/webkit"_s) {
                 size_t contentLength = 2000000 + webkitHTML.length();
                 co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Length: "_s, contentLength, "\r\n\r\n"_s));
-                EXPECT_FALSE(finishedLoading);
-                Util::runFor(Seconds(0.1));
-                EXPECT_FALSE(finishedLoading);
-                EXPECT_EQ(framesCommitted, 1u);
-                co_await connection.awaitableSend(webkitHTML);
-                co_await connection.awaitableSend(Vector<uint8_t>(1000000, ' '));
+
                 while (framesCommitted < 2)
                     Util::spinRunLoop();
                 Util::runFor(Seconds(0.1));
+                EXPECT_EQ(framesCommitted, 2u);
+
+                co_await connection.awaitableSend(webkitHTML);
+                co_await connection.awaitableSend(Vector<uint8_t>(1000000, ' '));
+
+                while (framesCommitted < 3)
+                    Util::spinRunLoop();
+                Util::runFor(Seconds(0.1));
+                EXPECT_EQ(framesCommitted, 3u);
+
                 EXPECT_FALSE(finishedLoading);
                 co_await connection.awaitableSend(Vector<uint8_t>(1000000, ' '));
                 continue;
@@ -98,8 +104,28 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     navigationDelegate.get().didCommitLoadWithRequestInFrame = makeBlockPtr([&](WKWebView *, NSURLRequest *, WKFrameInfo *frameInfo) {
+        NSString *url = frameInfo.request.URL.absoluteString;
+        switch (++framesCommitted) {
+        case 1:
+            EXPECT_WK_STREQ(url, "https://example.com/example");
+            break;
+        case 2:
+            EXPECT_WK_STREQ(url, "about:blank");
+            break;
+        case 3:
+            EXPECT_WK_STREQ(url, "https://webkit.org/webkit");
+            break;
+        default:
+            EXPECT_FALSE(true);
+            break;
+        }
         EXPECT_TRUE(frameInfo.isMainFrame); // FIXME: The second frame should not report that it is the main frame.
-        framesCommitted++;
+    }).get();
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
+        if (navigation._request) {
+            EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://example.com/example");
+            finishedLoading = true;
+        }
     }).get();
 
     auto configuration = server.httpsProxyConfiguration();
@@ -116,8 +142,7 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
     webView.get().navigationDelegate = navigationDelegate.get();
     webView.get().UIDelegate = uiDelegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
-    [navigationDelegate waitForDidFinishNavigation];
-    finishedLoading = true;
+    Util::run(&finishedLoading);
 
     while (!alert)
         Util::spinRunLoop();
@@ -138,7 +163,7 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
 TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
 {
     HTTPServer server({
-        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>setTimeout(() => { alert('navigating to same domain failed') }, 1000)</script>"_s } },
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
         { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
         { "/webkit"_s, { "<script>window.location='https://example.com/example_subframe'</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
@@ -151,7 +176,7 @@ TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "navigating to same domain failed"); // FIXME: This should succeed.
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
     __block bool done { false };
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
@@ -162,7 +187,7 @@ TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
         EXPECT_NE(childFramePid, 0);
         EXPECT_NE(mainFramePid, childFramePid); // FIXME: These should be equal.
         EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org"); // FIXME: This should be example.com like it is without site isolation.
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "example.com");
         done = true;
     }];
     Util::run(&done);
@@ -294,6 +319,27 @@ TEST(SiteIsolation, IframeWithPrompt)
         done = true;
     }];
     Util::run(&done);
+}
+
+TEST(SiteIsolation, GrandchildIframe)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<iframe srcdoc=\"<script>window.location='https://apple.com/apple'</script>\">"_s } },
+        { "/apple"_s, { "<script>alert('grandchild loaded successfully')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "grandchild loaded successfully");
+
+    // FIXME: Make the load event on the grandchild frame get called.
+    // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
 }

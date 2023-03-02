@@ -31,6 +31,7 @@
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "ExceptionData.h"
 #include "Logging.h"
 #include "SWServerRegistration.h"
@@ -54,7 +55,6 @@ BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const Strin
     m_records.reserveInitialCapacity(requests.size());
     for (auto& request : requests)
         m_records.uncheckedAppend(Record::create(*this, WTFMove(request), index++));
-    doStore();
 }
 
 BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
@@ -121,7 +121,10 @@ void BackgroundFetch::storeResponse(size_t index, ResourceResponse&& response)
         updateBackgroundFetchStatus(BackgroundFetchResult::Failure, BackgroundFetchFailureReason::BadStatus);
         return;
     }
-    doStore();
+    doStore([weakThis = WeakPtr { *this }](auto result) {
+        if (weakThis)
+            weakThis->handleStoreResult(result);
+    });
 }
 
 void BackgroundFetch::storeResponseBodyChunk(size_t index, const SharedBuffer& data)
@@ -232,7 +235,7 @@ void BackgroundFetch::Record::complete(const CreateLoaderCallback& createLoaderC
 {
     ASSERT(!m_loader);
     // FIXME: Handle Range headers
-    m_loader = createLoaderCallback(*this, ResourceRequest { m_request.internalRequest }, FetchOptions { m_request.options }, m_fetch->m_origin);
+    m_loader = createLoaderCallback(*this, m_request, m_fetch->m_origin);
     if (!m_loader)
         abort();
 }
@@ -362,7 +365,7 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
     });
 }
 
-void BackgroundFetch::doStore()
+void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&& callback)
 {
     WTF::Persistence::Encoder encoder;
     encoder << backgroundFetchCurrentVersion;
@@ -380,14 +383,12 @@ void BackgroundFetch::doStore()
         encoder << record->request().guard;
         encoder << record->request().httpHeaders;
         encoder << record->request().referrer;
+        encoder << record->request().cspResponseHeaders.value();
         encoder << record->response();
         encoder << record->isCompleted();
     }
 
-    m_store->storeFetch(m_registrationKey, m_identifier, { encoder.buffer(), encoder.bufferSize() }, [weakThis = WeakPtr { *this }](auto result) {
-        if (weakThis)
-            weakThis->handleStoreResult(result);
-    });
+    m_store->storeFetch(m_registrationKey, m_identifier, m_options.downloadTotal, m_uploadTotal, { encoder.buffer(), encoder.bufferSize() }, WTFMove(callback));
 }
 
 std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uint8_t> data, SWServer& server, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
@@ -473,6 +474,11 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uin
         if (!referrer)
             return nullptr;
 
+        std::optional<ContentSecurityPolicyResponseHeaders> responseHeaders;
+        decoder >> responseHeaders;
+        if (!responseHeaders)
+            return nullptr;
+
         WebCore::ResourceResponse response;
         if (!WebCore::ResourceResponse::decode(decoder, response))
             return nullptr;
@@ -482,7 +488,7 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uin
         if (!isCompleted)
             return nullptr;
 
-        auto record = Record::create(*fetch, { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer) }, index);
+        auto record = Record::create(*fetch, { WTFMove(*internalRequest), WTFMove(options), *requestHeadersGuard, WTFMove(*httpHeaders), WTFMove(*referrer), WTFMove(*responseHeaders) }, index);
         if (*isCompleted)
             record->setAsCompleted();
         records.uncheckedAppend(WTFMove(record));

@@ -106,11 +106,11 @@ static const struct CompactHashIndex JSTestNamedSetterWithLegacyUnforgeablePrope
 
 static const HashTableValue JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues[] =
 {
-    { "unforgeableAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttribute, 0 } },
-    { "unforgeableOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperation, 0 } },
+    { "unforgeableAttribute"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttribute, 0 } },
+    { "unforgeableOperation"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function, NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunction_unforgeableOperation, 0 } },
 };
 
-static const HashTable JSTestNamedSetterWithLegacyUnforgeablePropertiesTable = { 2, 3, true, JSTestNamedSetterWithLegacyUnforgeableProperties::info(), JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues, JSTestNamedSetterWithLegacyUnforgeablePropertiesTableIndex };
+static const HashTable JSTestNamedSetterWithLegacyUnforgeablePropertiesTable = { 2, 3, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::Function | JSC::PropertyAttribute::ReadOnly), JSTestNamedSetterWithLegacyUnforgeableProperties::info(), JSTestNamedSetterWithLegacyUnforgeablePropertiesTableValues, JSTestNamedSetterWithLegacyUnforgeablePropertiesTableIndex };
 template<> const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor::s_info = { "TestNamedSetterWithLegacyUnforgeableProperties"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor) };
 
 template<> JSValue JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -132,7 +132,7 @@ template<> void JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor::
 
 static const HashTableValue JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor, 0 } },
 };
 
 const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::s_info = { "TestNamedSetterWithLegacyUnforgeableProperties"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype) };
@@ -193,7 +193,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlot(JSObje
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
-        slot.setValue(thisObject, static_cast<unsigned>(0), value);
+        slot.setValue(thisObject, 0, value);
         return true;
     }
     return JSObject::getOwnPropertySlot(object, lexicalGlobalObject, propertyName, slot);
@@ -213,7 +213,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlotByIndex
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
-        slot.setValue(thisObject, static_cast<unsigned>(0), value);
+        slot.setValue(thisObject, 0, value);
         return true;
     }
     return JSObject::getOwnPropertySlotByIndex(object, lexicalGlobalObject, index, slot);

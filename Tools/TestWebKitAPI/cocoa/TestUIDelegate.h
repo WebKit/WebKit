@@ -42,6 +42,10 @@
 - (NSString *)waitForConfirm;
 - (NSString *)waitForPromptWithReply:(NSString *)reply;
 
+#if PLATFORM(MAC)
+- (_WKContextMenuElementInfo *)waitForContextMenu;
+#endif
+
 @end
 
 @interface WKWebView (TestUIDelegateExtras)
@@ -49,4 +53,7 @@
 - (NSString *)_test_waitForConfirm;
 - (NSString *)_test_waitForPromptWithReply:(NSString *)reply;
 - (void)_test_waitForInspectorToShow;
+#if PLATFORM(MAC)
+- (_WKContextMenuElementInfo *)_test_waitForContextMenu;
+#endif
 @end

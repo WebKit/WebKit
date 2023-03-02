@@ -41,7 +41,8 @@ public:
         NotSet,
         Replace,
         Transition,
-        Setter
+        Setter,
+        Proxy,
     };
     
     PutByVariant(CacheableIdentifier identifier)
@@ -60,6 +61,8 @@ public:
     static PutByVariant transition(CacheableIdentifier, const StructureSet& oldStructure, Structure* newStructure, const ObjectPropertyConditionSet&, PropertyOffset);
     
     static PutByVariant setter(CacheableIdentifier, const StructureSet&, PropertyOffset, const ObjectPropertyConditionSet&, std::unique_ptr<CallLinkStatus>);
+
+    static PutByVariant proxy(CacheableIdentifier, const StructureSet&, std::unique_ptr<CallLinkStatus>);
     
     Kind kind() const { return m_kind; }
     
@@ -68,13 +71,13 @@ public:
     
     const StructureSet& structure() const
     {
-        ASSERT(kind() == Replace || kind() == Setter);
+        ASSERT(kind() == Replace || kind() == Setter || kind() == Proxy);
         return m_oldStructure;
     }
     
     const StructureSet& oldStructure() const
     {
-        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter);
+        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter || kind() == Proxy);
         return m_oldStructure;
     }
     
@@ -85,7 +88,7 @@ public:
     
     StructureSet& oldStructure()
     {
-        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter);
+        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter || kind() == Proxy);
         return m_oldStructure;
     }
     
@@ -124,7 +127,7 @@ public:
     
     CallLinkStatus* callLinkStatus() const
     {
-        ASSERT(kind() == Setter);
+        ASSERT(kind() == Setter || kind() == Proxy);
         return m_callLinkStatus.get();
     }
 

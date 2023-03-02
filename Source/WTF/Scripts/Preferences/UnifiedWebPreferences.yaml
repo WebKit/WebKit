@@ -1235,6 +1235,20 @@ CSSTextSpacingEnabled:
     WebCore:
       default: false
 
+CSSTextUnderlinePositionLeftRight:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS text-underline-position: left right"
+  humanReadableDescription: "Enable the property text-underline-position left and right value support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextWrapEnabled:
   type: bool
   status: testable
@@ -3604,6 +3618,21 @@ LinkPreconnect:
     WebCore:
       default: false
 
+LinkPreconnectEarlyHintsEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Link rel=preconnect via HTTP early hints"
+  humanReadableDescription: "Enable link rel=preconnect via early hints"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(SERVER_PRECONNECT)": true
+      default: false
+    WebCore:
+      default: false
+
 LinkPrefetchEnabled:
   type: bool
   status: testable
@@ -5489,17 +5518,17 @@ SelectTrailingWhitespaceEnabled:
 
 SelectionAPIForShadowDOMEnabled:
   type: bool
-  status: testable
+  status: preview
   category: dom
   humanReadableName: "Selection API for shadow DOM"
   humanReadableDescription: "Enable selection API for shadow DOM"
   defaultValue:
     WebKit:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 SelectionFlippingEnabled:
   type: bool

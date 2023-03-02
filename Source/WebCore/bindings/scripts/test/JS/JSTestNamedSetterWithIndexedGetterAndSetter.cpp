@@ -116,7 +116,7 @@ template<> void JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor::initi
 
 static const HashTableValue JSTestNamedSetterWithIndexedGetterAndSetterPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithIndexedGetterAndSetterConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedSetterWithIndexedGetterAndSetterConstructor, 0 } },
     { "namedSetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunction_namedSetter, 2 } },
     { "indexedSetter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunction_indexedSetter, 1 } },
 };
@@ -176,7 +176,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlot(JSObject* o
         if (index.value() < thisObject->wrapped().length()) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, thisObject->wrapped().indexedSetter(index.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
-            slot.setValue(thisObject, static_cast<unsigned>(0), value);
+            slot.setValue(thisObject, 0, value);
             return true;
         }
         return JSObject::getOwnPropertySlot(object, lexicalGlobalObject, propertyName, slot);
@@ -188,7 +188,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlot(JSObject* o
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
-        slot.setValue(thisObject, static_cast<unsigned>(0), value);
+        slot.setValue(thisObject, 0, value);
         return true;
     }
     return JSObject::getOwnPropertySlot(object, lexicalGlobalObject, propertyName, slot);
@@ -204,7 +204,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlotByIndex(JSOb
         if (index < thisObject->wrapped().length()) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, thisObject->wrapped().indexedSetter(index));
             RETURN_IF_EXCEPTION(throwScope, false);
-            slot.setValue(thisObject, static_cast<unsigned>(0), value);
+            slot.setValue(thisObject, 0, value);
             return true;
         }
         return JSObject::getOwnPropertySlotByIndex(object, lexicalGlobalObject, index, slot);
@@ -217,7 +217,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlotByIndex(JSOb
     if (auto namedProperty = accessVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, *thisObject, propertyName, getterFunctor)) {
         auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, WTFMove(namedProperty.value()));
         RETURN_IF_EXCEPTION(throwScope, false);
-        slot.setValue(thisObject, static_cast<unsigned>(0), value);
+        slot.setValue(thisObject, 0, value);
         return true;
     }
     return JSObject::getOwnPropertySlotByIndex(object, lexicalGlobalObject, index, slot);

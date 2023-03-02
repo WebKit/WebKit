@@ -161,7 +161,7 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
     return CGDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
 }
 
-WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context() const
+WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context()
 {
     if (!m_context)
         m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters);
@@ -178,18 +178,18 @@ unsigned CGDisplayListImageBufferBackend::bytesPerRow() const
     return calculateBytesPerRow(backendSize());
 }
 
-void CGDisplayListImageBufferBackend::clearContents()
+void CGDisplayListImageBufferBackend::releaseGraphicsContext()
 {
     m_context = nullptr;
 }
 
-RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(WebCore::BackingStoreCopy) const
+RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(WebCore::BackingStoreCopy)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-RefPtr<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) const
+RefPtr<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

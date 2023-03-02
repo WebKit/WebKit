@@ -111,7 +111,7 @@ template<> void JSTestStringifierOperationImplementedAsDOMConstructor::initializ
 
 static const HashTableValue JSTestStringifierOperationImplementedAsPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestStringifierOperationImplementedAsConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestStringifierOperationImplementedAsConstructor, 0 } },
     { "identifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestStringifierOperationImplementedAsPrototypeFunction_identifier, 0 } },
     { "toString"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestStringifierOperationImplementedAsPrototypeFunction_toString, 0 } },
 };

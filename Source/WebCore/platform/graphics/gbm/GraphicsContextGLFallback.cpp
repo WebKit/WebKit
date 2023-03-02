@@ -36,7 +36,7 @@
 #include "PixelBuffer.h"
 #include "PlatformLayerDisplayDelegate.h"
 
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#if USE(GSTREAMER) && (ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS))
 #include "VideoFrameGStreamer.h"
 #endif
 
@@ -72,7 +72,7 @@ bool GraphicsContextGLFallback::copyTextureFromMedia(MediaPlayer&, PlatformGLObj
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> GraphicsContextGLFallback::paintCompositedResultsToVideoFrame()
 {
 #if USE(GSTREAMER)

@@ -6058,7 +6058,13 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _traits.get();
 }
 
-- (void)_updateTextInputTraits:(id <UITextInputTraits>)traits
+#if !USE(APPLE_INTERNAL_SDK)
+- (void)_updateAdditionalTextInputTraits:(id<UITextInputTraits_Private>)privateTraits
+{
+}
+#endif
+
+- (void)_updateTextInputTraits:(id<UITextInputTraits>)traits
 {
     traits.secureTextEntry = _focusedElementInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry];
 
@@ -6204,6 +6210,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
         privateTraits.shortcutConversionType = _focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault;
+
+    [self _updateAdditionalTextInputTraits:privateTraits];
 
     if ([traits isKindOfClass:UITextInputTraits.class])
         [self _updateInteractionTintColor:(UITextInputTraits *)traits];

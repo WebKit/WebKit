@@ -1,6 +1,0 @@
-
-PASS local to local: websocket success.
-PASS private to local: websocket success.
-PASS public to local: websocket success.
-PASS treat-as-public to local: websocket success.
-

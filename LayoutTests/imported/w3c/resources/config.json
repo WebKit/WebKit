@@ -2,6 +2,7 @@
  "alternate_hosts": { "alt": "127.0.0.1" },
  "ports":{"http":[8800, 8801],
           "https":[9443, 9444],
+          "h2":[9000],
           "ws":[49001]},
  "aliases": [
           {"url-path": "/resources/testharnessreport.js", "local-dir":"../../../resources/"},

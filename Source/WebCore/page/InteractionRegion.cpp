@@ -97,6 +97,14 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
     if (is<SliderThumbElement>(element))
         return true;
 
+    auto role = [](const Element& element) -> AccessibilityRole {
+        return AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr));
+    };
+
+    auto elementRole = role(element);
+    if (elementRole == AccessibilityRole::Button || elementRole == AccessibilityRole::MenuItem)
+        return true;
+
     return false;
 }
 

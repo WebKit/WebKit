@@ -1041,8 +1041,8 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
         url.setProtocol("wss"_s);
     }
 
-    if (url.port() && url.port().value() == 80)
-        url.setPort(443);
+    if (url.port() == 80)
+        url.setPort(std::nullopt);
 }
 
 void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureRequests)

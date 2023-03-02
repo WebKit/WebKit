@@ -433,10 +433,12 @@ void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampC
         m_client->sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration)
+void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
     if (m_client)
-        m_client->sourceBufferPrivateDurationChanged(duration);
+        m_client->sourceBufferPrivateDurationChanged(duration, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)

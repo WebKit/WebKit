@@ -3558,7 +3558,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAirImpl(Compi
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
-    compilationContext.procedure = makeUnique<B3::Procedure>(info.isSIMDFunction(functionIndex));
+    compilationContext.procedure = makeUnique<B3::Procedure>(info.usesSIMD(functionIndex));
     auto& procedure = *compilationContext.procedure;
     Code& code = procedure.code();
 

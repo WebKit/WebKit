@@ -125,12 +125,12 @@ static const HashTableValue JSTestEnabledBySettingTableValues[] =
     { { }, 0, NoIntrinsic, { HashTableValue::End } }
 };
 
-static const HashTable JSTestEnabledBySettingTable = { 0, 1, false, JSTestEnabledBySetting::info(), JSTestEnabledBySettingTableValues, JSTestEnabledBySettingTableIndex };
+static const HashTable JSTestEnabledBySettingTable = { 0, 1, static_cast<uint8_t>(0), JSTestEnabledBySetting::info(), JSTestEnabledBySettingTableValues, JSTestEnabledBySettingTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestEnabledBySettingConstructorTableValues[] =
 {
-    { "enabledBySettingConstant"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 0 } },
+    { "enabledBySettingConstant"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 0 } },
 };
 
 static_assert(TestEnabledBySetting::enabledBySettingConstant == 0, "enabledBySettingConstant in TestEnabledBySetting does not match value from IDL");
@@ -163,24 +163,24 @@ template<> void JSTestEnabledBySettingDOMConstructor::initializeProperties(VM& v
 
 static const HashTableValue JSTestEnabledBySettingPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySettingConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySettingConstructor, 0 } },
 #if ENABLE(TEST_FEATURE)
-    { "enabledBySettingAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySetting_enabledBySettingAttribute, setJSTestEnabledBySetting_enabledBySettingAttribute } },
+    { "enabledBySettingAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySetting_enabledBySettingAttribute, setJSTestEnabledBySetting_enabledBySettingAttribute } },
 #else
     { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 #if ENABLE(TEST_FEATURE)
-    { "enabledByTwoSettingsAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySetting_enabledByTwoSettingsAttribute, setJSTestEnabledBySetting_enabledByTwoSettingsAttribute } },
+    { "enabledByTwoSettingsAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySetting_enabledByTwoSettingsAttribute, setJSTestEnabledBySetting_enabledByTwoSettingsAttribute } },
 #else
     { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "supplementalAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySetting_supplementalAttribute, setJSTestEnabledBySetting_supplementalAttribute } },
+    { "supplementalAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestEnabledBySetting_supplementalAttribute, setJSTestEnabledBySetting_supplementalAttribute } },
 #if ENABLE(TEST_FEATURE)
     { "enabledBySettingOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestEnabledBySettingPrototypeFunction_enabledBySettingOperation, 1 } },
 #else
     { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "enabledBySettingConstant"_s, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 0 } },
+    { "enabledBySettingConstant"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 0 } },
 };
 
 const ClassInfo JSTestEnabledBySettingPrototype::s_info = { "TestEnabledBySetting"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingPrototype) };

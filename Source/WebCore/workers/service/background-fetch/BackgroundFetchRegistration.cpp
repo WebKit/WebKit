@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "FetchRequest.h"
 #include "FetchResponse.h"
+#include "FetchResponseBodyLoader.h"
 #include "JSBackgroundFetchRecord.h"
 #include "RetrieveRecordsOptions.h"
 #include "SWClientConnection.h"
@@ -91,11 +92,55 @@ static ExceptionOr<ResourceRequest> requestFromInfo(ScriptExecutionContext& cont
     return requestOrException.releaseReturnValue()->resourceRequest();
 }
 
+class BackgroundFetchResponseBodyLoader : public FetchResponseBodyLoader, public CanMakeWeakPtr<BackgroundFetchResponseBodyLoader> {
+public:
+    BackgroundFetchResponseBodyLoader(ScriptExecutionContext& context, FetchResponse& response, BackgroundFetchRecordIdentifier recordIdentifier)
+        : FetchResponseBodyLoader(response)
+        , m_connection(SWClientConnection::fromScriptExecutionContext(context))
+        , m_recordIdentifier(recordIdentifier)
+    {
+    }
+
+private:
+    void start() final
+    {
+        m_connection->retrieveRecordResponseBody(m_recordIdentifier, [weakThis = WeakPtr { *this }](auto&& result) {
+            if (!weakThis || !weakThis->m_response)
+                return;
+
+            Ref protectedResponse = *weakThis->m_response;
+
+            if (!result.has_value()) {
+                weakThis->m_response = nullptr;
+                protectedResponse->receivedError(WTFMove(result.error()));
+                return;
+            }
+
+            auto buffer = WTFMove(result.value());
+            if (!buffer) {
+                weakThis->m_response = nullptr;
+                protectedResponse->didSucceed({ });
+                return;
+            }
+
+            protectedResponse->receivedData(buffer.releaseNonNull());
+        });
+    }
+
+    void stop() final
+    {
+        m_response = nullptr;
+    }
+
+    Ref<SWClientConnection> m_connection;
+    BackgroundFetchRecordIdentifier m_recordIdentifier;
+};
+
 static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information)
 {
     auto recordIdentifier = information.identifier;
     auto record = BackgroundFetchRecord::create(context, WTFMove(information));
-    SWClientConnection::fromScriptExecutionContext(context)->retrieveRecordResponse(recordIdentifier, [weakContext = WeakPtr { context }, record](auto&& result) {
+    SWClientConnection::fromScriptExecutionContext(context)->retrieveRecordResponse(recordIdentifier, [weakContext = WeakPtr { context }, record, recordIdentifier](auto&& result) {
         if (!weakContext)
             return;
 
@@ -106,7 +151,7 @@ static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, 
 
         auto response = FetchResponse::create(weakContext.get(), { }, FetchHeaders::Guard::Immutable, { });
         response->setReceivedInternalResponse(result.releaseReturnValue(), FetchOptions::Credentials::Omit);
-        // FIXME: get the body.
+        response->setBodyLoader(makeUniqueRef<BackgroundFetchResponseBodyLoader>(*weakContext, response.get(), recordIdentifier));
         record->settleResponseReadyPromise(WTFMove(response));
     });
     return record;

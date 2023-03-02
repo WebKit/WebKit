@@ -35,6 +35,7 @@
 #include "NetworkLoadChecker.h"
 #include "NetworkProcess.h"
 #include "WebErrors.h"
+#include <WebCore/BackgroundFetchRequest.h>
 #include <WebCore/ClientOrigin.h>
 
 #define BGLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - BackgroundFetchLoad::" fmt, this, ##__VA_ARGS__)
@@ -43,11 +44,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
-BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, Client& client, ResourceRequest&& request, FetchOptions&& options, const ClientOrigin& clientOrigin)
+BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, Client& client, const BackgroundFetchRequest& request, const ClientOrigin& clientOrigin)
     : m_sessionID(WTFMove(sessionID))
     , m_client(client)
-    , m_request(WTFMove(request))
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, nullptr, nullptr, WTFMove(options), m_sessionID, WebPageProxyIdentifier { }, WebCore::HTTPHeaderMap { }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, m_request.httpReferrer(), true, OptionSet<NetworkConnectionIntegrity> { }))
+    , m_request(request.internalRequest)
+    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, WebPageProxyIdentifier { }, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<NetworkConnectionIntegrity> { }))
 {
     if (!m_request.url().protocolIsInHTTPFamily()) {
         didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });
@@ -55,6 +56,8 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     }
 
     m_networkLoadChecker->enableContentExtensionsCheck();
+    if (request.cspResponseHeaders)
+        m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { *request.cspResponseHeaders });
 
     m_networkLoadChecker->check(ResourceRequest { m_request }, nullptr, [this, weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
         if (!weakThis)

@@ -44,8 +44,9 @@ struct TextRecognitionResult;
 
 enum class EnterKeyHint : uint8_t;
 enum class PageIsEditable : bool;
+enum class FireEvents : bool { No, Yes };
+enum class FocusPreviousElement : bool { No, Yes };
 enum class PopoverVisibilityState : bool;
-
 enum class PopoverState : uint8_t {
     None,
     Auto,
@@ -148,6 +149,7 @@ public:
     void queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState);
     ExceptionOr<void> showPopover();
     ExceptionOr<void> hidePopover();
+    ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
     ExceptionOr<void> togglePopover(std::optional<bool> force);
 
     PopoverState popoverState() const;
@@ -194,10 +196,6 @@ protected:
 
 private:
     String nodeName() const final;
-
-    enum class FocusPreviousElement : bool { No, Yes };
-    enum class FireEvents : bool { No, Yes };
-    ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
 
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
 

@@ -156,8 +156,6 @@ public:
 
     virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
-    virtual void clearContents() { ASSERT_NOT_REACHED(); }
-
     const Parameters& parameters() { return m_parameters; }
 
 protected:

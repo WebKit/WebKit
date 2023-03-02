@@ -1171,7 +1171,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 // FIXME: Implement support for 'under left' and 'under right' values.
 #define TYPE TextUnderlinePosition
-#define FOR_EACH(CASE) CASE(Auto) CASE(Under) CASE(FromFont)
+#define FOR_EACH(CASE) CASE(Auto) CASE(Under) CASE(FromFont) CASE(Left) CASE(Right)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

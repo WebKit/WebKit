@@ -145,7 +145,7 @@ public:
     unsigned textAlignLast : 3; // TextAlignLast
     unsigned textJustify : 2; // TextJustify
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
-    unsigned textUnderlinePosition : 2; // TextUnderlinePosition
+    unsigned textUnderlinePosition : 3; // TextUnderlinePosition
     unsigned textWrap : 3; // TextWrap
     unsigned rubyPosition : 2; // RubyPosition
     unsigned textZoom: 1; // TextZoom

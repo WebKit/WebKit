@@ -147,6 +147,7 @@ ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
 {
     lazyInit();
 
+    bool isRecoverableError { false };
     if ([m_domain isEqualToString:NSURLErrorDomain]) {
         switch (m_errorCode) {
         case NSURLErrorTimedOut:
@@ -168,10 +169,16 @@ ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
         case NSURLErrorServerCertificateNotYetValid:
         case NSURLErrorClientCertificateRejected:
         case NSURLErrorClientCertificateRequired:
-            if (m_failingURL.protocolIs("https"_s) && (!m_failingURL.port() || WTF::isDefaultPortForProtocol(m_failingURL.port().value(), m_failingURL.protocol())))
-                return ResourceError::ErrorRecoveryMethod::HTTPFallback;
+            isRecoverableError = true;
         }
+    } else if ([m_domain isEqualToString:@"WebKitErrorDomain"]) {
+        // FIXME: These literals should be moved into a central location that is shared with WebKit::API.
+        constexpr auto httpsUpgradeRedirectLoop { 304 };
+        isRecoverableError = m_errorCode == httpsUpgradeRedirectLoop;
     }
+
+    if (isRecoverableError && m_failingURL.protocolIs("https"_s) && (!m_failingURL.port() || WTF::isDefaultPortForProtocol(m_failingURL.port().value(), m_failingURL.protocol())))
+        return ResourceError::ErrorRecoveryMethod::HTTPFallback;
     return ResourceError::ErrorRecoveryMethod::NoRecovery;
 }
 

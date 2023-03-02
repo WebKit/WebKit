@@ -122,7 +122,7 @@ template<> void JSTestOperationConditionalDOMConstructor::initializeProperties(V
 
 static const HashTableValue JSTestOperationConditionalPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestOperationConditionalConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestOperationConditionalConstructor, 0 } },
 #if ENABLE(ConditionBase)
     { "nonConditionalOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestOperationConditionalPrototypeFunction_nonConditionalOperation, 0 } },
 #else

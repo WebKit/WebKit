@@ -875,6 +875,12 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     [self sendClicksAtPoint:pointInWindow numberOfClicks:1];
 }
 
+- (void)rightClickAtPoint:(NSPoint)pointInWindow
+{
+    [self mouseDownAtPoint:pointInWindow simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [self mouseUpAtPoint:pointInWindow withFlags:0 eventType:NSEventTypeRightMouseUp];
+}
+
 - (BOOL)acceptsFirstMouseAtPoint:(NSPoint)pointInWindow
 {
     return [self acceptsFirstMouse:[self _mouseEventWithType:NSEventTypeLeftMouseDown atLocation:pointInWindow]];

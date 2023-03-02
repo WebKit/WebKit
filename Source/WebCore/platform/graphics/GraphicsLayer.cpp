@@ -39,6 +39,10 @@
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedEffectStack.h"
+#endif
+
 #ifndef NDEBUG
 #include <stdio.h>
 #endif
@@ -727,6 +731,22 @@ int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
     
     return firstIndex;
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void GraphicsLayer::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& effects, AcceleratedEffectValues&& baseValues)
+{
+    if (effects.isEmpty()) {
+        m_effectStack = nullptr;
+        return;
+    }
+
+    if (!m_effectStack)
+        m_effectStack = makeUnique<AcceleratedEffectStack>();
+
+    m_effectStack->setEffects(WTFMove(effects));
+    m_effectStack->setBaseValues(WTFMove(baseValues));
+}
+#endif
 
 double GraphicsLayer::backingStoreMemoryEstimate() const
 {

@@ -106,7 +106,7 @@ template<> void JSTestIndexedSetterThrowingExceptionDOMConstructor::initializePr
 
 static const HashTableValue JSTestIndexedSetterThrowingExceptionPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestIndexedSetterThrowingExceptionConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestIndexedSetterThrowingExceptionConstructor, 0 } },
 };
 
 const ClassInfo JSTestIndexedSetterThrowingExceptionPrototype::s_info = { "TestIndexedSetterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingExceptionPrototype) };
@@ -164,7 +164,7 @@ bool JSTestIndexedSetterThrowingException::getOwnPropertySlot(JSObject* object, 
         if (index.value() < thisObject->wrapped().length()) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, thisObject->wrapped().item(index.value()));
             RETURN_IF_EXCEPTION(throwScope, false);
-            slot.setValue(thisObject, static_cast<unsigned>(0), value);
+            slot.setValue(thisObject, 0, value);
             return true;
         }
     }
@@ -181,7 +181,7 @@ bool JSTestIndexedSetterThrowingException::getOwnPropertySlotByIndex(JSObject* o
         if (index < thisObject->wrapped().length()) {
             auto value = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, thisObject->wrapped().item(index));
             RETURN_IF_EXCEPTION(throwScope, false);
-            slot.setValue(thisObject, static_cast<unsigned>(0), value);
+            slot.setValue(thisObject, 0, value);
             return true;
         }
     }

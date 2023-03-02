@@ -3275,6 +3275,16 @@ void Page::setVisitedLinkStore(Ref<VisitedLinkStore>&& visitedLinkStore)
     invalidateStylesForAllLinks();
 }
 
+std::optional<uint64_t> Page::noiseInjectionHashSaltForDomain(const RegistrableDomain& domain)
+{
+    if (!m_noiseInjectionHashSalts.isValidKey(domain))
+        return std::nullopt;
+
+    return m_noiseInjectionHashSalts.ensure(domain, [] {
+        return cryptographicallyRandomNumber<uint64_t>();
+    }).iterator->value;
+}
+
 PAL::SessionID Page::sessionID() const
 {
     return m_sessionID;

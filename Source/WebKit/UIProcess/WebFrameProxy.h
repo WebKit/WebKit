@@ -119,7 +119,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const URL&);
     void didFailProvisionalLoad();
     void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&, bool containsPluginDocument);
-    void didFinishLoad();
+    void didFinishLoad(bool isAboutBlank);
     void didFailLoad();
     void didSameDocumentNavigation(const URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
@@ -152,6 +152,7 @@ public:
     void updateRemoteFrameSize(WebCore::IntSize);
 
     WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
+    WebProcessProxy& process() { return m_process.get(); }
 
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);

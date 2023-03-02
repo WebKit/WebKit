@@ -154,7 +154,12 @@ private:
                     RegType source = pair.first;
                     RegType dest = pair.second;
                     if (freeDestinations.contains(dest, IgnoreVectors)) {
-                        move(source, dest);
+                        // This means that this setup function cannot handle SIMD vectors as a part of parameters.
+                        // Now, this is guaranteed that we ensure FP parameter is always `double`.
+                        if constexpr (std::is_same_v<RegType, FPRReg>)
+                            moveDouble(source, dest);
+                        else
+                            move(source, dest);
                         pairs.remove(i);
                         madeMove = true;
                         break;
@@ -422,7 +427,7 @@ private:
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
     {
-        static_assert(std::is_same<CURRENT_ARGUMENT_TYPE, double>::value, "We should only be passing FPRRegs to a double");
+        static_assert(std::is_same_v<CURRENT_ARGUMENT_TYPE, double>, "We should only be passing FPRRegs to a double. We use moveDouble / loadDouble / storeDouble exclusively");
         marshallArgumentRegister<OperationType>(argSourceRegs, arg, args...);
     }
 
@@ -450,7 +455,7 @@ private:
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
     void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
     {
-        static_assert(std::is_same<CURRENT_ARGUMENT_TYPE, double>::value, "We should only be passing FPRRegs to a double");
+        static_assert(std::is_same_v<CURRENT_ARGUMENT_TYPE, double>, "We should only be passing FPRRegs to a double. We use moveDouble / loadDouble / storeDouble exclusively");
 
         // MIPS and ARM (hardfp, which we require) pass FP arguments in FP registers.
 #if CPU(MIPS)

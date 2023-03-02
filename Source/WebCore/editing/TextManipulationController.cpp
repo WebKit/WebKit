@@ -472,6 +472,9 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         auto* contentNode = content.node.get();
         ASSERT(contentNode);
 
+        if (RefPtr shadowRoot = contentNode->shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
+            observeParagraphs(firstPositionInNode(shadowRoot.get()), lastPositionInNode(shadowRoot.get()));
+
         while (!enclosingItemBoundaryElements.isEmpty() && !enclosingItemBoundaryElements.last()->contains(contentNode)) {
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
             enclosingItemBoundaryElements.removeLast();

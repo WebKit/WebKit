@@ -84,18 +84,20 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (!surface)
         return nullptr;
 
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0);
+    auto displayID = creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0;
+    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(displayID);
     if (!cgContext)
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), creationContext.surfacePool);
+    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), displayID, creationContext.surfacePool);
 }
 
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface, IOSurfacePool* ioSurfacePool)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTFMove(surface))
+    , m_displayID(displayID)
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
@@ -110,7 +112,7 @@ ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 GraphicsContext& ImageBufferIOSurfaceBackend::context()
 {
     if (!m_context) {
-        m_context = makeUnique<GraphicsContextCG>(m_surface->ensurePlatformContext());
+        m_context = makeUnique<GraphicsContextCG>(m_surface->ensurePlatformContext(m_displayID));
         applyBaseTransform(*m_context);
     }
     return *m_context;

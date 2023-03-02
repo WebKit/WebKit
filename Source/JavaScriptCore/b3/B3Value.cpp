@@ -49,17 +49,21 @@
 
 namespace JSC { namespace B3 {
 
+namespace B3ValueInternal {
+constexpr bool alwaysDumpConstructionSite = false;
+}
+
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
     if (!Options::dumpDisassembly() && !Options::dumpBBQDisassembly()
         && !Options::dumpOMGDisassembly() && !Options::dumpFTLDisassembly()
-        && !Options::dumpDFGDisassembly())
+        && !Options::dumpDFGDisassembly() && !Options::dumpGraphAfterParsing())
         return emptyString();
 
     StringPrintStream s;
-    static constexpr int framesToShow = 3;
-    static constexpr int framesToSkip = 7;
+    static constexpr int framesToShow = 60;
+    static constexpr int framesToSkip = 0;
     void* samples[framesToShow + framesToSkip];
     int frames = framesToShow + framesToSkip;
 
@@ -69,14 +73,19 @@ String Value::generateCompilerConstructionSite()
     StackTraceSymbolResolver stackTrace({ samples + framesToSkip, static_cast<size_t>(frames) });
 
     s.print("[");
-    bool firstPrinted = false;
+    int printed = 0;
     stackTrace.forEach([&] (unsigned, void*, const char* cName) {
+        if (printed > 3)
+            return;
         auto name = String::fromUTF8(cName);
-        if (firstPrinted)
-            s.print("|");
-        if (name.contains("enerator"_s)) {
+        if (name.contains("JSC::Wasm::B3IRGenerator::emit"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::add"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::create"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::end"_s)) {
+            if (printed)
+                s.print("|");
             s.print(name.left(name.find('(')));
-            firstPrinted = true;
+            ++printed;
         }
     });
     s.print("]");
@@ -249,6 +258,13 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
 
     if (m_origin)
         out.print(comma, OriginDump(proc, m_origin));
+
+#if ASSERT_ENABLED
+    if constexpr (B3ValueInternal::alwaysDumpConstructionSite) {
+        if (!m_compilerConstructionSite.isEmpty())
+            out.print(comma, compilerConstructionSite());
+    }
+#endif
 
     out.print(")");
 }

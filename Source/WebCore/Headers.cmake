@@ -1052,6 +1052,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     html/canvas/ImageBitmapRenderingContextSettings.h
     html/canvas/WebGLAny.h
+    html/canvas/WebGLAnyInlines.h
     html/canvas/WebGLContextAttributes.h
     html/canvas/WebGLStateTracker.h
 
@@ -1166,6 +1167,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/HTTPHeaderField.h
     loader/HistoryController.h
     loader/ImageLoader.h
+    loader/LinkHeader.h
     loader/LinkLoader.h
     loader/LinkLoaderClient.h
     loader/LoadSchedulingMode.h
@@ -1550,6 +1552,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/WindowsKeyboardCodes.h
 
     platform/animation/AcceleratedEffect.h
+    platform/animation/AcceleratedEffectStack.h
     platform/animation/AcceleratedEffectValues.h
     platform/animation/Animation.h
     platform/animation/AnimationList.h

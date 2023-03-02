@@ -146,7 +146,7 @@ static const HashTableValue JSDOMWindowTableValues[] =
     { "TestPromiseRejectionEvent"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindow_TestPromiseRejectionEventConstructor, 0 } },
 };
 
-static const HashTable JSDOMWindowTable = { 12, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+static const HashTable JSDOMWindowTable = { 12, 31, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
 template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -173,10 +173,10 @@ static const struct CompactHashIndex JSDOMWindowPrototypeTableIndex[2] = {
 
 static const HashTableValue JSDOMWindowPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindowConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsDOMWindowConstructor, 0 } },
 };
 
-static const HashTable JSDOMWindowPrototypeTable = { 1, 1, true, JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, JSDOMWindowPrototypeTableIndex };
+static const HashTable JSDOMWindowPrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, JSDOMWindowPrototypeTableIndex };
 const ClassInfo JSDOMWindowPrototype::s_info = { "DOMWindow"_s, &Base::s_info, &JSDOMWindowPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindowPrototype) };
 
 void JSDOMWindowPrototype::finishCreation(VM& vm)

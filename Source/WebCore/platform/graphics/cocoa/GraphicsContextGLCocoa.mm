@@ -836,7 +836,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
     return result;
 }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> GraphicsContextGLCocoa::paintCompositedResultsToVideoFrame()
 {
     auto &displayBuffer = m_swapChain.displayBuffer();

@@ -1041,6 +1041,9 @@ class Port(object):
     def web_platform_test_server_base_https_url(self, localhost_only=False):
         return web_platform_test_server.base_https_url(self, localhost_only)
 
+    def web_platform_test_server_base_h2_url(self, localhost_only=False):
+        return web_platform_test_server.base_h2_url(self, localhost_only)
+
     def http_server_supports_ipv6(self):
         # Cygwin is the only platform to still use Apache 1.3, which only supports IPV4.
         # Once it moves to Apache 2, we can drop this method altogether.

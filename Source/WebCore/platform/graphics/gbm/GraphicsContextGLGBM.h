@@ -50,7 +50,7 @@ public:
     // GraphicsContextGL overrides
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() override;
 #endif
 #if ENABLE(VIDEO)

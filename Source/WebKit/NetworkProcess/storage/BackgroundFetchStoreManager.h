@@ -29,6 +29,7 @@
 #include <WebCore/BackgroundFetchStore.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -41,10 +42,11 @@ class SharedBuffer;
 
 namespace WebKit {
 
-class BackgroundFetchStoreManager {
+class BackgroundFetchStoreManager : public CanMakeWeakPtr<BackgroundFetchStoreManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BackgroundFetchStoreManager(const String&, Ref<WTF::WorkQueue>&&);
+    using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
+    BackgroundFetchStoreManager(const String&, Ref<WTF::WorkQueue>&&, QuotaCheckFunction&&);
     ~BackgroundFetchStoreManager();
 
     static String createNewStorageIdentifier();
@@ -57,15 +59,18 @@ public:
     void clearAllFetches(const Vector<String>&, CompletionHandler<void()>&&);
 
     using StoreResult = WebCore::BackgroundFetchStore::StoreResult;
-    void storeFetch(const String&, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
+    void storeFetch(const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
     void storeFetchResponseBodyChunk(const String&, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&);
 
     void retrieveResponseBody(const String&, size_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 private:
+    void storeFetchAfterQuotaCheck(const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
+
     String m_path;
     Ref<WTF::WorkQueue> m_taskQueue;
     Ref<WTF::WorkQueue> m_ioQueue;
+    QuotaCheckFunction m_quotaCheckFunction;
 };
 
 } // namespace WebKit

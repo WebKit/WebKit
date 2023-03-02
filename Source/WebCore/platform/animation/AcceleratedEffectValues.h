@@ -61,7 +61,22 @@ struct AcceleratedEffectValues {
     AcceleratedEffectValues()
     {
     }
-    
+
+    AcceleratedEffectValues(float opacity, LengthPoint&& transformOrigin, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, OffsetRotation&& offsetRotate)
+        : opacity(opacity)
+        , transformOrigin(WTFMove(transformOrigin))
+        , transform(WTFMove(transform))
+        , translate(WTFMove(translate))
+        , scale(WTFMove(scale))
+        , rotate(WTFMove(rotate))
+        , offsetPath(WTFMove(offsetPath))
+        , offsetDistance(WTFMove(offsetDistance))
+        , offsetPosition(WTFMove(offsetPosition))
+        , offsetAnchor(WTFMove(offsetAnchor))
+        , offsetRotate(WTFMove(offsetRotate))
+    {
+    }
+
     WEBCORE_EXPORT AcceleratedEffectValues(const AcceleratedEffectValues&);
     AcceleratedEffectValues(const RenderStyle&);
     AcceleratedEffectValues& operator=(const AcceleratedEffectValues&) = default;

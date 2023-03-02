@@ -69,6 +69,7 @@ public:
     virtual void consumeBodyAsStream();
     virtual void feedStream() { }
     virtual void cancel() { }
+    virtual void loadBody() { }
 
     bool hasLoadingError() const;
     ResourceError loadingError() const;

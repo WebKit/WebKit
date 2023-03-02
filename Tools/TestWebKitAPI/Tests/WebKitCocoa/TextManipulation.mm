@@ -3454,6 +3454,35 @@ TEST(TextManipulation, CompleteTextManipulationSkipsEmptyContainers)
     EXPECT_WK_STREQ("Day", textContents.lastObject);
 }
 
+TEST(TextManipulation, CompleteTextManipulationReplacesShadowDOMContent)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><body><span id='host'><template shadowrootmode='open'>hello</template></span></body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+
+    done = false;
+    __block auto item = createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"world" }});
+    [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors.count, 0UL);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('host').shadowRoot.textContent"], "world");
+}
+
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
 {
     auto token = adoptNS([[_WKTextManipulationToken alloc] init]);

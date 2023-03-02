@@ -433,6 +433,22 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyChe
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
+bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, URL& newURL) const
+{
+    auto documentLoader = m_provisionalDocumentLoader ? m_provisionalDocumentLoader : m_documentLoader;
+    if (documentLoader && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly)
+        && newURL.protocolIs("http"_s)
+        && ((RegistrableDomain(newURL) == RegistrableDomain(originalURL) && !documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain))
+        || RegistrableDomain(newURL) != RegistrableDomain(originalURL))) {
+        FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
+        newURL.setProtocol("https"_s);
+        if (newURL.port() == 80)
+            newURL.setPort(std::nullopt);
+        return true;
+    }
+    return false;
+}
+
 void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
     auto* frame = lexicalFrameFromCommonVM();
@@ -456,6 +472,11 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
 
     if (frameRequest.frameName().isEmpty())
         frameRequest.setFrameName(m_frame.document()->baseTarget());
+
+    auto currentURL { m_frame.document() ? m_frame.document()->url() : URL { } };
+    auto newURL { frameRequest.resourceRequest().url() };
+    if (upgradeRequestforHTTPSOnlyIfNeeded(currentURL, newURL) && frameRequest.resourceRequest().url() != newURL)
+        frameRequest.resourceRequest().setURL(newURL);
 
     m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
 
@@ -833,18 +854,10 @@ void FrameLoader::subresourceLoadDone(LoadCompletionType type)
         scheduleCheckLoadComplete();
 }
 
-bool FrameLoader::preventsParentFromBeingComplete(const AbstractFrame& frame) const
-{
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-    if (!localFrame)
-        return false;
-    return !localFrame->loader().m_isComplete && (!localFrame->ownerElement() || !localFrame->ownerElement()->isLazyLoadObserverActive());
-}
-
 bool FrameLoader::allChildrenAreComplete() const
 {
     for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (preventsParentFromBeingComplete(*child))
+        if (child->preventsParentFromBeingComplete())
             return false;
     }
     return true;

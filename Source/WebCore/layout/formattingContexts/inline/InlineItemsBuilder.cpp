@@ -102,6 +102,78 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         m_formattingState.appendInlineItems(WTFMove(inlineItems));
     };
     adjustInlineFormattingStateWithNewInlineItems();
+
+#if ASSERT_ENABLED
+    // Check if we've got matching inline box start/end pairs.
+    size_t inlineBoxStart = 0;
+    size_t inlineBoxEnd = 0;
+    for (auto& inlineItem : m_formattingState.inlineItems()) {
+        if (inlineItem.isInlineBoxStart())
+            ++inlineBoxStart;
+        else if (inlineItem.isInlineBoxEnd())
+            ++inlineBoxEnd;
+    }
+    ASSERT(inlineBoxStart == inlineBoxEnd);
+#endif
+}
+
+using LayoutQueue = Vector<const Box*>;
+static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, const Box& firstDamagedLayoutBox)
+{
+    if (&root == &firstDamagedLayoutBox)
+        return true;
+
+    auto shouldSkipSubtree = root.establishesFormattingContext();
+    if (!shouldSkipSubtree && is<ElementBox>(root) && downcast<ElementBox>(root).hasChild()) {
+        auto& firstChild = *downcast<ElementBox>(root).firstChild();
+        layoutQueue.append(&firstChild);
+        if (traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox))
+            return true;
+        layoutQueue.takeLast();
+    }
+    if (auto* nextSibling = root.nextSibling()) {
+        layoutQueue.takeLast();
+        layoutQueue.append(nextSibling);
+        if (traverseUntilDamaged(layoutQueue, *nextSibling, firstDamagedLayoutBox))
+            return true;
+    }
+    return false;
+}
+
+static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot, InlineItemPosition startPosition, const InlineItems& currentInlineItems)
+{
+    if (!startPosition)
+        return { formattingContextRoot.firstChild() };
+    // For partial layout we need to build the layout queue up to the point where the new content is in order
+    // to be able to produce non-content type of trailing inline items.
+    // e.g <div><span<span>text</span></span> produces
+    // [inline box start][inline box start][text][inline box end][inline box end]
+    // and inserting new content after text
+    // <div><span><span>text more_text</span></span> should produce
+    // [inline box start][inline box start][text][ ][more_text][inline box end][inline box end]
+    // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
+    if (startPosition.index >= currentInlineItems.size()) {
+        ASSERT_NOT_REACHED();
+        return { formattingContextRoot.firstChild() };
+    }
+
+    if (!formattingContextRoot.firstChild()) {
+        // There should always be at least one inflow child in this inline formatting context.
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto& firstDamagedLayoutBox = currentInlineItems[startPosition.index].layoutBox();
+    auto& firstChild = *formattingContextRoot.firstChild();
+    LayoutQueue layoutQueue;
+    layoutQueue.append(&firstChild);
+    traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox);
+
+    if (layoutQueue.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        layoutQueue.append(formattingContextRoot.firstChild());
+    }
+    return layoutQueue;
 }
 
 void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)
@@ -109,50 +181,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
     ASSERT(root().hasInFlowOrFloatingChild());
-    Vector<const Box*> layoutQueue;
-
-    auto initializeLayoutQueue = [&] {
-        layoutQueue.append(root().firstChild());
-        if (!startPosition)
-            return;
-        // For partial layout we need to build the layout queue up to the point where the new content is in order
-        // to be able to produce non-content type of trailing inline items.
-        // e.g <div><span<span>text</span></span> produces
-        // [inline box start][inline box start][text][inline box end][inline box end]
-        // and inserting new content after text
-        // <div><span><span>text more_text</span></span> should produce
-        // [inline box start][inline box start][text][ ][more_text][inline box end][inline box end]
-        // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
-        auto& currentInlineItems = m_formattingState.inlineItems();
-        if (startPosition.index >= currentInlineItems.size()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        auto& firstDamagedLayoutBox = currentInlineItems[startPosition.index].layoutBox();
-        while (!layoutQueue.isEmpty()) {
-            while (true) {
-                auto& layoutBox = *layoutQueue.last();
-                if (layoutBox.establishesFormattingContext() || !is<ElementBox>(layoutBox) || !downcast<ElementBox>(layoutBox).hasChild())
-                    break;
-                layoutQueue.append(downcast<ElementBox>(layoutBox).firstChild());
-                if (&layoutBox == &firstDamagedLayoutBox)
-                    return;
-            }
-
-            while (!layoutQueue.isEmpty()) {
-                if (layoutQueue.last() == &firstDamagedLayoutBox)
-                    return;
-                auto& layoutBox = *layoutQueue.takeLast();
-                if (auto* nextSibling = layoutBox.nextSibling()) {
-                    layoutQueue.append(nextSibling);
-                    break;
-                }
-            }
-        }
-        ASSERT_NOT_REACHED();
-        layoutQueue.append(root().firstChild());
-    };
-    initializeLayoutQueue();
+    auto layoutQueue = initializeLayoutQueue(root(), startPosition, m_formattingState.inlineItems());
 
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
         if (!startPosition)

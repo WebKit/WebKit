@@ -1767,6 +1767,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     case InlineCallFrame::GetterCall:
     case InlineCallFrame::SetterCall:
     case InlineCallFrame::ProxyObjectLoadCall:
+    case InlineCallFrame::ProxyObjectStoreCall:
     case InlineCallFrame::BoundFunctionCall:
     case InlineCallFrame::BoundFunctionTailCall: {
         // When inlining getter and setter calls, we setup a stack frame which does not appear in the bytecode.
@@ -5526,7 +5527,66 @@ void ByteCodeParser::handlePutById(
             *variant.callLinkStatus(), SpecOther, ecmaMode);
         return;
     }
-    
+
+    case PutByVariant::Proxy: {
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)) {
+            emitPutById(base, identifier, value, putByStatus, isDirect, ecmaMode);
+            return;
+        }
+
+        JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+        auto* function = ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunctionConcurrently() : globalObject->performProxyObjectSetSloppyFunctionConcurrently();
+        if (UNLIKELY(!function)) {
+            emitPutById(base, identifier, value, putByStatus, isDirect, ecmaMode);
+            return;
+        }
+
+        addToGraph(Check, Edge(base, ProxyObjectUse));
+        Node* functionNode = weakJSConstant(function);
+        Node* propertyNameNode = weakJSConstant(variant.identifier().cell());
+
+        addToGraph(FilterPutByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByStatus(currentCodeOrigin(), putByStatus)), base);
+
+        // Make a call. We don't try to get fancy with using the smallest operand number because
+        // the stack layout phase should compress the stack anyway.
+
+        unsigned numberOfParameters = 0;
+        numberOfParameters++; // |this|
+        numberOfParameters++; // |receiver|
+        numberOfParameters++; // |propertyName|
+        numberOfParameters++; // |value|
+        numberOfParameters++; // True return PC.
+
+        // Start with a register offset that corresponds to the last in-use register.
+        int registerOffset = virtualRegisterForLocal(m_inlineStackTop->m_profiledBlock->numCalleeLocals() - 1).offset();
+        registerOffset -= numberOfParameters;
+        registerOffset -= CallFrame::headerSizeInRegisters;
+
+        // Get the alignment right.
+        registerOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -registerOffset);
+
+        ensureLocals(m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).toLocal());
+
+        // Issue SetLocals. This has two effects:
+        // 1) That's how handleCall() sees the arguments.
+        // 2) If we inline then this ensures that the arguments are flushed so that if you use
+        //    the dreaded arguments object on the getter, the right things happen. Well, sort of -
+        //    since we only really care about 'this' in this case. But we're not going to take that
+        //    shortcut.
+        set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(1, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
+        set(virtualRegisterForArgumentIncludingThis(2, registerOffset), propertyNameNode, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(3, registerOffset), value, ImmediateNakedSet);
+
+        // We've set some locals, but they are not user-visible. It's still OK to exit from here.
+        m_exitOK = true;
+        addToGraph(ExitOK);
+
+        handleCall(VirtualRegister(), Call, InlineCallFrame::ProxyObjectStoreCall,
+            osrExitIndex, functionNode, numberOfParameters - 1, registerOffset, *variant.callLinkStatus(), SpecOther, ecmaMode);
+        return;
+    }
+
     default: {
         emitPutById(base, identifier, value, putByStatus, isDirect, ecmaMode);
         return;

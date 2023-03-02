@@ -1317,6 +1317,16 @@ bool Editor::insertDictatedText(const String& text, const Vector<DictationAltern
     return m_alternativeTextController->insertDictatedText(text, dictationAlternatives, triggeringEvent);
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/EditorAdditions.cpp>
+#else
+static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied)
+{
+    UNUSED_PARAM(shouldConsiderApplyingAutocorrection);
+    return !autocorrectionWasApplied;
+}
+#endif
+
 bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, TextEvent* triggeringEvent)
 {
     if (text.isEmpty())
@@ -1355,11 +1365,11 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             if (triggeringEvent && triggeringEvent->isDictation())
                 DictationCommand::insertText(document, text, triggeringEvent->dictationAlternatives(), selection);
             else {
-                TypingCommand::Options options = 0;
+                TypingCommand::Options options = TypingCommand::RetainAutocorrectionIndicator;
                 if (selectInsertedText)
                     options |= TypingCommand::SelectInsertedText;
-                if (autocorrectionWasApplied)
-                    options |= TypingCommand::RetainAutocorrectionIndicator;
+                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied))
+                    options &= ~TypingCommand::RetainAutocorrectionIndicator;
                 if (triggeringEvent && triggeringEvent->isAutocompletion())
                     options |= TypingCommand::IsAutocompletion;
                 TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionFinal : TypingCommand::TextCompositionNone);

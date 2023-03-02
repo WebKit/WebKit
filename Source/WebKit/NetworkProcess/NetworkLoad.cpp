@@ -228,6 +228,11 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
         m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
 }
 
+void NetworkLoad::didReceiveInformationalResponse(ResourceResponse&& response)
+{
+    m_client.get().didReceiveInformationalResponse(WTFMove(response));
+}
+
 void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

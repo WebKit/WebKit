@@ -233,7 +233,6 @@ UIProcess/Notifications/glib/NotificationService.cpp
 
 UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
-UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
 UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
 

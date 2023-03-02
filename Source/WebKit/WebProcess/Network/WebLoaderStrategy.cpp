@@ -350,6 +350,9 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
 
     auto networkConnectionIntegrityPolicy = mainFrameDocumentLoader ? mainFrameDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
     parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
+
+    if (isMainFrameNavigation)
+        parameters.linkPreconnectEarlyHintsEnabled = mainFrame.settings().linkPreconnectEarlyHintsEnabled();
 }
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)

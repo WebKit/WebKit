@@ -822,13 +822,11 @@ sub GenerateIndexedGetter
     
     my @attributes = ();
     push(@attributes, "JSC::PropertyAttribute::ReadOnly") if !GetIndexedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
-    
-    my $attributeString = "static_cast<unsigned>(" . ((@attributes > 0) ? join(" | ", @attributes) : "0") . ")";
 
     my $indexedGetterFunctionName = $indexedGetterOperation->extendedAttributes->{ImplementedAs} || $indexedGetterOperation->name || "item";
     my $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, "thisObject->wrapped().${indexedGetterFunctionName}(${indexExpression})", "*thisObject->globalObject()");
     
-    return ($nativeToJSConversion, $attributeString);
+    return ($nativeToJSConversion, StringifyJSCAttributes(\@attributes));
 }
 
 sub GenerateNamedGetter
@@ -861,10 +859,9 @@ sub GenerateNamedGetter
     push(@attributes, "JSC::PropertyAttribute::ReadOnly") if !GetNamedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
     push(@attributes, "JSC::PropertyAttribute::DontEnum") if $interface->extendedAttributes->{LegacyUnenumerableNamedProperties};
     
-    my $attributeString = "static_cast<unsigned>(" . ((@attributes > 0) ? join(" | ", @attributes) : "0") . ")";
     my $nativeToJSConversion = NativeToJSValueUsingPointers($namedGetterOperation, $interface, $namedPropertyExpression, "*thisObject->globalObject()");
     
-    return ($nativeToJSConversion, $attributeString);
+    return ($nativeToJSConversion, StringifyJSCAttributes(\@attributes));
 }
 
 sub GenerateNamedGetterLambda
@@ -2068,6 +2065,16 @@ sub IsAcceleratedDOMAttribute
     return 1;
 }
 
+sub StringifyJSCAttributes
+{
+    my $specials = shift;
+    my $length = scalar @{$specials};
+
+    return "0" if $length == 0;
+    return "static_cast<unsigned>(@$specials)" if $length == 1;
+    return join(" | ", @$specials);
+}
+
 sub GetJSCAttributesForAttribute
 {
     my $interface = shift;
@@ -2083,8 +2090,8 @@ sub GetJSCAttributesForAttribute
     push(@specials, "JSC::PropertyAttribute::CustomAccessor") unless $isGlobalConstructor or IsJSBuiltin($interface, $attribute);
     push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
     push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
-    push(@specials, "JSC::PropertyAttribute::Accessor | JSC::PropertyAttribute::Builtin") if  IsJSBuiltin($interface, $attribute);
-    return "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
+    push(@specials, ("JSC::PropertyAttribute::Accessor", "JSC::PropertyAttribute::Builtin")) if IsJSBuiltin($interface, $attribute);
+    return \@specials;
 }
 
 sub GetIndexedGetterOperation
@@ -3388,9 +3395,10 @@ sub GeneratePropertiesHashTable
         push(@$hashKeys, "constructor");
         my $getter = "js" . $interfaceName . "Constructor";
         push(@$hashValue1, $getter);
-
         push(@$hashValue2, "0");
-        push(@$hashSpecials, "static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)");
+
+        my @specials = ("PropertyAttribute::DontEnum");
+        push(@$hashSpecials, \@specials);
     }
 
     return 0 if !$propertyCount;
@@ -4458,7 +4466,9 @@ sub GenerateImplementation
             push(@hashKeys, $name);
             push(@hashValue1, $constant->value);
             push(@hashValue2, "0");
-            push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
+
+            my @specials = ("PropertyAttribute::ReadOnly", "PropertyAttribute::DontDelete", "PropertyAttribute::ConstantInteger");
+            push(@hashSpecials, \@specials);
 
             my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
             $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
@@ -4483,8 +4493,7 @@ sub GenerateImplementation
             push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
             push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
             push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
-            my $special = "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
-            push(@hashSpecials, $special);
+            push(@hashSpecials, \@specials);
 
             if ($attribute->extendedAttributes->{DOMJIT}) {
                 push(@hashValue1, "&DOMJITAttributeFor" . $interface->type->name . $codeGenerator->WK_ucfirst($attribute->name));
@@ -4572,7 +4581,9 @@ sub GenerateImplementation
         push(@hashKeys, $name);
         push(@hashValue1, $constant->value);
         push(@hashValue2, "0");
-        push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
+
+        my @specials = ("PropertyAttribute::ReadOnly", "PropertyAttribute::DontDelete", "PropertyAttribute::ConstantInteger");
+        push(@hashSpecials, \@specials);
 
         my $conditional = $constant->extendedAttributes->{Conditional};
         $conditionals{$name} = $conditional if $conditional;
@@ -4627,7 +4638,7 @@ sub GenerateImplementation
                 my $attributeName = $attribute->name;
                 my $getter = GetAttributeGetterName($interface, $className, $attribute);
                 my $setter = "nullptr";
-                my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
+                my $jscAttributes = StringifyJSCAttributes(GetJSCAttributesForAttribute($interface, $attribute));
 
                 my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
                 push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
@@ -4772,7 +4783,7 @@ sub GenerateImplementation
         my $attributeName = $attribute->name;
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
         my $setter = IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
-        my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
+        my $jscAttributes = StringifyJSCAttributes(GetJSCAttributesForAttribute($interface, $attribute));
         my $isPrivateAndPublic = $attribute->extendedAttributes->{PublicIdentifier} && $attribute->extendedAttributes->{PrivateIdentifier};
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
@@ -4821,7 +4832,7 @@ sub GenerateImplementation
         my $functionName = $operation->name;
         my $implementationFunction = GetFunctionName($interface, $className, $operation);
         my $functionLength = GetFunctionLength($operation);
-        my $jsAttributes = ComputeFunctionSpecial($interface, $operation);
+        my $jsAttributes = StringifyJSCAttributes(ComputeFunctionSpecial($interface, $operation));
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
@@ -6578,7 +6589,9 @@ sub GenerateCallbackImplementationContent
             push(@hashKeys, $name);
             push(@hashValue1, $constant->value);
             push(@hashValue2, "0");
-            push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
+
+            my @specials = ("PropertyAttribute::ReadOnly", "PropertyAttribute::DontDelete", "PropertyAttribute::ConstantInteger");
+            push(@hashSpecials, \@specials);
 
             my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
             $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
@@ -7388,12 +7401,9 @@ sub GenerateHashTableValueArray
     my $packedSize = scalar @{$keys};
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
 
-    my $hasSetter = "false";
-
     my $i = 0;
     foreach my $key (@{$keys}) {
         my $typeTag;
-        my $hasSecondValue = 1;
         my $conditional;
 
         if ($conditionals) {
@@ -7404,39 +7414,41 @@ sub GenerateHashTableValueArray
             push(@implContent, "#if ${conditionalString}\n");
         }
 
-        if ("@$specials[$i]" =~ m/DOMJITFunction/) {
+        my $jscAttributes = StringifyJSCAttributes(@$specials[$i]);
+        if ($jscAttributes =~ m/DOMJITFunction/) {
             $typeTag = "DOMJITFunction";
-        } elsif ("@$specials[$i]" =~ m/Function/) {
+        } elsif ($jscAttributes =~ m/Function/) {
             $typeTag = "NativeFunction";
-        } elsif ("@$specials[$i]" =~ m/Builtin/) {
-            $typeTag = ("@$specials[$i]" =~ m/Accessor/) ? "BuiltinAccessor" : "BuiltinGenerator";
-        } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {
+        } elsif ($jscAttributes =~ m/Builtin/) {
+            $typeTag = $jscAttributes =~ m/Accessor/ ? "BuiltinAccessor" : "BuiltinGenerator";
+        } elsif ($jscAttributes =~ m/ConstantInteger/) {
             $typeTag = "Constant";
-            $hasSecondValue = 0;
-        } elsif ("@$specials[$i]" =~ m/DOMJITAttribute/) {
+        } elsif ($jscAttributes =~ m/DOMJITAttribute/) {
             $typeTag = "DOMJITAttribute";
         } else {
             $typeTag = "GetterSetter";
-            $hasSetter = "true";
         }
-        if ("@$specials[$i]" =~ m/ConstantInteger/) {
-            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { HashTableValue::" . $typeTag . "Type, @$value1[$i] } },\n");
-        } else {
-            my $readWriteConditional = $readWriteConditionals ? $readWriteConditionals->{$key} : undef;
-            if ($readWriteConditional) {
-                my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
-                push(@implContent, "#if ${readWriteConditionalString}\n");
-            }
-            my $secondValue = $hasSecondValue ? ", @$value2[$i]" : "";
-            push(@implContent, "    { \"$key\"_s, @$specials[$i], NoIntrinsic, { HashTableValue::" . $typeTag . "Type, @$value1[$i]$secondValue } },\n");
 
-            if ($readWriteConditional) {
-                push(@implContent, "#else\n") ;
-                my $secondValue = $hasSecondValue ? ", 0" : "";
-                push(@implContent, "    { \"$key\"_s, JSC::PropertyAttribute::ReadOnly | @$specials[$i], NoIntrinsic, { HashTableValue::" . $typeTag . "Type, @$value1[$i]$secondValue } },\n");
-                push(@implContent, "#endif\n");
-            }
+        my $readWriteConditional = $readWriteConditionals ? $readWriteConditionals->{$key} : undef;
+        if ($readWriteConditional) {
+            my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
+            push(@implContent, "#if ${readWriteConditionalString}\n");
         }
+
+        my $hasSecondValue = $typeTag ne "Constant";
+        my $secondValue = $hasSecondValue ? ", @$value2[$i]" : "";
+        push(@implContent, "    { \"$key\"_s, ${jscAttributes}, NoIntrinsic, { HashTableValue::${typeTag}Type, @$value1[$i]$secondValue } },\n");
+
+        if ($readWriteConditional) {
+            push(@implContent, "#else\n") ;
+            my $secondValue = $hasSecondValue ? ", 0" : "";
+
+            push(@{@$specials[$i]}, "PropertyAttribute::ReadOnly");
+
+            push(@implContent, "    { \"$key\"_s, " . StringifyJSCAttributes(@$specials[$i]) . ", NoIntrinsic, { HashTableValue::${typeTag}Type, @$value1[$i]$secondValue } },\n");
+            push(@implContent, "#endif\n");
+        }
+
         if ($conditional) {
             push(@implContent, "#else\n");
             push(@implContent, "    { { }, 0, NoIntrinsic, { HashTableValue::End } },\n");
@@ -7447,8 +7459,6 @@ sub GenerateHashTableValueArray
 
     push(@implContent, "    { { }, 0, NoIntrinsic, { HashTableValue::End } }\n") if (!$packedSize);
     push(@implContent, "};\n\n");
-
-    return $hasSetter;
 }
 
 sub GenerateHashTable
@@ -7538,11 +7548,19 @@ sub GenerateHashTable
     push(@implContent, "};\n\n");
 
     # Dump the hash table
-    my $hasSetter = GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries);
-    my $packedSize = scalar @{$keys};
+    GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries);
 
+    my $packedSize = scalar @{$keys};
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, ${className}::info(), $nameEntries, $nameIndex };\n");
+
+    my %seenPropertyAttributesHash;
+    foreach my $attributeArray (@{$specials}) {
+        $seenPropertyAttributesHash{$_} = 1 foreach @{$attributeArray};
+    }
+    my @seenPropertyAttributesArray = sort keys %seenPropertyAttributesHash;
+    my $seenPropertyAttributesString = "static_cast<uint8_t>(" . StringifyJSCAttributes(\@seenPropertyAttributesArray) . ")";
+
+    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $seenPropertyAttributesString, ${className}::info(), $nameEntries, $nameIndex };\n");
 }
 
 sub SubstituteHeader
@@ -8110,7 +8128,7 @@ sub ComputeFunctionSpecial
     if ($operation->extendedAttributes->{DOMJIT}) {
         push(@specials, "JSC::PropertyAttribute::DOMJITFunction") if $operation->extendedAttributes->{DOMJIT};
     }
-    return "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
+    return \@specials;
 }
 
 sub IsJSBuiltin

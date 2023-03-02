@@ -112,7 +112,7 @@ inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = R
 
 inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
-    ASSERT(!instance->module().moduleInformation().isSIMDFunction(callee->functionIndex()));
+    ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
@@ -187,7 +187,7 @@ inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* in
     }
 
     uint32_t functionIndex = callee->functionIndex();
-    ASSERT(instance->module().moduleInformation().isSIMDFunction(functionIndex));
+    ASSERT(instance->module().moduleInformation().usesSIMD(functionIndex));
     RefPtr<Wasm::Plan> plan;
     if (Options::wasmLLIntTiersUpToBBQ())
         plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));

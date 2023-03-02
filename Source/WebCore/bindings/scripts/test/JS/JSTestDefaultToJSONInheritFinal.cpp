@@ -131,9 +131,9 @@ template<> void JSTestDefaultToJSONInheritFinalDOMConstructor::initializePropert
 
 static const HashTableValue JSTestDefaultToJSONInheritFinalPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritFinalConstructor, 0 } },
-    { "finalLongAttributeFoo"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritFinal_finalLongAttributeFoo, setJSTestDefaultToJSONInheritFinal_finalLongAttributeFoo } },
-    { "finalLongAttributeBar"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritFinal_finalLongAttributeBar, setJSTestDefaultToJSONInheritFinal_finalLongAttributeBar } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritFinalConstructor, 0 } },
+    { "finalLongAttributeFoo"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritFinal_finalLongAttributeFoo, setJSTestDefaultToJSONInheritFinal_finalLongAttributeFoo } },
+    { "finalLongAttributeBar"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONInheritFinal_finalLongAttributeBar, setJSTestDefaultToJSONInheritFinal_finalLongAttributeBar } },
     { "toJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSON, 0 } },
 };
 

@@ -127,9 +127,9 @@ template<> void JSTestMapLikeWithOverriddenOperationsDOMConstructor::initializeP
 
 static const HashTableValue JSTestMapLikeWithOverriddenOperationsPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperationsConstructor, 0 } },
-    { "set"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_set, setJSTestMapLikeWithOverriddenOperations_set } },
-    { "size"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_size, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperationsConstructor, 0 } },
+    { "set"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_set, setJSTestMapLikeWithOverriddenOperations_set } },
+    { "size"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestMapLikeWithOverriddenOperations_size, 0 } },
     { "clear"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_clear, 0 } },
     { "get"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_get, 1 } },
     { "has"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestMapLikeWithOverriddenOperationsPrototypeFunction_has, 1 } },

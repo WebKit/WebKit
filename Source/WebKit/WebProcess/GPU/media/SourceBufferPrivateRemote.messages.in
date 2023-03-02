@@ -31,7 +31,7 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateAppendError(bool decodeError)
     SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult, WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes, MediaTime timeStampOffset)
     SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
-    SourceBufferPrivateDurationChanged(MediaTime duration)
+    SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
     SourceBufferPrivateDidParseSample(double sampleDuration)
     SourceBufferPrivateDidDropSample()
     SourceBufferPrivateBufferedDirtyChanged(bool dirty)

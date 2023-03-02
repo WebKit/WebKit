@@ -68,15 +68,28 @@ def base_https_url(port_obj, localhost_only=False):
     return "https://" + host + ":" + str(ports["https"][0]) + "/"
 
 
+def base_h2_url(port_obj, localhost_only=False):
+    config = wpt_config_json(port_obj)
+    if not config:
+        # This should only be hit by webkitpy unit tests
+        _log.debug("No WPT config file found")
+        return "https://localhost:9000/"
+    ports = config["ports"]
+    host = config["browser_host"] if not localhost_only else "localhost"
+    return "https://" + host + ":" + str(ports["h2"][0]) + "/"
+
+
 def base_url_list(port_obj):
     config = wpt_config_json(port_obj)
     host = config["browser_host"]
     plain_port = str(config["ports"]["http"][0])
     tls_port = str(config["ports"]["https"][0])
+    h2_port = str(config["ports"]["h2"][0])
 
     urls = [
         "http://{}:{}/".format(host, plain_port),
         "https://{}:{}/".format(host, tls_port),
+        "https://{}:{}/".format(host, h2_port),
     ]
     # Some ports support aliases but this list is to be presented to users
     # so we include localhost which always will work in host browsers.
@@ -84,6 +97,7 @@ def base_url_list(port_obj):
         urls += [
             "http://localhost:{}/".format(plain_port),
             "https://localhost:{}/".format(tls_port),
+            "https://localhost:{}/".format(h2_port),
         ]
 
     return urls

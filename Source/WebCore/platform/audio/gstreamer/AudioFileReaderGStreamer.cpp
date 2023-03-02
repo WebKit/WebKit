@@ -85,7 +85,7 @@ private:
     bool m_errorOccurred { false };
 };
 
-#if PLATFORM(BCM_NEXUS)
+#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
 int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer)
 {
     static int GST_AUTOPLUG_SELECT_SKIP;
@@ -152,7 +152,7 @@ AudioFileReader::~AudioFileReader()
 
     if (m_decodebin) {
         g_signal_handlers_disconnect_matched(m_decodebin.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-#if PLATFORM(BCM_NEXUS)
+#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
         g_signal_handlers_disconnect_matched(m_decodebin.get(), G_SIGNAL_MATCH_FUNC, 0, 0, nullptr, reinterpret_cast<gpointer>(decodebinAutoplugSelectCallback), nullptr);
 #endif
         m_decodebin = nullptr;
@@ -405,7 +405,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     g_object_set(source, "stream", memoryStream.get(), nullptr);
 
     m_decodebin = makeGStreamerElement("decodebin", "decodebin");
-#if PLATFORM(BCM_NEXUS)
+#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
     g_signal_connect(m_decodebin.get(), "autoplug-select", G_CALLBACK(decodebinAutoplugSelectCallback), nullptr);
 #endif
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);

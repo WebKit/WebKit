@@ -1024,6 +1024,16 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     }
 }
 
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task _didReceiveInformationalResponse:(NSURLResponse *)response
+{
+    if (auto* networkDataTask = [self existingTask:task]) {
+        ASSERT(RunLoop::isMain());
+
+        WebCore::ResourceResponse resourceResponse(response);
+        networkDataTask->didReceiveInformationalResponse(WTFMove(resourceResponse));
+    }
+}
+
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
     auto taskIdentifier = dataTask.taskIdentifier;

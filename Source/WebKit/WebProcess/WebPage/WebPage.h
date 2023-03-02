@@ -237,6 +237,7 @@ class VisiblePosition;
 
 enum SyntheticClickType : int8_t;
 enum class COEPDisposition : bool;
+enum class CaretAnimatorType : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
@@ -1011,6 +1012,7 @@ public:
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(MAC)
+    void setCaretAnimatorType(WebCore::CaretAnimatorType);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
     void requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&);
 #endif

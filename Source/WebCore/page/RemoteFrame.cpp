@@ -56,13 +56,15 @@ RemoteDOMWindow& RemoteFrame::window() const
 
 void RemoteFrame::didFinishLoadInAnotherProcess()
 {
-    auto* ownerElement = this->ownerElement();
-    if (!ownerElement)
-        return;
+    m_preventsParentFromBeingComplete = false;
 
-    // FIXME: Do something so that this would not have caused the load event to fire before a state change
-    // but now does cause the load event to fire.
-    ownerElement->document().checkCompleted();
+    if (auto* ownerElement = this->ownerElement())
+        ownerElement->document().checkCompleted();
+}
+
+bool RemoteFrame::preventsParentFromBeingComplete() const
+{
+    return m_preventsParentFromBeingComplete;
 }
 
 AbstractFrameView* RemoteFrame::virtualView() const

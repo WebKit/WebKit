@@ -314,6 +314,11 @@ void Frame::frameDetached()
     m_loader->frameDetached();
 }
 
+bool Frame::preventsParentFromBeingComplete() const
+{
+    return !m_loader->isComplete() && (!ownerElement() || !ownerElement()->isLazyLoadObserverActive());
+}
+
 void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!page() || !m_doc || !m_doc->renderView())

@@ -69,31 +69,26 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
         return;
     }
 
-    WeakPtr fetch { *result.iterator->value };
-
-    // FIXME: We should wait for upload data to be fully read.
-    uint64_t expectedSpace;
-    bool isSafe = WTF::safeAdd(fetch->downloadTotal(), fetch->uploadTotal(), expectedSpace);
-    if (!isSafe) {
-        callback(makeUnexpected(ExceptionData { QuotaExceededError, "Background fetch requested space is above quota"_s }));
-        return;
-    }
-
-    m_server->requestBackgroundFetchSpace(fetch->origin(), expectedSpace, [server = m_server, fetch = WTFMove(fetch), callback = WTFMove(callback)](bool result) mutable {
+    auto& fetch = *result.iterator->value;
+    fetch.doStore([server = m_server, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
         if (!fetch || !server) {
             callback(makeUnexpected(ExceptionData { TypeError, "Background fetch is gone"_s }));
             return;
         }
-        if (!result) {
+        switch (result) {
+        case BackgroundFetchStore::StoreResult::QuotaError:
             callback(makeUnexpected(ExceptionData { QuotaExceededError, "Background fetch requested space is above quota"_s }));
-            return;
-        }
-
-        fetch->perform([server = WTFMove(server)](auto& client, auto&& request, auto&& options, auto& origin) mutable {
-            return server ? server->createBackgroundFetchRecordLoader(client, WTFMove(request), WTFMove(options), origin) : nullptr;
-        });
-
-        callback(fetch->information());
+            break;
+        case BackgroundFetchStore::StoreResult::InternalError:
+            callback(makeUnexpected(ExceptionData { TypeError, "Background fetch store operation failed"_s }));
+            break;
+        case BackgroundFetchStore::StoreResult::OK:
+            fetch->perform([server = WTFMove(server)](auto& client, auto& request, auto& origin) mutable {
+                return server ? server->createBackgroundFetchRecordLoader(client, request, origin) : nullptr;
+            });
+            callback(fetch->information());
+            break;
+        };
     });
 }
 

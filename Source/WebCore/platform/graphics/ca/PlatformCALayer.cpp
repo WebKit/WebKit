@@ -183,6 +183,16 @@ void PlatformCALayer::clearContents()
     setContents(nullptr);
 }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void PlatformCALayer::clearAcceleratedEffectsAndBaseValues()
+{
+}
+
+void PlatformCALayer::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, AcceleratedEffectValues&)
+{
+}
+#endif
+
 void PlatformCALayer::dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>)
 {
 }

@@ -58,7 +58,7 @@ public:
     virtual void clearAllFetches(const ServiceWorkerRegistrationKey&, CompletionHandler<void()>&& = [] { }) = 0;
 
     enum class StoreResult : uint8_t { OK, QuotaError, InternalError };
-    virtual void storeFetch(const ServiceWorkerRegistrationKey&, const String&, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) = 0;
+    virtual void storeFetch(const ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) = 0;
     virtual void storeFetchResponseBodyChunk(const ServiceWorkerRegistrationKey&, const String&, size_t, const SharedBuffer&, CompletionHandler<void(StoreResult)>&&) = 0;
 
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;

@@ -73,7 +73,7 @@ static const HashTableValue JSSharedWorkerGlobalScopeTableValues[] =
     { "SharedWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsSharedWorkerGlobalScope_SharedWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSSharedWorkerGlobalScopeTable = { 2, 3, true, JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopeTableValues, JSSharedWorkerGlobalScopeTableIndex };
+static const HashTable JSSharedWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopeTableValues, JSSharedWorkerGlobalScopeTableIndex };
 template<> const ClassInfo JSSharedWorkerGlobalScopeDOMConstructor::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSSharedWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -100,10 +100,10 @@ static const struct CompactHashIndex JSSharedWorkerGlobalScopePrototypeTableInde
 
 static const HashTableValue JSSharedWorkerGlobalScopePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsSharedWorkerGlobalScopeConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsSharedWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSSharedWorkerGlobalScopePrototypeTable = { 1, 1, true, JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopePrototypeTableValues, JSSharedWorkerGlobalScopePrototypeTableIndex };
+static const HashTable JSSharedWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSSharedWorkerGlobalScope::info(), JSSharedWorkerGlobalScopePrototypeTableValues, JSSharedWorkerGlobalScopePrototypeTableIndex };
 const ClassInfo JSSharedWorkerGlobalScopePrototype::s_info = { "SharedWorkerGlobalScope"_s, &Base::s_info, &JSSharedWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSSharedWorkerGlobalScopePrototype) };
 
 void JSSharedWorkerGlobalScopePrototype::finishCreation(VM& vm)

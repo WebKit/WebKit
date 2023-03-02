@@ -1002,7 +1002,8 @@ struct WebCore::PublicKeyCredentialDescriptor {
 enum class WebCore::AttestationConveyancePreference : uint8_t {
     None,
     Indirect,
-    Direct
+    Direct,
+    Enterprise
 };
 #endif
 
@@ -3141,6 +3142,7 @@ struct WebCore::BackgroundFetchRequest {
     WebCore::FetchHeadersGuard guard;
     WebCore::HTTPHeaderMap httpHeaders;
     String referrer;
+    Markable<WebCore::ContentSecurityPolicyResponseHeaders, WebCore::ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
 };
 #endif
 
@@ -4758,3 +4760,113 @@ enum class WebCore::StorageType : uint8_t {
     Local,
     TransientLocal,
 };
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+struct WebCore::LengthPoint {
+    WebCore::Length x();
+    WebCore::Length y();
+}
+
+class WebCore::OffsetRotation {
+    bool hasAuto();
+    float angle();
+}
+
+[OptionSet] enum class WebCore::AcceleratedEffectProperty : uint16_t {
+    Opacity,
+    Transform,
+    Translate,
+    Rotate,
+    Scale,
+    OffsetPath,
+    OffsetDistance,
+    OffsetPosition,
+    OffsetAnchor,
+    OffsetRotate,
+    Filter,
+#if ENABLE(FILTERS_LEVEL_2)
+    BackdropFilter
+#endif
+};
+
+header: <WebCore/WebAnimationTypes.h>
+[CustomHeader] enum class WebCore::WebAnimationType : uint8_t {
+    CSSAnimation,
+    CSSTransition,
+    WebAnimation
+};
+
+enum class WebCore::FillMode : uint8_t {
+    None,
+    Forwards,
+    Backwards,
+    Both,
+    Auto
+};
+
+enum class WebCore::PlaybackDirection : uint8_t {
+    Normal,
+    Reverse,
+    Alternate,
+    AlternateReverse
+};
+
+enum class WebCore::CompositeOperation : uint8_t {
+    Replace,
+    Add,
+    Accumulate
+};
+
+struct WebCore::AcceleratedEffectValues {
+    float opacity;
+    WebCore::LengthPoint transformOrigin;
+    WebCore::TransformOperations transform;
+    RefPtr<WebCore::TransformOperation> translate;
+    RefPtr<WebCore::TransformOperation> scale;
+    RefPtr<WebCore::TransformOperation> rotate;
+    RefPtr<WebCore::PathOperation> offsetPath;
+    WebCore::Length offsetDistance;
+    WebCore::LengthPoint offsetPosition;
+    WebCore::LengthPoint offsetAnchor;
+    WebCore::OffsetRotation offsetRotate;
+}
+
+header: <WebCore/AcceleratedEffect.h>
+[CustomHeader] struct WebCore::AcceleratedEffectKeyframe {
+    double offset;
+    WebCore::AcceleratedEffectValues values;
+    RefPtr<WebCore::TimingFunction> timingFunction;
+    std::optional<WebCore::CompositeOperation> compositeOperation;
+    OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties;
+};
+
+[RefCounted] class WebCore::AcceleratedEffect {
+    Vector<WebCore::AcceleratedEffectKeyframe> keyframes();
+    WebCore::WebAnimationType animationType();
+    WebCore::FillMode fill();
+    WebCore::PlaybackDirection direction();
+    WebCore::CompositeOperation compositeOperation();
+    RefPtr<WebCore::TimingFunction> timingFunction();
+    RefPtr<WebCore::TimingFunction> defaultKeyframeTimingFunction();
+    OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties();
+    bool paused();
+    double iterationStart();
+    double iterations();
+    double playbackRate();
+    WTF::Seconds delay();
+    WTF::Seconds endDelay();
+    WTF::Seconds iterationDuration();
+    WTF::Seconds activeDuration();
+    WTF::Seconds endTime();
+    std::optional<WTF::Seconds> startTime();
+    std::optional<WTF::Seconds> holdTime();
+};
+#endif // ENABLE(THREADED_ANIMATION_RESOLUTION)
+
+#if PLATFORM(MAC)
+header: <WebCore/CaretAnimator.h>
+[CustomHeader] enum class WebCore::CaretAnimatorType : uint8_t {
+    Default,
+    Alternate,
+};
+#endif

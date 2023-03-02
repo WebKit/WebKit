@@ -26,29 +26,31 @@
 #include "config.h"
 #include "WasmBBQJIT.h"
 
+#include "B3Common.h"
+#include "B3ValueRep.h"
 #include "BinarySwitch.h"
 #include "BytecodeStructs.h"
+#include "CCallHelpers.h"
+#include "CPU.h"
+#include "CompilerTimingScope.h"
+#include "GPRInfo.h"
+#include "JSCast.h"
+#include "MacroAssembler.h"
+#include "RegisterSet.h"
+#include "WasmB3IRGenerator.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
 #include "WasmFunctionParser.h"
+#include "WasmIRGeneratorHelpers.h"
+#include "WasmInstance.h"
 #include "WasmMemoryInformation.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
+#include "WasmOperations.h"
 #include "WasmOps.h"
+#include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
-#include "assembler/AbstractMacroAssembler.h"
-#include "assembler/AssemblerBuffer.h"
-#include "assembler/CPU.h"
-#include "assembler/MacroAssembler.h"
-#include "b3/B3Common.h"
-#include "b3/B3ValueRep.h"
-#include "bytecompiler/RegisterID.h"
-#include "jit/CCallHelpers.h"
-#include "jit/GPRInfo.h"
-#include "jit/RegisterSet.h"
-#include "runtime/JSCast.h"
-#include "tools/CompilerTimingScope.h"
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 #include <wtf/HashFunctions.h>
@@ -1234,7 +1236,6 @@ public:
         RegisterSetBuilder callerSaveFprs = fprSetBuilder;
 
         gprSetBuilder.remove(m_scratchGPR);
-        gprSetBuilder.remove(m_dataScratchGPR);
         fprSetBuilder.remove(m_scratchFPR);
 
         m_gprSet = m_validGPRs = gprSetBuilder.buildAndValidate();
@@ -2895,7 +2896,7 @@ public:
             m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
         Width valueWidth = widthForType(toB3Type(valueType));
-        Width accessWidth = Wasm::accessWidth(op);
+        Width accessWidth = this->accessWidth(op);
 
         if (accessWidth != Width8)
             throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
@@ -4358,13 +4359,13 @@ public:
         // Left is strictly greater than right
         isGreaterThan.link(&m_jit);
         auto isGreaterThanResult = IsMinOrMax == MinOrMax::Max ? left : right;
-        m_jit.move(isGreaterThanResult, result);
+        m_jit.moveDouble(isGreaterThanResult, result);
         Jump afterGreaterThan = m_jit.jump();
 
         // Left is strictly less than right
         isLessThan.link(&m_jit);
         auto isLessThanResult = IsMinOrMax == MinOrMax::Max ? right : left;
-        m_jit.move(isLessThanResult, result);
+        m_jit.moveDouble(isLessThanResult, result);
         Jump afterLessThan = m_jit.jump();
 
         // Left is equal to right
@@ -5335,10 +5336,12 @@ public:
             "F32ConvertUI32", TypeKind::F32,
             BLOCK(Value::fromF32(static_cast<uint32_t>(operand.asI32()))),
             BLOCK(
-                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), m_scratchGPR);
 #if CPU(X86_64)
-                m_jit.convertUInt64ToFloat(m_scratchGPR, resultLocation.asFPR(), m_dataScratchGPR);
+                ScratchScope<1, 0> scratches(*this);
+                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), m_scratchGPR);
+                m_jit.convertUInt64ToFloat(m_scratchGPR, resultLocation.asFPR(), scratches.gpr(0));
 #else
+                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), m_scratchGPR);
                 m_jit.convertUInt64ToFloat(m_scratchGPR, resultLocation.asFPR());
 #endif
             )
@@ -5363,7 +5366,7 @@ public:
             BLOCK(Value::fromF32(static_cast<uint64_t>(operand.asI64()))),
             BLOCK(
 #if CPU(X86_64)
-                m_jit.convertUInt64ToFloat(operandLocation.asGPR(), resultLocation.asFPR(), m_dataScratchGPR);
+                m_jit.convertUInt64ToFloat(operandLocation.asGPR(), resultLocation.asFPR(), m_scratchGPR);
 #else
                 m_jit.convertUInt64ToFloat(operandLocation.asGPR(), resultLocation.asFPR());
 #endif
@@ -5388,10 +5391,12 @@ public:
             "F64ConvertUI32", TypeKind::F64,
             BLOCK(Value::fromF64(static_cast<uint32_t>(operand.asI32()))),
             BLOCK(
-                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), m_scratchGPR);
 #if CPU(X86_64)
-                m_jit.convertUInt64ToDouble(m_scratchGPR, resultLocation.asFPR(), m_dataScratchGPR);
+                ScratchScope<1, 0> scratches(*this);
+                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), m_scratchGPR);
+                m_jit.convertUInt64ToDouble(m_scratchGPR, resultLocation.asFPR(), scratches.gpr(0));
 #else
+                m_jit.zeroExtend32ToWord(operandLocation.asGPR(), m_scratchGPR);
                 m_jit.convertUInt64ToDouble(m_scratchGPR, resultLocation.asFPR());
 #endif
             )
@@ -5416,7 +5421,7 @@ public:
             BLOCK(Value::fromF64(static_cast<uint64_t>(operand.asI64()))),
             BLOCK(
 #if CPU(X86_64)
-                m_jit.convertUInt64ToDouble(operandLocation.asGPR(), resultLocation.asFPR(), m_dataScratchGPR);
+                m_jit.convertUInt64ToDouble(operandLocation.asGPR(), resultLocation.asFPR(), m_scratchGPR);
 #else
                 m_jit.convertUInt64ToDouble(operandLocation.asGPR(), resultLocation.asFPR());
 #endif
@@ -5437,8 +5442,7 @@ public:
                 m_jit.and32(Imm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
                 m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
 #if CPU(X86_64)
-                m_jit.move(Imm32(0x7fffffff), m_scratchGPR);
-                m_jit.move32ToFloat(m_scratchGPR, resultLocation.asFPR());
+                m_jit.move32ToFloat(TrustedImm32(0x7fffffff), resultLocation.asFPR());
                 m_jit.andFloat(lhsLocation.asFPR(), resultLocation.asFPR());
                 m_jit.orFloat(resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #else
@@ -5457,8 +5461,7 @@ public:
                 } else {
                     bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
 #if CPU(X86_64)
-                    m_jit.move(Imm32(0x7fffffff), m_scratchGPR);
-                    m_jit.move32ToFloat(m_scratchGPR, resultLocation.asFPR());
+                    m_jit.move32ToFloat(TrustedImm32(0x7fffffff), resultLocation.asFPR());
                     m_jit.andFloat(lhsLocation.asFPR(), resultLocation.asFPR());
                     if (signBit) {
                         m_jit.xorFloat(m_scratchFPR, m_scratchFPR);
@@ -5495,8 +5498,7 @@ public:
                 m_jit.move64ToDouble(m_scratchGPR, m_scratchFPR);
 
 #if CPU(X86_64)
-                m_jit.move(TrustedImm64(0x7fffffffffffffffll), m_scratchGPR);
-                m_jit.move64ToDouble(m_scratchGPR, resultLocation.asFPR());
+                m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), resultLocation.asFPR());
                 m_jit.andDouble(lhsLocation.asFPR(), resultLocation.asFPR());
                 m_jit.orDouble(resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #else
@@ -5517,8 +5519,7 @@ public:
                 } else {
                     bool signBit = bitwise_cast<uint64_t>(rhs.asF64()) & 0x8000000000000000ull;
 #if CPU(X86_64)
-                    m_jit.move(TrustedImm64(0x7fffffffffffffffll), m_scratchGPR);
-                    m_jit.move64ToDouble(m_scratchGPR, resultLocation.asFPR());
+                    m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), resultLocation.asFPR());
                     m_jit.andDouble(lhsLocation.asFPR(), resultLocation.asFPR());
                     if (signBit) {
                         m_jit.xorDouble(m_scratchFPR, m_scratchFPR);
@@ -5585,8 +5586,7 @@ public:
             BLOCK(Value::fromF32(std::abs(operand.asF32()))),
             BLOCK(
 #if CPU(X86_64)
-                m_jit.move(Imm32(0x7fffffffll), m_scratchGPR);
-                m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
+                m_jit.move32ToFloat(TrustedImm32(0x7fffffffll), m_scratchFPR);
                 m_jit.andFloat(operandLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #else
                 m_jit.absFloat(operandLocation.asFPR(), resultLocation.asFPR());
@@ -5602,8 +5602,7 @@ public:
             BLOCK(Value::fromF64(std::abs(operand.asF64()))),
             BLOCK(
 #if CPU(X86_64)
-                m_jit.move(TrustedImm64(0x7fffffffffffffffll), m_scratchGPR);
-                m_jit.move64ToDouble(m_scratchGPR, m_scratchFPR);
+                m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), m_scratchFPR);
                 m_jit.andDouble(operandLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #else
                 m_jit.absDouble(operandLocation.asFPR(), resultLocation.asFPR());
@@ -6693,7 +6692,7 @@ public:
         // FIXME: We should just store these registers on stack and load them.
         if (!!m_info.memory) {
             m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_scratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         }
     }
 
@@ -6869,12 +6868,18 @@ public:
         case TypeKind::Struct:
         case TypeKind::Func: {
             resultLocation = Location::fromGPR(GPRInfo::returnValueGPR);
+            ASSERT(m_validGPRs.contains(GPRInfo::returnValueGPR, IgnoreVectors));
             break;
         }
         case TypeKind::F32:
-        case TypeKind::F64:
+        case TypeKind::F64: {
+            resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+            ASSERT(m_validFPRs.contains(FPRInfo::returnValueFPR, Width::Width128));
+            break;
+        }
         case TypeKind::V128: {
             resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+            ASSERT(m_validFPRs.contains(FPRInfo::returnValueFPR, Width::Width128));
             break;
         }
         case TypeKind::Void:
@@ -6944,7 +6949,7 @@ public:
         Jump isSameInstance = m_jit.branchPtr(RelationalCondition::Equal, calleeInstance, GPRInfo::wasmContextInstancePointer);
         m_jit.move(calleeInstance, GPRInfo::wasmContextInstancePointer);
         m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_scratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         isSameInstance.link(&m_jit);
 
         // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
@@ -7331,7 +7336,7 @@ public:
 
         LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
 
-        m_jit.move(vectorLocation.asFPR(), resultLocation.asFPR());
+        m_jit.moveVector(vectorLocation.asFPR(), resultLocation.asFPR());
         switch (op) {
         case SIMDLaneOperation::LoadLane8:
             m_jit.vectorLoad8Lane(address, TrustedImm32(lane), resultLocation.asFPR());
@@ -7460,12 +7465,8 @@ public:
 #else
             m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::Unsigned }, result.asFPR(), result.asFPR(), result.asFPR());
 #endif
-        else {
-            m_jit.move(TrustedImm64(value.u64x2[0]), m_dataScratchGPR);
-            m_jit.vectorReplaceLaneInt64(TrustedImm32(0), m_dataScratchGPR, result.asFPR());
-            m_jit.move(TrustedImm64(value.u64x2[1]), m_dataScratchGPR);
-            m_jit.vectorReplaceLaneInt64(TrustedImm32(1), m_dataScratchGPR, result.asFPR());
-        }
+        else
+            m_jit.materializeVector(value, result.asFPR());
     }
 
     ExpressionType WARN_UNUSED_RETURN addConstant(v128_t value)
@@ -7659,12 +7660,10 @@ public:
             }
             if (scalarTypeIsFloatingPoint(info.lane)) {
                 if (info.lane == SIMDLane::f32x4) {
-                    m_jit.move(TrustedImm32(0x7fffffff), m_scratchGPR);
-                    m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
+                    m_jit.move32ToFloat(TrustedImm32(0x7fffffff), m_scratchFPR);
                     m_jit.vectorSplatFloat32(m_scratchFPR, m_scratchFPR);
                 } else {
-                    m_jit.move(TrustedImm64(0x7fffffffffffffffll), m_scratchGPR);
-                    m_jit.move64ToDouble(m_scratchGPR, m_scratchFPR);
+                    m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), m_scratchFPR);
                     m_jit.vectorSplatFloat64(m_scratchFPR, m_scratchFPR);
                 }
                 m_jit.vectorAnd(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, valueLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
@@ -7801,14 +7800,12 @@ public:
                 break;
             case SIMDLane::f32x4:
                 // For floats, we unfortunately have to flip the sign bit using XOR.
-                m_jit.move(TrustedImm32(-0x80000000), m_scratchGPR);
-                m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
+                m_jit.move32ToFloat(TrustedImm32(-0x80000000), m_scratchFPR);
                 m_jit.vectorSplatFloat32(m_scratchFPR, m_scratchFPR);
                 m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, valueLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
                 break;
             case SIMDLane::f64x2:
-                m_jit.move(TrustedImm64(-0x8000000000000000ll), m_scratchGPR);
-                m_jit.move64ToDouble(m_scratchGPR, m_scratchFPR);
+                m_jit.move64ToDouble(TrustedImm64(-0x8000000000000000ll), m_scratchFPR);
                 m_jit.vectorSplatFloat64(m_scratchFPR, m_scratchFPR);
                 m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, valueLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
                 break;
@@ -7851,7 +7848,7 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDRelOp(SIMDLaneOperation op, SIMDInfo info, ExpressionType left, ExpressionType right, Air::Arg relOp, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDRelOp(SIMDLaneOperation op, SIMDInfo info, ExpressionType left, ExpressionType right, B3::Air::Arg relOp, ExpressionType& result)
     {
         Location leftLocation = loadIfNecessary(left);
         Location rightLocation = loadIfNecessary(right);
@@ -7929,13 +7926,15 @@ public:
         if (info.lane == SIMDLane::i64x2) {
             // Multiplication of 64-bit ints isn't natively supported on ARM or Intel (at least the ones we're targeting)
             // so we scalarize it instead.
+            ScratchScope<1, 0> scratches(*this);
+            GPRReg dataScratchGPR = scratches.gpr(0);
             m_jit.vectorExtractLaneInt64(TrustedImm32(0), left.asFPR(), m_scratchGPR);
-            m_jit.vectorExtractLaneInt64(TrustedImm32(0), right.asFPR(), m_dataScratchGPR);
-            m_jit.mul64(m_scratchGPR, m_dataScratchGPR, m_scratchGPR);
+            m_jit.vectorExtractLaneInt64(TrustedImm32(0), right.asFPR(), dataScratchGPR);
+            m_jit.mul64(m_scratchGPR, dataScratchGPR, m_scratchGPR);
             m_jit.vectorReplaceLane(SIMDLane::i64x2, TrustedImm32(0), m_scratchGPR, m_scratchFPR);
             m_jit.vectorExtractLaneInt64(TrustedImm32(1), left.asFPR(), m_scratchGPR);
-            m_jit.vectorExtractLaneInt64(TrustedImm32(1), right.asFPR(), m_dataScratchGPR);
-            m_jit.mul64(m_scratchGPR, m_dataScratchGPR, m_scratchGPR);
+            m_jit.vectorExtractLaneInt64(TrustedImm32(1), right.asFPR(), dataScratchGPR);
+            m_jit.mul64(m_scratchGPR, dataScratchGPR, m_scratchGPR);
             m_jit.vectorReplaceLane(SIMDLane::i64x2, TrustedImm32(1), m_scratchGPR, m_scratchFPR);
             m_jit.moveVector(m_scratchFPR, result.asFPR());
         } else
@@ -8124,9 +8123,7 @@ public:
 private:
     bool isScratch(Location loc)
     {
-        return (loc.isGPR() && loc.asGPR() == m_dataScratchGPR)
-            || (loc.isGPR() && loc.asGPR() == m_scratchGPR)
-            || (loc.isFPR() && loc.asFPR() == m_scratchFPR);
+        return (loc.isGPR() && loc.asGPR() == m_scratchGPR) || (loc.isFPR() && loc.asFPR() == m_scratchFPR);
     }
 
     void emitStoreConst(Value constant, Location loc)
@@ -8188,12 +8185,10 @@ private:
             m_jit.move(TrustedImm64(constant.asRef()), loc.asGPR());
             break;
         case TypeKind::F32:
-            m_jit.move(Imm32(constant.asI32()), m_dataScratchGPR);
-            m_jit.move32ToFloat(m_dataScratchGPR, loc.asFPR());
+            m_jit.moveFloat(Imm32(constant.asI32()), loc.asFPR());
             break;
         case TypeKind::F64:
-            m_jit.move(Imm64(constant.asI64()), m_dataScratchGPR);
-            m_jit.move64ToDouble(m_dataScratchGPR, loc.asFPR());
+            m_jit.moveDouble(Imm64(constant.asI64()), loc.asFPR());
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented constant typekind.");
@@ -8255,12 +8250,10 @@ private:
         case TypeKind::I32:
         case TypeKind::I31ref:
         case TypeKind::F32:
-            m_jit.load32(srcLocation.asAddress(), m_dataScratchGPR);
-            m_jit.store32(m_dataScratchGPR, dst.asAddress());
+            m_jit.transfer32(srcLocation.asAddress(), dst.asAddress());
             break;
         case TypeKind::I64:
-            m_jit.load64(srcLocation.asAddress(), m_dataScratchGPR);
-            m_jit.store64(m_dataScratchGPR, dst.asAddress());
+            m_jit.transfer64(srcLocation.asAddress(), dst.asAddress());
             break;
         case TypeKind::F64:
             m_jit.loadDouble(srcLocation.asAddress(), m_scratchFPR);
@@ -8272,8 +8265,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Structref:
         case TypeKind::Arrayref:
-            m_jit.load64(srcLocation.asAddress(), m_dataScratchGPR);
-            m_jit.store64(m_dataScratchGPR, dst.asAddress());
+            m_jit.transfer64(srcLocation.asAddress(), dst.asAddress());
             break;
         case TypeKind::V128: {
             // We do two scalar load/store pairs instead of one vector load/store in order to avoid
@@ -8317,7 +8309,7 @@ private:
             break;
         case TypeKind::F32:
         case TypeKind::F64:
-            m_jit.move(srcLocation.asFPR(), dst.asFPR());
+            m_jit.moveDouble(srcLocation.asFPR(), dst.asFPR());
             break;
         case TypeKind::V128:
             m_jit.moveVector(srcLocation.asFPR(), dst.asFPR());
@@ -9022,7 +9014,6 @@ private:
 
     RegisterID m_scratchGPR { GPRInfo::nonPreservedNonArgumentGPR0 }; // Scratch registers to hold temporaries in operations.
     FPRegisterID m_scratchFPR { FPRInfo::nonPreservedNonArgumentFPR0 };
-    RegisterID m_dataScratchGPR { GPRInfo::wasmScratchGPR0 }; // Used specifically as a temporary for complex moves.
 
 #if CPU(X86) || CPU(X86_64)
     RegisterID m_shiftRCX { X86Registers::ecx };

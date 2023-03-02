@@ -182,6 +182,7 @@ class Page;
 class PaintWorklet;
 class PaintWorkletGlobalScope;
 class PlatformMouseEvent;
+class PointerEvent;
 class ProcessingInstruction;
 class QualifiedName;
 class Quirks;
@@ -264,11 +265,14 @@ enum CSSPropertyID : uint16_t;
 enum class CompositeOperator : uint8_t;
 enum class DOMAudioSessionType : uint8_t;
 enum class DisabledAdaptations : uint8_t;
+enum class FireEvents : bool;
 enum class FocusDirection : uint8_t;
+enum class FocusPreviousElement : bool;
 enum class FocusTrigger : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMutedState : uint8_t;
+enum class NoiseInjectionPolicy : bool;
 enum class ParserContentPolicy : uint8_t;
 enum class PlatformEventType : uint8_t;
 enum class ReferrerPolicySource : uint8_t;
@@ -1270,6 +1274,9 @@ public:
     WEBCORE_EXPORT void exitPointerLock();
 #endif
 
+    std::optional<uint64_t> noiseInjectionHashSalt() const final;
+    NoiseInjectionPolicy noiseInjectionPolicy() const;
+
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
     void incrementLoadEventDelayCount() { ++m_loadEventDelayCount; }
     void decrementLoadEventDelayCount();
@@ -1611,6 +1618,10 @@ public:
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
     HTMLDialogElement* activeModalDialog() const;
+    HTMLElement* topmostAutoPopover() const;
+
+    void hideAllPopoversUntil(Element*, FocusPreviousElement, FireEvents);
+    void handlePopoverLightDismiss(PointerEvent&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
@@ -2191,6 +2202,8 @@ private:
     String m_fragmentDirective;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
+
+    WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverPointerDownTarget;
 
 #if ENABLE(WEB_RTC)
     RefPtr<RTCNetworkManager> m_rtcNetworkManager;

@@ -73,6 +73,7 @@ GStreamerMediaEndpoint::GStreamerMediaEndpoint(GStreamerPeerConnectionBackend& p
 #endif
 {
     ensureGStreamerInitialized();
+    registerWebKitGStreamerElements();
 
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -653,7 +654,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLine
     } else
         sinkPad = requestPad("sink_%u"_s);
 
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting msid to %s on sink pad", mediaStreamID.ascii().data());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting msid to %s on sink pad %" GST_PTR_FORMAT, mediaStreamID.ascii().data(), sinkPad.get());
     if (gstObjectHasProperty(sinkPad.get(), "msid"))
         g_object_set(sinkPad.get(), "msid", mediaStreamID.ascii().data(), nullptr);
 

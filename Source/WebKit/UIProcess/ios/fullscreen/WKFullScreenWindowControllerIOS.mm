@@ -1082,6 +1082,13 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     if (page)
         page->setSuppressVisibilityUpdates(true);
 
+#if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
+    [UIView performWithoutAnimation:^{
+        CompletionHandler<void()> completionHandler = []() { };
+        performFullscreenTransition(_lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
+    }];
+#endif
+
     [self _reinsertWebViewUnderPlaceholder];
 
     if (auto* manager = self._manager) {

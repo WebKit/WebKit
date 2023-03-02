@@ -116,7 +116,7 @@ template<> void JSTestAsyncKeyValueIterableDOMConstructor::initializeProperties(
 
 static const HashTableValue JSTestAsyncKeyValueIterablePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestAsyncKeyValueIterableConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestAsyncKeyValueIterableConstructor, 0 } },
     { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncKeyValueIterablePrototypeFunction_entries, 0 } },
     { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncKeyValueIterablePrototypeFunction_keys, 0 } },
     { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncKeyValueIterablePrototypeFunction_values, 0 } },

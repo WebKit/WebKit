@@ -71,7 +71,7 @@ protected:
 
 private:
     void drawCellInternal(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
-    void drawCellFocusRingInternal(const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
+    void drawCellFocusRingInternal(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
 
     void drawCellFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
     void drawCellOrFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, bool drawCell = true);

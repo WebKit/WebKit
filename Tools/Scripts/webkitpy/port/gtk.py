@@ -81,7 +81,7 @@ class GtkPort(GLibPort):
                                                                     ignore_errors=True).strip()
                 dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             else:  # in flatpak
-                llvmpipe_libgl_path = "/usr/lib/x86_64-linux-gnu/"
+                llvmpipe_libgl_path = "/usr/lib/{}-linux-gnu/".format(os.uname().machine)
                 dri_libgl_path = os.path.join(llvmpipe_libgl_path, "GL", "lib", "dri")
 
             if os.path.exists(os.path.join(llvmpipe_libgl_path, "libGL.so")) and os.path.exists(os.path.join(dri_libgl_path, "swrast_dri.so")):

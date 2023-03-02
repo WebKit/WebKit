@@ -939,6 +939,8 @@ private:
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     WeakObjCPtr<NSPopover> m_lastContextMenuTranslationPopover;
 #endif
+
+    RetainPtr<NSObject> _textInputNotifications;
 };
     
 } // namespace WebKit

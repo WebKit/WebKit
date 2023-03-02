@@ -1827,7 +1827,7 @@ static void tupleNestedLoop(int32_t first, double second)
         patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move(params[3].gpr(), params[0].gpr());
             jit.move(params[0].gpr(), params[2].gpr());
-            jit.move(params[4].fpr(), params[1].fpr());
+            jit.moveDouble(params[4].fpr(), params[1].fpr());
         });
         root->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
         root->appendNew<VariableValue>(proc, Set, Origin(), tookInner, root->appendIntConstant(proc, Origin(), Int32, 0));
@@ -1849,7 +1849,7 @@ static void tupleNestedLoop(int32_t first, double second)
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(params[3].gpr(), params[0].gpr());
             jit.moveConditionally32(CCallHelpers::Equal, params[5].gpr(), CCallHelpers::TrustedImm32(0), params[0].gpr(), params[5].gpr(), params[2].gpr());
-            jit.move(params[4].fpr(), params[1].fpr());
+            jit.moveDouble(params[4].fpr(), params[1].fpr());
         });
         outerLoop->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
         outerLoop->appendNew<VariableValue>(proc, Set, Origin(), varInner, patchpoint);
@@ -1870,7 +1870,7 @@ static void tupleNestedLoop(int32_t first, double second)
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(params[3].gpr(), params[0].gpr());
             jit.move(CCallHelpers::TrustedImm32(0), params[2].gpr());
-            jit.move(params[4].fpr(), params[1].fpr());
+            jit.moveDouble(params[4].fpr(), params[1].fpr());
         });
         innerLoop->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
         innerLoop->appendNew<VariableValue>(proc, Set, Origin(), varInner, patchpoint);

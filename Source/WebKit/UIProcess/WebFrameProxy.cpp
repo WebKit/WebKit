@@ -246,14 +246,16 @@ void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::Cert
     m_containsPluginDocument = containsPluginDocument;
 }
 
-void WebFrameProxy::didFinishLoad()
+void WebFrameProxy::didFinishLoad(bool isAboutBlank)
 {
     m_frameLoadState.didFinishLoad();
 
     if (m_navigateCallback)
         m_navigateCallback(pageIdentifier(), frameID());
 
-    if (m_subframePage && m_parentFrame)
+    // FIXME: This isn't quite right. We shouldn't ignore all about:blank load finishes.
+    // We should ignore just the initial about:blank load finish. Add a test that re-loads about:blank in and from an isolated iframe.
+    if (m_subframePage && m_parentFrame && !isAboutBlank)
         m_parentFrame->m_process->send(Messages::WebFrame::DidFinishLoadInAnotherProcess(), m_frameID.object());
 }
 
