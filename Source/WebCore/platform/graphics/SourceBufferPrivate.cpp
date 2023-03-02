@@ -155,15 +155,29 @@ void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded)
 {
     DEBUG_LOG(LOGIDENTIFIER);
 
-    // Resolve the changes in TrackBuffers' buffered ranges
-    // into the SourceBuffer's buffered ranges
-    updateBufferedFromTrackBuffers(isEnded);
+    auto completionHandler = CompletionHandler<void()>([self = Ref { *this }, this, parsingSucceeded, isEnded]() {
+        if (!m_isAttached)
+            return;
 
-    if (m_client) {
-        if (!m_didReceiveSampleErrored)
-            m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::AppendSucceeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
-        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+        // Resolve the changes in TrackBuffers' buffered ranges
+        // into the SourceBuffer's buffered ranges
+        updateBufferedFromTrackBuffers(isEnded);
+
+        if (m_client) {
+            if (!m_didReceiveSampleErrored)
+                m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::AppendSucceeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
+            m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+        }
+    });
+
+    // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
+    // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
+    // duration set to the maximum of the current duration and the group end timestamp.
+    if (m_groupEndTimestamp > duration()) {
+        m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp, WTFMove(completionHandler));
+        return;
     }
+    completionHandler();
 }
 
 void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
@@ -1084,11 +1098,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
     } while (true);
 
     // Steps 2-4 will be handled by MediaSource::monitorSourceBuffers()
-
-    // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
-    // duration set to the maximum of the current duration and the group end timestamp.
-    if (m_groupEndTimestamp > duration())
-        m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp);
+    // Step 5 will be handlded by SourceBufferPrivate::appendCompleted()
 
     updateHighestPresentationTimestamp();
 }
