@@ -7331,7 +7331,7 @@ public:
 
         LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
 
-        m_jit.move(vectorLocation.asFPR(), resultLocation.asFPR());
+        m_jit.moveVector(vectorLocation.asFPR(), resultLocation.asFPR());
         switch (op) {
         case SIMDLaneOperation::LoadLane8:
             m_jit.vectorLoad8Lane(address, TrustedImm32(lane), resultLocation.asFPR());
