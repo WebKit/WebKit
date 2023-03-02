@@ -4358,13 +4358,13 @@ public:
         // Left is strictly greater than right
         isGreaterThan.link(&m_jit);
         auto isGreaterThanResult = IsMinOrMax == MinOrMax::Max ? left : right;
-        m_jit.move(isGreaterThanResult, result);
+        m_jit.moveDouble(isGreaterThanResult, result);
         Jump afterGreaterThan = m_jit.jump();
 
         // Left is strictly less than right
         isLessThan.link(&m_jit);
         auto isLessThanResult = IsMinOrMax == MinOrMax::Max ? right : left;
-        m_jit.move(isLessThanResult, result);
+        m_jit.moveDouble(isLessThanResult, result);
         Jump afterLessThan = m_jit.jump();
 
         // Left is equal to right
@@ -8317,7 +8317,7 @@ private:
             break;
         case TypeKind::F32:
         case TypeKind::F64:
-            m_jit.move(srcLocation.asFPR(), dst.asFPR());
+            m_jit.moveDouble(srcLocation.asFPR(), dst.asFPR());
             break;
         case TypeKind::V128:
             m_jit.moveVector(srcLocation.asFPR(), dst.asFPR());

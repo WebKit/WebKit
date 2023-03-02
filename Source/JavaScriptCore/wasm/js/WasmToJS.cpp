@@ -408,7 +408,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.setupArguments<decltype(operationConvertToF32)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             auto call = jit.call(OperationPtrTag);
             exceptionChecks.append(jit.emitJumpIfException(vm));
-            jit.move(FPRInfo::returnValueFPR , dest);
+            jit.moveDouble(FPRInfo::returnValueFPR , dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link<OperationPtrTag>(call, operationConvertToF32);
@@ -440,7 +440,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.setupArguments<decltype(operationConvertToF64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             auto call = jit.call(OperationPtrTag);
             exceptionChecks.append(jit.emitJumpIfException(vm));
-            jit.move(FPRInfo::returnValueFPR, dest);
+            jit.moveDouble(FPRInfo::returnValueFPR, dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link<OperationPtrTag>(call, operationConvertToF64);
