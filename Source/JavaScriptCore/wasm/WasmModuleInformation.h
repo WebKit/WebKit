@@ -110,7 +110,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     bool usesSIMD(uint32_t index) const
     {
-        ASSERT(index <= internalFunctionCount());
+        ASSERT(index < internalFunctionCount());
         ASSERT(functions[index].finishedValidating);
 
         // See also: B3Procedure::usesSIMD().
@@ -123,14 +123,14 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
         return functions[index].usesSIMD;
     }
-    void markUsesSIMD(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
+    void markUsesSIMD(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
 
-    bool usesExceptions(uint32_t index) const { ASSERT(index <= internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
-    void markUsesExceptions(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
-    bool usesAtomics(uint32_t index) const { ASSERT(index <= internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
-    void markUsesAtomics(uint32_t index) { ASSERT(index <= internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
+    bool usesExceptions(uint32_t index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
+    void markUsesExceptions(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
+    bool usesAtomics(uint32_t index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
+    void markUsesAtomics(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
 
-    void doneSeeingFunction(uint32_t index) { ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
+    void doneSeeingFunction(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
 
     uint32_t typeCount() const { return typeSignatures.size(); }
 

@@ -97,9 +97,6 @@ public:
     {
         RELEASE_ASSERT(RegDispatch<RegType>::hasSameType(entry.reg()));
         ASSERT(entry.width() == pointerWidth() || entry.width() == Width64);
-        auto& jit = m_jit;
-        JIT_COMMENT(jit, "Execute Spooler: ", entry);
-        ASSERT(entry.width() == pointerWidth() || entry.width() == Width64);
 
         if constexpr (!hasPairOp)
             return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()));

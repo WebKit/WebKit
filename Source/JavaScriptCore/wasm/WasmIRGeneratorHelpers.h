@@ -138,6 +138,7 @@ static inline void emitRethrowImpl(CCallHelpers& jit)
 
 static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
 {
+    JIT_COMMENT(jit, "throw impl, index: ", exceptionIndex);
     // Instance in argumentGPR0
     // arguments to the exception off of stack pointer
 

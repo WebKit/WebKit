@@ -3645,6 +3645,7 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     result->resultConstraints.append(ValueRep::reg(GPRInfo::returnValueGPR2));
     result->setGenerator([](CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
+        JIT_COMMENT(jit, "operationWasmRetrieveAndClearExceptionIfCatchable");
         jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
         jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
