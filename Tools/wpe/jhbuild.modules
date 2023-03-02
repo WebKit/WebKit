@@ -7,36 +7,36 @@
 
   <metamodule id="webkitwpe-testing-dependencies">
     <dependencies>
-      <dep package="glib"/>
-      <dep package="libsoup"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="atk"/>
       <dep package="cairo"/>
-      <dep package="fonts"/>
       <dep package="dicts"/>
       <dep package="fontconfig"/>
+      <dep package="fonts"/>
       <dep package="freetype6"/>
+      <dep package="glib"/>
       <dep package="harfbuzz"/>
       <dep package="icu"/>
-      <dep package="webkit-gstreamer-testing-dependencies"/>
-      <dep package="libwpe"/>
-      <dep package="wpebackend-fdo"/>
-      <dep package="libgpg-error"/>
-      <dep package="libgcrypt"/>
       <dep package="libepoxy"/>
-      <dep package="wayland-protocols"/>
-      <dep package="openjpeg"/>
-      <dep package="xdg-dbus-proxy"/>
-      <dep package="atk"/>
-      <dep package="at-spi2-atk"/>
+      <dep package="libgcrypt"/>
+      <dep package="libgpg-error"/>
+      <dep package="libsoup"/>
+      <dep package="libvpx"/>
+      <dep package="libwpe"/>
       <dep package="libxml2"/>
+      <dep package="manette"/>
+      <dep package="openjpeg"/>
+      <dep package="openxr"/>
       <dep package="shared-mime-info"/>
+      <dep package="wayland-protocols"/>
+      <dep package="wpebackend-fdo"/>
+      <dep package="xdg-dbus-proxy"/>
+
+      <dep package="webkit-gstreamer-testing-dependencies"/>
     </dependencies>
   </metamodule>
 
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
-  <repository type="tarball" name="sourceware.org-mirror"
-      href="http://mirrors.kernel.org/sources.redhat.com/"/>
-  <repository type="tarball" name="ftp.gnome.org"
-      href="http://ftp.gnome.org"/>
   <repository type="tarball" name="download.gnome.org"
       href="https://download.gnome.org"/>
   <repository type="tarball" name="cairographics.org"
@@ -47,127 +47,63 @@
       href="http://wayland.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
-  <repository type="tarball" name="github-tarball"
-      href="https://github.com/"/>
+  <repository type="tarball" name="tarball.github.com"
+      href="https://github.com"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="wpewebkit"
       href="https://wpewebkit.org/releases/"/>
-  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
-      href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="xmlsoft.org"
       href="http://xmlsoft.org"/>
 
-  <autotools id="libffi" autogen-sh="configure">
-    <branch module="libffi/libffi-3.0.10.tar.gz" version="3.0.10"
-             repo="sourceware.org-mirror"
-             hash="sha256:f01eb9027e9eb56aeaeef636649877756d475d714ef8b47f627f65bc5f3b492f"/>
-  </autotools>
+  <distutils id="meson" python3="1">
+    <branch repo="tarball.github.com"
+            version="0.61.5"
+            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
+            checkoutdir="meson-${version}"
+            hash="sha256:5e9a0d65c1a51936362b9686d1c5e9e184a6fd245d57e7269750ce50c20f5d9a"/>
+  </distutils>
 
-  <meson id="glib"
-         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
-    <dependencies>
-      <dep package="libffi"/>
-    </dependencies>
-    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
-            repo="download.gnome.org"
-            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
-    </branch>
-  </meson>
+  <!-- Dependencies -->
 
-  <meson id="glib-networking">
+  <!-- atk needed to build with A11y support -->
+  <meson id="atk" mesonargs="-Dintrospection=false">
+    <pkg-config>atk.pc</pkg-config>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
+    <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
             repo="download.gnome.org"
-            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
+            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
   </meson>
 
-  <autotools id="libpsl"
-             autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
-    <dependencies>
-      <dep package="icu"/>
-    </dependencies>
-    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
-            version="0.20.2"
-            repo="github-tarball"
-            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
-  </autotools>
-
-  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
-    <dependencies>
-      <dep package="glib-networking"/>
-      <dep package="libpsl"/>
-    </dependencies>
-    <branch module="/sources/libsoup/2.70/libsoup-${version}.tar.xz" version="2.70.0"
-            repo="download.gnome.org"
-            hash="sha256:54b020f74aefa438918d8e53cff62e2b1e59efe2de53e06b19a4b07b1f4d5342">
-    </branch>
-  </meson>
-
-  <autotools id="fonts" supports-non-srcdir-builds="no"
-             skip-autogen="true">
-    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
-  </autotools>
-
-  <autotools id="dicts" supports-non-srcdir-builds="no"
-             skip-autogen="true">
-    <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
-  </autotools>
-
-  <autotools id="freetype6" autogen-sh="configure"
-        autogenargs="--with-harfbuzz=no">
-    <branch module="freetype/freetype-2.9.1.tar.bz2" version="2.9.1"
-            repo="savannah.gnu.org"
-            hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
-  </autotools>
-
-  <autotools id="fontconfig" autogen-sh="configure"
-             autogenargs="--disable-docs"
-             supports-non-srcdir-builds="no">
-    <dependencies>
-      <dep package="freetype6"/>
-    </dependencies>
-    <branch module="software/fontconfig/release/fontconfig-2.13.1.tar.bz2" version="2.13.1"
-            repo="freedesktop.org"
-            hash="sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"/>
-  </autotools>
-
-  <autotools id="harfbuzz" autogen-sh="configure"
-        autogenargs="--with-cairo=no --with-glib=yes --with-freetype=yes --with-fontconfig=yes --with-icu=yes">
+  <!-- at-spi2-core needed to build with A11y support -->
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
+    <pkg-config>atspi-2.pc</pkg-config>
     <dependencies>
       <dep package="glib"/>
-      <dep package="freetype6"/>
-      <dep package="fontconfig"/>
-      <dep package="icu"/>
     </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-2.2.0.tar.bz2"
-            version="2.2.0"
-            checkoutdir="harfbuzz-2.2.0"
-            repo="freedesktop.org"
-            hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
-  </autotools>
-
-  <autotools id="icu"
-             autogen-sh="./source/configure"
-             autogenargs="--disable-samples --enable-weak-threads">
-    <branch module="icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
-            repo="webkitgtk-jhbuild-mirror"
-            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
-      <patch file="icudata-stdlibs.patch" strip="1"/>
+    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
+            repo="download.gnome.org"
+            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
     </branch>
-  </autotools>
+  </meson>
 
-  <autotools id="pixman"
-             autogen-sh="configure"
-             autogenargs="--enable-gtk=no">
-    <branch module="releases/pixman-${version}.tar.gz" version="0.40.0"
-            repo="cairographics.org"
-            hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc"/>
-  </autotools>
+  <!-- at-spi2-atk needed to build with A11y support -->
+  <meson id="at-spi2-atk" mesonargs="">
+    <pkg-config>atk.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
+    <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
+            repo="download.gnome.org"
+            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
+    </branch>
+  </meson>
 
   <autotools id="cairo"
              autogen-sh="configure"
@@ -177,7 +113,7 @@
       <dep package="fontconfig"/>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="releases/cairo-1.16.0.tar.xz" version="1.16.0"
+    <branch module="releases/cairo-${version}.tar.xz" version="1.16.0"
             repo="cairographics.org"
             hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14">
       <!-- See https://gitlab.freedesktop.org/cairo/cairo/merge_requests/5 -->
@@ -185,23 +121,107 @@
     </branch>
   </autotools>
 
-  <cmake id="libwpe">
-    <branch module="libwpe-1.8.0.tar.xz" version="1.8.0"
-            repo="wpewebkit"
-            hash="sha256:a6f00a7d091cbd4db57fe7ee3b4c12c6350921d654ed79812800a26c888481d2"/>
-  </cmake>
+  <autotools id="dicts"
+             supports-non-srcdir-builds="no"
+             skip-autogen="true">
+    <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
+  </autotools>
 
-  <cmake id="wpebackend-fdo">
+  <autotools id="fontconfig" autogen-sh="configure"
+             autogenargs="--disable-docs"
+             supports-non-srcdir-builds="no">
     <dependencies>
-      <dep package="libwpe"/>
+      <dep package="freetype6"/>
+    </dependencies>
+    <branch module="software/fontconfig/release/fontconfig-${version}.tar.bz2" version="2.13.1"
+            repo="freedesktop.org"
+            hash="sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"/>
+  </autotools>
+
+  <autotools id="fonts"
+             skip-autogen="true"
+             supports-non-srcdir-builds="no">
+    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
+  </autotools>
+
+  <autotools id="freetype6" autogen-sh="configure"
+        autogenargs="--with-harfbuzz=no">
+    <branch module="freetype/freetype-2.9.1.tar.bz2" version="2.9.1"
+            repo="savannah.gnu.org"
+            hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
+  </autotools>
+
+  <meson id="glib" mesonargs="-Dlibmount=disabled -Dselinux=disabled">
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
+    </branch>
+  </meson>
+
+  <meson id="glib-networking">
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="wpebackend-fdo-1.8.0.tar.xz" version="1.8.0"
-            repo="wpewebkit"
-            hash="sha256:9652a99c75fe1c6eab0585b6395f4e104b2427e4d1f42969f1f77df29920d253">
-    <patch file="wpebackend-fdo-cmake-buildfix-3.10.patch" strip="1"/>
+    <branch module="/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
+  </meson>
+
+  <autotools id="harfbuzz" autogen-sh="configure"
+        autogenargs="--with-cairo=no --with-glib=yes --with-freetype=yes --with-fontconfig=yes --with-icu=yes">
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="freetype6"/>
+      <dep package="fontconfig"/>
+      <dep package="icu"/>
+    </dependencies>
+    <branch module="software/harfbuzz/release/harfbuzz-${version}.tar.bz2"
+            version="2.2.0"
+            checkoutdir="harfbuzz-${version}"
+            repo="freedesktop.org"
+            hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
+  </autotools>
+
+  <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --enable-weak-threads">
+    <pkg-config>icu-i18n.pc</pkg-config>
+    <branch module="unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
+            repo="tarball.github.com"
+            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
+      <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
-  </cmake>
+  </autotools>
+
+  <autotools id="libepoxy" autogen-sh="configure">
+    <branch module="anholt/libepoxy/releases/download/${version}/libepoxy-${version}.tar.xz"
+            version="1.4.3"
+            repo="tarball.github.com"/>
+  </autotools>
+
+  <autotools id="libgcrypt" autogen-sh="configure">
+    <dependencies>
+      <dep package="libgpg-error"/>
+    </dependencies>
+    <branch module="libgcrypt/libgcrypt-${version}.tar.bz2"
+            version="1.8.4"
+            repo="gnupg.org"
+            hash="sha256:f638143a0672628fde0cad745e9b14deb85dffb175709cacc1f4fe24b93f2227">
+        <patch file="libgcrypt-use-only-dev-urandom-for-testing.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <autotools id="libpsl"
+             autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
+    <pkg-config>libpsl.pc</pkg-config>
+    <dependencies>
+      <dep package="icu"/>
+    </dependencies>
+    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
+            version="0.20.2"
+            repo="tarball.github.com"
+            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
+  </autotools>
 
   <autotools id="libgpg-error" autogen-sh="autoreconf">
     <branch module="libgpg-error/libgpg-error-${version}.tar.bz2"
@@ -212,105 +232,76 @@
     </branch>
   </autotools>
 
-  <autotools id="libgcrypt" autogen-sh="configure">
-    <branch module="libgcrypt/libgcrypt-${version}.tar.bz2"
-            version="1.8.4"
-            repo="gnupg.org"
-            hash="sha256:f638143a0672628fde0cad745e9b14deb85dffb175709cacc1f4fe24b93f2227">
-        <patch file="libgcrypt-use-only-dev-urandom-for-testing.patch" strip="1"/>
+  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
+    <pkg-config>libsoup-2.4.pc</pkg-config>
+    <dependencies>
+      <dep package="glib-networking"/>
+      <dep package="libpsl"/>
+    </dependencies>
+    <branch module="/sources/libsoup/2.70/libsoup-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:54b020f74aefa438918d8e53cff62e2b1e59efe2de53e06b19a4b07b1f4d5342">
     </branch>
-    <dependencies>
-      <dep package="libgpg-error"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="libepoxy" autogen-sh="configure">
-    <branch module="anholt/libepoxy/releases/download/1.4.3/libepoxy-1.4.3.tar.xz"
-            version="1.4.3" repo="github-tarball"/>
-  </autotools>
-
-  <autotools id="wayland-protocols" autogen-sh="configure">
-    <branch module="releases/wayland-protocols-${version}.tar.xz"
-            version="1.12"
-	    repo="wayland.freedesktop.org"
-	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
-  </autotools>
-
-  <meson id="graphene">
-    <branch repo="github.com"
-            module="ebassi/graphene.git"
-            tag="1.6.0"/>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
   </meson>
 
-  <cmake id="openjpeg">
-    <branch repo="github-tarball"
-            module="uclouvain/openjpeg/archive/v${version}.tar.gz"
-            checkoutdir="openjpeg-${version}"
-            version="2.3.0"
-            hash="sha256:3dc787c1bb6023ba846c2a0d9b1f6e179f1cd255172bde9eb75b01f1e6c7d71a"/>
+  <!-- libvpx needed for libwebrtc -->
+  <autotools id="libvpx" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --extra-cflags=-fPIC --extra-cxxflags=-fPIC">
+    <pkg-config>vpx.pc</pkg-config>
+    <branch repo="tarball.github.com"
+            version="1.10.0"
+            module="webmproject/libvpx/archive/refs/tags/v${version}.tar.gz"
+            checkoutdir="libvpx-${version}"
+            hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
+  </autotools>
+
+  <cmake id="libwpe">
+    <branch module="libwpe-${version}.tar.xz" version="1.14.1"
+            repo="wpewebkit"
+            hash="b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
   </cmake>
-
-  <distutils id="meson" python3="1">
-    <branch repo="github-tarball"
-            version="0.59.0"
-            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
-            checkoutdir="meson-${version}"
-            hash="sha256:e376c298df64b643dfe01eccb2d7b6f1e02e95aa38c19f19d120d129612ce476"/>
-    <dependencies>
-      <dep package="ninja"/>
-    </dependencies>
-  </distutils>
-
-  <autotools id="xdg-dbus-proxy" autogen-sh="configure">
-    <branch repo="github-tarball"
-            version="0.1.0"
-            module="flatpak/xdg-dbus-proxy/releases/download/${version}/xdg-dbus-proxy-${version}.tar.xz"
-            checkoutdir="xdg-dbus-proxy-${version}"
-            hash="sha256:9eefd30fe66940c8daf0e8ce6479307694814edb8b636caeb5aa6d6a46a4bc14"/>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-  </autotools>
-
-  <meson id="atk" mesonargs="-Dintrospection=false">
-    <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-  </meson>
-
-  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
-    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
-            repo="download.gnome.org"
-            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
-    </branch>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-  </meson>
-
-  <meson id="at-spi2-atk" mesonargs="">
-    <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
-    </branch>
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="atk"/>
-      <dep package="at-spi2-core"/>
-    </dependencies>
-  </meson>
 
   <autotools id="libxml2" supports-non-srcdir-builds="no"
              autogen-sh="./autogen.sh; ./configure --with-python=no">
     <branch module="/sources/libxml2-2.9.5.tar.gz" version="2.9.5"
             repo="xmlsoft.org"
             hash="sha256:4031c1ecee9ce7ba4f313e91ef6284164885cdb69937a123f6a83bb6a72dcd38"/>
+  </autotools>
+
+  <!-- libmanette >= 0.2.4 required for GamePad support -->
+  <meson id="manette" mesonargs="-Dintrospection=false -Dvapi=false">
+    <pkg-config>manette-0.2.pc</pkg-config>
+    <branch repo="download.gnome.org"
+            module="/sources/libmanette/0.2/libmanette-${version}.tar.xz"
+            version="0.2.4"
+            hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
+  </meson>
+
+  <cmake id="openjpeg">
+    <branch repo="tarball.github.com"
+            module="uclouvain/openjpeg/archive/v${version}.tar.gz"
+            checkoutdir="openjpeg-${version}"
+            version="2.3.0"
+            hash="sha256:3dc787c1bb6023ba846c2a0d9b1f6e179f1cd255172bde9eb75b01f1e6c7d71a"/>
+  </cmake>
+
+  <!-- OpenXR required for WebXR support -->
+  <cmake id="openxr">
+    <pkg-config>openxr.pc</pkg-config>
+    <dependencies>
+      <dep package="manette"/>
+    </dependencies>
+    <branch module="KhronosGroup/OpenXR-SDK/archive/release-${version}.tar.gz" version="1.0.11"
+            checkoutdir="openxr-${version}"
+            repo="tarball.github.com"
+            hash="sha256:8f28f0f7707487435578264ac18e14af17a5eab2062fc925fe01cd96ed802dce"/>
+  </cmake>
+
+  <autotools id="pixman"
+             autogen-sh="configure"
+             autogenargs="--enable-gtk=no">
+    <branch module="releases/pixman-${version}.tar.gz" version="0.40.0"
+            repo="cairographics.org"
+            hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc"/>
   </autotools>
 
   <autotools id="shared-mime-info"
@@ -323,6 +314,34 @@
     <branch module="/~hadess/shared-mime-info-${version}.tar.xz" version="1.10"
             repo="freedesktop.org"
             hash="sha256:c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf"/>
+  </autotools>
+
+  <autotools id="wayland-protocols" autogen-sh="configure">
+    <branch module="releases/wayland-protocols-${version}.tar.xz"
+            version="1.12"
+	    repo="wayland.freedesktop.org"
+	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
+  </autotools>
+
+  <meson id="wpebackend-fdo">
+    <dependencies>
+      <dep package="libwpe"/>
+    </dependencies>
+    <branch module="wpebackend-fdo-${version}.tar.xz" version="1.14.0"
+            repo="wpewebkit"
+            hash="e75b0cb2c7145448416e8696013d8883f675c66c11ed750e06865efec5809155">
+    </branch>
+  </meson>
+
+  <autotools id="xdg-dbus-proxy" autogen-sh="configure">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch repo="tarball.github.com"
+            version="0.1.0"
+            module="flatpak/xdg-dbus-proxy/releases/download/${version}/xdg-dbus-proxy-${version}.tar.xz"
+            checkoutdir="xdg-dbus-proxy-${version}"
+            hash="sha256:9eefd30fe66940c8daf0e8ce6479307694814edb8b636caeb5aa6d6a46a4bc14"/>
   </autotools>
 
 </moduleset>

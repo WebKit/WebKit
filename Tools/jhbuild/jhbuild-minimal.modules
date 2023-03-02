@@ -5,169 +5,90 @@
 
   <metamodule id="webkitgtk-minimal-dependencies">
     <dependencies>
-      <dep package="wpebackend-fdo"/>
-      <dep package="icu"/>
-      <dep package="libsoup"/>
-      <dep package="manette"/>
-      <dep package="libvpx"/>
-      <dep package="glib"/>
-      <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="icu"/>
+      <dep package="libsoup"/>
+      <dep package="libvpx"/>
+      <dep package="manette"/>
+      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
   <metamodule id="webkitwpe-minimal-dependencies">
     <dependencies>
-      <dep package="wpebackend-fdo"/>
-      <dep package="icu"/>
-      <dep package="libsoup"/>
-      <dep package="openxr"/>
-      <dep package="libvpx"/>
-      <dep package="glib"/>
-      <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="icu"/>
+      <dep package="libsoup"/>
+      <dep package="libvpx"/>
+      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
-  <repository type="git" name="github.com"
+  <repository type="tarball" name="github.com"
       href="https://github.com"/>
-  <repository type="tarball" name="github-tarball"
-      href="https://github.com/"/>
-  <repository type="tarball" name="sourceware.org-mirror"
-      href="http://mirrors.kernel.org/sources.redhat.com/"/>
-  <repository type="tarball" name="ftp.gnome.org"
-      href="http://ftp.gnome.org"/>
   <repository type="tarball" name="download.gnome.org"
       href="https://download.gnome.org"/>
-  <repository type="git" name="git.gnome.org"
-      href="https://git.gnome.org/browse/"/>
-  <repository type="tarball" name="cairographics.org"
-      href="http://cairographics.org"/>
-  <repository type="tarball" name="freedesktop.org"
-      href="http://www.freedesktop.org"/>
-  <repository type="tarball" name="xorg"
-      href="http://xorg.freedesktop.org"/>
-  <repository type="tarball" name="xmlsoft.org"
-      href="http://xmlsoft.org"/>
-  <repository type="tarball" name="savannah.gnu.org"
-      href="http://download.savannah.gnu.org/releases/"/>
-  <repository type="git" name="freedesktop-git"
-      href="http://anongit.freedesktop.org/git"/>
- <repository type="tarball" name="dri.freedesktop.org"
-      href="https://dri.freedesktop.org"/>
-  <repository type="tarball" name="mesa.freedesktop.org"
-      href="https://mesa.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
-  <repository type="tarball" name="llvm.org"
-      href="http://llvm.org"/>
-  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
-      href="http://webkitgtk.org/jhbuild_mirror/"/>
-  <repository type="tarball" name="gnupg.org"
-      href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="wpewebkit"
       href="https://wpewebkit.org/releases/"/>
 
-
-<!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
-<!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
-<!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
-
-  <cmake id="libwpe">
-    <branch module="libwpe-${version}.tar.xz" version="1.14.1"
-            repo="wpewebkit"
-            hash="b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
-  </cmake>
-
-  <meson id="wpebackend-fdo">
-    <dependencies>
-      <dep package="libwpe"/>
-    </dependencies>
-    <branch module="wpebackend-fdo-${version}.tar.xz" version="1.14.0"
-            repo="wpewebkit"
-            hash="e75b0cb2c7145448416e8696013d8883f675c66c11ed750e06865efec5809155">
-    </branch>
-  </meson>
-
-  <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --enable-weak-threads">
-    <pkg-config>icu-i18n.pc</pkg-config>
-    <branch module="unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
-            repo="github-tarball"
-            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
-      <patch file="icudata-stdlibs.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <!-- libsoup >= 2.69 required for SameSite cookie support -->
-  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled -Dtests=false">
-    <pkg-config>libsoup-2.4.pc</pkg-config>
-    <dependencies>
-      <dep package="libpsl"/>
-    </dependencies>
-    <branch module="/sources/libsoup/2.69/libsoup-${version}.tar.xz" version="2.69.90"
-            repo="download.gnome.org"
-            hash="sha256:8ed18092cfb27d870a7c7c45992f3a216bd22dd6fd6d2c9fbf1adc2d6957cab8">
-    <patch file="libsoup-lower-glib-dependency-to-2.38.patch" strip="1"/>
-    </branch>
-  </meson>
-
-  <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
-    <pkg-config>libpsl.pc</pkg-config>
-    <dependencies>
-      <dep package="icu"/>
-    </dependencies>
-    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
-            version="0.20.2"
-            repo="github-tarball"
-            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
-  </autotools>
-
-  <!-- libmanette >= 0.2.4 required for GamePad support -->
-  <meson id="manette" mesonargs="-Dintrospection=false -Dvapi=false">
-    <pkg-config>manette-0.2.pc</pkg-config>
-    <branch repo="ftp.gnome.org"
-            module="/pub/gnome/sources/libmanette/0.2/libmanette-0.2.4.tar.xz"
-            version="0.2.4"
-            hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
-  </meson>
-
-  <!-- meson 0.56.2+ required to build atk 2.38 -->
   <distutils id="meson" python3="1">
-    <branch repo="github-tarball"
+    <branch repo="github.com"
             version="0.61.5"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
             hash="sha256:5e9a0d65c1a51936362b9686d1c5e9e184a6fd245d57e7269750ce50c20f5d9a"/>
   </distutils>
 
-  <!-- OpenXR required for WebXR support -->
-  <cmake id="openxr">
-    <pkg-config>openxr.pc</pkg-config>
-    <branch module="KhronosGroup/OpenXR-SDK/archive/release-${version}.tar.gz" version="1.0.11"
-            checkoutdir="openxr-${version}"
-            repo="github-tarball"
-            hash="sha256:8f28f0f7707487435578264ac18e14af17a5eab2062fc925fe01cd96ed802dce"/>
-  </cmake>
+<!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
+<!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
+<!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
 
-  <!-- libvpx needed for libwebrtc -->
-  <autotools id="libvpx" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --extra-cflags=-fPIC --extra-cxxflags=-fPIC">
-    <pkg-config>vpx.pc</pkg-config>
-    <branch repo="github-tarball"
-            version="1.10.0"
-            module="webmproject/libvpx/archive/refs/tags/v${version}.tar.gz"
-            checkoutdir="libvpx-${version}"
-            hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
-  </autotools>
-
-  <!-- glib needed to upgrade gdbus-codegen -->
-  <meson id="glib"
-         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
+  <!-- atk needed to build with A11y support -->
+  <meson id="atk" mesonargs="-Dintrospection=false">
+    <pkg-config>atk.pc</pkg-config>
     <dependencies>
-      <dep package="libffi"/>
+      <dep package="glib"/>
     </dependencies>
+    <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
+            repo="download.gnome.org"
+            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
+  </meson>
+
+  <!-- at-spi2-core needed to build with A11y support -->
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
+    <pkg-config>atspi-2.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
+            repo="download.gnome.org"
+            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
+    </branch>
+  </meson>
+
+  <!-- at-spi2-atk needed to build with A11y support -->
+  <meson id="at-spi2-atk" mesonargs="">
+    <pkg-config>atk.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
+    <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
+            repo="download.gnome.org"
+            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
+    </branch>
+  </meson>
+
+  <meson id="glib" mesonargs="-Dlibmount=disabled -Dselinux=disabled">
+    <pkg-config>glib-2.0.pc</pkg-config>
     <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
             repo="download.gnome.org"
             hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
@@ -175,6 +96,7 @@
   </meson>
 
   <meson id="glib-networking">
+    <pkg-config>glib-2.0.pc</pkg-config>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -183,38 +105,73 @@
             hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
   </meson>
 
-  <!-- atk needed to build with A11y support -->
-  <meson id="atk" mesonargs="-Dintrospection=false">
-      <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
+  <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --enable-weak-threads">
+    <pkg-config>icu-i18n.pc</pkg-config>
+    <branch module="unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
+            repo="github.com"
+            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
+      <patch file="icudata-stdlibs.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
+    <pkg-config>libsoup-2.4.pc</pkg-config>
     <dependencies>
-      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="libpsl"/>
     </dependencies>
+    <branch module="/sources/libsoup/2.70/libsoup-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:54b020f74aefa438918d8e53cff62e2b1e59efe2de53e06b19a4b07b1f4d5342">
+    </branch>
   </meson>
 
-  <!-- at-spi2-core needed to build with A11y support -->
-  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
-    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
-            repo="download.gnome.org"
-            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
-    </branch>
+  <cmake id="libwpe">
+    <pkg-config>lwpe-1.0.pc</pkg-config>
+    <branch module="libwpe-${version}.tar.xz" version="1.14.1"
+            repo="wpewebkit"
+            hash="b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
+  </cmake>
+
+  <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
+    <pkg-config>libpsl.pc</pkg-config>
     <dependencies>
-      <dep package="glib"/>
+      <dep package="icu"/>
     </dependencies>
+    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
+            version="0.20.2"
+            repo="github.com"
+            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
+  </autotools>
+
+  <!-- libvpx needed for libwebrtc -->
+  <autotools id="libvpx" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --extra-cflags=-fPIC --extra-cxxflags=-fPIC">
+    <pkg-config>vpx.pc</pkg-config>
+    <branch repo="github.com"
+            version="1.10.0"
+            module="webmproject/libvpx/archive/refs/tags/v${version}.tar.gz"
+            checkoutdir="libvpx-${version}"
+            hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
+  </autotools>
+
+  <!-- libmanette >= 0.2.4 required for GamePad support -->
+  <meson id="manette" mesonargs="-Dintrospection=false -Dvapi=false">
+    <pkg-config>manette-0.2.pc</pkg-config>
+    <branch repo="download.gnome.org"
+            module="/sources/libmanette/0.2/libmanette-${version}.tar.xz"
+            version="0.2.4"
+            hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
   </meson>
 
-  <!-- at-spi2-atk needed to build with A11y support -->
-  <meson id="at-spi2-atk" mesonargs="">
-      <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
-    </branch>
+  <meson id="wpebackend-fdo">
+    <pkg-config>wpebackend-fdo-1.0.pc</pkg-config>
     <dependencies>
-      <dep package="glib"/>
-      <dep package="atk"/>
-      <dep package="at-spi2-core"/>
+      <dep package="libwpe"/>
     </dependencies>
+    <branch module="wpebackend-fdo-${version}.tar.xz" version="1.14.0"
+            repo="wpewebkit"
+            hash="e75b0cb2c7145448416e8696013d8883f675c66c11ed750e06865efec5809155">
+    </branch>
   </meson>
 
 </moduleset>
