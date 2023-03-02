@@ -58,8 +58,6 @@ public:
 #if PLATFORM(MAC)
     static std::unique_ptr<LayerHostingContext> createForExternalPluginHostingProcess();
 #endif
-    
-    static std::unique_ptr<LayerHostingContext> createTransportLayerForRemoteHosting(LayerHostingContextID);
 
     static RetainPtr<CALayer> createPlatformLayerForHostingContext(LayerHostingContextID);
 
@@ -91,17 +89,9 @@ public:
     // CAContext; call setFencePort() with the newly created port if synchronization
     // with this context is desired.
     WTF::MachSendRight createFencePort();
-    
-    // Should be only be used inside webprocess
-    void updateCachedContextID(LayerHostingContextID);
-    LayerHostingContextID cachedContextID();
 
 private:
     LayerHostingMode m_layerHostingMode;
-    // Denotes the contextID obtained from GPU process, should be returned
-    // for all calls to context ID in web process when UI side compositing
-    // is enabled. This is done to avoid making calls to CARenderServer from webprocess
-    LayerHostingContextID m_cachedContextID;
     RetainPtr<CAContext> m_context;
 };
 

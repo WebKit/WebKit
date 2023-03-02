@@ -91,8 +91,11 @@ void MediaPlayerPrivateRemote::layerHostingContextIdChanged(std::optional<WebKit
         m_videoLayerManager->didDestroyVideoLayer();
         return;
     }
-    setLayerHostingContextID(inlineLayerHostingContextId.value());
-    m_videoInlineSize = presentationSize;
+
+    m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value(), m_videoFullscreenGravity, presentationSize);
+#if PLATFORM(COCOA)
+    m_videoLayerManager->setVideoLayer(m_videoLayer.get(), presentationSize);
+#endif
 }
 
 } // namespace WebKit

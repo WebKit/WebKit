@@ -978,7 +978,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLMarqueeElement.h
     html/HTMLMediaElement.h
     html/HTMLMediaElementEnums.h
-    html/HTMLMediaElementIdentifier.h
     html/HTMLMenuElement.h
     html/HTMLMenuItemElement.h
     html/HTMLMetaElement.h

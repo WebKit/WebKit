@@ -33,7 +33,6 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
-#include "HTMLMediaElementIdentifier.h"
 #include "LayerHostingContextIdentifier.h"
 #include "Path.h"
 #include "PlatformLayer.h"
@@ -64,7 +63,6 @@ class GraphicsContext;
 class GraphicsLayerFactory;
 class GraphicsLayerContentsDisplayDelegate;
 class GraphicsLayerAsyncContentsDisplayDelegate;
-class HTMLVideoElement;
 class Image;
 class Model;
 class TiledBacking;
@@ -74,8 +72,6 @@ class TransformationMatrix;
 namespace DisplayList {
 enum class AsTextFlag : uint8_t;
 }
-
-using LayerHostingContextID = uint32_t;
 
 // Base class for animation values (also used for transitions). Here to
 // represent values for properties being animated via the GraphicsLayer,
@@ -265,14 +261,7 @@ public:
         ScrolledContents,
         Shape
     };
-    
-    enum class LayerMode : uint8_t {
-        PlatformLayer,
-        LayerHostingContextId
-    };
 
-    virtual LayerMode layerMode() const { return LayerMode::PlatformLayer; }
-    
     WEBCORE_EXPORT static Ref<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&, Type = Type::Normal);
     
     WEBCORE_EXPORT virtual ~GraphicsLayer();
@@ -535,7 +524,6 @@ public:
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
     virtual void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) { }
-    virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate();
 #if ENABLE(MODEL_ELEMENT)
@@ -798,7 +786,6 @@ protected:
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
     Path m_shapeLayerPath;
 #endif
-    LayerHostingContextID m_layerHostingContextID { 0 };
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::GraphicsLayerPaintingPhase);

@@ -73,13 +73,6 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(Ref<WebCore::Model> mod
 }
 #endif
 
-#if ENABLE(AVKIT)
-Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(WebCore::HTMLVideoElement& videoElement, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-{
-    return PlatformCALayerRemoteCustom::create(videoElement, owner, context);
-}
-#endif
-
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     auto layer = adoptRef(*new PlatformCALayerRemote(other, owner, context));
@@ -200,6 +193,8 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
 
         if (type() == PlatformCALayer::Type::RemoteCustom) {
             RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, m_properties, RemoteLayerBackingStore::LayerContentsType::CAMachPort);
+            didCommit();
+            return;
         }
 
         transaction.layerPropertiesChanged(*this);

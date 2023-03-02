@@ -78,8 +78,6 @@ private:
 
     DisplayLink* exisingDisplayLink();
 
-    WTF::MachSendRight createFence() override;
-
     std::optional<WebCore::PlatformDisplayID> m_displayID; // Would be nice to make this non-optional, and ensure we always get one on creation.
     std::optional<WebCore::FramesPerSecond> m_displayNominalFramesPerSecond;
     WebCore::FramesPerSecond m_clientPreferredFramesPerSecond { WebCore::FullSpeedFramesPerSecond };

@@ -29,14 +29,12 @@
 #include "DrawingAreaInfo.h"
 #include "EditorState.h"
 #include "PlatformCAAnimationRemote.h"
-#include "PlaybackSessionContextIdentifier.h"
 #include "RemoteLayerBackingStore.h"
 #include "TransactionID.h"
 #include <WebCore/Color.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
-#include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformCALayer.h>
@@ -119,9 +117,6 @@ public:
 
         WebCore::GraphicsLayer::PlatformLayerID layerID;
         WebCore::PlatformCALayer::LayerType type;
-        std::optional<PlaybackSessionContextIdentifier> playerIdentifier;
-        std::optional<WebCore::FloatSize> initialSize;
-        std::optional<WebCore::FloatSize> naturalSize;
 
         uint32_t hostingContextID;
         float hostingDeviceScaleFactor;
