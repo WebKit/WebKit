@@ -55,7 +55,7 @@ static double fetchStart(MonotonicTime timeOrigin, const ResourceTiming& resourc
 {
     if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart; fetchStart && !resourceTiming.networkLoadMetrics().failsTAOCheck)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, fetchStart);
-
+    
     // fetchStart is a required property.
     auto startTime = resourceTiming.resourceLoadTiming().startTime();
     ASSERT(startTime);
@@ -67,10 +67,10 @@ static double entryStartTime(MonotonicTime timeOrigin, const ResourceTiming& res
     if (resourceTiming.networkLoadMetrics().failsTAOCheck
         || !resourceTiming.networkLoadMetrics().redirectCount)
         return fetchStart(timeOrigin, resourceTiming);
-
+    
     if (resourceTiming.networkLoadMetrics().redirectStart)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.networkLoadMetrics().redirectStart);
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.resourceLoadTiming().startTime());
 }
 
@@ -78,7 +78,7 @@ static double entryEndTime(MonotonicTime timeOrigin, const ResourceTiming& resou
 {
     if (resourceTiming.networkLoadMetrics().responseEnd)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.networkLoadMetrics().responseEnd);
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.resourceLoadTiming().endTime());
 }
 
@@ -101,7 +101,7 @@ const String& PerformanceResourceTiming::nextHopProtocol() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return emptyString();
-
+    
     return m_resourceTiming.networkLoadMetrics().protocol;
 }
 
@@ -109,7 +109,7 @@ double PerformanceResourceTiming::workerStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().workerStart);
 }
 
@@ -117,13 +117,13 @@ double PerformanceResourceTiming::redirectStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.isLoadedFromServiceWorker())
         return 0.0;
-
+    
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
         return 0.0;
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().redirectStart);
 }
 
@@ -131,13 +131,13 @@ double PerformanceResourceTiming::redirectEnd() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.isLoadedFromServiceWorker())
         return 0.0;
-
+    
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
         return 0.0;
-
+    
     // These two times are so close to each other that we don't record two timestamps.
     // See https://www.w3.org/TR/resource-timing-2/#attribute-descriptions
     return fetchStart();
@@ -152,13 +152,13 @@ double PerformanceResourceTiming::domainLookupStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.isLoadedFromServiceWorker())
         return fetchStart();
-
+    
     if (!m_resourceTiming.networkLoadMetrics().domainLookupStart)
         return fetchStart();
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().domainLookupStart);
 }
 
@@ -166,13 +166,13 @@ double PerformanceResourceTiming::domainLookupEnd() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.isLoadedFromServiceWorker())
         return fetchStart();
-
+    
     if (!m_resourceTiming.networkLoadMetrics().domainLookupEnd)
         return domainLookupStart();
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().domainLookupEnd);
 }
 
@@ -180,13 +180,13 @@ double PerformanceResourceTiming::connectStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.isLoadedFromServiceWorker())
         return fetchStart();
-
+    
     if (!m_resourceTiming.networkLoadMetrics().connectStart)
         return domainLookupEnd();
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().connectStart);
 }
 
@@ -194,13 +194,13 @@ double PerformanceResourceTiming::connectEnd() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.isLoadedFromServiceWorker())
         return fetchStart();
-
+    
     if (!m_resourceTiming.networkLoadMetrics().connectEnd)
         return connectStart();
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().connectEnd);
 }
 
@@ -208,13 +208,13 @@ double PerformanceResourceTiming::secureConnectionStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     if (m_resourceTiming.networkLoadMetrics().secureConnectionStart == reusedTLSConnectionSentinel)
         return fetchStart();
-
+    
     if (!m_resourceTiming.networkLoadMetrics().secureConnectionStart)
         return 0.0;
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().secureConnectionStart);
 }
 
@@ -222,11 +222,11 @@ double PerformanceResourceTiming::requestStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     // requestStart is 0 when a network request is not made.
     if (!m_resourceTiming.networkLoadMetrics().requestStart)
         return connectEnd();
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().requestStart);
 }
 
@@ -234,11 +234,11 @@ double PerformanceResourceTiming::responseStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
+    
     // responseStart is 0 when a network request is not made.
     if (!m_resourceTiming.networkLoadMetrics().responseStart)
         return requestStart();
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().responseStart);
 }
 
@@ -249,11 +249,11 @@ double PerformanceResourceTiming::responseEnd() const
     ASSERT(m_resourceTiming.networkLoadMetrics().isComplete()
         || m_resourceTiming.resourceLoadTiming().endTime()
         || performanceEntryType() == Type::Navigation);
-
+    
     if (m_resourceTiming.networkLoadMetrics().isComplete()) {
         if (m_resourceTiming.networkLoadMetrics().responseEnd)
             return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().responseEnd);
-
+        
         // responseEnd is 0 when a network request is not made.
         // This should mean all other properties are empty.
         ASSERT(!m_resourceTiming.networkLoadMetrics().responseStart);
@@ -265,7 +265,7 @@ double PerformanceResourceTiming::responseEnd() const
         ASSERT(!m_resourceTiming.networkLoadMetrics().domainLookupEnd);
         ASSERT(!m_resourceTiming.networkLoadMetrics().domainLookupStart);
     }
-
+    
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.resourceLoadTiming().endTime());
 }
 
@@ -275,11 +275,11 @@ uint64_t PerformanceResourceTiming::transferSize() const
     // See https://github.com/w3c/server-timing/issues/89
     if (!m_resourceTiming.isSameOriginRequest())
         return 0;
-
+    
     auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
     if (encodedBodySize == std::numeric_limits<uint64_t>::max())
         return 0;
-
+    
     // https://w3c.github.io/resource-timing/#dom-performanceresourcetiming-transfersize
     // Motivated by https://github.com/w3c/resource-timing/issues/238
     return encodedBodySize + 300;
@@ -291,11 +291,11 @@ uint64_t PerformanceResourceTiming::encodedBodySize() const
     // See https://github.com/w3c/server-timing/issues/89
     if (!m_resourceTiming.isSameOriginRequest())
         return 0;
-
+    
     auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
     if (encodedBodySize == std::numeric_limits<uint64_t>::max())
         return 0;
-
+    
     return encodedBodySize;
 }
 
@@ -305,12 +305,20 @@ uint64_t PerformanceResourceTiming::decodedBodySize() const
     // See https://github.com/w3c/server-timing/issues/89
     if (!m_resourceTiming.isSameOriginRequest())
         return 0;
-
+    
     auto decodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyDecodedSize;
     if (decodedBodySize == std::numeric_limits<uint64_t>::max())
         return 0;
-
+    
     return decodedBodySize;
+}
+
+uint16_t PerformanceResourceTiming::responseStatus() const
+{
+    // FIXME: This should be a check for whether CORS has failed instead of just forbidding cross-origin response statuses.
+    if (!m_resourceTiming.isSameOriginRequest())
+        return 0;
+    return m_resourceTiming.networkLoadMetrics().responseStatus;
 }
 
 } // namespace WebCore

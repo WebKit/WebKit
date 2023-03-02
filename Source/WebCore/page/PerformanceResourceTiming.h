@@ -64,6 +64,7 @@ public:
     uint64_t transferSize() const;
     uint64_t encodedBodySize() const;
     uint64_t decodedBodySize() const;
+    uint16_t responseStatus() const;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const { return m_serverTiming; }
 

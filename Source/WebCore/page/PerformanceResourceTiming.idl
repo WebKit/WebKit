@@ -53,6 +53,7 @@ typedef double DOMHighResTimeStamp;
     [EnabledBySetting=PerformanceResourceTimingSensitivePropertiesEnabled] readonly attribute unsigned long long transferSize;
     [EnabledBySetting=PerformanceResourceTimingSensitivePropertiesEnabled] readonly attribute unsigned long long encodedBodySize;
     [EnabledBySetting=PerformanceResourceTimingSensitivePropertiesEnabled] readonly attribute unsigned long long decodedBodySize;
+    readonly attribute unsigned short responseStatus;
 
     // https://www.w3.org/TR/server-timing/#extension-to-the-performanceresourcetiming-interface
     [EnabledByDeprecatedGlobalSetting=ServerTimingEnabled] readonly attribute FrozenArray<PerformanceServerTiming> serverTiming;
