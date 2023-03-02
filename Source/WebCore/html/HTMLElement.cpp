@@ -1239,12 +1239,29 @@ static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilit
     return { };
 }
 
+static HTMLElement* topmostPopoverAncestor(Element& element)
+{
+    for (auto& element : lineageOfType<HTMLElement>(element)) {
+        if (element.popoverState() != PopoverState::Auto)
+            continue;
+        if (element.popoverData()->visibilityState() != PopoverVisibilityState::Showing)
+            continue;
+        return &element;
+    }
+
+    // FIXME: Include popover invokers and compare them in top layer order once they are implemented.
+
+    return nullptr;
+}
+
 void HTMLElement::queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState)
 {
     if (auto queuedEventData = popoverData()->queuedToggleEventData())
         oldState = queuedEventData->oldState;
     popoverData()->setQueuedToggleEventData({ oldState, newState });
     queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, newState] {
+        if (!popoverData())
+            return;
         auto queuedEventData = popoverData()->queuedToggleEventData();
         if (!queuedEventData || queuedEventData->newState != newState)
             return;
@@ -1273,18 +1290,35 @@ ExceptionOr<void> HTMLElement::showPopover()
 
     ASSERT(popoverData());
 
-    // FIXME: Run auto popover steps.
+    if (popoverState() == PopoverState::Auto) {
+        auto originalState = popoverState();
+        RefPtr ancestor = topmostPopoverAncestor(*this);
+        document().hideAllPopoversUntil(ancestor.get(), FocusPreviousElement::No, FireEvents::Yes);
 
-    if (popoverState() == PopoverState::Auto)
-        popoverData()->setPreviouslyFocusedElement(document().focusedElement());
+        if (popoverState() != originalState)
+            return { };
+
+        if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+            return check.releaseException();
+    }
+
+    bool shouldRestoreFocus = !document().topmostAutoPopover();
+    RefPtr previouslyFocusedElement = document().focusedElement();
 
     addToTopLayer();
+
+    popoverData()->setPreviouslyFocusedElement(nullptr);
+
+    // FIXME: Run popover focusing steps.
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
         { CSSSelector::PseudoClassOpen, true },
         { CSSSelector::PseudoClassClosed, false }
     });
     popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
+
+    if (shouldRestoreFocus && popoverState() == PopoverState::Auto)
+        popoverData()->setPreviouslyFocusedElement(previouslyFocusedElement.get());
 
     queuePopoverToggleEventTask(PopoverVisibilityState::Hidden, PopoverVisibilityState::Showing);
 
@@ -1298,7 +1332,12 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     ASSERT(popoverData());
 
-    // FIXME: Run auto popover steps.
+    if (popoverState() == PopoverState::Auto) {
+        document().hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
+
+        if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
+            return check.releaseException();
+    }
 
     if (fireEvents == FireEvents::Yes)
         dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));

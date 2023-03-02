@@ -236,7 +236,7 @@ FAIL Changing a popover from auto to undefined (via attr), and then manual durin
 FAIL Changing a popover from auto to undefined (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
 FAIL Changing a popover from auto to undefined (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected (string) "null" but got (object) null
 FAIL Changing a popover from auto to undefined (via attr), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" threw object "InvalidStateError: Element does not have the popover attribute" that is not a DOMException NotSupportedError: property "code" is equal to 11, expected 9
-PASS Changing a popover from manual to auto (via attr), and then auto during 'beforetoggle' works
+FAIL Changing a popover from manual to auto (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
 FAIL Changing a popover from manual to auto (via attr), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "auto"
 FAIL Changing a popover from manual to auto (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "auto"
 FAIL Changing a popover from manual to auto (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected "null" but got "auto"
@@ -286,7 +286,7 @@ FAIL Changing a popover from auto to undefined (via idl), and then manual during
 FAIL Changing a popover from auto to undefined (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
 FAIL Changing a popover from auto to undefined (via idl), and then null during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" threw object "InvalidStateError: Element does not have the popover attribute" that is not a DOMException NotSupportedError: property "code" is equal to 11, expected 9
 FAIL Changing a popover from auto to undefined (via idl), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" threw object "InvalidStateError: Element does not have the popover attribute" that is not a DOMException NotSupportedError: property "code" is equal to 11, expected 9
-PASS Changing a popover from manual to auto (via idl), and then auto during 'beforetoggle' works
+FAIL Changing a popover from manual to auto (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
 FAIL Changing a popover from manual to auto (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "auto"
 FAIL Changing a popover from manual to auto (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "auto"
 FAIL Changing a popover from manual to auto (via idl), and then null during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw

@@ -3925,6 +3925,8 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         if (event.key() == "Escape"_s) {
             if (RefPtr activeModalDialog = m_frame.document()->activeModalDialog())
                 activeModalDialog->queueCancelTask();
+            if (RefPtr topmostAutoPopover = m_frame.document()->topmostAutoPopover())
+                topmostAutoPopover->hidePopover();
         } else if (event.keyIdentifier() == "U+0009"_s)
             defaultTabEventHandler(event);
         else if (event.keyIdentifier() == "U+0008"_s)

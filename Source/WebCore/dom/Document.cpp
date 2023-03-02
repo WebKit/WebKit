@@ -76,6 +76,7 @@
 #include "DragEvent.h"
 #include "Editing.h"
 #include "Editor.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -186,6 +187,7 @@
 #include "PlugInsResources.h"
 #include "PluginDocument.h"
 #include "PointerCaptureController.h"
+#include "PointerEvent.h"
 #include "PointerLockController.h"
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
@@ -8940,6 +8942,68 @@ HTMLDialogElement* Document::activeModalDialog() const
     }
 
     return nullptr;
+}
+
+HTMLElement* Document::topmostAutoPopover() const
+{
+    for (auto& element : makeReversedRange(m_topLayerElements)) {
+        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate->popoverState() == PopoverState::Auto)
+            return candidate;
+    }
+
+    return nullptr;
+}
+
+// https://html.spec.whatwg.org/#hide-all-popovers-until
+void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+{
+    Vector<Ref<HTMLElement>> popoversToHide;
+    for (auto& item : makeReversedRange(m_topLayerElements)) {
+        if (!is<HTMLElement>(item))
+            continue;
+        auto& element = downcast<HTMLElement>(item.get());
+        if (element.popoverState() == PopoverState::Auto) {
+            if (&element == endpoint)
+                break;
+            popoversToHide.append(element);
+        }
+    }
+
+    for (auto& popover : popoversToHide)
+        popover->hidePopoverInternal(focusPreviousElement, fireEvents);
+}
+
+void Document::handlePopoverLightDismiss(PointerEvent& event)
+{
+    ASSERT(event.isTrusted());
+
+    RefPtr topmostAutoPopover = this->topmostAutoPopover();
+    if (!topmostAutoPopover)
+        return;
+
+    RefPtr popoverToAvoidHiding = [&]() -> HTMLElement* {
+        auto& target = downcast<Node>(*event.target());
+        auto* startElement = is<Element>(target) ? &downcast<Element>(target) : target.parentElement();
+        for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
+            if (element.popoverState() != PopoverState::Auto)
+                continue;
+            if (element.popoverData()->visibilityState() != PopoverVisibilityState::Showing)
+                continue;
+            return &element;
+        }
+        // FIXME: Handle popovertarget attributes.
+        return nullptr;
+    }();
+
+    if (event.type() == eventNames().pointerdownEvent) {
+        m_popoverPointerDownTarget = popoverToAvoidHiding;
+        return;
+    }
+
+    ASSERT(event.type() == eventNames().pointerupEvent);
+    if (m_popoverPointerDownTarget == popoverToAvoidHiding.get())
+        hideAllPopoversUntil(popoverToAvoidHiding.get(), FocusPreviousElement::No, FireEvents::Yes);
+    m_popoverPointerDownTarget = nullptr;
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
