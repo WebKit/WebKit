@@ -26,29 +26,31 @@
 #include "config.h"
 #include "WasmBBQJIT.h"
 
+#include "B3Common.h"
+#include "B3ValueRep.h"
 #include "BinarySwitch.h"
 #include "BytecodeStructs.h"
+#include "CCallHelpers.h"
+#include "CPU.h"
+#include "CompilerTimingScope.h"
+#include "GPRInfo.h"
+#include "JSCast.h"
+#include "MacroAssembler.h"
+#include "RegisterSet.h"
+#include "WasmB3IRGenerator.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
 #include "WasmFunctionParser.h"
+#include "WasmIRGeneratorHelpers.h"
+#include "WasmInstance.h"
 #include "WasmMemoryInformation.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
+#include "WasmOperations.h"
 #include "WasmOps.h"
+#include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
-#include "assembler/AbstractMacroAssembler.h"
-#include "assembler/AssemblerBuffer.h"
-#include "assembler/CPU.h"
-#include "assembler/MacroAssembler.h"
-#include "b3/B3Common.h"
-#include "b3/B3ValueRep.h"
-#include "bytecompiler/RegisterID.h"
-#include "jit/CCallHelpers.h"
-#include "jit/GPRInfo.h"
-#include "jit/RegisterSet.h"
-#include "runtime/JSCast.h"
-#include "tools/CompilerTimingScope.h"
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 #include <wtf/HashFunctions.h>
@@ -2894,7 +2896,7 @@ public:
             m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
         Width valueWidth = widthForType(toB3Type(valueType));
-        Width accessWidth = Wasm::accessWidth(op);
+        Width accessWidth = this->accessWidth(op);
 
         if (accessWidth != Width8)
             throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
@@ -7846,7 +7848,7 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDRelOp(SIMDLaneOperation op, SIMDInfo info, ExpressionType left, ExpressionType right, Air::Arg relOp, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDRelOp(SIMDLaneOperation op, SIMDInfo info, ExpressionType left, ExpressionType right, B3::Air::Arg relOp, ExpressionType& result)
     {
         Location leftLocation = loadIfNecessary(left);
         Location rightLocation = loadIfNecessary(right);
