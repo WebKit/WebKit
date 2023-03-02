@@ -4986,7 +4986,7 @@ bool RenderBox::establishesBlockFormattingContext() const
     || isInlineBlockOrInlineTable() || isTableCell() || isTableCaption() || isBlockWithOverFlowOtherThanVisibleAndClip()
     || boxStyle.display() == DisplayType::FlowRoot || boxStyle.containsLayoutOrPaint()
     || isFlexItemIncludingDeprecated() || isGridItem() || boxStyle.specifiesColumns()
-    || boxStyle.columnSpan() == ColumnSpan::All;
+    || boxStyle.columnSpan() == ColumnSpan::All || style().blockStepSize();
 }
 
 bool RenderBox::avoidsFloats() const
