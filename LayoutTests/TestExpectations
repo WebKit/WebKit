@@ -517,7 +517,6 @@ imported/w3c/web-platform-tests/x-frame-options/sameorigin.sub.html [ DumpJSCons
 
 # Timing out tests.
 imported/w3c/web-platform-tests/background-fetch/fetch-uploads.https.window.html [ Skip ]
-imported/w3c/web-platform-tests/background-fetch/match.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/background-fetch/update-ui.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/background-fetch/fetch.https.window.html [ Skip ]
 

@@ -40,6 +40,7 @@ namespace WebCore {
 
 class Blob;
 class DOMFormData;
+class FetchBodyOwner;
 class FetchBodySource;
 class FormData;
 class ReadableStream;
@@ -71,7 +72,7 @@ public:
     void clean();
 
     void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
-    void resolve(Ref<DeferredPromise>&&, const String& contentType, ReadableStream*);
+    void resolve(Ref<DeferredPromise>&&, const String& contentType, FetchBodyOwner*, ReadableStream*);
     void resolveWithData(Ref<DeferredPromise>&&, const String& contentType, const unsigned char*, unsigned);
     void resolveWithFormData(Ref<DeferredPromise>&&, const String& contentType, const FormData&, ScriptExecutionContext*);
     void consumeFormDataAsStream(const FormData&, FetchBodySource&, ScriptExecutionContext*);

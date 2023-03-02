@@ -331,7 +331,7 @@ void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBu
     m_sink->pipeFrom(stream);
 }
 
-void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& contentType, ReadableStream* stream)
+void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& contentType, FetchBodyOwner* owner, ReadableStream* stream)
 {
     if (stream) {
         ASSERT(!m_sink);
@@ -353,6 +353,8 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
     }
 
     if (m_isLoading) {
+        if (owner)
+            owner->loadBody();
         setConsumePromise(WTFMove(promise));
         return;
     }
@@ -473,10 +475,10 @@ void FetchBodyConsumer::loadingSucceeded(const String& contentType)
 
     if (m_consumePromise) {
         if (!m_userGestureToken || m_userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !m_userGestureToken->processingUserGesture())
-            resolve(m_consumePromise.releaseNonNull(), contentType, nullptr);
+            resolve(m_consumePromise.releaseNonNull(), contentType, nullptr, nullptr);
         else {
             UserGestureIndicator gestureIndicator(m_userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
-            resolve(m_consumePromise.releaseNonNull(), contentType, nullptr);
+            resolve(m_consumePromise.releaseNonNull(), contentType, nullptr, nullptr);
         }
     }
     if (m_source) {

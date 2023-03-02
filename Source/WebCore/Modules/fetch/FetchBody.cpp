@@ -173,7 +173,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_consumer.resolve(WTFMove(promise), owner.contentType(), m_readableStream.get());
+    m_consumer.resolve(WTFMove(promise), owner.contentType(), &owner, m_readableStream.get());
 }
 
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
