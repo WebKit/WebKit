@@ -115,7 +115,10 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         document->cachedResourceLoader().garbageCollectDocumentResources();
     }
 
-    GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
+    if (synchronous == Synchronous::Yes)
+        GCController::singleton().deleteAllCode(JSC::PreventCollectionAndDeleteAllCode);
+    else
+        GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
 
 #if ENABLE(VIDEO)
     for (auto* mediaElement : HTMLMediaElement::allMediaElements()) {
