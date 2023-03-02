@@ -170,3 +170,4 @@ webkit.org/b/242748 [ Release arm64 ] css3/color-filters/svg/color-filter-inline
 
 #webkit.org/b/253274
 compositing/patterns/direct-pattern-compositing-add-text.html [ Pass ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-padding.html [ Pass ImageOnlyFailure ]
