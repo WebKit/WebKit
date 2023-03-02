@@ -71,6 +71,11 @@
 #include "WebCoreThread.h"
 #endif
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedEffect.h"
+#include "AcceleratedEffectStack.h"
+#endif
+
 namespace WebCore {
 
 // The threshold width or height above which a tiled layer will be used. This should be
@@ -4896,6 +4901,42 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncCo
 {
     return adoptRef(new GraphicsLayerAsyncContentsDisplayDelegateCocoa(*this));
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void GraphicsLayerCA::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& effects, AcceleratedEffectValues&& baseValues)
+{
+    GraphicsLayer::setAcceleratedEffectsAndBaseValues(WTFMove(effects), WTFMove(baseValues));
+
+    auto* layer = primaryLayer();
+    ASSERT(layer);
+
+    auto hasEffectsTargetingPrimaryLayer = false;
+    auto hasEffectsTargetingBackdropLayer = false;
+
+    if (auto* effectsStack = acceleratedEffectStack()) {
+        auto& primaryLayerEffects = effectsStack->primaryLayerEffects();
+        hasEffectsTargetingPrimaryLayer = !primaryLayerEffects.isEmpty();
+        layer->setAcceleratedEffectsAndBaseValues(primaryLayerEffects, baseValues);
+
+        auto& backdropLayerEffects = effectsStack->backdropLayerEffects();
+        hasEffectsTargetingBackdropLayer = !backdropLayerEffects.isEmpty();
+        if (m_backdropLayer)
+            m_backdropLayer->setAcceleratedEffectsAndBaseValues(backdropLayerEffects, baseValues);
+    }
+
+    if (!hasEffectsTargetingPrimaryLayer)
+        layer->clearAcceleratedEffectsAndBaseValues();
+    if (!hasEffectsTargetingBackdropLayer && m_backdropLayer)
+        m_backdropLayer->clearAcceleratedEffectsAndBaseValues();
+
+    // After clearing animations, ensure that any property that could have
+    // been animated is reset to match the current non-animated values.
+    if (!hasEffectsTargetingPrimaryLayer && !hasEffectsTargetingBackdropLayer)
+        noteLayerPropertyChanged(TransformChanged | FiltersChanged | OpacityChanged | BackdropFiltersChanged | DebugIndicatorsChanged);
+
+    noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
+}
+#endif
 
 } // namespace WebCore
 

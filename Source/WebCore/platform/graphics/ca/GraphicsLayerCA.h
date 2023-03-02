@@ -202,6 +202,10 @@ public:
 
     WEBCORE_EXPORT RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate() override;
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    WEBCORE_EXPORT void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&) override;
+#endif
+
 private:
     bool isGraphicsLayerCA() const override { return true; }
 

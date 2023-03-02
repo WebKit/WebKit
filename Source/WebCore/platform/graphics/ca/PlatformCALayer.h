@@ -52,6 +52,11 @@ class PlatformCALayerClient;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+class AcceleratedEffect;
+struct AcceleratedEffectValues;
+#endif
+
 #if HAVE(IOSURFACE)
 class IOSurface;
 #endif
@@ -145,6 +150,11 @@ public:
     virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) = 0;
     virtual void removeAnimationForKey(const String& key) = 0;
     virtual RefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    virtual void clearAcceleratedEffectsAndBaseValues();
+    virtual void setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, AcceleratedEffectValues&);
+#endif
 
     virtual void setMask(PlatformCALayer*) = 0;
 

@@ -44,6 +44,11 @@
 #import <WebCore/TiledBacking.h>
 #import <wtf/PointerComparison.h>
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#import <WebCore/AcceleratedEffect.h>
+#import <WebCore/AcceleratedEffectValues.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1035,5 +1040,23 @@ LayerPool& PlatformCALayerRemote::layerPool()
 {
     return m_context->layerPool();
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void PlatformCALayerRemote::clearAcceleratedEffectsAndBaseValues()
+{
+    m_properties.effects = { };
+    m_properties.baseValues = { };
+
+    m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
+}
+
+void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects& effects, AcceleratedEffectValues& baseValues)
+{
+    m_properties.effects = effects;
+    m_properties.baseValues = baseValues;
+
+    m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
+}
+#endif
 
 } // namespace WebKit

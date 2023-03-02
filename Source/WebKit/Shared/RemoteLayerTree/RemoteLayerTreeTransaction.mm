@@ -131,6 +131,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , children(other.children)
     , addedAnimations(other.addedAnimations)
     , keysOfAnimationsToRemove(other.keysOfAnimationsToRemove)
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    , effects(other.effects)
+    , baseValues(other.baseValues)
+#endif
     , position(other.position)
     , anchorPoint(other.anchorPoint)
     , bounds(other.bounds)
@@ -198,6 +202,10 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
     if (changedProperties & LayerChange::AnimationsChanged) {
         encoder << addedAnimations;
         encoder << keysOfAnimationsToRemove;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        encoder << effects;
+        encoder << baseValues;
+#endif
     }
 
     if (changedProperties & LayerChange::PositionChanged)
@@ -354,6 +362,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
 
         if (!decoder.decode(result.keysOfAnimationsToRemove))
             return false;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        if (!decoder.decode(result.effects))
+            return false;
+
+        if (!decoder.decode(result.baseValues))
+            return false;
+#endif
     }
 
     if (result.changedProperties & LayerChange::PositionChanged) {
