@@ -120,6 +120,7 @@ private:
     void requestUpdateInlineRect() final;
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
+    void returnVideoView() final;
     void didSetupFullscreen() final;
     void failedToEnterFullscreen() final;
     void didEnterFullscreen(const WebCore::FloatSize&) final;
@@ -218,6 +219,7 @@ private:
     void requestUpdateInlineRect(PlaybackSessionContextIdentifier);
     void requestVideoContentLayer(PlaybackSessionContextIdentifier);
     void returnVideoContentLayer(PlaybackSessionContextIdentifier);
+    void returnVideoView(PlaybackSessionContextIdentifier);
     void didSetupFullscreen(PlaybackSessionContextIdentifier);
     void willExitFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
