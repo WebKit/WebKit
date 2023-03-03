@@ -966,7 +966,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         // Set sandbox state variable with probability of 1/8.
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
     }
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
     if (!(experimentalSandbox || experimentalSandboxWithProbability))
         SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
 #endif
