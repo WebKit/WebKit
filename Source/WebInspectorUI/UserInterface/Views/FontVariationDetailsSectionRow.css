@@ -24,13 +24,16 @@
  */
 
  .details-section > .content > .group > .row.font-variation {
-    --axisValueWidth: 36px;
-    --axisTagWidth: var(--axisValueWidth);
+    --axis-value-width: 42px;
+    --axis-tag-width: 36px;
+    --axis-min-max-label-height: 10px;
+    --warning-icon-size: 11px;
 
     display: grid;
-    gap: 6px;
-    grid-template-columns: [axis-tag] var(--axisTagWidth) [slider] 1fr [axis-value] minmax(max-content, var(--axisValueWidth));
-    padding: 5px 20px 5px 12px;
+    column-gap: 6px;
+    grid-template-columns: [axis-tag] var(--axis-tag-width) [slider] 1fr [axis-value] var(--axis-value-width) [warning-icon] var(--warning-icon-size);
+    padding: 5px 8px calc(5px + var(--axis-min-max-label-height)) 12px;
+    align-items: center;
 }
 
 .details-section > .content > .group > .row.font-variation > .label:not(:empty) {
@@ -42,17 +45,17 @@
     color: var(--text-color-secondary);
 }
 
-.details-section > .content > .group > .row.font-variation > .value {
+.details-section > .content > .group > .row.font-variation > input.value {
     grid-column: axis-value;
-    text-align: end;
+    height: max-content;
+    width: var(--axis-value-width);
+    padding: 4px;
+    border: 1px solid var(--border-color);
     font-variant-numeric: tabular-nums;
 }
 
-.details-section > .content > .group > .row.font-variation:has(.warning) > .value {
-    margin-inline-end: 8px; /* Clearance so warning icon doesn't overlap the axis value. */
-}
-
 .details-section > .content > .group > .row.font-variation > .variation-range {
+    position: relative;
     display: grid;
     grid-column: slider;
     grid-template-columns: [min-value] 1fr [max-value] 1fr;
@@ -62,7 +65,7 @@
     appearance: none;
     grid-column: 1 / -1;
     position: relative;
-    margin-block: 3px 8px;
+    height: var(--slider-height);
     margin-inline: 0;
     background-color: transparent;
 }
@@ -72,8 +75,8 @@
     position: relative;
     z-index: 2;
     margin-top: -9px;
-    width: 8px;
-    height: 20px;
+    width: var(--slider-thumb-width);
+    height: var(--slider-thumb-height);
     border-radius: 6px;
     background: var(--slider-thumb-background);
     box-shadow: var(--slider-thumb-box-shadow);
@@ -95,9 +98,9 @@
     content: "";
     position: absolute;
     z-index: 1;
-    top: -1px;
-    width: 2px;
-    height: 8px;
+    top: calc((var(--slider-height) - var(--slider-track-tick-height)) / 2);
+    width: var(--slider-track-tick-width);
+    height: var(--slider-track-tick-height);
     border-radius: 4px;
     background-color: var(--slider-track-tick-background);
 }
@@ -115,4 +118,25 @@
     grid-column: max-value;
     text-align: end;
     color: var(--text-color-secondary);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > :is(.variation-maxvalue, .variation-minvalue) {
+    position: absolute;
+    width: 100%;
+    bottom: calc(-1 * var(--axis-min-max-label-height));
+}
+
+.details-section > .content > .group > .row.font-variation:has(.warning) {
+    background-color: var(--warning-background-color-secondary);
+}
+
+.details-section > .content > .group > .row.font-variation > .warning {
+    grid-column: warning-icon;
+    display: inline-block;
+    width: var(--warning-icon-size);
+    height: var(--warning-icon-size);
+    background-image: url(/Images/Warning.svg);
+    background-repeat: no-repeat;
+    background-size: var(--warning-icon-size);
+    background-position: center;
 }

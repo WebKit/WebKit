@@ -996,6 +996,8 @@ localizedStrings["Maximum"] = "Maximum";
 localizedStrings["Maximum CPU Usage: %s"] = "Maximum CPU Usage: %s";
 localizedStrings["Maximum Size: %s"] = "Maximum Size: %s";
 localizedStrings["Maximum maximum memory size in this recording"] = "Maximum maximum memory size in this recording";
+/* Max axis value @ Font Details Sidebar */
+localizedStrings["Maximum value of variation axis"] = "Maximum value of variation axis";
 localizedStrings["Media"] = "Media";
 localizedStrings["Media & Animations"] = "Media & Animations";
 localizedStrings["Media Element"] = "Media Element";
@@ -1014,6 +1016,8 @@ localizedStrings["Message"] = "Message";
 localizedStrings["Method"] = "Method";
 localizedStrings["Microtask Dispatched"] = "Microtask Dispatched";
 localizedStrings["Microtask Fired"] = "Microtask Fired";
+/* Min axis value @ Font Details Sidebar */
+localizedStrings["Minimum value of variation axis"] = "Minimum value of variation axis";
 localizedStrings["Missing result level"] = "Missing result level";
 localizedStrings["Mixed"] = "Mixed";
 localizedStrings["Modifications are saved automatically and will apply the next time the Console Snippet is run."] = "Modifications are saved automatically and will apply the next time the Console Snippet is run.";
@@ -1602,6 +1606,8 @@ localizedStrings["Tabs"] = "Tabs";
 localizedStrings["Tabular Numerals @ Font Details Sidebar Property Value"] = "Tabular Numerals";
 /* A submenu item of 'Edit' to change DOM element's tag name */
 localizedStrings["Tag"] = "Tag";
+/* Tooltip for a variation axis tag that explains what the 4-character label represents. */
+localizedStrings["Tag tooltip @ Font Details Sidebar"] = "Variation axis tag";
 localizedStrings["Take snapshot"] = "Take snapshot";
 localizedStrings["Target"] = "Target";
 localizedStrings["Template Content"] = "Template Content";
