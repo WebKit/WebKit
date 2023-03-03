@@ -181,6 +181,17 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
         computedUnderlineOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
         break;
     }
+    case TextUnderlinePosition::Left:
+    case TextUnderlinePosition::Right: {
+        if (context.lineStyle.isHorizontalWritingMode()) {
+            ASSERT(context.textUnderlinePositionUnder);
+            // Position underline relative to the bottom edge of the lowest element's content box.
+            auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + gap + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.f) + underlineOffset.lengthOr(0.f);
+            computedUnderlineOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
+        } else
+            computedUnderlineOffset = fontMetrics.ascent() + underlineOffset.lengthOr(gap);
+        break;
+    }
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -271,7 +282,7 @@ GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator
     auto underlinePositionValue = resolvedUnderlinePosition(style, lineBox->baselineType());
     auto textUnderlinePositionUnder = std::optional<TextUnderlinePositionUnder> { };
 
-    if (underlinePositionValue == TextUnderlinePosition::Under) {
+    if (underlinePositionValue == TextUnderlinePosition::Under || underlinePositionValue == TextUnderlinePosition::Left || underlinePositionValue == TextUnderlinePosition::Right) {
         auto textRunOffset = textRunOffsetFromBottomMost(lineBox, renderer, textBoxLogicalTop, textBoxLogicalBottom);
         textUnderlinePositionUnder = TextUnderlinePositionUnder { textBoxLogicalBottom - textBoxLogicalTop, textRunOffset };
     }
@@ -303,7 +314,7 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
     auto textUnderlinePositionUnder = std::optional<TextUnderlinePositionUnder> { };
     auto underlinePositionValue = resolvedUnderlinePosition(style, inlineBox.lineBox()->baselineType());
 
-    if (underlinePositionValue == TextUnderlinePosition::Under) {
+    if (underlinePositionValue == TextUnderlinePosition::Under || underlinePositionValue == TextUnderlinePosition::Left || underlinePositionValue == TextUnderlinePosition::Right) {
         auto textRunOffset = boxOffsetFromBottomMost(inlineBox.lineBox(), inlineBox.renderer(), inlineBox.logicalTop(), inlineBox.logicalBottom());
         auto inlineBoxContentBoxHeight = inlineBox.logicalHeight();
         if (!inlineBox.isRootInlineBox())

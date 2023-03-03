@@ -200,7 +200,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle)
+void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle, const RenderStyle& style)
 {
     auto paintDecoration = [&] (auto decoration, auto style, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
@@ -255,10 +255,22 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
     // These decorations should match the visual overflows computed in visualOverflowForDecorations().
     auto underlineRect = FloatRect { boxOrigin, FloatSize { decorationGeometry.textBoxWidth, decorationGeometry.textDecorationThickness } };
     auto overlineRect = underlineRect;
-    if (decorationType.contains(TextDecorationLine::Underline))
-        underlineRect.move(0.f, decorationGeometry.underlineOffset);
-    if (decorationType.contains(TextDecorationLine::Overline))
-        overlineRect.move(0.f, decorationGeometry.overlineOffset);
+
+
+    // For now lets ignore the TextDecorationLine if we have some TextUnderlinePosition. This is wrong, but let's go with it.
+    if ((style.textUnderlinePosition() == TextUnderlinePosition::Left || style.textUnderlinePosition() == TextUnderlinePosition::Right) &&
+        style.isVerticalWritingMode()) {
+        if (style.textUnderlinePosition() == TextUnderlinePosition::Left)
+            underlineRect.move(0.f, decorationGeometry.underlineOffset);
+        else
+            overlineRect.move(0.f, decorationGeometry.overlineOffset);
+    } else {
+        if (decorationType.contains(TextDecorationLine::Underline))
+            underlineRect.move(0.f, decorationGeometry.underlineOffset);
+        if (decorationType.contains(TextDecorationLine::Overline))
+            overlineRect.move(0.f, decorationGeometry.overlineOffset);
+    }
+
 
     auto* shadow = m_shadow;
     do {
@@ -281,11 +293,21 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         };
         applyShadowIfNeeded();
 
-        // FIXME: Add support to handle left/right case
-        if (decorationType.contains(TextDecorationLine::Underline))
-            paintDecoration(TextDecorationLine::Underline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
-        if (decorationType.contains(TextDecorationLine::Overline))
-            paintDecoration(TextDecorationLine::Overline, decorationStyle.overline.decorationStyle, decorationStyle.overline.color, overlineRect);
+        // For now lets ignore the TextDecorationLine if we have some TextUnderlinePosition. This is wrong, but let's go with it.
+        if ((style.textUnderlinePosition() == TextUnderlinePosition::Left || style.textUnderlinePosition() == TextUnderlinePosition::Right) &&
+        style.isVerticalWritingMode()) {
+            if (style.textUnderlinePosition() == TextUnderlinePosition::Left)
+                paintDecoration(TextDecorationLine::Underline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
+            else
+                paintDecoration(TextDecorationLine::Overline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, overlineRect);
+        }
+        else {
+            if (decorationType.contains(TextDecorationLine::Underline))
+                paintDecoration(TextDecorationLine::Underline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
+            if (decorationType.contains(TextDecorationLine::Overline))
+                paintDecoration(TextDecorationLine::Overline, decorationStyle.overline.decorationStyle, decorationStyle.overline.color, overlineRect);
+        }
+
         // We only want to paint the shadow, hence the transparent color, not the actual line-through,
         // which will be painted in paintForegroundDecorations().
         if (shadow && decorationType.contains(TextDecorationLine::LineThrough))
