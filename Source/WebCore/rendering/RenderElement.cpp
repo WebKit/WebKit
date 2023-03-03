@@ -55,6 +55,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderDescendantIterator.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
@@ -68,7 +69,7 @@
 #if ASSERT_ENABLED
 #include "RenderListMarker.h"
 #endif
-#include "RenderFragmentContainer.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderStyle.h"
 #include "RenderTableCaption.h"
@@ -1838,6 +1839,12 @@ void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 
 void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
 {
+    if (is<RenderMultiColumnSpannerPlaceholder>(*this)) {
+        auto* spanner = downcast<RenderMultiColumnSpannerPlaceholder>(*this).spanner();
+        spanner->setHasOutlineAutoAncestor(hasOutlineAuto);
+        spanner->updateOutlineAutoAncestor(hasOutlineAuto);
+    }
+
     for (auto& child : childrenOfType<RenderObject>(*this)) {
         if (hasOutlineAuto == child.hasOutlineAutoAncestor())
             continue;
