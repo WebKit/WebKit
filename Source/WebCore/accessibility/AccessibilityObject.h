@@ -389,10 +389,11 @@ public:
     void setAccessibleName(const AtomString&) override { }
     bool hasAttributesRequiredForInclusion() const override;
 
-    // Accessibility Text - (To be deprecated).
-    String accessibilityDescription() const override { return String(); }
-    String title() const override { return String(); }
-    virtual String helpText() const { return String(); }
+    virtual String title() const { return { }; }
+    virtual String description() const { return { }; }
+    virtual String helpText() const { return { }; }
+
+    String textContent() const override;
 
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }

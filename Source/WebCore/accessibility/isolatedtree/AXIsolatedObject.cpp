@@ -72,7 +72,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 {
     auto& object = axObject.get();
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
-    setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
 
     if (object.ancestorFlagsAreInitialized())
         setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
@@ -118,8 +117,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::SubrolePlatformString, object.subrolePlatformString().isolatedCopy());
+    setProperty(AXPropertyName::TextContent, object.textContent().isolatedCopy());
     setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
-    setProperty(AXPropertyName::Title, object.title().isolatedCopy());
     setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXPropertyName::CanSetTextRangeAttributes, object.canSetTextRangeAttributes());

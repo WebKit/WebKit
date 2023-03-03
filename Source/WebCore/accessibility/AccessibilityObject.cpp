@@ -2802,6 +2802,14 @@ AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
     return downcast<HTMLInputElement>(*this->node()).autoFillButtonType();
 }
 
+String AccessibilityObject::textContent() const
+{
+    auto title = this->title();
+    if (!title.isEmpty())
+        return title;
+    return description();
+}
+
 const String AccessibilityObject::placeholderValue() const
 {
     const AtomString& placeholder = getAttribute(placeholderAttr);
@@ -4110,8 +4118,7 @@ static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, const 
     if (criteria.searchText.isEmpty())
         return true;
 
-    return containsPlainText(axObject->title(), criteria.searchText, CaseInsensitive)
-        || containsPlainText(axObject->accessibilityDescription(), criteria.searchText, CaseInsensitive)
+    return containsPlainText(axObject->textContent(), criteria.searchText, CaseInsensitive)
         || containsPlainText(axObject->stringValue(), criteria.searchText, CaseInsensitive);
 }
 

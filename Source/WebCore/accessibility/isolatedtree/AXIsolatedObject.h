@@ -491,8 +491,7 @@ private:
     bool inheritsPresentationalRole() const override;
     void setAccessibleName(const AtomString&) override;
     bool hasAttributesRequiredForInclusion() const override;
-    String accessibilityDescription() const override { return stringAttributeValue(AXPropertyName::AccessibilityDescription); }
-    String title() const override { return stringAttributeValue(AXPropertyName::Title); }
+    String textContent() const override { return stringAttributeValue(AXPropertyName::TextContent); }
     String text() const override;
     unsigned textLength() const override;
 #if PLATFORM(COCOA)

@@ -109,7 +109,7 @@ public:
     unsigned hierarchicalLevel() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String accessibilityDescriptionForChildren() const;
-    String accessibilityDescription() const override;
+    String description() const override;
     String helpText() const override;
     String title() const override;
     String text() const override;

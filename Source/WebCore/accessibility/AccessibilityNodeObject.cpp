@@ -1874,12 +1874,12 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     
     return String();
 }
-    
-String AccessibilityNodeObject::accessibilityDescription() const
+
+String AccessibilityNodeObject::description() const
 {
     // Static text should not have a description, it should only have a stringValue.
     if (roleValue() == AccessibilityRole::StaticText)
-        return String();
+        return { };
 
     String ariaDescription = ariaAccessibilityDescription();
     if (!ariaDescription.isEmpty())
@@ -1892,14 +1892,14 @@ String AccessibilityNodeObject::accessibilityDescription() const
         if (!alt.isNull())
             return alt;
     }
-    
+
 #if ENABLE(MATHML)
     if (is<MathMLElement>(m_node))
         return getAttribute(MathMLNames::alttextAttr);
 #endif
 
-    // An element's descriptive text is comprised of title() (what's visible on the screen) and accessibilityDescription() (other descriptive text).
-    // Both are used to generate what a screen reader speaks.                                                           
+    // An element's descriptive text is comprised of title() (what's visible on the screen) and description() (other descriptive text).
+    // Both are used to generate what a screen reader speaks.
     // If this point is reached (i.e. there's no accessibilityDescription) and there's no title(), we should fallback to using the title attribute.
     // The title attribute is normally used as help text (because it is a tooltip), but if there is nothing else available, this should be used (according to ARIA).
     // https://bugs.webkit.org/show_bug.cgi?id=170475: An exception is when the element is semantically unimportant. In those cases, title text should remain as help text.
@@ -1910,7 +1910,7 @@ String AccessibilityNodeObject::accessibilityDescription() const
             return titleAttribute;
     }
 
-    return String();
+    return { };
 }
 
 // Returns whether the role was not intended to play a semantically meaningful part of the
@@ -1931,47 +1931,46 @@ bool AccessibilityNodeObject::roleIgnoresTitle() const
 
 String AccessibilityNodeObject::helpText() const
 {
-    Node* node = this->node();
+    WeakPtr node = this->node();
     if (!node)
-        return String();
-    
-    const AtomString& ariaHelp = getAttribute(aria_helpAttr);
+        return { };
+
+    const auto& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
         return ariaHelp;
-    
+
     String describedBy = ariaDescribedByAttribute();
     if (!describedBy.isEmpty())
         return describedBy;
-    
-    String description = accessibilityDescription();
-    for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        if (is<HTMLElement>(*ancestor)) {
-            HTMLElement& element = downcast<HTMLElement>(*ancestor);
-            const AtomString& summary = element.getAttribute(summaryAttr);
+
+    String description = this->description();
+    for (Node* ancestor = node.get(); ancestor; ancestor = ancestor->parentNode()) {
+        if (auto* element = dynamicDowncast<HTMLElement>(ancestor)) {
+            const auto& summary = element->getAttribute(summaryAttr);
             if (!summary.isEmpty())
                 return summary;
-            
+
             // The title attribute should be used as help text unless it is already being used as descriptive text.
-            const AtomString& title = element.getAttribute(titleAttr);
+            const auto& title = element->getAttribute(titleAttr);
             if (!title.isEmpty() && description != title)
                 return title;
         }
 
-        auto objectCache = axObjectCache();
-        if (!objectCache)
-            return String();
+        auto* cache = axObjectCache();
+        if (!cache)
+            return { };
 
         // Only take help text from an ancestor element if its a group or an unknown role. If help was
         // added to those kinds of elements, it is likely it was meant for a child element.
-        if (AccessibilityObject* axObj = objectCache->getOrCreate(ancestor)) {
-            if (!axObj->isGroup() && axObj->roleValue() != AccessibilityRole::Unknown)
+        if (auto* axAncestor = cache->getOrCreate(ancestor)) {
+            if (!axAncestor->isGroup() && axAncestor->roleValue() != AccessibilityRole::Unknown)
                 break;
         }
     }
-    
-    return String();
+
+    return { };
 }
-    
+
 unsigned AccessibilityNodeObject::hierarchicalLevel() const
 {
     Node* node = this->node();
