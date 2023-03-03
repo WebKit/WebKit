@@ -139,7 +139,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     auto httpURL = request.url();
     httpURL.setProtocol(url.protocolIs("ws"_s) ? "http"_s : "https"_s);
     auto requestOrigin = SecurityOrigin::create(httpURL);
-    if (document.settings().fetchMetadataEnabled() && requestOrigin->isPotentiallyTrustworthy()) {
+    if (document.settings().fetchMetadataEnabled() && requestOrigin->isPotentiallyTrustworthy() && !document.quirks().shouldDisableFetchMetadata()) {
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchDest, "websocket"_s);
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchMode, "websocket"_s);
 

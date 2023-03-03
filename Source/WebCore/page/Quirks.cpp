@@ -1525,4 +1525,14 @@ bool Quirks::shouldDisableLazyImageLoadingQuirk() const
     return m_shouldDisableLazyImageLoadingQuirk.value();
 }
 
+// Breaks express checkout on victoriassecret.com (rdar://104818312).
+bool Quirks::shouldDisableFetchMetadata() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "victoriassecret.com"_s) || host.endsWithIgnoringASCIICase(".victoriassecret.com"_s);
+}
+
 }

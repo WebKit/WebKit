@@ -67,6 +67,7 @@
 #include "Page.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
+#include "Quirks.h"
 #include "RenderElement.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceTiming.h"
@@ -709,7 +710,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     auto* frame = m_documentLoader ? m_documentLoader->frame() : nullptr;
-    if (frame && frame->settings().fetchMetadataEnabled()) {
+    if (frame && frame->settings().fetchMetadataEnabled() && (!frame->document() || !frame->document()->quirks().shouldDisableFetchMetadata())) {
         auto requestOrigin = SecurityOrigin::create(request.url());
 
         // In the case of a protocol downgrade we strip all FetchMetadata headers.
@@ -884,7 +885,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (frameLoader.frame().settings().fetchMetadataEnabled()) {
+    if (frameLoader.frame().settings().fetchMetadataEnabled() && (!frameLoader.frame().document() || !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata())) {
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame().document()->securityOrigin());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
