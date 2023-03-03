@@ -100,6 +100,7 @@ public:
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
     WebCore::ScrollingNodeID rootScrollingNodeID() const;
+    WebCore::FloatPoint mainFrameScrollPosition() const;
 
     const RemoteLayerTreeHost* layerTreeHost() const;
     WebPageProxy& webPageProxy() const { return m_webPageProxy; }
@@ -121,7 +122,7 @@ public:
     String scrollingTreeAsText() const;
 
     void resetStateAfterProcessExited();
-    WebCore::ScrollingTreeScrollingNode* rootNode() const;
+//    WebCore::ScrollingTreeScrollingNode* rootNode() const;
 
     virtual void displayDidRefresh(WebCore::PlatformDisplayID);
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);

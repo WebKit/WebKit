@@ -201,6 +201,9 @@ private:
     void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
     void layerTreeCommitComplete() override;
 
+    double minimumZoomScale() const override;
+    WebCore::FloatRect documentRect() const override;
+
     void registerInsertionUndoGrouping() override;
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

@@ -211,6 +211,8 @@ public:
 
     Lock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
+    WEBCORE_EXPORT FloatPoint mainFrameScrollPosition();
+
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
     WEBCORE_EXPORT virtual void displayDidRefresh(PlatformDisplayID) { }
@@ -226,7 +228,6 @@ public:
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
-    FloatPoint mainFrameScrollPosition() const WTF_REQUIRES_LOCK(m_treeStateLock);
     void setMainFrameScrollPosition(FloatPoint);
 
     void setGestureState(std::optional<WheelScrollGestureState>);

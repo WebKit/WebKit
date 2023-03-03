@@ -141,7 +141,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
         if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
             m_hasUpdatedRenderingAfterDidCommitLoad = true;
             stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
-            m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+            m_lastVisibleContentRectUpdate = { };
         }
     }
 
@@ -158,6 +158,58 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 void WebPageProxy::layerTreeCommitComplete()
 {
     pageClient().layerTreeCommitComplete();
+}
+
+static inline float adjustedUnexposedEdge(float documentEdge, float exposedRectEdge, float factor)
+{
+    if (exposedRectEdge < documentEdge)
+        return documentEdge - factor * (documentEdge - exposedRectEdge);
+    
+    return exposedRectEdge;
+}
+
+static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRectEdge, float factor)
+{
+    if (exposedRectEdge > documentEdge)
+        return documentEdge + factor * (exposedRectEdge - documentEdge);
+    
+    return exposedRectEdge;
+}
+
+FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unobscuredContentRect, const FloatRect& unobscuredContentRectRespectingInputViewBounds, const FloatRect& currentLayoutViewportRect, double displayedContentScale, FrameView::LayoutViewportConstraint constraint) const
+{
+    FloatRect constrainedUnobscuredRect = unobscuredContentRect;
+    FloatRect documentRect = pageClient().documentRect();
+
+    if (constraint == FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect)
+        constrainedUnobscuredRect.intersect(documentRect);
+
+    double minimumScale = pageClient().minimumZoomScale();
+    bool isBelowMinimumScale = displayedContentScale < minimumScale;
+    if (isBelowMinimumScale) {
+        const CGFloat slope = 12;
+        CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
+            
+        constrainedUnobscuredRect.setX(adjustedUnexposedEdge(documentRect.x(), constrainedUnobscuredRect.x(), factor));
+        constrainedUnobscuredRect.setY(adjustedUnexposedEdge(documentRect.y(), constrainedUnobscuredRect.y(), factor));
+        constrainedUnobscuredRect.setWidth(adjustedUnexposedMaxEdge(documentRect.maxX(), constrainedUnobscuredRect.maxX(), factor) - constrainedUnobscuredRect.x());
+        constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
+    }
+
+    FloatSize constrainedSize = isBelowMinimumScale ? constrainedUnobscuredRect.size() : unobscuredContentRect.size();
+    FloatRect unobscuredContentRectForViewport = isBelowMinimumScale ? constrainedUnobscuredRect : unobscuredContentRectRespectingInputViewBounds;
+
+    auto layoutViewportSize = FrameView::expandedLayoutViewportSize(m_baseLayoutViewportSize, LayoutSize(documentRect.size()), m_preferences->layoutViewportHeightExpansionFactor());
+    FloatRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(LayoutRect(currentLayoutViewportRect), LayoutRect(documentRect), LayoutSize(constrainedSize), LayoutRect(unobscuredContentRectForViewport), layoutViewportSize, m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, constraint);
+    
+    if (layoutViewportRect != currentLayoutViewportRect)
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeLayoutViewportRect: new layout viewport  " << layoutViewportRect);
+    return layoutViewportRect;
+}
+
+FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
+{
+    return computeLayoutViewportRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), layoutViewportRect(), displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
 }
 
 #if ENABLE(DATA_DETECTION)

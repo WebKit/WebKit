@@ -518,9 +518,9 @@ void ScrollingTree::clearLatchedNode()
     m_latchingController.clearLatchedNode();
 }
 
-FloatPoint ScrollingTree::mainFrameScrollPosition() const
+FloatPoint ScrollingTree::mainFrameScrollPosition()
 {
-    ASSERT(m_treeStateLock.isLocked());
+    Locker locker { m_treeStateLock };
     return m_treeState.mainFrameScrollPosition;
 }
 

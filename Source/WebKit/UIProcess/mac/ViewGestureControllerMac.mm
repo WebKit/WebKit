@@ -131,7 +131,6 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
 
         // FIXME: We drop the first frame of the gesture on the floor, because we don't have the visible content bounds yet.
         prepareMagnificationGesture(origin);
-
         return;
     }
 
@@ -217,10 +216,10 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     targetOrigin.moveBy(-targetRect.center());
 
     m_initialMagnification = m_webPageProxy.pageScaleFactor();
-    m_initialMagnificationOrigin = FloatPoint();
+    m_initialMagnificationOrigin = { };
 
-    m_webPageProxy.drawingArea()->adjustTransientZoom(m_webPageProxy.pageScaleFactor(), scaledMagnificationOrigin(FloatPoint(), m_webPageProxy.pageScaleFactor()));
-    m_webPageProxy.drawingArea()->commitTransientZoom(targetMagnification, targetOrigin);
+    m_webPageProxy.drawingArea()->adjustTransientZoom(m_webPageProxy.pageScaleFactor(), scaledMagnificationOrigin({ }, m_webPageProxy.pageScaleFactor()), { });
+    m_webPageProxy.drawingArea()->commitTransientZoom(targetMagnification, targetOrigin, m_initialMagnificationOrigin);
 
     m_lastSmartMagnificationUnscaledTargetRect = unscaledTargetRect;
     m_lastSmartMagnificationOrigin = origin;

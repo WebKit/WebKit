@@ -49,8 +49,8 @@ private:
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) override;
 
-    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
-    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void adjustTransientZoom(double scale, WebCore::FloatPoint scaleOrigin, WebCore::FloatPoint zoomOriginInContentCoordinates) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin, WebCore::FloatPoint zoomOriginInContentCoordinates) override;
 
     void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;

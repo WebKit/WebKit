@@ -37,6 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingAreaProxy.h"
@@ -655,11 +656,15 @@ FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, d
     float magnificationOriginScale = 1 - (scale / m_initialMagnification);
     scaledMagnificationOrigin.scale(magnificationOriginScale);
     scaledMagnificationOrigin.move(origin - m_initialMagnificationOrigin);
+
+    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::scaledMagnificationOrigin " << origin << " scale " << scale << " computed scaledMagnificationOrigin " << scaledMagnificationOrigin);
     return scaledMagnificationOrigin;
 }
 
 void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect visibleContentRect, bool frameHandlesMagnificationGesture)
 {
+    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::didCollectGeometryForMagnificationGesture - visibleContentRect " << visibleContentRect);
+
     willBeginGesture(ViewGestureType::Magnification);
     m_visibleContentRect = visibleContentRect;
     m_visibleContentRectIsValid = true;
@@ -687,7 +692,7 @@ void ViewGestureController::applyMagnification()
     if (m_frameHandlesMagnificationGesture)
         m_webPageProxy.scalePage(m_magnification, roundedIntPoint(m_magnificationOrigin));
     else
-        m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification));
+        m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification), m_magnificationOrigin);
 }
 
 void ViewGestureController::endMagnificationGesture()
@@ -701,7 +706,7 @@ void ViewGestureController::endMagnificationGesture()
         m_webPageProxy.scalePage(newMagnification, roundedIntPoint(m_magnificationOrigin));
     else {
         if (auto drawingArea = m_webPageProxy.drawingArea())
-            drawingArea->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
+            drawingArea->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification), m_magnificationOrigin);
     }
 
 #if PLATFORM(MAC)
