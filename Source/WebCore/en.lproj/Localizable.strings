@@ -1516,6 +1516,15 @@
 /* accessibility role description for a date field. */
 "date field" = "date field";
 
+/* accessibility label for a date field month input. */
+"month" = "month";
+
+/* accessibility label for a date field day input. */
+"day" = "day";
+
+/* accessibility label for a date field year input. */
+"year" = "year";
+
 /* role description of ARIA definition role */
 "definition" = "definition";
 

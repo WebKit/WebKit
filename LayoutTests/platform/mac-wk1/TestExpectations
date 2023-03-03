@@ -1871,6 +1871,7 @@ webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html
 webkit.org/b/230072 [ Release ] inspector/dom/shadow-and-non-shadow-children.html [ Pass Failure ]
 
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
+webkit.org/b/251544 accessibility/date-input-aria-label-and-value.html [ Skip ]
 accessibility/mac/textmarker-range-for-range.html [ Skip ]
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 accessibility/aria-current-state-changed-notification.html [ Skip ]

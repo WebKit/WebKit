@@ -217,6 +217,9 @@ namespace WebCore {
     String AXURLFieldText();
     String AXDateFieldText();
     String AXTimeFieldText();
+    String AXDateFieldMonthText();
+    String AXDateFieldDayText();
+    String AXDateFieldYearText();
     String AXDateTimeFieldText();
     String AXMonthFieldText();
     String AXNumberFieldText();
