@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,17 +47,6 @@ class StatusBubble(View):
                   'ios-wk2', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-AS-debug-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac', 'api-gtk',
                   'bindings', 'jsc', 'jsc-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'jsc-mips', 'jsc-mips-tests', 'jsc-i386', 'webkitperl', 'webkitpy', 'services']
 
-    STEPS_TO_HIDE = ['^Archived built product$', '^Uploaded built product$', '^Transferred archive to S3$',
-                     '^Archived test results$', '^Uploaded test results$', '^Extracted test results$',
-                     '^Downloaded built product$', '^Extracted built product$',
-                     '^Crash collection has quiesced$', '^Triggered crash log submission$',
-                     '^Cleaned and updated working directory$', '^Checked out required revision$', '^Updated working directory$',
-                     '^Validated change$', '^Killed old processes$', '^Configured build$', '^OS:.*Xcode:', '(skipped)',
-                     '^Printed configuration$', '^Patch contains relevant changes$', '^Deleted .git/index.lock$',
-                     '^triggered.*$', '^Found modified ChangeLogs$', '^Created local git commit$', '^Set build summary$',
-                     '^Validated commiter$', '^Validated commiter and reviewer$', '^Validated ChangeLog and Reviewer$',
-                     '^Removed flags on bugzilla patch$', '^Checked change status on other queues$', '^Identifier:.*$',
-                     '^Updated branch information$', '^worker .* ready$']
     DAYS_TO_CHECK_QUEUE_POSITION = 0.5
     DAYS_TO_HIDE_BUBBLE = 7
     BUILDER_ICON = u'\U0001f6e0'
@@ -208,16 +197,13 @@ class StatusBubble(View):
         return '[[' + datetime.datetime.fromtimestamp(time).isoformat() + 'Z]]'
 
     def _steps_messages(self, build):
-        return '\n'.join([step.state_string for step in build.step_set.all().order_by('uid') if self._should_display_step(step)])
+        return '\n'.join([step.state_string for step in build.step_set.all().order_by('uid')])
 
     def _steps_messages_from_multiple_builds(self, builds):
         message = ''
         for build in reversed(builds):
             message += '\n\n' + self._steps_messages(build)
         return message
-
-    def _should_display_step(self, step):
-        return not [step_to_hide for step_to_hide in StatusBubble.STEPS_TO_HIDE if re.search(step_to_hide, step.state_string)]
 
     def _does_build_contains_any_failed_step(self, build):
         for step in build.step_set.all():
