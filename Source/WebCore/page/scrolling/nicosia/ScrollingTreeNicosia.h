@@ -42,6 +42,8 @@ private:
 
     Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
 
+    void applyLayerPositionsInternal() final;
+
     RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint) final;
 };
 

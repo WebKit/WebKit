@@ -50,11 +50,9 @@ public:
 
     bool requestRefreshCallback() override;
 
-    bool requiresDisplayRefreshCallback();
+    bool requiresDisplayRefreshCallback(const WebCore::DisplayUpdate&);
     void dispatchDisplayRefreshCallback();
     void invalidate();
-
-    void setTargetRefreshRate(unsigned);
 
 private:
     ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&);
@@ -65,8 +63,7 @@ private:
     void displayRefreshCallback();
     RunLoop::Timer m_displayRefreshTimer;
     Client* m_client;
-    unsigned m_targetRefreshRate;
-    WebCore::DisplayUpdate m_currentUpdate;
+    WebCore::DisplayUpdate m_displayUpdate;
 };
 
 } // namespace WebKit
