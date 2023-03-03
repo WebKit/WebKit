@@ -70,6 +70,10 @@
 - (instancetype)initWithStorageDirectoryAtURL:(NSURL *)storageDirectory;
 @end
 
+@interface AVSampleBufferDisplayLayer (Staging_100128644)
+@property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@end
+
 namespace WebCore {
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState enumerationValue)
@@ -915,6 +919,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
 
     if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
+
+    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsAutomaticBackgroundingDuringVideoPlayback:)])
+        m_sampleBufferDisplayLayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
 
     @try {
         [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
