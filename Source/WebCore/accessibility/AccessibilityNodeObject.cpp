@@ -500,8 +500,8 @@ bool AccessibilityNodeObject::canHaveChildren() const
     // When <noscript> is not being used (its renderer() == 0), ignore its children.
     if (node() && !renderer() && node()->hasTagName(noscriptTag))
         return false;
-    
-    // Elements that should not have children
+
+    // Elements that should not have children.
     switch (roleValue()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::PopUpButton:
@@ -2142,36 +2142,29 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
 
 String AccessibilityNodeObject::title() const
 {
-    Node* node = this->node();
+    WeakPtr node = this->node();
     if (!node)
-        return String();
+        return { };
 
-    bool isInputTag = is<HTMLInputElement>(*node);
-    if (isInputTag) {
-        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
-        if (input.isTextButton())
-            return input.valueWithDefault();
+    if (auto* input = dynamicDowncast<HTMLInputElement>(node.get())) {
+        if (input->isTextButton())
+            return input->valueWithDefault();
     }
 
     if (isLabelable()) {
-        HTMLLabelElement* label = labelForElement(downcast<Element>(node));
+        RefPtr label = labelForElement(downcast<Element>(node.get()));
         // Use the label text as the title if 1) the title element is NOT an exposed element and 2) there's no ARIA override.
         if (label && !exposesTitleUIElement() && !ariaAccessibilityDescription().length())
-            return textForLabelElement(label);
+            return textForLabelElement(label.get());
     }
 
-    // If this node isn't rendered, there's no inner text we can extract from a select element.
-    if (!isAccessibilityRenderObject() && node->hasTagName(selectTag))
-        return String();
+    // For <select> elements, title should be empty if they are not rendered or have role PopUpButton.
+    if (node && node->hasTagName(selectTag)
+        && (!isAccessibilityRenderObject() || roleValue() == AccessibilityRole::PopUpButton))
+        return { };
 
     switch (roleValue()) {
-    case AccessibilityRole::PopUpButton:
-        // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
-        if (node->hasTagName(selectTag))
-            return String();
-        FALLTHROUGH;
     case AccessibilityRole::Button:
-    case AccessibilityRole::ToggleButton:
     case AccessibilityRole::CheckBox:
     case AccessibilityRole::ListBoxOption:
     case AccessibilityRole::ListItem:
@@ -2179,9 +2172,11 @@ String AccessibilityNodeObject::title() const
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::PopUpButton:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Switch:
     case AccessibilityRole::Tab:
+    case AccessibilityRole::ToggleButton:
         return textUnderElement();
     // SVGRoots should not use the text under itself as a title. That could include the text of objects like <text>.
     case AccessibilityRole::SVGRoot:
@@ -2195,7 +2190,7 @@ String AccessibilityNodeObject::title() const
     if (isHeading())
         return textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeSkipIgnoredChildren, true));
 
-    return String();
+    return { };
 }
 
 String AccessibilityNodeObject::text() const
@@ -2226,7 +2221,7 @@ String AccessibilityNodeObject::stringValue() const
 {
     Node* node = this->node();
     if (!node)
-        return String();
+        return { };
 
     if (isARIAStaticText()) {
         String staticText = text();
@@ -2261,7 +2256,7 @@ String AccessibilityNodeObject::stringValue() const
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
     // single static array.
-    return String();
+    return { };
 }
 
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const

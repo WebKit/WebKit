@@ -496,6 +496,7 @@ private:
     unsigned textLength() const override;
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const override;
+    bool shouldCacheAttributedText() const;
     NSAttributedString *cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange&, SpellCheck) const;
 #endif
     AXObjectCache* axObjectCache() const override;

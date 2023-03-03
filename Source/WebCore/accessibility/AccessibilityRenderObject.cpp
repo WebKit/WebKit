@@ -757,7 +757,7 @@ String AccessibilityRenderObject::stringValue() const
             staticText = textUnderElement();
         return staticText;
     }
-        
+
     if (is<RenderText>(m_renderer.get()))
         return textUnderElement();
 
@@ -786,11 +786,11 @@ String AccessibilityRenderObject::stringValue() const
     }
 
     if (isWebArea())
-        return String();
-    
+        return { };
+
     if (isTextControl())
         return text();
-    
+
 #if PLATFORM(IOS_FAMILY)
     if (isInputTypePopupButton())
         return textUnderElement();
@@ -798,12 +798,12 @@ String AccessibilityRenderObject::stringValue() const
 
     if (auto* renderFileUploadControl = dynamicDowncast<RenderFileUploadControl>(m_renderer.get()))
         return renderFileUploadControl->fileTextValue();
-    
+
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
     // single static array.
-    return String();
+    return { };
 }
 
 bool AccessibilityRenderObject::canHavePlainText() const

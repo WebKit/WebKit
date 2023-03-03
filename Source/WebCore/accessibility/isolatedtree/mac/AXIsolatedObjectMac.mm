@@ -39,8 +39,9 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const AXCoreObject
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::SpeechHint, object->speechHintAttributeValue().isolatedCopy());
 
-    if (isTextControl())
+    if (shouldCacheAttributedText())
         setProperty(AXPropertyName::AttributedText, object->attributedStringForTextMarkerRange(object->textMarkerRange(), SpellCheck::Yes));
+
     if (object->isWebArea()) {
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object->preventKeyboardDOMEventDispatch());
         setProperty(AXPropertyName::CaretBrowsingEnabled, object->caretBrowsingEnabled());
@@ -112,6 +113,11 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
             return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
         return { };
     });
+}
+
+bool AXIsolatedObject::shouldCacheAttributedText() const
+{
+    return isTextControl() || isTabItem() || roleValue() == AccessibilityRole::WebCoreLink;
 }
 
 NSAttributedString *AXIsolatedObject::cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange& markerRange, SpellCheck spellCheck) const
