@@ -41,6 +41,8 @@ class RenderBox;
 class StyleImage;
 class FloatingObject;
 
+std::unique_ptr<Shape> makeShapeForShapeOutside(const RenderBox&);
+
 class ShapeOutsideDeltas final {
 public:
     ShapeOutsideDeltas()
@@ -90,7 +92,7 @@ public:
 
     ShapeOutsideDeltas computeDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
 
-    void setReferenceBoxLogicalSize(LayoutSize);
+    void invalidateForSizeChangeIfNeeded();
 
     LayoutUnit shapeLogicalTop() const { return computedShape().shapeMarginLogicalBoundingBox().y() + logicalTopOffset(); }
     LayoutUnit shapeLogicalBottom() const { return computedShape().shapeMarginLogicalBoundingBox().maxY() + logicalTopOffset(); }
@@ -120,8 +122,6 @@ public:
     static ShapeOutsideInfo* info(const RenderBox& key) { return infoMap().get(&key); }
 
 private:
-    std::unique_ptr<Shape> createShapeForImage(StyleImage*, float shapeImageThreshold, WritingMode, float margin) const;
-
     LayoutUnit logicalTopOffset() const;
     LayoutUnit logicalLeftOffset() const;
 
@@ -135,7 +135,7 @@ private:
     const RenderBox& m_renderer;
 
     mutable std::unique_ptr<Shape> m_shape;
-    LayoutSize m_referenceBoxLogicalSize;
+    LayoutSize m_cachedShapeLogicalSize;
 
     ShapeOutsideDeltas m_shapeOutsideDeltas;
 };
