@@ -126,6 +126,7 @@ private:
     void requestUpdateInlineRect() final;
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
+    void returnVideoView() final { }
     void didSetupFullscreen() final;
     void failedToEnterFullscreen() final { }
     void didEnterFullscreen(const FloatSize&) final { }
