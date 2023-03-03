@@ -71,6 +71,7 @@ static inline RefPtr<ArrayBuffer> alternateBlobIfNecessary(const WebKit::WebAuth
     return nullptr;
 }
 
+#define LOCAL_AUTHENTICATOR_ADDITIONS
 #endif
 
 namespace WebKit {
@@ -545,22 +546,19 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     // Step 12.
     // Skip Apple Attestation for none attestation.
     if (creationOptions.attestation == AttestationConveyancePreference::None) {
-        deleteDuplicateCredential();
-
         auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-        auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports());
-        auto exception = processClientExtensions(response);
-        if (exception)
-            receiveException(WTFMove(exception.value()));
-        else
-            receiveRespond(WTFMove(response));
+
+        finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
         return;
     }
 
     // Step 13. Apple Attestation
     auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
     auto nsAuthData = toNSData(authData);
+
+    LOCAL_AUTHENTICATOR_ADDITIONS
+
     auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = WeakPtr { *this }] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
@@ -599,9 +597,19 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
 
+    finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
+}
+
+void LocalAuthenticator::finishMakeCredential(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception)
+{
+    if (exception) {
+        receiveException(WTFMove(exception.value()));
+        return;
+    }
+
     deleteDuplicateCredential();
-    auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports());
-    auto exception = processClientExtensions(response);
+    auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, LocalAuthenticatorInternal::transports());
+    exception = processClientExtensions(response);
     if (exception)
         receiveException(WTFMove(exception.value()));
     else
