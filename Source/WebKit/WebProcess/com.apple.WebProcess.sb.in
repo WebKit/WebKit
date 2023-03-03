@@ -2391,3 +2391,7 @@
 #endif
 )
 #endif
+
+(with-filter (state-flag "WebContentProcessLaunched")
+    (allow mach-task-special-port-get (with report) (with telemetry))
+    (allow mach-task-special-port-set (with report) (with telemetry)))

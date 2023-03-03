@@ -1496,6 +1496,10 @@
         "com.apple.automation.stringlookupinfoenabled"
         "com.apple.webinspectord.availability_check"))
 
+(with-filter (state-flag "WebContentProcessLaunched")
+    (allow mach-task-special-port-get (with report) (with telemetry))
+    (allow mach-task-special-port-set (with report) (with telemetry)))
+
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>
 
