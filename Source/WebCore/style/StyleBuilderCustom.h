@@ -774,13 +774,8 @@ inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, C
         return;
     }
     if (primitiveValue.isCustomIdent()) {
-        if (builderState.document().settings().cssCounterStyleAtRulesEnabled()) {
-            builderState.style().setListStyleType(ListStyleType::CustomCounterStyle);
-            builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
-        } else {
-            builderState.style().setListStyleType(ListStyleType::Decimal);
-            builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
-        }
+        builderState.style().setListStyleType(ListStyleType::CustomCounterStyle);
+        builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
         return;
     }
     builderState.style().setListStyleType(ListStyleType::String);
