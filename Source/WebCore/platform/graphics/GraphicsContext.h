@@ -69,6 +69,7 @@ class GraphicsContext {
     friend class BifurcatedGraphicsContext;
     friend class DisplayList::DrawNativeImage;
     friend class NativeImage;
+    friend class ImageBuffer;
 public:
     WEBCORE_EXPORT GraphicsContext(const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
     WEBCORE_EXPORT GraphicsContext(const GraphicsContextState&);
