@@ -252,6 +252,10 @@ GraphicsContext& ImageBuffer::context() const
 
 void ImageBuffer::flushContext()
 {
+    // FIXME: this will be removed and flushDrawingContext will be renamed as flushContext().
+    // The direct backend context flush is not part of ImageBuffer abstraction semantics,
+    // rather implementation detail of the ImageBufferBackends that need separate management
+    // of their context lifetime for purposes of drawing from the image buffer.
     if (auto* backend = ensureBackendCreated()) {
         flushDrawingContext();
         backend->flushContext();
@@ -279,11 +283,11 @@ RefPtr<NativeImage> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) 
     return nullptr;
 }
 
-RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
     if (auto* backend = ensureBackendCreated()) {
         const_cast<ImageBuffer&>(*this).flushDrawingContext();
-        return backend->copyNativeImageForDrawing(copyBehavior);
+        return backend->copyNativeImageForDrawing(destination);
     }
     return nullptr;
 }
@@ -415,9 +419,15 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
     srcRectScaled.scale(resolutionScale());
 
     if (auto* backend = ensureBackendCreated()) {
-        if (auto image = copyNativeImageForDrawing(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-            destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
-        backend->finalizeDrawIntoContext(destContext);
+        if (&destContext == &context()) {
+            if (auto image = copyNativeImage(CopyBackingStore))
+                destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+        } else {
+            if (auto image = copyNativeImageForDrawing(destContext)) {
+                destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+                backend->finalizeDrawIntoContext(destContext);
+            }
+        }
     }
 }
 
@@ -504,7 +514,7 @@ Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeT
 RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
     if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushContext();
+        const_cast<ImageBuffer&>(*this).flushDrawingContext();
         return backend->getPixelBuffer(outputFormat, srcRect, allocator);
     }
     return nullptr;
@@ -513,7 +523,7 @@ RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& outputF
 void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     if (auto* backend = ensureBackendCreated()) {
-        flushContext();
+        flushDrawingContext();
         backend->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
     }
 }

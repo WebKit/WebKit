@@ -1270,6 +1270,20 @@ void KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionCont
     setAnimatedPropertiesInStyle(targetStyle, *computedTiming.progress, *computedTiming.currentIteration);
 }
 
+bool KeyframeEffect::isRunningAccelerated() const
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        if (!m_inTargetEffectStack || !canBeAccelerated())
+            return false;
+        auto* animation = this->animation();
+        ASSERT(animation);
+        return !animation->isSuspended() && animation->playState() == WebAnimation::PlayState::Running;
+    }
+#endif
+    return m_runningAccelerated == RunningAccelerated::Yes;
+}
+
 bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accelerated accelerated) const
 {
     if (accelerated == Accelerated::Yes && !isRunningAccelerated() && !isAboutToRunAccelerated())
@@ -1644,6 +1658,14 @@ bool KeyframeEffect::canBeAccelerated() const
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
         return false;
 
+    if (m_hasAcceleratedPropertyOverriddenByCascadeProperty)
+        return false;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return true;
+#endif
+
     if (m_someKeyframesUseStepsTimingFunction || is<StepsTimingFunction>(timingFunction()))
         return false;
 
@@ -1651,9 +1673,6 @@ bool KeyframeEffect::canBeAccelerated() const
         return false;
 
     if (m_hasKeyframeComposingAcceleratedProperty)
-        return false;
-
-    if (m_hasAcceleratedPropertyOverriddenByCascadeProperty)
         return false;
 
     return true;

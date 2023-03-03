@@ -255,7 +255,7 @@ namespace JSC {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(ForInContext);
     public:
-        using GetInst = std::tuple<unsigned, int>;
+        using GetInst = std::tuple<unsigned, int, unsigned>;
         using InInst = GetInst;
         using HasOwnPropertyJumpInst = std::tuple<unsigned, unsigned>;
 
@@ -269,14 +269,14 @@ namespace JSC {
         RegisterID* mode() const { return m_mode.get(); }
         const std::optional<Variable>& baseVariable() const { return m_baseVariable; }
 
-        void addGetInst(unsigned instIndex, int propertyRegIndex)
+        void addGetInst(unsigned instIndex, int propertyRegIndex, unsigned metadataID)
         {
-            m_getInsts.append(GetInst { instIndex, propertyRegIndex });
+            m_getInsts.append(GetInst { instIndex, propertyRegIndex, metadataID });
         }
 
-        void addInInst(unsigned instIndex, int propertyRegIndex)
+        void addInInst(unsigned instIndex, int propertyRegIndex, unsigned metadataID)
         {
-            m_inInsts.append(InInst { instIndex, propertyRegIndex });
+            m_inInsts.append(InInst { instIndex, propertyRegIndex, metadataID });
         }
 
         void addHasOwnPropertyJump(unsigned branchInstIndex, unsigned genericPathTarget)
@@ -850,7 +850,7 @@ namespace JSC {
         void emitJumpIfNotFunctionApply(RegisterID* cond, Label& target);
         void emitJumpIfEmptyPropertyNameEnumerator(RegisterID* cond, Label& target);
         void emitJumpIfSentinelString(RegisterID* cond, Label& target);
-        unsigned emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target);
+        unsigned emitJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target);
         void recordHasOwnPropertyInForInLoop(ForInContext&, unsigned branchOffset, Label& genericPath);
 
         template<typename BinOp, typename JmpOp>

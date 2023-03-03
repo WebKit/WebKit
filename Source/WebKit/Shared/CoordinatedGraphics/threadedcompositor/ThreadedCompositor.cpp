@@ -45,6 +45,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+static constexpr unsigned c_defaultRefreshRate = 60000;
+
 Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, TextureMapper::PaintFlags paintFlags)
 {
     return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, paintFlags));
@@ -64,7 +66,17 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
         m_attributes.needsResize = !viewportSize.isEmpty();
     }
 
+    m_display.displayID = displayID;
+    m_display.displayUpdate = { 0, c_defaultRefreshRate / 1000 };
+
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
+        m_display.updateTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &ThreadedCompositor::displayUpdateFired);
+#if USE(GLIB_EVENT_LOOP)
+        m_display.updateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
+        m_display.updateTimer->setName("[WebKit] ThreadedCompositor::DisplayUpdate");
+#endif
+        m_display.updateTimer->startOneShot(Seconds { 1.0 / m_display.displayUpdate.updatesPerSecond });
+
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
 
@@ -113,6 +125,8 @@ void ThreadedCompositor::invalidate()
         m_context = nullptr;
         m_client.didDestroyGLContext();
         m_scene = nullptr;
+
+        m_display.updateTimer = nullptr;
     });
     m_compositingRunLoop = nullptr;
 }
@@ -183,6 +197,8 @@ void ThreadedCompositor::renderLayerTree()
     if (!m_context || !m_context->makeContextCurrent())
         return;
 
+    m_display.updateTimer->stop();
+
     // Retrieve the scene attributes in a thread-safe manner.
     WebCore::IntSize viewportSize;
     WebCore::IntPoint scrollPosition;
@@ -246,22 +262,18 @@ void ThreadedCompositor::sceneUpdateFinished()
     // The DisplayRefreshMonitor will be used to dispatch a callback on the client thread if:
     //  - clientRendersNextFrame is true (i.e. client has to be notified about the finished update), or
     //  - a DisplayRefreshMonitor callback was requested from the Web engine
-    bool shouldDispatchDisplayRefreshCallback { false };
+    bool shouldDispatchDisplayRefreshCallback = m_displayRefreshMonitor->requiresDisplayRefreshCallback(m_display.displayUpdate);
 
-    {
+    if (!shouldDispatchDisplayRefreshCallback) {
         Locker locker { m_attributes.lock };
-        shouldDispatchDisplayRefreshCallback = m_attributes.clientRendersNextFrame
-            || m_displayRefreshMonitor->requiresDisplayRefreshCallback();
+        shouldDispatchDisplayRefreshCallback |= m_attributes.clientRendersNextFrame;
     }
 
     Locker stateLocker { m_compositingRunLoop->stateLock() };
 
     // Schedule the DisplayRefreshMonitor callback, if necessary.
-    if (shouldDispatchDisplayRefreshCallback) {
+    if (shouldDispatchDisplayRefreshCallback)
         m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
-        // Notify the ScrollingTree to make sure scrolling does not depend on the main thread.
-        m_client.displayDidRefresh(m_displayRefreshMonitor->displayID());
-    }
 
     // Mark the scene update as completed.
     m_compositingRunLoop->updateCompleted(stateLocker);
@@ -300,13 +312,28 @@ WebCore::DisplayRefreshMonitor& ThreadedCompositor::displayRefreshMonitor() cons
 void ThreadedCompositor::frameComplete()
 {
     ASSERT(m_compositingRunLoop->isCurrent());
+    displayUpdateFired();
     sceneUpdateFinished();
 }
 
 void ThreadedCompositor::targetRefreshRateDidChange(unsigned rate)
 {
     ASSERT(RunLoop::isMain());
-    m_displayRefreshMonitor->setTargetRefreshRate(rate);
+
+    if (!rate)
+        rate = c_defaultRefreshRate;
+    m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }, rate] {
+        m_display.displayUpdate = { 0, rate / 1000 };
+    });
+}
+
+void ThreadedCompositor::displayUpdateFired()
+{
+    m_display.displayUpdate = m_display.displayUpdate.nextUpdate();
+
+    m_client.displayDidRefresh(m_display.displayID);
+
+    m_display.updateTimer->startOneShot(Seconds { 1.0 / m_display.displayUpdate.updatesPerSecond });
 }
 
 }

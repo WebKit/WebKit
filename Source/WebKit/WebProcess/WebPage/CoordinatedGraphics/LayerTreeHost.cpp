@@ -34,6 +34,7 @@
 #include "DrawingArea.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/Frame.h>
@@ -427,14 +428,7 @@ void LayerTreeHost::didRenderFrame()
 
 void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
 {
-#if ENABLE(ASYNC_SCROLLING)
-    if (auto* scrollingCoordinator = m_webPage.scrollingCoordinator()) {
-        if (auto* scrollingTree = downcast<AsyncScrollingCoordinator>(*scrollingCoordinator).scrollingTree())
-            downcast<ThreadedScrollingTree>(*scrollingTree).displayDidRefresh(displayID);
-    }
-#else
-    UNUSED_PARAM(displayID);
-#endif
+    WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(displayID);
 }
 
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()

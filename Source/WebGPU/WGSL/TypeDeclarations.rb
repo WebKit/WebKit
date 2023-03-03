@@ -6,3 +6,8 @@ operator :+, {
     [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     [T < Float, C, R].(Matrix[T, C, R], Matrix[T, C, R]) => Matrix[T, C, R],
 }
+
+operator :*, {
+    [T < Float, C, R].(Matrix[T, C, R], Vector[T, C]) => Vector[T, R],
+    [T < Float, C, R].(Vector[T, R], Matrix[T, C, R]) => Vector[T, C],
+}

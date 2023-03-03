@@ -529,7 +529,6 @@ std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* ele
     auto style = RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry());
 
     FontCascadeDescription fontDescription;
-    fontDescription.setRenderingMode(settings().fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
 

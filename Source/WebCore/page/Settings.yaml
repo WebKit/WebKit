@@ -132,13 +132,6 @@ FontLoadTimingOverride:
     WebCore:
       default: FontLoadTimingOverride::None
 
-FontRenderingMode:
-  type: uint32_t
-  refinedType: FontRenderingMode
-  defaultValue:
-    WebCore:
-      default: FontRenderingMode::Normal
-
 ForceCompositingMode:
   type: bool
   defaultValue:

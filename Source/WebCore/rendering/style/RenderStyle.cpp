@@ -1093,6 +1093,8 @@ static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& 
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
         // Don't return true; keep looking for another change.
     }
+#else
+    UNUSED_PARAM(changedContextSensitiveProperties);
 #endif
 
     // FIXME: In SVG this needs to trigger a layout.

@@ -570,6 +570,51 @@ TEST(TextManipulation, StartTextManipulationBreaksParagraphInBetweenListItems)
     EXPECT_WK_STREQ("Ten", items[6].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationBreaksParagraphInBetweenFloatingListItems)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<style>"
+        "ul {"
+        "    margin: 0;"
+        "    padding: 0;"
+        "    list-style: none"
+        "}"
+        "li {"
+        "    text-align: center;"
+        "    float: left;"
+        "    border: 1px solid #e9e9e9;"
+        "    padding: 1rem;"
+        "}"
+        "</style>"
+        "<ul>"
+        "<li>hello</li>"
+        "<li>world</li>"
+        "<li>WebKit</li>"
+        "</ul>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    NSArray<_WKTextManipulationItem *> *items = [delegate items];
+    EXPECT_EQ(items.count, 3UL);
+
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("world", items[1].tokens[0].content);
+
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("WebKit", items[2].tokens[0].content);
+}
+
 TEST(TextManipulation, StartTextManipulationIncludesFullyClippedText)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

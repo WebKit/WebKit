@@ -708,6 +708,21 @@ String AXTimeFieldText()
     return WEB_UI_STRING("time field", "accessibility role description for a time field.");
 }
 
+String AXDateFieldMonthText()
+{
+    return WEB_UI_STRING("month", "accessibility label for a date field month input.");
+}
+
+String AXDateFieldDayText()
+{
+    return WEB_UI_STRING("day", "accessibility label for a date field day input.");
+}
+
+String AXDateFieldYearText()
+{
+    return WEB_UI_STRING("year", "accessibility label for a date field year input.");
+}
+
 String AXDateTimeFieldText()
 {
     return WEB_UI_STRING("date and time field", "accessibility role description for a date and time field.");

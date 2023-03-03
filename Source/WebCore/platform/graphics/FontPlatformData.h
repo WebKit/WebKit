@@ -114,10 +114,8 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, const CreationData* = nullptr);
-#if USE(CAIRO)
+    WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, const CreationData* = nullptr);
     FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic, const CreationData* = nullptr);
-#endif
 #endif
 
 #if USE(FREETYPE)
@@ -132,10 +130,6 @@ public:
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }
-    bool useGDI() const { return m_useGDI; }
-#if USE(CG)
-    CGFontRef cgFont() const { return m_cgFont.get(); }
-#endif
 #endif
 
 #if USE(CORE_TEXT)
@@ -282,10 +276,6 @@ private:
     bool m_isEmoji { false };
 #endif
 
-#if PLATFORM(WIN)
-    bool m_useGDI { false };
-#endif
-
 #if USE(FREETYPE)
     bool m_fixedWidth { false };
 #endif
@@ -338,6 +328,12 @@ private:
     CGAffineTransform m_textMatrix;
 };
 
+#endif
+
+#if PLATFORM(WIN)
+// This is a scaling factor for Windows GDI fonts. We do this for
+// subpixel precision when rendering using Uniscribe.
+constexpr int cWindowsFontScaleFactor = 32;
 #endif
 
 } // namespace WebCore

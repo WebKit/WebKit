@@ -308,7 +308,6 @@ void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily(SystemFontDatabase::singleton().systemFontShorthandFamily(SystemFontDatabase::FontShorthand::WebkitSmallControl));
     fontDescription.setWeight(boldWeightValue());
-    fontDescription.setRenderingMode(settings().fontRenderingMode());
     fontDescription.setComputedSize(12);
     font = FontCascade(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);

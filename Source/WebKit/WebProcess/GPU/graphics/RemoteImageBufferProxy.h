@@ -79,7 +79,7 @@ private:
     void waitForDidFlushWithTimeout();
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
-    RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
+    RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::GraphicsContext&) const final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;
@@ -112,7 +112,9 @@ private:
     Ref<RemoteImageBufferProxyFlushState> m_flushState;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
-    bool m_needsFlush { false };
+    // First command might be putPixelBuffer. With canMapBackingStore() == true, it needs to flush
+    // the surface initialization.
+    bool m_needsFlush { true };
 };
 
 class RemoteImageBufferProxyFlushState : public ThreadSafeRefCounted<RemoteImageBufferProxyFlushState> {

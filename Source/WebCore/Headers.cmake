@@ -2027,7 +2027,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/text/CharacterProperties.h
     platform/text/BidiContext.h
-    platform/text/FontRenderingMode.h
     platform/text/StringWithDirection.h
     platform/text/TextBoundaries.h
     platform/text/TextCheckerClient.h

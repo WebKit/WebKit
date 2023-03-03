@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class DOMRectReadOnly;
 class File;
 class HTMLImageElement;
 class RenderAttachment;
@@ -80,6 +81,7 @@ public:
     void requestIconWithSize(const FloatSize&) const;
     FloatSize iconSize() const { return m_iconSize; }
     void invalidateRendering();
+    DOMRectReadOnly* saveButtonClientRect() const;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool isImageMenuEnabled() const { return m_isImageMenuEnabled; }
@@ -89,6 +91,8 @@ public:
     bool isImageOnly() const { return m_implementation == Implementation::ImageOnly; }
 
 private:
+    friend class AttachmentSaveEventListener;
+
     HTMLAttachmentElement(const QualifiedName&, Document&);
     virtual ~HTMLAttachmentElement();
 
@@ -126,6 +130,7 @@ private:
     RefPtr<HTMLElement> m_titleElement;
     RefPtr<HTMLElement> m_subtitleElement;
     RefPtr<HTMLElement> m_saveButton;
+    mutable RefPtr<DOMRectReadOnly> m_saveButtonClientRect;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool m_isImageMenuEnabled { false };

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "FloatSize.h"
-#include "FontRenderingMode.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
 #include "Path.h"
@@ -91,7 +90,7 @@ WEBCORE_EXPORT DragImageRef createDragImageForSelection(Frame&, TextIndicatorDat
 WEBCORE_EXPORT DragImageRef createDragImageForRange(Frame&, const SimpleRange&, bool forceBlackText = false);
 DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&);
 DragImageRef createDragImageForImage(Frame&, Node&, IntRect& imageRect, IntRect& elementRect);
-DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, FontRenderingMode, float deviceScaleFactor);
+DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
 
 IntPoint dragOffsetForLinkDragImage(DragImageRef);

@@ -3798,11 +3798,6 @@ enum class WebCore::FirstPartyWebsiteDataRemovalMode : uint8_t {
     AllButCookiesReproTestingTimeout
 };
 
-enum class WebCore::FontRenderingMode : uint8_t {
-    Normal,
-    Alternate
-};
-
 header: <WebCore/DragData.h>
 [OptionSet, CustomHeader] enum class WebCore::DragApplicationFlags : uint8_t {
     IsModal,

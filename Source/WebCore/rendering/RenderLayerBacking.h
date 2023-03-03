@@ -192,6 +192,10 @@ public:
     void suspendAnimations(MonotonicTime = MonotonicTime());
     void resumeAnimations();
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    bool updateAcceleratedEffectsAndBaseValues();
+#endif
+
     WEBCORE_EXPORT LayoutRect compositedBounds() const;
     // Returns true if changed.
     bool setCompositedBounds(const LayoutRect&);

@@ -201,14 +201,14 @@ class GitHubEWS(GitHub):
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'wincairo'],  # FIXME: generate this list dynamically to have merge queue show up on top
-                          ['bindings', 'ios-sim', 'mac-AS-debug', 'gtk', ''],
-                          ['webkitperl', 'ios-wk2', 'api-mac', 'gtk-wk2', ''],
-                          ['webkitpy', 'api-ios', 'mac-wk1', 'api-gtk', ''],
-                          ['jsc', 'tv', 'mac-wk2', 'jsc-armv7', ''],
-                          ['jsc-arm64', 'tv-sim', 'mac-AS-debug-wk2', 'jsc-armv7-tests', ''],
-                          ['services', 'watch', 'mac-wk2-stress', 'jsc-mips', ''],
-                          ['merge', 'watch-sim', '', 'jsc-mips-tests', ''],
-                          ['unsafe-merge', '', '', '', '']]
+                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', ''],
+                          ['webkitperl', 'ios-wk2', 'api-mac', 'gtk', ''],
+                          ['webkitpy', 'api-ios', 'mac-wk1', 'gtk-wk2', ''],
+                          ['jsc', 'tv', 'mac-wk2', 'api-gtk', ''],
+                          ['jsc-arm64', 'tv-sim', 'mac-AS-debug-wk2', 'jsc-armv7', ''],
+                          ['services', 'watch', 'mac-wk2-stress', 'jsc-armv7-tests', ''],
+                          ['merge', 'watch-sim', '', 'jsc-mips', ''],
+                          ['unsafe-merge', '', '', 'jsc-mips-tests', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):

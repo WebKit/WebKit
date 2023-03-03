@@ -108,12 +108,9 @@ void Font::initGDIFont()
 
 void Font::platformCharWidthInit()
 {
-    // GDI Fonts init charwidths in initGDIFont.
-    if (!m_platformData.useGDI()) {
-        m_avgCharWidth = 0.f;
-        m_maxCharWidth = 0.f;
-        initCharWidths();
-    }
+    m_avgCharWidth = 0;
+    m_maxCharWidth = 0;
+    initCharWidths();
 }
 
 void Font::platformDestroy()
@@ -130,9 +127,9 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
 
     LOGFONT winfont;
     GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winfont);
-    winfont.lfHeight = -lroundf(scaledSize * (m_platformData.useGDI() ? 1 : 32));
+    winfont.lfHeight = -lroundf(scaledSize * cWindowsFontScaleFactor);
     auto hfont = adoptGDIObject(::CreateFontIndirect(&winfont));
-    return Font::create(FontPlatformData(WTFMove(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), origin());
+    return Font::create(FontPlatformData(WTFMove(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique()), origin());
 }
 
 FloatRect Font::boundsForGDIGlyph(Glyph glyph) const

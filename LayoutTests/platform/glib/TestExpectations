@@ -519,6 +519,8 @@ accessibility/element-reflection-ariadescribedby.html [ Timeout ]
 
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
+webkit.org/b/251544 accessibility/date-input-aria-label-and-value.html [ Skip ]
+
 # Added in r263823. Both tests are timing out.
 webkit.org/b/213874 accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
 webkit.org/b/213874 accessibility/keyevents-posted-for-increment-actions.html [ Skip ]

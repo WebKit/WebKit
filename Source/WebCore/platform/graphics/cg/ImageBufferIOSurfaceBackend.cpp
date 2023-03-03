@@ -146,14 +146,8 @@ void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
     // current state of the IOSurface.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
     context().fillRect({ });
-    m_mayHaveOutstandingBackingStoreReferences = false;
 }
 
-void ImageBufferIOSurfaceBackend::invalidateCachedNativeImageIfNeeded()
-{
-    if (m_mayHaveOutstandingBackingStoreReferences)
-        invalidateCachedNativeImage();
-}
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
 {
@@ -161,9 +155,18 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCop
     return NativeImage::create(m_surface->createImage());
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(BackingStoreCopy)
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(GraphicsContext& destination)
 {
-    return NativeImage::create(m_surface->createImage());
+    if (destination.hasPlatformContext() && CGContextGetType(destination.platformContext()) == kCGContextTypeBitmap) {
+        // The destination backend is not deferred, so we can return a reference.
+        // The destination backend needs to read the actual pixels. Returning non-refence will
+        // copy the pixels and but still cache the image to the context. This means we must
+        // return the reference or cleanup later if we return the non-reference.
+        return NativeImage::create(adoptCF(CGIOSurfaceContextCreateImageReference(m_surface->ensurePlatformContext())));
+    }
+    // Other backends are deferred (iosurface, display list) or potentially deferred. Must copy for drawing.
+    return ImageBufferIOSurfaceBackend::copyNativeImage(CopyBackingStore);
+
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
@@ -171,28 +174,23 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
     return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
 }
 
-void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& destinationContext)
-{
-    if (destinationContext.needsCachedNativeImageInvalidationWorkaround(ImageBufferIOSurfaceBackend::renderingMode))
-        invalidateCachedNativeImage();
-}
-
 RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
 {
+    const_cast<ImageBufferIOSurfaceBackend*>(this)->prepareForExternalRead();
     IOSurface::Locker lock(*m_surface);
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress(), allocator);
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    invalidateCachedNativeImageIfNeeded();
+    prepareForExternalWrite();
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
 }
 
 IOSurface* ImageBufferIOSurfaceBackend::surface()
 {
-    flushContext();
+    prepareForExternalWrite(); // This is conservative. At the time of writing this is not used.
     return m_surface.get();
 }
 
@@ -235,9 +233,33 @@ void ImageBufferIOSurfaceBackend::setVolatilityState(VolatilityState volatilityS
 
 void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()
 {
+    // FIXME: This will be removed. This was needed when putImageData was not properly accounting
+    // for outstanding reads.
     if (!m_mayHaveOutstandingBackingStoreReferences)
         return;
-    invalidateCachedNativeImage();
+    prepareForExternalWrite();
+}
+
+void ImageBufferIOSurfaceBackend::prepareForExternalRead()
+{
+    // Ensure that there are no pending draws to this surface. This is ensured by flushing the context
+    // through which the draws may have come.
+    flushContext();
+}
+
+void ImageBufferIOSurfaceBackend::prepareForExternalWrite()
+{
+    // Ensure that there are no future draws from the surface that would use the surface context image cache.
+    if (m_mayHaveOutstandingBackingStoreReferences) {
+        invalidateCachedNativeImage();
+        m_mayHaveOutstandingBackingStoreReferences = false;
+    }
+
+    // Ensure that there are no pending draws to this surface. This is ensured by flushing the context
+    // through which the draws may have come.
+    // Ensure that there are no pending draws from this surface. This is ensured by drawing the invalidation marker before
+    // flushing the the context. The invalidation marker forces the draws from this surface to complete before
+    // the invalidation marker completes.
     flushContext();
 }
 

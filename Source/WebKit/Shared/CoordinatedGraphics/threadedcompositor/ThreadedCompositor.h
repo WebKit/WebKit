@@ -89,6 +89,8 @@ private:
 
     void createGLContext();
 
+    void displayUpdateFired();
+
     Client& m_client;
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<WebCore::GLContext> m_context;
@@ -109,6 +111,12 @@ private:
 
         bool clientRendersNextFrame { false };
     } m_attributes;
+
+    struct {
+        WebCore::PlatformDisplayID displayID;
+        WebCore::DisplayUpdate displayUpdate;
+        std::unique_ptr<RunLoop::Timer> updateTimer;
+    } m_display;
 
     Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;
 };

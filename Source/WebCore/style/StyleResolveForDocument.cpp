@@ -84,7 +84,6 @@ RenderStyle resolveForDocument(const Document& document)
 
     FontCascadeDescription fontDescription;
     fontDescription.setSpecifiedLocale(document.contentLanguage());
-    fontDescription.setRenderingMode(settings.fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setShouldAllowUserInstalledFonts(settings.shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
 

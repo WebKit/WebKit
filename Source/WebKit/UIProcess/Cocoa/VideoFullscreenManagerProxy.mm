@@ -127,8 +127,6 @@
 
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -636,8 +634,6 @@ void VideoFullscreenManagerProxy::willRemoveLayerForID(PlaybackSessionContextIde
 
 void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
-    MESSAGE_CHECK(videoLayerID);
-
     auto& [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
 
@@ -1005,7 +1001,5 @@ AVPlayerViewController *VideoFullscreenManagerProxy::playerViewController(Playba
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
-
-#undef MESSAGE_CHECK
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

@@ -155,8 +155,6 @@ public:
     void setLetterSpacing(float s) { m_letterSpacing = s; }
     bool isFixedPitch() const;
     
-    FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
-
     bool enableKerning() const { return m_enableKerning; }
     bool requiresShaping() const { return m_requiresShaping; }
 

@@ -235,31 +235,24 @@ AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland()
 
 void AcceleratedBackingStoreWayland::unrealize()
 {
-    if (!m_glContextInitialized)
+    if (!m_gdkGLContext)
         return;
 
-    if (s_waylandImpl.value() == WaylandImpl::EGL) {
-        if (m_egl.viewTexture) {
-            if (makeContextCurrent())
-                glDeleteTextures(1, &m_egl.viewTexture);
-            m_egl.viewTexture = 0;
-        }
+    if (m_egl.viewTexture) {
+        if (makeContextCurrent())
+            glDeleteTextures(1, &m_egl.viewTexture);
+        m_egl.viewTexture = 0;
     }
 
-    if (m_gdkGLContext && m_gdkGLContext.get() == gdk_gl_context_get_current())
+    if (m_gdkGLContext.get() == gdk_gl_context_get_current())
         gdk_gl_context_clear_current();
 
-    m_glContextInitialized = false;
+    m_gdkGLContext = nullptr;
 }
 
-void AcceleratedBackingStoreWayland::tryEnsureGLContext()
+void AcceleratedBackingStoreWayland::ensureGLContext()
 {
-    if (m_glContextInitialized || !gtk_widget_get_realized(m_webPage.viewWidget()))
-        return;
-
-    m_glContextInitialized = true;
-    if (s_waylandImpl.value() != WaylandImpl::EGL)
-        return;
+    ASSERT(s_waylandImpl.value() == WaylandImpl::EGL);
 
     GUniqueOutPtr<GError> error;
 #if USE(GTK4)
@@ -267,29 +260,25 @@ void AcceleratedBackingStoreWayland::tryEnsureGLContext()
 #else
     m_gdkGLContext = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(m_webPage.viewWidget()), &error.outPtr()));
 #endif
-    if (m_gdkGLContext) {
+    if (!m_gdkGLContext)
+        g_error("GDK is not able to create a GL context: %s.", error->message);
+
 #if USE(OPENGL_ES)
-        gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
+    gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
 #endif
-        gdk_gl_context_realize(m_gdkGLContext.get(), &error.outPtr());
-        if (!error)
-            return;
-    }
 
-    g_warning("GDK is not able to create a GL context, falling back to glReadPixels (slow!): %s", error->message);
-
-    m_glContext = GLContext::createOffscreenContext();
+    if (!gdk_gl_context_realize(m_gdkGLContext.get(), &error.outPtr()))
+        g_error("GDK failed to relaize the GLK context: %s.", error->message);
 }
 
 bool AcceleratedBackingStoreWayland::makeContextCurrent()
 {
-    tryEnsureGLContext();
+    if (!gtk_widget_get_realized(m_webPage.viewWidget()))
+        return false;
 
-    if (m_gdkGLContext) {
-        gdk_gl_context_make_current(m_gdkGLContext.get());
-        return true;
-    }
-    return m_glContext ? m_glContext->makeContextCurrent() : false;
+    ensureGLContext();
+    gdk_gl_context_make_current(m_gdkGLContext.get());
+    return true;
 }
 
 void AcceleratedBackingStoreWayland::update(const LayerTreeContext& context)
@@ -430,51 +419,6 @@ bool AcceleratedBackingStoreWayland::tryEnsureTexture(unsigned& texture, IntSize
     return true;
 }
 
-void AcceleratedBackingStoreWayland::downloadTexture(unsigned texture, const IntSize& textureSize)
-{
-    ASSERT(s_waylandImpl.value() == WaylandImpl::EGL);
-    ASSERT(m_glContext);
-
-    if (!m_surface || cairo_image_surface_get_width(m_surface.get()) != textureSize.width() || cairo_image_surface_get_height(m_surface.get()) != textureSize.height())
-        m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, textureSize.width(), textureSize.height()));
-
-    cairo_surface_set_device_scale(m_surface.get(), m_webPage.deviceScaleFactor(), m_webPage.deviceScaleFactor());
-
-    GLuint fb;
-    glGenFramebuffers(1, &fb);
-    glBindFramebuffer(GL_FRAMEBUFFER, fb);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-
-    glPixelStorei(GL_PACK_ALIGNMENT, 4);
-
-#if USE(OPENGL_ES)
-    unsigned char* data = cairo_image_surface_get_data(m_surface.get());
-    if (cairo_image_surface_get_stride(m_surface.get()) == textureSize.width() * 4)
-        glReadPixels(0, 0, textureSize.width(), textureSize.height(), GL_RGBA, GL_UNSIGNED_BYTE, data);
-    else {
-        int strideBytes = cairo_image_surface_get_stride(m_surface.get());
-        for (int i = 0; i < textureSize.height(); i++) {
-            unsigned char* dataOffset = data + i * strideBytes;
-            glReadPixels(0, i, textureSize.width(), 1, GL_RGBA, GL_UNSIGNED_BYTE, dataOffset);
-        }
-    }
-
-    // Convert to BGRA.
-    int totalBytes = textureSize.width() * textureSize.height() * 4;
-    for (int i = 0; i < totalBytes; i += 4)
-        std::swap(data[i], data[i + 2]);
-#else
-    glPixelStorei(GL_PACK_ROW_LENGTH, cairo_image_surface_get_stride(m_surface.get()) / 4);
-    glReadPixels(0, 0, textureSize.width(), textureSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, cairo_image_surface_get_data(m_surface.get()));
-    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-#endif
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDeleteFramebuffers(1, &fb);
-
-    cairo_surface_mark_dirty(m_surface.get());
-}
-
 #if USE(GTK4)
 void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
 {
@@ -482,19 +426,12 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
     case WaylandImpl::EGL: {
         GLuint texture;
         IntSize textureSize;
-        if (!tryEnsureTexture(texture, textureSize))
-            return;
-
-        float deviceScaleFactor = m_webPage.deviceScaleFactor();
-
-        graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(textureSize.width() / deviceScaleFactor), static_cast<float>(textureSize.height() / deviceScaleFactor));
-        if (m_gdkGLContext) {
+        if (tryEnsureTexture(texture, textureSize)) {
+            float deviceScaleFactor = m_webPage.deviceScaleFactor();
+            graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(textureSize.width() / deviceScaleFactor), static_cast<float>(textureSize.height() / deviceScaleFactor));
             GRefPtr<GdkTexture> gdkTexture = adoptGRef(gdk_gl_texture_new(m_gdkGLContext.get(), texture, textureSize.width(), textureSize.height(), nullptr, nullptr));
             gtk_snapshot_append_texture(gtkSnapshot, gdkTexture.get(), &bounds);
-            return;
         }
-
-        downloadTexture(texture, textureSize);
         break;
     }
     case WaylandImpl::SHM:
@@ -504,8 +441,15 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
             m_shm.pendingFrame = false;
         }
 
-        if (!m_surface)
-            return;
+        if (m_surface) {
+            graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(cairo_image_surface_get_width(m_surface.get())), static_cast<float>(cairo_image_surface_get_height(m_surface.get())));
+            RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(gtkSnapshot, &bounds));
+            cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
+            cairo_set_operator(cr.get(), CAIRO_OPERATOR_OVER);
+            cairo_paint(cr.get());
+
+            cairo_surface_flush(m_surface.get());
+        }
         break;
 #else
         FALLTHROUGH;
@@ -513,14 +457,6 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
     case WaylandImpl::Unsupported:
         RELEASE_ASSERT_NOT_REACHED();
     }
-
-    graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(cairo_image_surface_get_width(m_surface.get())), static_cast<float>(cairo_image_surface_get_height(m_surface.get())));
-    RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(gtkSnapshot, &bounds));
-    cairo_set_source_surface(cr.get(), m_surface.get(), 0, 0);
-    cairo_set_operator(cr.get(), CAIRO_OPERATOR_OVER);
-    cairo_paint(cr.get());
-
-    cairo_surface_flush(m_surface.get());
 }
 #else
 bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
@@ -529,18 +465,11 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     case WaylandImpl::EGL: {
         GLuint texture;
         IntSize textureSize;
-        if (!tryEnsureTexture(texture, textureSize))
-            return true;
-
-        cairo_save(cr);
-
-        if (m_gdkGLContext) {
+        if (tryEnsureTexture(texture, textureSize)) {
+            cairo_save(cr);
             gdk_cairo_draw_from_gl(cr, gtk_widget_get_window(m_webPage.viewWidget()), texture, GL_TEXTURE, m_webPage.deviceScaleFactor(), 0, 0, textureSize.width(), textureSize.height());
             cairo_restore(cr);
-            return true;
         }
-
-        downloadTexture(texture, textureSize);
         break;
     }
     case WaylandImpl::SHM:
@@ -550,10 +479,23 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
             m_shm.pendingFrame = false;
         }
 
-        if (!m_surface)
-            return true;
+        if (m_surface) {
+            cairo_save(cr);
 
-        cairo_save(cr);
+            // The compositor renders the texture flipped for gdk_cairo_draw_from_gl, fix that here.
+            cairo_matrix_t transform;
+            cairo_matrix_init(&transform, 1, 0, 0, -1, 0, cairo_image_surface_get_height(m_surface.get()) / m_webPage.deviceScaleFactor());
+            cairo_transform(cr, &transform);
+
+            cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
+            cairo_set_source_surface(cr, m_surface.get(), 0, 0);
+            cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+            cairo_fill(cr);
+
+            cairo_restore(cr);
+
+            cairo_surface_flush(m_surface.get());
+        }
         break;
 #else
         FALLTHROUGH;
@@ -561,20 +503,6 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     case WaylandImpl::Unsupported:
         RELEASE_ASSERT_NOT_REACHED();
     }
-
-    // The compositor renders the texture flipped for gdk_cairo_draw_from_gl, fix that here.
-    cairo_matrix_t transform;
-    cairo_matrix_init(&transform, 1, 0, 0, -1, 0, cairo_image_surface_get_height(m_surface.get()) / m_webPage.deviceScaleFactor());
-    cairo_transform(cr, &transform);
-
-    cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
-    cairo_set_source_surface(cr, m_surface.get(), 0, 0);
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-    cairo_fill(cr);
-
-    cairo_restore(cr);
-
-    cairo_surface_flush(m_surface.get());
 
     return true;
 }

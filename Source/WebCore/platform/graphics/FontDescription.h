@@ -25,7 +25,6 @@
 #pragma once
 
 #include "FontPalette.h"
-#include "FontRenderingMode.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "TextFlags.h"
@@ -64,7 +63,6 @@ public:
     FontSelectionValue stretch() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
     FontSelectionRequest fontSelectionRequest() const { return m_fontSelectionRequest; }
-    FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
     const AtomString& computedLocale() const { return m_locale; } // This is what you should be using for things like text shaping and font fallback
@@ -126,7 +124,6 @@ public:
     void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
     void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
     void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
-    void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = static_cast<unsigned>(rendering); }
     void setOrientation(FontOrientation orientation) { m_orientation = static_cast<unsigned>(orientation); }
     void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = static_cast<unsigned>(orientation); }
@@ -181,7 +178,6 @@ private:
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
     unsigned m_widthVariant : 2; // FontWidthVariant
-    unsigned m_renderingMode : 1; // Used to switch between CG and GDI text on Windows.
     unsigned m_textRendering : 2; // TextRenderingMode
     unsigned m_script : 7; // Used to help choose an appropriate font for generic font families.
     unsigned m_fontSynthesisWeight : 1;
@@ -211,7 +207,6 @@ inline bool FontDescription::operator==(const FontDescription& other) const
 {
     return m_computedSize == other.m_computedSize
         && m_fontSelectionRequest == other.m_fontSelectionRequest
-        && m_renderingMode == other.m_renderingMode
         && m_textRendering == other.m_textRendering
         && m_orientation == other.m_orientation
         && m_nonCJKGlyphOrientation == other.m_nonCJKGlyphOrientation
@@ -258,7 +253,6 @@ void FontDescription::encode(Encoder& encoder) const
     encoder << orientation();
     encoder << nonCJKGlyphOrientation();
     encoder << widthVariant();
-    encoder << renderingMode();
     encoder << textRenderingMode();
     encoder << fontSynthesisWeight();
     encoder << fontSynthesisStyle();
@@ -338,11 +332,6 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     std::optional<FontWidthVariant> widthVariant;
     decoder >> widthVariant;
     if (!widthVariant)
-        return std::nullopt;
-
-    std::optional<FontRenderingMode> renderingMode;
-    decoder >> renderingMode;
-    if (!renderingMode)
         return std::nullopt;
 
     std::optional<TextRenderingMode> textRenderingMode;
@@ -480,7 +469,6 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     fontDescription.setOrientation(*orientation);
     fontDescription.setNonCJKGlyphOrientation(*nonCJKGlyphOrientation);
     fontDescription.setWidthVariant(*widthVariant);
-    fontDescription.setRenderingMode(*renderingMode);
     fontDescription.setTextRenderingMode(*textRenderingMode);
     fontDescription.setFontSynthesisWeight(*fontSynthesisWeight);
     fontDescription.setFontSynthesisStyle(*fontSynthesisStyle);

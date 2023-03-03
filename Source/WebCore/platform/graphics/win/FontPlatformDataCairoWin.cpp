@@ -56,7 +56,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     m_scaledFont = adoptRef(cairo_scaled_font_create(fontFace, &sizeMatrix, &ctm, fontOptions));
     cairo_font_face_destroy(fontFace);
 
-    if (!m_useGDI && m_size)
+    if (m_size)
         m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
 
@@ -94,8 +94,7 @@ unsigned FontPlatformData::hash() const
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     return m_font == other.m_font
-        && m_scaledFont == other.m_scaledFont
-        && m_useGDI == other.m_useGDI;
+        && m_scaledFont == other.m_scaledFont;
 }
 
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const

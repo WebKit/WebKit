@@ -33,7 +33,7 @@ class DocumentFragment : public ContainerNode {
 public:
     static Ref<DocumentFragment> create(Document&);
 
-    void parseHTML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
     bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
 
     bool canContainRangeEndPoint() const final { return true; }

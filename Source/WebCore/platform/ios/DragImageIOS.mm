@@ -113,7 +113,7 @@ static FontCascade cascadeForSystemFont(CGFloat size)
     return FontCascade(FontPlatformData(adoptCF(CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, nil)), font.pointSize));
 }
 
-DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String& title, TextIndicatorData& indicatorData, FontRenderingMode, float)
+DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String& title, TextIndicatorData& indicatorData, float)
 {
     // FIXME: Most of this can go away once we can use UIURLDragPreviewView unconditionally.
     constexpr CGFloat dragImagePadding = 10;

@@ -73,6 +73,10 @@
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
 
+@interface AVSampleBufferDisplayLayer (Staging_100128644)
+@property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@end
+
 #pragma mark -
 
 namespace WebCore {
@@ -1270,6 +1274,9 @@ void MediaPlayerPrivateWebM::ensureLayer()
     
     if ([m_displayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_displayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
+
+    if ([m_displayLayer respondsToSelector:@selector(setPreventsAutomaticBackgroundingDuringVideoPlayback:)])
+        m_displayLayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
 
     @try {
         [m_synchronizer addRenderer:m_displayLayer.get()];

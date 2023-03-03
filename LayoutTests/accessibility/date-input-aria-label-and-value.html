@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="date-input" type="date" value="2022-02-02" />
+
+<script>
+var testOutput = "Tests that aria-label and aria-valuenow update correctly for date inputs.\n\n";
+
+function outputString(message) {
+    testOutput += (`\n${message}\n`);
+}
+
+function keyDown(key, repeat = 1, message = "") {
+    if (message) 
+        outputString(message + ` (x${repeat})`);
+
+    for (let i = 0 ; i < repeat ; i++) 
+        eventSender.keyDown(key);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var axDateFieldWrapper = accessibilityController.accessibleElementById("date-input")
+            .childAtIndex(0)
+            .childAtIndex(0);
+
+    setTimeout(async function() {
+        async function expectChildToHaveARIAValueAttributes(childIndex, description) {
+            let result = await expectAsync(`axDateFieldWrapper.childAtIndex(${childIndex}).intValue`, `${description}`);
+
+            result += await expectAsync(`axDateFieldWrapper.childAtIndex(${childIndex}).valueDescription`, `"AXValueDescription: ${description}"`);
+
+            return result;
+        }
+        
+        function expectChildToHaveARIALabel(childIndex, labelText) {
+            return expect(`platformValueForW3CName(axDateFieldWrapper.childAtIndex(${childIndex}))`, labelText);
+        }
+        
+        const dateInput = document.getElementById("date-input");
+
+        outputString("Checking ARIA Labels for sub-fields");
+        testOutput += expectChildToHaveARIALabel(0, `"month"`);
+        testOutput += expectChildToHaveARIALabel(1, `"day"`);
+        testOutput += expectChildToHaveARIALabel(2, `"year"`);
+        
+        outputString("Focusing date element and pressing up arrow to increment the first field.");
+        dateInput.focus();
+        keyDown("upArrow");
+
+        testOutput += await expectChildToHaveARIAValueAttributes(0, 3);
+
+        keyDown("downArrow", 2, "Simulating down arrow press to decrement the first field.");
+        testOutput += await expectChildToHaveARIAValueAttributes(0, 1);
+
+        outputString("Simulating tab key to move to the next field in the date input.");
+        keyDown("\t");
+        testOutput += await expectChildToHaveARIAValueAttributes(1, 2);
+
+        outputString("Simulating typing \"10\" in the second input field.");
+        keyDown("1");
+        keyDown("0")
+        testOutput += await expectChildToHaveARIAValueAttributes(1, 10);
+
+        outputString("Simulating down arrow press to decrement the second field value.")
+        keyDown("downArrow");
+        testOutput += await expectChildToHaveARIAValueAttributes(1, 9);
+
+        keyDown("upArrow", 2, "Simulating up arrow press to increment the second field value.");
+        testOutput += await expectChildToHaveARIAValueAttributes(1, 11);
+
+        outputString("Simulating tab key to move to the next field in the date input.");
+        keyDown("\t");
+        testOutput += await expectChildToHaveARIAValueAttributes(2, 2022);
+
+        keyDown("downArrow", 10, "Simulating down arrow press to decrement the third field value.");
+        testOutput += await expectChildToHaveARIAValueAttributes(2, 2012);
+
+        outputString("Simulating up arrow press to increment the third field value.")
+        keyDown("upArrow");
+        testOutput += await expectChildToHaveARIAValueAttributes(2, 2013);
+
+        outputString("Manually setting the date input's value via JavaScript.")
+        dateInput.value = "2023-12-30";
+        testOutput += await expectChildToHaveARIAValueAttributes(0, 12);
+        testOutput += await expectChildToHaveARIAValueAttributes(1, 30);
+        testOutput += await expectChildToHaveARIAValueAttributes(2, 2023);
+
+        debug(testOutput);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

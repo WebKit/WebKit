@@ -2768,9 +2768,7 @@ private:
     void updateAllowedLookalikeCharacterStringsIfNeeded();
 #endif
 
-#if USE(RUNNINGBOARD)
     void clearAudibleActivity();
-#endif
 
     void tryCloseTimedOut();
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
@@ -2959,14 +2957,13 @@ private:
 #if PLATFORM(MACCATALYST)
     bool m_isListeningForUserFacingStateChangeNotification { false };
 #endif
-#if USE(RUNNINGBOARD)
     bool m_allowsMediaDocumentInlinePlayback { false };
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isCapturingActivity;
     RunLoop::Timer m_audibleActivityTimer;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_openingAppLinkActivity;
-#endif
+
     bool m_initialCapitalizationEnabled { false };
     std::optional<double> m_cpuLimit;
     Ref<WebBackForwardList> m_backForwardList;

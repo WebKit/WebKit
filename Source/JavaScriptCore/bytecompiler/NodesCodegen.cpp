@@ -2297,7 +2297,7 @@ RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& g
         Ref<Label> realCall = generator.newLabel();
         Ref<Label> end = generator.newLabel();
 
-        unsigned branchInsnOffset = generator.emitWideJumpIfNotFunctionHasOwnProperty(function.get(), realCall.get());
+        unsigned branchInsnOffset = generator.emitJumpIfNotFunctionHasOwnProperty(function.get(), realCall.get());
         generator.emitEnumeratorHasOwnProperty(returnValue.get(), base.get(), context->mode(), generator.emitNode(argument), context->propertyOffset(), context->enumerator());
         generator.emitJump(end.get());
 
