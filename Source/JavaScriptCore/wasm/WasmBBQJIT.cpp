@@ -5440,14 +5440,18 @@ public:
                 // FIXME: Better than what we have in the Air backend, but still not great. I think
                 // there's some vector instruction we can use to do this much quicker.
 
-                m_jit.moveFloatTo32(rhsLocation.asFPR(), m_scratchGPR);
-                m_jit.and32(Imm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
-                m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
 #if CPU(X86_64)
-                m_jit.move32ToFloat(TrustedImm32(0x7fffffff), resultLocation.asFPR());
-                m_jit.andFloat(lhsLocation.asFPR(), resultLocation.asFPR());
+                m_jit.moveFloatTo32(lhsLocation.asFPR(), m_scratchGPR);
+                m_jit.and32(TrustedImm32(0x7fffffff), m_scratchGPR);
+                m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
+                m_jit.moveFloatTo32(rhsLocation.asFPR(), m_scratchGPR);
+                m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
+                m_jit.move32ToFloat(m_scratchGPR, resultLocation.asFPR());
                 m_jit.orFloat(resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #else
+                m_jit.moveFloatTo32(rhsLocation.asFPR(), m_scratchGPR);
+                m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
+                m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
                 m_jit.absFloat(lhsLocation.asFPR(), lhsLocation.asFPR());
                 m_jit.orFloat(lhsLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #endif
@@ -5455,7 +5459,7 @@ public:
             BLOCK(
                 if (lhs.isConst()) {
                     m_jit.moveFloatTo32(rhsLocation.asFPR(), m_scratchGPR);
-                    m_jit.and32(Imm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
+                    m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
                     m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
 
                     emitMoveConst(Value::fromF32(std::fabsf(lhs.asF32())), resultLocation);
@@ -5463,8 +5467,9 @@ public:
                 } else {
                     bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
 #if CPU(X86_64)
-                    m_jit.move32ToFloat(TrustedImm32(0x7fffffff), resultLocation.asFPR());
-                    m_jit.andFloat(lhsLocation.asFPR(), resultLocation.asFPR());
+                    m_jit.moveDouble(lhsLocation.asFPR(), resultLocation.asFPR());
+                    m_jit.move32ToFloat(TrustedImm32(0x7fffffff), m_scratchFPR);
+                    m_jit.andFloat(m_scratchFPR, resultLocation.asFPR());
                     if (signBit) {
                         m_jit.xorFloat(m_scratchFPR, m_scratchFPR);
                         m_jit.subFloat(m_scratchFPR, resultLocation.asFPR(), resultLocation.asFPR());
@@ -5491,6 +5496,16 @@ public:
                 // FIXME: Better than what we have in the Air backend, but still not great. I think
                 // there's some vector instruction we can use to do this much quicker.
 
+#if CPU(X86_64)
+                m_jit.moveDoubleTo64(lhsLocation.asFPR(), m_scratchGPR);
+                m_jit.and64(TrustedImm64(0x7fffffffffffffffll), m_scratchGPR);
+                m_jit.move64ToDouble(m_scratchGPR, m_scratchFPR);
+                m_jit.moveDoubleTo64(rhsLocation.asFPR(), m_scratchGPR);
+                m_jit.urshift64(m_scratchGPR, TrustedImm32(63), m_scratchGPR);
+                m_jit.lshift64(m_scratchGPR, TrustedImm32(63), m_scratchGPR);
+                m_jit.move64ToDouble(m_scratchGPR, resultLocation.asFPR());
+                m_jit.orDouble(resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
+#else
                 m_jit.moveDoubleTo64(rhsLocation.asFPR(), m_scratchGPR);
 
                 // Probably saves us a bit of space compared to reserving another register and
@@ -5499,11 +5514,6 @@ public:
                 m_jit.lshift64(m_scratchGPR, TrustedImm32(63), m_scratchGPR);
                 m_jit.move64ToDouble(m_scratchGPR, m_scratchFPR);
 
-#if CPU(X86_64)
-                m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), resultLocation.asFPR());
-                m_jit.andDouble(lhsLocation.asFPR(), resultLocation.asFPR());
-                m_jit.orDouble(resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
-#else
                 m_jit.absDouble(lhsLocation.asFPR(), lhsLocation.asFPR());
                 m_jit.orDouble(lhsLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #endif
@@ -5521,8 +5531,9 @@ public:
                 } else {
                     bool signBit = bitwise_cast<uint64_t>(rhs.asF64()) & 0x8000000000000000ull;
 #if CPU(X86_64)
-                    m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), resultLocation.asFPR());
-                    m_jit.andDouble(lhsLocation.asFPR(), resultLocation.asFPR());
+                    m_jit.moveDouble(lhsLocation.asFPR(), resultLocation.asFPR());
+                    m_jit.move64ToDouble(TrustedImm64(0x7fffffffffffffffll), m_scratchFPR);
+                    m_jit.andDouble(m_scratchFPR, resultLocation.asFPR());
                     if (signBit) {
                         m_jit.xorDouble(m_scratchFPR, m_scratchFPR);
                         m_jit.subDouble(m_scratchFPR, resultLocation.asFPR(), resultLocation.asFPR());
