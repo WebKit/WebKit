@@ -52,6 +52,7 @@ class Buildbot():
         'mac-AS-debug-wk2': 'mac-AS-debug',
         'api-gtk': 'gtk',
         'gtk-wk2': 'gtk',
+        'wpe-wk2': 'wpe',
         'jsc-mips-tests': 'jsc-mips',
         'jsc-armv7-tests': 'jsc-armv7',
     }
