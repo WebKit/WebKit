@@ -163,7 +163,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     // FIXME: Consider also allowing elements that only receive touch events.
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
-    if (!hasListener || !hasPointer) {
+    bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 2;
+    if (!hasListener || !hasPointer || isTooBigForInteraction) {
         bool isOverlay = checkedRegionArea.value() <= frameViewArea && (renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned());
         if (isOverlay && isOriginalMatch) {
             Region boundsRegion;
@@ -179,9 +180,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
         return std::nullopt;
     }
-
-    if (checkedRegionArea.value() > frameViewArea / 2)
-        return std::nullopt;
 
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 
