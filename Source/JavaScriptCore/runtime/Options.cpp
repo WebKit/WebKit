@@ -665,6 +665,18 @@ void Options::notifyOptionsChanged()
             // If we can't run using it, then we should be conservative.
             Options::forceAllFunctionsToUseSIMD() = true;
         }
+
+        if (Options::useWebAssemblyGC()
+            || Options::useWebAssemblyTypedFunctionReferences()
+            || Options::useWebAssemblyTailCalls()) {
+            // The single-pass BBQ JIT doesn't support these features currently, so we should use a different
+            // BBQ backend if any of them are enabled. We should remove these limitations as support for each
+            // is added.
+            // FIXME: Add WASM GC support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253188
+            // FIXME: Add WASM typed function references support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253191
+            // FIXME: Add WASM tail calls support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253192
+            Options::useSinglePassBBQJIT() = false;
+        }
     }
 
     if (Options::dumpFuzzerAgentPredictions())
