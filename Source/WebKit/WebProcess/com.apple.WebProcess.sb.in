@@ -2392,6 +2392,8 @@
 )
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
 (with-filter (state-flag "WebContentProcessLaunched")
     (allow mach-task-special-port-get (with report) (with telemetry))
     (allow mach-task-special-port-set (with report) (with telemetry)))
+#endif
