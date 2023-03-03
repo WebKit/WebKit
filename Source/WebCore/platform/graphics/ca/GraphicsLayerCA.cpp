@@ -3275,6 +3275,14 @@ void GraphicsLayerCA::updateAnimations()
 
 bool GraphicsLayerCA::isRunningTransformAnimation() const
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (auto* effectStack = acceleratedEffectStack()) {
+        return effectStack->primaryLayerEffects().findIf([](auto& effect) {
+            return effect->animatesTransformRelatedProperty();
+        }) != notFound;
+    }
+#endif
+
     return m_animations.findIf([&](LayerPropertyAnimation animation) {
         return animatedPropertyIsTransformOrRelated(animation.m_property) && (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused);
     }) != notFound;
