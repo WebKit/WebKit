@@ -169,13 +169,5 @@ WK_USER_LTO_MODE_none = NO;
 WK_USER_LTO_MODE_ = $(WK_DEFAULT_LTO_MODE);
 WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_thin);
 
-// Use a difference in the way the Legacy build sytem and XCBuild interpret
-// xcconfig file to determine which is being used.
-WK_WHICH_BUILD_SYSTEM = not_
-WK_WHICH_BUILD_SYSTEM = $(inherited)legacy
-WK_USE_NEW_BUILD_SYSTEM = $(WK_USE_NEW_BUILD_SYSTEM_$(WK_WHICH_BUILD_SYSTEM))
-WK_USE_NEW_BUILD_SYSTEM_legacy = NO
-WK_USE_NEW_BUILD_SYSTEM_not_legacy = YES
-
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
