@@ -186,11 +186,11 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy cop
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
-RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
     if (canMapBackingStore())
-        return ImageBuffer::copyNativeImageForDrawing(copyBehavior);
-    return copyNativeImage(copyBehavior);
+        return ImageBuffer::copyNativeImageForDrawing(destination);
+    return copyNativeImage(DontCopyBackingStore);
 }
 
 void RemoteImageBufferProxy::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -231,6 +231,9 @@ RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
 
 RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
+    if (canMapBackingStore())
+        return ImageBuffer::getPixelBuffer(destinationFormat, srcRect, allocator);
+
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return nullptr;
     auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
@@ -261,6 +264,14 @@ GraphicsContext& RemoteImageBufferProxy::context() const
 
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
+    if (canMapBackingStore()) {
+        // At the moment, this does not need to invalidate the possible read caches in
+        // GPUP side. GPUP side does not use bitmap-based deferred rendering that would need
+        // trigger to migrate the backend surfaces to bitmap copies.
+        ImageBuffer::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
+        return;
+    }
+
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
     // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.

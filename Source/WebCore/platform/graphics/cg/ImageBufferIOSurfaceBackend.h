@@ -59,7 +59,7 @@ protected:
     IntSize backendSize() const override;
     
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) override;
-    RefPtr<NativeImage> copyNativeImageForDrawing(BackingStoreCopy = CopyBackingStore) override;
+    RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext&) override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
     RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) override;
@@ -79,9 +79,9 @@ protected:
 
     unsigned bytesPerRow() const override;
 
-    void finalizeDrawIntoContext(GraphicsContext& destinationContext) override;
     void invalidateCachedNativeImage();
-    void invalidateCachedNativeImageIfNeeded();
+    void prepareForExternalRead();
+    void prepareForExternalWrite();
 
     std::unique_ptr<IOSurface> m_surface;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
