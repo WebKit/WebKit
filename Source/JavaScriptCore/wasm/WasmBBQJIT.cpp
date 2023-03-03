@@ -3255,12 +3255,14 @@ public:
             m_jit.truncateDoubleToInt64(operandLocation.asFPR(), resultLocation.asGPR());
             break;
         case TruncationKind::I64TruncF32U: {
-            emitMoveConst(Value::fromF32(static_cast<float>(std::numeric_limits<int64_t>::min())), Location::fromFPR(scratch2FPR));
+            if constexpr (isX86())
+                emitMoveConst(Value::fromF32(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())), Location::fromFPR(scratch2FPR));
             m_jit.truncateFloatToUint64(operandLocation.asFPR(), resultLocation.asGPR(), scratch1FPR, scratch2FPR);
             break;
         }
         case TruncationKind::I64TruncF64U: {
-            emitMoveConst(Value::fromF64(static_cast<double>(std::numeric_limits<int64_t>::min())), Location::fromFPR(scratch2FPR));
+            if constexpr (isX86())
+                emitMoveConst(Value::fromF64(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())), Location::fromFPR(scratch2FPR));
             m_jit.truncateDoubleToUint64(operandLocation.asFPR(), resultLocation.asGPR(), scratch1FPR, scratch2FPR);
             break;
         }
