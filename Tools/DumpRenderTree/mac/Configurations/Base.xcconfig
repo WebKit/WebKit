@@ -88,6 +88,9 @@ OTHER_CFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System
 
 FRAMEWORK_SEARCH_PATHS = $(WK_PRIVATE_FRAMEWORK_STUBS_DIR) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR) $(inherited);
 
+WK_WHICH_BUILD_SYSTEM = not_;
+WK_WHICH_BUILD_SYSTEM = $(inherited)legacy;
+
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBCORE_TEST_SUPPORT_DIR) $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH) ForwardingHeaders $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 HEADER_SEARCH_PATHS_ = mac/InternalHeaders $(SRCROOT)/../../Source/WebKitLegacy/mac/WebView;
 HEADER_SEARCH_PATHS_cocoatouch = $(SRCROOT)/../../Source/WebKit/Platform/spi/ios;

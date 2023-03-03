@@ -3,10 +3,34 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		0F4680A914BA7FD900BFE272 /* (Legacy) LLInt Offsets */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 0F4680AC14BA7FD900BFE272 /* Build configuration list for PBXAggregateTarget "(Legacy) LLInt Offsets" */;
+			buildPhases = (
+				0F4680AA14BA7FD900BFE272 /* (Legacy) Generate Derived Sources */,
+			);
+			dependencies = (
+				14BD68992151916D0050DAFF /* PBXTargetDependency */,
+			);
+			name = "(Legacy) LLInt Offsets";
+			productName = "Derived Sources";
+		};
+		14BD688F215191450050DAFF /* (Legacy) LLInt Settings */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 14BD6893215191450050DAFF /* Build configuration list for PBXAggregateTarget "(Legacy) LLInt Settings" */;
+			buildPhases = (
+				14BD6892215191450050DAFF /* (Legacy) Generate Derived Sources */,
+			);
+			dependencies = (
+				14BD6890215191450050DAFF /* PBXTargetDependency */,
+			);
+			name = "(Legacy) LLInt Settings";
+			productName = "Derived Sources";
+		};
 		5325BDBF21DFF2B100A0DEE1 /* Apply Configuration to XCFileLists */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5325BDC421DFF2B200A0DEE1 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
@@ -48,6 +72,20 @@
 			);
 			name = "Test Tools";
 			productName = "Test Tools";
+		};
+		65788A9D18B409EB00C189FF /* (Legacy) Offline Assembler */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 65788AA218B409EB00C189FF /* Build configuration list for PBXAggregateTarget "(Legacy) Offline Assembler" */;
+			buildPhases = (
+				DDE9930C278D083D00F60D26 /* Product Dependencies */,
+				65788AA018B409EB00C189FF /* (Legacy) Offline Assemble */,
+			);
+			dependencies = (
+				65244BD318ECB5000010B708 /* PBXTargetDependency */,
+				65788A9E18B409EB00C189FF /* PBXTargetDependency */,
+			);
+			name = "(Legacy) Offline Assembler";
+			productName = "Offline Assembler";
 		};
 		65FB3F6609D11E9100F49DEB /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
@@ -1808,6 +1846,7 @@
 		DD5F74F9283EF58D0027A8C6 /* copy-profiling-data.sh in Headers */ = {isa = PBXBuildFile; fileRef = DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDB04F41278E569A008D3678 /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
 		DDB04F42278E56A2008D3678 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
+		DDE99310278D087D00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9930E278D086600F60D26 /* libWebKitAdditions.a */; };
 		DDE99312278D089000F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9930E278D086600F60D26 /* libWebKitAdditions.a */; };
 		DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */; };
 		DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2235,12 +2274,40 @@
 			remoteGlobalIDString = 0FEC85941BDB5CF10080FF74;
 			remoteInfo = testb3;
 		};
+		0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
+			remoteInfo = "LLInt Offsets";
+		};
 		14BD6883215191310050DAFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
 			remoteInfo = "Derived Sources";
+		};
+		14BD6891215191450050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
+		14BD68982151916D0050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14BD6881215191310050DAFF;
+			remoteInfo = JSCLLIntSettingsExtractor;
+		};
+		14BD689A215191740050DAFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14BD688F215191450050DAFF;
+			remoteInfo = "LLInt Settings";
 		};
 		14CFB0FF23035EF300F0048C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2375,6 +2442,20 @@
 			remoteGlobalIDString = 5D6B2A47152B9E17005231DE;
 			remoteInfo = "Test Tools";
 		};
+		65244BD218ECB5000010B708 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
+		65788A9F18B409EB00C189FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FF922C314F46B130041A24E;
+			remoteInfo = JSCLLIntOffsetsExtractor;
+		};
 		65788AAA18B40A3B00C189FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2403,19 +2484,12 @@
 			remoteGlobalIDString = 932F5B3E0822A1C700736975;
 			remoteInfo = "JavaScriptCore (Upgraded)";
 		};
-		DD4ABD8129A6D61A00530828 /* PBXContainerItemProxy */ = {
+		DD41FA8A27CDE1C400394D95 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0FF922C314F46B130041A24E;
-			remoteInfo = JSCLLIntOffsetsExtractor;
-		};
-		DD4ABD8329A6D61A00530828 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 14BD6881215191310050DAFF;
-			remoteInfo = JSCLLIntSettingsExtractor;
+			remoteGlobalIDString = 65788A9D18B409EB00C189FF;
+			remoteInfo = "(Legacy) Offline Assembler";
 		};
 		FE533CAE1F217EC60016A1FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2436,6 +2510,17 @@
 				5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */,
 			);
 			name = "Copy Support Script";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDE9930C278D083D00F60D26 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				DDE99310278D087D00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
+			);
+			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		DDE99311278D088800F60D26 /* Product Dependencies */ = {
@@ -11566,6 +11651,7 @@
 			dependencies = (
 				14CFB10923035F1300F0048C /* PBXTargetDependency */,
 				65788AAB18B40A3B00C189FF /* PBXTargetDependency */,
+				0FF922D314F46B2F0041A24E /* PBXTargetDependency */,
 			);
 			name = JSCLLIntOffsetsExtractor;
 			productInstallPath = /usr/local/bin;
@@ -11624,6 +11710,7 @@
 			dependencies = (
 				14CFB10723035F0F00F0048C /* PBXTargetDependency */,
 				14BD6882215191310050DAFF /* PBXTargetDependency */,
+				14BD689B215191740050DAFF /* PBXTargetDependency */,
 			);
 			name = JSCLLIntSettingsExtractor;
 			productInstallPath = /usr/local/bin;
@@ -11691,6 +11778,7 @@
 				A53F1ABF18C90F8B0072EB6D /* Resources */,
 				F4CDF3C927E9147500191928 /* Copy Profiling Data */,
 				932F5B3F0822A1C700736975 /* Headers */,
+				3732811A17FCD235004AD519 /* Postprocess Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				932F5BD20822A1C700736975 /* Frameworks */,
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
@@ -11707,8 +11795,7 @@
 				535E08C222545AC800DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
-				DD4ABD8229A6D61A00530828 /* PBXTargetDependency */,
-				DD4ABD8429A6D61A00530828 /* PBXTargetDependency */,
+				DD41FA8B27CDE1C400394D95 /* PBXTargetDependency */,
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 				53B4BD141F68C2AA00D2BEA3 /* PBXTargetDependency */,
 			);
@@ -11761,7 +11848,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1140;
 				TargetAttributes = {
@@ -11787,8 +11873,11 @@
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
+				14BD688F215191450050DAFF /* (Legacy) LLInt Settings */,
 				14BD6881215191310050DAFF /* JSCLLIntSettingsExtractor */,
+				0F4680A914BA7FD900BFE272 /* (Legacy) LLInt Offsets */,
 				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
+				65788A9D18B409EB00C189FF /* (Legacy) Offline Assembler */,
 				53B4BD041F68AF8900D2BEA3 /* Generate Unified Sources */,
 				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 				1412111F0A48793C00480255 /* minidom */,
@@ -11819,6 +11908,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0F4680AA14BA7FD900BFE272 /* (Legacy) Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "(Legacy) Generate Derived Sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ] && exit 0\nset -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --webkit-additions-path=${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\" \"${BUILD_VARIANTS}\" ${OFFLINEASM_ARGS}\n";
+		};
+		14BD6892215191450050DAFF /* (Legacy) Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "(Legacy) Generate Derived Sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ] && exit 0\nset -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --webkit-additions-path=${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredSettings.h\" \"${ARCHS} C_LOOP\" ${OFFLINEASM_ARGS}\n";
+		};
 		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -11847,6 +11964,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names JS WTF\nfi\n";
+		};
+		3732811A17FCD235004AD519 /* Postprocess Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Postprocess Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec ${SRCROOT}/postprocess-headers.sh\n";
 		};
 		532424B0254905D900A6975B /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -12041,6 +12172,20 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		65788AA018B409EB00C189FF /* (Legacy) Offline Assemble */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "(Legacy) Offline Assemble";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ] && exit 0\n\nif [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --webkit-additions-path=${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}\"\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h \"${BUILD_VARIANTS}\" ${OFFLINEASM_ARGS} || exit 1\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -12504,10 +12649,30 @@
 			target = 0FEC85941BDB5CF10080FF74 /* testb3 */;
 			targetProxy = 0FEC85B01BDB5D8F0080FF74 /* PBXContainerItemProxy */;
 		};
+		0FF922D314F46B2F0041A24E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F4680A914BA7FD900BFE272 /* (Legacy) LLInt Offsets */;
+			targetProxy = 0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */;
+		};
 		14BD6882215191310050DAFF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
 			targetProxy = 14BD6883215191310050DAFF /* PBXContainerItemProxy */;
+		};
+		14BD6890215191450050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 14BD6891215191450050DAFF /* PBXContainerItemProxy */;
+		};
+		14BD68992151916D0050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14BD6881215191310050DAFF /* JSCLLIntSettingsExtractor */;
+			targetProxy = 14BD68982151916D0050DAFF /* PBXContainerItemProxy */;
+		};
+		14BD689B215191740050DAFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14BD688F215191450050DAFF /* (Legacy) LLInt Settings */;
+			targetProxy = 14BD689A215191740050DAFF /* PBXContainerItemProxy */;
 		};
 		14CFB10023035EF300F0048C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12604,6 +12769,16 @@
 			target = 5D6B2A47152B9E17005231DE /* Test Tools */;
 			targetProxy = 5D6B2A56152B9E2E005231DE /* PBXContainerItemProxy */;
 		};
+		65244BD318ECB5000010B708 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 65244BD218ECB5000010B708 /* PBXContainerItemProxy */;
+		};
+		65788A9E18B409EB00C189FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */;
+			targetProxy = 65788A9F18B409EB00C189FF /* PBXContainerItemProxy */;
+		};
 		65788AAB18B40A3B00C189FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
@@ -12624,15 +12799,10 @@
 			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
 			targetProxy = 932F5BE60822A1C700736975 /* PBXContainerItemProxy */;
 		};
-		DD4ABD8229A6D61A00530828 /* PBXTargetDependency */ = {
+		DD41FA8B27CDE1C400394D95 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */;
-			targetProxy = DD4ABD8129A6D61A00530828 /* PBXContainerItemProxy */;
-		};
-		DD4ABD8429A6D61A00530828 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 14BD6881215191310050DAFF /* JSCLLIntSettingsExtractor */;
-			targetProxy = DD4ABD8329A6D61A00530828 /* PBXContainerItemProxy */;
+			target = 65788A9D18B409EB00C189FF /* (Legacy) Offline Assembler */;
+			targetProxy = DD41FA8A27CDE1C400394D95 /* PBXContainerItemProxy */;
 		};
 		FE533CAF1F217EC60016A1FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12642,6 +12812,34 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0F4680AD14BA7FD900BFE272 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Debug;
+		};
+		0F4680AE14BA7FD900BFE272 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Release;
+		};
+		0F4680AF14BA7FD900BFE272 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Profiling;
+		};
+		0F4680B014BA7FD900BFE272 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Production;
+		};
 		0F61833F1C45F62A0072450B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
@@ -12914,6 +13112,34 @@
 			};
 			name = Production;
 		};
+		14BD6894215191450050DAFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		14BD6895215191450050DAFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		14BD6896215191450050DAFF /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		14BD6897215191450050DAFF /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		14CFB10123035EF300F0048C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -13099,6 +13325,42 @@
 			};
 			name = Production;
 		};
+		65788AA318B409EB00C189FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Debug;
+		};
+		65788AA418B409EB00C189FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Release;
+		};
+		65788AA518B409EB00C189FF /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Profiling;
+		};
+		65788AA618B409EB00C189FF /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = "Derived Sources copy-Info.plist";
+				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Production;
+		};
 		65FB3F7809D11EBD00F49DEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
@@ -13241,6 +13503,17 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0F4680AC14BA7FD900BFE272 /* Build configuration list for PBXAggregateTarget "(Legacy) LLInt Offsets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F4680AD14BA7FD900BFE272 /* Debug */,
+				0F4680AE14BA7FD900BFE272 /* Release */,
+				0F4680AF14BA7FD900BFE272 /* Profiling */,
+				0F4680B014BA7FD900BFE272 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		0F61833E1C45F62A0072450B /* Build configuration list for PBXNativeTarget "testair" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -13362,6 +13635,17 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
+		14BD6893215191450050DAFF /* Build configuration list for PBXAggregateTarget "(Legacy) LLInt Settings" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14BD6894215191450050DAFF /* Debug */,
+				14BD6895215191450050DAFF /* Release */,
+				14BD6896215191450050DAFF /* Profiling */,
+				14BD6897215191450050DAFF /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		14CFB10523035EF300F0048C /* Build configuration list for PBXAggregateTarget "Unlock Keychain" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -13424,6 +13708,17 @@
 				6511230214046A4C002B101D /* Release */,
 				6511230314046A4C002B101D /* Profiling */,
 				6511230414046A4C002B101D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		65788AA218B409EB00C189FF /* Build configuration list for PBXAggregateTarget "(Legacy) Offline Assembler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65788AA318B409EB00C189FF /* Debug */,
+				65788AA418B409EB00C189FF /* Release */,
+				65788AA518B409EB00C189FF /* Profiling */,
+				65788AA618B409EB00C189FF /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

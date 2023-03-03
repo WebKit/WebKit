@@ -3069,6 +3069,7 @@
 				5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */,
 				7C02321B251B9A8A00BA7BB6 /* Generate Preferences */,
 				9398100D0824BF01008DF038 /* Headers */,
+				DDF74CA027EE3E990011F633 /* (Legacy) Install Headers */,
 				DD7AF5CF298C51C90059E87E /* Migrate WebCore Headers and Generate Export List */,
 				939810B20824BF01008DF038 /* Resources */,
 				1C395DE20C6BE8E0000D1E52 /* Generate Export Files */,
@@ -3363,6 +3364,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -f \"${SCRIPT_OUTPUT_FILE_0}\" && \"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
+		DDF74CA027EE3E990011F633 /* (Legacy) Install Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "(Legacy) Install Headers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\n\n# The \"Migrate WebCore Headers\" build rule invokes clang (through tapi), which means that the inferior xcodebuild we invoke here needs access to the current build products. Make an inferior build directory containing symlinks to the _real_ build products, and set the DSTROOT to the superior build directory so that headers are installed to the _real_ WebKitLegacy.framework.\nset -e\nINFERIOR_SYMROOT=\"${TARGET_TEMP_DIR}/LegacyInstallHeaders-build\"\nINFERIOR_BUILT_PRODUCTS_DIR=\"${BUILT_PRODUCTS_DIR/${SYMROOT}/${INFERIOR_SYMROOT}}\"\nmkdir -p \"${INFERIOR_BUILT_PRODUCTS_DIR}\"\nfor p in \"${BUILT_PRODUCTS_DIR}\"/*; do\n    ln -sfhv \"${p}\" \"${INFERIOR_BUILT_PRODUCTS_DIR}/$(basename \"${p}\")\"\ndone\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration ${CONFIGURATION} installhdrs DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SYMROOT=\"${INFERIOR_SYMROOT}\" DERIVED_FILE_DIR=\"${DERIVED_FILE_DIR}\" SDKROOT=\"${SDKROOT}\" SDK_VARIANT=\"${SDK_VARIANT}\" ARCHS=\"${ARCHS}\" INSTALLHDRS_COPY_PHASE=NO INSTALLHDRS_SCRIPT_PHASE=NO INSTALL_PATH=/ -UseNewBuildSystem=YES\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
