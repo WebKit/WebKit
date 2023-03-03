@@ -913,13 +913,8 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView _setZoomEnabledInternal:layerTreeTransaction.allowsUserScaling()];
 
-    auto horizontalOverscrollBehavior = WebCore::OverscrollBehavior::Auto;
-    auto verticalOverscrollBehavior = WebCore::OverscrollBehavior::Auto;
-
-    if (auto rootNode = _page->scrollingCoordinatorProxy()->rootNode()) {
-        horizontalOverscrollBehavior = rootNode->horizontalOverscrollBehavior();
-        verticalOverscrollBehavior = rootNode->verticalOverscrollBehavior();
-    }
+    auto horizontalOverscrollBehavior = _page->scrollingCoordinatorProxy()->mainFrameHorizontalOverscrollBehavior();
+    auto verticalOverscrollBehavior = _page->scrollingCoordinatorProxy()->mainFrameVerticalOverscrollBehavior();
     
     WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateScrollViewForOverscrollBehavior(_scrollView.get(), horizontalOverscrollBehavior, verticalOverscrollBehavior, WebKit::ScrollingTreeScrollingNodeDelegateIOS::AllowOverscrollToPreventScrollPropagation::No);
 

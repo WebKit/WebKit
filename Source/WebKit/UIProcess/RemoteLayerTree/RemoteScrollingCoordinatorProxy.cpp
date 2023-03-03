@@ -58,6 +58,7 @@ RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy()
 
 ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
+    // FIXME: Locking
     if (!m_scrollingTree->rootNode())
         return 0;
 
@@ -254,13 +255,19 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
 
 bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
 {
+    // FIXME: Locking
     auto* rootNode = m_scrollingTree->rootNode();
     return rootNode && rootNode->canHaveScrollbars();
 }
 
-ScrollingTreeScrollingNode* RemoteScrollingCoordinatorProxy::rootNode() const
+OverscrollBehavior RemoteScrollingCoordinatorProxy::mainFrameHorizontalOverscrollBehavior() const
 {
-    return m_scrollingTree->rootNode();
+    return m_scrollingTree->mainFrameHorizontalOverscrollBehavior();
+}
+
+OverscrollBehavior RemoteScrollingCoordinatorProxy::mainFrameVerticalOverscrollBehavior() const
+{
+    return m_scrollingTree->mainFrameVerticalOverscrollBehavior();
 }
 
 void RemoteScrollingCoordinatorProxy::displayDidRefresh(PlatformDisplayID displayID)
@@ -270,6 +277,7 @@ void RemoteScrollingCoordinatorProxy::displayDidRefresh(PlatformDisplayID displa
 
 bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
 {
+    // FIXME: Locking
     auto* rootNode = m_scrollingTree->rootNode();
     if (!rootNode)
         return false;

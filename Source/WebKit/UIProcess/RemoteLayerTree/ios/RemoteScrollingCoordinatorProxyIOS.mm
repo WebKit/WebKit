@@ -278,6 +278,7 @@ bool RemoteScrollingCoordinatorProxyIOS::shouldSetScrollViewDecelerationRateFast
 
 void RemoteScrollingCoordinatorProxyIOS::setRootNodeIsInUserScroll(bool value)
 {
+    // FIXME: Locking
     auto* rootNode = scrollingTree()->rootNode();
     if (!rootNode)
         return;

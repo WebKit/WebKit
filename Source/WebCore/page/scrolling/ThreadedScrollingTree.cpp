@@ -225,12 +225,10 @@ bool ThreadedScrollingTree::canUpdateLayersOnScrollingThread() const
 
 void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)
 {
+    ScrollingTree::scrollingTreeNodeDidScroll(node, scrollingLayerPositionAction);
+
     if (!m_scrollingCoordinator)
         return;
-
-    auto scrollPosition = node.currentScrollPosition();
-    if (node.isRootNode())
-        setMainFrameScrollPosition(scrollPosition);
 
     if (isHandlingProgrammaticScroll())
         return;
@@ -239,6 +237,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
+    auto scrollPosition = node.currentScrollPosition();
     auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, scrollingLayerPositionAction };
 
     if (RunLoop::isMain()) {
