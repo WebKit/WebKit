@@ -45,15 +45,12 @@ FontCustomPlatformData::~FontCustomPlatformData() = default;
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontCreationContext&)
 {
     int size = fontDescription.computedPixelSize();
-    FontRenderingMode renderingMode = fontDescription.renderingMode();
 
     LOGFONT logFont;
     memset(&logFont, 0, sizeof(LOGFONT));
     wcsncpy(logFont.lfFaceName, name.wideCharacters().data(), LF_FACESIZE - 1);
 
-    logFont.lfHeight = -size;
-    if (renderingMode == FontRenderingMode::Normal)
-        logFont.lfHeight *= 32;
+    logFont.lfHeight = -size * cWindowsFontScaleFactor;
     logFont.lfWidth = 0;
     logFont.lfEscapement = 0;
     logFont.lfOrientation = 0;

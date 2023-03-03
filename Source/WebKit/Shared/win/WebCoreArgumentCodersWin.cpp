@@ -120,7 +120,7 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
     if (!gdiFont)
         return std::nullopt;
 
-    return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, false, creationData);
+    return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, creationData);
 }
 
 } // namespace IPC

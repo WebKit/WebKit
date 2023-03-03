@@ -161,8 +161,7 @@ private:
             | static_cast<unsigned>(description.fontSynthesisWeight()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
-            | static_cast<unsigned>(description.orientation()) << 2
-            | static_cast<unsigned>(description.renderingMode());
+            | static_cast<unsigned>(description.orientation()) << 2;
         unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 26
             | static_cast<unsigned>(description.variantEastAsianWidth()) << 24
             | static_cast<unsigned>(description.variantEastAsianVariant()) << 21

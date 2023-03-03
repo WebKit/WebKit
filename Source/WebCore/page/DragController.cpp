@@ -1200,7 +1200,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         client().willPerformDragSourceAction(DragSourceAction::Link, dragOrigin, dataTransfer);
         if (!dragImage) {
             TextIndicatorData textIndicator;
-            dragImage = DragImage { createDragImageForLink(element, linkURL, textContentWithSimplifiedWhiteSpace, textIndicator, src.settings().fontRenderingMode(), m_page.deviceScaleFactor()) };
+            dragImage = DragImage { createDragImageForLink(element, linkURL, textContentWithSimplifiedWhiteSpace, textIndicator, m_page.deviceScaleFactor()) };
             if (dragImage) {
                 m_dragOffset = dragOffsetForLinkDragImage(dragImage.get());
                 dragLoc = IntPoint(dragOrigin.x() + m_dragOffset.x(), dragOrigin.y() + m_dragOffset.y());

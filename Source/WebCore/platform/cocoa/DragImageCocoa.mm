@@ -290,7 +290,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     boundingRect.setHeight((static_cast<int>(boundingRect.height() / 2) * 2));
 }
 
-DragImageRef createDragImageForLink(Element& element, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float deviceScaleFactor)
+DragImageRef createDragImageForLink(Element& element, URL& url, const String& title, TextIndicatorData&, float deviceScaleFactor)
 {
     LinkImageLayout layout(url, title);
 

@@ -47,9 +47,6 @@ void Font::platformInit()
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
 
-    if (m_platformData.useGDI())
-       return initGDIFont();
-
     if (!m_platformData.size()) {
         m_fontMetrics.reset();
         m_avgCharWidth = 0;

@@ -33,7 +33,6 @@
 #include "EditingBehaviorType.h"
 #include "FontGenericFamilies.h"
 #include "FontLoadTimingOverride.h"
-#include "FontRenderingMode.h"
 #include "ForcedAccessibilityValue.h"
 #include "FourCC.h"
 #include "FrameFlattening.h"
