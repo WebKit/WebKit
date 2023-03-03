@@ -192,9 +192,19 @@ bool defaultMediaSessionCoordinatorEnabled()
 }
 #endif
 
+bool defaultRunningBoardThrottlingEnabled()
+{
+#if PLATFORM(MAC)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RunningBoardThrottling);
+    return newSDK;
+#else
+    return false;
+#endif
+}
+
 bool defaultShouldTakeSuspendedAssertions()
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent);
     return !newSDK;
 #else

@@ -94,6 +94,7 @@ bool defaultRemoveBackgroundEnabled();
 bool defaultGamepadVibrationActuatorEnabled();
 #endif
 
+bool defaultRunningBoardThrottlingEnabled();
 bool defaultShouldTakeSuspendedAssertions();
 bool defaultShowModalDialogEnabled();
 
