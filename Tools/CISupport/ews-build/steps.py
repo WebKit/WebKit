@@ -1830,7 +1830,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     descriptionDone = ['Validated commiter and reviewer']
     VALIDATORS_FOR = {
         # FIXME: Remove manual validators once bot is finished
-        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'JonWBedard', 'ryanhaddad', 'webkit-bug-bridge'],
+        'apple': ['webkit-bug-bridge'],
     }
 
     def __init__(self, *args, **kwargs):
