@@ -435,11 +435,12 @@ AnimationEvents DocumentTimeline::prepareForPendingAnimationEventsDispatch()
 
 Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const
 {
+    ASSERT(m_document);
     auto* renderer = element.renderer();
     if (renderer && renderer->isComposited()) {
         auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
         if (auto* graphicsLayer = compositedRenderer->layer()->backing()->graphicsLayer())
-            return graphicsLayer->acceleratedAnimationsForTesting();
+            return graphicsLayer->acceleratedAnimationsForTesting(m_document->settings());
     }
     return { };
 }
