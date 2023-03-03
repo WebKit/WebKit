@@ -75,8 +75,12 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
         return FailedCheck { { *error }, { /* warnings */ } };
     }
 
+    // FIXME: add more validation
+    auto maybeFailure = typeCheck(shaderModule);
+    if (maybeFailure.has_value())
+        return *maybeFailure;
+
     Vector<Warning> warnings { };
-    // FIXME: add validation
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
 }
 
@@ -98,8 +102,6 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, Pipeli
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        // FIXME: this should run as part of staticCheck
-        RUN_PASS(typeCheck, ast);
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(resolveTypeReferences, ast);
         RUN_PASS(rewriteEntryPoints, callGraph, result);
