@@ -2354,8 +2354,9 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         if (auto blockBox = dynamicDowncast<RenderBlockFlow>(this)) {
             // Floats inside a block level box may not use their margins in their
             // intrinsic size contributions if margin-trim is set
-            startMarginLength = blockBox->shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineStart, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginStartUsing(&styleToUse) : Length { 0, LengthType::Fixed };
-            endMarginLength = blockBox->shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginEndUsing(&styleToUse) : Length { 0, LengthType::Fixed };
+            auto* renderElement = dynamicDowncast<RenderElement>(child);
+            startMarginLength = (renderElement && blockBox->shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineStart, *renderElement)) ? childStyle.marginStartUsing(&styleToUse) : Length { 0, LengthType::Fixed };
+            endMarginLength = (renderElement && blockBox->shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *renderElement)) ? childStyle.marginEndUsing(&styleToUse) : Length { 0, LengthType::Fixed };
         }   else {
             startMarginLength = childStyle.marginStartUsing(&styleToUse);
             endMarginLength = childStyle.marginEndUsing(&styleToUse);
