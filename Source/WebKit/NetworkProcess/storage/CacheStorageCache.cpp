@@ -38,9 +38,13 @@ namespace WebKit {
 
 static String computeKeyURL(const URL& url)
 {
+    RELEASE_ASSERT(url.isValid());
+    RELEASE_ASSERT(!url.isEmpty());
     URL keyURL { url };
     keyURL.removeQueryAndFragmentIdentifier();
-    return keyURL.string();
+    auto keyURLString = keyURL.string();
+    RELEASE_ASSERT(!keyURLString.isEmpty());
+    return keyURLString;
 }
 
 static uint64_t nextRecordIdentifier()
@@ -61,8 +65,12 @@ CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String&
     , m_identifier(WebCore::DOMCacheIdentifier::generateThreadSafe())
     , m_name(name)
     , m_uniqueName(uniqueName)
+#if ASSERT_ENABLED
+    , m_queue(queue.copyRef())
+#endif
     , m_store(createStore(uniqueName, path, WTFMove(queue)))
 {
+    assertIsOnCorrectQueue();
 }
 
 CacheStorageManager* CacheStorageCache::manager()
@@ -72,6 +80,8 @@ CacheStorageManager* CacheStorageCache::manager()
 
 void CacheStorageCache::getSize(CompletionHandler<void(uint64_t)>&& callback)
 {
+    assertIsOnCorrectQueue();
+
     if (m_isInitialized) {
         uint64_t size = 0;
         for (auto& urlRecords : m_records.values()) {
@@ -92,18 +102,23 @@ void CacheStorageCache::getSize(CompletionHandler<void(uint64_t)>&& callback)
 
 void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
+    assertIsOnCorrectQueue();
+
     if (m_isInitialized)
         return callback(WebCore::DOMCacheEngine::CacheIdentifierOperationResult { m_identifier, false });
 
     m_store->readAllRecordInfos([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& recordInfos) mutable {
         if (!weakThis)
             return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+        
+        assertIsOnCorrectQueue();
 
         std::sort(recordInfos.begin(), recordInfos.end(), [](auto& a, auto& b) {
             return a.insertionTime < b.insertionTime;
         });
 
         for (auto&& recordInfo : recordInfos) {
+            RELEASE_ASSERT(!recordInfo.url.string().impl()->isAtom());
             recordInfo.identifier = nextRecordIdentifier();
             m_records.ensure(computeKeyURL(recordInfo.url), [] {
                 return Vector<CacheStorageRecordInformation> { };
@@ -127,6 +142,7 @@ static CacheStorageRecord toCacheStorageRecord(WebCore::DOMCacheEngine::Record&&
 void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
     ASSERT(m_isInitialized);
+    assertIsOnCorrectQueue();
 
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     auto url = options.request.url();
@@ -147,6 +163,7 @@ void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& option
 
         WebCore::CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary };
         for (auto& record : iterator->value) {
+            RELEASE_ASSERT(!record.url.string().impl()->isAtom());
             if (WebCore::DOMCacheEngine::queryCacheMatch(options.request, record.url, record.hasVaryStar, record.varyHeaders, queryOptions))
                 targetRecordInfos.append(record);
         }
@@ -188,6 +205,7 @@ void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& option
 void CacheStorageCache::removeRecords(WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     ASSERT(m_isInitialized);
+    assertIsOnCorrectQueue();
     
     if (!options.ignoreMethod && request.httpMethod() != "GET"_s)
         return callback({ });
@@ -229,6 +247,7 @@ CacheStorageRecordInformation* CacheStorageCache::findExistingRecord(const WebCo
 
     WebCore::CacheQueryOptions options;
     auto index = iterator->value.findIf([&] (auto& record) {
+        RELEASE_ASSERT(!record.url.string().impl()->isAtom());
         bool hasMatchedIdentifier = !identifier || identifier == record.identifier;
         return hasMatchedIdentifier && WebCore::DOMCacheEngine::queryCacheMatch(request, record.url, record.hasVaryStar, record.varyHeaders, options);
     });
@@ -241,6 +260,7 @@ CacheStorageRecordInformation* CacheStorageCache::findExistingRecord(const WebCo
 void CacheStorageCache::putRecords(Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     ASSERT(m_isInitialized);
+    assertIsOnCorrectQueue();
 
     if (!m_manager)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
@@ -271,9 +291,11 @@ void CacheStorageCache::putRecords(Vector<WebCore::DOMCacheEngine::Record>&& rec
 void CacheStorageCache::putRecordsAfterQuotaCheck(Vector<CacheStorageRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     ASSERT(m_isInitialized);
+    assertIsOnCorrectQueue();
 
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     for (auto& record : records) {
+        RELEASE_ASSERT(!record.info.url.string().impl()->isAtom());
         if (auto* existingRecord = findExistingRecord(record.request)) {
             record.info.identifier = existingRecord->identifier;
             targetRecordInfos.append(*existingRecord);
@@ -321,7 +343,8 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
 
             record.info.key = existingRecordInfo->key;
             record.info.insertionTime = existingRecordInfo->insertionTime;
-            record.info.url = existingRecordInfo->url;
+            // FIXME: Remove isolatedCopy() when rdar://105122133 is resolved.
+            record.info.url = existingRecordInfo->url.isolatedCopy();
             record.requestHeadersGuard = existingRecord->requestHeadersGuard;
             record.request = WTFMove(existingRecord->request);
             record.options = WTFMove(existingRecord->options);
@@ -356,6 +379,8 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
 
 void CacheStorageCache::removeAllRecords()
 {
+    assertIsOnCorrectQueue();
+
     uint64_t sizeDecreased = 0;
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     for (auto& urlRecords : m_records.values()) {
@@ -374,6 +399,8 @@ void CacheStorageCache::removeAllRecords()
 
 void CacheStorageCache::close()
 {
+    assertIsOnCorrectQueue();
+
     m_records.clear();
     m_isInitialized = false;
 }
