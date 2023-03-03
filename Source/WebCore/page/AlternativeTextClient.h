@@ -42,6 +42,7 @@ enum class AlternativeTextType : uint8_t {
     Correction = 0,
     Reversion,
     SpellingSuggestions,
+    GrammarSuggestions,
     DictationAlternatives
 };
 
@@ -76,6 +77,7 @@ template<> struct EnumTraits<WebCore::AlternativeTextType> {
         WebCore::AlternativeTextType::Correction,
         WebCore::AlternativeTextType::Reversion,
         WebCore::AlternativeTextType::SpellingSuggestions,
+        WebCore::AlternativeTextType::GrammarSuggestions,
         WebCore::AlternativeTextType::DictationAlternatives
     >;
 };

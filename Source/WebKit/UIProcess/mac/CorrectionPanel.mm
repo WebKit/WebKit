@@ -40,6 +40,7 @@ static inline NSCorrectionIndicatorType correctionIndicatorType(WebCore::Alterna
     case WebCore::AlternativeTextType::Reversion:
         return NSCorrectionIndicatorTypeReversion;
     case WebCore::AlternativeTextType::SpellingSuggestions:
+    case WebCore::AlternativeTextType::GrammarSuggestions:
         return NSCorrectionIndicatorTypeGuesses;
     case WebCore::AlternativeTextType::DictationAlternatives:
         ASSERT_NOT_REACHED();
