@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "KeyframeEffect.h"
 #include "KeyframeList.h"
+#include "LayoutSize.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <wtf/IsoMallocInlines.h>
@@ -85,14 +86,9 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatablePr
     }
 }
 
-Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter)
+Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect, const IntRect& borderBoxRect)
 {
-    return adoptRef(*new AcceleratedEffect(*this, propertyFilter));
-}
-
-Ref<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect)
-{
-    return adoptRef(*new AcceleratedEffect(effect));
+    return adoptRef(*new AcceleratedEffect(effect, borderBoxRect));
 }
 
 Ref<AcceleratedEffect> AcceleratedEffect::create(Vector<AcceleratedEffectKeyframe>&& keyframes, WebAnimationType type, FillMode fill, PlaybackDirection direction, CompositeOperation composite, RefPtr<TimingFunction>&& timingFunction, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double iterationStart, double iterations, double playbackRate, Seconds delay, Seconds endDelay, Seconds iterationDuration, Seconds activeDuration, Seconds endTime, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
@@ -100,7 +96,12 @@ Ref<AcceleratedEffect> AcceleratedEffect::create(Vector<AcceleratedEffectKeyfram
     return adoptRef(*new AcceleratedEffect(WTFMove(keyframes), type, fill, direction, composite, WTFMove(timingFunction), WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, iterationStart, iterations, playbackRate, delay, endDelay, iterationDuration, activeDuration, endTime, startTime, holdTime));
 }
 
-AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect)
+Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter)
+{
+    return adoptRef(*new AcceleratedEffect(*this, propertyFilter));
+}
+
+AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect& borderBoxRect)
 {
     m_fill = effect.fill();
     m_direction = effect.direction();
@@ -155,7 +156,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect)
 
         acceleratedKeyframe.values = [&]() -> AcceleratedEffectValues {
             if (auto* style = srcKeyframe.style())
-                return { *style };
+                return { *style, borderBoxRect };
             return { };
         }();
 

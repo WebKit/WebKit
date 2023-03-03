@@ -3994,6 +3994,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
     ASSERT(target);
 
     bool hasInterpolatingEffect = false;
+    auto borderBoxRect = snappedIntRect(m_owningLayer.rendererBorderBoxRect());
 
     AcceleratedEffects acceleratedEffects;
     if (auto* effectStack = target->keyframeEffectStack()) {
@@ -4002,7 +4003,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
                 continue;
             if (!hasInterpolatingEffect && effect->isRunningAccelerated())
                 hasInterpolatingEffect = true;
-            acceleratedEffects.append(AcceleratedEffect::create(*effect));
+            acceleratedEffects.append(AcceleratedEffect::create(*effect, borderBoxRect));
         }
     }
 
@@ -4014,7 +4015,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
 
     auto baseValues = [&]() -> AcceleratedEffectValues {
         if (auto* style = target->lastStyleChangeEventStyle())
-            return { *style };
+            return { *style, borderBoxRect };
         return { };
     }();
 

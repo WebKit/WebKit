@@ -41,6 +41,9 @@
 
 namespace WebCore {
 
+class IntRect;
+class Path;
+
 struct AcceleratedEffectValues {
     float opacity { 1 };
     LengthPoint transformOrigin { };
@@ -57,7 +60,7 @@ struct AcceleratedEffectValues {
 #if ENABLE(FILTERS_LEVEL_2)
     FilterOperations backdropFilter { };
 #endif
-    
+
     AcceleratedEffectValues()
     {
     }
@@ -78,10 +81,8 @@ struct AcceleratedEffectValues {
     }
 
     WEBCORE_EXPORT AcceleratedEffectValues(const AcceleratedEffectValues&);
-    AcceleratedEffectValues(const RenderStyle&);
+    AcceleratedEffectValues(const RenderStyle&, const IntRect&);
     AcceleratedEffectValues& operator=(const AcceleratedEffectValues&) = default;
-    
-    void copyTransformOperations(const TransformOperations&);
 };
 
 } // namespace WebCore

@@ -28,22 +28,22 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-namespace WebCore {
+#include "IntSize.h"
+#include "LengthFunctions.h"
+#include "Path.h"
 
-void AcceleratedEffectValues::copyTransformOperations(const TransformOperations& src)
-{
-    auto& transformOperations = transform.operations();
-    auto& srcTransformOperations = src.operations();
-    transformOperations.reserveCapacity(srcTransformOperations.size());
-    for (auto& srcTransformOperation : srcTransformOperations)
-        transformOperations.uncheckedAppend(srcTransformOperation.copyRef());
-}
+namespace WebCore {
 
 AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& src)
 {
     opacity = src.opacity;
 
-    copyTransformOperations(src.transform);
+    auto& transformOperations = transform.operations();
+    auto& srcTransformOperations = src.transform.operations();
+    transformOperations.reserveCapacity(srcTransformOperations.size());
+    for (auto& srcTransformOperation : srcTransformOperations)
+        transformOperations.uncheckedAppend(srcTransformOperation.copyRef());
+
     translate = src.translate.copyRef();
     scale = src.scale.copyRef();
     rotate = src.rotate.copyRef();
@@ -64,21 +64,49 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
 #endif
 }
 
-AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style)
+static LengthPoint nonCalculatedLengthPoint(LengthPoint lengthPoint, const IntSize& borderBoxSize)
+{
+    if (!lengthPoint.x().isCalculated() && !lengthPoint.y().isCalculated())
+        return lengthPoint;
+    return {
+        { floatValueForLength(lengthPoint.x(), borderBoxSize.width()), LengthType::Fixed },
+        { floatValueForLength(lengthPoint.y(), borderBoxSize.height()), LengthType::Fixed }
+    };
+}
+
+AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect)
 {
     opacity = style.opacity();
 
-    copyTransformOperations(style.transform());
-    translate = style.translate();
-    scale = style.scale();
-    rotate = style.rotate();
-    transformOrigin = style.transformOriginXY();
+    auto borderBoxSize = borderBoxRect.size();
+
+    auto& transformOperations = transform.operations();
+    auto& srcTransformOperations = style.transform().operations();
+    transformOperations.reserveCapacity(srcTransformOperations.size());
+    for (auto& srcTransformOperation : srcTransformOperations)
+        transformOperations.uncheckedAppend(srcTransformOperation->selfOrCopyWithResolvedCalculatedValues(borderBoxSize));
+
+    if (auto* srcTranslate = style.translate())
+        translate = srcTranslate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
+    if (auto* srcScale = style.scale())
+        scale = srcScale->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
+    if (auto* srcRotate = style.rotate())
+        rotate = srcRotate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
+    transformOrigin = nonCalculatedLengthPoint(style.transformOriginXY(), borderBoxSize);
 
     offsetPath = style.offsetPath();
-    offsetPosition = style.offsetPosition();
-    offsetAnchor = style.offsetAnchor();
+    offsetPosition = nonCalculatedLengthPoint(style.offsetPosition(), borderBoxSize);
+    offsetAnchor = nonCalculatedLengthPoint(style.offsetAnchor(), borderBoxSize);
     offsetRotate = style.offsetRotate();
     offsetDistance = style.offsetDistance();
+    if (offsetDistance.isCalculated() && offsetPath) {
+        auto anchor = borderBoxRect.location() + floatPointForLengthPoint(transformOrigin, borderBoxSize);
+        if (!offsetAnchor.x().isAuto())
+            anchor = floatPointForLengthPoint(offsetAnchor, borderBoxRect.size()) + borderBoxRect.location();
+
+        auto path = offsetPath->getPath(borderBoxRect, anchor, offsetRotate);
+        offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
+    }
 
     for (auto srcFilterOperation : style.filter().operations())
         filter.operations().append(srcFilterOperation.copyRef());

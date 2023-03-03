@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class IntRect;
 class KeyframeEffect;
 
 enum class AcceleratedEffectProperty : uint16_t {
@@ -71,7 +72,7 @@ struct AcceleratedEffectKeyframe {
 class AcceleratedEffect : public RefCounted<AcceleratedEffect> {
     WTF_MAKE_ISO_ALLOCATED(AcceleratedEffect);
 public:
-    static Ref<AcceleratedEffect> create(const KeyframeEffect&);
+    static Ref<AcceleratedEffect> create(const KeyframeEffect&, const IntRect&);
     WEBCORE_EXPORT static Ref<AcceleratedEffect> create(Vector<AcceleratedEffectKeyframe>&&, WebAnimationType, FillMode, PlaybackDirection, CompositeOperation, RefPtr<TimingFunction>&& timingFunction, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double iterationStart, double iterations, double playbackRate, Seconds delay, Seconds endDelay, Seconds iterationDuration, Seconds activeDuration, Seconds endTime, std::optional<Seconds> startTime, std::optional<Seconds> holdTime);
 
     virtual ~AcceleratedEffect() = default;
@@ -100,7 +101,7 @@ public:
     std::optional<Seconds> holdTime() const { return m_holdTime; }
 
 private:
-    AcceleratedEffect(const KeyframeEffect&);
+    AcceleratedEffect(const KeyframeEffect&, const IntRect&);
     explicit AcceleratedEffect(Vector<AcceleratedEffectKeyframe>&&, WebAnimationType, FillMode, PlaybackDirection, CompositeOperation, RefPtr<TimingFunction>&& timingFunction, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double iterationStart, double iterations, double playbackRate, WTF::Seconds delay, WTF::Seconds endDelay, WTF::Seconds iterationDuration, WTF::Seconds activeDuration, WTF::Seconds endTime, std::optional<WTF::Seconds> startTime, std::optional<WTF::Seconds> holdTime);
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
 
