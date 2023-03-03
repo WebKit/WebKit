@@ -1,10 +1,11 @@
-Pop upDialog with popover=manualInvalid popover value - defaults to popover=manualInvalid popover value - defaults to popover=manualInvalid popover value - defaults to popover=manual
+Pop upPop upDialog with popover=manualInvalid popover value - defaults to popover=manualInvalid popover value - defaults to popover=manualInvalid popover value - defaults to popover=manual
 Not a popover
 Dialog without popover attribute
 
 FAIL The element <div popover="" id="boolean">Pop up</div> should behave as a popover. Element has unexpected visibility state
 FAIL The element <div popover="">Pop up</div> should behave as a popover. Element has unexpected visibility state
 FAIL The element <div popover="auto">Pop up</div> should behave as a popover. Element has unexpected visibility state
+FAIL The element <div popover="hint">Pop up</div> should behave as a popover. Element has unexpected visibility state
 FAIL The element <div popover="manual">Pop up</div> should behave as a popover. Element has unexpected visibility state
 FAIL The element <article popover="">Different element type</article> should behave as a popover. Element has unexpected visibility state
 FAIL The element <header popover="">Different element type</header> should behave as a popover. Element has unexpected visibility state
@@ -204,7 +205,7 @@ FAIL A <video> element should *not* behave as a popover. assert_throws_dom: Call
 PASS IDL attribute reflection
 FAIL Popover attribute value should be case insensitive Element has unexpected visibility state
 FAIL Changing attribute values for popover should work Element has unexpected visibility state
-PASS Changing attribute values should close open popovers
+FAIL Changing attribute values should close open popovers assert_false: expected false got true
 PASS Removing a visible popover=auto element from the document should close the popover
 PASS A showing popover=auto does not match :modal
 PASS Removing a visible popover=manual element from the document should close the popover

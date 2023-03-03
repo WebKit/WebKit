@@ -2,9 +2,9 @@ Direct DOM children
 
 Grandchildren
 
-popovertoggletarget attribute relationship
+popovertarget attribute relationship
 
-nested popovertoggletarget attribute relationship
+nested popovertarget attribute relationship
 
 anchor attribute relationship
 
@@ -14,8 +14,8 @@ Popover 1  Dialog
 
 PASS Direct DOM children
 PASS Grandchildren
-FAIL popovertoggletarget attribute relationship assert_true: expected true got false
-FAIL nested popovertoggletarget attribute relationship assert_true: expected true got false
+FAIL popovertarget attribute relationship assert_true: expected true got false
+FAIL nested popovertarget attribute relationship assert_true: expected true got false
 FAIL anchor attribute relationship assert_true: expected true got false
 FAIL indirect anchor attribute relationship assert_true: expected true got false
 FAIL more complex nesting, all using anchor ancestry assert_equals: Popover #1 incorrect state expected true but got false
