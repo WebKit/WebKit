@@ -325,8 +325,13 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
         return true;
 
     auto displayType = renderer->style().display();
-    if (element.hasTagName(HTMLNames::liTag) || element.hasTagName(HTMLNames::aTag)) {
+    bool isListItem = element.hasTagName(HTMLNames::liTag);
+    if (isListItem || element.hasTagName(HTMLNames::aTag)) {
         if (displayType == DisplayType::Block || displayType == DisplayType::InlineBlock)
+            return true;
+
+        auto floating = renderer->style().floating();
+        if (isListItem && (floating == Float::Left || floating == Float::Right))
             return true;
 
         for (RefPtr parent = element.parentElement(); parent; parent = parent->parentElement()) {
