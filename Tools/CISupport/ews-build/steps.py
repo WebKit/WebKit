@@ -4043,8 +4043,9 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
         with_change_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
@@ -4090,8 +4091,9 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='repeat-failures-without-change'), ExtractTestResults(identifier='repeat-failures-without-change'), AnalyzeLayoutTestsResultsRedTree()])
         return rc
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
         without_change_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
