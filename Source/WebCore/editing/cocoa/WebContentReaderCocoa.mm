@@ -147,7 +147,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
     NSString *fragmentString = [string _htmlDocumentFragmentString:NSMakeRange(0, [string length]) documentAttributes:attributesForAttributedStringConversion() subresources:&subresources];
     auto fragment = DocumentFragment::create(document);
     auto dummyBodyToForceInBodyInsertionMode = HTMLBodyElement::create(document);
-    fragment->parseHTML(fragmentString, dummyBodyToForceInBodyInsertionMode.ptr(), { });
+    fragment->parseHTML(fragmentString, dummyBodyToForceInBodyInsertionMode, { });
 
     result.fragment = WTFMove(fragment);
     for (WebArchiveResourceFromNSAttributedString *resource in subresources)

@@ -1175,7 +1175,7 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     auto fakeBody = HTMLBodyElement::create(document);
     auto fragment = DocumentFragment::create(document);
 
-    fragment->parseHTML(markup, fakeBody.ptr(), parserContentPolicy);
+    fragment->parseHTML(markup, fakeBody, parserContentPolicy);
     restoreAttachmentElementsInFragment(fragment);
     if (!baseURL.isEmpty() && baseURL != aboutBlankURL() && baseURL != document.baseURL())
         completeURLs(fragment.ptr(), baseURL);
@@ -1354,7 +1354,7 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
     if (document->isHTMLDocument()) {
-        fragment->parseHTML(markup, &contextElement, parserContentPolicy);
+        fragment->parseHTML(markup, contextElement, parserContentPolicy);
         return fragment;
     }
 
@@ -1379,7 +1379,7 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr(), { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
+        fragment->parseHTML(WTFMove(sourceString), fakeBody, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
     } else if (sourceMIMEType == textPlainContentTypeAtom())
         fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
     else {
