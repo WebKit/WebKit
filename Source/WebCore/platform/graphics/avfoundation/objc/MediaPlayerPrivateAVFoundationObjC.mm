@@ -155,6 +155,10 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
 @property (nonatomic, readonly) NSURL *resolvedURL;
 @end
 
+@interface AVPlayer (Staging_100128644)
+@property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@end
+
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -1102,6 +1106,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     setShouldDisableSleep(player()->shouldDisableSleep());
+
+    if ([m_avPlayer respondsToSelector:@selector(setPreventsAutomaticBackgroundingDuringVideoPlayback:)])
+        m_avPlayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
 #endif
 
     if (m_muted) {
