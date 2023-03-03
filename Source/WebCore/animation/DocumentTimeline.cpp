@@ -48,6 +48,10 @@
 #include "RenderLayerBacking.h"
 #include "WebAnimationTypes.h"
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedTimeline.h"
+#endif
+
 namespace WebCore {
 
 Ref<DocumentTimeline> DocumentTimeline::create(Document& document)
@@ -407,6 +411,15 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (m_document && m_document->settings().threadedAnimationResolutionEnabled()) {
+        m_acceleratedAnimationsPendingRunningStateChange.clear();
+        if (auto* acceleratedTimeline = m_document->existingAcceleratedTimeline())
+            acceleratedTimeline->updateEffectStacks();
+        return;
+    }
+#endif
+
     auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 

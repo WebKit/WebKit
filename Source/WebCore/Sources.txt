@@ -491,6 +491,7 @@ accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
 accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
+animation/AcceleratedTimeline.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
