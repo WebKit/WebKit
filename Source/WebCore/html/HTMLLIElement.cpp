@@ -77,8 +77,19 @@ void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& 
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
         else if (value == "1"_s)
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
-        else
-            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, value);
+        else {
+            auto valueLowerCase = value.convertToASCIILowercase();
+            if (valueLowerCase == "disc"_s)
+                addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueDisc);
+            else if (valueLowerCase == "circle"_s)
+                addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueCircle);
+            else if (valueLowerCase == "round"_s)
+                addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueRound);
+            else if (valueLowerCase == "square"_s)
+                addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueSquare);
+            else if (valueLowerCase == "none"_s)
+                addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueNone);
+        }
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }

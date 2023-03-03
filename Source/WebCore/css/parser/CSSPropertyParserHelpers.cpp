@@ -8281,6 +8281,8 @@ RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, 
             if (!integer)
                 return nullptr;
         }
+        if (!symbol)
+            return nullptr;
 
         // Additive tuples must be specified in order of strictly descending weight.
         auto weight = integer->intValue();

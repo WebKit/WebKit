@@ -3999,7 +3999,7 @@
             ],
             "codegen-properties": {
                 "custom": "All",
-                "parser-grammar": "<<values>> | <string>"
+                "parser-grammar": "<<values>> | <string> | <custom-ident>"
             },
             "specification": {
                 "category": "css-lists",

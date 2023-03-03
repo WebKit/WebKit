@@ -774,17 +774,8 @@ imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-roman.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-display-contents.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-reversed-display-contents.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-decimal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-roman.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-roman.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s.html [ ImageOnlyFailure ]
@@ -6286,11 +6277,35 @@ webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [
 ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
 ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
 
-#Skipping counter-style-at-rules tests until we rendering of counter-styles get implemented.
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/ [ Skip ]
-
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Skip ]
 
 # Most ports don't have a HEIC decoder.
 http/tests/misc/heic-accept-header.html [ Pass Failure ]
+# Missing complex predefined counter-style at-rule rdar://103021467
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/dependent-builtin.html [ ImageOnlyFailure ]
+
+# Missing counter-style integration with counter() rdar://106084053
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-prefix.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-suffix.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/name-case-sensitivity.html [ ImageOnlyFailure ]
+
+# Missing support to counter-style at-rule in shadow scope rdar://103873418
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom.html [ ImageOnlyFailure ]
+
+# Missing allowing redefinition of predefined counter-styles rdar://106085436
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-attr-mapping.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-builtin.html [ ImageOnlyFailure ]
+
+# Missing counter-style integration with symbols() rdar://106084071
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function.html [ ImageOnlyFailure ]
+
+# WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772)
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-additive.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-alphabetic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-symbolic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle.html [ ImageOnlyFailure ]

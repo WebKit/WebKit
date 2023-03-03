@@ -3222,6 +3222,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyListStyleType:
         if (style.listStyleType() == ListStyleType::String)
             return CSSPrimitiveValue::create(style.listStyleStringValue());
+        if (style.listStyleType() == ListStyleType::CustomCounterStyle)
+            return CSSPrimitiveValue::createCustomIdent(style.listStyleStringValue());
         return createConvertingToCSSValueID(style.listStyleType());
     case CSSPropertyWebkitLocale:
         if (style.specifiedLocale().isNull())
