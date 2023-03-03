@@ -1,0 +1,27 @@
+<style>
+* { 
+    -webkit-user-modify: read-write;
+}
+</style>
+<script>
+    function main() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        console.log('The test PASS if it does not crash.')
+        document.designMode = "on";
+        document.execCommand("selectAll", false, null);
+        document.execCommand("italic", false, null);
+        document.execCommand("italic", false, null);
+    }
+</script>
+
+<body onload="main()">
+<ruby>
+<h1></h1>
+<rt>
+<p></p>
+<input>
+</rt>
+Hello! This rendering should not crash.
+<rp></rp>
+</ruby>
