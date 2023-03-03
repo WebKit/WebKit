@@ -2330,6 +2330,11 @@ void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
 }
 
+void NetworkProcess::updateSchemeDefaultPort(uint16_t port, String scheme) const
+{
+    registerDefaultPortForProtocolForTesting(port, scheme);
+}
+
 void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));

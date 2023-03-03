@@ -50,6 +50,8 @@ public:
     bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession", false); }
     std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes", { }); }
     std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions", { }); }
+    uint32_t defaultHTTPPort() const { return uint32TestRunnerFeatureValue("defaultHTTPPort", 80); };
+    uint32_t defaultHTTPSPort() const { return uint32TestRunnerFeatureValue("defaultHTTPSPort", 443); };
 
     const auto& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
     const auto& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }
@@ -66,6 +68,7 @@ public:
 private:
     bool boolTestRunnerFeatureValue(std::string key, bool defaultValue) const;
     std::string stringTestRunnerFeatureValue(std::string key, std::string defaultValue) const;
+    uint32_t uint32TestRunnerFeatureValue(std::string key, uint32_t defaultValue) const;
 
     TestFeatures m_features;
 };

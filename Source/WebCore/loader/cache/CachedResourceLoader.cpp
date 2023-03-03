@@ -240,8 +240,10 @@ ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::request
 {
     if (auto* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
-            if (auto* document = frame->document())
-                request.upgradeInsecureRequestIfNeeded(*document);
+            if (auto* document = frame->document()) {
+                bool shouldUpgradeIfNeeded = MixedContentChecker::shouldUpgradeInsecureContent(*frame, MixedContentChecker::Upgradable::Yes, request.resourceRequest().url(), request.options().mode, request.options().destination, request.options().initiator);
+                request.upgradeInsecureRequestIfNeeded(*document, shouldUpgradeIfNeeded ? ContentSecurityPolicy::ForceUpgradeRequest::Yes : ContentSecurityPolicy::ForceUpgradeRequest::No);
+            }
             URL requestURL = request.resourceRequest().url();
             if (requestURL.isValid() && canRequest(CachedResource::Type::ImageResource, requestURL, request.options(), ForPreload::No))
                 PingLoader::loadImage(*frame, requestURL);
@@ -434,7 +436,56 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
     }
 }
 
-bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
+static MixedContentChecker::Upgradable isUpgradableTypeFromResourceType(CachedResource::Type type)
+{
+    switch (type) {
+    // https://www.w3.org/TR/mixed-content/#category-upgradeable
+    // Editor’s Draft, 23 February 2023
+    // 3.1. Upgradeable Content
+    case CachedResource::Type::ImageResource:
+    case CachedResource::Type::MediaResource:
+#if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::ModelResource:
+#endif
+        return MixedContentChecker::Upgradable::Yes;
+
+    case CachedResource::Type::CSSStyleSheet:
+    case CachedResource::Type::Script:
+    case CachedResource::Type::FontResource:
+        return MixedContentChecker::Upgradable::No;
+
+    case CachedResource::Type::SVGFontResource:
+        return MixedContentChecker::Upgradable::No;
+
+    case CachedResource::Type::Beacon:
+    case CachedResource::Type::Ping:
+    case CachedResource::Type::RawResource:
+    case CachedResource::Type::Icon:
+    case CachedResource::Type::SVGDocumentResource:
+        return MixedContentChecker::Upgradable::No;
+#if ENABLE(XSLT)
+    case CachedResource::Type::XSLStyleSheet:
+        return MixedContentChecker::Upgradable::No;
+#endif
+
+    case CachedResource::Type::LinkPrefetch:
+        return MixedContentChecker::Upgradable::No;
+
+#if ENABLE(VIDEO)
+    case CachedResource::Type::TextTrackResource:
+        return MixedContentChecker::Upgradable::No;
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::Type::ApplicationManifest:
+        return MixedContentChecker::Upgradable::No;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return MixedContentChecker::Upgradable::No;
+    }
+}
+
+bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options) const
 {
     if (!canRequestInContentDispositionAttachmentSandbox(type, url))
         return false;
@@ -451,8 +502,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         if (auto* frame = this->frame()) {
             if (m_document && !MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->securityOrigin(), url))
                 return false;
+            break;
         }
-        break;
+        FALLTHROUGH;
 #if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
 #endif
@@ -465,16 +517,19 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::ImageResource:
     case CachedResource::Type::SVGFontResource:
     case CachedResource::Type::FontResource: {
-        // These resources can corrupt only the frame's pixels.
         if (auto* frame = this->frame()) {
-            if (m_document && !MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*frame, contentTypeFromResourceType(type), url))
+            if (!MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*frame, contentTypeFromResourceType(type), url)
+                || MixedContentChecker::shouldBlockInsecureContent(*frame, isUpgradableTypeFromResourceType(type), url, options.mode, options.destination, options.initiator))
                 return false;
         }
         break;
     }
-    case CachedResource::Type::MainResource:
     case CachedResource::Type::Beacon:
     case CachedResource::Type::Ping:
+        if (auto* frame = this->frame(); MixedContentChecker::shouldBlockInsecureContent(*frame, isUpgradableTypeFromResourceType(type), url, options.mode, options.destination, options.initiator))
+            return false;
+        FALLTHROUGH;
+    case CachedResource::Type::MainResource:
     case CachedResource::Type::LinkPrefetch:
         // Prefetch cannot affect the current document.
 #if ENABLE(APPLICATION_MANIFEST)
@@ -603,7 +658,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     // They'll still get a warning in the console about CSP blocking the load.
 
     // FIXME: Should we consider whether the request is for preload here?
-    if (!checkInsecureContent(type, url))
+    if (!checkInsecureContent(type, url, options))
         return false;
 
     return true;
@@ -637,7 +692,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 
     // Last of all, check for insecure content. We do this last so that when folks block insecure content with a CSP policy, they don't get a warning.
     // They'll still get a warning in the console about CSP blocking the load.
-    if (!checkInsecureContent(type, url)) {
+    if (!checkInsecureContent(type, url, options)) {
         CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: URL was not allowed because content is insecure");
         return false;
     }
@@ -715,7 +770,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
         return true;
 
     if (auto* document = m_documentLoader->cachedResourceLoader().document())
-        upgradeInsecureResourceRequestIfNeeded(request, *document);
+        upgradeInsecureResourceRequestIfNeeded(request, *document, ContentSecurityPolicy::ForceUpgradeRequest::No);
 
     // FIXME: We might want to align the checks done here with the ones done in CachedResourceLoader::requestResource, content extensions blocking in particular.
 
@@ -1014,6 +1069,12 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (!canRequest(type, url, request.options(), forPreload)) {
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Not allowed to request resource", frame);
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
+    }
+
+    if (auto* document = this->document()) {
+        bool shouldUpgradeIfNeeded = MixedContentChecker::shouldUpgradeInsecureContent(frame, isUpgradableTypeFromResourceType(type), url, request.options().mode, request.options().destination, request.options().initiator);
+        request.upgradeInsecureRequestIfNeeded(*document, shouldUpgradeIfNeeded ? ContentSecurityPolicy::ForceUpgradeRequest::Yes : ContentSecurityPolicy::ForceUpgradeRequest::No);
+        url = request.resourceRequest().url();
     }
 
     if (!portAllowed(url)) {

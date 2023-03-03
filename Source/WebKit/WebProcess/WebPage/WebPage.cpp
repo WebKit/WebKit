@@ -8304,6 +8304,11 @@ void WebPage::updateCORSDisablingPatterns(Vector<String>&& patterns)
     m_page->setCORSDisablingPatterns(parseAndAllowAccessToCORSDisablingPatterns(m_corsDisablingPatterns));
 }
 
+void WebPage::updateSchemeDefaultPort(uint16_t port, String scheme) const
+{
+    registerDefaultPortForProtocolForTesting(port, scheme);
+}
+
 void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
 {
     // FIXME: We should probably have this mechanism done between UIProcess and NetworkProcess directly.

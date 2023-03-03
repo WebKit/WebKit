@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Origin https://127.0.0.1:8443 is not allowed by Access-Control-Allow-Origin. Status code: 200
+This test loads a secure iframe that attempt to import() a module script via HTTP. Since the iframe's content is of a secure origin, importing a module script via HTTP should result in a mixed content error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.data should be TypeError: Importing a module script failed.. Was TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -3237,6 +3237,18 @@ void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef pageRef, double del
     toImpl(pageRef)->setMediaCaptureReportingDelay(Seconds(delay));
 }
 
+void WKPageSetDefaultHTTPPortForTesting(WKPageRef pageRef, uint16_t port)
+{
+    CRASH_IF_SUSPENDED;
+    toImpl(pageRef)->updateSchemeDefaultPort(port, "http"_s);
+}
+
+void WKPageSetDefaultHTTPSPortForTesting(WKPageRef pageRef, uint16_t port)
+{
+    CRASH_IF_SUSPENDED;
+    toImpl(pageRef)->updateSchemeDefaultPort(port, "https"_s);
+}
+
 void WKPageDispatchActivityStateUpdateForTesting(WKPageRef pageRef)
 {
     CRASH_IF_SUSPENDED;

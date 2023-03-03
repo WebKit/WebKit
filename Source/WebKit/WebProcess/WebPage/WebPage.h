@@ -1506,6 +1506,8 @@ public:
 
     void updateCORSDisablingPatterns(Vector<String>&&);
 
+    void updateSchemeDefaultPort(uint16_t, String) const;
+
 #if ENABLE(IPC_TESTING_API)
     bool ipcTestingAPIEnabled() const { return m_ipcTestingAPIEnabled; }
     uint64_t webPageProxyID() const { return messageSenderDestinationID(); }

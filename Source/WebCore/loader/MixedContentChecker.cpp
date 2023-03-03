@@ -71,7 +71,6 @@ static bool foundMixedContentInFrameTree(const LocalFrame& frame, const URL& url
     return false;
 }
 
-
 static void logWarning(const LocalFrame& frame, bool allowed, ASCIILiteral action, const URL& target)
 {
     const char* errorString = allowed ? " was allowed to " : " was not allowed to ";
@@ -79,8 +78,17 @@ static void logWarning(const LocalFrame& frame, bool allowed, ASCIILiteral actio
     frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
+static void logWarningUpgradeOrBlock(const LocalFrame& frame, bool blocked, const URL& target)
+{
+    const char* errorString = !blocked ? "automatically upgraded and should" : "blocked and must";
+    auto message = makeString((!blocked ? "" : "[blocked] "), "The page at ", frame.document()->url().stringCenterEllipsizedToLength(), " requested insecure content from ", target.stringCenterEllipsizedToLength(), ". This content was ", errorString, " be served over HTTPS.\n");
+    frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
+}
+
 bool MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(LocalFrame& frame, ContentType type, const URL& url)
 {
+    if (frame.document()->settings().upgradeMixedContentEnabled())
+        return true;
     if (!foundMixedContentInFrameTree(frame, url))
         return true;
 
@@ -100,6 +108,8 @@ bool MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(LocalFrame&
 
 bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& frame, SecurityOrigin& securityOrigin, const URL& url, ShouldLogWarning shouldLogWarning)
 {
+    if (frame.document()->settings().upgradeMixedContentEnabled())
+        return true;
     if (!foundMixedContentInFrameTree(frame, url))
         return true;
 
@@ -116,6 +126,55 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
     }
 
     return allowed;
+}
+
+bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, Upgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
+{
+    if (!frame.document()->settings().upgradeMixedContentEnabled())
+        return false;
+    // 4.1.1 request’s URL is a potentially trustworthy URL.
+    // and
+    // 4.1.3 § 4.3 Does settings prohibit mixed security contexts? returns "Does Not Restrict Mixed Security Contents" when applied to request’s client.
+    // If the request is already HTTPS, then it is not mixed-content.
+    if (!foundMixedContentInFrameTree(frame, url) || isUpgradable != Upgradable::Yes)
+        return false;
+
+    auto upgradeIPAddress = frame.document()->settings().iPAddressMixedContentUpgradeTestingEnabled();
+    if (url.protocolIs("https"_s)
+        // 4.1.2 request’s URL’s host is an IP address.
+        || (!upgradeIPAddress && URL::hostIsIPAddress(url.host()))
+        // 4.1.4 request’s destination is not "image", "audio", or "video".
+        || (destination != FetchOptions::Destination::Audio && destination != FetchOptions::Destination::Image && destination != FetchOptions::Destination::Video)
+        // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
+        || (destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset)
+        // and CORS is excluded
+        || mode == FetchOptions::Mode::Cors)
+        return false;
+    return true;
+}
+
+bool MixedContentChecker::shouldBlockInsecureContent(LocalFrame& frame, Upgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
+{
+    if (!frame.document()->settings().upgradeMixedContentEnabled())
+        return false;
+    if (!foundMixedContentInFrameTree(frame, url))
+        return false;
+
+    if (!frame.document()->contentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
+        return true;
+
+    if (isUpgradable == Upgradable::Yes) {
+        if (frame.settings().allowDisplayOfInsecureContent())
+            return false;
+        bool willUpgrade = shouldUpgradeInsecureContent(frame, isUpgradable, url, mode, destination, initiator);
+        logWarningUpgradeOrBlock(frame, !willUpgrade, url);
+        if (willUpgrade)
+            frame.document()->setFoundMixedContent(SecurityContext::MixedContentType::Inactive);
+        return !willUpgrade;
+    }
+
+    logWarningUpgradeOrBlock(frame, /* blocked */ true, url);
+    return true;
 }
 
 void MixedContentChecker::checkFormForMixedContent(LocalFrame& frame, const URL& url)

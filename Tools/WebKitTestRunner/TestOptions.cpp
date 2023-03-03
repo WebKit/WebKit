@@ -197,6 +197,10 @@ const TestFeatures& TestOptions::defaults()
             { "viewHeight", 600 },
             { "viewWidth", 800 },
         };
+        features.uint32TestRunnerFeatures = {
+            { "defaultHTTPPort", 80 },
+            { "defaultHTTPSPort", 443 },
+        };
         features.stringTestRunnerFeatures = {
             { "additionalSupportedImageTypes", { } },
             { "applicationBundleIdentifier", { } },
@@ -257,6 +261,9 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "viewHeight", TestHeaderKeyType::DoubleTestRunner },
         { "viewWidth", TestHeaderKeyType::DoubleTestRunner },
 
+        { "defaultHTTPPort", TestHeaderKeyType::UInt32TestRunner },
+        { "defaultHTTPSPort", TestHeaderKeyType::UInt32TestRunner },
+
         { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
         { "applicationBundleIdentifier", TestHeaderKeyType::StringTestRunner },
         { "applicationManifest", TestHeaderKeyType::StringRelativePathTestRunner },
@@ -304,6 +311,11 @@ bool TestOptions::boolTestRunnerFeatureValue(std::string key) const
 double TestOptions::doubleTestRunnerFeatureValue(std::string key) const
 {
     return testRunnerFeatureValue(key, m_features.doubleTestRunnerFeatures);
+}
+
+uint32_t TestOptions::uint32TestRunnerFeatureValue(std::string key) const
+{
+    return testRunnerFeatureValue(key, m_features.uint32TestRunnerFeatures);
 }
 
 std::string TestOptions::stringTestRunnerFeatureValue(std::string key) const

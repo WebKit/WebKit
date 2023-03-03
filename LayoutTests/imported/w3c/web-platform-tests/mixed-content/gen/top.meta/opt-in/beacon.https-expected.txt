@@ -1,6 +1,5 @@
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/empty.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
 
 PASS Mixed-Content: Expects allowed for beacon to same-https origin and no-redirect redirection from https context.
 PASS Mixed-Content: Expects blocked for beacon to cross-http origin and no-redirect redirection from https context.
-FAIL Mixed-Content: Expects blocked for beacon to same-http origin and no-redirect redirection from https context. assert_equals: The resource request should be 'blocked'. expected "blocked" but got "allowed"
+PASS Mixed-Content: Expects blocked for beacon to same-http origin and no-redirect redirection from https context.
 

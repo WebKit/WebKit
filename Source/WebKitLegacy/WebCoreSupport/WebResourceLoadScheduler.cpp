@@ -39,6 +39,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/SetForScope.h>
 #include <wtf/URL.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -134,6 +135,15 @@ void WebResourceLoadScheduler::schedulePluginStreamLoad(LocalFrame& frame, Netsc
 void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
+
+    // Fixup the request's URL if the default port was changed for testing before we schedule the request.
+    auto url = resourceLoader->request().url();
+    if (!url.port() && WTF::URLParser::defaultPortForProtocol(url.protocol()) != defaultPortForProtocol(url.protocol())) {
+        url.setPort(defaultPortForProtocol(url.protocol()));
+        auto request = resourceLoader->request();
+        request.setURL(url);
+        resourceLoader->setRequest(WTFMove(request));
+    }
 
 #if PLATFORM(IOS_FAMILY)
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.

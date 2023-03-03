@@ -85,6 +85,8 @@ public:
     double deviceScaleFactor() const { return doubleTestRunnerFeatureValue("deviceScaleFactor"); }
     double viewHeight() const { return doubleTestRunnerFeatureValue("viewHeight"); }
     double viewWidth() const { return doubleTestRunnerFeatureValue("viewWidth"); }
+    uint32_t defaultHTTPPort() const { return uint32TestRunnerFeatureValue("defaultHTTPPort"); };
+    uint32_t defaultHTTPSPort() const { return uint32TestRunnerFeatureValue("defaultHTTPSPort"); };
     std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes"); }
     std::string applicationBundleIdentifier() const { return stringTestRunnerFeatureValue("applicationBundleIdentifier"); }
     std::string applicationManifest() const { return stringTestRunnerFeatureValue("applicationManifest"); }
@@ -112,6 +114,7 @@ private:
     bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue) const;
     bool boolTestRunnerFeatureValue(std::string key) const;
     double doubleTestRunnerFeatureValue(std::string key) const;
+    uint32_t uint32TestRunnerFeatureValue(std::string key) const;
     std::string stringTestRunnerFeatureValue(std::string key) const;
     std::vector<std::string> stringVectorTestRunnerFeatureValue(std::string key) const;
 

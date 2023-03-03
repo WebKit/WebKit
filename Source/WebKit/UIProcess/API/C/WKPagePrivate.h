@@ -209,6 +209,8 @@ WK_EXPORT void WKPageLoadedSubresourceDomains(WKPageRef page, WKPageLoadedSubres
 WK_EXPORT void WKPageClearLoadedSubresourceDomains(WKPageRef page);
 
 WK_EXPORT void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef page, double delay);
+WK_EXPORT void WKPageSetDefaultHTTPPortForTesting(WKPageRef page, uint16_t port);
+WK_EXPORT void WKPageSetDefaultHTTPSPortForTesting(WKPageRef page, uint16_t port);
 
 WK_EXPORT void WKPageDispatchActivityStateUpdateForTesting(WKPageRef page);
 

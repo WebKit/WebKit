@@ -1,0 +1,11 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+CONSOLE MESSAGE: Cannot load image https://127.0.0.1:8443/resources/redirect.py?url=http://127.0.0.1:8080/security/resources/compass.jpg due to access control checks.
+CONSOLE MESSAGE: secureCookie=yes
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test opens a window that loads an insecure image (via a tricky redirect) and then tries to read a secure cookie. This should block the secure cookie from being read because insecure content was loaded while loading a main frame.

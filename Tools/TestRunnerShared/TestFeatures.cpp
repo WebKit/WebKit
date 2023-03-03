@@ -48,6 +48,7 @@ void merge(TestFeatures& base, TestFeatures additional)
     merge(base.stringWebPreferenceFeatures, additional.stringWebPreferenceFeatures);
     merge(base.boolTestRunnerFeatures, additional.boolTestRunnerFeatures);
     merge(base.doubleTestRunnerFeatures, additional.doubleTestRunnerFeatures);
+    merge(base.uint32TestRunnerFeatures, additional.uint32TestRunnerFeatures);
     merge(base.stringTestRunnerFeatures, additional.stringTestRunnerFeatures);
     merge(base.stringVectorTestRunnerFeatures, additional.stringVectorTestRunnerFeatures);
 }
@@ -65,6 +66,8 @@ bool operator==(const TestFeatures& a, const TestFeatures& b)
     if (a.boolTestRunnerFeatures != b.boolTestRunnerFeatures)
         return false;
     if (a.doubleTestRunnerFeatures != b.doubleTestRunnerFeatures)
+        return false;
+    if (a.uint32TestRunnerFeatures != b.uint32TestRunnerFeatures)
         return false;
     if (a.stringTestRunnerFeatures != b.stringTestRunnerFeatures)
         return false;
@@ -122,6 +125,18 @@ static bool shouldEnableWebGPU(const std::string& pathOrURL)
     return pathContains(pathOrURL, "127.0.0.1:8000/webgpu");
 }
 
+static bool shouldSetDefaultPortsForWTR(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "localhost:8080/") || pathContains(pathOrURL, "localhost:8443/")
+        || pathContains(pathOrURL, "127.0.0.1:8080/") || pathContains(pathOrURL, "127.0.0.1:8443/");
+}
+
+static bool shouldSetDefaultPortsForWPT(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "localhost:8800/") || pathContains(pathOrURL, "localhost:9443/")
+        || pathContains(pathOrURL, "127.0.0.1:8800/") || pathContains(pathOrURL, "127.0.0.1:9443/");
+}
+
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
 {
     TestFeatures features;
@@ -140,6 +155,15 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
     }
     if (shouldEnableWebGPU(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "WebGPUEnabled", true });
+    if (pathContains(command.pathOrURL, "UpgradeMixedContent")) {
+        if (shouldSetDefaultPortsForWPT(command.pathOrURL)) {
+            features.uint32TestRunnerFeatures.insert({ "defaultHTTPPort", 8800 });
+            features.uint32TestRunnerFeatures.insert({ "defaultHTTPSPort", 9443 });
+        } else if (shouldSetDefaultPortsForWTR(command.pathOrURL)) {
+            features.uint32TestRunnerFeatures.insert({ "defaultHTTPPort", 8000 });
+            features.uint32TestRunnerFeatures.insert({ "defaultHTTPSPort", 8443 });
+        }
+    }
 
     return features;
 }
@@ -224,6 +248,9 @@ bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string
         return true;
     case TestHeaderKeyType::DoubleTestRunner:
         features.doubleTestRunnerFeatures.insert_or_assign(key, parseDoubleTestHeaderValue(value));
+        return true;
+    case TestHeaderKeyType::UInt32TestRunner:
+        features.uint32TestRunnerFeatures.insert_or_assign(key, parseUInt32TestHeaderValue(value));
         return true;
     case TestHeaderKeyType::StringTestRunner:
         features.stringTestRunnerFeatures.insert_or_assign(key, value);

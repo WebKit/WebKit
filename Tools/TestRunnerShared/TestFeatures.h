@@ -43,6 +43,7 @@ struct TestFeatures {
 
     std::unordered_map<std::string, bool> boolTestRunnerFeatures;
     std::unordered_map<std::string, double> doubleTestRunnerFeatures;
+    std::unordered_map<std::string, uint32_t> uint32TestRunnerFeatures;
     std::unordered_map<std::string, std::string> stringTestRunnerFeatures;
     std::unordered_map<std::string, std::vector<std::string>> stringVectorTestRunnerFeatures;
 };
@@ -61,6 +62,7 @@ enum class TestHeaderKeyType : uint8_t {
 
     BoolTestRunner,
     DoubleTestRunner,
+    UInt32TestRunner,
     StringTestRunner,
     StringRelativePathTestRunner,
     StringURLTestRunner,

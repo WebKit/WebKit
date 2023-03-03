@@ -522,6 +522,7 @@ private:
     void registerURLSchemeAsLocal(const String&) const;
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
+    void updateSchemeDefaultPort(uint16_t, String) const;
 
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);

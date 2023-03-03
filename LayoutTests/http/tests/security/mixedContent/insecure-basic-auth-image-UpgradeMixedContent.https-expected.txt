@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: The page at https://127.0.0.1:8443/security/mixedContent/insecure-basic-auth-image-UpgradeMixedContent.https.html requested insecure content from http://localhost:8000/security/mixedContent/resources/subresource2/protected-image.py. This content was automatically upgraded and should be served over HTTPS.
+
+Tests that we do not load an insecure image when asked for basic authentication credentials.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did not load image.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

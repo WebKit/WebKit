@@ -193,7 +193,7 @@ private:
     CachedResourceHandle<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&, PAL::SessionID, const CookieJar&, const Settings&);
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource&, ResourceError&);
-    bool checkInsecureContent(CachedResource::Type, const URL&) const;
+    bool checkInsecureContent(CachedResource::Type, const URL&, const ResourceLoaderOptions&) const;
 
     void performPostLoadActions();
 

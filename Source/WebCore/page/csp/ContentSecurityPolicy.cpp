@@ -1017,14 +1017,14 @@ void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String
         InspectorInstrumentation::scriptExecutionBlockedByCSP(m_scriptExecutionContext, directiveText);
 }
 
-void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType) const
+void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType, ForceUpgradeRequest forceUpgradeRequest) const
 {
     URL url = request.url();
-    upgradeInsecureRequestIfNeeded(url, requestType);
+    upgradeInsecureRequestIfNeeded(url, requestType, forceUpgradeRequest);
     request.setURL(url);
 }
 
-void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType) const
+void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType, ForceUpgradeRequest forceUpgradeRequest) const
 {
     if (!url.protocolIs("http"_s) && !url.protocolIs("ws"_s))
         return;
@@ -1033,9 +1033,10 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
     if (requestType == InsecureRequestType::Load || requestType == InsecureRequestType::FormSubmission)
         upgradeRequest |= m_upgradeInsecureRequests;
 
-    if (!upgradeRequest)
+    if (!upgradeRequest && forceUpgradeRequest == ForceUpgradeRequest::No)
         return;
 
+    auto originalProtocol = url.protocol();
     if (url.protocolIs("http"_s))
         url.setProtocol("https"_s);
     else {
@@ -1043,7 +1044,7 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
         url.setProtocol("wss"_s);
     }
 
-    if (url.port() == 80)
+    if (url.port() && WTF::isDefaultPortForProtocol(url.port().value(), originalProtocol))
         url.setPort(std::nullopt);
 }
 

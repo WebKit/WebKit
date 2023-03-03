@@ -137,7 +137,8 @@ bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url)
             return false;
         }
 
-        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(m_frame, document->securityOrigin(), url))
+        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(m_frame, document->securityOrigin(), url)
+            || MixedContentChecker::shouldBlockInsecureContent(m_frame, MixedContentChecker::Upgradable::No, url))
             return false;
     }
 

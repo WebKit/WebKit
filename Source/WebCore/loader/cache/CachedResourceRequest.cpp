@@ -100,12 +100,12 @@ void CachedResourceRequest::updateForAccessControl(Document& document)
     updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.storedCredentialsPolicy);
 }
 
-void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& document)
+void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& document, ContentSecurityPolicy::ForceUpgradeRequest forceUpgradeRequest)
 {
     URL url = request.url();
 
     ASSERT(document.contentSecurityPolicy());
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
+    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load, forceUpgradeRequest);
 
     if (url == request.url())
         return;
@@ -113,9 +113,9 @@ void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& 
     request.setURL(url);
 }
 
-void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
+void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document, ContentSecurityPolicy::ForceUpgradeRequest forceUpgradeRequest)
 {
-    upgradeInsecureResourceRequestIfNeeded(m_resourceRequest, document);
+    upgradeInsecureResourceRequestIfNeeded(m_resourceRequest, document, forceUpgradeRequest);
 }
 
 void CachedResourceRequest::setDomainForCachePartition(Document& document)

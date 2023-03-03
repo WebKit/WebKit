@@ -197,6 +197,10 @@ const TestFeatures& TestOptions::defaults()
             { "StandardFontFamily", "Times" },
         };
 #endif
+        features.uint32TestRunnerFeatures = {
+            { "defaultHTTPPort", 80 },
+            { "defaultHTTPSPort", 443 },
+        };
     }
     return features;
 }
@@ -213,6 +217,9 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
 
         { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },
+
+        { "defaultHTTPPort", TestHeaderKeyType::UInt32TestRunner },
+        { "defaultHTTPSPort", TestHeaderKeyType::UInt32TestRunner },
     };
 
     return map;
@@ -234,6 +241,11 @@ template<typename T> T featureValue(std::string key, T defaultValue, const std::
 bool TestOptions::boolTestRunnerFeatureValue(std::string key, bool defaultValue) const
 {
     return featureValue(key, defaultValue, m_features.boolTestRunnerFeatures);
+}
+
+uint32_t TestOptions::uint32TestRunnerFeatureValue(std::string key, uint32_t defaultValue) const
+{
+    return featureValue(key, defaultValue, m_features.uint32TestRunnerFeatures);
 }
 
 std::string TestOptions::stringTestRunnerFeatureValue(std::string key, std::string defaultValue) const

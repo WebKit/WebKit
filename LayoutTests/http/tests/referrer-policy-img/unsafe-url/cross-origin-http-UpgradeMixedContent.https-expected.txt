@@ -1,0 +1,10 @@
+Tests the behavior of unsafe-url referrer policy when cross origin from HTTPS to HTTP.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS referrer is not unsafe-url
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

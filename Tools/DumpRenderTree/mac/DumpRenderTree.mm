@@ -1836,6 +1836,9 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 
     WebCoreTestSupport::clearAllLogChannelsToAccumulate();
     WebCoreTestSupport::initializeLogChannelsIfNecessary();
+
+    registerDefaultPortForProtocolForTesting(options.defaultHTTPPort(), "http"_s);
+    registerDefaultPortForProtocolForTesting(options.defaultHTTPSPort(), "https"_s);
 }
 
 #if PLATFORM(IOS_FAMILY)

@@ -77,6 +77,7 @@
 #include <WebCore/ViolationReportType.h>
 #include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
+#include <wtf/URLParser.h>
 
 #if USE(QUICK_LOOK)
 #include <WebCore/PreviewConverter.h>
@@ -384,6 +385,13 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
                 httpBody = IPC::FormDataReference { WTFMove(formData) };
         }
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidSendRequest(m_parameters.webPageProxyID, resourceLoadInfo(), request, httpBody), 0);
+    }
+
+    // Fixup the request's URL if the default port was changed for testing before we schedule the request.
+    if (!request.url().port() && WTF::URLParser::defaultPortForProtocol(request.url().protocol()) != defaultPortForProtocol(request.url().protocol())) {
+        auto url = request.url();
+        url.setPort(defaultPortForProtocol(url.protocol()));
+        request.setURL(url);
     }
 
     parameters.request = WTFMove(request);

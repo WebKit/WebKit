@@ -3086,6 +3086,20 @@ IOSFormControlRefreshEnabled:
     WebCore:
       default: true
 
+IPAddressMixedContentUpgradeTestingEnabled:
+  type: bool
+  status: testable
+  category: security
+  humanReadableName: "Upgrade IP address in mixed content"
+  humanReadableDescription: "Enable Upgrade IP address in mixed content"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 IPCTestingAPIEnabled:
   type: bool
   status: internal
@@ -6758,6 +6772,20 @@ UpgradeKnownHostsToHTTPSEnabled:
   defaultValue:
     WebKit:
       default: true
+
+UpgradeMixedContentEnabled:
+  type: bool
+  status: unstable
+  category: networking
+  humanReadableName: "Upgrade upgradable mixed content"
+  humanReadableDescription: "Upgrade upgradable mixed content"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 UseARKitForModel:
   type: bool

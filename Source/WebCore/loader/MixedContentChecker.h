@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "FetchOptions.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -45,8 +46,12 @@ enum class ContentType {
 
 enum class ShouldLogWarning { No, Yes };
 
+enum class Upgradable : bool { No, Yes, };
+
 bool frameAndAncestorsCanDisplayInsecureContent(LocalFrame&, ContentType, const URL&);
 bool frameAndAncestorsCanRunInsecureContent(LocalFrame&, SecurityOrigin&, const URL&, ShouldLogWarning = ShouldLogWarning::Yes);
+bool shouldUpgradeInsecureContent(LocalFrame&, Upgradable, const URL&, FetchOptions::Mode, FetchOptions::Destination, Initiator);
+bool shouldBlockInsecureContent(LocalFrame&, Upgradable, const URL&, FetchOptions::Mode = FetchOptions::Mode::Cors, FetchOptions::Destination = FetchOptions::Destination::EmptyString, Initiator = Initiator::EmptyString);
 void checkFormForMixedContent(LocalFrame&, const URL&);
 
 } // namespace MixedContentChecker

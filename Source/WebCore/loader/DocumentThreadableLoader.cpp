@@ -132,6 +132,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_shouldLogError(shouldLogError)
 {
     relaxAdoptionRequirement();
+    WTFLogAlways("DocumentThreadableLoader::DocumentThreadableLoader: request url: %s, sameOrigin: %d, m_origin: %s, document URL: %s, securityOrigin: %s", request.url().string().ascii().data(), m_sameOriginRequest, m_origin ? m_origin->toString().ascii().data() : "<null>", m_document.url().string().ascii().data(), securityOrigin().toString().ascii().data());
 
     // Setting a referrer header is only supported in the async code path.
     ASSERT(m_async || m_referrer.isEmpty());
@@ -574,6 +575,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     const URL& requestURL = request.url();
     m_options.securityCheck = securityCheck;
     ASSERT(m_sameOriginRequest || !requestURL.hasCredentials());
+    WTFLogAlways("DocumentThreadableLoader::loadRequest: request url: %s, sameOrigin: %d", request.url().string().ascii().data(), m_sameOriginRequest);
 
     if (!m_referrer.isNull())
         request.setHTTPReferrer(m_referrer);
@@ -619,7 +621,8 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     ResourceResponse response;
     auto identifier = AtomicObjectIdentifier<ResourceLoader> { std::numeric_limits<uint64_t>::max() };
     if (auto* frame = m_document.frame()) {
-        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document.securityOrigin(), requestURL))
+        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document.securityOrigin(), requestURL)
+            || MixedContentChecker::shouldBlockInsecureContent(*frame, MixedContentChecker::Upgradable::No, requestURL, m_options.mode, m_options.destination, m_options.initiator))
             return;
         auto& frameLoader = frame->loader();
         identifier = frameLoader.loadResourceSynchronously(request, m_options.clientCredentialPolicy, m_options, *m_originalHeaders, error, response, data);

@@ -172,6 +172,9 @@ void TestInvocation::invoke()
     if (m_error)
         goto end;
 
+    WKPageSetDefaultHTTPPortForTesting(TestController::singleton().mainWebView()->page(), m_options.defaultHTTPPort());
+    WKPageSetDefaultHTTPSPortForTesting(TestController::singleton().mainWebView()->page(), m_options.defaultHTTPSPort());
+
     WKPageLoadURLWithShouldOpenExternalURLsPolicy(TestController::singleton().mainWebView()->page(), m_url.get(), shouldOpenExternalURLs);
 
     TestController::singleton().runUntil(m_gotFinalMessage, TestController::noTimeout);

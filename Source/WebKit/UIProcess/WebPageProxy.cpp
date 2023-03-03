@@ -12180,6 +12180,13 @@ void WebPageProxy::setNeedsDOMWindowResizeEvent()
     send(Messages::WebPage::SetNeedsDOMWindowResizeEvent());
 }
 
+void WebPageProxy::updateSchemeDefaultPort(uint16_t port, String scheme)
+{
+    send(Messages::WebPage::UpdateSchemeDefaultPort(port, scheme));
+    if (auto* networkProcess = websiteDataStore().networkProcessIfExists())
+        networkProcess->send(Messages::NetworkProcess::UpdateSchemeDefaultPort(port, scheme), 0);
+}
+
 void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
 {
 #if ENABLE(SERVICE_WORKER)

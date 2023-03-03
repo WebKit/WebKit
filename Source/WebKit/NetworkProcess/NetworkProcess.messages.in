@@ -168,6 +168,7 @@ messages -> NetworkProcess LegacyReceiver {
     RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
     RegisterURLSchemeAsLocal(String scheme)
     RegisterURLSchemeAsNoAccess(String scheme)
+    UpdateSchemeDefaultPort(uint16_t port, String scheme)
 
     SyncLocalStorage() -> ()
     StoreServiceWorkerRegistrations(PAL::SessionID sessionID) -> ()
