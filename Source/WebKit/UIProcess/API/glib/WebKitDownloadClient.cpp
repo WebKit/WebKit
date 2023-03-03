@@ -82,9 +82,7 @@ private:
     {
         ASSERT(m_download);
         didReceiveResponse(downloadProxy, resourceResponse);
-        bool allowOverwrite = false;
-        String destination = webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), allowOverwrite);
-        completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
+        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), WTFMove(completionHandler));
     }
 
     void didCreateDestination(DownloadProxy& downloadProxy, const String& path) override
