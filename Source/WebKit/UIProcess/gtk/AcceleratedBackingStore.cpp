@@ -28,8 +28,9 @@
 
 #include "HardwareAccelerationManager.h"
 #include "WebPageProxy.h"
-#include <WebCore/CairoUtilities.h>
 #include <WebCore/PlatformDisplay.h>
+#include <gtk/gtk.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(WAYLAND)
 #include "AcceleratedBackingStoreWayland.h"
@@ -42,11 +43,34 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if PLATFORM(WAYLAND)
+static bool gtkCanUseHardwareAcceleration()
+{
+    static bool canUseHardwareAcceleration;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GUniqueOutPtr<GError> error;
+#if USE(GTK4)
+        canUseHardwareAcceleration = gdk_display_prepare_gl(gdk_display_get_default(), &error.outPtr());
+#else
+        auto* window = gtk_window_new(GTK_WINDOW_POPUP);
+        gtk_widget_realize(window);
+        auto context = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(window), &error.outPtr()));
+        canUseHardwareAcceleration = !!context;
+        gtk_widget_destroy(window);
+#endif
+        if (!canUseHardwareAcceleration)
+            g_warning("Disabled hardware acceleration because GTK failed to initialize GL: %s.", error->message);
+    });
+    return canUseHardwareAcceleration;
+}
+#endif
+
 bool AcceleratedBackingStore::checkRequirements()
 {
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        return AcceleratedBackingStoreWayland::checkRequirements();
+        return AcceleratedBackingStoreWayland::checkRequirements() && gtkCanUseHardwareAcceleration();
 #endif
 #if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
