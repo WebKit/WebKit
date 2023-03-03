@@ -35,10 +35,12 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "ImageDecoder.h"
+#include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorkerRegistrationData.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -141,6 +143,14 @@ static constexpr ASCIILiteral acceptHeaderValueForAVIFImageResource()
 #endif
 }
 
+static String acceptHeaderValueForAdditionalSupportedImageMIMETypes()
+{
+    StringBuilder sb;
+    for (const auto& additionalSupportedImageMIMEType : MIMETypeRegistry::additionalSupportedImageMIMETypes())
+        sb.append(makeString(additionalSupportedImageMIMEType, ','));
+    return sb.toString();
+}
+
 static constexpr ASCIILiteral acceptHeaderValueForVideoImageResource(bool supportsVideoImage)
 {
     if (supportsVideoImage)
@@ -152,6 +162,7 @@ static String acceptHeaderValueForImageResource()
 {
     return String(acceptHeaderValueForWebPImageResource())
         + acceptHeaderValueForAVIFImageResource()
+        + acceptHeaderValueForAdditionalSupportedImageMIMETypes()
         + acceptHeaderValueForVideoImageResource(ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video))
         + "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"_s;
 }

@@ -6276,3 +6276,6 @@ webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/bloc
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-invalid.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-valid.html [ Skip ]
+
+# Most ports don't have a HEIC decoder.
+http/tests/misc/heic-accept-header.html [ Pass Failure ]

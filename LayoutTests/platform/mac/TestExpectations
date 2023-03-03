@@ -2801,3 +2801,5 @@ webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
 [ Ventura+ ] fast/images/image-overlay-mutiple-frames.html [ Pass ImageOnlyFailure ]
 
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
+
+http/tests/misc/heic-accept-header.html [ Pass ]
