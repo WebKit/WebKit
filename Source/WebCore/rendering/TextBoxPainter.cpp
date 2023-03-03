@@ -190,32 +190,32 @@ void TextBoxPainter<TextBoxPath>::paintBackground()
 }
 
 template<typename TextBoxPath>
-void TextBoxPainter<TextBoxPath>::paintCompositionForeground()
+void TextBoxPainter<TextBoxPath>::paintCompositionForeground(const StyledMarkedText& markedText)
 {
     auto& editor = m_renderer.frame().editor();
-    auto& lineStyle = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
 
     auto highlights = editor.customCompositionHighlights();
     Vector<CompositionHighlight> highlightsWithForeground;
 
+    if (!(editor.compositionUsesCustomHighlights() && m_containsComposition)) {
+        paintForeground(markedText);
+        return;
+    }
+
     // The highlight ranges must be "packed" so that there is no non-empty interval between
     // any two adjacent highlight ranges. This is needed since otherwise, `paintForeground`
     // will not be called in those would-be non-empty intervals.
-    if (editor.compositionUsesCustomHighlights() && m_containsComposition) {
-        highlightsWithForeground.append({ textBox().start(), highlights[0].startOffset, { }, { } });
+    highlightsWithForeground.append({ textBox().start(), highlights[0].startOffset, { }, { } });
 
-        for (size_t i = 0; i < highlights.size(); ++i) {
-            highlightsWithForeground.append(highlights[i]);
-            if (i != highlights.size() - 1)
-                highlightsWithForeground.append({ highlights[i].endOffset, highlights[i + 1].startOffset, { }, { } });
-        }
-
-        highlightsWithForeground.append({ highlights.last().endOffset, textBox().end(), { }, { } });
-    } else {
-        paintForeground({ MarkedText { m_selectableRange.clamp(textBox().start()), m_selectableRange.clamp(textBox().end()), MarkedText::Unmarked },
-            StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, lineStyle, m_isFirstLine, m_paintInfo) });
-        return;
+    for (size_t i = 0; i < highlights.size(); ++i) {
+        highlightsWithForeground.append(highlights[i]);
+        if (i != highlights.size() - 1)
+            highlightsWithForeground.append({ highlights[i].endOffset, highlights[i + 1].startOffset, { }, { } });
     }
+
+    highlightsWithForeground.append({ highlights.last().endOffset, textBox().end(), { }, { } });
+
+    auto& lineStyle = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
 
     for (auto& highlight : highlightsWithForeground) {
         auto style = StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, lineStyle, m_isFirstLine, m_paintInfo);
@@ -258,7 +258,10 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
         return false;
     };
     if (!contentMayNeedStyledMarkedText()) {
-        paintCompositionForeground();
+        auto& lineStyle = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
+        auto markedText = MarkedText { m_selectableRange.clamp(textBox().start()), m_selectableRange.clamp(textBox().end()), MarkedText::Unmarked };
+        auto styledMarkedText = StyledMarkedText { markedText, StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, lineStyle, m_isFirstLine, m_paintInfo) };
+        paintCompositionForeground(styledMarkedText);
         return;
     }
 
@@ -340,7 +343,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
                 }
                 auto decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect);
                 paintBackgroundDecorations(decorationPainter, markedText, snappedPaintRect);
-                paintForeground(markedText);
+                paintCompositionForeground(markedText);
                 paintForegroundDecorations(decorationPainter, markedText, snappedPaintRect);
             }
         }
@@ -349,7 +352,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
         auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
 
         for (auto& markedText : coalescedStyledMarkedTexts)
-            paintForeground(markedText);
+            paintCompositionForeground(markedText);
     }
 }
 
