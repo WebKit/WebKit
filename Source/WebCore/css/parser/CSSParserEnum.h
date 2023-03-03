@@ -32,7 +32,7 @@ namespace WebCore {
 
 namespace CSSParserEnum {
 
-enum class WEBCORE_EXPORT IsNestedContext : bool {
+enum class IsNestedContext : bool {
     Yes,
     No
 };
