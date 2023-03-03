@@ -472,9 +472,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
     , m_geolocationPermissionRequestManager(*this)
-#if USE(RUNNINGBOARD)
     , m_audibleActivityTimer(RunLoop::main(), this, &WebPageProxy::clearAudibleActivity)
-#endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
     , m_cpuLimit(m_configuration->cpuLimit())
     , m_backForwardList(WebBackForwardList::create(*this))
@@ -1270,14 +1268,12 @@ void WebPageProxy::close()
     // Null out related WebPageProxy to avoid leaks.
     m_configuration->setRelatedPage(nullptr);
 
-#if PLATFORM(IOS_FAMILY)
     // Make sure we don't hold a process assertion after getting closed.
     m_isVisibleActivity = nullptr;
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
     m_openingAppLinkActivity = nullptr;
     m_audibleActivityTimer.stop();
-#endif
 
     stopAllURLSchemeTasks();
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
@@ -2452,13 +2448,11 @@ void WebPageProxy::updateThrottleState()
 #endif
 }
 
-#if USE(RUNNINGBOARD)
 void WebPageProxy::clearAudibleActivity()
 {
     WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
     m_isAudibleActivity = nullptr;
 }
-#endif
 
 void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
 {
@@ -8533,11 +8527,12 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
 #if PLATFORM(IOS_FAMILY)
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
+#endif
+
     m_isVisibleActivity = nullptr;
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
     m_openingAppLinkActivity = nullptr;
-#endif
 
     m_pageIsUserObservableCount = nullptr;
     m_visiblePageToken = nullptr;
