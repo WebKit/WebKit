@@ -1526,9 +1526,9 @@ void BytecodeGenerator::emitJumpIfSentinelString(RegisterID* cond, Label& target
     OpJeqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::sentinelString), target.bind(this));
 }
 
-unsigned BytecodeGenerator::emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target)
+unsigned BytecodeGenerator::emitJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit<OpcodeSize::Wide32>(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::hasOwnPropertyFunction), target.bind(this));
+    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::hasOwnPropertyFunction), target.bind(this));
     return m_lastInstruction.offset();
 }
 
@@ -1536,6 +1536,7 @@ void BytecodeGenerator::recordHasOwnPropertyInForInLoop(ForInContext& context, u
 {
     RELEASE_ASSERT(genericPath.isBound());
     RELEASE_ASSERT(!genericPath.isForward());
+    RELEASE_ASSERT((Fits<unsigned, OpcodeSize::Narrow>::check(genericPath.location() - branchOffset)));
     context.addHasOwnPropertyJump(branchOffset, genericPath.location());
 }
 
@@ -2606,13 +2607,21 @@ RegisterID* BytecodeGenerator::emitInstanceOfCustom(RegisterID* dst, RegisterID*
 
 RegisterID* BytecodeGenerator::emitInByVal(RegisterID* dst, RegisterID* property, RegisterID* base)
 {
+    kill(dst);
     for (size_t i = m_forInContextStack.size(); i--; ) {
         ForInContext& context = m_forInContextStack[i].get();
         if (context.local() != property)
             continue;
 
-        OpEnumeratorInByVal::emit<OpcodeSize::Wide32>(this, dst, base, context.mode(), property, context.propertyOffset(), context.enumerator());
-        context.addInInst(m_lastInstruction.offset(), property->index());
+        // Reserve a metadata ID if we need to de-optimize it later
+        auto metadataID = addMetadataFor(op_in_by_val);
+        if (Fits<unsigned, OpcodeSize::Narrow>::check(metadataID))
+            OpEnumeratorInByVal::emit(this, dst, base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        else if (Fits<unsigned, OpcodeSize::Narrow>::check(metadataID))
+            OpEnumeratorInByVal::emitWithSmallestSizeRequirement<OpcodeSize::Wide16>(this, dst, base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        else
+            OpEnumeratorInByVal::emit<OpcodeSize::Wide32>(this, dst, base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        context.addInInst(m_lastInstruction.offset(), property->index(), metadataID);
         return dst;
     }
 
@@ -2760,9 +2769,15 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
         if (context.local() != property)
             continue;
 
-        // FIXME: We should have a better bytecode rewriter that can resize chunks.
-        OpEnumeratorGetByVal::emit<OpcodeSize::Wide32>(this, kill(dst), base, context.mode(), property, context.propertyOffset(), context.enumerator());
-        context.addGetInst(m_lastInstruction.offset(), property->index());
+        // Reserve a metadata ID if we need to de-optimize it later
+        auto metadataID = addMetadataFor(op_get_by_val);
+        if (Fits<unsigned, OpcodeSize::Narrow>::check(metadataID))
+            OpEnumeratorGetByVal::emit(this, kill(dst), base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        else if (Fits<unsigned, OpcodeSize::Narrow>::check(metadataID))
+            OpEnumeratorGetByVal::emitWithSmallestSizeRequirement<OpcodeSize::Wide16>(this, kill(dst), base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        else
+            OpEnumeratorGetByVal::emit<OpcodeSize::Wide32>(this, kill(dst), base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        context.addGetInst(m_lastInstruction.offset(), property->index(), metadataID);
         return dst;
     }
 
@@ -5358,9 +5373,9 @@ ALWAYS_INLINE void rewriteOp(BytecodeGenerator& generator, TupleType& instTuple)
 {
     unsigned instIndex = std::get<0>(instTuple);
     int propertyRegIndex = std::get<1>(instTuple);
+    unsigned metadataID = std::get<2>(instTuple);
     auto instruction = generator.m_writer.ref(instIndex);
     auto end = instIndex + instruction->size();
-    ASSERT(instruction->isWide32());
 
     generator.m_writer.seek(instIndex);
 
@@ -5372,9 +5387,18 @@ ALWAYS_INLINE void rewriteOp(BytecodeGenerator& generator, TupleType& instTuple)
     // 1. dst stays the same.
     // 2. base stays the same.
     // 3. property gets switched to the original property.
-
     static_assert(sizeof(NewOpType) <= sizeof(OldOpType));
-    NewOpType::emit(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
+    switch (instruction->width()) {
+    case OpcodeSize::Narrow:
+        NewOpType::template emit<OpcodeSize::Narrow, BytecodeGenerator>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex), metadataID);
+        break;
+    case OpcodeSize::Wide16:
+        NewOpType::template emit<OpcodeSize::Wide16, BytecodeGenerator>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex), metadataID);
+        break;
+    case OpcodeSize::Wide32:
+        NewOpType::template emit<OpcodeSize::Wide32, BytecodeGenerator>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex), metadataID);
+        break;
+    }
 
     // 4. nop out the remaining bytes
     while (generator.m_writer.position() < end)
@@ -5395,42 +5419,69 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGener
     // reassigned, or we'd have to resort to runtime checks to see if the variable had been
     // reassigned from its original value.
 
-    bool escaped = false;
+    unsigned escaped = 0;
+    unsigned loopHintOffset = 0;
     for (unsigned offset = bodyBytecodeStartOffset(); !escaped && offset < bodyBytecodeEndOffset;) {
         auto instruction = generator.instructions().at(offset);
         ASSERT(!instruction->is<OpEnter>());
-        for (Checkpoint checkpoint = instruction->numberOfCheckpoints(); checkpoint--;) {
-            computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), checkpoint, [&] (VirtualRegister operand) {
-                if (local()->virtualRegister() == operand)
-                    escaped = true;
-            });
+        if (instruction->is<OpLoopHint>()) {
+            if (!loopHintOffset)
+                loopHintOffset = offset;
+        } else {
+            for (Checkpoint checkpoint = instruction->numberOfCheckpoints(); checkpoint--;) {
+                computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), checkpoint, [&] (VirtualRegister operand) {
+                    if (local()->virtualRegister() == operand)
+                        escaped = loopHintOffset ? loopHintOffset : offset;
+                });
+            }
+            if (escaped)
+                break;
         }
         offset += instruction->size();
     }
 
-    if (!escaped)
-        return;
-
-    for (const auto& instTuple : m_getInsts)
+    for (const auto& instTuple : m_getInsts) {
+        unsigned offset = std::get<0>(instTuple);
+        if (escaped && offset < escaped)
+            continue;
         rewriteOp<OpEnumeratorGetByVal, OpGetByVal>(generator, instTuple);
+    }
 
-    for (const auto& instTuple : m_inInsts)
+    for (const auto& instTuple : m_inInsts) {
+        unsigned offset = std::get<0>(instTuple);
+        if (escaped && offset < escaped)
+            continue;
         rewriteOp<OpEnumeratorInByVal, OpInByVal>(generator, instTuple);
+    }
 
     for (const auto& hasOwnPropertyTuple : m_hasOwnPropertyJumpInsts) {
         static_assert(sizeof(OpJmp) <= sizeof(OpJneqPtr));
         unsigned branchInstIndex = std::get<0>(hasOwnPropertyTuple);
         unsigned newBranchTarget = std::get<1>(hasOwnPropertyTuple);
+        if (escaped && branchInstIndex < escaped)
+            continue;
 
         auto instruction = generator.m_writer.ref(branchInstIndex);
         RELEASE_ASSERT(instruction->is<OpJneqPtr>());
-        RELEASE_ASSERT(instruction->isWide32());
         auto end = branchInstIndex + instruction->size();
 
         generator.m_writer.seek(branchInstIndex);
         generator.disablePeepholeOptimization();
+        BoundLabel targetLabel(static_cast<int>(newBranchTarget) - static_cast<int>(branchInstIndex));
 
-        OpJmp::emit(&generator, BoundLabel(static_cast<int>(newBranchTarget) - static_cast<int>(branchInstIndex)));
+#if ASSERT_ENABLED
+        bool didEmit = false;
+        OpcodeSize size = instruction->width();
+        if (static_cast<unsigned>(size) <= static_cast<unsigned>(OpcodeSize::Narrow))
+            didEmit = OpJmp::emit<OpcodeSize::Narrow, BytecodeGenerator, NoAssert, true>(&generator, targetLabel);
+        if (!didEmit && static_cast<unsigned>(size) <= static_cast<unsigned>(OpcodeSize::Wide16))
+            didEmit = OpJmp::emit<OpcodeSize::Wide16, BytecodeGenerator, NoAssert, true>(&generator, targetLabel);
+        if (!didEmit)
+            didEmit = OpJmp::emit<OpcodeSize::Wide32, BytecodeGenerator, Assert, true>(&generator, targetLabel);
+        ASSERT(didEmit);
+#else
+        OpJmp::emit(&generator, targetLabel);
+#endif
 
         while (generator.m_writer.position() < end)
             OpNop::emit<OpcodeSize::Narrow>(&generator);
