@@ -159,7 +159,7 @@ void JSDOMWindowBase::updateDocument()
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
 }
 
-ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
+Document* JSDOMWindowBase::scriptExecutionContext() const
 {
     return m_wrapped->document();
 }
