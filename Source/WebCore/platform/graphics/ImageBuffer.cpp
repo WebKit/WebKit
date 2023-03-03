@@ -416,8 +416,9 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
 
     if (auto* backend = ensureBackendCreated()) {
         if (auto image = copyNativeImageForDrawing(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-            destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+            destContext.drawNativeImageInternal(*image, backendSize(), destRect, srcRectScaled, options);
         backend->finalizeDrawIntoContext(destContext);
+
     }
 }
 
@@ -441,7 +442,7 @@ void ImageBuffer::drawConsuming(GraphicsContext& destContext, const FloatRect& d
     if (auto* backend = ensureBackendCreated()) {
         auto backendSize = backend->backendSize();
         if (auto image = sinkIntoNativeImage())
-            destContext.drawNativeImage(*image, backendSize, destRect, adjustedSrcRect, options);
+            destContext.drawNativeImageInternal(*image, backendSize, destRect, adjustedSrcRect, options);
     }
 }
 

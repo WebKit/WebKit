@@ -72,11 +72,19 @@ DestinationColorSpace NativeImage::colorSpace() const
 
 void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
 {
-    auto isHDRNativeImage = [](const NativeImage& image) -> bool {
+    auto isHDRColorSpace = [](CGColorSpaceRef colorSpace) -> bool {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        return CGColorSpaceIsHDR(CGImageGetColorSpace(image.platformImage().get()));
+        return CGColorSpaceIsHDR(colorSpace);
 #pragma clang diagnostic pop
+    };
+
+    auto isHDRNativeImage = [&](const NativeImage& image) -> bool {
+        return isHDRColorSpace(CGImageGetColorSpace(image.platformImage().get()));
+    };
+
+    auto isHDRContext = [&](GraphicsContext& context) -> bool {
+        return isHDRColorSpace(context.colorSpace().platformColorSpace());
     };
 
     auto colorSpaceForHDRImageBuffer = [](GraphicsContext& context) -> const DestinationColorSpace& {
@@ -93,6 +101,11 @@ void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, con
 
     auto drawHDRNativeImage = [&](GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options) -> bool {
         if (sourceRect.isEmpty() || !isHDRNativeImage(*this))
+            return false;
+
+        // If context and the image have HDR colorSpaces, draw the image directly without
+        // going through the workaround.
+        if (isHDRContext(context))
             return false;
 
         // Create a temporary ImageBuffer for destinationRect with the current scaleFator.
