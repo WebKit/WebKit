@@ -1347,6 +1347,20 @@ void SWServer::performGetOriginsWithRegistrationsCallbacks()
         callback(originsWithRegistrations);
 }
 
+void SWServer::getAllOrigins(CompletionHandler<void(HashSet<ClientOrigin>&&)>&& callback)
+{
+    whenImportIsCompletedIfNeeded([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+        if (!weakThis) {
+            callback({ });
+            return;
+        }
+        HashSet<ClientOrigin> clientOrigins;
+        for (auto& key : weakThis->m_scopeToRegistrationMap.keys())
+            clientOrigins.add(key.clientOrigin());
+        callback(WTFMove(clientOrigins));
+    });
+}
+
 void SWServer::addContextConnection(SWServerToContextConnection& connection)
 {
     RELEASE_LOG(ServiceWorker, "SWServer::addContextConnection");
@@ -1546,7 +1560,7 @@ void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, Back
 {
     RefPtr worker = registration.activeWorker();
     if (!worker) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch update message: No active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().data());
+        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch update message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().data());
         return;
     }
 
@@ -1564,6 +1578,36 @@ void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, Back
         terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
         connectionOrStatus.value()->fireBackgroundFetchEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
             RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Background fetch event was not successfully handled");
+            if (terminateWorkerTimer->isActive()) {
+                worker->decrementFunctionalEventCounter();
+                terminateWorkerTimer->stop();
+            }
+        });
+    });
+}
+
+void SWServer::fireBackgroundFetchClickEvent(SWServerRegistration& registration, BackgroundFetchInformation&& info)
+{
+    RefPtr worker = registration.activeWorker();
+    if (!worker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch click message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().data());
+        return;
+    }
+
+    fireFunctionalEvent(registration, [weakThis = WeakPtr { *this }, worker = worker.releaseNonNull(), info = WTFMove(info)](auto&& connectionOrStatus) mutable {
+        if (!connectionOrStatus.has_value())
+            return;
+
+        auto serviceWorkerIdentifier = worker->identifier();
+
+        worker->incrementFunctionalEventCounter();
+        auto terminateWorkerTimer = makeUnique<Timer>([worker] {
+            RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a background fetch click event");
+            worker->decrementFunctionalEventCounter();
+        });
+        terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
+        connectionOrStatus.value()->fireBackgroundFetchClickEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+            RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Background fetch clickevent was not successfully handled");
             if (terminateWorkerTimer->isActive()) {
                 worker->decrementFunctionalEventCounter();
                 terminateWorkerTimer->stop();

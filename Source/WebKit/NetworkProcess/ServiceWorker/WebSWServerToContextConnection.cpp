@@ -180,6 +180,22 @@ void WebSWServerToContextConnection::fireBackgroundFetchEvent(ServiceWorkerIdent
     });
 }
 
+void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier serviceWorkerIdentifier, const BackgroundFetchInformation& info, CompletionHandler<void(bool)>&& callback)
+{
+    if (!m_processingFunctionalEventCount++)
+        m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+
+    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FireBackgroundFetchClickEvent { serviceWorkerIdentifier, info }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed) mutable {
+        if (!weakThis)
+            return callback(wasProcessed);
+
+        if (!--weakThis->m_processingFunctionalEventCount)
+            weakThis->m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { weakThis->webProcessIdentifier() }, 0);
+
+        callback(wasProcessed);
+    });
+}
+
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));

@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class BackgroundFetchEngine;
 class BackgroundFetchRecordLoader;
 class BackgroundFetchStore;
 class RegistrableDomain;

@@ -1,0 +1,3 @@
+
+PASS background fetch abort should trigger an abort event
+

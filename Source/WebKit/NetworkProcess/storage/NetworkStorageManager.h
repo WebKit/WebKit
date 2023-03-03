@@ -51,7 +51,6 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
-class BackgroundFetchStore;
 class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;
@@ -113,7 +112,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
-#endif
+#endif // ENABLE(SERVICE_WORKER)
 
 private:
     NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, UnifiedOriginStorageLevel);
@@ -211,7 +210,7 @@ private:
     String m_path;
     FileSystem::Salt m_salt;
     bool m_closed { false };
-    HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_originStorageManagers;
+    HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_originStorageManagers WTF_GUARDED_BY_CAPABILITY(workQueue());
     ThreadSafeWeakHashSet<IPC::Connection> m_connections;
     std::unique_ptr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
     std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;

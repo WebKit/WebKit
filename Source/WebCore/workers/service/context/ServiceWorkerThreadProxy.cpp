@@ -445,6 +445,28 @@ void ServiceWorkerThreadProxy::fireBackgroundFetchEvent(BackgroundFetchInformati
         m_ongoingFunctionalEventTasks.take(identifier)(false);
 }
 
+void ServiceWorkerThreadProxy::fireBackgroundFetchClickEvent(BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    if (m_ongoingFunctionalEventTasks.isEmpty())
+        thread().startFunctionalEventMonitoring();
+
+    auto identifier = ++m_functionalEventTasksCounter;
+    ASSERT(!m_ongoingFunctionalEventTasks.contains(identifier));
+    m_ongoingFunctionalEventTasks.add(identifier, WTFMove(callback));
+    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, info = crossThreadCopy(WTFMove(info))](auto&) mutable {
+        thread().queueTaskToFireBackgroundFetchClickEvent(WTFMove(info), [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
+            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
+                if (auto callback = m_ongoingFunctionalEventTasks.take(identifier))
+                    callback(result);
+                if (m_ongoingFunctionalEventTasks.isEmpty())
+                    thread().stopFunctionalEventMonitoring();
+            });
+        });
+    }, WorkerRunLoop::defaultMode());
+    if (!isPosted)
+        m_ongoingFunctionalEventTasks.take(identifier)(false);
+}
+
 void ServiceWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
 {
     ASSERT(!isMainThread());

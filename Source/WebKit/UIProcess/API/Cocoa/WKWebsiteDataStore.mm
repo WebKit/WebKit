@@ -974,6 +974,78 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+-(void)_getAllBackgroundFetchIdentifiers:(void(^)(NSArray<NSString *> *identifiers))completionHandler
+{
+#if ENABLE(SERVICE_WORKER)
+    _websiteDataStore->networkProcess().getAllBackgroundFetchIdentifiers(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (auto identifiers) {
+        auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers.size()]);
+        for (auto identifier : identifiers)
+            [result addObject:(NSString *)identifier];
+        completionHandler(result.autorelease());
+    });
+#else
+    completionHandler(nil);
+#endif
+}
+
+-(void)_abortBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
+{
+    if (!completionHandler)
+        completionHandler = [] { };
+
+#if ENABLE(SERVICE_WORKER)
+    _websiteDataStore->networkProcess().abortBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+-(void)_pauseBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
+{
+    if (!completionHandler)
+        completionHandler = [] { };
+
+#if ENABLE(SERVICE_WORKER)
+    _websiteDataStore->networkProcess().pauseBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
+-(void)_resumeBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
+{
+    if (!completionHandler)
+        completionHandler = [] { };
+
+#if ENABLE(SERVICE_WORKER)
+    _websiteDataStore->networkProcess().resumeBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
+-(void)_clickBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
+{
+    if (!completionHandler)
+        completionHandler = [] { };
+
+#if ENABLE(SERVICE_WORKER)
+    if (!completionHandler)
+        completionHandler = [] { };
+
+    _websiteDataStore->networkProcess().clickBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
 -(void)_setServiceWorkerOverridePreferences:(WKPreferences *)preferences
 {
 #if ENABLE(SERVICE_WORKER)

@@ -359,6 +359,33 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInf
     });
 }
 
+void ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent(BackgroundFetchInformation&& info, Function<void(bool)>&& callback)
+{
+    auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
+    serviceWorkerGlobalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope = Ref { serviceWorkerGlobalScope }, info = crossThreadCopy(WTFMove(info)), callback = WTFMove(callback)]() mutable {
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
+
+        Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(serviceWorkerGlobalScope->registration());
+        BackgroundFetchEventInit eventInit { { }, manager->backgroundFetchRegistrationInstance(serviceWorkerGlobalScope, WTFMove(info)) };
+        auto event = BackgroundFetchEvent::create(eventNames().backgroundfetchclickEvent, WTFMove(eventInit));
+
+        serviceWorkerGlobalScope->dispatchEvent(event.get());
+
+        event->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, callback = WTFMove(callback)](auto&& extendLifetimePromises) mutable {
+            bool success = true;
+            for (auto& promise : extendLifetimePromises) {
+                if (promise->status() == DOMPromise::Status::Rejected) {
+                    success = false;
+                    break;
+                }
+            }
+
+            RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent failed to process background fetch event");
+            callback(success);
+        });
+    });
+}
+
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
     ASSERT(globalScope()->isContextThread());

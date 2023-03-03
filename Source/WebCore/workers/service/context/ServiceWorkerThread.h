@@ -78,6 +78,7 @@ public:
     void queueTaskToFireNotificationEvent(NotificationData&&, NotificationEventType, Function<void(bool)>&&);
 #endif
     void queueTaskToFireBackgroundFetchEvent(BackgroundFetchInformation&&, Function<void(bool)>&&);
+    void queueTaskToFireBackgroundFetchClickEvent(BackgroundFetchInformation&&, Function<void(bool)>&&);
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerIdentifier; }
     std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier() const { return m_jobDataIdentifier; }

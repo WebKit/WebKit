@@ -220,6 +220,12 @@ messages -> NetworkProcess LegacyReceiver {
     GetPendingPushMessages(PAL::SessionID sessionID) -> (Vector<WebKit::WebPushMessage> messages)
     ProcessPushMessage(PAL::SessionID sessionID, struct WebKit::WebPushMessage pushMessage, enum:uint8_t WebCore::PushPermissionState pushPermissionState) -> (bool didSucceed)
     ProcessNotificationEvent(struct WebCore::NotificationData data, enum:bool WebCore::NotificationEventType eventType) -> (bool didSucceed)
+
+    GetAllBackgroundFetchIdentifiers(PAL::SessionID sessionID) -> (Vector<String> fetches);
+    AbortBackgroundFetch(PAL::SessionID sessionID, String identifier) -> ();
+    PauseBackgroundFetch(PAL::SessionID sessionID, String identifier) -> ();
+    ResumeBackgroundFetch(PAL::SessionID sessionID, String identifier) -> ();
+    ClickBackgroundFetch(PAL::SessionID sessionID, String identifier) -> ();
 #endif
     SetPushAndNotificationsEnabledForOrigin(PAL::SessionID sessionID, WebCore::SecurityOriginData origin, bool enabled) -> ()
     DeletePushAndNotificationRegistration(PAL::SessionID sessionID, WebCore::SecurityOriginData origin) -> (String errorMessage)

@@ -28,10 +28,15 @@
 
 #include <WebCore/BackgroundFetchStore.h>
 #include <WebCore/ClientOrigin.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 
 namespace WTF {
 class WorkQueue;
+}
+
+namespace WebCore {
+class SWServer;
 }
 
 namespace WebKit {
@@ -40,13 +45,19 @@ class NetworkStorageManager;
 
 class BackgroundFetchStoreImpl :  public WebCore::BackgroundFetchStore {
 public:
-    static Ref<BackgroundFetchStoreImpl> create(WeakPtr<NetworkStorageManager>&& manager) { return adoptRef(*new BackgroundFetchStoreImpl(WTFMove(manager))); }
+    static Ref<BackgroundFetchStoreImpl> create(WeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server) { return adoptRef(*new BackgroundFetchStoreImpl(WTFMove(manager), WTFMove(server))); }
     ~BackgroundFetchStoreImpl();
 
-private:
-    explicit BackgroundFetchStoreImpl(WeakPtr<NetworkStorageManager>&&);
+    void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
+    void abortBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void pauseBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void resumeBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void clickBackgroundFetch(const String&, CompletionHandler<void()>&&);
 
-    void initializeFetches(WebCore::BackgroundFetchEngine&, const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
+private:
+    BackgroundFetchStoreImpl(WeakPtr<NetworkStorageManager>&&, WeakPtr<WebCore::SWServer>&&);
+
+    void initializeFetches(const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
     void clearFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, CompletionHandler<void()>&&) final;
     void clearAllFetches(const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
     void storeFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) final;
@@ -54,6 +65,10 @@ private:
     void retrieveResponseBody(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) final;
 
     String getFilename(const WebCore::ServiceWorkerRegistrationKey&, const String&);
+    void registerFetch(const WebCore::ClientOrigin&, const WebCore::ServiceWorkerRegistrationKey&, const String& backgroundFetchIdentifier, String&& fetchStorageIdentifier);
+    void loadAllFetches(CompletionHandler<void()>&&);
+    void fetchInformationFromFilename(const String&, CompletionHandler<void(const WebCore::ServiceWorkerRegistrationKey&, const String&)>&&);
+    void initializeFetches(const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
 
     WeakPtr<NetworkStorageManager> m_manager;
 
@@ -63,6 +78,13 @@ private:
         Vector<CompletionHandler<void()>> initializationCallbacks;
     };
     HashMap<WebCore::ClientOrigin, PerClientOriginFetches> m_perClientOriginFetches;
+
+    struct FetchInformation {
+        WebCore::ClientOrigin origin;
+        FetchIdentifier identifier;
+    };
+    HashMap<String, FetchInformation> m_filenameToFetch;
+    WeakPtr<WebCore::SWServer> m_server;
 };
 
 } // namespace WebKit
