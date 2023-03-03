@@ -163,6 +163,8 @@ public:
 
     bool shouldDisableLazyImageLoadingQuirk() const;
     bool shouldDisableLazyIframeLoadingQuirk() const;
+
+    bool shouldDisableFetchMetadata() const;
     
 private:
     bool needsQuirks() const;
