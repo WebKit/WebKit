@@ -340,12 +340,6 @@ function resolveWithoutPromise(resolution, onFulfilled, onRejected, context)
         return;
     }
 
-    if (@isPromise(resolution)) {
-        var constructor = resolution.constructor;
-        if (constructor === @Promise || constructor === @InternalPromise)
-            return @performPromiseThen(resolution, onFulfilled, onRejected, @undefined, context);
-    }
-
     var then;
     try {
         then = resolution.then;
