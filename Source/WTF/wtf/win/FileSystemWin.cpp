@@ -224,7 +224,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
 
         ASSERT(wcslen(tempFile) == std::size(tempFile) - 1);
 
-        proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
+        proposedPath = pathByAppendingComponent(String(std::data(tempPath)), String(std::data(tempFile)));
         if (proposedPath.isEmpty())
             break;
     } while (!action(proposedPath));

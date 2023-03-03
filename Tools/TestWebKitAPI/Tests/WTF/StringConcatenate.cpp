@@ -216,4 +216,24 @@ TEST(WTF, StringConcatenate_Tuple)
     EXPECT_STREQ("hello 42 world", makeString(std::make_tuple(helloCodepoints, ' ', unsigned(42), ' ', "world")).utf8().data());
 }
 
+TEST(WTF, StringConcatenate_StringLiteral)
+{
+    EXPECT_STREQ("hello 42 world", makeString("hello", ' ', 42, " ", "world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString("hello"_s, ' ', 42, " "_s, "world"_s).utf8().data());
+
+    EXPECT_STREQ("hello 42 world", makeString("hello 42\0ignored", ' ', "world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString("hello 42\0ignored"_s, ' ', "world").utf8().data());
+
+    const char helloChars[] = { 'h', 'e', 'l', 'l', 'o', '\0' };
+    char helloData[64];
+    memcpy(helloData, helloChars, sizeof(helloChars));
+
+    auto hello = makeString(helloData);
+    EXPECT_STREQ("hello", hello.utf8().data());
+    EXPECT_EQ(5u, hello.length());
+
+    EXPECT_STREQ("hello 42 world", makeString(helloData, " 42 world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString(hello, " 42 world").utf8().data());
+}
+
 }
