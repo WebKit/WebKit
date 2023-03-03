@@ -73,8 +73,17 @@ enum {
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 struct _WebKitDownloadPrivate {
+    ~_WebKitDownloadPrivate()
+    {
+        if (decideDestinationCallback) {
+            g_critical("Bug: application handled WebKitDownload::decide-destination but failed to call webkit_download_set_destination() before the WebKitDownload was destroyed");
+            decideDestinationCallback(AllowOverwrite::No, { });
+        }
+    }
+
     RefPtr<DownloadProxy> download;
 
+    CompletionHandler<void(AllowOverwrite, String)> decideDestinationCallback;
     GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
     GWeakPtr<WebKitWebView> webView;
@@ -129,6 +138,12 @@ static void webkitDownloadGetProperty(GObject* object, guint propId, GValue* val
     }
 }
 
+static void maybeFinishDecideDestination(WebKitDownload* download)
+{
+    if (auto completionHandler = std::exchange(download->priv->decideDestinationCallback, nullptr))
+        completionHandler(download->priv->allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, String::fromUTF8(download->priv->destination.get()));
+}
+
 static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const gchar* suggestedFilename)
 {
     if (download->priv->destination)
@@ -145,6 +160,7 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
     download->priv->destinationURI.reset(g_filename_to_uri(download->priv->destination.get(), nullptr, nullptr));
 #endif
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
+    maybeFinishDecideDestination(download);
     return TRUE;
 }
 
@@ -278,12 +294,19 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * @suggested_filename: the filename suggested for the download
      *
      * This signal is emitted after response is received to
-     * decide a destination for the download. If this signal is not
-     * handled the file will be downloaded to %G_USER_DIRECTORY_DOWNLOAD
+     * decide a destination for the download using
+     * webkit_download_set_destination(). If this signal is not
+     * handled, the file will be downloaded to %G_USER_DIRECTORY_DOWNLOAD
      * directory using @suggested_filename.
      *
-     * Returns: %TRUE to stop other handlers from being invoked for the event.
-     *   %FALSE to propagate the event further.
+     * Since 2.40, you may handle this signal asynchronously by
+     * returning %TRUE without calling webkit_download_set_destination().
+     * This indicates intent to eventually call webkit_download_set_destination().
+     * In this case, the download will not proceed until the destination is set
+     * or cancelled with webkit_download_cancel().
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event,
+     *   or %FALSE to propagate the event further.
      */
     signals[DECIDE_DESTINATION] = g_signal_new(
         "decide-destination",
@@ -418,15 +441,16 @@ void webkitDownloadFinished(WebKitDownload* download)
     g_signal_emit(download, signals[FINISHED], 0, nullptr);
 }
 
-String webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename, bool& allowOverwrite)
+void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, CString&& suggestedFilename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
 {
     if (download->priv->isCancelled)
-        return { };
+        return;
 
-    gboolean returnValue;
-    g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &returnValue);
-    allowOverwrite = download->priv->allowOverwrite;
-    return String::fromUTF8(download->priv->destination.get());
+    download->priv->decideDestinationCallback = WTFMove(completionHandler);
+    gboolean applicationWillDecideDestination = FALSE;
+    g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &applicationWillDecideDestination);
+    if (!applicationWillDecideDestination)
+        maybeFinishDecideDestination(download);
 }
 
 void webkitDownloadDestinationCreated(WebKitDownload* download, const String& destinationPath)
@@ -499,6 +523,7 @@ const gchar* webkit_download_get_destination(WebKitDownload* download)
  * set a fixed destination that doesn't depend on the suggested
  * filename you can connect to notify::response signal and call
  * webkit_download_set_destination().
+ *
  * If #WebKitDownload::decide-destination signal is not handled
  * and destination is not set when the download transfer starts,
  * the file will be saved with the filename suggested by the server in
@@ -522,18 +547,19 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* dest
     }
 #endif
 
-    if (!g_strcmp0(download->priv->destination.get(), destination))
-        return;
-
+    if (g_strcmp0(download->priv->destination.get(), destination)) {
 #if ENABLE(2022_GLIB_API)
-    download->priv->destination.reset(g_strdup(destination));
-#else
-    if (destinationPath)
-        download->priv->destination = WTFMove(destinationPath);
-    else
         download->priv->destination.reset(g_strdup(destination));
+#else
+        if (destinationPath)
+            download->priv->destination = WTFMove(destinationPath);
+        else
+            download->priv->destination.reset(g_strdup(destination));
 #endif
-    g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
+        g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
+    }
+
+    maybeFinishDecideDestination(download);
 }
 
 /**
@@ -571,6 +597,8 @@ WebKitURIResponse* webkit_download_get_response(WebKitDownload* download)
 void webkit_download_cancel(WebKitDownload* download)
 {
     g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
+
+    maybeFinishDecideDestination(download);
 
     download->priv->isCancelled = true;
     download->priv->download->cancel([download = Ref { *download->priv->download }] (auto*) {
