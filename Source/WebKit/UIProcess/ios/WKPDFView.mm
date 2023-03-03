@@ -206,6 +206,10 @@
     _data = adoptNS([data copy]);
     _suggestedFilename = adoptNS([filename copy]);
 
+#if HAVE(SETUSEIOSURFACEFORTILES)
+    [PDFHostViewController setUseIOSurfaceForTiles:false];
+#endif
+
     [PDFHostViewController createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController *hostViewController) {
         ASSERT(isMainRunLoop());
 
