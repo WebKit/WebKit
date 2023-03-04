@@ -1,0 +1,11 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+EVENT(startstreaming)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+EVENT(endstreaming)
+EVENT(startstreaming)
+END OF TEST
+

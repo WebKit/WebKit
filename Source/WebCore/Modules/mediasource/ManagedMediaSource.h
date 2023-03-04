@@ -46,8 +46,14 @@ public:
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 
     bool isManaged() const final { return true; }
+
 private:
     explicit ManagedMediaSource(ScriptExecutionContext&);
+    void monitorSourceBuffers() final;
+    bool isBuffered(const PlatformTimeRanges&) const;
+    void startStreaming();
+    void endStreaming();
+    bool m_streaming { false };
 };
 
 } // namespace WebCore
