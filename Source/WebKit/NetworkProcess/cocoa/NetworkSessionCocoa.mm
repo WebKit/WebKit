@@ -92,6 +92,13 @@ SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationLite, kSymptomAnalyticsServiceEnd
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
+#if HAVE(NW_PROXY_CONFIG)
+SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+SOFT_LINK_OPTIONAL(libnetwork, nw_context_add_proxy, void, __cdecl, (nw_context_t, nw_proxy_config_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_context_clear_proxies, void, __cdecl, (nw_context_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_with_agent_data, nw_proxy_config_t, __cdecl, (const uint8_t*, size_t, const uuid_t))
+#endif
+
 #import "DeviceManagementSoftLink.h"
 
 using namespace WebKit;
@@ -1317,8 +1324,10 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
 #if HAVE(NW_PROXY_CONFIG)
     if (auto networkContext = session.get()._networkContext) {
         if (auto proxyConfig = networkSession.proxyConfig()) {
-            nw_context_clear_proxies(networkContext);
-            nw_context_add_proxy(networkContext, proxyConfig);
+            if (auto* clearProxies = nw_context_clear_proxiesPtr())
+                clearProxies(networkContext);
+            if (auto* addProxy = nw_context_add_proxyPtr())
+                addProxy(networkContext, proxyConfig);
         }
     }
 #endif
@@ -2082,8 +2091,10 @@ void NetworkSessionCocoa::clearProxyConfigData()
         [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
     });
 
-    for (nw_context_t context in contexts.get())
-        nw_context_clear_proxies(context);
+    if (auto* clearProxies = nw_context_clear_proxiesPtr()) {
+        for (nw_context_t context in contexts.get())
+            clearProxies(context);
+    }
 }
 
 void NetworkSessionCocoa::setProxyConfigData(const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData)
@@ -2092,7 +2103,8 @@ void NetworkSessionCocoa::setProxyConfigData(const IPC::DataReference& proxyConf
     if (proxyIdentifierData.size_bytes() == sizeof(uuid_t))
         memcpy(identifier, proxyIdentifierData.data(), proxyIdentifierData.size_bytes());
     
-    m_nwProxyConfig = adoptNS(nw_proxy_config_create_with_agent_data(proxyConfigData.data(), proxyConfigData.size_bytes(), identifier));
+    if (auto* createProxyConfig = nw_proxy_config_create_with_agent_dataPtr())
+        m_nwProxyConfig = adoptNS(createProxyConfig(proxyConfigData.data(), proxyConfigData.size_bytes(), identifier));
     
     RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
     forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
@@ -2101,9 +2113,13 @@ void NetworkSessionCocoa::setProxyConfigData(const IPC::DataReference& proxyConf
         [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
     });
     
-    for (nw_context_t context in contexts.get()) {
-        nw_context_clear_proxies(context);
-        nw_context_add_proxy(context, m_nwProxyConfig.get());
+    if (auto* clearProxies = nw_context_clear_proxiesPtr()) {
+        if (auto* addProxy = nw_context_add_proxyPtr()) {
+            for (nw_context_t context in contexts.get()) {
+                clearProxies(context);
+                addProxy(context, m_nwProxyConfig.get());
+            }
+        }
     }
 }
 #endif // HAVE(NW_PROXY_CONFIG)

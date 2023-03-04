@@ -37,7 +37,14 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/StringConcatenateNumbers.h>
+
+#if HAVE(NW_PROXY_CONFIG)
+SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_http_connect, nw_proxy_config_t, __cdecl, (nw_endpoint_t, nw_protocol_options_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_socksv5, nw_proxy_config_t, __cdecl, (nw_endpoint_t))
+#endif
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
@@ -159,6 +166,10 @@ TEST(WebKit, SOCKS5)
 // FIXME: Enabling blocked by rdar://106168249
 TEST(WebKit, DISABLED_HTTPSProxyAPI)
 {
+    auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
+    if (!createProxyConfig)
+        return;
+
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
@@ -167,7 +178,7 @@ TEST(WebKit, DISABLED_HTTPSProxyAPI)
     [webView setUIDelegate:delegate.get()];
 
     auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
-    auto proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+    auto proxyConfig = adoptNS(createProxyConfig(endpoint.get(), nil));
     [webView.get().configuration.websiteDataStore setProxyConfiguration:proxyConfig.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
@@ -176,6 +187,10 @@ TEST(WebKit, DISABLED_HTTPSProxyAPI)
 
 TEST(WebKit, SOCKS5API)
 {
+    auto* createProxyConfig = nw_proxy_config_create_socksv5Ptr();
+    if (!createProxyConfig)
+        return;
+
     constexpr uint8_t socks5Version = 0x5; // https://tools.ietf.org/html/rfc1928#section-3
     constexpr uint8_t noAuthenticationRequired = 0x00; // https://tools.ietf.org/html/rfc1928#section-3
     constexpr uint8_t connect = 0x01; // https://tools.ietf.org/html/rfc1928#section-4
@@ -226,7 +241,7 @@ TEST(WebKit, SOCKS5API)
     });
 
     auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
-    auto proxyConfig = adoptNS(nw_proxy_config_create_socksv5(endpoint.get()));
+    auto proxyConfig = adoptNS(createProxyConfig(endpoint.get()));
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
     [webView.get().configuration.websiteDataStore setProxyConfiguration:proxyConfig.get()];
