@@ -61,11 +61,6 @@ RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 #endif
 }
 
-FloatPoint RemoteScrollingCoordinatorProxyMac::currentMainFrameScrollPosition() const
-{
-    return scrollingTree()->mainFrameScrollPosition();
-}
-
 void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const NativeWebWheelEvent& nativeWheelEvent, RectEdges<bool> rubberBandableEdges)
 {
 #if ENABLE(SCROLLING_THREAD)

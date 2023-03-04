@@ -227,6 +227,13 @@ public:
 
     WEBCORE_EXPORT OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
     WEBCORE_EXPORT OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
+    
+    WEBCORE_EXPORT IntPoint mainFrameScrollOrigin() const;
+    WEBCORE_EXPORT int mainFrameHeaderHeight() const;
+    WEBCORE_EXPORT int mainFrameFooterHeight() const;
+    WEBCORE_EXPORT float mainFrameScaleFactor() const;
+    WEBCORE_EXPORT FloatSize totalContentsSize() const;
+    WEBCORE_EXPORT FloatRect layoutViewport() const;
 
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
