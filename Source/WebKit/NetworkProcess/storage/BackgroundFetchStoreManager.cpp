@@ -103,6 +103,7 @@ void BackgroundFetchStoreManager::clearFetch(const String& identifier, Completio
     assertIsCurrent(m_taskQueue.get());
 
     if (m_path.isEmpty()) {
+        m_nonPersistentChunks.remove(identifier);
         callback();
         return;
     }
@@ -122,6 +123,8 @@ void BackgroundFetchStoreManager::clearAllFetches(const Vector<String>& identifi
     assertIsCurrent(m_taskQueue.get());
 
     if (m_path.isEmpty()) {
+        for (auto& identifier : identifiers)
+            m_nonPersistentChunks.remove(identifier);
         callback();
         return;
     }
@@ -199,6 +202,15 @@ void BackgroundFetchStoreManager::storeFetchResponseBodyChunk(const String& iden
     assertIsCurrent(m_taskQueue.get());
 
     if (m_path.isEmpty()) {
+        auto& chunks = m_nonPersistentChunks.ensure(identifier, [] {
+            return Vector<SharedBufferBuilder>();
+        }).iterator->value;
+
+        while (chunks.size() <= index)
+            chunks.append({ });
+
+        chunks[index].append(data);
+
         callback(StoreResult::OK);
         return;
     }
@@ -227,7 +239,12 @@ void BackgroundFetchStoreManager::retrieveResponseBody(const String& identifier,
     assertIsCurrent(m_taskQueue.get());
 
     if (m_path.isEmpty()) {
-        callback(RefPtr<SharedBuffer> { });
+        auto iterator = m_nonPersistentChunks.find(identifier);
+        if (iterator == m_nonPersistentChunks.end() || iterator->value.size() <= index) {
+            callback(RefPtr<SharedBuffer> { });
+            return;
+        }
+        callback(iterator->value[index].copy()->makeContiguous());
         return;
     }
 

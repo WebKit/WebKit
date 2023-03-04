@@ -160,7 +160,9 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
         if (options.enableInAppBrowserPrivacy())
             [websiteDataStoreConfig setEnableInAppBrowserPrivacyForTesting:YES];
 #endif
-        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig.get()]).get();
+        auto store = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig.get()]);
+        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)store.get();
+        [store set_delegate:globalWebsiteDataStoreDelegateClient().get()];
     } else
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[globalWebViewConfiguration() websiteDataStore];
 }

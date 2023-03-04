@@ -1520,7 +1520,7 @@ void NetworkProcessProxy::endServiceWorkerBackgroundProcessing(WebCore::ProcessI
 
 void NetworkProcessProxy::requestBackgroundFetchPermission(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
 {
-    RELEASE_LOG(Storage, "%p - NetworkProcessProxy::requestStorageSpace", this);
+    RELEASE_LOG(ServiceWorker, "%p - NetworkProcessProxy::requestBackgroundFetchPermission", this);
     auto* store = websiteDataStoreFromSessionID(sessionID);
 
     if (!store) {
