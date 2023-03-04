@@ -1498,6 +1498,8 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& re
     }
 #if ALLOW_PARTIAL_CONTENT_INVALIDATION
     modernLineLayout->updateTextContent(renderer, offset, delta);
+    if (!modernLineLayout->isDamaged())
+        container->invalidateLineLayoutPath();
 #else
     UNUSED_PARAM(offset);
     UNUSED_PARAM(delta);

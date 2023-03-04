@@ -1725,8 +1725,10 @@ void RenderObject::insertedIntoTree(IsInternalMove)
         auto shouldInvalidateLineLayoutPath = true;
         if (auto* modernLineLayout = container->modernLineLayout()) {
             shouldInvalidateLineLayoutPath = LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, *this, *modernLineLayout);
-            if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container))
+            if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container)) {
                 modernLineLayout->insertedIntoTree(*parent(), *this);
+                shouldInvalidateLineLayoutPath = !modernLineLayout->isDamaged();
+            }
         }
         if (shouldInvalidateLineLayoutPath)
             container->invalidateLineLayoutPath();
