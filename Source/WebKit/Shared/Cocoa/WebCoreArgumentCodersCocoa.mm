@@ -190,6 +190,9 @@ void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& enco
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     encoder << request.multiTokenContexts();
 #endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    encoder << request.deferredPaymentRequest();
+#endif
 }
 
 bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest& request)
@@ -325,6 +328,14 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& deco
     if (!multiTokenContexts)
         return false;
     request.setMultiTokenContexts(WTFMove(*multiTokenContexts));
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    std::optional<std::optional<WebCore::ApplePayDeferredPaymentRequest>> deferredPaymentRequest;
+    decoder >> deferredPaymentRequest;
+    if (!deferredPaymentRequest)
+        return false;
+    request.setDeferredPaymentRequest(WTFMove(*deferredPaymentRequest));
 #endif
 
     return true;
