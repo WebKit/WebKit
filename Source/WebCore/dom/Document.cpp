@@ -2033,11 +2033,6 @@ FrameView* Document::view() const
     return m_frame ? m_frame->view() : nullptr;
 }
 
-Page* Document::page() const
-{
-    return m_frame ? m_frame->page() : nullptr;
-}
-
 Ref<Range> Document::createRange()
 {
     return Range::create(*this);

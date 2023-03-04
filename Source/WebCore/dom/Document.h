@@ -623,7 +623,7 @@ public:
     void setStateForNewFormElements(const Vector<AtomString>&);
 
     WEBCORE_EXPORT FrameView* view() const; // Can be null.
-    WEBCORE_EXPORT Page* page() const; // Can be null.
+    inline Page* page() const; // Defined in Page.h
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
 
