@@ -133,10 +133,10 @@ TextStream& operator<<(TextStream& ts, WheelEventHandlingResult result)
 TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
 {
     switch (steps) {
-    case WheelEventProcessingSteps::ScrollingThread: ts << "scrolling thread"; break;
-    case WheelEventProcessingSteps::MainThreadForScrolling: ts << "main thread scrolling"; break;
-    case WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch: ts << "main thread non-blocking DOM event dispatch"; break;
-    case WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch: ts << "main thread blocking DOM event dispatch"; break;
+    case WheelEventProcessingSteps::AsyncScrolling: ts << "async scrolling"; break;
+    case WheelEventProcessingSteps::SynchronousScrolling: ts << "synchronous scrolling"; break;
+    case WheelEventProcessingSteps::NonBlockingDOMEventDispatch: ts << "non-blocking DOM event dispatch"; break;
+    case WheelEventProcessingSteps::BlockingDOMEventDispatch: ts << "blocking DOM event dispatch"; break;
     }
     return ts;
 }

@@ -114,7 +114,7 @@ void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent
         m_scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(platformWheelEvent);
-    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread)) {
+    if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling)) {
         continueWheelEventHandling(wheelEvent, { processingSteps, false });
         return;
     }

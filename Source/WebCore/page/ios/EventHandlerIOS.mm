@@ -111,13 +111,13 @@ bool EventHandler::wheelEvent(WebEvent *event)
     CurrentEventScope scope(event);
 
     auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event);
-    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
     if (wheelEvent.isGestureStart())
         m_wheelScrollGestureState = std::nullopt;
     else if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
         if (m_wheelScrollGestureState && *m_wheelScrollGestureState == WheelScrollGestureState::NonBlocking)
-            processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+            processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
 
     bool eventWasHandled = handleWheelEvent(wheelEvent, processingSteps);

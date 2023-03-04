@@ -3063,8 +3063,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
         if (event.momentumPhase() == WebWheelEvent::PhaseBegan && preferences().momentumScrollingAnimatorEnabled())
             m_scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(event);
 #endif
-        // "MainThreadForScrolling" here means "needs sending to the web process".
-        continueWheelEventHandling(event, { WheelEventProcessingSteps::MainThreadForScrolling, false });
+        continueWheelEventHandling(event, { WheelEventProcessingSteps::SynchronousScrolling, false });
         return;
     }
 
