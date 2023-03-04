@@ -39,6 +39,8 @@ public:
     InlineDamage() = default;
 
     enum class Type {
+        // Can't decide the type of damage. Let's nuke all the things.
+        Invalid,
         // Content changed or some style property that drives soft wrap opportunities (e.g. going from white-space: pre to normal).
         // This tells us to re-process the inline content and run line layout.
         NeedsContentUpdateAndLineLayout,
@@ -63,7 +65,7 @@ private:
     void setDamageType(Type type) { m_damageType = type; }
     void setDamagedPosition(ContentPosition contentPosition) { m_contentPosition = contentPosition; }
 
-    Type m_damageType { Type::NeedsContentUpdateAndLineLayout };
+    Type m_damageType { Type::Invalid };
     std::optional<ContentPosition> m_contentPosition;
 };
 

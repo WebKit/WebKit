@@ -482,6 +482,7 @@ void WebFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(Same
         WebMouseEventButton::NoButton,
         WebMouseEventSyntheticClickType::NoTap,
         WebProcess::singleton().userGestureTokenIdentifier(UserGestureIndicator::currentUserGesture()),
+        UserGestureIndicator::currentUserGesture() ? UserGestureIndicator::currentUserGesture()->authorizationToken() : std::nullopt,
         true, /* canHandleRequest */
         WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow,
         { }, /* downloadAttribute */
@@ -961,6 +962,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
         mouseButton(navigationAction),
         syntheticClickType(navigationAction),
         WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken()),
+        navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
         webPage->canHandleRequest(request),
         navigationAction.shouldOpenExternalURLsPolicy(),
         navigationAction.downloadAttribute(),
@@ -1077,6 +1079,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         mouseButton(navigationAction),
         syntheticClickType(navigationAction),
         WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken()),
+        navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
         webPage->canHandleRequest(request),
         navigationAction.shouldOpenExternalURLsPolicy(),
         navigationAction.downloadAttribute(),

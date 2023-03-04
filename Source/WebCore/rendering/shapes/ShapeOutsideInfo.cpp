@@ -71,7 +71,7 @@ FloatSize ShapeOutsideInfo::shapeToRendererSize(const FloatSize& size) const
     return size;
 }
 
-static inline CSSBoxType referenceBox(const ShapeValue& shapeValue)
+static CSSBoxType referenceBox(const ShapeValue& shapeValue)
 {
     if (shapeValue.cssBox() == CSSBoxType::BoxMissing) {
         if (shapeValue.type() == ShapeValue::Type::Image)
@@ -81,29 +81,30 @@ static inline CSSBoxType referenceBox(const ShapeValue& shapeValue)
     return shapeValue.cssBox();
 }
 
-void ShapeOutsideInfo::setReferenceBoxLogicalSize(LayoutSize newReferenceBoxLogicalSize)
+static LayoutSize computeLogicalBoxSize(const RenderBox& renderer, bool isHorizontalWritingMode)
 {
-    bool isHorizontalWritingMode = m_renderer.containingBlock()->style().isHorizontalWritingMode();
-    switch (referenceBox(*m_renderer.style().shapeOutside())) {
+    auto& shapeValue = *renderer.style().shapeOutside();
+    auto size = isHorizontalWritingMode ? renderer.size() : renderer.size().transposedSize();
+    switch (referenceBox(shapeValue)) {
     case CSSBoxType::MarginBox:
         if (isHorizontalWritingMode)
-            newReferenceBoxLogicalSize.expand(m_renderer.horizontalMarginExtent(), m_renderer.verticalMarginExtent());
+            size.expand(renderer.horizontalMarginExtent(), renderer.verticalMarginExtent());
         else
-            newReferenceBoxLogicalSize.expand(m_renderer.verticalMarginExtent(), m_renderer.horizontalMarginExtent());
+            size.expand(renderer.verticalMarginExtent(), renderer.horizontalMarginExtent());
         break;
     case CSSBoxType::BorderBox:
         break;
     case CSSBoxType::PaddingBox:
         if (isHorizontalWritingMode)
-            newReferenceBoxLogicalSize.shrink(m_renderer.horizontalBorderExtent(), m_renderer.verticalBorderExtent());
+            size.shrink(renderer.horizontalBorderExtent(), renderer.verticalBorderExtent());
         else
-            newReferenceBoxLogicalSize.shrink(m_renderer.verticalBorderExtent(), m_renderer.horizontalBorderExtent());
+            size.shrink(renderer.verticalBorderExtent(), renderer.horizontalBorderExtent());
         break;
     case CSSBoxType::ContentBox:
         if (isHorizontalWritingMode)
-            newReferenceBoxLogicalSize.shrink(m_renderer.horizontalBorderAndPaddingExtent(), m_renderer.verticalBorderAndPaddingExtent());
+            size.shrink(renderer.horizontalBorderAndPaddingExtent(), renderer.verticalBorderAndPaddingExtent());
         else
-            newReferenceBoxLogicalSize.shrink(m_renderer.verticalBorderAndPaddingExtent(), m_renderer.horizontalBorderAndPaddingExtent());
+            size.shrink(renderer.verticalBorderAndPaddingExtent(), renderer.horizontalBorderAndPaddingExtent());
         break;
     case CSSBoxType::FillBox:
     case CSSBoxType::StrokeBox:
@@ -112,11 +113,70 @@ void ShapeOutsideInfo::setReferenceBoxLogicalSize(LayoutSize newReferenceBoxLogi
         ASSERT_NOT_REACHED();
         break;
     }
+    return size;
+}
 
-    if (m_referenceBoxLogicalSize == newReferenceBoxLogicalSize)
+void ShapeOutsideInfo::invalidateForSizeChangeIfNeeded()
+{
+    auto newSize = computeLogicalBoxSize(m_renderer, m_renderer.containingBlock()->isHorizontalWritingMode());
+    if (m_cachedShapeLogicalSize == newSize)
         return;
+
     markShapeAsDirty();
-    m_referenceBoxLogicalSize = newReferenceBoxLogicalSize;
+    m_cachedShapeLogicalSize = newSize;
+}
+
+static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const LayoutSize& referenceBoxLogicalSize)
+{
+    LayoutPoint marginBoxOrigin(-renderBox.marginLogicalLeft() - renderBox.borderAndPaddingLogicalLeft(), -renderBox.marginBefore() - renderBox.borderBefore() - renderBox.paddingBefore());
+    LayoutSize marginBoxSizeDelta(renderBox.marginLogicalWidth() + renderBox.borderAndPaddingLogicalWidth(), renderBox.marginLogicalHeight() + renderBox.borderAndPaddingLogicalHeight());
+    LayoutSize marginRectSize(referenceBoxLogicalSize + marginBoxSizeDelta);
+    marginRectSize.clampNegativeToZero();
+    return LayoutRect(marginBoxOrigin, marginRectSize);
+}
+
+std::unique_ptr<Shape> makeShapeForShapeOutside(const RenderBox& renderer)
+{
+    auto& style = renderer.style();
+    auto& containingBlock = *renderer.containingBlock();
+    auto writingMode = containingBlock.style().writingMode();
+    bool isHorizontalWritingMode = containingBlock.isHorizontalWritingMode();
+    float shapeImageThreshold = style.shapeImageThreshold();
+    auto& shapeValue = *style.shapeOutside();
+
+    auto boxSize = computeLogicalBoxSize(renderer, isHorizontalWritingMode);
+
+    auto margin = [&] {
+        auto shapeMargin = floatValueForLength(style.shapeMargin(), containingBlock.contentWidth());
+        return isnan(shapeMargin) ? 0.0f : shapeMargin;
+    }();
+
+    switch (shapeValue.type()) {
+    case ShapeValue::Type::Shape:
+        ASSERT(shapeValue.shape());
+        return Shape::createShape(*shapeValue.shape(), boxSize, writingMode, margin);
+    case ShapeValue::Type::Image: {
+        ASSERT(shapeValue.isImageValid());
+        auto* styleImage = shapeValue.image();
+        auto imageSize = renderer.calculateImageIntrinsicDimensions(styleImage, boxSize, RenderImage::ScaleByEffectiveZoom);
+        styleImage->setContainerContextForRenderer(renderer, imageSize, style.effectiveZoom());
+
+        auto marginRect = getShapeImageMarginRect(renderer, boxSize);
+        auto imageRect = is<RenderImage>(renderer) ? downcast<RenderImage>(renderer).replacedContentRect() : LayoutRect { { }, imageSize };
+
+        ASSERT(!styleImage->isPending());
+        RefPtr<Image> image = styleImage->image(const_cast<RenderBox*>(&renderer), imageSize);
+        return Shape::createRasterShape(image.get(), shapeImageThreshold, imageRect, marginRect, writingMode, margin);
+    }
+    case ShapeValue::Type::Box: {
+        auto shapeRect = computeRoundedRectForBoxShape(referenceBox(shapeValue), renderer);
+        if (!isHorizontalWritingMode)
+            shapeRect = shapeRect.transposedRect();
+        return Shape::createBoxShape(shapeRect, writingMode, margin);
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 static inline bool checkShapeImageOrigin(Document& document, const StyleImage& styleImage)
@@ -136,66 +196,11 @@ static inline bool checkShapeImageOrigin(Document& document, const StyleImage& s
     return false;
 }
 
-static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const LayoutSize& referenceBoxLogicalSize)
-{
-    LayoutPoint marginBoxOrigin(-renderBox.marginLogicalLeft() - renderBox.borderAndPaddingLogicalLeft(), -renderBox.marginBefore() - renderBox.borderBefore() - renderBox.paddingBefore());
-    LayoutSize marginBoxSizeDelta(renderBox.marginLogicalWidth() + renderBox.borderAndPaddingLogicalWidth(), renderBox.marginLogicalHeight() + renderBox.borderAndPaddingLogicalHeight());
-    LayoutSize marginRectSize(referenceBoxLogicalSize + marginBoxSizeDelta);
-    marginRectSize.clampNegativeToZero();
-    return LayoutRect(marginBoxOrigin, marginRectSize);
-}
-
-std::unique_ptr<Shape> ShapeOutsideInfo::createShapeForImage(StyleImage* styleImage, float shapeImageThreshold, WritingMode writingMode, float margin) const
-{
-    LayoutSize imageSize = m_renderer.calculateImageIntrinsicDimensions(styleImage, m_referenceBoxLogicalSize, RenderImage::ScaleByEffectiveZoom);
-    styleImage->setContainerContextForRenderer(m_renderer, imageSize, m_renderer.style().effectiveZoom());
-
-    const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_referenceBoxLogicalSize);
-    const LayoutRect& imageRect = is<RenderImage>(m_renderer)
-        ? downcast<RenderImage>(m_renderer).replacedContentRect()
-        : LayoutRect(LayoutPoint(), imageSize);
-
-    ASSERT(!styleImage->isPending());
-    RefPtr<Image> image = styleImage->image(const_cast<RenderBox*>(&m_renderer), imageSize);
-    return Shape::createRasterShape(image.get(), shapeImageThreshold, imageRect, marginRect, writingMode, margin);
-}
-
 const Shape& ShapeOutsideInfo::computedShape() const
 {
-    if (Shape* shape = m_shape.get())
-        return *shape;
+    if (!m_shape)
+        m_shape = makeShapeForShapeOutside(m_renderer);
 
-    const RenderStyle& style = m_renderer.style();
-    ASSERT(m_renderer.containingBlock());
-    const RenderStyle& containingBlockStyle = m_renderer.containingBlock()->style();
-
-    WritingMode writingMode = containingBlockStyle.writingMode();
-    auto margin = [&] {
-        auto shapeMargin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : 0_lu);
-        return isnan(shapeMargin) ? 0.0f : shapeMargin;
-    }();
-    float shapeImageThreshold = style.shapeImageThreshold();
-    const ShapeValue& shapeValue = *style.shapeOutside();
-
-    switch (shapeValue.type()) {
-    case ShapeValue::Type::Shape:
-        ASSERT(shapeValue.shape());
-        m_shape = Shape::createShape(*shapeValue.shape(), m_referenceBoxLogicalSize, writingMode, margin);
-        break;
-    case ShapeValue::Type::Image:
-        ASSERT(shapeValue.isImageValid());
-        m_shape = createShapeForImage(shapeValue.image(), shapeImageThreshold, writingMode, margin);
-        break;
-    case ShapeValue::Type::Box: {
-        RoundedRect shapeRect = computeRoundedRectForBoxShape(referenceBox(shapeValue), m_renderer);
-        if (!containingBlockStyle.isHorizontalWritingMode())
-            shapeRect = shapeRect.transposedRect();
-        m_shape = Shape::createBoxShape(shapeRect, writingMode, margin);
-        break;
-    }
-    }
-
-    ASSERT(m_shape);
     return *m_shape;
 }
 

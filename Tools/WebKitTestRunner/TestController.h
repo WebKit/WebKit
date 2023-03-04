@@ -407,6 +407,12 @@ public:
     void unlockScreenOrientation();
 #endif
 
+    WKRetainPtr<WKStringRef> getBackgroundFetchIdentifier();
+    void abortBackgroundFetch(WKStringRef);
+    void pauseBackgroundFetch(WKStringRef);
+    void resumeBackgroundFetch(WKStringRef);
+    void simulateClickBackgroundFetch(WKStringRef);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;

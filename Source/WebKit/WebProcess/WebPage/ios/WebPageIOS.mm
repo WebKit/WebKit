@@ -197,6 +197,14 @@ static String plainTextForDisplay(const std::optional<SimpleRange>& range)
     return range ? plainTextForDisplay(*range) : emptyString();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPageIOSAdditions.mm>
+#else
+static void adjustCandidateAutocorrectionInFrame(Frame&)
+{
+}
+#endif
+
 // WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
 // we need to ignore differences that are within a small rounding error, with enough leeway
 // to handle rounding differences that may result from round-tripping through UIScrollView.
@@ -2479,9 +2487,9 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
     reply({ WTFMove(rootViewSelectionRects) , (__bridge UIFont *)font });
 }
 
-void WebPage::applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&& callback)
+void WebPage::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(const String&)>&& callback)
 {
-    callback(applyAutocorrectionInternal(correction, originalText) ? correction : String());
+    callback(applyAutocorrectionInternal(correction, originalText, isCandidate) ? correction : String());
 }
 
 Seconds WebPage::eventThrottlingDelay() const
@@ -2502,12 +2510,12 @@ Seconds WebPage::eventThrottlingDelay() const
     return std::min(m_estimatedLatency * 2, 1_s);
 }
 
-void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&& reply)
+void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(bool)>&& reply)
 {
-    reply(applyAutocorrectionInternal(correction, originalText));
+    reply(applyAutocorrectionInternal(correction, originalText, isCandidate));
 }
 
-bool WebPage::applyAutocorrectionInternal(const String& correction, const String& originalText)
+bool WebPage::applyAutocorrectionInternal(const String& correction, const String& originalText, bool isCandidate)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     if (!frame->selection().isCaretOrRange())
@@ -2571,9 +2579,11 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         affinity = VisiblePosition(makeDeprecatedLegacyPosition(range->start), Affinity::Upstream).affinity();
     
     frame->selection().setSelectedRange(range, affinity, WebCore::FrameSelection::ShouldCloseTyping::Yes);
-    if (correction.length())
+    if (correction.length()) {
         frame->editor().insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
-    else if (originalText.length())
+        if (isCandidate)
+            adjustCandidateAutocorrectionInFrame(frame.get());
+    } else if (originalText.length())
         frame->editor().deleteWithDirection(SelectionDirection::Backward, TextGranularity::CharacterGranularity, false, true);
     return true;
 }

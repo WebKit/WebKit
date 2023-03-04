@@ -398,7 +398,7 @@ static bool isVideoWithDefaultObjectSize(const RenderReplaced* maybeVideo)
 void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* contentRenderer, FloatSize& constrainedSize, FloatSize& intrinsicRatio) const
 {
     FloatSize intrinsicSize;
-    if (shouldApplySizeContainment())
+    if (shouldApplySizeOrInlineSizeContainment())
         RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
     else if (contentRenderer) {
         contentRenderer->computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
@@ -508,7 +508,7 @@ RoundedRect RenderReplaced::roundedContentBoxRect() const
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.
-    ASSERT(!embeddedContentBox() || shouldApplySizeContainment());
+    ASSERT(!embeddedContentBox() || shouldApplySizeOrInlineSizeContainment());
     intrinsicSize = FloatSize(intrinsicLogicalWidth(), intrinsicLogicalHeight());
 
     if (style().hasAspectRatio()) {
@@ -568,8 +568,6 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
 {
     if (style().logicalWidth().isSpecified())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
-    if (shouldApplyInlineSizeContainment())
-        return LayoutUnit();
     if (style().logicalWidth().isIntrinsic())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
 
@@ -582,8 +580,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
 
     if (style().logicalWidth().isAuto()) {
         bool computedHeightIsAuto = style().logicalHeight().isAuto();
-        bool hasIntrinsicWidth = constrainedSize.width() > 0;
-        bool hasIntrinsicHeight = constrainedSize.height() > 0;
+        bool hasIntrinsicWidth = constrainedSize.width() > 0 || shouldApplySizeOrInlineSizeContainment();
+        bool hasIntrinsicHeight = constrainedSize.height() > 0 || shouldApplySizeContainment();
 
         // For flex or grid items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex or
         // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
@@ -652,8 +650,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(contentRenderer, constrainedSize, intrinsicRatio);
 
     bool widthIsAuto = style().logicalWidth().isAuto();
-    bool hasIntrinsicHeight = constrainedSize.height() > 0;
-    bool hasIntrinsicWidth = constrainedSize.width() > 0;
+    bool hasIntrinsicHeight = constrainedSize.height() > 0 || shouldApplySizeContainment();
+    bool hasIntrinsicWidth = constrainedSize.width() > 0 || shouldApplySizeOrInlineSizeContainment();
 
     // See computeReplacedLogicalHeight() for a similar check for heights.
     if (!intrinsicRatio.isEmpty() && (isFlexItem() || isGridItem()) && hasOverridingLogicalWidth() && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight))

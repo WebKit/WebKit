@@ -28,6 +28,7 @@
 
 #if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
 
+#import "WebPaymentCoordinatorProxyCocoa.h"
 #import <WebCore/ApplePayPaymentTokenContext.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -37,13 +38,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-static NSDecimalNumber *toDecimalNumber(const String& amount)
-{
-    if (!amount)
-        return NSDecimalNumber.zero;
-    return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
-}
 
 RetainPtr<PKPaymentTokenContext> platformPaymentTokenContext(const ApplePayPaymentTokenContext& webTokenContext)
 {

@@ -489,9 +489,9 @@ void WebEditorClient::textWillBeDeletedInTextField(Element& element)
 
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const
 {
-    // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
+    // This prevents erasing spelling and grammar markers to match AppKit.
 #if PLATFORM(COCOA)
-    return type != TextCheckingType::Spelling;
+    return !(type == TextCheckingType::Spelling || type == TextCheckingType::Grammar);
 #else
     UNUSED_PARAM(type);
     return true;

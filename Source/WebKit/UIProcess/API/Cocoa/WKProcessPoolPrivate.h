@@ -51,7 +51,6 @@
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebsiteDataStore._allowTLSCertificateChain:forHost:", macos(10.10, 12.0), ios(8.0, 15.0));
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.fastServerTrustEvaluationEnabled", macos(10.11, 10.15.4), ios(9.0, 13.4));
-- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy WK_API_DEPRECATED_WITH_REPLACEMENT("WKHTTPCookieStore._setCookieAcceptPolicy:completionHandler:", macos(10.10, 12.0), ios(8.0, 15.0));
 
 - (id)_objectForBundleParameter:(NSString *)parameter;
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
@@ -109,7 +108,6 @@
 - (size_t)_webProcessCountIgnoringPrewarmedAndCached WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (size_t)_pluginProcessCount WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (size_t)_serviceWorkerProcessCount WK_API_AVAILABLE(macos(10.14), ios(12.0));
-- (void)_syncNetworkProcessCookies WK_API_DEPRECATED_WITH_REPLACEMENT("WKHTTPCookieStore._flushCookiesToDiskWithCompletionHandler:", macos(10.13, 12.0), ios(11.0, 15.0));
 - (void)_makeNextWebProcessLaunchFailForTesting WK_API_AVAILABLE(macos(10.14), ios(12.0));
 - (NSUInteger)_maximumSuspendedPageCount WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (NSUInteger)_processCacheCapacity WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

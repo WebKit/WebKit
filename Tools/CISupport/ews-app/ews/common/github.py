@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -372,10 +372,7 @@ class GitHubEWS(GitHub):
 
     def _steps_messages(self, build):
         # FIXME: figure out if it is possible to have multi-line hover-over messages in GitHub UI.
-        return '; '.join([step.state_string for step in build.step_set.all().order_by('uid') if self._should_display_step(step)])
-
-    def _should_display_step(self, step):
-        return not [step_to_hide for step_to_hide in StatusBubble.STEPS_TO_HIDE if re.search(step_to_hide, step.state_string)]
+        return '; '.join([step.state_string for step in build.step_set.all().order_by('uid')])
 
     def _does_build_contains_any_failed_step(self, build):
         for step in build.step_set.all():

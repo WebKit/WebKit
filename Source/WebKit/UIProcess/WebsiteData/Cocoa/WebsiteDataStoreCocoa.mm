@@ -46,6 +46,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
+#import <wtf/UUID.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
@@ -262,24 +263,34 @@ static String defaultWebsiteDataStoreRootDirectory()
 
 void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&& completionHandler)
 {
-    Vector<UUID> identifiers;
-    for (auto identifierString : FileSystem::listDirectory(defaultWebsiteDataStoreRootDirectory())) {
-        if (auto identifier = UUID::parse(identifierString))
-            identifiers.append(*identifier);
-    }
+    ASSERT(isMainRunLoop());
 
-    completionHandler(WTFMove(identifiers));
+    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
+        auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
+            return UUID::parse(identifierString);
+        });
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
+            completionHandler(WTFMove(identifiers));
+        });
+    });
 }
 
 void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
+
     if (!identifier)
         return completionHandler("Identifier is invalid"_s);
 
-    if (!FileSystem::deleteNonEmptyDirectory(defaultWebsiteDataStoreDirectory(identifier)))
-        return completionHandler("WebsiteDataStore with this identifier does not exist or deletion failed"_s);
+    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
+        bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
+            if (!deleted)
+                return completionHandler("WebsiteDataStore with this identifier does not exist or deletion failed"_s);
 
-    return completionHandler({ });
+            completionHandler({ });
+        });
+    });
 }
 
 String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const UUID& identifier)

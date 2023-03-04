@@ -3505,6 +3505,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (attemptToFold(m_vm.propertyNames->unicode.impl(), globalObject->regExpProtoUnicodeGetter()))
                         break;
 
+                    if (attemptToFold(m_vm.propertyNames->unicodeSets.impl(), globalObject->regExpProtoUnicodeSetsGetter()))
+                        break;
+
                     if (attemptToFold(m_vm.propertyNames->replaceSymbol.impl(), globalObject->regExpProtoSymbolReplaceFunction()))
                         break;
                 }

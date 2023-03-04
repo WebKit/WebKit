@@ -41,10 +41,16 @@ namespace WebCore {
 String CSSCounterStyle::counterForSystemCyclic(int value) const
 {
     auto amountOfSymbols = symbols().size();
-    int symbolIndex = (value - 1) % amountOfSymbols;
-    if (symbolIndex < 0)
-        symbolIndex += amountOfSymbols;
-    if (symbolIndex < 0 || static_cast<unsigned>(symbolIndex) >= amountOfSymbols) {
+    if (amountOfSymbols < 1) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    // For avoiding subtracting -1 from INT_MAX we will sum-up amountOfSymbols in case the value is not positive.
+    // This works because x % y = (x + y) % y
+    unsigned symbolIndex = static_cast<unsigned>(value > 0 ? value : value + amountOfSymbols);
+    symbolIndex = (symbolIndex - 1) % amountOfSymbols;
+    if (static_cast<unsigned>(symbolIndex) >= amountOfSymbols) {
         ASSERT_NOT_REACHED();
         return  { };
     }
@@ -64,36 +70,41 @@ String CSSCounterStyle::counterForSystemFixed(int value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#symbolic-system
-String CSSCounterStyle::counterForSystemSymbolic(int value) const
+String CSSCounterStyle::counterForSystemSymbolic(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (!amountOfSymbols || value <= 0) {
+    if (!amountOfSymbols) {
         ASSERT_NOT_REACHED();
         return { };
     }
+    if (value < 1)
+        return { };
+
     unsigned symbolIndex = ((value - 1) % amountOfSymbols);
-    int frequency = static_cast<int>(std::ceil(static_cast<float>(value) / amountOfSymbols));
+    unsigned frequency = static_cast<unsigned>(std::ceil(static_cast<float>(value) / amountOfSymbols));
 
     StringBuilder result;
-    for (int i = 0; i < frequency; ++i)
+    for (unsigned i = 0; i < frequency; ++i)
         result.append(symbols().at(symbolIndex));
     return result.toString();
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#alphabetic-system
-String CSSCounterStyle::counterForSystemAlphabetic(int value) const
+String CSSCounterStyle::counterForSystemAlphabetic(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (value < 1 || !amountOfSymbols) {
+    if (amountOfSymbols < 2) {
         ASSERT_NOT_REACHED();
         return { };
     }
+    if (value < 1)
+        return { };
 
     Vector<String> reversed;
     while (value) {
         value -= 1;
         reversed.append(symbols().at(value % amountOfSymbols));
-        value = static_cast<int>(std::floor(value / amountOfSymbols));
+        value = std::floor(value / amountOfSymbols);
     }
     StringBuilder result;
     for (auto iter = reversed.rbegin(); iter != reversed.rend(); ++iter)
@@ -102,10 +113,10 @@ String CSSCounterStyle::counterForSystemAlphabetic(int value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#numeric-system
-String CSSCounterStyle::counterForSystemNumeric(int value) const
+String CSSCounterStyle::counterForSystemNumeric(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (!amountOfSymbols) {
+    if (amountOfSymbols < 2) {
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -115,7 +126,7 @@ String CSSCounterStyle::counterForSystemNumeric(int value) const
     Vector<String> reversed;
     while (value) {
         reversed.append(symbols().at(value % amountOfSymbols));
-        value = static_cast<int>(std::floor(value / amountOfSymbols));
+        value = static_cast<unsigned>(std::floor(value / amountOfSymbols));
     }
     StringBuilder result;
     for (auto iter = reversed.rbegin(); iter != reversed.rend(); ++iter)
@@ -124,7 +135,7 @@ String CSSCounterStyle::counterForSystemNumeric(int value) const
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#additive-system
-String CSSCounterStyle::counterForSystemAdditive(int value) const
+String CSSCounterStyle::counterForSystemAdditive(unsigned value) const
 {
     auto& additiveSymbols = this->additiveSymbols();
     if (!value) {
@@ -142,7 +153,7 @@ String CSSCounterStyle::counterForSystemAdditive(int value) const
     };
 
     for (auto& [symbol, weight] : additiveSymbols) {
-        if (!weight || static_cast<int>(weight) > value)
+        if (!weight || weight > value)
             continue;
         auto repetitions = static_cast<unsigned>(std::floor(value / weight));
         appendToResult(symbol, repetitions);
@@ -155,17 +166,18 @@ String CSSCounterStyle::counterForSystemAdditive(int value) const
 
 String CSSCounterStyle::initialRepresentation(int value) const
 {
+    unsigned absoluteValue = std::abs(value);
     switch (system()) {
     case CSSCounterStyleDescriptors::System::Cyclic:
         return counterForSystemCyclic(value);
     case CSSCounterStyleDescriptors::System::Numeric:
-        return counterForSystemNumeric(value);
+        return counterForSystemNumeric(absoluteValue);
     case CSSCounterStyleDescriptors::System::Alphabetic:
-        return counterForSystemAlphabetic(value);
+        return counterForSystemAlphabetic(absoluteValue);
     case CSSCounterStyleDescriptors::System::Symbolic:
-        return counterForSystemSymbolic(value);
+        return counterForSystemSymbolic(absoluteValue);
     case CSSCounterStyleDescriptors::System::Additive:
-        return counterForSystemAdditive(value);
+        return counterForSystemAdditive(absoluteValue);
     case CSSCounterStyleDescriptors::System::Fixed:
         return counterForSystemFixed(value);
     case CSSCounterStyleDescriptors::System::Extends:
@@ -193,12 +205,11 @@ String CSSCounterStyle::text(int value)
     if (!isInRange(value))
         return fallbackText(value);
 
-    auto shouldApplyNegative = shouldApplyNegativeSymbols(value);
-    auto result = initialRepresentation(shouldApplyNegative ? std::abs(value) : value);
+    auto result = initialRepresentation(value);
     if (result.isEmpty())
         return fallbackText(value);
     applyPadSymbols(result, value);
-    if (shouldApplyNegative)
+    if (shouldApplyNegativeSymbols(value))
         applyNegativeSymbols(result);
 
     return result;
@@ -221,14 +232,14 @@ void CSSCounterStyle::applyPadSymbols(String& text, int value) const
     if (pad().m_padMinimumLength <= 0)
         return;
 
-    unsigned numberOfSymbolsToAdd { pad().m_padMinimumLength - WTF::numGraphemeClusters(text) };
+    int numberOfSymbolsToAdd = static_cast<int>(pad().m_padMinimumLength - WTF::numGraphemeClusters(text));
     if (shouldApplyNegativeSymbols(value))
-        numberOfSymbolsToAdd -= WTF::numGraphemeClusters(prefix()) + WTF::numGraphemeClusters(negative().m_suffix);
+        numberOfSymbolsToAdd -= static_cast<int>(WTF::numGraphemeClusters(negative().m_prefix) + WTF::numGraphemeClusters(negative().m_suffix));
 
     String padText;
-    for (unsigned i = 0; i < numberOfSymbolsToAdd; ++i)
+    for (int i = 0; i < numberOfSymbolsToAdd; ++i)
         padText = makeString(padText, pad().m_padSymbol);
-    text = makeString(text, padText);
+    text = makeString(padText, text);
 }
 
 bool CSSCounterStyle::isInRange(int value) const

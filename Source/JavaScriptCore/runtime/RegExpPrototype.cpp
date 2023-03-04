@@ -45,6 +45,7 @@ static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterMultiline);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterDotAll);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterSticky);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterUnicode);
+static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterUnicodeSets);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterSource);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterFlags);
 
@@ -69,6 +70,7 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->multiline, regExpProtoGetterMultiline, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->sticky, regExpProtoGetterSticky, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->unicode, regExpProtoGetterUnicode, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->unicodeSets, regExpProtoGetterUnicodeSets, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->source, regExpProtoGetterSource, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->flags, regExpProtoGetterFlags, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -331,6 +333,22 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterUnicode, (JSGlobalObject* globalObject
     return JSValue::encode(jsBoolean(regexp->regExp()->unicode()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterUnicodeSets, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    if (UNLIKELY(!regexp)) {
+        if (thisValue == globalObject->regExpPrototype())
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(globalObject, scope, "The RegExp.prototype.unicodeSets getter can only be called on a RegExp object"_s);
+    }
+
+    return JSValue::encode(jsBoolean(regexp->regExp()->unicodeSets()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterFlags, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -543,7 +561,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
     unsigned matchPosition = position;
     // 19. Repeat, while q < size
     bool regExpIsSticky = regexp->sticky();
-    bool regExpIsUnicode = regexp->unicode();
+    bool regExpIsUnicode = regexp->eitherUnicode();
     
     unsigned maxSizeForDirectPath = 100000;
     JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 1);

@@ -62,6 +62,7 @@ public:
     JSC_REGEXP_FLAGS(JSC_DEFINE_REGEXP_FLAG_ACCESSOR)
 #undef JSC_DEFINE_REGEXP_FLAG_ACCESSOR
     bool globalOrSticky() const { return global() || sticky(); }
+    bool eitherUnicode() const { return unicode() || unicodeSets(); }
 
     const String& pattern() const { return m_patternString; }
 

@@ -260,6 +260,7 @@ public:
     enum class ShouldSkipEvent : bool { No, Yes };
     void fireFunctionalEvent(SWServerRegistration&, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&&);
     void fireBackgroundFetchEvent(SWServerRegistration&, BackgroundFetchInformation&&);
+    void fireBackgroundFetchClickEvent(SWServerRegistration&, BackgroundFetchInformation&&);
 
     ScriptExecutionContextIdentifier clientIdFromVisibleClientId(const String& visibleIdentifier) const { return m_visibleClientIdToInternalClientIdMap.get(visibleIdentifier); }
 
@@ -279,10 +280,12 @@ public:
         String userAgent;
     };
     WEBCORE_EXPORT std::optional<GatheredClientData> gatherClientData(const ClientOrigin&, ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT void getAllOrigins(CompletionHandler<void(HashSet<ClientOrigin>&&)>&&);
 
     void requestBackgroundFetchPermission(const ClientOrigin& clientOrigin, CompletionHandler<void(bool)>&& callback) { m_delegate->requestBackgroundFetchPermission(clientOrigin, WTFMove(callback)); }
     std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client& client, const BackgroundFetchRequest& request, const WebCore::ClientOrigin& origin) { return m_delegate->createBackgroundFetchRecordLoader(client, request, origin); }
     Ref<BackgroundFetchStore> createBackgroundFetchStore() { return m_delegate->createBackgroundFetchStore(); }
+    WEBCORE_EXPORT BackgroundFetchEngine& backgroundFetchEngine();
 
 private:
     unsigned maxRegistrationCount();
@@ -316,8 +319,6 @@ private:
     void whenImportIsCompletedIfNeeded(CompletionHandler<void()>&&);
 
     ResourceRequest createScriptRequest(const URL&, const ServiceWorkerJobData&, SWServerRegistration&);
-
-    BackgroundFetchEngine& backgroundFetchEngine();
 
     WeakPtr<SWServerDelegate> m_delegate;
 

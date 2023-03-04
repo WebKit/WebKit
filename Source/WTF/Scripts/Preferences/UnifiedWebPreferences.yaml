@@ -717,7 +717,7 @@ BackgroundWebContentRunningBoardThrottlingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: WebKit::defaultRunningBoardThrottlingEnabled()
 
 BackspaceKeyNavigationEnabled:
   type: bool
@@ -885,17 +885,17 @@ CSSColorMixEnabled:
 
 CSSContainIntrinsicSizeEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS Contain Intrinsic Size"
   humanReadableDescription: "Enable contain-intrinsic-size CSS property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSContainerQueriesEnabled:
   type: bool
@@ -955,17 +955,17 @@ CSSCounterStyleAtRuleImageSymbolsEnabled:
 
 CSSCounterStyleAtRulesEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS @counter-style"
   humanReadableDescription: "Enable support for CSS @counter-style rules"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
@@ -1350,6 +1350,20 @@ CanvasFiltersEnabled:
       default: false
     WebCore:
       default: false
+
+CanvasNoiseInjectionEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Canvas Noise Injection"
+  humanReadableDescription: "Enable canvas (2D/WebGL) noise injection"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 CanvasUsesAcceleratedDrawing:
   type: bool
@@ -4852,17 +4866,17 @@ PluginsEnabled:
 
 PopoverAttributeEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "HTML popover attribute"
   humanReadableDescription: "Enable HTML popover attribute support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 PreferFasterClickOverDoubleTap:
   type: bool
@@ -6048,7 +6062,7 @@ StandardFontFamily:
 
 StorageAPIEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Storage API"
   humanReadableDescription: "Enable Storage API"
@@ -6064,7 +6078,7 @@ StorageAPIEnabled:
 
 StorageAPIEstimateEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "Storage API Estimate"
   humanReadableDescription: "Enable Storage API Estimate"
@@ -6072,8 +6086,10 @@ StorageAPIEstimateEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)" : true
       default: false
     WebCore:
+      "PLATFORM(COCOA)" : true
       default: false
 
 StorageAccessAPIEnabled:
@@ -6496,7 +6512,7 @@ UseGPUProcessForDisplayCapture:
   humanReadableName: "GPU Process: Screen and Window capture"
   humanReadableDescription: "Display capture in GPU Process"
   webcoreBinding: none
-  condition: HAVE(SC_CONTENT_SHARING_SESSION)
+  condition: HAVE(SCREEN_CAPTURE_KIT)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -6602,6 +6618,18 @@ UsePreHTML5ParserQuirks:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
+
+UseSCContentSharingPicker:
+  type: bool
+  status: internal
+  humanReadableName: "Use SCContentSharingPicker"
+  humanReadableDescription: "Use SCContentSharingPicker when available"
+  condition: HAVE(SC_CONTENT_SHARING_PICKER)
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultUseSCContentSharingPicker()
     WebCore:
       default: false
 
@@ -6716,6 +6744,20 @@ VP9SWDecoderEnabledOnBattery:
   condition: ENABLE(VP9)
   defaultValue:
     WebKit:
+      default: false
+
+VerifyWindowOpenUserGestureFromUIProcess:
+  type: bool
+  status: testable
+  category: security
+  humanReadableName: "Verify window.open user gesture"
+  humanReadableDescription: "Verifies that the user gesture for window.open came from the UI process"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 VerticalFormControlsEnabled:

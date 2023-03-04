@@ -606,39 +606,38 @@ Element* AccessibilityRenderObject::anchorElement() const
 String AccessibilityRenderObject::helpText() const
 {
     if (!m_renderer)
-        return String();
-    
-    const AtomString& ariaHelp = getAttribute(aria_helpAttr);
+        return { };
+
+    const auto& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
         return ariaHelp;
-    
+
     String describedBy = ariaDescribedByAttribute();
     if (!describedBy.isEmpty())
         return describedBy;
-    
-    String description = accessibilityDescription();
-    for (RenderObject* ancestor = renderer(); ancestor; ancestor = ancestor->parent()) {
-        if (is<HTMLElement>(ancestor->node())) {
-            HTMLElement& element = downcast<HTMLElement>(*ancestor->node());
-            const AtomString& summary = element.getAttribute(summaryAttr);
+
+    String description = this->description();
+    for (auto* ancestor = renderer(); ancestor; ancestor = ancestor->parent()) {
+        if (auto* element = dynamicDowncast<HTMLElement>(ancestor->node())) {
+            const auto& summary = element->getAttribute(summaryAttr);
             if (!summary.isEmpty())
                 return summary;
-            
+
             // The title attribute should be used as help text unless it is already being used as descriptive text.
-            const AtomString& title = element.getAttribute(titleAttr);
+            const auto& title = element->getAttribute(titleAttr);
             if (!title.isEmpty() && description != title)
                 return title;
         }
-        
+
         // Only take help text from an ancestor element if its a group or an unknown role. If help was 
         // added to those kinds of elements, it is likely it was meant for a child element.
-        if (AccessibilityObject* axObj = axObjectCache()->getOrCreate(ancestor)) {
-            if (!axObj->isGroup() && axObj->roleValue() != AccessibilityRole::Unknown)
+        if (auto* axAncestor = axObjectCache()->getOrCreate(ancestor)) {
+            if (!axAncestor->isGroup() && axAncestor->roleValue() != AccessibilityRole::Unknown)
                 break;
         }
     }
-    
-    return String();
+
+    return { };
 }
 
 String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
@@ -758,7 +757,7 @@ String AccessibilityRenderObject::stringValue() const
             staticText = textUnderElement();
         return staticText;
     }
-        
+
     if (is<RenderText>(m_renderer.get()))
         return textUnderElement();
 
@@ -787,11 +786,11 @@ String AccessibilityRenderObject::stringValue() const
     }
 
     if (isWebArea())
-        return String();
-    
+        return { };
+
     if (isTextControl())
         return text();
-    
+
 #if PLATFORM(IOS_FAMILY)
     if (isInputTypePopupButton())
         return textUnderElement();
@@ -799,12 +798,12 @@ String AccessibilityRenderObject::stringValue() const
 
     if (auto* renderFileUploadControl = dynamicDowncast<RenderFileUploadControl>(m_renderer.get()))
         return renderFileUploadControl->fileTextValue();
-    
+
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
     // single static array.
-    return String();
+    return { };
 }
 
 bool AccessibilityRenderObject::canHavePlainText() const
@@ -3485,7 +3484,7 @@ String AccessibilityRenderObject::descriptionForMSAA() const
     if (!description.isEmpty())
         return description;
 
-    description = accessibilityDescription();
+    description = this->description();
     if (!description.isEmpty()) {
         // From the Mozilla MSAA implementation:
         // "Signal to screen readers that this description is speakable and is not
@@ -3495,7 +3494,7 @@ String AccessibilityRenderObject::descriptionForMSAA() const
         return "Description: " + description;
     }
 
-    return String();
+    return { };
 }
 
 static AccessibilityRole msaaRoleForRenderer(const RenderObject* renderer)

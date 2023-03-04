@@ -111,6 +111,12 @@ static HashMap<PAL::SessionID, WebsiteDataStore*>& allDataStores()
     return map;
 }
 
+WorkQueue& WebsiteDataStore::websiteDataStoreIOQueue()
+{
+    static auto& queue = WorkQueue::create("com.apple.WebKit.WebsiteDataStoreIO").leakRef();
+    return queue;
+}
+
 void WebsiteDataStore::forEachWebsiteDataStore(Function<void(WebsiteDataStore&)>&& function)
 {
     for (auto* dataStore : allDataStores().values())
@@ -2345,5 +2351,18 @@ void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const 
 
     networkProcess().send(Messages::NetworkProcess::ResumeDownload(m_sessionID, downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle, callDownloadDidStart), 0);
 }
+
+#if HAVE(NW_PROXY_CONFIG)
+void WebsiteDataStore::clearProxyConfigData()
+{
+    networkProcess().send(Messages::NetworkProcess::ClearProxyConfigData(m_sessionID), 0);
+}
+
+void WebsiteDataStore::setProxyConfigData(const API::Data& data, uuid_t proxyIdentifier)
+{
+    auto proxyIdentifierData = IPC::DataReference(reinterpret_cast<uint8_t *>(proxyIdentifier), sizeof(uuid_t));
+    networkProcess().send(Messages::NetworkProcess::SetProxyConfigData(m_sessionID, data.dataReference(), WTFMove(proxyIdentifierData)), 0);
+}
+#endif // HAVE(NW_PROXY_CONFIG)
 
 }

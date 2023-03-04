@@ -53,7 +53,7 @@ class BackgroundFetchStore : public RefCounted<BackgroundFetchStore>, public Can
 public:
     virtual ~BackgroundFetchStore() = default;
 
-    virtual void initializeFetches(BackgroundFetchEngine&, const ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) = 0;
+    virtual void initializeFetches(const ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) = 0;
     virtual void clearFetch(const ServiceWorkerRegistrationKey&, const String&, CompletionHandler<void()>&& = [] { }) = 0;
     virtual void clearAllFetches(const ServiceWorkerRegistrationKey&, CompletionHandler<void()>&& = [] { }) = 0;
 

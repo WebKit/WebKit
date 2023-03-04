@@ -748,7 +748,39 @@ std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFet
 
 Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
 {
-    return BackgroundFetchStoreImpl::create(m_storageManager.get());
+    return ensureBackgroundFetchStore();
+}
+
+BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore()
+{
+    if (!m_backgroundFetchStore)
+        m_backgroundFetchStore = BackgroundFetchStoreImpl::create(m_storageManager.get(), ensureSWServer());
+    return *m_backgroundFetchStore;
+}
+
+void NetworkSession::getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&& callback)
+{
+    ensureBackgroundFetchStore().getAllBackgroundFetchIdentifiers(WTFMove(callback));
+}
+
+void NetworkSession::abortBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
+{
+    ensureBackgroundFetchStore().abortBackgroundFetch(identifier, WTFMove(callback));
+}
+
+void NetworkSession::pauseBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
+{
+    ensureBackgroundFetchStore().pauseBackgroundFetch(identifier, WTFMove(callback));
+}
+
+void NetworkSession::resumeBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
+{
+    ensureBackgroundFetchStore().resumeBackgroundFetch(identifier, WTFMove(callback));
+}
+
+void NetworkSession::clickBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
+{
+    ensureBackgroundFetchStore().clickBackgroundFetch(identifier, WTFMove(callback));
 }
 #endif // ENABLE(SERVICE_WORKER)
 

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `deferredPaymentRequest` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["paymentRequestDeferred"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `deferredPaymentRequest`.");
+
+function daysFromToday(days) {
+    date = new Date();
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+const paymentDescription = "paymentDescription";
+const deferredBilling = { label: "deferredBilling", amount: "5", type: "final", paymentTiming: "deferred", deferredPaymentDate: daysFromToday(14) };
+const deferredBillingOut = { ...deferredBilling, recurringPaymentIntervalUnit: "month", recurringPaymentIntervalCount: 1 };
+const billingAgreement = "billingAgreement";
+const managementURL = "http://managementURL.com";
+const tokenNotificationURL = "http://tokenNotificationURL.com";
+const freeCancellationDate = daysFromToday(7);
+const freeCancellationDateTimeZone = "America/Los_Angeles";
+
+function modifiersWithData(data) {
+    return [ { supportedMethods: 'https://apple.com/apple-pay', data } ];
+}
+
+function testValidDeferredPaymentRequest(description, {initialDeferredPaymentRequest, expectedDeferredPaymentRequest}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        if (initialDeferredPaymentRequest !== undefined)
+            detailsInit.modifiers = modifiersWithData({ deferredPaymentRequest: initialDeferredPaymentRequest });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualDeferredPaymentRequest = internals.mockPaymentCoordinator.deferredPaymentRequest;
+        if (actualDeferredPaymentRequest)
+            assert_object_equals(actualDeferredPaymentRequest, expectedDeferredPaymentRequest, "check that the `deferredPaymentRequest` matches");
+        else
+            assert_equals(actualDeferredPaymentRequest, expectedDeferredPaymentRequest, "check that the `deferredPaymentRequest` matches");
+
+        await response.complete("success");
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            let detailsUpdate = { };
+            if (initialDeferredPaymentRequest !== undefined)
+                detailsUpdate.modifiers = modifiersWithData({ deferredPaymentRequest: initialDeferredPaymentRequest });
+            event.updateWith(detailsUpdate);
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualDeferredPaymentRequest = internals.mockPaymentCoordinator.deferredPaymentRequest;
+        if (actualDeferredPaymentRequest)
+            assert_object_equals(actualDeferredPaymentRequest, expectedDeferredPaymentRequest, "check that the `deferredPaymentRequest` matches");
+        else
+            assert_equals(actualDeferredPaymentRequest, expectedDeferredPaymentRequest, "check that the `deferredPaymentRequest` matches");
+
+        await response.complete("success");
+    }, description + " as part of an update.");
+}
+
+testValidDeferredPaymentRequest("The default value of `deferredPaymentRequest` should be `null` if `data` is not provided", {
+    initialDeferredPaymentRequest: undefined,
+    expectedDeferredPaymentRequest: null,
+});
+
+testValidDeferredPaymentRequest("Should not error if optional properties are not provided", {
+    initialDeferredPaymentRequest: { paymentDescription, deferredBilling, managementURL },
+    expectedDeferredPaymentRequest: { paymentDescription, deferredBilling: deferredBillingOut, managementURL },
+});
+testValidDeferredPaymentRequest("Should not error if optional free-cancellation-date properties are not provided", {
+    initialDeferredPaymentRequest: { paymentDescription, deferredBilling, billingAgreement, managementURL, tokenNotificationURL },
+    expectedDeferredPaymentRequest: { paymentDescription, deferredBilling: deferredBillingOut, billingAgreement, managementURL, tokenNotificationURL },
+});
+testValidDeferredPaymentRequest("Should propagate all data", {
+    initialDeferredPaymentRequest: { paymentDescription, deferredBilling, billingAgreement, managementURL, tokenNotificationURL, freeCancellationDate, freeCancellationDateTimeZone },
+    expectedDeferredPaymentRequest: { paymentDescription, deferredBilling: deferredBillingOut, billingAgreement, managementURL, tokenNotificationURL, freeCancellationDate, freeCancellationDateTimeZone },
+});
+
+function testInvalidDeferredPaymentRequest(description, {deferredPaymentRequest, expectedErrorSubstring}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        detailsInit.modifiers = modifiersWithData({ deferredPaymentRequest });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error with '" + expectedErrorSubstring + "' but got '" + e.message + "'");
+        }
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ modifiers: modifiersWithData({ deferredPaymentRequest }) });
+        });
+
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error with '" + expectedErrorSubstring + "' but got '" + e.message + "'");
+        }
+    }, description + " as part of an update.");
+}
+
+testInvalidDeferredPaymentRequest("Should error when `deferredBilling` is missing `paymentTiming`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling: { } , managementURL },
+    expectedErrorSubstring: "'deferredBilling' must be a 'deferred' line item",
+});
+testInvalidDeferredPaymentRequest("Should error when `deferredBilling` has an invalid `paymentTiming`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling: { paymentTiming: "whenever" } , managementURL },
+    expectedErrorSubstring: "Type error", // Would have preferred "'deferredBilling' must be a 'deferred' line item", but the enum parser caught it first.
+});
+testInvalidDeferredPaymentRequest("Should error when `deferredBilling.paymentTiming` is not 'deferred'", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling: { paymentTiming: "immediate" } , managementURL },
+    expectedErrorSubstring: "must be a 'deferred' line item",
+});
+testInvalidDeferredPaymentRequest("Should error when `deferredBilling` is missing `label`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling: { paymentTiming: "deferred" } , managementURL },
+    expectedErrorSubstring: "Missing label for 'deferredBilling'",
+});
+testInvalidDeferredPaymentRequest("Should error when `deferredBilling` is missing `amount`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling: { paymentTiming: "deferred", label: "deferredBillingBad" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+testInvalidDeferredPaymentRequest("Should error when `deferredBilling` has an invalid `amount`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling: { paymentTiming: "deferred", label: "deferredBillingBad", amount: "invalid" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+
+testInvalidDeferredPaymentRequest("Should error when there is a `freeCancellationDate` without `freeCancellationDateTimeZone`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling, managementURL, billingAgreement, freeCancellationDate },
+    expectedErrorSubstring: "Missing 'freeCancellationDateTimeZone' when 'freeCancellationDate' is set",
+});
+testInvalidDeferredPaymentRequest("Should error when there is a `freeCancellationDateTimeZone` without `freeCancellationDate`", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling, managementURL, billingAgreement, freeCancellationDateTimeZone },
+    expectedErrorSubstring: "Unexpected 'freeCancellationDateTimeZone' when 'freeCancellationDate' is not set",
+});
+testInvalidDeferredPaymentRequest("Should error when `freeCancellationDate` is not a valid Date", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling, managementURL, freeCancellationDate: "Tomorrow", freeCancellationDateTimeZone },
+    expectedErrorSubstring: "Unexpected 'freeCancellationDateTimeZone' when 'freeCancellationDate' is not set", // Would have preferred "not a valid date", but Date parser removed the property.
+});
+testInvalidDeferredPaymentRequest("Should error when `freeCancellationDateTimeZone` is not a valid time zone", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling, managementURL, freeCancellationDate, freeCancellationDateTimeZone: "Backyard" },
+    expectedErrorSubstring: "not a valid time zone",
+});
+
+testInvalidDeferredPaymentRequest("Should error when `managementURL` is not a valid URL", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling, managementURL: 42 },
+    expectedErrorSubstring: "not a valid URL",
+});
+
+testInvalidDeferredPaymentRequest("Should error when `tokenNotificationURL` is not a valid URL", {
+    deferredPaymentRequest: { paymentDescription, deferredBilling, managementURL, tokenNotificationURL: 42 },
+    expectedErrorSubstring: "not a valid URL",
+});
+
+done();
+</script>
+

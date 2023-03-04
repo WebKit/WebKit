@@ -1126,6 +1126,31 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/EditorAdditions.cpp>
+#else
+static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
+{
+    UNUSED_PARAM(shouldConsiderApplyingAutocorrection);
+    UNUSED_PARAM(isAutocompletion);
+    return !autocorrectionWasApplied;
+}
+
+static inline bool didApplyAutocorrection(Document&, AlternativeTextController& alternativeTextController)
+{
+    return alternativeTextController.applyAutocorrectionBeforeTypingIfAppropriate();
+}
+
+static inline void respondToAppliedEditing(Document&, AlternativeTextController& alternativeTextController, CompositeEditCommand& command)
+{
+    alternativeTextController.respondToAppliedEditing(&command);
+}
+
+static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>&)
+{
+}
+#endif
+
 static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, IsInputMethodComposing isInputMethodComposing,
     const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
 {
@@ -1195,7 +1220,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     if (command.isTopLevelCommand()) {
         updateEditorUINowIfScheduled();
 
-        m_alternativeTextController->respondToAppliedEditing(&command);
+        respondToAppliedEditing(m_document, *m_alternativeTextController, command);
 
         if (!command.preservesTypingStyle())
             m_document.selection().clearTypingStyle();
@@ -1317,16 +1342,6 @@ bool Editor::insertDictatedText(const String& text, const Vector<DictationAltern
     return m_alternativeTextController->insertDictatedText(text, dictationAlternatives, triggeringEvent);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/EditorAdditions.cpp>
-#else
-static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied)
-{
-    UNUSED_PARAM(shouldConsiderApplyingAutocorrection);
-    return !autocorrectionWasApplied;
-}
-#endif
-
 bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, TextEvent* triggeringEvent)
 {
     if (text.isEmpty())
@@ -1351,7 +1366,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (text.length() == 1 && u_ispunct(text[0]) && !isAmbiguousBoundaryCharacter(text[0]))
         shouldConsiderApplyingAutocorrection = true;
 
-    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
+    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && didApplyAutocorrection(document(), *m_alternativeTextController);
 
     // Get the selection to use for the event that triggered this insertText.
     // If the event handler changed the selection, we may want to use a different selection
@@ -1368,10 +1383,10 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
                 TypingCommand::Options options = TypingCommand::RetainAutocorrectionIndicator;
                 if (selectInsertedText)
                     options |= TypingCommand::SelectInsertedText;
-                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied))
-                    options &= ~TypingCommand::RetainAutocorrectionIndicator;
                 if (triggeringEvent && triggeringEvent->isAutocompletion())
                     options |= TypingCommand::IsAutocompletion;
+                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options & TypingCommand::IsAutocompletion))
+                    options &= ~TypingCommand::RetainAutocorrectionIndicator;
                 TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionFinal : TypingCommand::TextCompositionNone);
             }
 
@@ -3193,6 +3208,8 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
         DocumentMarker::Grammar,
 #endif
     };
+    adjustMarkerTypesToRemoveForWordsAffectedByEditing(markerTypesToRemove);
+
     removeMarkers(wordRange, markerTypesToRemove, RemovePartiallyOverlappingMarker::Yes);
     document().markers().clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Replacement);
 }

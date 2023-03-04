@@ -35,18 +35,15 @@ public:
     template<typename T, typename = typename std::enable_if_t<!std::is_same_v<T, void>>>
     explicit WebCoreOpaqueRoot(T* pointer)
         : m_pointer(static_cast<void*>(pointer))
-        , m_isNode(pointer && std::is_base_of_v<Node, T>)
     {
     }
 
     WebCoreOpaqueRoot(std::nullptr_t) { }
 
-    bool isNode() const { return m_isNode; }
     void* pointer() const { return m_pointer; }
 
 private:
     void* m_pointer { nullptr };
-    bool m_isNode { false };
 };
 
 template<typename Visitor>

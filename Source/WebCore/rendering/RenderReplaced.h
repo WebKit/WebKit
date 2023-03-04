@@ -40,15 +40,12 @@ public:
 
     LayoutSize intrinsicSize() const final
     {
-        if (shouldApplySizeContainment()) {
-            LayoutSize size;
-            if (auto width = explicitIntrinsicInnerWidth())
-                size.setWidth(width.value());
-            if (auto height = explicitIntrinsicInnerHeight())
-                size.setHeight(height.value());
-            return size;
-        }
-        return m_intrinsicSize;
+        LayoutSize size = m_intrinsicSize;
+        if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
+            size.setWidth(explicitIntrinsicInnerWidth().value_or(0));
+        if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
+            size.setHeight(explicitIntrinsicInnerHeight().value_or(0));
+        return size;
     }
     
     RoundedRect roundedContentBoxRect() const;

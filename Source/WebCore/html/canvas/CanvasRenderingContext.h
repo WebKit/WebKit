@@ -94,6 +94,8 @@ public:
     virtual PixelFormat pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;
 
+    virtual void postProcessPixelBuffer() const { }
+
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
     bool taintsOrigin(const CanvasPattern*);

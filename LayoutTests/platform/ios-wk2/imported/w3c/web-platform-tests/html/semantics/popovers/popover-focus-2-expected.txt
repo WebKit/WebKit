@@ -3,6 +3,6 @@ Invoker  after
 Show popover
 
 FAIL Popover focus navigation assert_equals: Hidden popover should be skipped expected Element node <button id="button2">Button2</button> but got Element node <button id="button1">Button1</button>
-FAIL Circular reference tab navigation assert_equals: Step 2 expected Element node <button id="circular1" autofocus="" popoverhidetarget="po... but got Element node <button id="circular0" popovertoggletarget="popover4">Inv...
+FAIL Circular reference tab navigation assert_equals: Step 2 expected Element node <button id="circular1" autofocus="" popovertarget="popove... but got Element node <button id="circular0" popovertarget="popover4">Invoker</...
 FAIL Popover focus returns when popover is hidden by invoker assert_true: popover should be invoked by invoker expected true got false
 

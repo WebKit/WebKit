@@ -23,7 +23,7 @@
 headers: <WebCore/Pasteboard.h>
 
 header: <WebCore/Pasteboard.h>
-[CustomHeader=True] struct WebCore::PasteboardImage {
+[CustomHeader] struct WebCore::PasteboardImage {
     RefPtr<WebCore::Image> image;
 #if PLATFORM(MAC)
     RefPtr<WebCore::SharedBuffer> dataInWebArchiveFormat;
@@ -43,7 +43,7 @@ header: <WebCore/Pasteboard.h>
 };
 
 header: <WebCore/Pasteboard.h>
-[CustomHeader=True] struct WebCore::PasteboardWebContent {
+[CustomHeader] struct WebCore::PasteboardWebContent {
 #if PLATFORM(COCOA)
     String contentOrigin;
     bool canSmartCopyOrDelete;
@@ -69,7 +69,7 @@ header: <WebCore/Pasteboard.h>
 };
 
 header: <WebCore/Pasteboard.h>
-[CustomHeader=True] struct WebCore::PasteboardURL {
+[CustomHeader] struct WebCore::PasteboardURL {
     URL url
     String title
 #if PLATFORM(MAC)
@@ -81,7 +81,7 @@ header: <WebCore/Pasteboard.h>
 };
 
 header: <WebCore/Pasteboard.h>
-[CustomHeader=True] struct WebCore::PasteboardBuffer {
+[CustomHeader] struct WebCore::PasteboardBuffer {
 #if PLATFORM(COCOA)
     String contentOrigin;
 #endif

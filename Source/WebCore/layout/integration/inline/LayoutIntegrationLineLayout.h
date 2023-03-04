@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "InlineDamage.h"
 #include "InlineFormattingConstraints.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
@@ -129,6 +130,7 @@ public:
     // This is temporary, required by partial bailout check.
     bool hasOutOfFlowContent() const;
     bool contentNeedsVisualReordering() const;
+    bool isDamaged() const { return m_lineDamage && m_lineDamage->type() != Layout::InlineDamage::Type::Invalid; }
 
 private:
     void updateReplacedDimensions(const RenderBox&);

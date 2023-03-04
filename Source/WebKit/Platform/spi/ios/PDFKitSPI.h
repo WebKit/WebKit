@@ -39,6 +39,8 @@
 
 @interface PDFHostViewController : _UIRemoteViewController<UIGestureRecognizerDelegate, UIDocumentPasswordViewDelegate>
 
+@property (nonatomic, class) bool useIOSurfaceForTiles;
+
 + (void) createHostView:(void(^)(PDFHostViewController* hostViewController)) callback forExtensionIdentifier:(NSString*) extensionIdentifier;
 - (void) setDelegate:(id<PDFHostViewControllerDelegate>) delegate;
 - (void) setDocumentData:(NSData*) data withScrollView:(UIScrollView*) scrollView;

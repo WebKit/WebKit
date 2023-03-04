@@ -95,7 +95,7 @@ URL AccessibilityImageMapLink::url() const
 
 void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
-    String description = accessibilityDescription();
+    String description = this->description();
     if (!description.isEmpty())
         textOrder.append(AccessibilityText(description, AccessibilityTextSource::Alternative));
 
@@ -107,19 +107,20 @@ void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& tex
     if (!summary.isEmpty())
         textOrder.append(AccessibilityText(summary, AccessibilityTextSource::Summary));
 }
-    
-String AccessibilityImageMapLink::accessibilityDescription() const
+
+String AccessibilityImageMapLink::description() const
 {
-    const AtomString& ariaLabel = getAttribute(aria_labelAttr);
+    const auto& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
-    const AtomString& alt = getAttribute(altAttr);
+
+    const auto& alt = getAttribute(altAttr);
     if (!alt.isEmpty())
         return alt;
 
-    return String();
+    return { };
 }
-    
+
 String AccessibilityImageMapLink::title() const
 {
     const AtomString& title = getAttribute(titleAttr);
@@ -178,7 +179,7 @@ String AccessibilityImageMapLink::stringValueForMSAA() const
 
 String AccessibilityImageMapLink::nameForMSAA() const
 {
-    return accessibilityDescription();
+    return description();
 }
 
 } // namespace WebCore

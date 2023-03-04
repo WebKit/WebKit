@@ -384,6 +384,12 @@ public:
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
     void processPushMessage(PAL::SessionID, WebPushMessage&&, WebCore::PushPermissionState, CompletionHandler<void(bool)>&&);
     void processNotificationEvent(WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&);
+
+    void getAllBackgroundFetchIdentifiers(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
+    void abortBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void pauseBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void resumeBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void clickBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
 #endif
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
@@ -471,6 +477,11 @@ private:
     void removeWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier);
     void countNonDefaultSessionSets(PAL::SessionID, CompletionHandler<void(size_t)>&&);
 
+#if HAVE(NW_PROXY_CONFIG)
+    void clearProxyConfigData(PAL::SessionID);
+    void setProxyConfigData(PAL::SessionID, const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData);
+#endif
+    
 #if USE(SOUP)
     void setIgnoreTLSErrors(PAL::SessionID, bool);
     void userPreferredLanguagesChanged(const Vector<String>&);

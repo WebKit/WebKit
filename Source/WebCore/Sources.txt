@@ -491,6 +491,7 @@ accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
 accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
+animation/AcceleratedTimeline.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
@@ -2226,6 +2227,7 @@ platform/graphics/SystemFontDatabase.cpp
 platform/graphics/SystemFallbackFontCache.cpp
 platform/graphics/TextRun.cpp
 platform/graphics/TextTrackRepresentation.cpp
+platform/graphics/TextTransform.cpp
 platform/graphics/TrackBuffer.cpp
 platform/graphics/TrackPrivateBase.cpp
 platform/graphics/VP9Utilities.cpp

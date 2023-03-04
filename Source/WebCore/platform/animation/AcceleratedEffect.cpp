@@ -227,6 +227,21 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
     }
 }
 
+bool AcceleratedEffect::animatesTransformRelatedProperty() const
+{
+    return m_animatedProperties.containsAny({
+        AcceleratedEffectProperty::Transform,
+        AcceleratedEffectProperty::Translate,
+        AcceleratedEffectProperty::Rotate,
+        AcceleratedEffectProperty::Scale,
+        AcceleratedEffectProperty::OffsetPath,
+        AcceleratedEffectProperty::OffsetDistance,
+        AcceleratedEffectProperty::OffsetPosition,
+        AcceleratedEffectProperty::OffsetAnchor,
+        AcceleratedEffectProperty::OffsetRotate
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)

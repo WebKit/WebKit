@@ -57,6 +57,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/UUID.h>
 #include <wtf/WeakHashSet.h>
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -141,6 +142,7 @@ enum class CheckBackForwardList : bool { No, Yes };
 class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
     using WebPageProxyMap = HashMap<WebPageProxyIdentifier, WeakPtr<WebPageProxy>>;
+    using UserInitiatedActionByAuthorizationTokenMap = HashMap<UUID, RefPtr<API::UserInitiatedAction>>;
     typedef HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
@@ -237,7 +239,11 @@ public:
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
+    void recordUserGestureAuthorizationToken(UUID);
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
+    RefPtr<API::UserInitiatedAction> userInitiatedActivity(std::optional<UUID>, uint64_t);
+
+    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction&, std::optional<UUID>);
 
     bool isResponsive() const;
 
@@ -644,6 +650,7 @@ private:
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<ProvisionalFrameProxy> m_provisionalFrames;
     UserInitiatedActionMap m_userInitiatedActionMap;
+    UserInitiatedActionByAuthorizationTokenMap m_userInitiatedActionByAuthorizationTokenMap;
 
     HashMap<VisitedLinkStore*, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;

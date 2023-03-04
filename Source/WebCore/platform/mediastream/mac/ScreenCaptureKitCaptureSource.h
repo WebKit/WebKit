@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "DisplayCaptureManager.h"
 #include "DisplayCaptureSourceCocoa.h"
+#include "ScreenCaptureKitSharingSessionManager.h"
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -51,7 +52,7 @@ namespace WebCore {
 
 class ScreenCaptureKitCaptureSource final
     : public DisplayCaptureSourceCocoa::Capturer
-    , public CanMakeWeakPtr<ScreenCaptureKitCaptureSource> {
+    , public ScreenCaptureSessionSource::Observer {
 public:
     static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> create(const CaptureDevice&, const MediaConstraints*);
 
@@ -64,11 +65,8 @@ public:
     static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
 
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
-    void streamFailedWithError(RetainPtr<NSError>&&, const String&);
-    enum class SampleType { Video };
-    void streamDidOutputSampleBuffer(RetainPtr<CMSampleBufferRef>, SampleType);
-    void sessionDidChangeContent(RetainPtr<SCContentSharingSession>);
-    void sessionDidEnd(RetainPtr<SCContentSharingSession>);
+    void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
+    void sessionFailedWithError(RetainPtr<NSError>&&, const String&);
 
 private:
 
@@ -84,28 +82,26 @@ private:
     // LoggerHelper
     const char* logClassName() const final { return "ScreenCaptureKitCaptureSource"; }
 
+    // ScreenCaptureKitSharingSessionManager::Observer
+    void sessionFilterDidChange(SCContentFilter*) final;
+    void sessionStreamDidEnd(SCStream*) final;
+
     void startContentStream();
     void findShareableContent();
     RetainPtr<SCStreamConfiguration> streamConfiguration();
     void updateStreamConfiguration();
 
-    using SCContentStreamUpdateCallback = void (^)(SCStream *, CMSampleBufferRef);
-    SCContentStreamUpdateCallback frameAvailableHandler();
-
     dispatch_queue_t captureQueue();
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    RetainPtr<SCContentSharingSession> m_contentSharingSession;
-#endif
+    SCStream* contentStream() const { return m_sessionSource ? m_sessionSource->stream() : nullptr; }
+    SCContentFilter* contentFilter() const { return m_sessionSource ? m_sessionSource->contentFilter() : nullptr; }
 
     std::optional<Content> m_content;
     RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
-    RetainPtr<SCContentFilter> m_contentFilter;
-    RetainPtr<SCStream> m_contentStream;
+    RefPtr<ScreenCaptureSessionSource> m_sessionSource;
     RetainPtr<SCStreamConfiguration> m_streamConfiguration;
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
-    BlockPtr<void(SCStream *, CMSampleBufferRef)> m_frameAvailableHandler;
     CaptureDevice m_captureDevice;
     uint32_t m_deviceID { 0 };
     mutable std::optional<IntSize> m_intrinsicSize;

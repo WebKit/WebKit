@@ -1830,7 +1830,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     descriptionDone = ['Validated commiter and reviewer']
     VALIDATORS_FOR = {
         # FIXME: Remove manual validators once bot is finished
-        'apple': ['geoffreygaren', 'markcgee', 'rjepstein', 'JonWBedard', 'ryanhaddad', 'webkit-bug-bridge'],
+        'apple': ['webkit-bug-bridge'],
     }
 
     def __init__(self, *args, **kwargs):
@@ -4043,8 +4043,9 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
             self.build.addStepsAfterCurrentStep(next_steps)
         return rc
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
         with_change_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
@@ -4090,8 +4091,9 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
         self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='repeat-failures-without-change'), ExtractTestResults(identifier='repeat-failures-without-change'), AnalyzeLayoutTestsResultsRedTree()])
         return rc
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield shell.Test.runCommand(self, command)
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
         logTextJson = self.log_observer_json.getStdout()
         without_change_repeat_failures_results = LayoutTestFailures.results_from_string(logTextJson)
@@ -5016,8 +5018,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         ShowIdentifier(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         Canonicalize(),
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         PushPullRequestBranch(),
                         UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
@@ -5031,8 +5033,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         ShowIdentifier(),
                         CommitPatch(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(addURLs=False, verifycqplus=True),
                         Canonicalize(),
+                        ValidateChange(addURLs=False, verifycqplus=True),
                         PushCommitToWebKitRepo(),
                     ])
                 return rc

@@ -41,7 +41,7 @@ protected:
     AXObjectCache* axObjectCache() const override { return m_axObjectCache.get(); }
 
 private:
-    String accessibilityDescription() const final;
+    String description() const final;
     String helpText() const final;
     void accessibilityText(Vector<AccessibilityText>&) const final;
     AccessibilityRole determineAccessibilityRole() final;

@@ -160,7 +160,9 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
         if (options.enableInAppBrowserPrivacy())
             [websiteDataStoreConfig setEnableInAppBrowserPrivacyForTesting:YES];
 #endif
-        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig.get()]).get();
+        auto store = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig.get()]);
+        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)store.get();
+        [store set_delegate:globalWebsiteDataStoreDelegateClient().get()];
     } else
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[globalWebViewConfiguration() websiteDataStore];
 }
@@ -578,6 +580,56 @@ void TestController::configureWebpagePreferences(WKWebViewConfiguration *configu
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
     return adoptWK(WKImageCreateDataURLFromImage(mainWebView()->windowSnapshotImage().get()));
+}
+
+WKRetainPtr<WKStringRef> TestController::getBackgroundFetchIdentifier()
+{
+    __block String result;
+    __block bool isDone = false;
+    [globalWebViewConfiguration().get().websiteDataStore _getAllBackgroundFetchIdentifiers:^(NSArray<NSString *> *identifiers) {
+        if ([identifiers count])
+            result = identifiers[0];
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+
+    return adoptWK(WKStringCreateWithUTF8CString(result.utf8().data()));
+}
+
+void TestController::abortBackgroundFetch(WKStringRef identifier)
+{
+    __block bool isDone = false;
+    [globalWebViewConfiguration().get().websiteDataStore _abortBackgroundFetch:toWTFString(identifier) completionHandler:^() {
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+}
+
+void TestController::pauseBackgroundFetch(WKStringRef identifier)
+{
+    __block bool isDone = false;
+    [globalWebViewConfiguration().get().websiteDataStore _pauseBackgroundFetch:toWTFString(identifier) completionHandler:^() {
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+}
+
+void TestController::resumeBackgroundFetch(WKStringRef identifier)
+{
+    __block bool isDone = false;
+    [globalWebViewConfiguration().get().websiteDataStore _resumeBackgroundFetch:toWTFString(identifier) completionHandler:^() {
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+}
+
+void TestController::simulateClickBackgroundFetch(WKStringRef identifier)
+{
+    __block bool isDone = false;
+    [globalWebViewConfiguration().get().websiteDataStore _clickBackgroundFetch:toWTFString(identifier) completionHandler:^() {
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
 }
 
 } // namespace WTR

@@ -92,7 +92,7 @@ void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, 
         return;
 
     if (extendedCounter->isExtendsSystem() && extendedCounter->isExtendsUnresolved())
-        resolveExtendsReference(*extendedCounter, countersInChain);
+        resolveExtendsReference(*extendedCounter, countersInChain, map);
 
     // Recursion return for non-circular chain. Calling resolveExtendsReference() for the extendedCounter might have already resolved this counter style if a circle was formed. If it is still unresolved, it should get resolved here.
     if (counter.isExtendsUnresolved())
@@ -121,8 +121,7 @@ RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::decimalCounter()
     auto iterator = userAgentCounters.find("decimal"_s);
     if (iterator != userAgentCounters.end())
         return iterator->value.get();
-    // user agent counter style should always be populated with a counter named decimal
-    ASSERT_NOT_REACHED();
+    // user agent counter style should always be populated with a counter named decimal if counter-style-at-rule is enabled
     return nullptr;
 }
 

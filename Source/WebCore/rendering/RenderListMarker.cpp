@@ -304,7 +304,6 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
 {
     // Note, the following switch statement has been explicitly grouped by list-style-type ordinal range.
     switch (type) {
-    // FIXME: handle counter-style: rdar://102988393.
     case ListStyleType::CustomCounterStyle:
     case ListStyleType::ArabicIndic:
     case ListStyleType::Bengali:
@@ -422,7 +421,6 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
 static StringView listMarkerSuffix(ListStyleType type)
 {
     switch (type) {
-    // FIXME: handle counter-style: rdar://102988393.
     case ListStyleType::CustomCounterStyle:
         return { };
     case ListStyleType::Asterisks:
@@ -567,7 +565,6 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
     case ListStyleType::DisclosureOpen:
         return { &blackDownPointingSmallTriangle, 1 };
 
-    // FIXME: handle counter-style: rdar://102988393.
     case ListStyleType::CustomCounterStyle:
         if (!counterStyle)
             return String::number(value);
@@ -1842,14 +1839,21 @@ void RenderListMarker::updateContent()
 
     auto type = style().listStyleType();
     switch (type) {
-    // FIXME: handle CSSCounterStyle case rdar://102988393.
-    case ListStyleType::CustomCounterStyle:
     case ListStyleType::String:
         m_textWithSuffix = style().listStyleStringValue();
         m_textWithoutSuffixLength = m_textWithSuffix.length();
-        // FIXME: Depending on the string value, we may need the real bidi algorithm.
+        // FIXME: Depending on the string value, we may need the real bidi algorithm. (rdar://106139180)
         m_textIsLeftToRightDirection = u_charDirection(m_textWithSuffix[0]) != U_RIGHT_TO_LEFT;
         break;
+    case ListStyleType::CustomCounterStyle: {
+        auto* counter = counterStyle();
+        ASSERT(counter);
+        auto text = makeString(counter->prefix(), counter->text(m_listItem->value()));
+        m_textWithSuffix = makeString(text, counter->suffix());
+        m_textWithoutSuffixLength = text.length();
+        m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;
+        break;
+    }
     default:
         auto text = listMarkerText(type, m_listItem->value());
         m_textWithSuffix = makeString(text, listMarkerSuffix(type));

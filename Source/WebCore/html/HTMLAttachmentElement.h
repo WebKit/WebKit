@@ -98,7 +98,7 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
     void ensureModernShadowTree(ShadowRoot&);
-    void updateSaveButton(const AtomString& eventTypeName);
+    void updateSaveButton(bool);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool shouldSelectOnMouseDown() final {

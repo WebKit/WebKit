@@ -766,17 +766,8 @@ imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-roman.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-display-contents.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-start-reversed-display-contents.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-decimal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-roman.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-alpha.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-roman.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s.html [ ImageOnlyFailure ]
@@ -2766,13 +2757,14 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html [ Pass Failure ]
 
-# text-transform: full-width support
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html [ ImageOnlyFailure ]
+# text-transform: full-width
+# no full width mapping for characters ( and )
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht [ ImageOnlyFailure ]
+# full width and space concatenation issue
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html [ ImageOnlyFailure ]
+
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-009.html [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-writing-modes/full-width-003.html [ ImageOnlyFailure ]
@@ -4733,9 +4725,6 @@ webkit.org/b/214462 imported/w3c/web-platform-tests/css/css-scoping/slotted-plac
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
 
-# contain-intrinsic-size
-webkit.org/b/246283 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html [ Skip ]
-
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-002.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-003.html [ ImageOnlyFailure ]
@@ -4859,7 +4848,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 # c-v: auto
@@ -6278,11 +6266,35 @@ webkit.org/b/252942 imported/w3c/web-platform-tests/preload/modulepreload.html [
 ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
 ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
 
-#Skipping counter-style-at-rules tests until we rendering of counter-styles get implemented.
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/ [ Skip ]
-
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Skip ]
 
 # Most ports don't have a HEIC decoder.
 http/tests/misc/heic-accept-header.html [ Pass Failure ]
+# Missing complex predefined counter-style at-rule rdar://103021467
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/dependent-builtin.html [ ImageOnlyFailure ]
+
+# Missing counter-style integration with counter() rdar://106084053
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-prefix.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-suffix.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/name-case-sensitivity.html [ ImageOnlyFailure ]
+
+# Missing support to counter-style at-rule in shadow scope rdar://103873418
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom.html [ ImageOnlyFailure ]
+
+# Missing allowing redefinition of predefined counter-styles rdar://106085436
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-attr-mapping.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-builtin.html [ ImageOnlyFailure ]
+
+# Missing counter-style integration with symbols() rdar://106084071
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function.html [ ImageOnlyFailure ]
+
+# WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772)
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-additive.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-alphabetic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-symbolic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle.html [ ImageOnlyFailure ]

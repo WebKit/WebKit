@@ -231,6 +231,7 @@ private:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     bool threadedAnimationResolutionEnabled() const;
+    void updateAssociatedThreadedEffectStack(const std::optional<const Styleable>&);
 #endif
 
     // AnimationEffect

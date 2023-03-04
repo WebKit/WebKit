@@ -56,7 +56,7 @@ public:
     bool isLink() const override { return true; }
     bool isLinked() const override { return true; }
     String title() const override;
-    String accessibilityDescription() const override;
+    String description() const override;
     AccessibilityObject* parentObject() const override;
     
     String stringValueForMSAA() const override;

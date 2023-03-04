@@ -748,6 +748,13 @@ bool InjectedBundle::isGeolocationProviderActive() const
     return booleanValue(adoptWK(result).get());
 }
 
+WKRetainPtr<WKStringRef> InjectedBundle::getBackgroundFetchIdentifier()
+{
+    WKTypeRef result = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("GetBackgroundFetchIdentifier").get(), 0, &result);
+    return static_cast<WKStringRef>(result);
+}
+
 unsigned InjectedBundle::imageCountInGeneralPasteboard() const
 {
     WKTypeRef result = nullptr;

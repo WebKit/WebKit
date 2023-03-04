@@ -367,6 +367,10 @@
 #include "HTMLVideoElement.h"
 #endif
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedTimeline.h"
+#endif
+
 #define DOCUMENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, valueOrDefault(pageID()).toUInt64(), valueOrDefault(frameID()).object().toUInt64(), this == &topDocument(), ##__VA_ARGS__)
 #define DOCUMENT_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, valueOrDefault(pageID()).toUInt64(), valueOrDefault(frameID()).object().toUInt64(), this == &topDocument(), ##__VA_ARGS__)
 
@@ -2024,11 +2028,6 @@ void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
 FrameView* Document::view() const
 {
     return m_frame ? m_frame->view() : nullptr;
-}
-
-Page* Document::page() const
-{
-    return m_frame ? m_frame->page() : nullptr;
 }
 
 Ref<Range> Document::createRange()
@@ -8855,6 +8854,15 @@ DocumentTimeline& Document::timeline()
 
     return *m_timeline;
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+AcceleratedTimeline& Document::acceleratedTimeline()
+{
+    if (!m_acceleratedTimeline)
+        m_acceleratedTimeline = makeUnique<AcceleratedTimeline>(*this);
+    return *m_acceleratedTimeline;
+}
+#endif
 
 Vector<RefPtr<WebAnimation>> Document::getAnimations()
 {

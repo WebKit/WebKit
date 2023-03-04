@@ -45,6 +45,22 @@ class Events(service.BuildbotService):
 
     EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix)
     MAX_GITHUB_DESCRIPTION = 140
+    STEPS_TO_REPORT = [
+        'configuration', 'checkout-pull-request', 'apply-patch',
+        'compile-webkit', 'compile-webkit-without-change', 'compile-jsc', 'compile-jsc-without-change',
+        'layout-tests', 'layout-tests-repeat-failures', 're-run-layout-tests',
+        'run-layout-tests-without-change', 'layout-tests-repeat-failures-without-change',
+        'run-layout-tests-in-stress-mode', 'run-layout-tests-in-guard-malloc-stress-mode',
+        'run-api-tests', 'run-api-tests-without-change', 're-run-api-tests',
+        'jscore-test', 'jscore-test-without-change',
+        'add-reviewer-to-commit-message', 'commit-patch', 'push-commit-to-webkit-repo', 'canonicalize-commit',
+        'build-webkit-org-unit-tests', 'buildbot-check-config', 'buildbot-check-config-for-build-webkit', 'buildbot-check-config-for-ews',
+        'ews-unit-tests', 'resultsdbpy-unit-tests',
+        'upload-built-product', 'upload-test-results',
+        'apply-watch-list', 'bindings-tests', 'check-webkit-style',
+        'webkitperl-tests', 're-run-webkitperl-tests',
+        'webkitpy-tests-python2', 'webkitpy-tests-python3'
+    ]
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """
@@ -192,6 +208,8 @@ class Events(service.BuildbotService):
         self.sendDataToEWS(data)
 
     def stepStarted(self, key, step):
+        if step.get('name') not in self.STEPS_TO_REPORT:
+            return
         state_string = step.get('state_string')
         if state_string == 'pending':
             state_string = 'Running {}'.format(step.get('name'))
@@ -211,6 +229,8 @@ class Events(service.BuildbotService):
         self.sendDataToEWS(data)
 
     def stepFinished(self, key, step):
+        if step.get('name') not in self.STEPS_TO_REPORT:
+            return
         data = {
             "type": self.type_prefix + "step",
             "status": "finished",

@@ -262,12 +262,22 @@ void AlternativeTextController::timerFired()
         }
     }
         break;
-    case AlternativeTextType::SpellingSuggestions: {
+    case AlternativeTextType::SpellingSuggestions:
+    case AlternativeTextType::GrammarSuggestions: {
         if (!m_rangeWithAlternative || plainText(*m_rangeWithAlternative) != m_originalText)
             break;
-        String paragraphText = plainText(TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
+
         Vector<String> suggestions;
-        textChecker()->getGuessesForWord(m_originalText, paragraphText, m_document.selection().selection(), suggestions);
+        if (m_type == AlternativeTextType::GrammarSuggestions) {
+            if (auto* editorClient = this->editorClient()) {
+                TextCheckingHelper checker(*editorClient, *m_rangeWithAlternative);
+                suggestions = checker.guessesForMisspelledWordOrUngrammaticalPhrase(true).guesses;
+            }
+        } else {
+            auto paragraphText = plainText(TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
+            textChecker()->getGuessesForWord(m_originalText, paragraphText, m_document.selection().selection(), suggestions);
+        }
+
         if (suggestions.isEmpty()) {
             m_rangeWithAlternative = std::nullopt;
             break;
@@ -323,6 +333,7 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
         break;
     case AlternativeTextType::Reversion:
     case AlternativeTextType::SpellingSuggestions:
+    case AlternativeTextType::GrammarSuggestions:
         if (result.length())
             applyAlternativeTextToRange(*m_rangeWithAlternative, result, m_type, markerTypesForReplacement());
         break;
@@ -541,7 +552,19 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
 
 bool AlternativeTextController::shouldStartTimerFor(const WebCore::DocumentMarker &marker, int endOffset) const
 {
-    return (((marker.type() == DocumentMarker::Replacement && !marker.description().isNull()) || marker.type() == DocumentMarker::Spelling || marker.type() == DocumentMarker::DictationAlternatives) && static_cast<int>(marker.endOffset()) == endOffset);
+    if (static_cast<int>(marker.endOffset()) != endOffset)
+        return false;
+
+    switch (marker.type()) {
+    case DocumentMarker::Spelling:
+    case DocumentMarker::Grammar:
+    case DocumentMarker::DictationAlternatives:
+        return true;
+    case DocumentMarker::Replacement:
+        return !marker.description().isNull();
+    default:
+        return false;
+    }
 }
 
 bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker& marker, const Position& endOfWordPosition)
@@ -556,9 +579,10 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
     m_originalText = currentWord;
     switch (marker.type()) {
     case DocumentMarker::Spelling:
+    case DocumentMarker::Grammar:
         m_rangeWithAlternative = WTFMove(wordRange);
         m_details = emptyString();
-        startAlternativeTextUITimer(AlternativeTextType::SpellingSuggestions);
+        startAlternativeTextUITimer((marker.type() == DocumentMarker::Spelling) ? AlternativeTextType::SpellingSuggestions : AlternativeTextType::GrammarSuggestions);
         break;
     case DocumentMarker::Replacement:
         m_rangeWithAlternative = WTFMove(wordRange);

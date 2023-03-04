@@ -1,0 +1,3 @@
+
+PASS background fetch click should trigger a click event
+

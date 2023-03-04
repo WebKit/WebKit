@@ -1726,8 +1726,10 @@ void RenderObject::insertedIntoTree(IsInternalMove)
         auto shouldInvalidateLineLayoutPath = true;
         if (auto* modernLineLayout = container->modernLineLayout()) {
             shouldInvalidateLineLayoutPath = LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, *this, *modernLineLayout);
-            if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container))
+            if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container)) {
                 modernLineLayout->insertedIntoTree(*parent(), *this);
+                shouldInvalidateLineLayoutPath = !modernLineLayout->isDamaged();
+            }
         }
         if (shouldInvalidateLineLayoutPath)
             container->invalidateLineLayoutPath();
@@ -2343,7 +2345,7 @@ static inline void adjustLineHeightOfSelectionGeometries(Vector<SelectionGeometr
         --i;
         if (geometries[i].lineNumber())
             break;
-        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads && geometries[i].isHorizontal())
             continue;
         geometries[i].setLineNumber(lineNumber);
         geometries[i].setLogicalTop(lineTop);
@@ -2500,7 +2502,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     for (size_t j = 1; j < numberOfGeometries; ++j) {
         if (geometries[j].lineNumber() != geometries[j - 1].lineNumber())
             continue;
-        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads && geometries[j].isHorizontal())
             continue;
         auto& previousRect = geometries[j - 1];
         bool previousRectMayNotReachRightEdge = (previousRect.direction() == TextDirection::LTR && previousRect.containsEnd()) || (previousRect.direction() == TextDirection::RTL && previousRect.containsStart());
@@ -2518,7 +2520,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         auto& selectionGeometry = geometries[i];
         if (!selectionGeometry.isLineBreak() && selectionGeometry.lineNumber() >= maxLineNumber)
             continue;
-        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads && selectionGeometry.isHorizontal())
             continue;
         if (selectionGeometry.direction() == TextDirection::RTL && selectionGeometry.isFirstOnLine()) {
             selectionGeometry.setLogicalWidth(selectionGeometry.logicalWidth() + selectionGeometry.logicalLeft() - selectionGeometry.minX());
@@ -2570,7 +2572,7 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
     IntRect interiorUnionRect;
     for (size_t i = 0; i < numberOfGeometries; ++i) {
         auto& currentGeometry = result.geometries[i];
-        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
+        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads && currentGeometry.isHorizontal()) {
             if (currentGeometry.quad().isEmpty())
                 continue;
 

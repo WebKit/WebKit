@@ -72,7 +72,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 {
     auto& object = axObject.get();
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
-    setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
 
     if (object.ancestorFlagsAreInitialized())
         setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
@@ -118,8 +117,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::SubrolePlatformString, object.subrolePlatformString().isolatedCopy());
+    setProperty(AXPropertyName::TextContent, object.textContent().isolatedCopy());
     setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
-    setProperty(AXPropertyName::Title, object.title().isolatedCopy());
     setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXPropertyName::CanSetTextRangeAttributes, object.canSetTextRangeAttributes());
@@ -466,7 +465,7 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
 {
     ASSERT(selectedChildren.isEmpty() || (selectedChildren[0] && selectedChildren[0]->isAXIsolatedObjectInstance()));
 
-    performFunctionOnMainThread([&] (AXCoreObject* object) {
+    performFunctionOnMainThread([&] (AccessibilityObject* object) {
         if (selectedChildren.isEmpty()) {
             // No selection, no need to convert objects from isolated to live.
             object->setSelectedChildren(selectedChildren);
@@ -590,14 +589,14 @@ AXCoreObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
 
 void AXIsolatedObject::setARIAGrabbed(bool value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setARIAGrabbed(value);
     });
 }
 
 void AXIsolatedObject::setIsExpanded(bool value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setIsExpanded(value);
     });
 }
@@ -613,21 +612,21 @@ bool AXIsolatedObject::performDismissAction()
 
 void AXIsolatedObject::scrollToMakeVisible() const
 {
-    performFunctionOnMainThread([] (AXCoreObject* axObject) {
+    performFunctionOnMainThread([] (AccessibilityObject* axObject) {
         axObject->scrollToMakeVisible();
     });
 }
 
 void AXIsolatedObject::scrollToMakeVisibleWithSubFocus(const IntRect& rect) const
 {
-    performFunctionOnMainThread([&rect] (AXCoreObject* axObject) {
+    performFunctionOnMainThread([&rect] (AccessibilityObject* axObject) {
         axObject->scrollToMakeVisibleWithSubFocus(rect);
     });
 }
 
 void AXIsolatedObject::scrollToGlobalPoint(const IntPoint& point) const
 {
-    performFunctionOnMainThread([&point] (AXCoreObject* axObject) {
+    performFunctionOnMainThread([&point] (AccessibilityObject* axObject) {
         axObject->scrollToGlobalPoint(point);
     });
 }
@@ -652,21 +651,21 @@ bool AXIsolatedObject::setValue(const String& value)
 
 void AXIsolatedObject::setSelected(bool value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setSelected(value);
     });
 }
 
 void AXIsolatedObject::setSelectedRows(AccessibilityChildrenVector& value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setSelectedRows(value);
     });
 }
 
 void AXIsolatedObject::setFocused(bool value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setFocused(value);
     });
 }
@@ -682,23 +681,16 @@ String AXIsolatedObject::selectedText() const
 
 void AXIsolatedObject::setSelectedText(const String& value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setSelectedText(value);
     });
 }
 
 void AXIsolatedObject::setSelectedTextRange(const PlainTextRange& value)
 {
-    performFunctionOnMainThread([&value](AXCoreObject* object) {
+    performFunctionOnMainThread([&value] (AccessibilityObject* object) {
         object->setSelectedTextRange(value);
     });
-}
-
-String AXIsolatedObject::computedLabel()
-{
-    // This is only used by the web inspector that calls AccessibilityObject::computedLabel().
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
 SRGBA<uint8_t> AXIsolatedObject::colorValue() const
@@ -1088,15 +1080,6 @@ std::optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange&
     return axObject ? axObject->misspellingRange(range, direction) : std::nullopt;
 }
 
-LayoutRect AXIsolatedObject::boundingBoxRect() const
-{
-    return Accessibility::retrieveValueFromMainThread<LayoutRect>([this] () -> LayoutRect {
-        if (auto* axObject = associatedAXObject())
-            return axObject->boundingBoxRect();
-        return { };
-    });
-}
-
 LayoutRect AXIsolatedObject::elementRect() const
 {
     return Accessibility::retrieveValueFromMainThread<LayoutRect>([this] () -> LayoutRect {
@@ -1149,7 +1132,7 @@ bool AXIsolatedObject::insertText(const String& text)
 
 void AXIsolatedObject::makeRangeVisible(const PlainTextRange& axRange)
 {
-    performFunctionOnMainThread([&axRange] (AXCoreObject* axObject) {
+    performFunctionOnMainThread([&axRange] (AccessibilityObject* axObject) {
         axObject->makeRangeVisible(axRange);
     });
 }
@@ -1163,14 +1146,14 @@ bool AXIsolatedObject::press()
 
 void AXIsolatedObject::increment()
 {
-    performFunctionOnMainThread([](AXCoreObject* axObject) {
+    performFunctionOnMainThread([] (AccessibilityObject* axObject) {
         axObject->increment();
     });
 }
 
 void AXIsolatedObject::decrement()
 {
-    performFunctionOnMainThread([](AXCoreObject* axObject) {
+    performFunctionOnMainThread([] (AccessibilityObject* axObject) {
         axObject->decrement();
     });
 }

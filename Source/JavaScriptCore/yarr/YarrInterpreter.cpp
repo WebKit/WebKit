@@ -46,23 +46,25 @@ public:
         : m_pattern(pattern)
     {
         if (pattern)
-            m_unicode = pattern->unicode();
+            m_compileMode = pattern->compileMode();
     }
 
-    ByteTermDumper(bool unicode)
-        : m_unicode(unicode)
+    ByteTermDumper(CompileMode compileMode)
+        : m_compileMode(compileMode)
     {
     }
 
     void dumpTerm(size_t idx, ByteTerm);
     void dumpDisjunction(ByteDisjunction*, unsigned nesting = 0);
-    bool unicode() { return m_unicode; }
+    bool unicode() const { return m_compileMode == CompileMode::Unicode; }
+    bool unicodeSets() const { return m_compileMode == CompileMode::UnicodeSets; }
+    bool eitherUnicode() const { return unicode() || unicodeSets(); }
 
 private:
     YarrPattern* m_pattern { nullptr };
     unsigned m_nesting { 0 };
     unsigned m_lineIndent { 0 };
-    bool m_unicode { false };
+    CompileMode m_compileMode { CompileMode::Legacy };
     bool m_recursiveDump { false };
 };
 
@@ -612,10 +614,10 @@ public:
                 // See ES 6.0, 21.2.2.8.2 for the definition of Canonicalize(). For non-Unicode
                 // patterns, Unicode values are never allowed to match against ASCII ones.
                 // For Unicode, we need to check all canonical equivalents of a character.
-                if (!unicode && (isASCII(oldCh) || isASCII(ch))) {
+                if (isLegacyCompilation() && (isASCII(oldCh) || isASCII(ch))) {
                     if (toASCIIUpper(oldCh) == toASCIIUpper(ch))
                         continue;
-                } else if (areCanonicallyEquivalent(oldCh, ch, unicode ? CanonicalMode::Unicode : CanonicalMode::UCS2))
+                } else if (areCanonicallyEquivalent(oldCh, ch, isEitherUnicodeCompilation() ? CanonicalMode::Unicode : CanonicalMode::UCS2))
                     continue;
             }
 
@@ -761,7 +763,7 @@ public:
         switch (term.atom.quantityType) {
         case QuantifierType::FixedCount: {
             if (term.matchDirection() == Forward) {
-                if (unicode) {
+                if (isEitherUnicodeCompilation()) {
                     backTrack->begin = input.getPos();
                     unsigned matchAmount = 0;
                     for (matchAmount = 0; matchAmount < term.atom.quantityMaxCount; ++matchAmount) {
@@ -790,7 +792,7 @@ public:
             }
 
             // matchDirection is Backward
-            if (unicode) {
+            if (isEitherUnicodeCompilation()) {
                 backTrack->begin = input.getPos();
                 for (unsigned matchAmount = 0; matchAmount < term.atom.quantityMaxCount; ++matchAmount) {
                     unsigned matchOffset = term.atom.quantityMaxCount - 1 - matchAmount;
@@ -871,13 +873,13 @@ public:
 
         switch (term.atom.quantityType) {
         case QuantifierType::FixedCount:
-            if (unicode)
+            if (isEitherUnicodeCompilation())
                 input.setPos(backTrack->begin);
             break;
 
         case QuantifierType::Greedy:
             if (backTrack->matchAmount) {
-                if (unicode) {
+                if (isEitherUnicodeCompilation()) {
                     // Rematch one less match
                     if (term.matchDirection() == Forward) {
                         input.setPos(backTrack->begin);
@@ -1642,7 +1644,7 @@ public:
             return JSRegExpResult::ErrorHitLimit;
         }
 
-        ByteTermDumper termDumper(unicode);
+        ByteTermDumper termDumper(compileMode);
 
         if (btrack)
             BACKTRACK();
@@ -1700,7 +1702,7 @@ public:
         case ByteTerm::Type::PatternCharacterFixed: {
             DUMP_CURR_CHAR();
             if (currentTerm().matchDirection() == Forward) {
-                if (unicode) {
+                if (isEitherUnicodeCompilation()) {
                     if (!U_IS_BMP(currentTerm().atom.patternCharacter)) {
                         for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityMaxCount; ++matchAmount) {
                             if (!checkSurrogatePair(currentTerm(), currentTerm().inputPosition - 2 * matchAmount))
@@ -1721,7 +1723,7 @@ public:
             } else {
                 auto& term = currentTerm();
 
-                if (unicode) {
+                if (isEitherUnicodeCompilation()) {
                     if (!U_IS_BMP(term.atom.patternCharacter)) {
                         for (unsigned matchAmount = 0; matchAmount < currentTerm().atom.quantityMaxCount; ++matchAmount) {
                             auto inputPosition = term.inputPosition + 2 * matchAmount;
@@ -1791,7 +1793,7 @@ public:
         case ByteTerm::Type::PatternCasedCharacterOnce:
         case ByteTerm::Type::PatternCasedCharacterFixed: {
             DUMP_CURR_CHAR();
-            if (unicode) {
+            if (isEitherUnicodeCompilation()) {
                 // Case insensitive matching of unicode characters is handled as Type::CharacterClass.
                 ASSERT(U_IS_BMP(currentTerm().atom.patternCharacter));
 
@@ -1831,7 +1833,7 @@ public:
             BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + currentTerm().frameLocation);
 
             // Case insensitive matching of unicode characters is handled as Type::CharacterClass.
-            ASSERT(!unicode || U_IS_BMP(currentTerm().atom.patternCharacter));
+            ASSERT(!isEitherUnicodeCompilation() || U_IS_BMP(currentTerm().atom.patternCharacter));
 
             if (currentTerm().matchDirection() == Forward) {
                 unsigned matchAmount = 0;
@@ -1872,7 +1874,7 @@ public:
             BackTrackInfoPatternCharacter* backTrack = reinterpret_cast<BackTrackInfoPatternCharacter*>(context->frame + currentTerm().frameLocation);
 
             // Case insensitive matching of unicode characters is handled as Type::CharacterClass.
-            ASSERT(!unicode || U_IS_BMP(currentTerm().atom.patternCharacter));
+            ASSERT(!isEitherUnicodeCompilation() || U_IS_BMP(currentTerm().atom.patternCharacter));
             
             backTrack->matchAmount = 0;
             MATCH_NEXT();
@@ -2149,19 +2151,24 @@ public:
 
     Interpreter(BytecodePattern* pattern, unsigned* output, const CharType* input, unsigned length, unsigned start)
         : pattern(pattern)
-        , unicode(pattern->unicode())
+        , compileMode(pattern->compileMode())
         , output(output)
-        , input(input, start, length, pattern->unicode())
+        , input(input, start, length, pattern->eitherUnicode())
         , startOffset(start)
         , remainingMatchCount(matchLimit)
     {
     }
 
 private:
+    inline bool isLegacyCompilation() const { return compileMode == CompileMode::Legacy; }
+    inline bool isUnicodeCompilation() const { return compileMode == CompileMode::Unicode; }
+    inline bool isUnicodeSetsCompilation() const { return compileMode == CompileMode::UnicodeSets; }
+    inline bool isEitherUnicodeCompilation() const { return isUnicodeCompilation() || isUnicodeSetsCompilation(); }
+
     inline bool isSafeToRecurse() { return m_stackCheck.isSafeToRecurse(); }
 
     BytecodePattern* pattern;
-    bool unicode;
+    CompileMode compileMode;
     unsigned* output;
     InputStream input;
     StackCheck m_stackCheck;
@@ -2955,7 +2962,7 @@ void ByteTermDumper::dumpTerm(size_t idx, ByteTerm term)
         out.print("CharacterClass");
         dumpInverted(term);
         dumpInputPosition(term);
-        if (term.atom.quantityType != QuantifierType::FixedCount || unicode())
+        if (term.atom.quantityType != QuantifierType::FixedCount || eitherUnicode())
             dumpFrameLocation(term);
         dumpCharClass(term);
         dumpQuantity(term);

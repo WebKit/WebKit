@@ -1496,7 +1496,7 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
 {
     // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.
     // Give up if the child specified -webkit-margin-collapse: separate that prevents collapsing.
-    if (document().inQuirksMode() && hasMarginAfterQuirk(child) && (isTableCell() || isBody()))
+    if (document().inQuirksMode() && hasMarginBeforeQuirk(child) && (isTableCell() || isBody()))
         return;
 
     LayoutUnit beforeChildMargin = marginBeforeForChild(child);
@@ -2884,7 +2884,7 @@ bool RenderBlockFlow::positionNewFloats()
         m_floatingObjects->addPlacedObject(&floatingObject);
 
         if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo())
-            shapeOutside->setReferenceBoxLogicalSize(logicalSizeForChild(childBox));
+            shapeOutside->invalidateForSizeChangeIfNeeded();
         // If the child moved, we have to repaint it.
         if (childBox.checkForRepaintDuringLayout())
             childBox.repaintDuringLayoutIfMoved(oldRect);

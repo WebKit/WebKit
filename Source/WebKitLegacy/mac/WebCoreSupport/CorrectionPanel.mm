@@ -40,6 +40,7 @@ static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextT
     case AlternativeTextType::Reversion:
         return NSCorrectionIndicatorTypeReversion;
     case AlternativeTextType::SpellingSuggestions:
+    case AlternativeTextType::GrammarSuggestions:
         return NSCorrectionIndicatorTypeGuesses;
     case AlternativeTextType::DictationAlternatives:
         ASSERT_NOT_REACHED();

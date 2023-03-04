@@ -37,7 +37,14 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/StringConcatenateNumbers.h>
+
+#if HAVE(NW_PROXY_CONFIG)
+SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_http_connect, nw_proxy_config_t, __cdecl, (nw_endpoint_t, nw_protocol_options_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_socksv5, nw_proxy_config_t, __cdecl, (nw_endpoint_t))
+#endif
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
@@ -154,6 +161,95 @@ TEST(WebKit, SOCKS5)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
+
+#if HAVE(NW_PROXY_CONFIG)
+// FIXME: Enabling blocked by rdar://106168249
+TEST(WebKit, DISABLED_HTTPSProxyAPI)
+{
+    auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
+    if (!createProxyConfig)
+        return;
+
+    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+    auto delegate = adoptNS([ProxyDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+
+    auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
+    auto proxyConfig = adoptNS(createProxyConfig(endpoint.get(), nil));
+    [webView.get().configuration.websiteDataStore setProxyConfiguration:proxyConfig.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    EXPECT_WK_STREQ([delegate waitForAlert], "success!");
+}
+
+TEST(WebKit, SOCKS5API)
+{
+    auto* createProxyConfig = nw_proxy_config_create_socksv5Ptr();
+    if (!createProxyConfig)
+        return;
+
+    constexpr uint8_t socks5Version = 0x5; // https://tools.ietf.org/html/rfc1928#section-3
+    constexpr uint8_t noAuthenticationRequired = 0x00; // https://tools.ietf.org/html/rfc1928#section-3
+    constexpr uint8_t connect = 0x01; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t reserved = 0x00; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t domainName = 0x03; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t requestSucceeded = 0x00; // https://tools.ietf.org/html/rfc1928#section-6
+
+    using namespace TestWebKitAPI;
+    HTTPServer server([](Connection connection) {
+        connection.receiveBytes([=] (Vector<uint8_t>&& bytes) {
+            constexpr uint8_t expectedAuthenticationMethodCount = 1;
+            Vector<uint8_t> expectedClientGreeting { socks5Version, expectedAuthenticationMethodCount, noAuthenticationRequired };
+            EXPECT_EQ(bytes, expectedClientGreeting);
+            connection.send(Vector<uint8_t> { socks5Version, noAuthenticationRequired }, [=] {
+                connection.receiveBytes([=] (Vector<uint8_t>&& bytes) {
+                    constexpr uint8_t httpPortFirstByte = 0;
+                    constexpr uint8_t httpPortSecondByte = 80;
+                    Vector<uint8_t> expectedConnectRequest {
+                        socks5Version,
+                        connect,
+                        reserved,
+                        domainName,
+                        static_cast<uint8_t>(strlen("example.com")),
+                        'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm',
+                        httpPortFirstByte, httpPortSecondByte
+                    };
+                    EXPECT_EQ(bytes, expectedConnectRequest);
+
+                    Vector<uint8_t> response { socks5Version, requestSucceeded, reserved,
+                        domainName,
+                        static_cast<uint8_t>(strlen("example.com")),
+                        'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm',
+                        httpPortFirstByte, httpPortSecondByte
+                    };
+                    connection.send(WTFMove(response), [=] {
+                        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+                            connection.send(
+                                "HTTP/1.1 200 OK\r\n"
+                                "Content-Length: 34\r\n"
+                                "\r\n"
+                                "<script>alert('success!')</script>"_s
+                            );
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
+    auto proxyConfig = adoptNS(createProxyConfig(endpoint.get()));
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+    [webView.get().configuration.websiteDataStore setProxyConfiguration:proxyConfig.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
+}
+#endif // HAVE(NW_PROXY_CONFIG)
 
 static HTTPServer proxyAuthenticationServer()
 {

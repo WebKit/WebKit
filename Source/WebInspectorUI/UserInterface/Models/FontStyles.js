@@ -80,7 +80,7 @@ WI.FontStyles = class FontStyles
         case "ital":
             return value >= 1 ? "italic" : "normal";
         default:
-            return value;
+            return String(value);
         }
     }
 

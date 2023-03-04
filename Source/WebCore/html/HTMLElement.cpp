@@ -1157,12 +1157,7 @@ void HTMLElement::setAutocorrect(bool autocorrect)
 
 InputMode HTMLElement::canonicalInputMode() const
 {
-    auto mode = inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr));
-    if (mode == InputMode::Unspecified) {
-        if (document().quirks().needsInputModeNoneImplicitly(*this))
-            return InputMode::None;
-    }
-    return mode;
+    return inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr));
 }
 
 const AtomString& HTMLElement::inputMode() const

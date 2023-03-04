@@ -207,7 +207,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << allowedLookalikeCharacterStrings;
 #endif
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
     encoder << machBootstrapHandle;
 #endif
 }
@@ -662,7 +662,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     parameters.allowedLookalikeCharacterStrings = WTFMove(*allowedLookalikeCharacterStrings);
 #endif
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
     std::optional<SandboxExtension::Handle> machBootstrapHandle;
     decoder >> machBootstrapHandle;
     if (!machBootstrapHandle)

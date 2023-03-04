@@ -94,9 +94,14 @@ bool defaultRemoveBackgroundEnabled();
 bool defaultGamepadVibrationActuatorEnabled();
 #endif
 
+bool defaultRunningBoardThrottlingEnabled();
 bool defaultShouldTakeSuspendedAssertions();
 bool defaultShowModalDialogEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+bool defaultUseSCContentSharingPicker();
+#endif
 
 } // namespace WebKit

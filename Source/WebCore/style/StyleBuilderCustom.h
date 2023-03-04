@@ -773,11 +773,9 @@ inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, C
         builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
         return;
     }
-    // FIXME: handle counter-style: rdar://102988393.
-    // We should skip handling counter style until we can represent all systems with CSSCounterStyle::text(). We currently don't accept custom-ident in list-style-type parser-grammar (CSSProperties.json).
     if (primitiveValue.isCustomIdent()) {
         builderState.style().setListStyleType(ListStyleType::CustomCounterStyle);
-        builderState.style().setListStyleStringValue(makeAtomString(primitiveValue.stringValue()));
+        builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
         return;
     }
     builderState.style().setListStyleType(ListStyleType::String);

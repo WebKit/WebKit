@@ -84,6 +84,7 @@ enum class SDKAlignedBehavior {
     PushStateFilePathRestriction,
     RequiresUserGestureToLoadVideo,
     RestrictsBaseURLSchemes,
+    RunningBoardThrottling,
     ScrollViewContentInsetsAreNotObscuringInsets,
     SendsNativeMouseEvents,
     SessionCleanupByDefault,

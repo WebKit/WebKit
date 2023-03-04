@@ -112,11 +112,8 @@ bool RenderVideo::updateIntrinsicSize()
     return true;
 }
 
-LayoutSize RenderVideo::calculateIntrinsicSize()
+LayoutSize RenderVideo::calculateIntrinsicSizeInternal()
 {
-    if (shouldApplySizeContainment())
-        return intrinsicSize();
-
     // Spec text from 4.8.6
     //
     // The intrinsic width of a video element's playback area is the intrinsic width 
@@ -144,6 +141,21 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
         return LayoutSize(defaultSize().width(), 1);
 
     return defaultSize();
+}
+
+LayoutSize RenderVideo::calculateIntrinsicSize()
+{
+    if (shouldApplySizeContainment())
+        return intrinsicSize();
+
+    auto calculatedIntrinsicSize = calculateIntrinsicSizeInternal();
+    if (shouldApplyInlineSizeContainment()) {
+        if (isHorizontalWritingMode())
+            calculatedIntrinsicSize.setWidth(intrinsicSize().width());
+        else
+            calculatedIntrinsicSize.setHeight(intrinsicSize().height());
+    }
+    return calculatedIntrinsicSize;
 }
 
 void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
@@ -332,7 +344,12 @@ bool RenderVideo::hasVideoMetadata() const
 
 bool RenderVideo::hasPosterFrameSize() const
 {
-    return videoElement().shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource().errorOccurred();
+    bool isEmpty = m_cachedImageSize.isEmpty();
+    // For contain: inline-size, if the block-size is not empty, it shouldn't be treated as empty here,
+    // so that contain: inline-size could affect the intrinsic size, which should be 0 x block-size.
+    if (shouldApplyInlineSizeContainment())
+        isEmpty = isHorizontalWritingMode() ? !m_cachedImageSize.height() : !m_cachedImageSize.width();
+    return videoElement().shouldDisplayPosterImage() && !isEmpty && !imageResource().errorOccurred();
 }
 
 bool RenderVideo::hasDefaultObjectSize() const

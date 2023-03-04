@@ -429,6 +429,10 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
+    // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
+    if (firstPartyDomain.isEmpty())
+        return true;
+
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
         return false;
@@ -2367,10 +2371,69 @@ void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID session
 #if ENABLE(SERVICE_WORKER)
 void NetworkProcess::processNotificationEvent(NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
-    if (auto* session = networkSession(data.sourceSession))
-        session->ensureSWServer().processNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
+    auto* session = networkSession(data.sourceSession);
+    if (!session) {
+        callback(false);
+        return;
+    }
+
+    session->ensureSWServer().processNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
 }
 
+void NetworkProcess::getAllBackgroundFetchIdentifiers(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&&)>&& callback)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        callback({ });
+        return;
+    }
+
+    session->getAllBackgroundFetchIdentifiers(WTFMove(callback));
+}
+
+void NetworkProcess::abortBackgroundFetch(PAL::SessionID sessionID, const String& identifier, CompletionHandler<void()>&& callback)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        callback();
+        return;
+    }
+
+    session->abortBackgroundFetch(identifier, WTFMove(callback));
+}
+
+void NetworkProcess::pauseBackgroundFetch(PAL::SessionID sessionID, const String& identifier, CompletionHandler<void()>&& callback)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        callback();
+        return;
+    }
+
+    session->pauseBackgroundFetch(identifier, WTFMove(callback));
+}
+
+void NetworkProcess::resumeBackgroundFetch(PAL::SessionID sessionID, const String& identifier, CompletionHandler<void()>&& callback)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        callback();
+        return;
+    }
+
+    session->resumeBackgroundFetch(identifier, WTFMove(callback));
+}
+
+void NetworkProcess::clickBackgroundFetch(PAL::SessionID sessionID, const String& identifier, CompletionHandler<void()>&& callback)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        callback();
+        return;
+    }
+
+    session->clickBackgroundFetch(identifier, WTFMove(callback));
+}
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 
 void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)

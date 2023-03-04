@@ -535,9 +535,11 @@ std::optional<LayoutRect> LineLayout::layout()
     // FIXME: Partial layout should not rely on inline display content, but instead InlineFormattingState
     // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
     // layout in constructContent.
-    auto isPartialLayout = m_lineDamage && m_lineDamage->contentPosition();
-    if (!isPartialLayout)
+    auto isPartialLayout = isDamaged() && m_lineDamage->contentPosition();
+    if (!isPartialLayout) {
+        m_lineDamage = { };
         clearInlineContent();
+    }
     ASSERT(m_inlineContentConstraints);
     auto intrusiveInitialLetterBottom = [&]() -> std::optional<LayoutUnit> {
         if (auto lowestInitialLetterLogicalBottom = flow().lowestInitialLetterLogicalBottom())

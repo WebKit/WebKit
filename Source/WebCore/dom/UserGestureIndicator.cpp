@@ -44,9 +44,10 @@ static RefPtr<UserGestureToken>& currentToken()
     return token;
 }
 
-UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType, Document* document)
+UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType, Document* document, std::optional<UUID> authorizationToken)
     : m_state(state)
     , m_gestureType(gestureType)
+    , m_authorizationToken(authorizationToken)
 {
     if (!document || !processingUserGesture())
         return;
@@ -100,13 +101,13 @@ bool UserGestureToken::isValidForDocument(const Document& document) const
     return m_documentsImpactedByUserGesture.contains(document);
 }
 
-UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle)
+UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<UUID> authorizationToken)
     : m_previousToken { currentToken() }
 {
     ASSERT(isMainThread());
 
     if (state)
-        currentToken() = UserGestureToken::create(state.value(), gestureType, document);
+        currentToken() = UserGestureToken::create(state.value(), gestureType, document, authorizationToken);
 
     if (state && document && currentToken()->processingUserGesture()) {
         document->updateLastHandledUserGestureTimestamp(currentToken()->startTime());
@@ -184,6 +185,14 @@ bool UserGestureIndicator::processingUserGestureForMedia()
         return false;
 
     return currentToken() ? currentToken()->processingUserGestureForMedia() : false;
+}
+
+std::optional<UUID> UserGestureIndicator::authorizationToken() const
+{
+    if (!isMainThread())
+        return std::nullopt;
+
+    return currentToken() ? currentToken()->authorizationToken() : std::nullopt;
 }
 
 }

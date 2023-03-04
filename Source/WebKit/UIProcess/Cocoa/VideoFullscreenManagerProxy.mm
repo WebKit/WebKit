@@ -252,6 +252,12 @@ void VideoFullscreenModelContext::returnVideoContentLayer()
         m_manager->returnVideoContentLayer(m_contextId);
 }
 
+void VideoFullscreenModelContext::returnVideoView()
+{
+    if (m_manager)
+        m_manager->returnVideoView(m_contextId);
+}
+
 void VideoFullscreenModelContext::didSetupFullscreen()
 {
     if (m_manager)
@@ -888,6 +894,23 @@ void VideoFullscreenManagerProxy::requestVideoContentLayer(PlaybackSessionContex
 void VideoFullscreenManagerProxy::returnVideoContentLayer(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::VideoFullscreenManager::ReturnVideoContentLayer(contextId));
+}
+
+void VideoFullscreenManagerProxy::returnVideoView(PlaybackSessionContextIdentifier contextId)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto& model = ensureModel(contextId);
+    auto *playerView = model.playerView();
+    auto *videoView = model.layerHostView();
+    if (playerView && videoView) {
+        auto *playerLayer = (WebAVPlayerLayer *)[model.playerView() layer];
+        [playerLayer addSublayer:[videoView layer]];
+        [playerView setNeedsLayout];
+        [playerView layoutIfNeeded];
+    }
+#else
+    UNUSED_PARAM(contextId);
+#endif
 }
 
 void VideoFullscreenManagerProxy::didSetupFullscreen(PlaybackSessionContextIdentifier contextId)

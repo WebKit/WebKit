@@ -95,6 +95,10 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
 
+    var regexpUnicodeSets = @tryGetById(regexp, "unicodeSets");
+    if (regexpUnicodeSets !== @regExpProtoUnicodeSetsGetter)
+        return true;
+
     return typeof regexp.lastIndex !== "number";
 }
 
@@ -460,7 +464,10 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
     var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
-    
+    var regexpUnicodeSets = @tryGetById(regexp, "unicodeSets");
+    if (regexpUnicodeSets !== @regExpProtoUnicodeSetsGetter)
+        return true;
+
     // These are accessed by the RegExp species constructor.
     var regexpSource = @tryGetById(regexp, "source");
     if (regexpSource !== @regExpProtoSourceGetter)
@@ -496,9 +503,9 @@ function split(string, limit)
     // 5. Let flags be ? ToString(? Get(rx, "flags")).
     var flags = @toString(regexp.flags);
 
-    // 6. If flags contains "u", var unicodeMatching be true.
+    // 6. If flags contains "u" or flags contains "v", var unicodeMatching be true.
     // 7. Else, let unicodeMatching be false.
-    var unicodeMatching = @stringIncludesInternal.@call(flags, "u");
+    var unicodeMatching = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
     // 8. If flags contains "y", var newFlags be flags.
     // 9. Else, let newFlags be the string that is the concatenation of flags and "y".
     var newFlags = @stringIncludesInternal.@call(flags, "y") ? flags : flags + "y";

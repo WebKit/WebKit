@@ -1,0 +1,35 @@
+
+PASS Should have a feature for `deferredPaymentRequest`.
+PASS The default value of `deferredPaymentRequest` should be `null` if `data` is not provided as part of the request.
+PASS The default value of `deferredPaymentRequest` should be `null` if `data` is not provided as part of an update.
+PASS Should not error if optional properties are not provided as part of the request.
+PASS Should not error if optional properties are not provided as part of an update.
+PASS Should not error if optional free-cancellation-date properties are not provided as part of the request.
+PASS Should not error if optional free-cancellation-date properties are not provided as part of an update.
+PASS Should propagate all data as part of the request.
+PASS Should propagate all data as part of an update.
+PASS Should error when `deferredBilling` is missing `paymentTiming` as part of the request.
+PASS Should error when `deferredBilling` is missing `paymentTiming` as part of an update.
+PASS Should error when `deferredBilling` has an invalid `paymentTiming` as part of the request.
+PASS Should error when `deferredBilling` has an invalid `paymentTiming` as part of an update.
+PASS Should error when `deferredBilling.paymentTiming` is not 'deferred' as part of the request.
+PASS Should error when `deferredBilling.paymentTiming` is not 'deferred' as part of an update.
+PASS Should error when `deferredBilling` is missing `label` as part of the request.
+PASS Should error when `deferredBilling` is missing `label` as part of an update.
+PASS Should error when `deferredBilling` is missing `amount` as part of the request.
+PASS Should error when `deferredBilling` is missing `amount` as part of an update.
+PASS Should error when `deferredBilling` has an invalid `amount` as part of the request.
+PASS Should error when `deferredBilling` has an invalid `amount` as part of an update.
+PASS Should error when there is a `freeCancellationDate` without `freeCancellationDateTimeZone` as part of the request.
+PASS Should error when there is a `freeCancellationDate` without `freeCancellationDateTimeZone` as part of an update.
+PASS Should error when there is a `freeCancellationDateTimeZone` without `freeCancellationDate` as part of the request.
+PASS Should error when there is a `freeCancellationDateTimeZone` without `freeCancellationDate` as part of an update.
+PASS Should error when `freeCancellationDate` is not a valid Date as part of the request.
+PASS Should error when `freeCancellationDate` is not a valid Date as part of an update.
+PASS Should error when `freeCancellationDateTimeZone` is not a valid time zone as part of the request.
+PASS Should error when `freeCancellationDateTimeZone` is not a valid time zone as part of an update.
+PASS Should error when `managementURL` is not a valid URL as part of the request.
+PASS Should error when `managementURL` is not a valid URL as part of an update.
+PASS Should error when `tokenNotificationURL` is not a valid URL as part of the request.
+PASS Should error when `tokenNotificationURL` is not a valid URL as part of an update.
+

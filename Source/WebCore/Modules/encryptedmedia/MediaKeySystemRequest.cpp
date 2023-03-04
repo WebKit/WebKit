@@ -33,6 +33,7 @@
 #include "JSMediaKeySystemAccess.h"
 #include "Logging.h"
 #include "MediaKeySystemController.h"
+#include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
 #include "WindowEventLoop.h"

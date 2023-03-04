@@ -127,6 +127,9 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     m_multiTokenContexts = request.multiTokenContexts();
 #endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = request.deferredPaymentRequest();
+#endif
 
     ASSERT(showCount == hideCount);
     ++showCount;
@@ -162,6 +165,9 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Apple
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     m_multiTokenContexts = WTFMove(shippingMethodUpdate->newMultiTokenContexts);
 #endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTFMove(shippingMethodUpdate->newDeferredPaymentRequest);
+#endif
 }
 
 static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
@@ -192,6 +198,9 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Appl
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     m_multiTokenContexts = WTFMove(shippingContactUpdate->newMultiTokenContexts);
 #endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTFMove(shippingContactUpdate->newDeferredPaymentRequest);
+#endif
 }
 
 void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
@@ -214,6 +223,9 @@ void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<AppleP
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     m_multiTokenContexts = WTFMove(paymentMethodUpdate->newMultiTokenContexts);
 #endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTFMove(paymentMethodUpdate->newDeferredPaymentRequest);
+#endif
 }
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
@@ -235,6 +247,9 @@ void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCoup
 #endif
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     m_multiTokenContexts = WTFMove(couponCodeUpdate->newMultiTokenContexts);
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    m_deferredPaymentRequest = WTFMove(couponCodeUpdate->newDeferredPaymentRequest);
 #endif
 }
 

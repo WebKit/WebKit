@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(SCREEN_CAPTURE_KIT) && HAVE(SC_CONTENT_SHARING_SESSION)
+#if HAVE(SCREEN_CAPTURE_KIT)
 
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
 
@@ -32,6 +32,10 @@
 #import <ScreenCaptureKit/SCContentFilterPrivate.h>
 #import <ScreenCaptureKit/SCContentSharingSession.h>
 #import <ScreenCaptureKit/SCStream_Private.h>
+
+#if HAVE(SC_CONTENT_PICKER)
+#import <ScreenCaptureKit/SCContentPicker.h>
+#endif
 
 #else // USE(APPLE_INTERNAL_SDK)
 
@@ -76,9 +80,7 @@ typedef NS_ENUM(NSInteger, SCContentFilterType) {
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTitle:(NSString *)title;
-- (BOOL)isEqualToSharingSession:(SCContentSharingSession *)other;
 - (void)showPickerForType:(SCContentFilterType)type;
-- (void)updateContent:(SCContentFilter *)content;
 - (void)end;
 @end
 

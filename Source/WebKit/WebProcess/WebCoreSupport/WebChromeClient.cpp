@@ -308,6 +308,7 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFe
         mouseButton(navigationAction),
         syntheticClickType(navigationAction),
         webProcess.userGestureTokenIdentifier(navigationAction.userGestureToken()),
+        navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
         m_page.canHandleRequest(navigationAction.resourceRequest()),
         navigationAction.shouldOpenExternalURLsPolicy(),
         navigationAction.downloadAttribute(),

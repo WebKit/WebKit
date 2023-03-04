@@ -54,6 +54,7 @@ public:
     std::optional<float> overrideAlpha() const { return std::get<CurrentColor>(m_style).overrideAlpha; }
 
     String color() const;
+    std::optional<Color> srgbaColor() const;
     RefPtr<CanvasGradient> canvasGradient() const;
     RefPtr<CanvasPattern> canvasPattern() const;
 
@@ -103,6 +104,11 @@ inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 inline String CanvasStyle::color() const
 {
     return serializationForHTML(std::get<Color>(m_style));
+}
+
+inline std::optional<Color> CanvasStyle::srgbaColor() const
+{
+    return std::holds_alternative<Color>(m_style) ? std::optional { std::get<Color>(m_style) } : std::nullopt;
 }
 
 } // namespace WebCore

@@ -107,6 +107,7 @@ public:
     WEBCORE_EXPORT void firePushSubscriptionChangeEvent(ServiceWorkerIdentifier, std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData);
     WEBCORE_EXPORT void fireNotificationEvent(ServiceWorkerIdentifier, NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
     WEBCORE_EXPORT void fireBackgroundFetchEvent(ServiceWorkerIdentifier, BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT void fireBackgroundFetchClickEvent(ServiceWorkerIdentifier, BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
 
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
 

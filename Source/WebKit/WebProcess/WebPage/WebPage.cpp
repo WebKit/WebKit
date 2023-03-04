@@ -966,7 +966,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         // Set sandbox state variable with probability of 1/8.
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
     }
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
     if (!(experimentalSandbox || experimentalSandboxWithProbability))
         SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
 #endif
@@ -4352,6 +4352,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(settings.alternateWebMPlayerEnabled());
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    PlatformMediaSessionManager::setUseSCContentSharingPicker(settings.useSCContentSharingPicker());
 #endif
 
 #if ENABLE(WEBM_FORMAT_READER)

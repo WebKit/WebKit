@@ -93,6 +93,7 @@ using namespace B3;
 namespace {
 namespace WasmB3IRGeneratorInternal {
 static constexpr bool verbose = false;
+static constexpr bool verboseInlining = false;
 }
 }
 
@@ -314,7 +315,22 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
+    unsigned advanceCallSiteIndex()
+    {
+        if (m_inlineParent)
+            return m_inlineRoot->advanceCallSiteIndex();
+        return ++m_callSiteIndex;
+    }
+
+    unsigned callSiteIndex() const
+    {
+        if (m_inlineParent)
+            return m_inlineRoot->callSiteIndex();
+        return m_callSiteIndex;
+    }
+
     B3IRGenerator(const ModuleInformation&, Callee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
+    B3IRGenerator(B3IRGenerator& inlineCaller, B3IRGenerator& inlineRoot, unsigned functionIndex, BasicBlock* returnContinuation, Vector<Value*> args);
 
     // SIMD
     void notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
@@ -524,6 +540,7 @@ public:
     }
 
     PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addInlinedArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
@@ -618,6 +635,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
 
+    PartialResult WARN_UNUSED_RETURN addInlinedReturn(const Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const Stack& expressionStack);
@@ -636,10 +654,14 @@ public:
     B3::PatchpointValue* createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
     B3::PatchpointValue* createTailCallPatchpoint(BasicBlock*, const Vector<ArgumentLocation>&, const Vector<ExpressionType>& tmpArgs, const Checked<int32_t>& tailCallStackOffsetFromFP, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
 
+    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { --m_stackSize; }
+
+    bool canInline() const;
 
     Value* constant(B3::Type, uint64_t bits, std::optional<Origin> = std::nullopt);
     Value* constant(B3::Type, v128_t bits, std::optional<Origin> = std::nullopt);
@@ -651,16 +673,22 @@ public:
 
     void addStackMap(unsigned callSiteIndex, StackMap&& stackmap)
     {
+        if (m_inlineParent) {
+            m_inlineRoot->addStackMap(callSiteIndex, WTFMove(stackmap));
+            return;
+        }
         m_stackmaps.add(CallSiteIndex(callSiteIndex), WTFMove(stackmap));
     }
 
     StackMaps&& takeStackmaps()
     {
+        RELEASE_ASSERT(m_inlineRoot == this);
         return WTFMove(m_stackmaps);
     }
 
     Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers()
     {
+        RELEASE_ASSERT(m_inlineRoot == this);
         return WTFMove(m_exceptionHandlers);
     }
 
@@ -794,7 +822,7 @@ private:
 
     FunctionParser<B3IRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
-    Callee& m_callee;
+    Callee* m_callee;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
     const CompilationMode m_compilationMode;
     const unsigned m_functionIndex { UINT_MAX };
@@ -805,11 +833,21 @@ private:
     Vector<BasicBlock*> m_rootBlocks;
     BasicBlock* m_topLevelBlock;
     BasicBlock* m_currentBlock { nullptr };
+
+    // Only used when this is an inlined context
+    BasicBlock* m_returnContinuation { nullptr };
+    B3IRGenerator* m_inlineRoot { nullptr };
+    B3IRGenerator* m_inlineParent { nullptr };
+    Vector<Value*> m_inlinedArgs;
+    Vector<Variable*> m_inlinedResults;
+    unsigned m_inlineDepth { 0 };
+    Checked<uint32_t> m_inlinedBytes { 0 };
+
     Vector<uint32_t> m_outerLoops;
     Vector<Variable*> m_locals;
     Vector<Variable*> m_stack;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
-    unsigned& m_osrEntryScratchBufferSize;
+    unsigned* m_osrEntryScratchBufferSize;
     HashMap<ValueKey, Value*> m_constantPool;
     HashMap<BlockSignature, B3::Type> m_tupleMap;
     InsertionSet m_constantInsertionValues;
@@ -852,6 +890,9 @@ private:
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
     RefPtr<B3::Air::PrologueGenerator> m_prologueGenerator;
+
+    Vector<B3IRGenerator> m_protectedInlineeGenerators;
+    Vector<FunctionParser<B3IRGenerator>> m_protectedInlineeParsers;
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -880,17 +921,49 @@ void B3IRGenerator::restoreWasmContextInstance(BasicBlock* block, Value* arg)
     });
 }
 
+B3IRGenerator::B3IRGenerator(B3IRGenerator& parentCaller, B3IRGenerator& rootCaller, unsigned functionIndex, BasicBlock* returnContinuation, Vector<Value*> args)
+    : m_info(rootCaller.m_info)
+    , m_callee(nullptr)
+    , m_mode(rootCaller.m_mode)
+    , m_compilationMode(CompilationMode::OMGMode)
+    , m_functionIndex(functionIndex)
+    , m_loopIndexForOSREntry(-1)
+    , m_tierUp(nullptr)
+    , m_proc(rootCaller.m_proc)
+    , m_returnContinuation(returnContinuation)
+    , m_inlineRoot(&rootCaller)
+    , m_inlineParent(&parentCaller)
+    , m_inlinedArgs(WTFMove(args))
+    , m_inlineDepth(parentCaller.m_inlineDepth + 1)
+    , m_unlinkedWasmToWasmCalls(rootCaller.m_unlinkedWasmToWasmCalls)
+    , m_osrEntryScratchBufferSize(nullptr)
+    , m_constantInsertionValues(m_proc)
+    , m_hasExceptionHandlers()
+    , m_numImportFunctions(m_info.importFunctionCount())
+    , m_tryCatchDepth(parentCaller.m_tryCatchDepth)
+    , m_callSiteIndex(0)
+{
+    m_topLevelBlock = m_proc.addBlock();
+    m_rootBlocks.append(m_proc.addBlock());
+    m_currentBlock = m_rootBlocks[0];
+    m_instanceValue = rootCaller.m_instanceValue;
+    m_baseMemoryValue = rootCaller.m_baseMemoryValue;
+    m_boundsCheckingSizeValue = rootCaller.m_boundsCheckingSizeValue;
+}
+
 B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
     : m_info(info)
-    , m_callee(callee)
+    , m_callee(&callee)
     , m_mode(mode)
     , m_compilationMode(compilationMode)
     , m_functionIndex(functionIndex)
     , m_loopIndexForOSREntry(loopIndexForOSREntry)
     , m_tierUp(tierUp)
     , m_proc(procedure)
+    , m_inlineRoot(this)
+    , m_inlinedBytes(m_info.functionWasmSize(m_functionIndex))
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
-    , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
+    , m_osrEntryScratchBufferSize(&osrEntryScratchBufferSize)
     , m_constantInsertionValues(m_proc)
     , m_hasExceptionHandlers(hasExceptionHandlers)
     , m_numImportFunctions(info.importFunctionCount())
@@ -954,10 +1027,11 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Proc
     }
 
     m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
+        RELEASE_ASSERT(m_callee);
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
         GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
-        jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), scratchGPR);
+        jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(m_callee)), scratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
         jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
     });
@@ -1213,12 +1287,34 @@ auto B3IRGenerator::addDrop(ExpressionType) -> PartialResult
     return { };
 }
 
+auto B3IRGenerator::addInlinedArguments(const TypeDefinition& signature) -> PartialResult
+{
+    RELEASE_ASSERT(signature.as<FunctionSignature>()->argumentCount() == m_inlinedArgs.size());
+    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
+
+    for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
+        B3::Type type = toB3Type(signature.as<FunctionSignature>()->argumentType(i));
+        Value* value = m_inlinedArgs[i];
+        RELEASE_ASSERT(value->type() == type);
+
+        Variable* argumentVariable = m_proc.addVariable(type);
+        m_locals[i] = argumentVariable;
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), argumentVariable, value);
+    }
+
+    return { };
+}
+
 auto B3IRGenerator::addArguments(const TypeDefinition& signature) -> PartialResult
 {
     ASSERT(!m_locals.size());
     WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(signature.as<FunctionSignature>()->argumentCount()), "can't allocate memory for ", signature.as<FunctionSignature>()->argumentCount(), " arguments");
 
     m_locals.grow(signature.as<FunctionSignature>()->argumentCount());
+
+    if (m_inlineParent)
+        return addInlinedArguments(signature);
+
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
     for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
@@ -3457,7 +3553,7 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
 
         ASSERT(!m_proc.usesSIMD() || m_compilationMode == CompilationMode::OMGForOSREntryMode);
         unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
-        m_osrEntryScratchBufferSize = valueSize * indexInBuffer;
+        *m_osrEntryScratchBufferSize = valueSize * indexInBuffer;
         m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
         body->addPredecessor(m_currentBlock);
     }
@@ -3536,7 +3632,7 @@ auto B3IRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Cont
 
     BasicBlock* continuation = m_proc.addBlock();
     splitStack(signature, enclosingStack, newStack);
-    result = ControlData(m_proc, origin(), signature, BlockType::Try, m_stackSize, continuation, ++m_callSiteIndex, m_tryCatchDepth);
+    result = ControlData(m_proc, origin(), signature, BlockType::Try, m_stackSize, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
     return { };
 }
 
@@ -3549,29 +3645,39 @@ auto B3IRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& sign
 
 PatchpointExceptionHandle B3IRGenerator::preparePatchpointForExceptions(BasicBlock* block, PatchpointValue* patch)
 {
-    ++m_callSiteIndex;
-    if (!m_tryCatchDepth)
+    advanceCallSiteIndex();
+    bool mustSaveState = m_tryCatchDepth;
+
+    if (!mustSaveState)
         return { m_hasExceptionHandlers };
 
     Vector<Value*> liveValues;
     Origin origin = this->origin();
-    for (Variable* local : m_locals) {
-        Value* result = block->appendNew<VariableValue>(m_proc, B3::Get, origin, local);
-        liveValues.append(result);
-    }
-    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-        ControlData& data = m_parser->controlStack()[controlIndex].controlData;
-        Stack& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-        for (Variable* value : expressionStack)
-            liveValues.append(get(block, value));
-        if (ControlType::isAnyCatch(data))
-            liveValues.append(get(block, data.exception()));
+
+    Vector<B3IRGenerator*> frames;
+    for (auto* currentFrame = this; currentFrame; currentFrame = currentFrame->m_inlineParent)
+        frames.append(currentFrame);
+    frames.reverse();
+
+    for (auto* currentFrame : frames) {
+        for (Variable* local : currentFrame->m_locals) {
+            Value* result = block->appendNew<VariableValue>(m_proc, B3::Get, origin, local);
+            liveValues.append(result);
+        }
+        for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
+            ControlData& data = currentFrame->m_parser->controlStack()[controlIndex].controlData;
+            Stack& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+            for (Variable* value : expressionStack)
+                liveValues.append(get(block, value));
+            if (ControlType::isAnyCatch(data))
+                liveValues.append(get(block, data.exception()));
+        }
     }
 
     patch->effects.exitsSideways = true;
     patch->appendVectorWithRep(liveValues, ValueRep::LateColdAny);
 
-    return { m_hasExceptionHandlers, m_callSiteIndex, static_cast<unsigned>(liveValues.size()) };
+    return { m_hasExceptionHandlers, callSiteIndex(), static_cast<unsigned>(liveValues.size()) };
 }
 
 auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
@@ -3607,9 +3713,9 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
 
     if (ControlType::isTry(data)) {
         if (kind == CatchKind::Catch)
-            data.convertTryToCatch(++m_callSiteIndex, m_proc.addVariable(pointerType()));
+            data.convertTryToCatch(advanceCallSiteIndex(), m_proc.addVariable(pointerType()));
         else
-            data.convertTryToCatchAll(++m_callSiteIndex, m_proc.addVariable(pointerType()));
+            data.convertTryToCatchAll(advanceCallSiteIndex(), m_proc.addVariable(pointerType()));
     }
     // We convert from "try" to "catch" ControlType above. This doesn't
     // happen if ControlType is already a "catch". This can happen when
@@ -3625,13 +3731,20 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
 
     unsigned indexInBuffer = 0;
 
-    for (auto& local : m_locals)
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
+    Vector<B3IRGenerator*> frames;
+    for (auto* currentFrame = this; currentFrame; currentFrame = currentFrame->m_inlineParent)
+        frames.append(currentFrame);
+    frames.reverse();
 
-    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-        auto& controlData = m_parser->controlStack()[controlIndex].controlData;
-        auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-        connectControlAtEntrypoint(indexInBuffer, pointer, controlData, expressionStack, data);
+    for (auto* currentFrame : frames) {
+        for (auto& local : currentFrame->m_locals)
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
+
+        for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
+            auto& controlData = currentFrame->m_parser->controlStack()[controlIndex].controlData;
+            auto& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+            connectControlAtEntrypoint(indexInBuffer, pointer, controlData, expressionStack, data);
+        }
     }
 
     PatchpointValue* result = m_currentBlock->appendNew<PatchpointValue>(m_proc, m_proc.addTuple({ pointerType(), pointerType() }), origin());
@@ -3668,10 +3781,13 @@ auto B3IRGenerator::addDelegate(ControlType& target, ControlType& data) -> Parti
 auto B3IRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& data) -> PartialResult
 {
     unsigned targetDepth = 0;
+    if (m_inlineParent)
+        targetDepth += m_inlineParent->m_tryCatchDepth;
+
     if (ControlType::isTry(target))
         targetDepth = target.tryDepth();
 
-    m_exceptionHandlers.append({ HandlerType::Delegate, data.tryStart(), ++m_callSiteIndex, 0, m_tryCatchDepth, targetDepth });
+    m_exceptionHandlers.append({ HandlerType::Delegate, data.tryStart(), advanceCallSiteIndex(), 0, m_tryCatchDepth, targetDepth });
     return { };
 }
 
@@ -3718,10 +3834,35 @@ auto B3IRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
     return { };
 }
 
+auto B3IRGenerator::addInlinedReturn(const Stack& returnValues) -> PartialResult
+{
+    dataLogLnIf(WasmB3IRGeneratorInternal::verboseInlining, "Returning inline to BB ", *m_returnContinuation);
+
+    auto* signature = m_parser->signature().as<FunctionSignature>();
+    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(m_parser->signature(), CallRole::Callee);
+    RELEASE_ASSERT(returnValues.size() >= wasmCallInfo.results.size());
+    RELEASE_ASSERT(signature->returnCount() == wasmCallInfo.results.size());
+
+    if (!m_inlinedResults.size() && wasmCallInfo.results.size()) {
+        for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i)
+            m_inlinedResults.append(m_proc.addVariable(toB3Type(signature->returnType(i))));
+    }
+    RELEASE_ASSERT(m_inlinedResults.size() == wasmCallInfo.results.size());
+
+    unsigned offset = returnValues.size() - wasmCallInfo.results.size();
+    for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i)
+        m_currentBlock->appendNew<B3::VariableValue>(m_proc, B3::Set, origin(), m_inlinedResults[i], get(returnValues[offset + i]));
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(m_returnContinuation));
+    return { };
+}
+
 auto B3IRGenerator::addReturn(const ControlData&, const Stack& returnValues) -> PartialResult
 {
-    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(m_parser->signature(), CallRole::Callee);
+    if (m_returnContinuation)
+        return addInlinedReturn(returnValues);
 
+    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(m_parser->signature(), CallRole::Callee);
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
     patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         params.code().emitEpilogue(jit);
@@ -3969,6 +4110,57 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
     return patchpoint;
 }
 
+bool B3IRGenerator::canInline() const
+{
+    ASSERT(!m_inlinedBytes || !m_inlineParent);
+    return m_inlineDepth < Options::maximumWasmDepthForInlining()
+        && m_inlineRoot->m_inlinedBytes.value() < Options::maximumWasmCallerSizeForInlining();
+}
+
+auto B3IRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const TypeDefinition& calleeSignature, Vector<ExpressionType>& args, ResultList& resultList) -> PartialResult
+{
+    Vector<Value*> getArgs;
+
+    for (auto* arg : args)
+        getArgs.append(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), arg));
+
+    BasicBlock* continuation = m_proc.addBlock();
+
+    const FunctionData& function = m_info.functions[calleeFunctionIndex];
+    m_protectedInlineeGenerators.constructAndAppend(*this, *m_inlineRoot, calleeFunctionIndex, continuation, WTFMove(getArgs));
+    auto& irGenerator = m_protectedInlineeGenerators.last();
+    m_protectedInlineeParsers.constructAndAppend(irGenerator, function.data.data(), function.data.size(), calleeSignature, m_info);
+    auto& parser = m_protectedInlineeParsers.last();
+    WASM_FAIL_IF_HELPER_FAILS(parser.parse());
+
+    irGenerator.insertConstants();
+    for (unsigned i = 1; i < irGenerator.m_rootBlocks.size(); ++i) {
+        auto* block = irGenerator.m_rootBlocks[i];
+        dataLogLnIf(WasmB3IRGeneratorInternal::verboseInlining, "Block (", i, ")", *block, " is an inline catch handler");
+        m_rootBlocks.append(block);
+    }
+    m_exceptionHandlers.appendVector(WTFMove(irGenerator.m_exceptionHandlers));
+    if (irGenerator.m_exceptionHandlers.size())
+        m_hasExceptionHandlers = { true };
+    RELEASE_ASSERT(!irGenerator.m_callSiteIndex);
+
+    irGenerator.m_topLevelBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_rootBlocks[0]));
+    m_makesCalls |= irGenerator.m_makesCalls;
+    m_makesTailCalls |= irGenerator.m_makesTailCalls;
+    ASSERT(!irGenerator.m_makesTailCalls);
+    ASSERT(&irGenerator.m_proc == &m_proc);
+
+    dataLogLnIf(WasmB3IRGeneratorInternal::verboseInlining, "Block ", *m_currentBlock, " is going to do an inline call to block ", *irGenerator.m_topLevelBlock, " then continue at ", *continuation);
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_topLevelBlock));
+    m_currentBlock = continuation;
+
+    for (unsigned i = 0; i < calleeSignature.as<FunctionSignature>()->returnCount(); ++i)
+        resultList.append(push(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), irGenerator.m_inlinedResults[i])));
+
+    return { };
+}
+
 auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
@@ -4097,6 +4289,17 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
         createTailCallPatchpoint(m_currentBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP,
             scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitUnlinkedWasmToWasmCall));
         return { };
+    }
+
+    if (callType == CallType::Call
+        && m_info.functionWasmSizeImportSpace(functionIndex) < Options::maximumWasmCalleeSizeForInlining()
+        && isAnyOMG(m_compilationMode)
+        && canInline()) {
+        dataLogLnIf(WasmB3IRGeneratorInternal::verboseInlining, " inlining call to ", functionIndex - m_numImportFunctions, " from ", m_functionIndex);
+        RELEASE_ASSERT(!m_info.callCanClobberInstance(functionIndex));
+        m_inlineRoot->m_inlinedBytes += m_info.functionWasmSizeImportSpace(functionIndex);
+
+        return emitInlineDirectCall(functionIndex - m_numImportFunctions, signature, args, results);
     }
 
     // We do not need to store |this| with JS instance since,

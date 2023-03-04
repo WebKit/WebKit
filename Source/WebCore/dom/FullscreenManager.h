@@ -31,6 +31,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "GCReachableRef.h"
 #include "LayoutRect.h"
+#include "Page.h"
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 

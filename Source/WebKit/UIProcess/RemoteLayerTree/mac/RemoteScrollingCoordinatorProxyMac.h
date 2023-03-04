@@ -40,6 +40,8 @@ public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyMac();
 
+    WebCore::FloatPoint currentMainFrameScrollPosition() const;
+
 private:
     void handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
 

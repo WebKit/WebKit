@@ -244,7 +244,6 @@ private:
     AXCoreObject* titleUIElement() const override { return objectAttributeValue(AXPropertyName::TitleUIElement); }
     AXCoreObject* scrollBar(AccessibilityOrientation) override;
     AccessibilityRole ariaRoleAttribute() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::ARIARoleAttribute)); }
-    String computedLabel() override;
     const String placeholderValue() const override { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const override { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
     bool supportsExpandedTextValue() const override { return boolAttributeValue(AXPropertyName::SupportsExpandedTextValue); }
@@ -255,7 +254,6 @@ private:
     String subrolePlatformString() const override { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }
     String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
     bool supportsPressAction() const override;
-    LayoutRect boundingBoxRect() const override;
     LayoutRect elementRect() const override;
     IntPoint clickPoint() override;
     void accessibilityText(Vector<AccessibilityText>& texts) const override;
@@ -491,12 +489,12 @@ private:
     bool inheritsPresentationalRole() const override;
     void setAccessibleName(const AtomString&) override;
     bool hasAttributesRequiredForInclusion() const override;
-    String accessibilityDescription() const override { return stringAttributeValue(AXPropertyName::AccessibilityDescription); }
-    String title() const override { return stringAttributeValue(AXPropertyName::Title); }
+    String textContent() const override { return stringAttributeValue(AXPropertyName::TextContent); }
     String text() const override;
     unsigned textLength() const override;
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const override;
+    bool shouldCacheAttributedText() const;
     NSAttributedString *cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange&, SpellCheck) const;
 #endif
     AXObjectCache* axObjectCache() const override;

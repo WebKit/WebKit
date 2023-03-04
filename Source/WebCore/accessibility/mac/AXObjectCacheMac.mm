@@ -658,7 +658,8 @@ bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();
     return client == kAXClientTypeVoiceOver
-        || UNLIKELY(client == kAXClientTypeWebKitTesting);
+        || UNLIKELY(client == kAXClientTypeWebKitTesting
+        || client == kAXClientTypeXCTest);
 }
 
 bool AXObjectCache::isIsolatedTreeEnabled()

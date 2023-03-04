@@ -268,7 +268,11 @@ bool NetworkProcessConnection::cookiesEnabled() const
 
 void NetworkProcessConnection::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
 {
+    if (m_cookieAcceptPolicy == newPolicy)
+        return;
+
     m_cookieAcceptPolicy = newPolicy;
+    WebProcess::singleton().cookieJar().clearCache();
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)

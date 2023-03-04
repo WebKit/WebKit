@@ -455,6 +455,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/applepay/ApplePayCouponCodeUpdate.h
     Modules/applepay/ApplePayDateComponents.h
     Modules/applepay/ApplePayDateComponentsRange.h
+    Modules/applepay/ApplePayDeferredPaymentRequest.h
     Modules/applepay/ApplePayDetailsUpdateBase.h
     Modules/applepay/ApplePayError.h
     Modules/applepay/ApplePayErrorCode.h
@@ -776,6 +777,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayCouponCodeUpdate.idl
     Modules/applepay/ApplePayDateComponents.idl
     Modules/applepay/ApplePayDateComponentsRange.idl
+    Modules/applepay/ApplePayDeferredPaymentRequest.idl
     Modules/applepay/ApplePayDetailsUpdateBase.idl
     Modules/applepay/ApplePayError.idl
     Modules/applepay/ApplePayErrorCode.idl

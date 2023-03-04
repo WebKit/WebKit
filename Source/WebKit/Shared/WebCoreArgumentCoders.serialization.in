@@ -323,7 +323,7 @@ struct CGAffineTransform {
     WebCore::FloatSize size()
 }
 
-[RefCounted, CustomHeader=True] class WebCore::LinearTimingFunction {
+[RefCounted, CustomHeader] class WebCore::LinearTimingFunction {
 };
 
 [Nested] enum class WebCore::CubicBezierTimingFunction::TimingFunctionPreset : uint8_t {
@@ -334,7 +334,7 @@ struct CGAffineTransform {
     Custom
 };
 
-[RefCounted, CustomHeader=True] class WebCore::CubicBezierTimingFunction {
+[RefCounted, CustomHeader] class WebCore::CubicBezierTimingFunction {
     WebCore::CubicBezierTimingFunction::TimingFunctionPreset timingFunctionPreset()
     double x1()
     double y1()
@@ -351,12 +351,12 @@ struct CGAffineTransform {
     End,
 };
 
-[RefCounted, CustomHeader=True] class WebCore::StepsTimingFunction {
+[RefCounted, CustomHeader] class WebCore::StepsTimingFunction {
     int numberOfSteps()
     std::optional<WebCore::StepsTimingFunction::StepPosition> stepPosition()
 };
 
-[RefCounted, CustomHeader=True] class WebCore::SpringTimingFunction {
+[RefCounted, CustomHeader] class WebCore::SpringTimingFunction {
     double mass()
     double stiffness()
     double damping()
@@ -416,7 +416,7 @@ struct CGAffineTransform {
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGLActiveInfo.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader=True] struct WebCore::GraphicsContextGLActiveInfo {
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::GraphicsContextGLActiveInfo {
     String name;
     GCGLenum type;
     GCGLint size;
@@ -430,7 +430,7 @@ enum class WebCore::ViewportFit : uint8_t {
 };
 
 header: <WebCore/ViewportArguments.h>
-[CustomHeader=True] struct WebCore::ViewportAttributes {
+[CustomHeader] struct WebCore::ViewportAttributes {
     WebCore::FloatSize layoutSize;
 
     float initialScale;
@@ -445,7 +445,7 @@ header: <WebCore/ViewportArguments.h>
 };
 
 header: <WebCore/ShareData.h>
-[CustomHeader=True] struct WebCore::ShareDataWithParsedURL {
+[CustomHeader] struct WebCore::ShareDataWithParsedURL {
     WebCore::ShareData shareData;
     std::optional<URL> url;
     Vector<WebCore::RawFile> files;
@@ -460,7 +460,7 @@ struct WebCore::ShareData {
 
 enum class WebCore::ShareDataOriginator : bool
 
-[CustomHeader=True] struct WebCore::RawFile {
+[CustomHeader] struct WebCore::RawFile {
     String fileName;
     RefPtr<WebCore::SharedBuffer> fileData;
 };
@@ -531,19 +531,19 @@ class WebCore::PrivateClickMeasurement {
     String sourceApplicationBundleID()
 }
 
-[CustomHeader=True] struct WebCore::PCM::SourceSite {
+[CustomHeader] struct WebCore::PCM::SourceSite {
     WebCore::RegistrableDomain registrableDomain
 }
 
-[CustomHeader=True] struct WebCore::PCM::AttributionDestinationSite {
+[CustomHeader] struct WebCore::PCM::AttributionDestinationSite {
     WebCore::RegistrableDomain registrableDomain
 }
 
-[CustomHeader=True] struct WebCore::PCM::EphemeralNonce {
+[CustomHeader] struct WebCore::PCM::EphemeralNonce {
     String nonce
 }
 
-[CustomHeader=True] struct WebCore::PCM::AttributionTriggerData {
+[CustomHeader] struct WebCore::PCM::AttributionTriggerData {
     uint8_t data
     uint8_t priority;
     WebCore::PCM::WasSent wasSent;
@@ -553,7 +553,7 @@ class WebCore::PrivateClickMeasurement {
 # destinationUnlinkableToken and destinationSecretToken are not serialized.
 }
 
-[CustomHeader=True] struct WebCore::PCM::AttributionTimeToSendData {
+[CustomHeader] struct WebCore::PCM::AttributionTimeToSendData {
     std::optional<WallTime> sourceEarliestTimeToSend;
     std::optional<WallTime> destinationEarliestTimeToSend;
 }
@@ -577,6 +577,18 @@ struct WebCore::ApplePayPaymentTokenContext {
     String merchantDomain
     String amount
 }
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+struct WebCore::ApplePayDeferredPaymentRequest {
+    String billingAgreement
+    WebCore::ApplePayLineItem deferredBilling
+    WallTime freeCancellationDate
+    String freeCancellationDateTimeZone
+    String managementURL
+    String paymentDescription
+    String tokenNotificationURL
+};
 #endif
 
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
@@ -673,6 +685,9 @@ struct WebCore::ApplePayDetailsUpdateBase {
 #endif
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     std::optional<Vector<WebCore::ApplePayPaymentTokenContext>> newMultiTokenContexts;
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    std::optional<WebCore::ApplePayDeferredPaymentRequest> newDeferredPaymentRequest;
 #endif
 }
 
@@ -1291,7 +1306,7 @@ header: <WebCore/ResourceRequest.h>
 
 #if USE(SOUP)
 header: <WebCore/ResourceRequest.h>
-[CustomHeader=True] struct WebCore::ResourceRequestPlatformData {
+[CustomHeader] struct WebCore::ResourceRequestPlatformData {
     WebCore::ResourceRequest::RequestData requestData;
     bool acceptEncoding;
     uint16_t redirectCount;
@@ -2579,7 +2594,7 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
 };
 
 header: <WebCore/FEComponentTransfer.h>
-[CustomHeader=True, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ComponentTransferFunction {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ComponentTransferFunction {
     WebCore::ComponentTransferType type;
     float slope;
     float intercept;
@@ -4582,6 +4597,15 @@ struct WebCore::ServiceWorkerContextData {
     WebCore::NavigationPreloadState navigationPreloadState;
 };
 
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+header: <WebCore/DisplayCapturePromptType.h>
+enum class WebCore::DisplayCapturePromptType : uint8_t {
+    Window,
+    Screen,
+    UserChoose
+};
 #endif
 
 header: <JavaScriptCore/ArrayBuffer.h>

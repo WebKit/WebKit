@@ -49,7 +49,6 @@
 #import "_WKDownloadInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import <WebCore/CertificateInfo.h>
-#import <WebCore/HTTPCookieAcceptPolicyCocoa.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -223,10 +222,6 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 {
 }
 
-- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
-{
-}
-
 - (id)_objectForBundleParameter:(NSString *)parameter
 {
     return [_processPool->bundleParameters() objectForKey:parameter];
@@ -366,9 +361,6 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     return _processPool->prewarmedProcessIdentifier();
 }
 
-- (void)_syncNetworkProcessCookies
-{
-}
 
 - (void)_clearWebProcessCache
 {

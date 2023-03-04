@@ -34,4 +34,6 @@
     [Conditional=APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS] ApplePayAutomaticReloadPaymentRequest newAutomaticReloadPaymentRequest;
 
     [Conditional=APPLE_PAY_MULTI_MERCHANT_PAYMENTS] sequence<ApplePayPaymentTokenContext> newMultiTokenContexts;
+
+    [Conditional=APPLE_PAY_DEFERRED_PAYMENTS] ApplePayDeferredPaymentRequest newDeferredPaymentRequest;
 };

@@ -59,6 +59,7 @@ http/tests/paymentrequest/ApplePayModifier-automaticReloadPaymentRequest.https.h
 http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
@@ -1683,7 +1684,7 @@ webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-i
 
 # NOTIFICATION_EVENT is Ventura+
 [ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
+webkit.org/b/253343 [ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
 [ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 [ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 [ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
@@ -1730,6 +1731,9 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
 
 webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
+
+webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Pass Failure ]
+webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Pass Failure ]
 
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]

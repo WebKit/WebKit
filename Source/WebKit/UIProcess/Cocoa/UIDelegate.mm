@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1226,10 +1226,16 @@ void UIDelegate::UIClient::didChangeFontAttributes(const WebCore::FontAttributes
 
 void UIDelegate::UIClient::promptForDisplayCapturePermission(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
 {
-    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (request.canRequestDisplayCapturePermission()) {
+        request.promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::UserChoose);
+        return;
+    }
 
-    ASSERT([delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)]);
-    ASSERT(request.canPromptForGetDisplayMedia());
+    auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (![delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)]) {
+        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+        return;
+    }
 
     auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:));
     auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKDisplayCapturePermissionDecision decision) mutable {
@@ -1288,6 +1294,11 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return;
     }
 
+    if (request.requiresDisplayCapture()) {
+        promptForDisplayCapturePermission(page, frame, userMediaOrigin, topLevelOrigin, request);
+        return;
+    }
+
     // FIXME: Provide a specific delegate for display capture.
     if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
         auto checker = CompletionHandlerCallChecker::create(delegate, @selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:));
@@ -1325,18 +1336,6 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
             type = request.requiresVideoCapture() ? WKMediaCaptureTypeCameraAndMicrophone : WKMediaCaptureTypeMicrophone;
         [delegate webView:m_uiDelegate->m_webView.get().get() requestMediaCapturePermissionForOrigin:wrapper(topLevelOrigin) initiatedByFrame:frameInfoWrapper.get() type:type decisionHandler:decisionHandler.get()];
         return;
-    }
-
-    if (request.requiresDisplayCapture() && request.canPromptForGetDisplayMedia()) {
-        if (respondsToRequestDisplayCapturePermissionForOrigin) {
-            promptForDisplayCapturePermission(page, frame, userMediaOrigin, topLevelOrigin, request);
-            return;
-        }
-
-        if (!respondsToRequestUserMediaAuthorizationForDevices) {
-            request.promptForGetDisplayMedia();
-            return;
-        }
     }
 
     if (!respondsToRequestUserMediaAuthorizationForDevices) {

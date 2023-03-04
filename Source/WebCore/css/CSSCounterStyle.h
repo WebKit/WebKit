@@ -95,10 +95,10 @@ private:
 
     String counterForSystemCyclic(int) const;
     String counterForSystemFixed(int) const;
-    String counterForSystemSymbolic(int) const;
-    String counterForSystemAlphabetic(int) const;
-    String counterForSystemNumeric(int) const;
-    String counterForSystemAdditive(int) const;
+    String counterForSystemSymbolic(unsigned) const;
+    String counterForSystemAlphabetic(unsigned) const;
+    String counterForSystemNumeric(unsigned) const;
+    String counterForSystemAdditive(unsigned) const;
 
     bool isPredefinedCounterStyle() const { return m_predefinedCounterStyle; }
     bool isAutoRange() const { return ranges().isEmpty(); }

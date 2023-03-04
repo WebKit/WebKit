@@ -278,6 +278,7 @@
     macro(type) \
     macro(uid) \
     macro(unicode) \
+    macro(unicodeSets) \
     macro(unit) \
     macro(usage) \
     macro(value) \

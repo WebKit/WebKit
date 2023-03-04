@@ -35,7 +35,11 @@
 #include <WebCore/BackgroundFetchOptions.h>
 #include <WebCore/BackgroundFetchRecordInformation.h>
 #include <WebCore/DOMCacheEngine.h>
+#include <WebCore/SWServer.h>
 #include <WebCore/SWServerRegistration.h>
+#include <wtf/CallbackAggregator.h>
+#include <wtf/CrossThreadCopier.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -43,8 +47,9 @@ using namespace WebCore;
 
 // FIXME: Handle quota.
 
-BackgroundFetchStoreImpl::BackgroundFetchStoreImpl(WeakPtr<NetworkStorageManager>&& manager)
+BackgroundFetchStoreImpl::BackgroundFetchStoreImpl(WeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server)
     : m_manager(WTFMove(manager))
+    , m_server(WTFMove(server))
 {
 }
 
@@ -61,14 +66,27 @@ String BackgroundFetchStoreImpl::getFilename(const ServiceWorkerRegistrationKey&
     return iterator->value.fetchToFilenames.get(std::make_pair(key.scope().string(), identifier));
 }
 
-void BackgroundFetchStoreImpl::initializeFetches(BackgroundFetchEngine& engine, const ServiceWorkerRegistrationKey& key, CompletionHandler<void()>&& callback)
+void BackgroundFetchStoreImpl::registerFetch(const ClientOrigin& origin, const ServiceWorkerRegistrationKey& key, const String& backgroundFetchIdentifier, String&& fetchStorageIdentifier)
+{
+    m_filenameToFetch.add(fetchStorageIdentifier, FetchInformation { origin, std::make_pair(key.scope().string(), backgroundFetchIdentifier) });
+
+    auto iterator = m_perClientOriginFetches.find(origin);
+    if (iterator != m_perClientOriginFetches.end())
+        iterator->value.fetchToFilenames.add(std::make_pair(key.scope().string(), backgroundFetchIdentifier), WTFMove(fetchStorageIdentifier));
+}
+
+void BackgroundFetchStoreImpl::initializeFetches(const ServiceWorkerRegistrationKey& key, CompletionHandler<void()>&& callback)
+{
+    initializeFetches({ key.topOrigin(), SecurityOriginData::fromURL(key.scope()) }, WTFMove(callback));
+}
+
+void BackgroundFetchStoreImpl::initializeFetches(const ClientOrigin& origin, CompletionHandler<void()>&& callback)
 {
     if (!m_manager) {
         callback();
         return;
     }
 
-    auto origin = key.clientOrigin();
     auto addResult = m_perClientOriginFetches.add(origin, PerClientOriginFetches { });
     if (!addResult.isNewEntry && addResult.iterator->value.initializationCallbacks.isEmpty()) {
         callback();
@@ -76,7 +94,7 @@ void BackgroundFetchStoreImpl::initializeFetches(BackgroundFetchEngine& engine, 
     }
 
     addResult.iterator->value.initializationCallbacks.append(WTFMove(callback));
-    auto internalCallback = [origin, weakEngine = WeakPtr { engine }, protectedThis = Ref { *this }, manager = m_manager](Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&& fetches) {
+    auto internalCallback = [origin, weakEngine = WeakPtr { m_server->backgroundFetchEngine() }, protectedThis = Ref { *this }, manager = m_manager](Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&& fetches) {
         if (weakEngine && manager) {
             for (auto& fetch : fetches) {
                 weakEngine->addFetchFromStore({ fetch.first->data(), fetch.first->size() }, [&](auto& key, auto& identifier) {
@@ -87,9 +105,8 @@ void BackgroundFetchStoreImpl::initializeFetches(BackgroundFetchEngine& engine, 
                         });
                         return;
                     }
-                    auto iterator = protectedThis->m_perClientOriginFetches.find(origin);
-                    if (iterator != protectedThis->m_perClientOriginFetches.end())
-                        iterator->value.fetchToFilenames.add(std::make_pair(key.scope().string(), identifier), WTFMove(fetch.second));
+
+                    protectedThis->registerFetch(origin, key, identifier, WTFMove(fetch.second));
                 });
             }
         }
@@ -137,6 +154,7 @@ void BackgroundFetchStoreImpl::clearFetch(const ServiceWorkerRegistrationKey& ke
         callback();
         return;
     }
+    m_filenameToFetch.remove(fetchStorageIdentifier);
 
     m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifier = crossThreadCopy(fetchStorageIdentifier), callback = WTFMove(callback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
@@ -164,10 +182,11 @@ void BackgroundFetchStoreImpl::clearAllFetches(const ServiceWorkerRegistrationKe
     }
 
     Vector<String> fetchStorageIdentifiers;
-    iterator->value.fetchToFilenames.removeIf([&fetchStorageIdentifiers, &key] (auto& iterator) {
+    iterator->value.fetchToFilenames.removeIf([&] (auto& iterator) {
         if (iterator.key.first != key.scope().string())
             return false;
         fetchStorageIdentifiers.append(iterator.value);
+        m_filenameToFetch.remove(iterator.value);
         return true;
     });
 
@@ -201,11 +220,8 @@ void BackgroundFetchStoreImpl::storeFetch(const ServiceWorkerRegistrationKey& ke
         fetchStorageIdentifier = BackgroundFetchStoreManager::createNewStorageIdentifier();
 
     auto internalCallback = [protectedThis = Ref { *this }, origin, key, identifier, fetchStorageIdentifier, callback = WTFMove(callback)](StoreResult result) mutable {
-        if (result == StoreResult::OK) {
-            auto iterator = protectedThis->m_perClientOriginFetches.find(origin);
-            if (iterator != protectedThis->m_perClientOriginFetches.end())
-                iterator->value.fetchToFilenames.add(std::make_pair(key.scope().string(), identifier), WTFMove(fetchStorageIdentifier));
-        }
+        if (result == StoreResult::OK)
+            protectedThis->registerFetch(origin, key, identifier, WTFMove(fetchStorageIdentifier));
         callback(result);
     };
 
@@ -291,6 +307,77 @@ void BackgroundFetchStoreImpl::retrieveResponseBody(const ServiceWorkerRegistrat
                 callback(result);
             });
         });
+    });
+}
+
+void BackgroundFetchStoreImpl::fetchInformationFromFilename(const String& filename, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
+{
+    loadAllFetches([protectedThis = Ref { *this }, filename, callback = WTFMove(callback)]() mutable {
+        auto iterator = protectedThis->m_filenameToFetch.find(filename);
+        if (iterator == protectedThis->m_filenameToFetch.end()) {
+            callback({ }, { });
+            return;
+        }
+
+        ServiceWorkerRegistrationKey key { SecurityOriginData { iterator->value.origin.topOrigin }, URL { { }, iterator->value.identifier.first } };
+        callback(key, iterator->value.identifier.second);
+    });
+}
+
+void BackgroundFetchStoreImpl::loadAllFetches(CompletionHandler<void()>&& callback)
+{
+    if (!m_server) {
+        callback();
+        return;
+    }
+
+    m_server->getAllOrigins([protectedThis = Ref { *this }, callback = WTFMove(callback)](auto&& origins) mutable {
+        auto callbackAggregator = MainRunLoopCallbackAggregator::create(WTFMove(callback));
+        for (auto& origin : origins)
+            protectedThis->initializeFetches(origin, [callbackAggregator] { });
+    });
+}
+
+void BackgroundFetchStoreImpl::getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&& callback)
+{
+    loadAllFetches([protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+        callback(copyToVector(protectedThis->m_filenameToFetch.keys()));
+    });
+}
+
+void BackgroundFetchStoreImpl::abortBackgroundFetch(const String& filename, CompletionHandler<void()>&& callback)
+{
+    fetchInformationFromFilename(filename, [engine = WeakPtr { m_server->backgroundFetchEngine() }, callback = WTFMove(callback)](auto key, auto identifier) mutable {
+        if (engine && !identifier.isNull())
+            engine->abortBackgroundFetch(key, identifier);
+        callback();
+    });
+}
+
+void BackgroundFetchStoreImpl::pauseBackgroundFetch(const String& filename, CompletionHandler<void()>&& callback)
+{
+    fetchInformationFromFilename(filename, [engine = WeakPtr { m_server->backgroundFetchEngine() }, callback = WTFMove(callback)](auto key, auto identifier) mutable {
+        if (engine && !identifier.isNull())
+            engine->pauseBackgroundFetch(key, identifier);
+        callback();
+    });
+}
+
+void BackgroundFetchStoreImpl::resumeBackgroundFetch(const String& filename, CompletionHandler<void()>&& callback)
+{
+    fetchInformationFromFilename(filename, [engine = WeakPtr { m_server->backgroundFetchEngine() }, callback = WTFMove(callback)](auto key, auto identifier) mutable {
+        if (engine && !identifier.isNull())
+            engine->resumeBackgroundFetch(key, identifier);
+        callback();
+    });
+}
+
+void BackgroundFetchStoreImpl::clickBackgroundFetch(const String& filename, CompletionHandler<void()>&& callback)
+{
+    fetchInformationFromFilename(filename, [engine = WeakPtr { m_server->backgroundFetchEngine() }, callback = WTFMove(callback)](auto key, auto identifier) mutable {
+        if (engine && !identifier.isNull())
+            engine->clickBackgroundFetch(key, identifier);
+        callback();
     });
 }
 

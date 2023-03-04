@@ -156,6 +156,8 @@ public:
     void clearResourceLoadStatistics();
     void reloadFromOrigin();
 
+    WKRetainPtr<WKStringRef> getBackgroundFetchIdentifier();
+
 private:
     InjectedBundle() = default;
     ~InjectedBundle();

@@ -71,6 +71,7 @@ class GraphicsLayerAsyncContentsDisplayDelegate;
 class HTMLVideoElement;
 class Image;
 class Model;
+class Settings;
 class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
@@ -519,7 +520,7 @@ public:
     WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
     WEBCORE_EXPORT virtual void resumeAnimations();
 
-    virtual Vector<std::pair<String, double>> acceleratedAnimationsForTesting() const { return { }; }
+    virtual Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const { return { }; }
 
     // Layer contents
     virtual void setContentsToImage(Image*) { }

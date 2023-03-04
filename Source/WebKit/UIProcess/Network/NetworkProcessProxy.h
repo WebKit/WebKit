@@ -290,6 +290,12 @@ public:
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
     void processPushMessage(PAL::SessionID, const WebPushMessage&, CompletionHandler<void(bool wasProcessed)>&&);
     void processNotificationEvent(const WebCore::NotificationData&, WebCore::NotificationEventType, CompletionHandler<void(bool wasProcessed)>&&);
+
+    void getAllBackgroundFetchIdentifiers(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
+    void abortBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void pauseBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void resumeBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
+    void clickBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
 #endif
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);

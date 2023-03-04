@@ -71,7 +71,7 @@ enum class BuiltInCharacterClassID : unsigned {
     SpaceClassID,
     WordClassID,
     DotClassID,
-    BaseUnicodePropertyID
+    BaseUnicodePropertyID,
 };
 
 struct BytecodePattern;

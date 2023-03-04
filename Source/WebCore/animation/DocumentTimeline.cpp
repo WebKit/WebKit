@@ -48,6 +48,10 @@
 #include "RenderLayerBacking.h"
 #include "WebAnimationTypes.h"
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedTimeline.h"
+#endif
+
 namespace WebCore {
 
 Ref<DocumentTimeline> DocumentTimeline::create(Document& document)
@@ -407,6 +411,15 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (m_document && m_document->settings().threadedAnimationResolutionEnabled()) {
+        m_acceleratedAnimationsPendingRunningStateChange.clear();
+        if (auto* acceleratedTimeline = m_document->existingAcceleratedTimeline())
+            acceleratedTimeline->updateEffectStacks();
+        return;
+    }
+#endif
+
     auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 
@@ -435,11 +448,12 @@ AnimationEvents DocumentTimeline::prepareForPendingAnimationEventsDispatch()
 
 Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const
 {
+    ASSERT(m_document);
     auto* renderer = element.renderer();
     if (renderer && renderer->isComposited()) {
         auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
         if (auto* graphicsLayer = compositedRenderer->layer()->backing()->graphicsLayer())
-            return graphicsLayer->acceleratedAnimationsForTesting();
+            return graphicsLayer->acceleratedAnimationsForTesting(m_document->settings());
     }
     return { };
 }

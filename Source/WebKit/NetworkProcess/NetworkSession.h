@@ -71,7 +71,7 @@ enum class Critical : bool;
 }
 
 namespace WebKit {
-
+class BackgroundFetchStoreImpl;
 class NetworkBroadcastChannelRegistry;
 class NetworkDataTask;
 class NetworkLoadScheduler;
@@ -216,6 +216,12 @@ public:
     void unregisterSWServerConnection(WebSWServerConnection&);
 
     bool hasServiceWorkerDatabasePath() const;
+
+    void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
+    void abortBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void pauseBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void resumeBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void clickBackgroundFetch(const String&, CompletionHandler<void()>&&);
 #endif
 
     WebSharedWorkerServer* sharedWorkerServer() { return m_sharedWorkerServer.get(); }
@@ -260,6 +266,11 @@ public:
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
+#if HAVE(NW_PROXY_CONFIG)
+    virtual void clearProxyConfigData() { }
+    virtual void setProxyConfigData(const IPC::DataReference&, const IPC::DataReference&) { }
+#endif
+                                    
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -276,6 +287,8 @@ protected:
     void requestBackgroundFetchPermission(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&) final;
     std::unique_ptr<WebCore::BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(WebCore::BackgroundFetchRecordLoader::Client&, const WebCore::BackgroundFetchRequest&, const WebCore::ClientOrigin&) final;
     Ref<WebCore::BackgroundFetchStore> createBackgroundFetchStore() final;
+
+    BackgroundFetchStoreImpl& ensureBackgroundFetchStore();
 #endif // ENABLE(SERVICE_WORKER)
 
     PAL::SessionID m_sessionID;
@@ -340,6 +353,7 @@ protected:
     };
     std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
     std::unique_ptr<WebCore::SWServer> m_swServer;
+    RefPtr<BackgroundFetchStoreImpl> m_backgroundFetchStore;
 #endif
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
 

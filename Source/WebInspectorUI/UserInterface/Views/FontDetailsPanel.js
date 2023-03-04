@@ -85,7 +85,6 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             if (row instanceof WI.FontVariationDetailsSectionRow) {
                 let fontVariationAxis = fontProperty.variations.values().next().value;
                 row.value = fontVariationAxis.value ? fontVariationAxis.value : WI.FontStyles.fontPropertyValueToAxisValue(fontVariationAxis.tag, fontProperty.value);
-                row.warningMessage = (fontVariationAxis.value < fontVariationAxis.minimumValue || fontVariationAxis.value > fontVariationAxis.maximumValue) ? WI.UIString("Axis value outside of supported range: %s – %s", "A warning that is shown in the Font Details Sidebar when the value for a variation axis is outside of the supported range of values").format(this._formatAxisValueAsString(fontVariationAxis.minimumValue), this._formatAxisValueAsString(fontVariationAxis.maximumValue)) : null;
             }
         }
 
@@ -109,7 +108,6 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         for (let [tag, fontVariationAxis] of this._fontVariationsMap) {
             let variationRow = this._fontVariationRowsMap.get(tag);
             variationRow.value = fontVariationAxis.value ?? fontVariationAxis.defaultValue;
-            variationRow.warningMessage = (fontVariationAxis.value < fontVariationAxis.minimumValue || fontVariationAxis.value > fontVariationAxis.maximumValue) ? WI.UIString("Axis value outside of supported range: %s – %s", "A warning that is shown in the Font Details Sidebar when the value for a variation axis is outside of the supported range of values").format(this._formatAxisValueAsString(fontVariationAxis.minimumValue), this._formatAxisValueAsString(fontVariationAxis.maximumValue)) : null;
         }
 
         if (!this._fontVariationRowsMap.size) {

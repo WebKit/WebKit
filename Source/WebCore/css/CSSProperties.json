@@ -3999,7 +3999,10 @@
             ],
             "codegen-properties": {
                 "custom": "All",
-                "parser-grammar": "<<values>> | <string>"
+                "parser-function": "consumeListStyleType",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<<values>> | <string> | <custom-ident>",
+                "parser-grammar-unused-reason": "custom-ident should be consumed depending on settings."
             },
             "specification": {
                 "category": "css-lists",
@@ -5994,6 +5997,7 @@
                 "uppercase",
                 "lowercase",
                 "full-size-kana",
+                "full-width",
                 "none"
             ],
             "codegen-properties": {

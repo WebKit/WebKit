@@ -236,6 +236,8 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
+    const HashSet<uint32_t>& suppliedColors() const { return m_suppliedColors; }
+
     class FontProxy final : public FontSelectorClient {
     public:
         FontProxy() = default;
@@ -321,6 +323,8 @@ protected:
     Ref<TextMetrics> measureTextInternal(const String& text);
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
+
+    void postProcessPixelBuffer() const final;
 
 private:
     void applyLineDash() const;
@@ -420,7 +424,9 @@ private:
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };
+    bool m_wasLastDrawPutImageData { false };
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
+    HashSet<uint32_t> m_suppliedColors;
     CanvasRenderingContext2DSettings m_settings;
 };
 

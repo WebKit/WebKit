@@ -115,7 +115,7 @@ Element* AccessibilitySVGElement::childElementWithMatchingLanguage(ChildrenType&
 
 void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
-    String description = accessibilityDescription();
+    String description = this->description();
     if (!description.isEmpty())
         textOrder.append(AccessibilityText(description, AccessibilityTextSource::Alternative));
 
@@ -124,7 +124,7 @@ void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textO
         textOrder.append(AccessibilityText(helptext, AccessibilityTextSource::Help));
 }
 
-String AccessibilitySVGElement::accessibilityDescription() const
+String AccessibilitySVGElement::description() const
 {
     // According to the SVG Accessibility API Mappings spec, the order of priority is:
     // 1. aria-labelledby
@@ -149,8 +149,8 @@ String AccessibilitySVGElement::accessibilityDescription() const
     }
 
     if (is<SVGUseElement>(element())) {
-        if (AccessibilityObject* target = targetForUseElement())
-            return target->accessibilityDescription();
+        if (auto* target = targetForUseElement())
+            return target->description();
     }
 
     // FIXME: This is here to not break the svg-image.html test. But 'alt' is not
@@ -162,7 +162,7 @@ String AccessibilitySVGElement::accessibilityDescription() const
             return alt;
     }
 
-    return String();
+    return { };
 }
 
 String AccessibilitySVGElement::helpText() const
@@ -189,8 +189,8 @@ String AccessibilitySVGElement::helpText() const
     }
 
     auto titleElements = childrenOfType<SVGTitleElement>(*element());
-    if (auto titleChild = childElementWithMatchingLanguage(titleElements)) {
-        if (titleChild->textContent() != accessibilityDescription())
+    if (auto* titleChild = childElementWithMatchingLanguage(titleElements)) {
+        if (titleChild->textContent() != description())
             return titleChild->textContent();
     }
 

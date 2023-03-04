@@ -84,6 +84,18 @@ bool defaultRemoveBackgroundEnabled()
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+bool defaultUseSCContentSharingPicker()
+{
+    static bool enabled = false;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(Bilby, Newsroom);
+    });
+    return enabled;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

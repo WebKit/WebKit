@@ -411,14 +411,14 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
     sendWithAsyncReply(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection), WTFMove(callback));
 }
 
-void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&& callback)
+void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(const String&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::ApplyAutocorrection(correction, originalText), WTFMove(callback));
+    sendWithAsyncReply(Messages::WebPage::ApplyAutocorrection(correction, originalText, isCandidate), WTFMove(callback));
 }
 
-bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText)
+bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate)
 {
-    auto sendSync = m_process->sendSync(Messages::WebPage::SyncApplyAutocorrection(correction, originalText), m_webPageID);
+    auto sendSync = m_process->sendSync(Messages::WebPage::SyncApplyAutocorrection(correction, originalText, isCandidate), m_webPageID);
     auto [autocorrectionApplied] = sendSync.takeReplyOr(false);
     return autocorrectionApplied;
 }

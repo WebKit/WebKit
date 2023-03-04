@@ -58,6 +58,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
+#include "TextTransform.h"
 #include "VisiblePosition.h"
 #include "WidthIterator.h"
 #include <wtf/IsoMallocInlines.h>
@@ -1387,6 +1388,8 @@ String applyTextTransform(const RenderStyle& style, const String& text, UChar pr
         return text.convertToLowercaseWithLocale(style.computedLocale());
     case TextTransform::FullSizeKana:
         return convertToFullSizeKana(text);
+    case TextTransform::FullWidth:
+        return transformToFullWidth(text);
     }
     ASSERT_NOT_REACHED();
     return text;
@@ -1495,6 +1498,8 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& re
     }
 #if ALLOW_PARTIAL_CONTENT_INVALIDATION
     modernLineLayout->updateTextContent(renderer, offset, delta);
+    if (!modernLineLayout->isDamaged())
+        container->invalidateLineLayoutPath();
 #else
     UNUSED_PARAM(offset);
     UNUSED_PARAM(delta);

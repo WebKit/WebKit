@@ -60,7 +60,7 @@ public:
     void updateDocument();
 
     DOMWindow& wrapped() const { return *m_wrapped; }
-    ScriptExecutionContext* scriptExecutionContext() const;
+    Document* scriptExecutionContext() const;
 
     // Called just before removing this window from the JSWindowProxy.
     void willRemoveFromWindowProxy();

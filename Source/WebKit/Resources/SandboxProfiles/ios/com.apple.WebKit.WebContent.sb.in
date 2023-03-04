@@ -304,10 +304,9 @@
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
-    (with-filter (require-all
-        (require-not (state-flag "EnableExperimentalSandbox"))
-        (require-not (state-flag "EnableExperimentalSandboxWithProbability")))
-        (allow mach-lookup (global-name "com.apple.CARenderServer")))
+#if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
+    (allow mach-lookup (global-name "com.apple.CARenderServer"))
+#endif
 
     ; UIKit-required IOKit nodes.
     (deny iokit-open-user-client (with telemetry)
@@ -464,10 +463,10 @@
         (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
         (extension "com.apple.fileprovider.read-write")))
 
-(allow mach-lookup
-    (global-name "com.apple.logd")
-    (global-name "com.apple.logd.events")
-)
+(with-filter (require-not (state-flag "DisableLogging"))
+    (allow mach-lookup (global-name
+        "com.apple.logd"
+        "com.apple.logd.events")))
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.distributed_notifications@1v3"))
@@ -1496,6 +1495,10 @@
         "com.apple.accessibility.wob.status"
         "com.apple.automation.stringlookupinfoenabled"
         "com.apple.webinspectord.availability_check"))
+
+(with-filter (state-flag "WebContentProcessLaunched")
+    (allow mach-task-special-port-get (with report) (with telemetry))
+    (allow mach-task-special-port-set (with report) (with telemetry)))
 
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>

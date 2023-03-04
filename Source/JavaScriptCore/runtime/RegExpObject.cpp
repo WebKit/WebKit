@@ -180,7 +180,7 @@ JSValue RegExpObject::matchGlobal(JSGlobalObject* globalObject, JSString* string
     RETURN_IF_EXCEPTION(scope, { });
 
     ASSERT(!s.isNull());
-    if (regExp->unicode()) {
+    if (regExp->eitherUnicode()) {
         unsigned stringLength = s.length();
         RELEASE_AND_RETURN(scope, collectMatches(
             vm, globalObject, string, s, regExp,

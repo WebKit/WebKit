@@ -51,7 +51,7 @@
 namespace JSC {
 
 namespace Yarr {
-enum class Flags : uint8_t;
+enum class Flags : uint16_t;
 }
 
 template <typename T, typename = void>

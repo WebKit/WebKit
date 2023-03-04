@@ -163,7 +163,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
 #if ENABLE(THUNDER)
     return false;
-#endif
+#else
 
     if (!needsQuirks())
         return false;
@@ -175,6 +175,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     m_hasBrokenEncryptedMediaAPISupportQuirk = domain == "starz.com"_s || domain == "youtube.com"_s || domain == "hulu.com"_s;
 
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
+#endif
 }
 
 bool Quirks::shouldDisableContentChangeObserver() const
@@ -603,39 +604,6 @@ bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
     auto& url = m_document->topDocument().url();
     return equalLettersIgnoringASCIICase(url.host(), "docs.google.com"_s) && startsWithLettersIgnoringASCIICase(url.path(), "/spreadsheets/"_s);
 #else
-    return false;
-#endif
-}
-
-// FIXME(<rdar://problem/50394969>): Remove after desmos.com adopts inputmode="none".
-bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (element.hasTagName(HTMLNames::inputTag)) {
-        if (!equalLettersIgnoringASCIICase(m_document->url().host(), "calendar.google.com"_s))
-            return false;
-        static NeverDestroyed<QualifiedName> dataInitialValueAttr(nullAtom(), "data-initial-value"_s, nullAtom());
-        static NeverDestroyed<QualifiedName> dataPreviousValueAttr(nullAtom(), "data-previous-value"_s, nullAtom());
-
-        return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr), "off"_s)
-            && element.hasAttributeWithoutSynchronization(dataInitialValueAttr)
-            && element.hasAttributeWithoutSynchronization(dataPreviousValueAttr);
-    }
-
-    if (!element.hasTagName(HTMLNames::textareaTag))
-        return false;
-
-    auto& url = m_document->url();
-    auto host = url.host();
-    if (!host.endsWithIgnoringASCIICase(".desmos.com"_s))
-        return false;
-
-    return element.parentElement() && element.parentElement()->classNames().contains("dcg-mq-textarea"_s);
-#else
-    UNUSED_PARAM(element);
     return false;
 #endif
 }
@@ -1523,6 +1491,16 @@ bool Quirks::shouldDisableLazyImageLoadingQuirk() const
         m_shouldDisableLazyImageLoadingQuirk = true;
 
     return m_shouldDisableLazyImageLoadingQuirk.value();
+}
+
+// Breaks express checkout on victoriassecret.com (rdar://104818312).
+bool Quirks::shouldDisableFetchMetadata() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "victoriassecret.com"_s) || host.endsWithIgnoringASCIICase(".victoriassecret.com"_s);
 }
 
 }

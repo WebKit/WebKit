@@ -214,6 +214,13 @@ interface TestRunner {
     undefined simulateWebNotificationClick(object notification);
     undefined simulateWebNotificationClickForServiceWorkerNotifications();
 
+    // Background fech support
+    DOMString getBackgroundFetchIdentifier();
+    undefined abortBackgroundFetch(DOMString identifier);
+    undefined pauseBackgroundFetch(DOMString identifier);
+    undefined resumeBackgroundFetch(DOMString identifier);
+    undefined simulateClickBackgroundFetch(DOMString identifier);
+
     // Geolocation
     undefined setGeolocationPermission(boolean value);
     undefined setMockGeolocationPosition(double latitude, double longitude, double accuracy, optional double? altitude, optional double? altitudeAccuracy, optional double? heading, optional double? speed, optional double? floorLevel);

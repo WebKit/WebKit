@@ -45,6 +45,7 @@ NSString * const WKWebsiteDataTypeServiceWorkerRegistrations = @"WKWebsiteDataTy
 NSString * const WKWebsiteDataTypeFileSystem = @"WKWebsiteDataTypeFileSystem";
 NSString * const WKWebsiteDataTypeSearchFieldRecentSearches = @"WKWebsiteDataTypeSearchFieldRecentSearches";
 NSString * const WKWebsiteDataTypeMediaKeys = @"WKWebsiteDataTypeMediaKeys";
+NSString * const WKWebsiteDataTypeHashSalt = @"WKWebsiteDataTypeHashSalt";
 
 NSString * const _WKWebsiteDataTypeMediaKeys = WKWebsiteDataTypeMediaKeys;
 NSString * const _WKWebsiteDataTypeHSTSCache = @"_WKWebsiteDataTypeHSTSCache";
@@ -95,6 +96,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"HSTS Cache"];
     if ([dataTypes containsObject:WKWebsiteDataTypeMediaKeys])
         [array addObject:@"Media Keys"];
+    if ([dataTypes containsObject:WKWebsiteDataTypeHashSalt])
+        [array addObject:@"Hash Salt"];
     if ([dataTypes containsObject:WKWebsiteDataTypeSearchFieldRecentSearches])
         [array addObject:@"Search Field Recent Searches"];
     if ([dataTypes containsObject:WKWebsiteDataTypeFileSystem])

@@ -6867,6 +6867,22 @@ RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParse
     return consumeBasicShapeOrBox(range, context);
 }
 
+RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    if (range.peek().type() == StringToken)
+        return consumeString(range);
+
+    if (auto predefinedValues = consumeIdentRange(range, CSSValueDisc, CSSValueEthiopicNumeric))
+        return predefinedValues;
+
+    if (context.counterStyleAtRuleEnabled)
+        return consumeCustomIdent(range);
+
+    return nullptr;
+}
+
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (auto imageValue = consumeImageOrNone(range, context))
@@ -8281,6 +8297,8 @@ RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, 
             if (!integer)
                 return nullptr;
         }
+        if (!symbol)
+            return nullptr;
 
         // Additive tuples must be specified in order of strictly descending weight.
         auto weight = integer->intValue();

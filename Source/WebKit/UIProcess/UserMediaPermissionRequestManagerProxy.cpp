@@ -36,6 +36,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UserMediaRequest.h>
@@ -942,6 +943,17 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #if ENABLE(GPU_PROCESS)
     if (m_page.preferences().captureAudioInGPUProcessEnabled() || m_page.preferences().captureVideoInGPUProcessEnabled())
         m_page.process().processPool().ensureGPUProcess().setUseMockCaptureDevices(mockDevicesEnabled);
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    auto useSharingPicker = m_page.preferences().useSCContentSharingPicker();
+
+#if ENABLE(GPU_PROCESS)
+    if (useSharingPicker)
+        m_page.process().processPool().ensureGPUProcess().setUseSCContentSharingPicker(useSharingPicker);
+#endif
+
+    PlatformMediaSessionManager::setUseSCContentSharingPicker(useSharingPicker);
 #endif
 
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled() == mockDevicesEnabled)

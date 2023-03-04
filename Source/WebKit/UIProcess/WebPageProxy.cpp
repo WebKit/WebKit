@@ -322,11 +322,11 @@
 #include <WebCore/HighlightVisibility.h>
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #import "DisplayCaptureSessionManager.h"
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
+#if HAVE(SCREEN_CAPTURE_KIT)
 #import <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
 
@@ -3016,6 +3016,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
 #endif
 
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: sent mouse event " << eventType << " (queue size " << m_mouseEventQueue.size() << ")");
+    m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
     send(Messages::WebPage::MouseEvent(event, sandboxExtensions));
 }
 
@@ -3180,6 +3181,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
     if (m_keyEventQueue.size() == 1) { // Otherwise, sent from DidReceiveEvent message handler.
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
+        m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
         send(Messages::WebPage::KeyEvent(event));
     }
 
@@ -6297,6 +6299,9 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 #endif
         userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 
+    if (userInitiatedActivity && m_preferences->verifyWindowOpenUserGestureFromUIProcess() && request.url().string() != Quirks::staticRadioPlayerURLString())
+        m_process->consumeIfNotVerifiablyFromUIProcess(*userInitiatedActivity, navigationActionData.userGestureAuthorizationToken);
+
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
@@ -7943,7 +7948,9 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
 
         bool canProcessMoreKeyEvents = !m_keyEventQueue.isEmpty();
         if (canProcessMoreKeyEvents) {
+            auto nextEvent = m_keyEventQueue.first();
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
+            m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
             send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()));
         }
 
@@ -8887,7 +8894,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.allowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings();
 #endif
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
     if (!preferences().experimentalSandboxEnabled())
         parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #endif
@@ -11597,10 +11604,15 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 void WebPageProxy::setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned> index)
 {
     DisplayCaptureSessionManager::singleton().setIndexOfDeviceSelectedForTesting(index);
+}
+
+void WebPageProxy::setSystemCanPromptForGetDisplayMediaForTesting(bool canPrompt)
+{
+    DisplayCaptureSessionManager::singleton().setSystemCanPromptForTesting(canPrompt);
 }
 #endif
 

@@ -1255,7 +1255,7 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaS
         return false;
 
     // DecompressionSessions doesn't support encrypted media.
-    if (!m_displayLayer)
+    if (trackID == m_enabledVideoTrackID && !m_displayLayer)
         return false;
 
     // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.

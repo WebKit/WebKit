@@ -96,8 +96,8 @@ messages -> WebPage LegacyReceiver {
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection) -> (struct WebKit::WebAutocorrectionData data)
-    ApplyAutocorrection(String correction, String originalText) -> (String string)
-    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Synchronous
+    ApplyAutocorrection(String correction, String originalText, bool isCandidate) -> (String string)
+    SyncApplyAutocorrection(String correction, String originalText, bool isCandidate) -> (bool autocorrectionApplied) Synchronous
     HandleAutocorrectionContextRequest()
     RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects)
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)

@@ -71,6 +71,10 @@
 #include <wtf/UUID.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedTimeline.h"
+#endif
+
 namespace WebCore {
 using namespace JSC;
 
@@ -2545,6 +2549,25 @@ bool KeyframeEffect::threadedAnimationResolutionEnabled() const
 {
     auto* document = this->document();
     return document && document->settings().threadedAnimationResolutionEnabled();
+}
+
+void KeyframeEffect::updateAssociatedThreadedEffectStack(const std::optional<const Styleable>& previousTarget)
+{
+    if (!threadedAnimationResolutionEnabled())
+        return;
+
+    ASSERT(document());
+    if (!document()->page())
+        return;
+
+    auto& acceleratedTimeline = document()->acceleratedTimeline();
+    if (previousTarget)
+        acceleratedTimeline.updateEffectStackForTarget(*previousTarget);
+    if (auto currentTarget = targetStyleable())
+        acceleratedTimeline.updateEffectStackForTarget(*currentTarget);
+
+    if (auto* animation = this->animation())
+        animation->acceleratedStateDidChange();
 }
 #endif
 

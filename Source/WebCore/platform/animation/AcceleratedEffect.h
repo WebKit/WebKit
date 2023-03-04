@@ -100,6 +100,8 @@ public:
     std::optional<Seconds> startTime() const { return m_startTime; }
     std::optional<Seconds> holdTime() const { return m_holdTime; }
 
+    bool animatesTransformRelatedProperty() const;
+
 private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&);
     explicit AcceleratedEffect(Vector<AcceleratedEffectKeyframe>&&, WebAnimationType, FillMode, PlaybackDirection, CompositeOperation, RefPtr<TimingFunction>&& timingFunction, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<AcceleratedEffectProperty>&&, bool paused, double iterationStart, double iterations, double playbackRate, WTF::Seconds delay, WTF::Seconds endDelay, WTF::Seconds iterationDuration, WTF::Seconds activeDuration, WTF::Seconds endTime, std::optional<WTF::Seconds> startTime, std::optional<WTF::Seconds> holdTime);

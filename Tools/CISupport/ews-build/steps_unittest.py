@@ -42,6 +42,7 @@ from twisted.python import failure, log
 from twisted.trial import unittest
 import send_email
 
+from layout_test_failures import LayoutTestFailures
 from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
@@ -2783,6 +2784,13 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class MockLayoutTestFailures(object):
+    def __init__(self, failing_tests, flaky_tests, did_exceed_test_failure_limit):
+        self.failing_tests = failing_tests
+        self.flaky_tests = flaky_tests
+        self.did_exceed_test_failure_limit = did_exceed_test_failure_limit
+
+
 class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -2794,11 +2802,12 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setupStep(RunWebKitTestsRedTree())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
-        self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2806,13 +2815,41 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '500', '--skip-failing-tests']
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
+
+    def test_set_properties_when_executed_scope_this_class(self):
+        self.configureStep()
+        first_run_failures = ['fast/css/test1.html', 'fast/svg/test2.svg', 'imported/test/test3.html']
+        first_run_flakies = ['fast/css/flaky1.html', 'fast/svg/flaky2.svg', 'imported/test/flaky3.html']
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                        )
+            + 2
+        )
+        # Patch LayoutTestFailures.results_from_string() to report the expected values
+        # Check this values end on the properties this class should define
+        mock_test_failures = MockLayoutTestFailures(first_run_failures, first_run_flakies, False)
+        self.patch(LayoutTestFailures, 'results_from_string', lambda f: mock_test_failures)
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        # Note: first_run properties are considered to belong to RunWebKitTestsRedTree() in this case, so they should be set to mock_test_failures
+        self.assertEqual(first_run_failures, self.getProperty('first_run_failures'))
+        self.assertEqual(first_run_flakies, self.getProperty('first_run_flakies'))
+        self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
+        return rc
 
 
 class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.TestCase):
@@ -2826,11 +2863,12 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
 
     def configureStep(self):
         self.setupStep(RunWebKitTestsRepeatFailuresRedTree())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
-        self.setProperty('configuration', 'release')
         first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
         first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
         self.setProperty('first_run_failures', first_run_failures)
@@ -2843,7 +2881,7 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--skip-failing-tests', '--fully-parallel', '--repeat-each=10'] + sorted(first_run_failures)
                         )
             + 0,
@@ -2851,6 +2889,44 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
         return self.runStep()
 
+    def test_set_properties_when_executed_scope_this_class(self):
+        self.configureStep()
+        first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
+        first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
+        # Set good values for properties that only the superclass should set
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('first_results_exceed_failure_limit', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=18000,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10'] + sorted(first_run_failures)
+                        )
+            + 2
+        )
+        # Patch LayoutTestFailures.results_from_string() so it always reports fake values.
+        # Check this fake values do not end on the properties that belong to the superclass.
+        fake_failing_tests = ['fake/should/not/happen/failure1.html', 'imported/fake/failure2.html']
+        fake_flaky_tests = ['fake/should/not/happen/flaky1.html', 'imported/fake/flaky2.html']
+        fake_layout_test_failures = MockLayoutTestFailures(fake_failing_tests, fake_flaky_tests, True)
+        self.patch(LayoutTestFailures, 'results_from_string', lambda f: fake_layout_test_failures)
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        # first_run properties should not be set to fake_layout_test_failures when running RunWebKitTestsRepeatFailuresRedTree()
+        self.assertEqual(first_run_failures, self.getProperty('first_run_failures'))
+        self.assertEqual(first_run_flakies, self.getProperty('first_run_flakies'))
+        self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
+        # Test also that this fake values are set _only_ for the properties this class should define
+        self.assertEqual(fake_failing_tests, self.getProperty('with_change_repeat_failures_results_nonflaky_failures'))
+        self.assertEqual(fake_flaky_tests, self.getProperty('with_change_repeat_failures_results_flakies'))
+        self.assertTrue(self.getProperty('with_change_repeat_failures_results_exceed_failure_limit'))
+        return rc
 
 class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -2863,11 +2939,12 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
 
     def configureStep(self):
         self.setupStep(RunWebKitTestsRepeatFailuresWithoutChangeRedTree())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
-        self.setProperty('configuration', 'release')
         first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
         first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
         with_change_repeat_failures_results_nonflaky_failures = ['fast/css/test1.html']
@@ -2884,7 +2961,7 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(with_change_repeat_failures_results_nonflaky_failures)
                         )
             + 0,
@@ -2913,7 +2990,7 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(first_run_failures)
                         )
             + 0,
@@ -2921,6 +2998,52 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
         return self.runStep()
 
+    def test_set_properties_when_executed_scope_this_class(self):
+        self.configureStep()
+        first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
+        first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
+        with_change_repeat_failures_results_nonflaky_failures = ['fast/css/test1.html']
+        with_change_repeat_failures_results_flakies = ['imported/test/test2.html', 'fast/svg/test3.svg']
+        # Set good values for properties that only the superclass should set
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('first_results_exceed_failure_limit', False)
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', with_change_repeat_failures_results_nonflaky_failures)
+        self.setProperty('with_change_repeat_failures_results_flakies', with_change_repeat_failures_results_flakies)
+        self.setProperty('with_change_repeat_failures_timedout', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=10800,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(with_change_repeat_failures_results_nonflaky_failures)
+                        )
+            + 2
+        )
+        # Patch LayoutTestFailures.results_from_string() so it always reports fake values.
+        # Check this fake values do not end on the properties that belong to the superclass.
+        fake_failing_tests = ['fake/should/not/happen/failure1.html', 'imported/fake/failure2.html']
+        fake_flaky_tests = ['fake/should/not/happen/flaky1.html', 'imported/fake/flaky2.html']
+        fake_layout_test_failures = MockLayoutTestFailures(fake_failing_tests, fake_flaky_tests, True)
+        self.patch(LayoutTestFailures, 'results_from_string', lambda f: fake_layout_test_failures)
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        # first_run properties should not be set to fake_layout_test_failures when running RunWebKitTestsRepeatFailuresWithoutChangeRedTree()
+        self.assertEqual(first_run_failures, self.getProperty('first_run_failures'))
+        self.assertEqual(first_run_flakies, self.getProperty('first_run_flakies'))
+        self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
+        self.assertEqual(with_change_repeat_failures_results_nonflaky_failures, self.getProperty('with_change_repeat_failures_results_nonflaky_failures'))
+        self.assertEqual(with_change_repeat_failures_results_flakies, self.getProperty('with_change_repeat_failures_results_flakies'))
+        self.assertFalse(self.getProperty('with_change_repeat_failures_timedout'))
+        # Test also that this fake values are set _only_ for the properties this class should define
+        self.assertEqual(fake_failing_tests, self.getProperty('without_change_repeat_failures_results_nonflaky_failures'))
+        self.assertEqual(fake_flaky_tests, self.getProperty('without_change_repeat_failures_results_flakies'))
+        self.assertTrue(self.getProperty('without_change_repeat_failures_results_exceed_failure_limit'))
+        return rc
 
 class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -5526,7 +5649,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
     def test_success_pr_validators(self):
         self.setupStep(ValidateCommitterAndReviewer())
-        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'geoffreygaren']
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'webkit-bug-bridge']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('remote', 'apple')
@@ -5539,7 +5662,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
     def test_success_pr_validators_case(self):
         self.setupStep(ValidateCommitterAndReviewer())
-        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'jonwbedard']
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'Webkit-Bug-Bridge']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('remote', 'apple')
@@ -5584,7 +5707,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @JonWBedard, @ryanhaddad or @webkit-bug-bridge")
+        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @webkit-bug-bridge")
         return self.runStep()
 
 

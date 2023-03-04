@@ -964,7 +964,7 @@
 (deny mach-lookup (with no-report)
     (global-name "com.apple.tccd.system"))
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
+#if HAVE(SCREEN_CAPTURE_KIT)
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")

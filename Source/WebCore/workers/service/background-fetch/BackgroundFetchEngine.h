@@ -59,6 +59,11 @@ public:
 
     WEBCORE_EXPORT void addFetchFromStore(Span<const uint8_t>, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&&);
 
+    WEBCORE_EXPORT void abortBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
+    WEBCORE_EXPORT void pauseBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
+    WEBCORE_EXPORT void resumeBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
+    WEBCORE_EXPORT void clickBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
+
 private:
     void notifyBackgroundFetchUpdate(BackgroundFetchInformation&&);
 

@@ -1400,6 +1400,11 @@ inline Page* AbstractFrame::page() const
     return m_page.get();
 }
 
+inline Page* Document::page() const
+{
+    return m_frame ? m_frame->page() : nullptr;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);
 
 } // namespace WebCore

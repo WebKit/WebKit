@@ -29,6 +29,7 @@ import sys
 #
 # AdditionalEncoder - generate serializers for StreamConnectionEncoder in addition to IPC::Encoder.
 # CreateUsing - use a custom function to call instead of the constructor or create.
+# CustomHeader - don't include a header based on the struct/class name. Only needed for non-enum types.
 # Alias - this type is not a struct or class, but a typedef.
 # Nested - this type is only serialized as a member of its parent, so work around the need for http://wg21.link/P0289 and don't forward declare it in the header.
 # RefCounted - deserializer returns a std::optional<Ref<T>> instead of a std::optional<T>.
@@ -40,6 +41,7 @@ import sys
 #
 # BitField - work around the need for http://wg21.link/P0572 and don't check that the serialization order matches the memory layout.
 # Nullable - check if the member is truthy before serializing.
+# Validator - additional C++ to validate the value when decoding
 
 class SerializedType(object):
     def __init__(self, struct_or_class, namespace, name, parent_class_name, members, condition, attributes, other_metadata=None):

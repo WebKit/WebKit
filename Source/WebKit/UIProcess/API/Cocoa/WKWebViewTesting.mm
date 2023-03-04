@@ -322,7 +322,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(NSNumber *)nsIndex
 {
-#if HAVE(SCREEN_CAPTURE_KIT)
+#if ENABLE(MEDIA_STREAM)
     if (!_page)
         return;
 
@@ -331,6 +331,16 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         index = nsIndex.unsignedIntValue;
 
     _page->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
+#endif
+}
+
+- (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_page)
+        return;
+
+    _page->setSystemCanPromptForGetDisplayMediaForTesting(!!canPrompt);
 #endif
 }
 

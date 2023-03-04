@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "ApplePayPaymentSetupFeaturesWebKit.h"
 #import "AutomaticReloadPaymentRequest.h"
+#import "DeferredPaymentRequest.h"
 #import "PaymentSetupConfigurationWebKit.h"
 #import "PaymentTokenContext.h"
 #import "RecurringPaymentRequest.h"
@@ -350,6 +351,11 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 #if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
     if (auto& multiTokenContexts = paymentRequest.multiTokenContexts())
         [result setMultiTokenContexts:platformPaymentTokenContexts(*multiTokenContexts).get()];
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_PAYMENTS)
+    if (auto& deferredPaymentRequest = paymentRequest.deferredPaymentRequest())
+        [result setDeferredPaymentRequest:platformDeferredPaymentRequest(*deferredPaymentRequest).get()];
 #endif
 
     return result;

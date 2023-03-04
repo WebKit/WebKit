@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/UUID.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -102,6 +103,7 @@ public:
     OptionSet<Modifier> modifiers() const { return m_modifiers; }
 
     WallTime timestamp() const { return m_timestamp; }
+    std::optional<UUID> authorizationToken() const { return m_authorizationToken; };
 
 protected:
     PlatformEvent()
@@ -142,6 +144,7 @@ protected:
     WallTime m_timestamp;
     Type m_type;
     OptionSet<Modifier> m_modifiers;
+    std::optional<UUID> m_authorizationToken;
 };
 
 } // namespace WebCore

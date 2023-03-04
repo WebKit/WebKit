@@ -27,6 +27,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include <WebCore/BackgroundFetchStore.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/WeakPtr.h>
@@ -34,10 +35,6 @@
 
 namespace WTF {
 class WorkQueue;
-}
-
-namespace WebCore {
-class SharedBuffer;
 }
 
 namespace WebKit {
@@ -71,6 +68,8 @@ private:
     Ref<WTF::WorkQueue> m_taskQueue;
     Ref<WTF::WorkQueue> m_ioQueue;
     QuotaCheckFunction m_quotaCheckFunction;
+
+    HashMap<String, Vector<WebCore::SharedBufferBuilder>> m_nonPersistentChunks;
 };
 
 } // namespace WebKit

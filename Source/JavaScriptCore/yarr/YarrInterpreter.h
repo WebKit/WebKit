@@ -469,7 +469,7 @@ public:
         m_body->terms.shrinkToFit();
 
         newlineCharacterClass = pattern.newlineCharacterClass();
-        if (unicode() && ignoreCase())
+        if (eitherUnicode() && ignoreCase())
             wordcharCharacterClass = pattern.wordUnicodeIgnoreCaseCharCharacterClass();
         else
             wordcharCharacterClass = pattern.wordcharCharacterClass();
@@ -493,11 +493,24 @@ public:
         return m_offsetVectorBaseForNamedCaptures + duplicateNamedGroupId - 1;
     }
 
+    CompileMode compileMode() const
+    {
+        if (unicode())
+            return CompileMode::Unicode;
+
+        if (unicodeSets())
+            return CompileMode::UnicodeSets;
+
+        return CompileMode::Legacy;
+    }
+
     bool ignoreCase() const { return m_flags.contains(Flags::IgnoreCase); }
     bool multiline() const { return m_flags.contains(Flags::Multiline); }
     bool hasIndices() const { return m_flags.contains(Flags::HasIndices); }
     bool sticky() const { return m_flags.contains(Flags::Sticky); }
     bool unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool unicodeSets() const { return m_flags.contains(Flags::UnicodeSets); }
+    bool eitherUnicode() const { return unicode() || unicodeSets(); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     std::unique_ptr<ByteDisjunction> m_body;

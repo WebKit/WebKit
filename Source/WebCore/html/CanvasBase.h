@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntSize.h"
+#include "PixelBuffer.h"
 #include "TaskSource.h"
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
@@ -124,6 +125,7 @@ public:
 
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
     virtual void dispatchEvent(Event&) = 0;
+    bool postProcessPixelBuffer(Ref<PixelBuffer>, bool, const HashSet<uint32_t>&) const;
 
 protected:
     explicit CanvasBase(IntSize);

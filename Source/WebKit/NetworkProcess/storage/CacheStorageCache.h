@@ -56,6 +56,12 @@ private:
     CacheStorageRecordInformation* findExistingRecord(const WebCore::ResourceRequest&, std::optional<uint64_t> = std::nullopt);
     void putRecordsAfterQuotaCheck(Vector<CacheStorageRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void putRecordsInStore(Vector<CacheStorageRecord>&&, Vector<std::optional<CacheStorageRecord>>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void assertIsOnCorrectQueue()
+    {
+#if ASSERT_ENABLED
+        assertIsCurrent(m_queue.get());
+#endif
+    }
 
     WeakPtr<CacheStorageManager> m_manager;
     bool m_isInitialized { false };
@@ -63,6 +69,9 @@ private:
     String m_name;
     String m_uniqueName;
     HashMap<String, Vector<CacheStorageRecordInformation>> m_records;
+#if ASSERT_ENABLED
+    Ref<WorkQueue> m_queue;
+#endif
     Ref<CacheStorageStore> m_store;
 };
 

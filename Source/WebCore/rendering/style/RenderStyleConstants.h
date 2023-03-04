@@ -726,6 +726,7 @@ enum class TextTransform : uint8_t {
     Uppercase,
     Lowercase,
     FullSizeKana,
+    FullWidth,
     None
 };
 
@@ -1493,6 +1494,7 @@ template<> struct EnumTraits<WebCore::ListStyleType> {
         WebCore::ListStyleType::TraditionalChineseInformal,
         WebCore::ListStyleType::TraditionalChineseFormal,
         WebCore::ListStyleType::EthiopicNumeric,
+        WebCore::ListStyleType::CustomCounterStyle,
         WebCore::ListStyleType::String,
         WebCore::ListStyleType::None
     >;

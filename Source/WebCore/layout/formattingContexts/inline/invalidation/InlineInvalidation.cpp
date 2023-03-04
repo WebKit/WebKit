@@ -201,31 +201,46 @@ static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedC
 
 void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox, std::optional<size_t> offset)
 {
-    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
-    if (m_displayBoxes.isEmpty())
-        return;
-
-    if (!damagedInlineTextBox) {
-        // New text box got appended. Let's dirty the last existing line.
-        ASSERT(!offset);
-        if (auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes))
-            m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
+    if (m_displayBoxes.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        m_inlineDamage = { };
         return;
     }
-    // Existing text box got modified. Dirty all the way up to the damaged position's line.
-    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ *damagedInlineTextBox, offset.value_or(0) }, m_inlineFormattingState.inlineItems(), m_displayBoxes))
+
+    auto damagedLine = std::optional<DamagedLine> { };
+    if (damagedInlineTextBox) {
+        // Existing text box got modified. Dirty all the way up to the damaged position's line.
+        damagedLine = leadingInlineItemPositionByDamagedBox({ *damagedInlineTextBox, offset.value_or(0) }, m_inlineFormattingState.inlineItems(), m_displayBoxes);
+    } else {
+        // New text box got appended. Let's dirty the last existing line.
+        ASSERT(!offset);
+        damagedLine = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes);
+    }
+
+    if (damagedLine) {
+        m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
         m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
+        return;
+    }
+
+    m_inlineDamage = { };
 }
 
 void InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
 {
-    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
     if (m_displayBoxes.isEmpty()) {
         ASSERT_NOT_REACHED();
+        m_inlineDamage = { };
         return;
     }
-    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineFormattingState.inlineItems(), m_displayBoxes))
+
+    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineFormattingState.inlineItems(), m_displayBoxes)) {
         m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
+        m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
+        return;
+    }
+
+    m_inlineDamage = { };
 }
 
 void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)

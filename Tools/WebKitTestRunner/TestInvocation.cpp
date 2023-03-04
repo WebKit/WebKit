@@ -1086,6 +1086,29 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermissionOnPrompt"))
         return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermissionOnPrompt(stringValue(messageBody))));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "GetBackgroundFetchIdentifier"))
+        return TestController::singleton().getBackgroundFetchIdentifier();
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AbortBackgroundFetch")) {
+        TestController::singleton().abortBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "PauseBackgroundFetch")) {
+        TestController::singleton().pauseBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ResumeBackgroundFetch")) {
+        TestController::singleton().resumeBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SimulateClickBackgroundFetch")) {
+        TestController::singleton().simulateClickBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));
     

@@ -317,7 +317,7 @@ void WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifie
             callback(result);
         });
     };
-    callOnMainRunLoop([identifier, data = WTFMove(data), eventType, callback = WTFMove(inQueueCallback)]() mutable {
+    callOnMainRunLoop([identifier, data = WTFMove(data).isolatedCopy(), eventType, callback = WTFMove(inQueueCallback)]() mutable {
         SWContextManager::singleton().fireNotificationEvent(identifier, WTFMove(data), eventType, WTFMove(callback));
     });
 }
@@ -331,8 +331,22 @@ void WebSWContextManagerConnection::fireBackgroundFetchEvent(ServiceWorkerIdenti
             callback(result);
         });
     };
-    callOnMainRunLoop([identifier, info = WTFMove(info), callback = WTFMove(inQueueCallback)]() mutable {
+    callOnMainRunLoop([identifier, info = WTFMove(info).isolatedCopy(), callback = WTFMove(inQueueCallback)]() mutable {
         SWContextManager::singleton().fireBackgroundFetchEvent(identifier, WTFMove(info), WTFMove(callback));
+    });
+}
+
+void WebSWContextManagerConnection::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    assertIsCurrent(m_queue.get());
+
+    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
+        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
+            callback(result);
+        });
+    };
+    callOnMainRunLoop([identifier, info = WTFMove(info).isolatedCopy(), callback = WTFMove(inQueueCallback)]() mutable {
+        SWContextManager::singleton().fireBackgroundFetchClickEvent(identifier, WTFMove(info), WTFMove(callback));
     });
 }
 

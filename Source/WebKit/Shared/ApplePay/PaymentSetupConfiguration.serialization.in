@@ -23,7 +23,7 @@
 #if ENABLE(APPLE_PAY)
 
 header: "PaymentSetupConfigurationWebKit.h"
-[CustomHeader=True] class WebKit::PaymentSetupConfiguration {
+[CustomHeader] class WebKit::PaymentSetupConfiguration {
     [SecureCodingAllowed=[PAL::getPKPaymentSetupConfigurationClass()]] RetainPtr<PKPaymentSetupConfiguration> m_configuration;
 };
 
