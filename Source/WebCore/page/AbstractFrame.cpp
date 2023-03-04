@@ -45,6 +45,8 @@ AbstractFrame::AbstractFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwner
     , m_treeNode(*this, parentFrame(ownerElement))
     , m_windowProxy(WindowProxy::create(*this))
     , m_ownerElement(ownerElement)
+    , m_mainFrame(ownerElement ? page.mainFrame() : *this)
+    , m_settings(page.settings())
 {
     if (auto* parent = parentFrame(ownerElement))
         parent->tree().appendChild(*this);

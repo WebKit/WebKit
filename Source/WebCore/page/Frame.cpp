@@ -151,8 +151,6 @@ static inline float parentTextZoomFactor(Frame* frame)
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier)
     : AbstractFrame(page, identifier, ownerElement)
-    , m_mainFrame(ownerElement ? page.mainFrame() : *this)
-    , m_settings(&page.settings())
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -164,7 +162,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
     StaticCSSValuePool::init();
 
     if (ownerElement) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame))
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
             localMainFrame->selfOnlyRef();
         ownerElement->setContentFrame(*this);
     }
@@ -211,7 +209,7 @@ Frame::~Frame()
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->frameDestroyed();
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!isMainFrame() && localMainFrame)
         localMainFrame->selfOnlyDeref();
 }
@@ -553,7 +551,7 @@ bool Frame::selectionChangeCallbacksDisabled() const
 
 bool Frame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategory)
 {
-    if (m_settings->javaScriptCanAccessClipboard() && m_settings->domPasteAllowed())
+    if (settings().javaScriptCanAccessClipboard() && settings().domPasteAllowed())
         return true;
 
     if (!m_doc)
@@ -562,7 +560,7 @@ bool Frame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategory)
     if (editor().isPastingFromMenuOrKeyBinding())
         return true;
 
-    if (!m_settings->domPasteAccessRequestsEnabled())
+    if (!settings().domPasteAccessRequestsEnabled())
         return false;
 
     auto gestureToken = UserGestureIndicator::currentUserGesture();
