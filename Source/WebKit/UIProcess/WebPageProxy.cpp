@@ -3022,6 +3022,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
 #endif
 
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: sent mouse event " << eventType << " (queue size " << m_mouseEventQueue.size() << ")");
+    m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
     send(Messages::WebPage::MouseEvent(event, sandboxExtensions));
 }
 
@@ -3186,6 +3187,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
     if (m_keyEventQueue.size() == 1) { // Otherwise, sent from DidReceiveEvent message handler.
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
+        m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
         send(Messages::WebPage::KeyEvent(event));
     }
 
@@ -6302,6 +6304,8 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     else
 #endif
         userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
+    if (m_preferences->verifyWindowOpenUserGestureFromUIProcess() && request.url().string() != Quirks::staticRadioPlayerURLString())
+        m_process->consumeIfNotVerifiablyFromUIProcess(userInitiatedActivity.get(), navigationActionData.userGestureAuthorizationToken);
 
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
@@ -7949,7 +7953,9 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
 
         bool canProcessMoreKeyEvents = !m_keyEventQueue.isEmpty();
         if (canProcessMoreKeyEvents) {
+            auto nextEvent = m_keyEventQueue.first();
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
+            m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
             send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()));
         }
 

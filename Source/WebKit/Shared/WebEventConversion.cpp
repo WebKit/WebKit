@@ -90,6 +90,7 @@ public:
         m_modifiers = platform(webEvent.modifiers());
 
         m_timestamp = webEvent.timestamp();
+        m_authorizationToken = webEvent.authorizationToken();
 
         // PlatformMouseEvent
         switch (webEvent.button()) {

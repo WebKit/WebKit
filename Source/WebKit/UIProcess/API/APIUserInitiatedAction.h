@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/UUID.h>
 
 namespace API {
 
@@ -42,8 +43,12 @@ public:
     void setConsumed() { m_consumed = true; }
     bool consumed() const { return m_consumed; }
 
+    void setAuthorizationToken(UUID authorizationToken) { m_authorizationToken = authorizationToken; }
+    std::optional<UUID> authorizationToken() const { return m_authorizationToken; }
+
 private:
     bool m_consumed { false };
+    std::optional<UUID> m_authorizationToken;
 };
 
 } // namespace API

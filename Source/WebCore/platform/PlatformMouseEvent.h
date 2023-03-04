@@ -28,6 +28,7 @@
 #include "IntPoint.h"
 #include "PlatformEvent.h"
 #include "PointerID.h"
+#include <wtf/UUID.h>
 #include <wtf/WindowsExtras.h>
 
 namespace WebCore {
