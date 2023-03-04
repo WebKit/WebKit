@@ -52,7 +52,7 @@ ThreadGlobalData::~ThreadGlobalData() = default;
 void ThreadGlobalData::destroy()
 {
     if (m_fontCache)
-        m_fontCache->invalidate();
+        m_fontCache->invalidate(FontCache::ShouldRunInvalidationCallbacks::No);
     m_fontCache = nullptr;
     m_destroyed = true;
 }

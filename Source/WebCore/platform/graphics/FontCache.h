@@ -142,11 +142,11 @@ public:
     // On the other hand, if we're invalidating because the set of installed fonts changed,
     // or if some accessibility text settings were altered, we should run a style recalc
     // so the user can immediately see the effect of the new environment.
-    enum class ShouldRunInvalidationCallback : bool {
+    enum class ShouldRunInvalidationCallbacks : bool {
         No,
         Yes
     };
-    WEBCORE_EXPORT static void invalidateAllFontCaches(ShouldRunInvalidationCallback = ShouldRunInvalidationCallback::Yes);
+    WEBCORE_EXPORT static void invalidateAllFontCaches(ShouldRunInvalidationCallbacks);
 
     WEBCORE_EXPORT size_t fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
@@ -195,7 +195,7 @@ public:
     static bool configurePatternForFontDescription(FcPattern*, const FontDescription&);
 #endif
 
-    void invalidate();
+    void invalidate(ShouldRunInvalidationCallbacks);
 
 private:
     void releaseNoncriticalMemory();

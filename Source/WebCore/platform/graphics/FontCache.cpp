@@ -382,7 +382,7 @@ void FontCache::removeClient(FontSelector& client)
     m_clients.remove(client);
 }
 
-void FontCache::invalidate()
+void FontCache::invalidate(ShouldRunInvalidationCallbacks shouldRunInvalidationCallbacks)
 {
     m_fontDataCaches->platformData.clear();
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -396,8 +396,10 @@ void FontCache::invalidate()
 
     ++m_generation;
 
-    for (auto& client : copyToVectorOf<Ref<FontSelector>>(m_clients))
-        client->fontCacheInvalidated();
+    if (shouldRunInvalidationCallbacks == ShouldRunInvalidationCallbacks::Yes) {
+        for (auto& client : copyToVectorOf<Ref<FontSelector>>(m_clients))
+            client->fontCacheInvalidated();
+    }
 
     purgeInactiveFontData();
 }
@@ -429,13 +431,16 @@ static void dispatchToAllFontCaches(F function)
     }
 }
 
-void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallback shouldRunInvalidationCallback)
+void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallbacks shouldRunInvalidationCallbacks)
 {
-    dispatchToAllFontCaches([](FontCache& fontCache) {
-        fontCache.invalidate();
+    dispatchToAllFontCaches([&](FontCache& fontCache) {
+        fontCache.invalidate(shouldRunInvalidationCallbacks);
     });
 
-    if (shouldRunInvalidationCallback == ShouldRunInvalidationCallback::Yes && fontCacheInvalidationCallback())
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=252283): This should call the invalidation
+    // callback on other FontCaches on worker threads too, so that canvases in those threads can
+    // respond to changes in the font environment.
+    if (shouldRunInvalidationCallbacks == ShouldRunInvalidationCallbacks::Yes && fontCacheInvalidationCallback())
         fontCacheInvalidationCallback()();
 }
 
