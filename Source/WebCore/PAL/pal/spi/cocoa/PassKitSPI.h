@@ -336,6 +336,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 
+#if HAVE(PASSKIT_DEFERRED_PAYMENTS)
+@interface PKDeferredPaymentRequest (Staging_104652810)
+@property (nonatomic, strong, nullable) NSTimeZone *freeCancellationDateTimeZone;
+@end
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #define PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
