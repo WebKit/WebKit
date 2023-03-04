@@ -42,9 +42,9 @@ public:
         virtual void handleDisplayRefreshMonitorUpdate(bool) = 0;
     };
 
-    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, Client& client)
+    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, Client& client, WebCore::DisplayUpdate displayUpdate)
     {
-        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, client));
+        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, client, displayUpdate));
     }
     virtual ~ThreadedDisplayRefreshMonitor() = default;
 
@@ -55,7 +55,7 @@ public:
     void invalidate();
 
 private:
-    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&);
+    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&, WebCore::DisplayUpdate);
 
     bool startNotificationMechanism() final { return true; }
     void stopNotificationMechanism() final { }
