@@ -1387,10 +1387,16 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.trustd.agent")))
 
-;; Various services required by AppKit and other frameworks
-(allow mach-lookup
-       (global-name "com.apple.logd")
-       (global-name "com.apple.logd.events"))
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "DisableLogging"))
+    (allow mach-lookup (global-name
+        "com.apple.logd"
+        "com.apple.logd.events")))
+#else
+(allow mach-lookup (global-name
+    "com.apple.logd"
+    "com.apple.logd.events"))
+#endif
 
 ; Needed for [CAContext remoteContextWithOptions]
 #if HAVE(SANDBOX_STATE_FLAGS)
