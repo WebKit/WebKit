@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -156,29 +155,4 @@ TEST(WebKit, CookieCachePruning)
         }];
         TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
     }
-}
-
-TEST(WebKit, CookieAccessFromPDFInAboutBlank)
-{
-    auto delegate = adoptNS([TestUIDelegate new]);
-    __block RetainPtr<WKWebView> openedWebView;
-    delegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
-        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-        return openedWebView.get();
-    };
-
-    auto webProcessStarter = adoptNS([TestWKWebView new]);
-    [webProcessStarter synchronouslyLoadHTMLString:@"start network process so the creation of the second web view doesn't send NetworkProcessCreationParameters" baseURL:nil];
-
-    TestWebKitAPI::HTTPServer server({ { "/"_s, { "hi"_s } } });
-    auto webView = adoptNS([TestWKWebView new]);
-    webView.get().UIDelegate = delegate.get();
-    NSString *html = [NSString stringWithFormat:@"<script>"
-        "var w = window.open();"
-        "w.document.write('<embed type=\"application/pdf\" src=\"%@\"></embed>');"
-        "</script>", server.request().URL];
-    [webView loadHTMLString:html baseURL:server.request().URL];
-
-    while (!server.totalRequests())
-        TestWebKitAPI::Util::spinRunLoop();
 }

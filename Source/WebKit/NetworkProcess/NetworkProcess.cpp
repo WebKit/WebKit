@@ -429,10 +429,6 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
-    // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
-    if (firstPartyDomain.isEmpty())
-        return true;
-
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
         return false;
