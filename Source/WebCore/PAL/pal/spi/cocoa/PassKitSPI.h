@@ -47,6 +47,14 @@
 #endif
 #endif
 
+#if HAVE(PASSKIT_DEFERRED_PAYMENTS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKDeferredPaymentRequest.h>
+#else
+#import <PassKit/PKDeferredPaymentRequest.h>
+#endif
+#endif
+
 #if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
 #import <PassKitCore/PKAutomaticReloadPaymentSummaryItem.h>

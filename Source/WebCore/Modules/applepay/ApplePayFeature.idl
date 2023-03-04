@@ -51,6 +51,9 @@
 #if defined(ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM) && ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM
     "paymentTimingAutomaticReload",
 #endif
+#if defined(ENABLE_APPLE_PAY_DEFERRED_PAYMENTS) && ENABLE_APPLE_PAY_DEFERRED_PAYMENTS
+    "paymentRequestDeferred",
+#endif
 #if defined(ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM) && ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM
     "paymentTimingDeferred",
 #endif

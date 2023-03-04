@@ -36,6 +36,7 @@ unsigned PaymentAPIVersion::current()
 {
     static unsigned current = [] {
 #if ENABLE(APPLE_PAY_FEATURES)
+        // This version number should not be changed anymore, features can now be found in method.data.features.
         return 15;
 #elif ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM) || ENABLE(APPLE_PAY_RECURRING_PAYMENTS) || ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS) || ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS) || ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
         return 14;
