@@ -1215,5 +1215,7 @@ void testVectorXorAndAllOnesConstantToVectorOrXor(v128_t);
 void testVectorAndConstantConstant(v128_t, v128_t);
 void testVectorFmulByElementFloat();
 void testVectorFmulByElementDouble();
+void testVectorExtractLane0Float();
+void testVectorExtractLane0Double();
 
 #endif // ENABLE(B3_JIT)
