@@ -1249,14 +1249,13 @@ bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
 void WebProcessProxy::recordUserGestureAuthorizationToken(UUID authorizationToken)
 {
     if (!UserInitiatedActionByAuthorizationTokenMap::isValidKey(authorizationToken) || !authorizationToken)
-        return nullptr;
+        return;
 
-    auto result = m_userInitiatedActionByAuthorizationTokenMap.ensure(authorizationToken, [authorizationToken] {
+    m_userInitiatedActionByAuthorizationTokenMap.ensure(authorizationToken, [authorizationToken] {
         auto action = API::UserInitiatedAction::create();
         action->setAuthorizationToken(authorizationToken);
         return action;
     });
-    return result.iterator->value;
 }
 
 RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
@@ -1290,7 +1289,7 @@ void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedActi
 {
     if (authToken && m_userInitiatedActionByAuthorizationTokenMap.remove(*authToken))
         return;
-    action->setConsumed();
+    action.setConsumed();
 }
 
 bool WebProcessProxy::isResponsive() const

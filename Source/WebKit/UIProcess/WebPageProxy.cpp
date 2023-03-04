@@ -6299,7 +6299,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 #endif
         userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
     if (m_preferences->verifyWindowOpenUserGestureFromUIProcess() && request.url().string() != Quirks::staticRadioPlayerURLString())
-        m_process->consumeIfNotVerifiablyFromUIProcess(userInitiatedActivity.get(), navigationActionData.userGestureAuthorizationToken);
+        m_process->consumeIfNotVerifiablyFromUIProcess(userInitiatedActivity, navigationActionData.userGestureAuthorizationToken);
 
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
