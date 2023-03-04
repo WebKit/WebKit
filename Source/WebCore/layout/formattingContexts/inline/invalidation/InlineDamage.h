@@ -59,6 +59,8 @@ public:
     };
     std::optional<ContentPosition> contentPosition() const { return m_contentPosition; }
 
+    void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTFMove(layoutBox)); }
+
 private:
     friend class InlineInvalidation;
 
@@ -67,6 +69,7 @@ private:
 
     Type m_damageType { Type::Invalid };
     std::optional<ContentPosition> m_contentPosition;
+    Vector<UniqueRef<Box>> m_detachedLayoutBoxes;
 };
 
 }

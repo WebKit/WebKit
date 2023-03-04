@@ -290,6 +290,20 @@ const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& ch
     return layoutBoxForRenderer(child);
 }
 
+UniqueRef<Layout::Box> BoxTree::remove(const RenderElement& parent, RenderObject& child)
+{
+    UNUSED_PARAM(parent);
+    ASSERT(child.layoutBox());
+
+    auto* layoutBox = child.layoutBox();
+
+    m_boxToRendererMap = { };
+    child.clearLayoutBox();
+    // FIXME: Move over to WeakListHashSet if this turns out to be too expensive.
+    m_renderers.removeFirst(&child);
+    return layoutBox->removeFromParent();
+}
+
 const Layout::ElementBox& BoxTree::rootLayoutBox() const
 {
     return *m_rootRenderer.layoutBox();

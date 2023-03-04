@@ -174,7 +174,13 @@ bool LineLayout::canUseForAfterInlineBoxStyleChange(const RenderInline& inlineBo
 bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
 {
     ASSERT(isEnabled());
-    return shouldInvalidateLineLayoutPathAfterContentChangeFor(parent, rendererWithNewContent, lineLayout);
+    return shouldInvalidateLineLayoutPathAfterChangeFor(parent, rendererWithNewContent, lineLayout, TypeOfChangeForInvalidation::NodeMutation);
+}
+
+bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout& lineLayout, bool isRemoval)
+{
+    ASSERT(isEnabled());
+    return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
 bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
@@ -1225,6 +1231,17 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
         invalidation.textInserted();
+        return;
+    }
+    ASSERT_NOT_IMPLEMENTED_YET();
+}
+
+void LineLayout::removedFromTree(const RenderElement& parent, RenderObject& child)
+{
+    auto childLayoutBox = m_boxTree.remove(parent, child);
+    if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox.get())) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.textWillBeRemoved(WTFMove(childLayoutBox));
         return;
     }
     ASSERT_NOT_IMPLEMENTED_YET();
