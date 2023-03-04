@@ -85,11 +85,6 @@ WebContextMenuClient::~WebContextMenuClient()
 #endif
 }
 
-void WebContextMenuClient::contextMenuDestroyed()
-{
-    delete this;
-}
-
 void WebContextMenuClient::downloadURL(const URL& url)
 {
     [m_webView _downloadURL:url];
@@ -113,7 +108,7 @@ void WebContextMenuClient::lookUpInDictionary(Frame* frame)
     [htmlView _lookUpInDictionaryFromMenu:nil];
 }
 
-bool WebContextMenuClient::isSpeaking()
+bool WebContextMenuClient::isSpeaking() const
 {
     return [NSApp isSpeaking];
 }

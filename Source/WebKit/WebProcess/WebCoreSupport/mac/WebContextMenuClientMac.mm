@@ -48,7 +48,7 @@ void WebContextMenuClient::lookUpInDictionary(Frame* frame)
     m_page->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
 
-bool WebContextMenuClient::isSpeaking()
+bool WebContextMenuClient::isSpeaking() const
 {
     return m_page->isSpeaking();
 }

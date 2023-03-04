@@ -37,7 +37,7 @@ public:
 
 private:
     void setWindowRect(const WebCore::FloatRect&) final;
-    WebCore::FloatRect windowRect() final;
+    WebCore::FloatRect windowRect() const final;
     void setStatusbarText(const WTF::String&) final { }
 
     void focus() final;

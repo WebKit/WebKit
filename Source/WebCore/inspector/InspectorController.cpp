@@ -93,17 +93,17 @@ namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
 
-InspectorController::InspectorController(Page& page, InspectorClient* inspectorClient)
+InspectorController::InspectorController(Page& page, std::unique_ptr<InspectorClient>&& inspectorClient)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(makeUnique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
-    , m_overlay(makeUnique<InspectorOverlay>(page, inspectorClient))
+    , m_overlay(makeUnique<InspectorOverlay>(page, inspectorClient.get()))
     , m_executionStopwatch(Stopwatch::create())
     , m_page(page)
-    , m_inspectorClient(inspectorClient)
+    , m_inspectorClient(WTFMove(inspectorClient))
 {
-    ASSERT_ARG(inspectorClient, inspectorClient);
+    ASSERT_ARG(inspectorClient, m_inspectorClient);
 
     auto pageContext = pageAgentContext();
 
@@ -162,7 +162,7 @@ void InspectorController::createLazyAgents()
     auto debuggerAgentPtr = debuggerAgent.get();
     m_agents.append(WTFMove(debuggerAgent));
 
-    m_agents.append(makeUnique<PageNetworkAgent>(pageContext, m_inspectorClient));
+    m_agents.append(makeUnique<PageNetworkAgent>(pageContext, m_inspectorClient.get()));
     m_agents.append(makeUnique<InspectorCSSAgent>(pageContext));
     ensureDOMAgent();
     m_agents.append(makeUnique<PageDOMDebuggerAgent>(pageContext, debuggerAgentPtr));
@@ -466,7 +466,7 @@ InspectorPageAgent& InspectorController::ensurePageAgent()
 {
     if (!m_pageAgent) {
         auto pageContext = pageAgentContext();
-        auto pageAgent = makeUnique<InspectorPageAgent>(pageContext, m_inspectorClient, m_overlay.get());
+        auto pageAgent = makeUnique<InspectorPageAgent>(pageContext, m_inspectorClient.get(), m_overlay.get());
         m_pageAgent = pageAgent.get();
         m_agents.append(WTFMove(pageAgent));
     }

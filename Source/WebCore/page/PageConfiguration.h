@@ -86,22 +86,46 @@ class WebRTCProvider;
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT PageConfiguration(PAL::SessionID, UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<WebRTCProvider>&&, Ref<CacheStorageProvider>&&, Ref<UserContentProvider>&&, Ref<BackForwardClient>&&, Ref<CookieJar>&&, UniqueRef<ProgressTrackerClient>&&, UniqueRef<FrameLoaderClient>&&, UniqueRef<SpeechRecognitionProvider>&&, UniqueRef<MediaRecorderProvider>&&, Ref<BroadcastChannelRegistry>&&, UniqueRef<StorageProvider>&&, UniqueRef<ModelPlayerProvider>&&, Ref<BadgeClient>&&);
+    WEBCORE_EXPORT PageConfiguration(
+        PAL::SessionID,
+        UniqueRef<EditorClient>&&,
+        Ref<SocketProvider>&&,
+        UniqueRef<WebRTCProvider>&&,
+        Ref<CacheStorageProvider>&&,
+        Ref<UserContentProvider>&&,
+        Ref<BackForwardClient>&&,
+        Ref<CookieJar>&&,
+        UniqueRef<ProgressTrackerClient>&&,
+        UniqueRef<FrameLoaderClient>&&,
+        UniqueRef<SpeechRecognitionProvider>&&,
+        UniqueRef<MediaRecorderProvider>&&,
+        Ref<BroadcastChannelRegistry>&&,
+        UniqueRef<StorageProvider>&&,
+        UniqueRef<ModelPlayerProvider>&&,
+        Ref<BadgeClient>&&,
+#if ENABLE(CONTEXT_MENUS)
+        UniqueRef<ContextMenuClient>&&,
+#endif
+#if ENABLE(APPLE_PAY)
+        UniqueRef<PaymentCoordinatorClient>&&,
+#endif
+        UniqueRef<ChromeClient>&&
+    );
     WEBCORE_EXPORT ~PageConfiguration();
     PageConfiguration(PageConfiguration&&);
 
     PAL::SessionID sessionID;
     std::unique_ptr<AlternativeTextClient> alternativeTextClient;
-    ChromeClient* chromeClient { nullptr };
+    UniqueRef<ChromeClient> chromeClient;
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenuClient* contextMenuClient { nullptr };
+    UniqueRef<ContextMenuClient> contextMenuClient;
 #endif
     UniqueRef<EditorClient> editorClient;
     Ref<SocketProvider> socketProvider;
     std::unique_ptr<DragClient> dragClient;
-    InspectorClient* inspectorClient { nullptr };
+    std::unique_ptr<InspectorClient> inspectorClient;
 #if ENABLE(APPLE_PAY)
-    PaymentCoordinatorClient* paymentCoordinatorClient { nullptr };
+    UniqueRef<PaymentCoordinatorClient> paymentCoordinatorClient;
 #endif
 
 #if ENABLE(WEB_AUTHN)

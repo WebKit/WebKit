@@ -62,7 +62,7 @@ MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     m_availablePaymentNetworks.add("visa"_s);
 }
 
-std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
+std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork) const
 {
     auto result = m_availablePaymentNetworks.find(paymentNetwork);
     if (result == m_availablePaymentNetworks.end())
@@ -91,6 +91,11 @@ void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, Comp
 
 static uint64_t showCount;
 static uint64_t hideCount;
+
+MockPaymentCoordinator::~MockPaymentCoordinator()
+{
+    ASSERT(showCount == hideCount);
+}
 
 void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 {
@@ -322,12 +327,6 @@ void MockPaymentCoordinator::cancelPaymentSession()
 {
     ++hideCount;
     ASSERT(showCount == hideCount);
-}
-
-void MockPaymentCoordinator::paymentCoordinatorDestroyed()
-{
-    ASSERT(showCount == hideCount);
-    delete this;
 }
 
 void MockPaymentCoordinator::addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)

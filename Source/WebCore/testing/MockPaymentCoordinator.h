@@ -47,8 +47,10 @@ struct ApplePayDetailsUpdateBase;
 struct ApplePayPaymentMethod;
 
 class MockPaymentCoordinator final : public PaymentCoordinatorClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MockPaymentCoordinator(Page&);
+    ~MockPaymentCoordinator();
 
     void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
     void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
@@ -104,7 +106,7 @@ public:
     void deref() const { }
 
 private:
-    std::optional<String> validatedPaymentNetwork(const String&) final;
+    std::optional<String> validatedPaymentNetwork(const String&) const final;
     bool canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
@@ -119,7 +121,6 @@ private:
     void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
-    void paymentCoordinatorDestroyed() final;
 
     bool isMockPaymentCoordinator() const final { return true; }
 

@@ -172,7 +172,6 @@ inline WebChromeClient::~WebChromeClient()
 
 void WebChromeClient::chromeDestroyed()
 {
-    delete this;
 }
 
 void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
@@ -180,7 +179,7 @@ void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
     m_page.sendSetWindowFrame(windowFrame);
 }
 
-FloatRect WebChromeClient::windowRect()
+FloatRect WebChromeClient::windowRect() const
 {
 #if PLATFORM(IOS_FAMILY)
     return FloatRect();
@@ -196,7 +195,7 @@ FloatRect WebChromeClient::windowRect()
 #endif
 }
 
-FloatRect WebChromeClient::pageRect()
+FloatRect WebChromeClient::pageRect() const
 {
     return FloatRect(FloatPoint(), m_page.size());
 }
@@ -245,7 +244,7 @@ void WebChromeClient::assistiveTechnologyMakeFirstResponder()
 
 #endif    
 
-bool WebChromeClient::canTakeFocus(FocusDirection)
+bool WebChromeClient::canTakeFocus(FocusDirection) const
 {
     notImplemented();
     return true;
@@ -362,7 +361,7 @@ void WebChromeClient::show()
     m_page.show();
 }
 
-bool WebChromeClient::canRunModal()
+bool WebChromeClient::canRunModal() const
 {
     return m_page.canRunModal();
 }
@@ -382,7 +381,7 @@ void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
     m_page.send(Messages::WebPageProxy::SetToolbarsAreVisible(toolbarsAreVisible));
 }
 
-bool WebChromeClient::toolbarsVisible()
+bool WebChromeClient::toolbarsVisible() const
 {
     API::InjectedBundle::PageUIClient::UIElementVisibility toolbarsVisibility = m_page.injectedBundleUIClient().toolbarsAreVisible(&m_page);
     if (toolbarsVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
@@ -398,7 +397,7 @@ void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
     m_page.send(Messages::WebPageProxy::SetStatusBarIsVisible(statusBarIsVisible));
 }
 
-bool WebChromeClient::statusbarVisible()
+bool WebChromeClient::statusbarVisible() const
 {
     API::InjectedBundle::PageUIClient::UIElementVisibility statusbarVisibility = m_page.injectedBundleUIClient().statusBarIsVisible(&m_page);
     if (statusbarVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
@@ -414,7 +413,7 @@ void WebChromeClient::setScrollbarsVisible(bool)
     notImplemented();
 }
 
-bool WebChromeClient::scrollbarsVisible()
+bool WebChromeClient::scrollbarsVisible() const
 {
     notImplemented();
     return true;
@@ -425,7 +424,7 @@ void WebChromeClient::setMenubarVisible(bool menuBarVisible)
     m_page.send(Messages::WebPageProxy::SetMenuBarIsVisible(menuBarVisible));
 }
 
-bool WebChromeClient::menubarVisible()
+bool WebChromeClient::menubarVisible() const
 {
     API::InjectedBundle::PageUIClient::UIElementVisibility menubarVisibility = m_page.injectedBundleUIClient().menuBarIsVisible(&m_page);
     if (menubarVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)

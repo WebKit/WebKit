@@ -706,8 +706,8 @@ Internals::Internals(Document& document)
 #if ENABLE(APPLE_PAY)
     auto* frame = document.frame();
     if (frame && frame->page() && frame->isMainFrame()) {
-        auto mockPaymentCoordinator = new MockPaymentCoordinator(*frame->page());
-        frame->page()->setPaymentCoordinator(makeUnique<PaymentCoordinator>(*mockPaymentCoordinator));
+        auto mockPaymentCoordinator = makeUniqueRef<MockPaymentCoordinator>(*frame->page());
+        frame->page()->setPaymentCoordinator(makeUnique<PaymentCoordinator>(WTFMove(mockPaymentCoordinator)));
     }
 #endif
 

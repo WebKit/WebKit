@@ -95,7 +95,7 @@ void WebChromeClientIOS::setWindowRect(const WebCore::FloatRect& r)
     [[webView() _UIDelegateForwarder] webView:webView() setFrame:r];
 }
 
-FloatRect WebChromeClientIOS::windowRect()
+FloatRect WebChromeClientIOS::windowRect() const
 {
     CGRect windowRect = [[webView() _UIDelegateForwarder] webViewFrame:webView()];
     return enclosingIntRect(windowRect);

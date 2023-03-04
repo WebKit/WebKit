@@ -102,7 +102,6 @@ WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
 
 void WebInspectorClient::inspectedPageDestroyed()
 {
-    delete this;
 }
 
 FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* inspectedPageController)

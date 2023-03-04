@@ -619,17 +619,20 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().broadcastChannelRegistry(),
         makeUniqueRef<WebStorageProvider>(),
         makeUniqueRef<WebModelPlayerProvider>(*this),
-        WebProcess::singleton().badgeClient()
+        WebProcess::singleton().badgeClient(),
+#if ENABLE(CONTEXT_MENUS)
+        makeUniqueRef<WebContextMenuClient>(this),
+#endif
+#if ENABLE(APPLE_PAY)
+        makeUniqueRef<WebPaymentCoordinator>(*this),
+#endif
+        makeUniqueRef<WebChromeClient>(*this)
     );
 
-    pageConfiguration.chromeClient = new WebChromeClient(*this);
-#if ENABLE(CONTEXT_MENUS)
-    pageConfiguration.contextMenuClient = new WebContextMenuClient(this);
-#endif
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(this);
 #endif
-    pageConfiguration.inspectorClient = new WebInspectorClient(this);
+    pageConfiguration.inspectorClient = makeUnique<WebInspectorClient>(this);
 #if USE(AUTOCORRECTION_PANEL)
     pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(this);
 #endif
@@ -657,10 +660,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = WebStorageNamespaceProvider::getOrCreate();
     pageConfiguration.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
-
-#if ENABLE(APPLE_PAY)
-    pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinator(*this);
-#endif
 
 #if ENABLE(WEB_AUTHN)
     pageConfiguration.authenticatorCoordinatorClient = makeUnique<WebAuthenticatorCoordinator>(*this);
@@ -754,6 +753,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
     setPageAndTextZoomFactors(parameters.pageZoomFactor, parameters.textZoomFactor);
 
+    // FIXME: These should use makeUnique and makeUniqueRef instead of new.
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), *new WebGeolocationClient(*this));
 #endif
@@ -5683,9 +5683,9 @@ void WebPage::didRemoveBackForwardItem(const BackForwardItemIdentifier& itemID)
 
 #if PLATFORM(COCOA)
 
-bool WebPage::isSpeaking()
+bool WebPage::isSpeaking() const
 {
-    auto sendResult = sendSync(Messages::WebPageProxy::GetIsSpeaking());
+    auto sendResult = const_cast<WebPage*>(this)->sendSync(Messages::WebPageProxy::GetIsSpeaking());
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }

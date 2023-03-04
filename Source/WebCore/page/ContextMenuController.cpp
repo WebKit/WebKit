@@ -97,15 +97,14 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
-ContextMenuController::ContextMenuController(Page& page, ContextMenuClient& client)
+ContextMenuController::ContextMenuController(Page& page, UniqueRef<ContextMenuClient>&& client)
     : m_page(page)
-    , m_client(client)
+    , m_client(WTFMove(client))
 {
 }
 
 ContextMenuController::~ContextMenuController()
 {
-    m_client.contextMenuDestroyed();
 }
 
 void ContextMenuController::clearContextMenu()
@@ -311,7 +310,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemTagDownloadLinkToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
-        m_client.downloadURL(m_context.hitTestResult().absoluteLinkURL());
+        m_client->downloadURL(m_context.hitTestResult().absoluteLinkURL());
         break;
     case ContextMenuItemTagCopyLinkToClipboard:
         frame->editor().copyURL(m_context.hitTestResult().absoluteLinkURL(), m_context.hitTestResult().textContent());
@@ -321,7 +320,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemTagDownloadImageToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
-        m_client.downloadURL(m_context.hitTestResult().absoluteImageURL());
+        m_client->downloadURL(m_context.hitTestResult().absoluteImageURL());
         break;
     case ContextMenuItemTagCopyImageToClipboard:
         // FIXME: The Pasteboard class is not written yet
@@ -338,7 +337,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemTagDownloadMediaToDisk:
         // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
-        m_client.downloadURL(m_context.hitTestResult().absoluteMediaURL());
+        m_client->downloadURL(m_context.hitTestResult().absoluteMediaURL());
         break;
     case ContextMenuItemTagCopyMediaLinkToClipboard:
         frame->editor().copyURL(m_context.hitTestResult().absoluteMediaURL(), m_context.hitTestResult().textContent());
@@ -457,7 +456,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().command("SelectAll"_s).execute();
         break;
     case ContextMenuItemTagInsertEmoji:
-        m_client.insertEmoji(*frame);
+        m_client->insertEmoji(*frame);
         break;
 #endif
     case ContextMenuItemTagSpellingGuess: {
@@ -490,11 +489,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().learnSpelling();
         break;
     case ContextMenuItemTagSearchWeb:
-        m_client.searchWithGoogle(frame);
+        m_client->searchWithGoogle(frame);
         break;
     case ContextMenuItemTagLookUpInDictionary:
         // FIXME: Some day we may be able to do this from within WebCore.
-        m_client.lookUpInDictionary(frame);
+        m_client->lookUpInDictionary(frame);
         break;
     case ContextMenuItemTagOpenLink:
         if (Frame* targetFrame = m_context.hitTestResult().targetFrame()) {
@@ -524,11 +523,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         auto selectedRange = frame->selection().selection().toNormalizedRange();
         if (!selectedRange || selectedRange->collapsed())
             selectedRange = makeRangeSelectingNodeContents(document);
-        m_client.speak(plainText(*selectedRange));
+        m_client->speak(plainText(*selectedRange));
         break;
     }
     case ContextMenuItemTagStopSpeaking:
-        m_client.stopSpeaking();
+        m_client->stopSpeaking();
         break;
     case ContextMenuItemTagDefaultDirection:
         frame->editor().setBaseWritingDirection(WritingDirection::Natural);
@@ -550,7 +549,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
 #if PLATFORM(COCOA)
     case ContextMenuItemTagSearchInSpotlight:
-        m_client.searchWithSpotlight();
+        m_client->searchWithSpotlight();
         break;
 #endif
     case ContextMenuItemTagShowSpellingPanel:
@@ -624,7 +623,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagTranslate:
 #if HAVE(TRANSLATION_UI_SERVICES)
         if (RefPtr view = frame->view()) {
-            m_client.handleTranslation({
+            m_client->handleTranslation({
                 m_context.hitTestResult().selectedText(),
                 view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())),
                 view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame()),
@@ -1061,11 +1060,11 @@ void ContextMenuController::populate()
 
                 if (image && !image->isAnimated()) {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-                    if (m_client.supportsCopySubject())
+                    if (m_client->supportsCopySubject())
                         appendItem(copySubjectItem, m_contextMenu.get());
 #endif
 #if ENABLE(IMAGE_ANALYSIS)
-                    if (m_client.supportsLookUpInImages())
+                    if (m_client->supportsLookUpInImages())
                         appendItem(LookUpImageItem, m_contextMenu.get());
 #endif
                 }
@@ -1568,7 +1567,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldCheck = frame->editor().isAutomaticTextReplacementEnabled();
             break;
         case ContextMenuItemTagStopSpeaking:
-            shouldEnable = m_client.isSpeaking();
+            shouldEnable = m_client->isSpeaking();
             break;
 #else // PLATFORM(COCOA) ends here
         case ContextMenuItemTagStopSpeaking:
@@ -1748,7 +1747,7 @@ void ContextMenuController::showContextMenuAt(Frame& frame, const IntPoint& clic
     frame.eventHandler().handleMousePressEvent(mouseEvent);
     bool handled = frame.eventHandler().sendContextMenuEvent(mouseEvent);
     if (handled)
-        m_client.showContextMenu();
+        m_client->showContextMenu();
 }
 
 #endif
@@ -1759,7 +1758,7 @@ void ContextMenuController::showImageControlsMenu(Event& event)
 {
     clearContextMenu();
     handleContextMenuEvent(event);
-    m_client.showContextMenu();
+    m_client->showContextMenu();
 }
 
 #endif

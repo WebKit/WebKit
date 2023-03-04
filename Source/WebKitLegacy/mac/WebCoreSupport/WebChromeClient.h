@@ -51,14 +51,14 @@ private:
     void chromeDestroyed() final;
 
     void setWindowRect(const WebCore::FloatRect&) override;
-    WebCore::FloatRect windowRect() override;
+    WebCore::FloatRect windowRect() const override;
 
-    WebCore::FloatRect pageRect() final;
+    WebCore::FloatRect pageRect() const final;
 
     void focus() override;
     void unfocus() final;
 
-    bool canTakeFocus(WebCore::FocusDirection) final;
+    bool canTakeFocus(WebCore::FocusDirection) const final;
     void takeFocus(WebCore::FocusDirection) override;
 
     void focusedElementChanged(WebCore::Element*) override;
@@ -67,20 +67,20 @@ private:
     WebCore::Page* createWindow(WebCore::Frame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
 
-    bool canRunModal() final;
+    bool canRunModal() const final;
     void runModal() final;
 
     void setToolbarsVisible(bool) final;
-    bool toolbarsVisible() final;
+    bool toolbarsVisible() const final;
 
     void setStatusbarVisible(bool) final;
-    bool statusbarVisible() final;
+    bool statusbarVisible() const final;
 
     void setScrollbarsVisible(bool) final;
-    bool scrollbarsVisible() final;
+    bool scrollbarsVisible() const final;
 
     void setMenubarVisible(bool) final;
-    bool menubarVisible() final;
+    bool menubarVisible() const final;
 
     void setResizable(bool) final;
 

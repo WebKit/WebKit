@@ -81,8 +81,6 @@ void WebInspectorClient::inspectedPageDestroyed()
 {
     if (WebInspector* inspector = m_page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
         inspector->close();
-
-    delete this;
 }
 
 void WebInspectorClient::frontendCountChanged(unsigned count)

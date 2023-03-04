@@ -31,6 +31,7 @@
 #include "ContextMenuItem.h"
 #include "HitTestRequest.h"
 #include <wtf/OptionSet.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -43,11 +44,11 @@ class Page;
 class ContextMenuController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ContextMenuController(Page&, ContextMenuClient&);
+    ContextMenuController(Page&, UniqueRef<ContextMenuClient>&&);
     ~ContextMenuController();
 
     Page& page() { return m_page; }
-    ContextMenuClient& client() { return m_client; }
+    ContextMenuClient& client() { return m_client.get(); }
 
     ContextMenu* contextMenu() const { return m_contextMenu.get(); }
     WEBCORE_EXPORT void clearContextMenu();
@@ -97,7 +98,7 @@ private:
 #endif
 
     Page& m_page;
-    ContextMenuClient& m_client;
+    UniqueRef<ContextMenuClient> m_client;
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;
     ContextMenuContext m_context;

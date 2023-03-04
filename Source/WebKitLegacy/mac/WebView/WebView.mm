@@ -1533,25 +1533,26 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
-        WebCore::EmptyBadgeClient::create()
+        WebCore::EmptyBadgeClient::create(),
+#if ENABLE(CONTEXT_MENUS)
+        makeUniqueRef<WebContextMenuClient>(self),
+#endif
+#if ENABLE(APPLE_PAY)
+        makeUniqueRef<WebPaymentCoordinatorClient>(),
+#endif
+#if !PLATFORM(IOS_FAMILY)
+        makeUniqueRef<WebChromeClient>(self)
+#else
+        makeUniqueRef<WebChromeClientIOS>(self)
+#endif
     );
 #if !PLATFORM(IOS_FAMILY)
-    pageConfiguration.chromeClient = new WebChromeClient(self);
-    pageConfiguration.contextMenuClient = new WebContextMenuClient(self);
-    // FIXME: We should enable this on iOS as well.
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
-    pageConfiguration.inspectorClient = new WebInspectorClient(self);
-#else
-    pageConfiguration.chromeClient = new WebChromeClientIOS(self);
-    pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #endif
+    pageConfiguration.inspectorClient = makeUnique<WebInspectorClient>(self);
 
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
-#endif
-
-#if ENABLE(APPLE_PAY)
-    pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
 #endif
 
     pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(self);
@@ -1801,18 +1802,17 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
-        WebCore::EmptyBadgeClient::create()
+        WebCore::EmptyBadgeClient::create(),
+#if ENABLE(APPLE_PAY)
+        makeUniqueRef<WebPaymentCoordinatorClient>(),
+#endif
+        makeUniqueRef<WebChromeClientIOS>(self)
     );
-    pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
 #endif
 
-#if ENABLE(APPLE_PAY)
-    pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
-#endif
-
-    pageConfiguration.inspectorClient = new WebInspectorClient(self);
+    pageConfiguration.inspectorClient = makeUnique<WebInspectorClient>(self);
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();

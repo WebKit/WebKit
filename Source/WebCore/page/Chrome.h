@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSView;
@@ -75,7 +76,7 @@ struct WindowFeatures;
 
 class Chrome : public HostWindow {
 public:
-    Chrome(Page&, ChromeClient&);
+    Chrome(Page&, UniqueRef<ChromeClient>&&);
     virtual ~Chrome();
 
     ChromeClient& client() { return m_client; }
@@ -114,39 +115,39 @@ public:
 
     void contentsSizeChanged(Frame&, const IntSize&) const;
 
-    WEBCORE_EXPORT void setWindowRect(const FloatRect&) const;
+    WEBCORE_EXPORT void setWindowRect(const FloatRect&);
     WEBCORE_EXPORT FloatRect windowRect() const;
 
     FloatRect pageRect() const;
 
-    void focus() const;
-    void unfocus() const;
+    void focus();
+    void unfocus();
 
     bool canTakeFocus(FocusDirection) const;
-    void takeFocus(FocusDirection) const;
+    void takeFocus(FocusDirection);
 
-    void focusedElementChanged(Element*) const;
-    void focusedFrameChanged(Frame*) const;
+    void focusedElementChanged(Element*);
+    void focusedFrameChanged(Frame*);
 
-    WEBCORE_EXPORT Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) const;
-    WEBCORE_EXPORT void show() const;
+    WEBCORE_EXPORT Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT void show();
 
     bool canRunModal() const;
-    void runModal() const;
+    void runModal();
 
-    void setToolbarsVisible(bool) const;
+    void setToolbarsVisible(bool);
     bool toolbarsVisible() const;
 
-    void setStatusbarVisible(bool) const;
+    void setStatusbarVisible(bool);
     bool statusbarVisible() const;
 
-    void setScrollbarsVisible(bool) const;
+    void setScrollbarsVisible(bool);
     bool scrollbarsVisible() const;
 
-    void setMenubarVisible(bool) const;
+    void setMenubarVisible(bool);
     bool menubarVisible() const;
 
-    void setResizable(bool) const;
+    void setResizable(bool);
 
     bool canRunBeforeUnloadConfirmPanel();
     bool runBeforeUnloadConfirmPanel(const String& message, Frame&);
@@ -218,7 +219,8 @@ private:
     void getToolTip(const HitTestResult&, String&, TextDirection&);
 
     Page& m_page;
-    ChromeClient& m_client;
+    UniqueRef<ChromeClient> m_client;
+    // FIXME: This should be WeakPtr<PopupOpeningObserver>.
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
 #if PLATFORM(IOS_FAMILY)
     bool m_isDispatchViewportDataDidChangeSuppressed { false };

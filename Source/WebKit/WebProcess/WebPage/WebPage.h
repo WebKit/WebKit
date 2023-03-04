@@ -1030,7 +1030,7 @@ public:
     void confirmCompositionForTesting(const String& compositionString);
 
 #if PLATFORM(COCOA)
-    bool isSpeaking();
+    bool isSpeaking() const;
     void speak(const String&);
     void stopSpeaking();
 

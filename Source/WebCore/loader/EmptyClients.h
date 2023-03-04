@@ -49,14 +49,14 @@ class EmptyChromeClient : public ChromeClient {
     void chromeDestroyed() override { }
 
     void setWindowRect(const FloatRect&) final { }
-    FloatRect windowRect() final { return FloatRect(); }
+    FloatRect windowRect() const final { return FloatRect(); }
 
-    FloatRect pageRect() final { return FloatRect(); }
+    FloatRect pageRect() const final { return FloatRect(); }
 
     void focus() final { }
     void unfocus() final { }
 
-    bool canTakeFocus(FocusDirection) final { return false; }
+    bool canTakeFocus(FocusDirection) const final { return false; }
     void takeFocus(FocusDirection) final { }
 
     void focusedElementChanged(Element*) final { }
@@ -65,20 +65,20 @@ class EmptyChromeClient : public ChromeClient {
     Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
     void show() final { }
 
-    bool canRunModal() final { return false; }
+    bool canRunModal() const final { return false; }
     void runModal() final { }
 
     void setToolbarsVisible(bool) final { }
-    bool toolbarsVisible() final { return false; }
+    bool toolbarsVisible() const final { return false; }
 
     void setStatusbarVisible(bool) final { }
-    bool statusbarVisible() final { return false; }
+    bool statusbarVisible() const final { return false; }
 
     void setScrollbarsVisible(bool) final { }
-    bool scrollbarsVisible() final { return false; }
+    bool scrollbarsVisible() const final { return false; }
 
     void setMenubarVisible(bool) final { }
-    bool menubarVisible() final { return false; }
+    bool menubarVisible() const final { return false; }
 
     void setResizable(bool) final { }
 

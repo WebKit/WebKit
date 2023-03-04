@@ -114,12 +114,12 @@ class EmptyBackForwardClient final : public BackForwardClient {
 #if ENABLE(CONTEXT_MENUS)
 
 class EmptyContextMenuClient final : public ContextMenuClient {
-    void contextMenuDestroyed() final { }
+    WTF_MAKE_FAST_ALLOCATED;
 
     void downloadURL(const URL&) final { }
     void searchWithGoogle(const Frame*) final { }
     void lookUpInDictionary(Frame*) final { }
-    bool isSpeaking() final { return false; }
+    bool isSpeaking() const final { return false; }
     void speak(const String&) final { }
     void stopSpeaking() final { }
 
@@ -407,6 +407,7 @@ private:
 };
 
 class EmptyInspectorClient final : public InspectorClient {
+    WTF_MAKE_FAST_ALLOCATED;
     void inspectedPageDestroyed() final { }
     Inspector::FrontendChannel* openLocalFrontend(InspectorController*) final { return nullptr; }
     void bringFrontendToFront() final { }
@@ -417,7 +418,8 @@ class EmptyInspectorClient final : public InspectorClient {
 #if ENABLE(APPLE_PAY)
 
 class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
-    std::optional<String> validatedPaymentNetwork(const String&) final { return std::nullopt; }
+    WTF_MAKE_FAST_ALLOCATED;
+    std::optional<String> validatedPaymentNetwork(const String&) const final { return std::nullopt; }
     bool canMakePayments() final { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable { completionHandler(false); }); }
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable { completionHandler(false); }); }
@@ -432,7 +434,6 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }
-    void paymentCoordinatorDestroyed() final { }
 };
 
 #endif
@@ -1200,28 +1201,21 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         EmptyBroadcastChannelRegistry::create(),
         makeUniqueRef<DummyStorageProvider>(),
         makeUniqueRef<DummyModelPlayerProvider>(),
-        EmptyBadgeClient::create()
-    };
-
-    static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
-    pageConfiguration.chromeClient = &dummyChromeClient.get();
-
-#if ENABLE(APPLE_PAY)
-    static NeverDestroyed<EmptyPaymentCoordinatorClient> dummyPaymentCoordinatorClient;
-    pageConfiguration.paymentCoordinatorClient = &dummyPaymentCoordinatorClient.get();
-#endif
-
+        EmptyBadgeClient::create(),
 #if ENABLE(CONTEXT_MENUS)
-    static NeverDestroyed<EmptyContextMenuClient> dummyContextMenuClient;
-    pageConfiguration.contextMenuClient = &dummyContextMenuClient.get();
+        makeUniqueRef<EmptyContextMenuClient>(),
 #endif
+#if ENABLE(APPLE_PAY)
+        makeUniqueRef<EmptyPaymentCoordinatorClient>(),
+#endif
+        makeUniqueRef<EmptyChromeClient>()
+    };
 
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<EmptyDragClient>();
 #endif
 
-    static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;
-    pageConfiguration.inspectorClient = &dummyInspectorClient.get();
+    pageConfiguration.inspectorClient = makeUnique<EmptyInspectorClient>();
 
     pageConfiguration.diagnosticLoggingClient = makeUnique<EmptyDiagnosticLoggingClient>();
 
