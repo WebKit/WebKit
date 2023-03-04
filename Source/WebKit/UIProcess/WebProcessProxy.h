@@ -142,10 +142,9 @@ enum class CheckBackForwardList : bool { No, Yes };
 class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
     using WebPageProxyMap = HashMap<WebPageProxyIdentifier, WeakPtr<WebPageProxy>>;
-    using UserInitiatedActionByAuthorizationTokenMap = HashMap<UUID, RefPtr<API::UserInitiatedAction>>
+    using UserInitiatedActionByAuthorizationTokenMap = HashMap<UUID, RefPtr<API::UserInitiatedAction>>;
     typedef HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
-    typedef HashMap<UUID, RefPtr<API::UserInitiatedAction>> UserInitiatedActionByAuthorizationTokenMap;
 
     enum class IsPrewarmed {
         No,
@@ -244,7 +243,7 @@ public:
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(std::optional<UUID>, uint64_t);
 
-    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction&, std::optional<UUID>)
+    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction&, std::optional<UUID>);
 
     bool isResponsive() const;
 
