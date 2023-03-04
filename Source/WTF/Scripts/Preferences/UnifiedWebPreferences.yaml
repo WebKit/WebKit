@@ -955,17 +955,17 @@ CSSCounterStyleAtRuleImageSymbolsEnabled:
 
 CSSCounterStyleAtRulesEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS @counter-style"
   humanReadableDescription: "Enable support for CSS @counter-style rules"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
