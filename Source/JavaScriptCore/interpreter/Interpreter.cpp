@@ -1044,7 +1044,7 @@ JSValue Interpreter::executeBoundCall(VM& vm, JSBoundFunction* function, const A
     auto callData = JSC::getCallData(targetFunction);
     ASSERT(callData.type != CallData::Type::None);
 
-    return executeCallImpl(vm, targetFunction, callData, boundThis, combinedArgs);
+    RELEASE_AND_RETURN(scope, executeCallImpl(vm, targetFunction, callData, boundThis, combinedArgs));
 }
 
 ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, const CallData& callData, JSValue thisValue, const ArgList& args)
