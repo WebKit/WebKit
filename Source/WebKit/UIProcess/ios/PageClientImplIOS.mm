@@ -431,7 +431,7 @@ IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
         rootViewRect = [m_contentView accessibilityConvertRectToSceneReferenceCoordinates:rootViewRect];
     return enclosingIntRect(rootViewRect);
 }
-    
+
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
     [m_contentView _didHandleKeyEvent:event.nativeEvent() eventWasHandled:eventWasHandled];

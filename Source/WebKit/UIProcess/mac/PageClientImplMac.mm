@@ -477,6 +477,16 @@ IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
     return rootViewToScreen(rect);
 }
 
+IPC::DataReference PageClientImpl::remoteWindowTokenForAccessibility()
+{
+    return m_impl->remoteWindowToken();
+}
+
+IPC::DataReference PageClientImpl::remoteElementTokenForAccessibility()
+{
+    return m_impl->remoteElementToken();
+}
+
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
     m_impl->doneWithKeyEvent(event.nativeEvent(), eventWasHandled);
