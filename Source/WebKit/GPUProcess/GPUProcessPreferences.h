@@ -71,6 +71,10 @@ struct GPUProcessPreferences {
     std::optional<bool> alternateWebMPlayerEnabled;
 #endif
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    std::optional<bool> useSCContentSharingPicker;
+#endif
+
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessPreferences&);
 };

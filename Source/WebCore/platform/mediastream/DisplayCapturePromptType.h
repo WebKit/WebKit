@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,16 @@
 
 #pragma once
 
-#include "UserMediaPermissionRequestProxy.h"
-#include <WebCore/SecurityOrigin.h>
+#if ENABLE(MEDIA_STREAM)
 
-namespace WebKit {
+namespace WebCore {
 
-class UserMediaPermissionRequestProxyMac final : public UserMediaPermissionRequestProxy {
-public:
-    ~UserMediaPermissionRequestProxyMac() final;
-
-    UserMediaPermissionRequestProxyMac(UserMediaPermissionRequestManagerProxy&, WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
-
-    void promptForGetDisplayMedia(UserMediaDisplayCapturePromptType) final;
-    bool canRequestDisplayCapturePermission() final;
+enum class DisplayCapturePromptType : uint8_t {
+    Window,
+    Screen,
+    UserChoose
 };
 
+} // namespace WebCore
 
-} // namespace WebKit
+#endif // ENABLE(MEDIA_STREAM)

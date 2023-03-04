@@ -1922,6 +1922,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/CaptureDevice.h
     platform/mediastream/CaptureDeviceManager.h
     platform/mediastream/DisplayCaptureManager.h
+    platform/mediastream/DisplayCapturePromptType.h
     platform/mediastream/MDNSRegisterError.h
     platform/mediastream/MediaConstraints.h
     platform/mediastream/MediaStreamPrivate.h

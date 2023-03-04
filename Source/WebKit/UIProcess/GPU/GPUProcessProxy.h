@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,7 @@
 
 namespace WebCore {
 class CaptureDevice;
+enum class DisplayCapturePromptType : uint8_t;
 struct MockMediaDevice;
 struct ScreenProperties;
 class SecurityOriginData;
@@ -77,6 +78,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);
+    void setUseSCContentSharingPicker(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
@@ -90,9 +92,8 @@ public:
     void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+#if HAVE(SCREEN_CAPTURE_KIT)
+    void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
 
     void removeSession(PAL::SessionID);
@@ -171,6 +172,9 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
     uint64_t m_orientation { 0 };
+#endif
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    bool m_useSCContentSharingPicker { false };
 #endif
 #if PLATFORM(COCOA)
     bool m_hasSentTCCDSandboxExtension { false };

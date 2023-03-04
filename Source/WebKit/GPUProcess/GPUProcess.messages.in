@@ -49,6 +49,9 @@ messages -> GPUProcess LegacyReceiver {
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
     TriggerMockMicrophoneConfigurationChange()
 #endif
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    SetUseSCContentSharingPicker(bool use)
+#endif
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
@@ -56,9 +59,8 @@ messages -> GPUProcess LegacyReceiver {
 
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    ShowWindowPicker() -> (std::optional<WebCore::CaptureDevice> device)
-    ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device)
+#if HAVE(SCREEN_CAPTURE_KIT)
+    PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)
 #endif
 
 #if ENABLE(VIDEO)

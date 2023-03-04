@@ -68,6 +68,7 @@ struct WKAppPrivacyReportTestingData {
 @property (nonatomic, readonly) BOOL _wirelessVideoPlaybackDisabled;
 
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
+- (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;

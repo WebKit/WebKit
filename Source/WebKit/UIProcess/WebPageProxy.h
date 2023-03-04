@@ -2077,6 +2077,7 @@ public:
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned>);
+    void setSystemCanPromptForGetDisplayMediaForTesting(bool);
 #endif
 
 #if PLATFORM(MAC)

@@ -48,7 +48,7 @@ UserMediaPermissionRequestProxyMac::~UserMediaPermissionRequestProxyMac()
 
 void UserMediaPermissionRequestProxyMac::promptForGetDisplayMedia(UserMediaDisplayCapturePromptType promptType)
 {
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM)
     if (!manager())
         return;
 
@@ -67,10 +67,10 @@ void UserMediaPermissionRequestProxyMac::promptForGetDisplayMedia(UserMediaDispl
 #endif
 }
 
-bool UserMediaPermissionRequestProxyMac::canPromptForGetDisplayMedia()
+bool UserMediaPermissionRequestProxyMac::canRequestDisplayCapturePermission()
 {
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    return DisplayCaptureSessionManager::isAvailable();
+#if ENABLE(MEDIA_STREAM)
+    return DisplayCaptureSessionManager::singleton().canRequestDisplayCapturePermission();
 #else
     return false;
 #endif

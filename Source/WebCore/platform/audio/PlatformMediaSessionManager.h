@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,8 @@ public:
     WEBCORE_EXPORT static bool opusDecoderEnabled();
     WEBCORE_EXPORT static void setAlternateWebMPlayerEnabled(bool);
     WEBCORE_EXPORT static bool alternateWebMPlayerEnabled();
+    WEBCORE_EXPORT static void setUseSCContentSharingPicker(bool);
+    WEBCORE_EXPORT static bool useSCContentSharingPicker();
 
 #if ENABLE(VP9)
     WEBCORE_EXPORT static void setShouldEnableVP9Decoder(bool);
@@ -237,6 +239,9 @@ private:
 #endif
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     static bool m_alternateWebMPlayerEnabled;
+#endif
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    static bool s_useSCContentSharingPicker;
 #endif
 
 #if ENABLE(VP9)

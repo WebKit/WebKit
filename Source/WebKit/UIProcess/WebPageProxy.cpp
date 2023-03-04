@@ -322,11 +322,11 @@
 #include <WebCore/HighlightVisibility.h>
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #import "DisplayCaptureSessionManager.h"
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
+#if HAVE(SCREEN_CAPTURE_KIT)
 #import <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
 
@@ -11597,10 +11597,15 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 
 #endif
 
-#if HAVE(SCREEN_CAPTURE_KIT)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 void WebPageProxy::setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned> index)
 {
     DisplayCaptureSessionManager::singleton().setIndexOfDeviceSelectedForTesting(index);
+}
+
+void WebPageProxy::setSystemCanPromptForGetDisplayMediaForTesting(bool canPrompt)
+{
+    DisplayCaptureSessionManager::singleton().setSystemCanPromptForTesting(canPrompt);
 }
 #endif
 

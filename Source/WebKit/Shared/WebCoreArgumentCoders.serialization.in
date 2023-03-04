@@ -4584,6 +4584,15 @@ struct WebCore::ServiceWorkerContextData {
 
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+header: <WebCore/DisplayCapturePromptType.h>
+enum class WebCore::DisplayCapturePromptType : uint8_t {
+    Window,
+    Screen,
+    UserChoose
+};
+#endif
+
 header: <JavaScriptCore/ArrayBuffer.h>
 [RefCounted, CustomHeader] class JSC::ArrayBuffer {
     Vector<uint8_t> toVector();

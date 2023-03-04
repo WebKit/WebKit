@@ -6496,7 +6496,7 @@ UseGPUProcessForDisplayCapture:
   humanReadableName: "GPU Process: Screen and Window capture"
   humanReadableDescription: "Display capture in GPU Process"
   webcoreBinding: none
-  condition: HAVE(SC_CONTENT_SHARING_SESSION)
+  condition: HAVE(SCREEN_CAPTURE_KIT)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -6602,6 +6602,18 @@ UsePreHTML5ParserQuirks:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
+
+UseSCContentSharingPicker:
+  type: bool
+  status: internal
+  humanReadableName: "Use SCContentSharingPicker"
+  humanReadableDescription: "Use SCContentSharingPicker when available"
+  condition: HAVE(SC_CONTENT_SHARING_PICKER)
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultUseSCContentSharingPicker()
     WebCore:
       default: false
 

@@ -50,7 +50,6 @@
 namespace WebKit {
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-
 void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(DisplayCaptureSessionManager::CaptureSessionType)>&& completionHandler)
 {
 
@@ -98,6 +97,7 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
         completionBlock(result);
     }];
 }
+#endif
 
 std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType deviceType, unsigned indexOfDeviceSelectedForTesting)
 {
@@ -113,54 +113,30 @@ std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelect
     return std::nullopt;
 }
 
-void DisplayCaptureSessionManager::showWindowPicker(WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+bool DisplayCaptureSessionManager::useMockCaptureDevices() const
 {
-    if (m_indexOfDeviceSelectedForTesting || page.preferences().mockCaptureDevicesEnabled()) {
+    return m_indexOfDeviceSelectedForTesting || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
+}
+
+void DisplayCaptureSessionManager::showWindowPicker(const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    if (useMockCaptureDevices()) {
         completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Window, m_indexOfDeviceSelectedForTesting.value_or(0)));
         return;
     }
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
-        if (!page.preferences().useGPUProcessForDisplayCapture()) {
-            WebCore::ScreenCaptureKitSharingSessionManager::singleton().showWindowPicker(WTFMove(completionHandler));
-            return;
-        }
-
-        auto& gpuProcess = page.process().processPool().ensureGPUProcess();
-        gpuProcess.updateSandboxAccess(false, false, true);
-        gpuProcess.showWindowPicker(WTFMove(completionHandler));
-        return;
-    }
-#endif
-
     completionHandler(std::nullopt);
 }
 
-void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy& page, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+void DisplayCaptureSessionManager::showScreenPicker(const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    if (m_indexOfDeviceSelectedForTesting || page.preferences().mockCaptureDevicesEnabled()) {
+    if (useMockCaptureDevices()) {
         completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Screen, m_indexOfDeviceSelectedForTesting.value_or(0)));
         return;
     }
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
-        if (!page.preferences().useGPUProcessForDisplayCapture()) {
-            WebCore::ScreenCaptureKitSharingSessionManager::singleton().showScreenPicker(WTFMove(completionHandler));
-            return;
-        }
-
-        auto& gpuProcess = page.process().processPool().ensureGPUProcess();
-        gpuProcess.updateSandboxAccess(false, false, true);
-        gpuProcess.showScreenPicker(WTFMove(completionHandler));
-        return;
-    }
-#endif
-
     completionHandler(std::nullopt);
 }
-#endif
 
 bool DisplayCaptureSessionManager::isAvailable()
 {
@@ -186,36 +162,83 @@ DisplayCaptureSessionManager::~DisplayCaptureSessionManager()
 {
 }
 
-void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType, WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+bool DisplayCaptureSessionManager::canRequestDisplayCapturePermission()
 {
-    ASSERT(isAvailable());
+    if (useMockCaptureDevices())
+        return m_systemCanPromptForTesting;
 
 #if HAVE(SCREEN_CAPTURE_KIT)
+    return WebCore::ScreenCaptureKitSharingSessionManager::useSCContentSharingPicker();
+#else
+    return false;
+#endif
+}
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+static WebCore::DisplayCapturePromptType toScreenCaptureKitPromptType(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType)
+{
+    if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Screen)
+        return WebCore::DisplayCapturePromptType::Screen;
+    if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window)
+        return WebCore::DisplayCapturePromptType::Window;
+    if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::UserChoose)
+        return WebCore::DisplayCapturePromptType::UserChoose;
+
+    ASSERT_NOT_REACHED();
+    return WebCore::DisplayCapturePromptType::Screen;
+}
+#endif
+
+void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType, WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    if (useMockCaptureDevices()) {
+        if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window)
+            showWindowPicker(origin, WTFMove(completionHandler));
+        else
+            showScreenPicker(origin, WTFMove(completionHandler));
+        return;
+    }
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    ASSERT(isAvailable());
+
     if (!isAvailable() || !completionHandler) {
         completionHandler(std::nullopt);
         return;
     }
 
+    if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
+        if (!page.preferences().useGPUProcessForDisplayCapture()) {
+            WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
+            return;
+        }
+
+        auto& gpuProcess = page.process().processPool().ensureGPUProcess();
+        gpuProcess.updateSandboxAccess(false, false, true);
+        gpuProcess.promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
+        return;
+    }
+
     if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Screen) {
-        showScreenPicker(page, origin, WTFMove(completionHandler));
+        showScreenPicker(origin, WTFMove(completionHandler));
         return;
     }
 
     if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window) {
-        showWindowPicker(page, origin, WTFMove(completionHandler));
+        showWindowPicker(origin, WTFMove(completionHandler));
         return;
     }
 
-    alertForGetDisplayMedia(page, origin, [this, page = Ref { page }, origin, completionHandler = WTFMove(completionHandler)] (DisplayCaptureSessionManager::CaptureSessionType sessionType) mutable {
+    alertForGetDisplayMedia(page, origin, [this, origin, completionHandler = WTFMove(completionHandler)] (DisplayCaptureSessionManager::CaptureSessionType sessionType) mutable {
         if (sessionType == CaptureSessionType::None) {
             completionHandler(std::nullopt);
             return;
         }
 
         if (sessionType == CaptureSessionType::Screen)
-            showScreenPicker(page, origin, WTFMove(completionHandler));
+            showScreenPicker(origin, WTFMove(completionHandler));
         else
-            showWindowPicker(page, origin, WTFMove(completionHandler));
+            showWindowPicker(origin, WTFMove(completionHandler));
     });
 #else
     completionHandler(std::nullopt);
