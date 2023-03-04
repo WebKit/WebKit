@@ -1375,13 +1375,6 @@ static String convertToFullSizeKana(const String& string)
     return result == string ? string : result.toString();
 }
 
-#if !PLATFORM(COCOA)
-String transformToFullWidth(const String text)
-{
-    return text;
-}
-#endif
-
 String applyTextTransform(const RenderStyle& style, const String& text, UChar previousCharacter)
 {
     switch (style.textTransform()) {

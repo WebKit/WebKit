@@ -31,11 +31,13 @@
 
 namespace WebCore {
 
+#if !PLATFORM(COCOA)
 // https://w3c.github.io/csswg-drafts/css-text/#full-width
 String transformToFullWidth(const String& text)
 {
     // TODO: implement for all platforms.
     return text;
 }
+#endif
 
 } // namespace WebCore
