@@ -235,4 +235,10 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     SetEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t> bytesPerSecondLimit)
 #endif
+
+#if HAVE(NW_PROXY_CONFIG)
+    ClearProxyConfigData(PAL::SessionID sessionID)
+    SetProxyConfigData(PAL::SessionID sessionID, IPC::DataReference proxyConfigData, IPC::DataReference proxyIdentifierData)
+#endif
+
 }

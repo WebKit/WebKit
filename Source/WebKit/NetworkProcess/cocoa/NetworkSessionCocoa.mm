@@ -1313,6 +1313,15 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
 
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
+    
+#if HAVE(NW_PROXY_CONFIG)
+    if (auto networkContext = session.get()._networkContext) {
+        if (auto proxyConfig = networkSession.proxyConfig()) {
+            nw_context_clear_proxies(networkContext);
+            nw_context_add_proxy(networkContext, proxyConfig);
+        }
+    }
+#endif
 }
 
 #if HAVE(SESSION_CLEANUP)
@@ -2035,6 +2044,69 @@ void NetworkSessionCocoa::clearAlternativeServices(WallTime modifiedSince)
     UNUSED_PARAM(modifiedSince);
 #endif
 }
+
+void NetworkSessionCocoa::forEachSessionWrapper(Function<void(SessionWrapper&)>&& function)
+{
+    auto sessionSetFunction = [function = WTFMove(function)] (SessionSet& sessionSet) {
+        function(sessionSet.sessionWithCredentialStorage);
+        function(sessionSet.ephemeralStatelessSession);
+        if (sessionSet.appBoundSession)
+            function(sessionSet.appBoundSession->sessionWithCredentialStorage);
+        
+        for (auto& isolatedSession : sessionSet.isolatedSessions.values()) {
+            if (isolatedSession)
+                function(isolatedSession->sessionWithCredentialStorage);
+        }
+    };
+    
+    sessionSetFunction(m_defaultSessionSet.get());
+
+    for (auto& set : m_perPageSessionSets.values())
+        sessionSetFunction(set);
+
+    for (auto& set : m_perParametersSessionSets.values()) {
+        if (set)
+            sessionSetFunction(*set);
+    }
+}
+
+#if HAVE(NW_PROXY_CONFIG)
+void NetworkSessionCocoa::clearProxyConfigData()
+{
+    m_nwProxyConfig = nullptr;
+
+    RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
+    forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
+        if (!sessionWrapper.session)
+            return;
+        [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
+    });
+
+    for (nw_context_t context in contexts.get())
+        nw_context_clear_proxies(context);
+}
+
+void NetworkSessionCocoa::setProxyConfigData(const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData)
+{
+    uuid_t identifier;
+    if (proxyIdentifierData.size_bytes() == sizeof(uuid_t))
+        memcpy(identifier, proxyIdentifierData.data(), proxyIdentifierData.size_bytes());
+    
+    m_nwProxyConfig = adoptNS(nw_proxy_config_create_with_agent_data(proxyConfigData.data(), proxyConfigData.size_bytes(), identifier));
+    
+    RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
+    forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
+        if (!sessionWrapper.session)
+            return;
+        [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
+    });
+    
+    for (nw_context_t context in contexts.get()) {
+        nw_context_clear_proxies(context);
+        nw_context_add_proxy(context, m_nwProxyConfig.get());
+    }
+}
+#endif // HAVE(NW_PROXY_CONFIG)
 
 #if USE(APPLE_INTERNAL_SDK)
 

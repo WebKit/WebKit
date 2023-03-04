@@ -438,6 +438,11 @@ public:
     void saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>&);
     void loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&&);
 
+#if HAVE(NW_PROXY_CONFIG)
+    void clearProxyConfigData();
+    void setProxyConfigData(const API::Data&, uuid_t proxyIdentifier);
+#endif
+    
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

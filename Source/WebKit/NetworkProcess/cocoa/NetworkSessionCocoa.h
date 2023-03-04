@@ -147,6 +147,12 @@ public:
 
     void removeDataTask(DataTaskIdentifier);
 
+#if HAVE(NW_PROXY_CONFIG)
+    nw_proxy_config_t proxyConfig() const { return m_nwProxyConfig.get(); }
+    void clearProxyConfigData() final;
+    void setProxyConfigData(const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData) final;
+#endif
+
 private:
     void invalidateAndCancel() override;
     HashSet<WebCore::SecurityOriginData> originsWithCredentials() final;
@@ -178,6 +184,8 @@ private:
     void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;
     size_t countNonDefaultSessionSets() const final;
 
+    void forEachSessionWrapper(Function<void(SessionWrapper&)>&&);
+
     Ref<SessionSet> m_defaultSessionSet;
     HashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;
     HashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
@@ -191,6 +199,9 @@ private:
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
+#if HAVE(NW_PROXY_CONFIG)
+    RetainPtr<nw_proxy_config_t> m_nwProxyConfig;
+#endif
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };

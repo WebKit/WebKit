@@ -57,6 +57,10 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+#if HAVE(NW_PROXY_CONFIG)
+#import <Network/Network.h>
+#endif
+
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
 public:
     WebsiteDataStoreClient(WKWebsiteDataStore *dataStore, id<_WKWebsiteDataStoreDelegate> delegate)
@@ -321,6 +325,23 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         completionHandlerCopy();
     });
 }
+
+#if HAVE(NW_PROXY_CONFIG)
+- (void)setProxyConfig:(nw_proxy_config_t)proxyConfig
+{
+    if (!proxyConfig) {
+        _websiteDataStore->clearProxyConfigData();
+        return;
+    }
+
+    uuid_t proxyIdentifier;
+    nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
+
+    auto proxyConfigData = API::Data::createWithoutCopying((NSData *)nw_proxy_config_copy_agent_data(proxyConfig));
+    
+    _websiteDataStore->setProxyConfigData(proxyConfigData.get(), proxyIdentifier);
+}
+#endif // HAVE(NW_PROXY_CONFIG)
 
 #pragma mark WKObject protocol implementation
 

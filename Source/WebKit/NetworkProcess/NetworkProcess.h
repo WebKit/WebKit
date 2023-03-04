@@ -477,6 +477,11 @@ private:
     void removeWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier);
     void countNonDefaultSessionSets(PAL::SessionID, CompletionHandler<void(size_t)>&&);
 
+#if HAVE(NW_PROXY_CONFIG)
+    void clearProxyConfigData(PAL::SessionID);
+    void setProxyConfigData(PAL::SessionID, const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData);
+#endif
+    
 #if USE(SOUP)
     void setIgnoreTLSErrors(PAL::SessionID, bool);
     void userPreferredLanguagesChanged(const Vector<String>&);

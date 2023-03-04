@@ -1413,3 +1413,7 @@
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 170000))
 #define HAVE_SETUSEIOSURFACEFORTILES 1
 #endif
+
+#if __has_include(<Network/proxy_config.h>)
+#define HAVE_NW_PROXY_CONFIG 1
+#endif

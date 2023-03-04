@@ -216,14 +216,32 @@ const String& NetworkProcess::uiProcessBundleIdentifier() const
 }
 
 #if PLATFORM(IOS_FAMILY)
-
 void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     if (auto* session = networkSession(sessionID))
         session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
 }
+#endif // PLATFORM(IOS_FAMILY)
 
-#endif
+#if HAVE(NW_PROXY_CONFIG)
+void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
+{
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return;
+
+    session->clearProxyConfigData();
+}
+
+void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData)
+{
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return;
+
+    session->setProxyConfigData(proxyConfigData, proxyIdentifierData);
+}
+#endif // HAVE(NW_PROXY_CONFIG)
 
 } // namespace WebKit

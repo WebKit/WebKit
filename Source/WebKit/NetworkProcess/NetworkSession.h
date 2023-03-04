@@ -266,6 +266,11 @@ public:
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
+#if HAVE(NW_PROXY_CONFIG)
+    virtual void clearProxyConfigData() { }
+    virtual void setProxyConfigData(const IPC::DataReference&, const IPC::DataReference&) { }
+#endif
+                                    
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
