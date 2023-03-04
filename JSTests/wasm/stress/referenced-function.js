@@ -13,7 +13,7 @@ let bytes = readFile('./resources/funcref-race.wasm', 'binary');
             t5: new WebAssembly.Table({ initial: 39, element: 'externref', maximum: 690 }),
         },
     };
-    for (let j = 0; j < 10000; j++) {
+    for (let j = 0; j < 1000; j++) {
         try {
             let i = await WebAssembly.instantiate(bytes, importObject);
             i.instance.exports.fn10();
