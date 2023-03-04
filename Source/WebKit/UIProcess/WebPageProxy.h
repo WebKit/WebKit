@@ -898,8 +898,8 @@ public:
     void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void(bool)>&&);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&&);
-    void applyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(const String&)>&&);
-    bool applyAutocorrection(const String& correction, const String& originalText);
+    void applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(const String&)>&&);
+    bool applyAutocorrection(const String& correction, const String& originalText, bool isCandidate);
     void requestAutocorrectionContext();
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
     void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);

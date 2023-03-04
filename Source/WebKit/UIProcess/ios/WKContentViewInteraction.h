@@ -753,6 +753,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context;
 
+- (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input isCandidate:(BOOL)isCandidate withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler;
+
 - (void)_didStartProvisionalLoadForMainFrame;
 - (void)_didCommitLoadForMainFrame;
 
