@@ -116,7 +116,8 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     IntPoint originInContentsSpace = m_webPage.mainFrameView()->windowToContents(roundedIntPoint(origin));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
-    m_webPage.mainFrame()->document()->hitTest(HitTestRequest(), hitTestResult);
+    if (auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame()))
+        mainFrame->document()->hitTest(HitTestRequest(), hitTestResult);
     Node* node = hitTestResult.innerNode();
     if (!node) {
         dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint(), FloatRect(), FloatRect(), false, 0, 0);
@@ -150,7 +151,10 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     if (m_cachedTextLegibilityScales)
         return m_cachedTextLegibilityScales;
 
-    RefPtr document = m_webPage.mainFrame()->document();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+    RefPtr document = localMainFrame->document();
     if (!document)
         return std::nullopt;
 

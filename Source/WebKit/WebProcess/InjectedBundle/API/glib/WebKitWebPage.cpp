@@ -822,7 +822,7 @@ WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), nullptr);
 
-    if (auto* coreFrame = webPage->priv->webPage->mainFrame())
+    if (auto* coreFrame = dynamicDowncast<WebCore::LocalFrame>(webPage->priv->webPage->mainFrame()))
         return kit(coreFrame->document());
 
     return nullptr;

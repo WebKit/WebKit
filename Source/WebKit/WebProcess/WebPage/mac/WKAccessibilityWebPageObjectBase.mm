@@ -106,7 +106,7 @@ namespace ax = WebCore::Accessibility;
     if (page) {
         m_pageID = page->identifier();
 
-        auto* frame = page->mainFrame();
+        auto* frame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
         m_pageID = { };

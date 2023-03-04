@@ -52,9 +52,10 @@ using namespace WebCore;
 
 void WebChromeClient::didPreventDefaultForEvent()
 {
-    if (!m_page.mainFrame())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
         return;
-    ContentChangeObserver::didPreventDefaultForEvent(*m_page.mainFrame());
+    ContentChangeObserver::didPreventDefaultForEvent(*localMainFrame);
 }
 
 #endif

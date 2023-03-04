@@ -386,7 +386,8 @@ WebRemoteObjectRegistry* WebPage::remoteObjectRegistry()
 
 void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
 {
-    auto* document = mainFrame()->document();
+    auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(this->mainFrame());
+    auto* document = mainFrame ? mainFrame->document() : nullptr;
     [m_mockAccessibilityElement setHasMainFramePlugin:document ? document->isPluginDocument() : false];
 }
 

@@ -1474,7 +1474,7 @@ PluginView* WebPage::pluginViewForFrame(Frame* frame)
 
 PluginView* WebPage::mainFramePlugIn() const
 {
-    return pluginViewForFrame(mainFrame());
+    return pluginViewForFrame(dynamicDowncast<LocalFrame>(mainFrame()));
 }
 
 #endif
@@ -1547,7 +1547,7 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     
 void WebPage::clearMainFrameName()
 {
-    if (Frame* frame = mainFrame())
+    if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
         frame->tree().clearName();
 }
 
@@ -5383,7 +5383,7 @@ void WebPage::restoreSelectionInFocusedEditableElement()
 
 bool WebPage::mainFrameHasCustomContentProvider() const
 {
-    if (Frame* frame = mainFrame()) {
+    if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame())) {
         WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
         ASSERT(webFrameLoaderClient);
         return webFrameLoaderClient->frameHasCustomContentProvider();
@@ -6212,7 +6212,7 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
 
     if (canShortCircuitHorizontalWheelEvents) {
         // Check if we have any horizontal scroll bars on the page.
-        if (pageContainsAnyHorizontalScrollbars(mainFrame()))
+        if (pageContainsAnyHorizontalScrollbars(dynamicDowncast<LocalFrame>(mainFrame())))
             canShortCircuitHorizontalWheelEvents = false;
     }
 
@@ -6223,14 +6223,15 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
     send(Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents(m_canShortCircuitHorizontalWheelEvents));
 }
 
-Frame* WebPage::mainFrame() const
+AbstractFrame* WebPage::mainFrame() const
 {
-    return m_page ? dynamicDowncast<LocalFrame>(m_page->mainFrame()) : nullptr;
+    return m_page ? &m_page->mainFrame() : nullptr;
 }
 
+// FIXME: This should return an AbstractFrameView.
 FrameView* WebPage::mainFrameView() const
 {
-    if (Frame* frame = mainFrame())
+    if (Frame* frame = dynamicDowncast<LocalFrame>(mainFrame()))
         return frame->view();
     return nullptr;
 }
@@ -7640,7 +7641,7 @@ void WebPage::clearPageLevelStorageAccess()
 
 void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
 {
-    auto* frame = mainFrame();
+    auto* frame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!frame || !frame->document())
         return;
 
@@ -7699,7 +7700,7 @@ WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(WebCore::DOMPaste
 void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double gamma)
 {
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-    auto* frame = mainFrame();
+    auto* frame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!frame || !frame->document())
         return;
 
@@ -7790,7 +7791,7 @@ void WebPage::requestAttachmentIcon(const String& identifier, const WebCore::Flo
 RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const String& identifier) const
 {
     // FIXME: Handle attachment elements in subframes too as well.
-    auto* frame = mainFrame();
+    auto* frame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!frame || !frame->document())
         return nullptr;
 
@@ -8388,7 +8389,10 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExten
 
 void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppInitiated());
+    auto* mainFrame = dynamicDowncast<LocalFrame>(this->mainFrame());
+    if (!mainFrame)
+        return completionHandler(false);
+    return completionHandler(mainFrame->document()->loader()->lastNavigationWasAppInitiated());
 }
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
