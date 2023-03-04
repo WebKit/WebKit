@@ -753,6 +753,17 @@ public:
     {
     }
 
+private:
+    bool animationIsAccelerated(const Settings& settings) const final
+    {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        return settings.threadedAnimationResolutionEnabled();
+#else
+        UNUSED_PARAM(settings);
+        return false;
+#endif
+    }
+
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
         return value(from).canBlend(value(to));
@@ -987,7 +998,7 @@ private:
 // This class extends LengthPointPropertyWrapper to accommodate `auto` value expressed as
 // LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto)). This is used for 
 // offset-anchor and offset-position, which allows `auto`, and is expressed like so.
-class LengthPointOrAutoPropertyWrapper final : public LengthPointPropertyWrapper {
+class LengthPointOrAutoPropertyWrapper : public LengthPointPropertyWrapper {
 public:
     LengthPointOrAutoPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
         : LengthPointPropertyWrapper(property, getter, setter)
@@ -1003,6 +1014,25 @@ private:
         bool toIsAuto = value(to).x().isAuto() && value(to).y().isAuto();
 
         return (!fromIsAuto && !toIsAuto); 
+    }
+};
+
+class OffsetLengthPointWrapper final : public LengthPointOrAutoPropertyWrapper {
+public:
+    OffsetLengthPointWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+        : LengthPointOrAutoPropertyWrapper(property, getter, setter)
+    {
+    }
+
+private:
+    bool animationIsAccelerated(const Settings& settings) const final
+    {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        return settings.threadedAnimationResolutionEnabled();
+#else
+        UNUSED_PARAM(settings);
+        return false;
+#endif
     }
 };
 
@@ -1212,7 +1242,7 @@ private:
     }
 };
 
-class PathOperationPropertyWrapper final : public RefCountedPropertyWrapper<PathOperation> {
+class PathOperationPropertyWrapper : public RefCountedPropertyWrapper<PathOperation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PathOperationPropertyWrapper(CSSPropertyID property, PathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<PathOperation>&&))
@@ -1241,6 +1271,26 @@ private:
         if (!clipPathA || !clipPathB)
             return false;
         return *clipPathA == *clipPathB;
+    }
+};
+
+class OffsetPathWrapper final : public PathOperationPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    OffsetPathWrapper()
+        : PathOperationPropertyWrapper(CSSPropertyOffsetPath, &RenderStyle::offsetPath, &RenderStyle::setOffsetPath)
+    {
+    }
+
+private:
+    bool animationIsAccelerated(const Settings& settings) const final
+    {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        return settings.threadedAnimationResolutionEnabled();
+#else
+        UNUSED_PARAM(settings);
+        return false;
+#endif
     }
 };
 
@@ -2660,6 +2710,26 @@ private:
     }
 };
 
+class OffsetDistanceWrapper final : public LengthPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    OffsetDistanceWrapper()
+        : LengthPropertyWrapper(CSSPropertyOffsetDistance, &RenderStyle::offsetDistance, &RenderStyle::setOffsetDistance, LengthPropertyWrapper::Flags::IsLengthPercentage)
+    {
+    }
+
+private:
+    bool animationIsAccelerated(const Settings& settings) const final
+    {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        return settings.threadedAnimationResolutionEnabled();
+#else
+        UNUSED_PARAM(settings);
+        return false;
+#endif
+    }
+};
+
 class PerspectiveWrapper final : public FloatPropertyWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -3532,10 +3602,12 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperAspectRatio,
         new DiscretePropertyWrapper<FontPalette>(CSSPropertyFontPalette, &RenderStyle::fontPalette, &RenderStyle::setFontPalette),
 
-        new PathOperationPropertyWrapper(CSSPropertyOffsetPath, &RenderStyle::offsetPath, &RenderStyle::setOffsetPath),
-        new LengthPropertyWrapper(CSSPropertyOffsetDistance, &RenderStyle::offsetDistance, &RenderStyle::setOffsetDistance, LengthPropertyWrapper::Flags::IsLengthPercentage),
-        new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetPosition, &RenderStyle::offsetPosition, &RenderStyle::setOffsetPosition),
-        new LengthPointOrAutoPropertyWrapper(CSSPropertyOffsetAnchor, &RenderStyle::offsetAnchor, &RenderStyle::setOffsetAnchor),
+        new OffsetPathWrapper,
+        new OffsetDistanceWrapper,
+        new OffsetLengthPointWrapper(CSSPropertyOffsetPosition, &RenderStyle::offsetPosition, &RenderStyle::setOffsetPosition),
+        new OffsetLengthPointWrapper(CSSPropertyOffsetAnchor, &RenderStyle::offsetAnchor, &RenderStyle::setOffsetAnchor),
+        new OffsetRotateWrapper,
+
         new PropertyWrapperContent,
         new OffsetRotateWrapper,
         new DiscretePropertyWrapper<TextDecorationSkipInk>(CSSPropertyTextDecorationSkipInk, &RenderStyle::textDecorationSkipInk, &RenderStyle::setTextDecorationSkipInk),
