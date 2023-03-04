@@ -1632,6 +1632,7 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->clientBadgeEnabled();
 }
 
+<<<<<<< HEAD
 - (void)setInactiveSchedulingPolicy:(WKInactiveSchedulingPolicy)policy
 {
     switch (policy) {
@@ -1655,6 +1656,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (WKInactiveSchedulingPolicy)inactiveSchedulingPolicy
 {
     return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
+}
+
+- (void)_setVerifyWindowOpenUserGestureFromUIProcess:(BOOL)enabled
+{
+    _preferences->setVerifyWindowOpenUserGestureFromUIProcess(enabled);
+}
+
+- (BOOL)_verifyWindowOpenUserGestureFromUIProcess
+{
+    return _preferences->verifyWindowOpenUserGestureFromUIProcess();
 }
 
 @end

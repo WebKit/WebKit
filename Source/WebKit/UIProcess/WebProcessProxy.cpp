@@ -1246,6 +1246,19 @@ bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
     return m_previouslyApprovedFilePaths.contains(fileSystemPath);
 }
 
+void WebProcessProxy::recordUserGestureAuthorizationToken(UUID authorizationToken)
+{
+    if (!UserInitiatedActionByAuthorizationTokenMap::isValidKey(authorizationToken) || !authorizationToken)
+        return nullptr;
+
+    auto result = m_userInitiatedActionByAuthorizationTokenMap.ensure(authorizationToken, [authorizationToken] {
+        auto action = API::UserInitiatedAction::create();
+        action->setAuthorizationToken(authorizationToken);
+        return action;
+    });
+    return result.iterator->value;
+}
+
 RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
 {
     if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
@@ -1253,6 +1266,31 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t
 
     auto result = m_userInitiatedActionMap.ensure(identifier, [] { return API::UserInitiatedAction::create(); });
     return result.iterator->value;
+}
+
+RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::optional<UUID> authorizationToken, uint64_t identifier)
+{
+    if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
+        return nullptr;
+
+    if (authorizationToken) {
+        auto it = m_userInitiatedActionByAuthorizationTokenMap.find(*authorizationToken);
+        if (it != m_userInitiatedActionByAuthorizationTokenMap.end()) {
+            auto result = m_userInitiatedActionMap.ensure(identifier, [it] {
+                return it->value;
+            });
+            return result.iterator->value;
+        }
+    }
+
+    return userInitiatedActivity(identifier);
+}
+
+void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction& action, std::optional<UUID> authToken)
+{
+    if (authToken && m_userInitiatedActionByAuthorizationTokenMap.remove(*authToken))
+        return;
+    action->setConsumed();
 }
 
 bool WebProcessProxy::isResponsive() const
@@ -1263,7 +1301,8 @@ bool WebProcessProxy::isResponsive() const
 void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
 {
     ASSERT(UserInitiatedActionMap::isValidKey(identifier));
-    m_userInitiatedActionMap.remove(identifier);
+    if (auto removed = m_userInitiatedActionMap.take(identifier); removed && removed->authorizationToken())
+        m_userInitiatedActionByAuthorizationTokenMap.remove(*removed->authorizationToken());
 }
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const

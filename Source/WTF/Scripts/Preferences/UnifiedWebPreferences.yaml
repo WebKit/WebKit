@@ -6730,6 +6730,20 @@ VP9SWDecoderEnabledOnBattery:
     WebKit:
       default: false
 
+VerifyWindowOpenUserGestureFromUIProcess:
+  type: bool
+  status: testable
+  category: security
+  humanReadableName: "Verify window.open user gesture"
+  humanReadableDescription: "Verifies that the user gesture for window.open came from the UI process"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 VerticalFormControlsEnabled:
   type: bool
   status: testable
