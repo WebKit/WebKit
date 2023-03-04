@@ -19,7 +19,7 @@
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * OF LIABILITY, WHETHER IN  IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
@@ -32,6 +32,7 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <limits>
+#include <wtf/Bitmap.h>
 #include <wtf/DataLog.h>
 #include <wtf/StackCheck.h>
 #include <wtf/Vector.h>
@@ -42,26 +43,46 @@ namespace JSC { namespace Yarr {
 
 class CharacterClassConstructor {
 public:
-    CharacterClassConstructor(bool isCaseInsensitive, CanonicalMode canonicalMode)
+    CharacterClassConstructor(bool isCaseInsensitive, CompileMode compileMode)
         : m_isCaseInsensitive(isCaseInsensitive)
         , m_anyCharacter(false)
+        , m_mayContainStrings(false)
+        , m_invertedStrings(false)
+        , m_compileMode(compileMode)
         , m_characterWidths(CharacterClassWidths::Unknown)
-        , m_canonicalMode(canonicalMode)
+        , m_canonicalMode(compileMode == CompileMode::Legacy ? CanonicalMode::UCS2 : CanonicalMode::Unicode)
     {
     }
     
     void reset()
     {
+        m_strings.clear();
         m_matches.clear();
         m_ranges.clear();
         m_matchesUnicode.clear();
         m_rangesUnicode.clear();
+        m_setOp = CharacterClassSetOp::Default;
         m_anyCharacter = false;
+        m_mayContainStrings = false;
+        m_invertedStrings = false;
         m_characterWidths = CharacterClassWidths::Unknown;
+    }
+
+    void combiningSetOp(CharacterClassSetOp setOp)
+    {
+        ASSERT(m_setOp == CharacterClassSetOp::Default || m_setOp == setOp);
+        m_setOp = setOp;
     }
 
     void append(const CharacterClass* other)
     {
+        if (m_setOp != CharacterClassSetOp::Default) {
+            performSetOpWith(other);
+            return;
+        }
+
+        for (size_t i = 0; i < other->m_strings.size(); ++i)
+            m_strings.append(other->m_strings[i]);
         for (size_t i = 0; i < other->m_matches.size(); ++i)
             addSorted(m_matches, other->m_matches[i]);
         for (size_t i = 0; i < other->m_ranges.size(); ++i)
@@ -70,6 +91,7 @@ public:
             addSorted(m_matchesUnicode, other->m_matchesUnicode[i]);
         for (size_t i = 0; i < other->m_rangesUnicode.size(); ++i)
             addSortedRange(m_rangesUnicode, other->m_rangesUnicode[i].begin, other->m_rangesUnicode[i].end);
+        m_mayContainStrings |= other->hasStrings();
     }
 
     void appendInverted(const CharacterClass* other)
@@ -122,6 +144,11 @@ public:
 
             addSortedMatchOrRange(lo, max + 1);
         };
+
+        if (other->hasStrings()) {
+            m_mayContainStrings = true;
+            m_invertedStrings = true;
+        }
 
         addSortedInverted(0, 0x7f, other->m_matches, other->m_ranges, m_matches, m_ranges);
         addSortedInverted(0x80, 0x10ffff, other->m_matchesUnicode, other->m_rangesUnicode, m_matchesUnicode, m_rangesUnicode);
@@ -231,16 +258,139 @@ public:
 
             ++info;
             lo = info->begin;
+        }
+    }
+
+    void atomClassStringDisjunction(Vector<Vector<UChar32>>& disjunctionStrings)
+    {
+        Vector<Vector<UChar32>> utf32Strings;
+        Vector<UChar32> matches;
+        Vector<UChar32> matchesUnicode;
+        Vector<CharacterRange> emptyRanges;
+
+        sort(disjunctionStrings);
+
+        auto addCh = [&](UChar32 ch) {
+            if (isASCII(ch))
+                matches.append(ch);
+            else
+                matchesUnicode.append(ch);
         };
 
+        for (auto string : disjunctionStrings) {
+            if (string.size() == 1) {
+                UChar32 ch = string[0];
+                if (!m_isCaseInsensitive) {
+                    addCh(ch);
+                    continue;
+                }
+
+                // Add multiple matches, if necessary.
+                const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_canonicalMode);
+                if (info->type == CanonicalizeUnique)
+                    addCh(ch);
+                else {
+                    if (info->type == CanonicalizeSet) {
+                        for (const UChar32* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
+                            addCh(ch);
+                    } else {
+                        addCh(ch);
+                        addCh(getCanonicalPair(info, ch));
+                    }
+                }
+                continue;
+            }
+
+            utf32Strings.append(string);
+        }
+
+        performSetOpWithStrings(utf32Strings);
+        performSetOpWithMatches(matches, emptyRanges, matchesUnicode, emptyRanges);
+    }
+
+    void performSetOpWith(CharacterClassConstructor* rhs)
+    {
+        performSetOpWithStrings(rhs->m_strings);
+        performSetOpWithMatches(rhs->m_matches, rhs->m_ranges, rhs->m_matchesUnicode, rhs->m_rangesUnicode);
+    }
+
+    void performSetOpWith(const CharacterClass* rhs)
+    {
+        performSetOpWithStrings(rhs->m_strings);
+        performSetOpWithMatches(rhs->m_matches, rhs->m_ranges, rhs->m_matchesUnicode, rhs->m_rangesUnicode);
+    }
+
+    void performSetOpWithStrings(const Vector<Vector<UChar32>>& utf32Strings)
+    {
+        if (m_compileMode != CompileMode::UnicodeSets)
+            return;
+
+        switch (m_setOp) {
+        case CharacterClassSetOp::Default:
+        case CharacterClassSetOp::Union:
+            unionStrings(utf32Strings);
+            break;
+
+        case CharacterClassSetOp::Intersection:
+            intersectionStrings(utf32Strings);
+            break;
+
+        case CharacterClassSetOp::Subtraction:
+            subtractionStrings(utf32Strings);
+            break;
+        }
+    }
+
+    void performSetOpWithMatches(const Vector<UChar32>& rhsMatches, const Vector<CharacterRange>& rhsRanges, const Vector<UChar32>& rhsMatchesUnicode, const Vector<CharacterRange>& rhsRangesUnicode)
+    {
+        if (m_compileMode != CompileMode::UnicodeSets)
+            return;
+
+        asciiOpSorted(rhsMatches, rhsRanges);
+        unicodeOpSorted(rhsMatchesUnicode, rhsRangesUnicode);
+    }
+
+    bool hasInverteStrings()
+    {
+        return m_invertedStrings;
+    }
+
+    static ALWAYS_INLINE int compareUTF32Strings(const Vector<UChar32>& a, const Vector<UChar32>& b)
+    {
+        // Longer strings before shorter.
+        if (a.size() > b.size())
+            return -1;
+
+        if (a.size() < b.size())
+            return 1;
+
+        // Lexically sort for same length strings.
+        for (unsigned i = 0; i < a.size(); ++i) {
+            if (a[i] < b[i])
+                return -1;
+        }
+
+        return a[a.size() - 1] > b[a.size() - 1] ? 1 : 0;
+    }
+
+    static void sort(Vector<Vector<UChar32>>& utf32Strings)
+    {
+        std::sort(utf32Strings.begin(), utf32Strings.end(), [](const Vector<UChar32>& a, const Vector<UChar32>& b)
+            {
+                return compareUTF32Strings(a, b) < 0;
+            });
     }
 
     std::unique_ptr<CharacterClass> charClass()
     {
         coalesceTables();
 
+        if (!m_strings.isEmpty())
+            sort(m_strings);
+
         auto characterClass = makeUnique<CharacterClass>();
 
+        characterClass->m_strings.swap(m_strings);
         characterClass->m_matches.swap(m_matches);
         characterClass->m_ranges.swap(m_ranges);
         characterClass->m_matchesUnicode.swap(m_matchesUnicode);
@@ -362,7 +512,296 @@ private:
             } else
                 break;
         }
+    }
 
+    void unionStrings(const Vector<Vector<UChar32>>& rhsStrings)
+    {
+        // result should include strings in either the LHS or RHS
+        Vector<Vector<UChar32>> result;
+        size_t lhsIndex = 0;
+        size_t rhsIndex = 0;
+
+        while (lhsIndex < m_strings.size() && rhsIndex < rhsStrings.size()) {
+            auto lhsString = m_strings[lhsIndex];
+            auto rhsString = rhsStrings[rhsIndex];
+
+            auto strCompare = compareUTF32Strings(lhsString, rhsString);
+            if (strCompare <= 0) {
+                result.append(lhsString);
+                lhsIndex++;
+                if (!strCompare)
+                    rhsIndex++;
+            } else {
+                result.append(rhsString);
+                rhsIndex++;
+            }
+        }
+
+        // One of LHS or RHS has been exhausted, add the remaining strings.
+        while (lhsIndex < m_strings.size())
+            result.append(m_strings[lhsIndex++]);
+
+        while (rhsIndex < rhsStrings.size())
+            result.append(rhsStrings[rhsIndex++]);
+
+        m_strings.swap(result);
+        m_mayContainStrings = !m_strings.isEmpty();
+    }
+
+    void intersectionStrings(const Vector<Vector<UChar32>>& rhsStrings)
+    {
+        // result should include strings that are in both the LHS and RHS.
+        Vector<Vector<UChar32>> result;
+        size_t lhsIndex = 0;
+        size_t rhsIndex = 0;
+
+        while (lhsIndex < m_strings.size() && rhsIndex < rhsStrings.size()) {
+            auto lhsString = m_strings[lhsIndex];
+            auto rhsString = rhsStrings[rhsIndex];
+
+            auto strCompare = compareUTF32Strings(lhsString, rhsString);
+            if (!strCompare) {
+                result.append(lhsString);
+                lhsIndex++;
+                rhsIndex++;
+            } else if (strCompare < 0)
+                lhsIndex++;
+            else
+                rhsIndex++;
+        }
+
+        m_strings.swap(result);
+        m_mayContainStrings = !m_strings.isEmpty();
+    }
+
+    void subtractionStrings(const Vector<Vector<UChar32>>& rhsStrings)
+    {
+        // result should include strings in LHS that are not in RHS.
+        Vector<Vector<UChar32>> result;
+        size_t lhsIndex = 0;
+        size_t rhsIndex = 0;
+
+        while (lhsIndex < m_strings.size() && rhsIndex < rhsStrings.size()) {
+            auto lhsString = m_strings[lhsIndex];
+            auto rhsString = rhsStrings[rhsIndex];
+
+            auto strCompare = compareUTF32Strings(lhsString, rhsString);
+            if (!strCompare) {
+                lhsIndex++;
+                rhsIndex++;
+            } else if (strCompare < 0) {
+                result.append(lhsString);
+                lhsIndex++;
+            } else
+                rhsIndex++;
+        }
+
+        // Add any remaining LHS strings.
+        while (lhsIndex < m_strings.size())
+            result.append(m_strings[lhsIndex++]);
+
+        m_strings.swap(result);
+        m_mayContainStrings = !m_strings.isEmpty();
+    }
+
+    void asciiOpSorted(const Vector<UChar32>& rhsMatches, const Vector<CharacterRange>& rhsRanges)
+    {
+        Vector<UChar32> resultMatches;
+        Vector<CharacterRange> resultRanges;
+        Bitmap<0x80> lhsASCIIBitmap;
+        Bitmap<0x80> rhsASCIIBitmap;
+
+        for (auto match : m_matches)
+            lhsASCIIBitmap.set(match);
+
+        for (auto range : m_ranges) {
+            for (UChar32 ch = range.begin; ch <= range.end; ch++)
+                lhsASCIIBitmap.set(ch);
+        }
+
+        for (auto match : rhsMatches)
+            rhsASCIIBitmap.set(match);
+
+        for (auto range : rhsRanges) {
+            for (UChar32 ch = range.begin; ch <= range.end; ch++)
+                rhsASCIIBitmap.set(ch);
+        }
+
+        switch (m_setOp) {
+        case CharacterClassSetOp::Default:
+        case CharacterClassSetOp::Union:
+            lhsASCIIBitmap.merge(rhsASCIIBitmap);
+            break;
+
+        case CharacterClassSetOp::Intersection:
+            lhsASCIIBitmap.filter(rhsASCIIBitmap);
+            break;
+
+        case CharacterClassSetOp::Subtraction:
+            lhsASCIIBitmap.exclude(rhsASCIIBitmap);
+            break;
+        }
+
+        bool firstCharUnset = true;
+        UChar32 lo = 0;
+        UChar32 hi = 0;
+
+        auto addCharToResults = [&]() {
+            if (lo == hi)
+                resultMatches.append(lo);
+            else
+                resultRanges.append(CharacterRange(lo, hi));
+        };
+
+        for (auto setVal : lhsASCIIBitmap) {
+            UChar32 ch = static_cast<UChar32>(setVal);
+            if (firstCharUnset) {
+                lo = hi = ch;
+                firstCharUnset = false;
+            } else {
+                if (ch == hi + 1)
+                    hi = ch;
+                else {
+                    addCharToResults();
+                    lo = hi = ch;
+                }
+            }
+        }
+
+        if (!firstCharUnset)
+            addCharToResults();
+
+        m_matches.swap(resultMatches);
+        m_ranges.swap(resultRanges);
+    }
+
+    void unicodeOpSorted(const Vector<UChar32>& rhsMatchesUnicode, const Vector<CharacterRange>& rhsRangesUnicode)
+    {
+        Vector<UChar32> resultMatches;
+        Vector<CharacterRange> resultRanges;
+
+        constexpr size_t chunkSize = 2048;
+        Bitmap<chunkSize> lhsASCIIBitmap;
+        Bitmap<chunkSize> rhsASCIIBitmap;
+
+        UChar32 chunkLo = INT_MAX, chunkHi;
+
+        size_t lhsMatchIndex = 0;
+        size_t lhsRangeIndex = 0;
+        size_t rhsMatchIndex = 0;
+        size_t rhsRangeIndex = 0;
+
+        if (!m_matchesUnicode.isEmpty())
+            chunkLo = std::min(chunkLo, m_matchesUnicode[0]);
+
+        if (!m_rangesUnicode.isEmpty())
+            chunkLo = std::min(chunkLo, m_rangesUnicode[0].begin);
+
+        while (lhsMatchIndex < m_matchesUnicode.size() || lhsRangeIndex < m_rangesUnicode.size() || rhsMatchIndex < rhsMatchesUnicode.size() || rhsRangeIndex < rhsRangesUnicode.size()) {
+            if (rhsMatchIndex >= rhsMatchesUnicode.size() && rhsRangeIndex > rhsRangesUnicode.size() && m_setOp == CharacterClassSetOp::Intersection) {
+                // RHS is exhausted, we can short cut from here. Can't intersect anything more so bail out.
+                break;
+            }
+
+            chunkHi = chunkLo + chunkSize - 1;
+
+            for (; lhsMatchIndex < m_matchesUnicode.size(); ++lhsMatchIndex) {
+                UChar32 ch = m_matchesUnicode[lhsMatchIndex];
+                if (ch > chunkHi)
+                    break;
+
+                lhsASCIIBitmap.set(ch - chunkLo);
+            }
+
+            for (; lhsRangeIndex < m_rangesUnicode.size(); ++lhsRangeIndex) {
+                auto range = m_rangesUnicode[lhsRangeIndex];
+                if (range.begin > chunkHi)
+                    break;
+
+                auto begin = std::max(chunkLo, range.begin);
+                auto end = std::min(range.end, chunkHi);
+
+                for (UChar32 ch = begin; ch <= end; ch++)
+                    lhsASCIIBitmap.set(ch - chunkLo);
+
+                if (range.end > chunkHi)
+                    break;
+            }
+
+            for (; rhsMatchIndex < rhsMatchesUnicode.size(); ++rhsMatchIndex) {
+                UChar32 ch = rhsMatchesUnicode[lhsMatchIndex];
+                if (ch > chunkHi)
+                    break;
+
+                rhsASCIIBitmap.set(ch - chunkLo);
+            }
+
+            for (; rhsRangeIndex < rhsRangesUnicode.size(); ++rhsRangeIndex) {
+                auto range = rhsRangesUnicode[rhsRangeIndex];
+                if (range.begin > chunkHi)
+                    break;
+
+                auto begin = std::max(chunkLo, range.begin);
+                auto end = std::min(range.end, chunkHi);
+
+                for (UChar32 ch = begin; ch <= end; ch++)
+                    rhsASCIIBitmap.set(ch);
+
+                if (range.end > chunkHi)
+                    break;
+            }
+
+            switch (m_setOp) {
+            case CharacterClassSetOp::Default:
+            case CharacterClassSetOp::Union:
+                lhsASCIIBitmap.merge(rhsASCIIBitmap);
+                break;
+
+            case CharacterClassSetOp::Intersection:
+                lhsASCIIBitmap.filter(rhsASCIIBitmap);
+                break;
+
+            case CharacterClassSetOp::Subtraction:
+                lhsASCIIBitmap.exclude(rhsASCIIBitmap);
+                break;
+            }
+
+            bool firstCharUnset = true;
+            UChar32 lo = 0;
+            UChar32 hi = 0;
+
+            auto addCharToResults = [&]() {
+                if (lo == hi)
+                    resultMatches.append(lo);
+                else
+                    resultRanges.append(CharacterRange(lo, hi));
+            };
+
+            for (auto setVal : lhsASCIIBitmap) {
+                UChar32 ch = static_cast<UChar32>(setVal) + chunkLo;
+                if (firstCharUnset) {
+                    lo = hi = ch;
+                    firstCharUnset = false;
+                } else {
+                    if (ch == hi + 1)
+                        hi = ch;
+                    else {
+                        addCharToResults();
+                        lo = hi = ch;
+                    }
+                }
+            }
+
+            if (!firstCharUnset)
+                addCharToResults();
+
+            chunkLo = chunkHi + 1;
+            lhsASCIIBitmap.clearAll();
+            rhsASCIIBitmap.clearAll();
+        }
+
+        m_matchesUnicode.swap(resultMatches);
+        m_rangesUnicode.swap(resultRanges);
     }
 
     void coalesceTables()
@@ -423,10 +862,16 @@ private:
 
     bool m_isCaseInsensitive : 1;
     bool m_anyCharacter : 1;
+    bool m_mayContainStrings : 1;
+    bool m_invertedStrings : 1;
+
+    CharacterClassSetOp m_setOp { CharacterClassSetOp::Default };
+    CompileMode m_compileMode;
     CharacterClassWidths m_characterWidths;
     
     CanonicalMode m_canonicalMode;
 
+    Vector<Vector<UChar32>> m_strings;
     Vector<UChar32> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar32> m_matchesUnicode;
@@ -474,8 +919,9 @@ class YarrPatternConstructor {
 public:
     YarrPatternConstructor(YarrPattern& pattern)
         : m_pattern(pattern)
-        , m_characterClassConstructor(pattern.ignoreCase(), pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
+        , m_baseCharacterClassConstructor(pattern.ignoreCase(), pattern.compileMode())
     {
+        m_currentCharacterClassConstructor = &m_baseCharacterClassConstructor;
         auto body = makeUnique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
@@ -489,7 +935,8 @@ public:
     void resetForReparsing()
     {
         m_pattern.resetForReparsing();
-        m_characterClassConstructor.reset();
+        m_baseCharacterClassConstructor.reset();
+        m_currentCharacterClassConstructor = &m_baseCharacterClassConstructor;
         m_error = ErrorCode::NoError;
         m_parenthesisContext.reset();
         m_forwardReferencesInLookbehind.clear();
@@ -573,19 +1020,19 @@ public:
     {
         // We handle case-insensitive checking of unicode characters which do have both
         // cases by handling them as if they were defined using a CharacterClass.
-        if (!m_pattern.ignoreCase() || (isASCII(ch) && !m_pattern.unicode())) {
+        if (!m_pattern.ignoreCase() || (isASCII(ch) && !m_pattern.eitherUnicode())) {
             m_alternative->m_terms.append(PatternTerm(ch, parenthesisMatchDirection()));
             return;
         }
 
-        const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2);
+        const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_pattern.eitherUnicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2);
         if (info->type == CanonicalizeUnique) {
             m_alternative->m_terms.append(PatternTerm(ch, parenthesisMatchDirection()));
             return;
         }
 
-        m_characterClassConstructor.putUnicodeIgnoreCase(ch, info);
-        auto newCharacterClass = m_characterClassConstructor.charClass();
+        m_currentCharacterClassConstructor->putUnicodeIgnoreCase(ch, info);
+        auto newCharacterClass = m_currentCharacterClassConstructor->charClass();
         m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), false, parenthesisMatchDirection()));
         m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
@@ -600,7 +1047,7 @@ public:
             m_alternative->m_terms.append(PatternTerm(m_pattern.spacesCharacterClass(), invert, parenthesisMatchDirection()));
             break;
         case BuiltInCharacterClassID::WordClassID:
-            if (m_pattern.unicode() && m_pattern.ignoreCase())
+            if (m_pattern.eitherUnicode() && m_pattern.ignoreCase())
                 m_alternative->m_terms.append(PatternTerm(m_pattern.wordUnicodeIgnoreCaseCharCharacterClass(), invert, parenthesisMatchDirection()));
             else
                 m_alternative->m_terms.append(PatternTerm(m_pattern.wordcharCharacterClass(), invert, parenthesisMatchDirection()));
@@ -612,9 +1059,40 @@ public:
             else
                 m_alternative->m_terms.append(PatternTerm(m_pattern.newlineCharacterClass(), true, parenthesisMatchDirection()));
             break;
-        default:
+        default: {
+            if (characterClassMayContainStrings(classID)) {
+                auto characterClass = m_pattern.unicodeCharacterClassFor(classID);
+                if (characterClass->hasStrings()) {
+                    atomParenthesesSubpatternBegin(false);
+                    unsigned alternativeCount = 0;
+                    for (unsigned i = 0; i < characterClass->m_strings.size(); ++i) {
+                        if (alternativeCount)
+                            disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+
+                        auto string = characterClass->m_strings[i];
+
+                        for (auto ch : string)
+                            atomPatternCharacter(ch);
+
+                        ++alternativeCount;
+                    }
+
+                    if (characterClass->hasSingleCharacters()) {
+                        if (alternativeCount)
+                            disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+
+                        m_alternative->m_terms.append(PatternTerm(characterClass, invert, parenthesisMatchDirection()));
+                    }
+
+                    atomParenthesesEnd();
+                    break;
+                }
+                // Fall through for the case where the characterClass REALLY doesn't have strings.
+            }
+
             m_alternative->m_terms.append(PatternTerm(m_pattern.unicodeCharacterClassFor(classID), invert, parenthesisMatchDirection()));
             break;
+        }
         }
     }
 
@@ -625,12 +1103,12 @@ public:
 
     void atomCharacterClassAtom(UChar32 ch)
     {
-        m_characterClassConstructor.putChar(ch);
+        m_currentCharacterClassConstructor->putChar(ch);
     }
 
     void atomCharacterClassRange(UChar32 begin, UChar32 end)
     {
-        m_characterClassConstructor.putRange(begin, end);
+        m_currentCharacterClassConstructor->putRange(begin, end);
     }
 
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
@@ -639,37 +1117,103 @@ public:
 
         switch (classID) {
         case BuiltInCharacterClassID::DigitClassID:
-            m_characterClassConstructor.append(invert ? m_pattern.nondigitsCharacterClass() : m_pattern.digitsCharacterClass());
+            m_currentCharacterClassConstructor->append(invert ? m_pattern.nondigitsCharacterClass() : m_pattern.digitsCharacterClass());
             break;
         
         case BuiltInCharacterClassID::SpaceClassID:
-            m_characterClassConstructor.append(invert ? m_pattern.nonspacesCharacterClass() : m_pattern.spacesCharacterClass());
+            m_currentCharacterClassConstructor->append(invert ? m_pattern.nonspacesCharacterClass() : m_pattern.spacesCharacterClass());
             break;
         
         case BuiltInCharacterClassID::WordClassID:
-            if (m_pattern.unicode() && m_pattern.ignoreCase())
-                m_characterClassConstructor.append(invert ? m_pattern.nonwordUnicodeIgnoreCaseCharCharacterClass() : m_pattern.wordUnicodeIgnoreCaseCharCharacterClass());
+            if (m_pattern.eitherUnicode() && m_pattern.ignoreCase())
+                m_currentCharacterClassConstructor->append(invert ? m_pattern.nonwordUnicodeIgnoreCaseCharCharacterClass() : m_pattern.wordUnicodeIgnoreCaseCharCharacterClass());
             else
-                m_characterClassConstructor.append(invert ? m_pattern.nonwordcharCharacterClass() : m_pattern.wordcharCharacterClass());
+                m_currentCharacterClassConstructor->append(invert ? m_pattern.nonwordcharCharacterClass() : m_pattern.wordcharCharacterClass());
             break;
         
         default:
             if (!invert)
-                m_characterClassConstructor.append(m_pattern.unicodeCharacterClassFor(classID));
+                m_currentCharacterClassConstructor->append(m_pattern.unicodeCharacterClassFor(classID));
             else
-                m_characterClassConstructor.appendInverted(m_pattern.unicodeCharacterClassFor(classID));
+                m_currentCharacterClassConstructor->appendInverted(m_pattern.unicodeCharacterClassFor(classID));
         }
+    }
+
+    void atomClassStringDisjunction(Vector<Vector<UChar32>>& utf32Strings)
+    {
+        m_currentCharacterClassConstructor->atomClassStringDisjunction(utf32Strings);
+    }
+
+    void atomCharacterClassSetOp(CharacterClassSetOp setOp)
+    {
+        m_currentCharacterClassConstructor->combiningSetOp(setOp);
+    }
+
+    void atomCharacterClassPushNested()
+    {
+        m_characterClassStack.append(CharacterClassConstructor(m_pattern.ignoreCase(), m_pattern.compileMode()));
+        m_currentCharacterClassConstructor = &m_characterClassStack.last();
+    }
+
+    void atomCharacterClassPopNested()
+    {
+        if (m_characterClassStack.isEmpty())
+            return;
+
+        CharacterClassConstructor* priorCharacterClassConstructor = m_characterClassStack.size() == 1 ? &m_baseCharacterClassConstructor : &m_characterClassStack[m_characterClassStack.size() - 2];
+        priorCharacterClassConstructor->performSetOpWith(m_currentCharacterClassConstructor);
+        m_characterClassStack.removeLast();
+        m_currentCharacterClassConstructor = priorCharacterClassConstructor;
     }
 
     void atomCharacterClassEnd()
     {
-        auto newCharacterClass = m_characterClassConstructor.charClass();
+        if (m_currentCharacterClassConstructor->hasInverteStrings()) {
+            m_error = ErrorCode::NegatedClassSetMayContainStrings;
+            return;
+        }
+
+        auto newCharacterClass = m_currentCharacterClassConstructor->charClass();
+        auto hasStrings = newCharacterClass->hasStrings();
 
         if (!m_invertCharacterClass && newCharacterClass.get()->m_anyCharacter) {
+            ASSERT(!hasStrings);
             m_alternative->m_terms.append(PatternTerm(m_pattern.anyCharacterClass(), false));
             return;
         }
-        m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+
+        if (!hasStrings)
+            m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+        else {
+            if (m_invertCharacterClass) {
+                m_error = ErrorCode::NegatedClassSetMayContainStrings;
+                return;
+            }
+
+            atomParenthesesSubpatternBegin(false);
+            unsigned alternativeCount = 0;
+            for (unsigned i = 0; i < newCharacterClass->m_strings.size(); ++i) {
+                if (alternativeCount)
+                    disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+
+                auto string = newCharacterClass->m_strings[i];
+
+                for (auto ch : string)
+                    atomPatternCharacter(ch);
+
+                ++alternativeCount;
+            }
+
+            if (newCharacterClass->hasSingleCharacters()) {
+                if (alternativeCount)
+                    disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+
+                m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+            }
+
+            atomParenthesesEnd();
+        }
+
         m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
 
@@ -982,7 +1526,7 @@ public:
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoPatternCharacter;
                     alternative->m_hasFixedSize = false;
-                } else if (m_pattern.unicode()) {
+                } else if (m_pattern.eitherUnicode()) {
                     CheckedUint32 tempCount = term.quantityMaxCount;
                     tempCount *= U16_LENGTH(term.patternCharacter);
                     if (tempCount.hasOverflowed())
@@ -998,7 +1542,7 @@ public:
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     alternative->m_hasFixedSize = false;
-                } else if (m_pattern.unicode()) {
+                } else if (m_pattern.eitherUnicode()) {
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     if (term.characterClass->hasOneCharacterSize() && !term.invert()) {
@@ -1416,7 +1960,9 @@ private:
 
     YarrPattern& m_pattern;
     PatternAlternative* m_alternative;
-    CharacterClassConstructor m_characterClassConstructor;
+    CharacterClassConstructor m_baseCharacterClassConstructor;
+    CharacterClassConstructor* m_currentCharacterClassConstructor;
+    Vector<CharacterClassConstructor> m_characterClassStack;
     Vector<UnresolvedForwardReference> m_forwardReferencesInLookbehind;
     StackCheck m_stackCheck;
     ErrorCode m_error { ErrorCode::NoError };
@@ -1429,7 +1975,10 @@ ErrorCode YarrPattern::compile(StringView patternString)
     YarrPatternConstructor constructor(*this);
 
     {
-        ErrorCode error = parse(constructor, patternString, unicode());
+        ErrorCode error = parse(constructor, patternString, compileMode());
+        if (hasError(constructor.error()))
+            return constructor.error();
+
         if (hasError(error))
             return error;
     }
@@ -1650,7 +2199,7 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         out.printf("inputPosition %u ", inputPosition);
         dumpCharacterClass(out, thisPattern, characterClass);
         dumpQuantifier(out);
-        if (quantityType != QuantifierType::FixedCount || thisPattern->unicode())
+        if (quantityType != QuantifierType::FixedCount || thisPattern->eitherUnicode())
             out.print(",frame location ", frameLocation);
         out.println();
         break;
@@ -1741,6 +2290,8 @@ void YarrPattern::dumpPatternString(PrintStream& out, StringView patternString)
         out.print("m");
     if (unicode())
         out.print("u");
+    if (unicodeSets())
+        out.print("v");
     if (sticky())
         out.print("y");
 }
@@ -1778,6 +2329,12 @@ void YarrPattern::dumpPattern(PrintStream& out, StringView patternString)
             if (printSeparator)
                 out.print("|");
             out.print("unicode");
+            printSeparator = true;
+        }
+        if (unicodeSets()) {
+            if (printSeparator)
+                out.print("|");
+            out.print("unicodeSets");
             printSeparator = true;
         }
         if (sticky()) {

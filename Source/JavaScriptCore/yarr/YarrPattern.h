@@ -41,6 +41,12 @@ namespace JSC { namespace Yarr {
 struct YarrPattern;
 struct PatternDisjunction;
 
+enum class CompileMode : uint8_t {
+    Legacy,
+    Unicode,
+    UnicodeSets
+};
+
 struct CharacterRange {
     UChar32 begin { 0 };
     UChar32 end { 0x10ffff };
@@ -87,6 +93,7 @@ public:
         , m_anyCharacter(false)
     {
     }
+
     CharacterClass(const char* table, bool inverted)
         : m_table(table)
         , m_characterWidths(CharacterClassWidths::Unknown)
@@ -94,6 +101,7 @@ public:
         , m_anyCharacter(false)
     {
     }
+
     CharacterClass(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
         : m_matches(matches)
         , m_ranges(ranges)
@@ -106,11 +114,28 @@ public:
     {
     }
 
-    bool hasNonBMPCharacters() { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
+    CharacterClass(std::initializer_list<Vector<UChar32>> strings, std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths, bool inCanonicalForm)
+        : m_strings(strings)
+        , m_matches(matches)
+        , m_ranges(ranges)
+        , m_matchesUnicode(matchesUnicode)
+        , m_rangesUnicode(rangesUnicode)
+        , m_table(nullptr)
+        , m_characterWidths(widths)
+        , m_tableInverted(false)
+        , m_anyCharacter(false)
+        , m_inCanonicalForm(inCanonicalForm)
+    {
+    }
 
-    bool hasOneCharacterSize() { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
-    bool hasOnlyNonBMPCharacters() { return m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasNonBMPCharacters() const { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
+
+    bool hasOneCharacterSize() const { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasOnlyNonBMPCharacters() const { return m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasStrings() const { return !m_strings.isEmpty(); }
+    bool hasSingleCharacters() const { return !m_matches.isEmpty() || !m_ranges.isEmpty() || !m_matchesUnicode.isEmpty() || !m_rangesUnicode.isEmpty(); }
     
+    Vector<Vector<UChar32>> m_strings;
     Vector<UChar32> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar32> m_matchesUnicode;
@@ -120,6 +145,45 @@ public:
     CharacterClassWidths m_characterWidths;
     bool m_tableInverted : 1;
     bool m_anyCharacter : 1;
+    bool m_inCanonicalForm : 1;
+};
+
+struct ClassSet : public CharacterClass {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClassSet()
+        : CharacterClass()
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(const char* table, bool inverted)
+        : CharacterClass(table, inverted)
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
+        : CharacterClass(matches, ranges, matchesUnicode, rangesUnicode, widths)
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(std::initializer_list<Vector<UChar32>> strings, std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
+        : CharacterClass(matches, ranges, matchesUnicode, rangesUnicode, widths)
+        , m_strings(strings)
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(std::initializer_list<Vector<UChar32>> strings, bool inCanonicalForm)
+        : m_strings(strings)
+        , m_inCanonicalForm(inCanonicalForm)
+    {
+    }
+
+    Vector<Vector<UChar32>> m_strings;
+    bool m_inCanonicalForm : 1;
 };
 
 enum class QuantifierType : uint8_t {
@@ -615,9 +679,22 @@ struct YarrPattern {
     bool hasIndices() const { return m_flags.contains(Flags::HasIndices); }
     bool sticky() const { return m_flags.contains(Flags::Sticky); }
     bool unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool unicodeSets() const { return m_flags.contains(Flags::UnicodeSets); }
+    bool eitherUnicode() const { return unicode() || unicodeSets(); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     bool hasDuplicateNamedCaptureGroups() const { return !!m_numDuplicateNamedCaptureGroups; }
+
+    CompileMode compileMode() const
+    {
+        if (unicode())
+            return CompileMode::Unicode;
+
+        if (unicodeSets())
+            return CompileMode::UnicodeSets;
+
+        return CompileMode::Legacy;
+    }
 
     bool m_containsBackreferences : 1;
     bool m_containsBOL : 1;

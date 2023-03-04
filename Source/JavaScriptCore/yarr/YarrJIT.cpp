@@ -4001,7 +4001,7 @@ class YarrGenerator final : public YarrJITInfo {
         // it fails when the body alternatives fail to match with the current offset.
         // FIXME: Support unicode flag.
         // https://bugs.webkit.org/show_bug.cgi?id=228611
-        if (disjunction->m_minimumSize && !m_pattern.sticky() && !m_pattern.unicode()) {
+        if (disjunction->m_minimumSize && !m_pattern.sticky() && !m_pattern.eitherUnicode()) {
             auto bmInfo = BoyerMooreInfo::create(m_charSize, std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
             if (collectBoyerMooreInfo(disjunction, currentAlternativeIndex, bmInfo.get())) {
                 dataLogLnIf(YarrJITInternal::verbose, bmInfo.get());
@@ -4421,9 +4421,9 @@ public:
         , m_patternString(patternString)
         , m_charSize(charSize)
         , m_compileMode(compileMode)
-        , m_decodeSurrogatePairs(m_charSize == CharSize::Char16 && m_pattern.unicode())
-        , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
-        , m_canonicalMode(m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
+        , m_decodeSurrogatePairs(m_charSize == CharSize::Char16 && m_pattern.eitherUnicode())
+        , m_unicodeIgnoreCase(m_pattern.eitherUnicode() && m_pattern.ignoreCase())
+        , m_canonicalMode(m_pattern.eitherUnicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         , m_parenContextSizes(compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numSubpatterns : 0, compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numDuplicateNamedCaptureGroups : 0, m_pattern.m_body->m_callFrameSize)
 #endif
@@ -4442,9 +4442,9 @@ public:
         , m_patternString(patternString)
         , m_charSize(charSize)
         , m_compileMode(compileMode)
-        , m_decodeSurrogatePairs(m_charSize == CharSize::Char16 && m_pattern.unicode())
-        , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
-        , m_canonicalMode(m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
+        , m_decodeSurrogatePairs(m_charSize == CharSize::Char16 && m_pattern.eitherUnicode())
+        , m_unicodeIgnoreCase(m_pattern.eitherUnicode() && m_pattern.ignoreCase())
+        , m_canonicalMode(m_pattern.eitherUnicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         , m_parenContextSizes(compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numSubpatterns : 0, compileMode == JITCompileMode::IncludeSubpatterns ? m_pattern.m_numDuplicateNamedCaptureGroups : 0, m_pattern.m_body->m_callFrameSize)
 #endif
@@ -4614,7 +4614,7 @@ public:
 
         ptrdiff_t codeSize = MacroAssembler::differenceBetween(startOfMainCode, m_jit.label());
         bool canInline = m_compileMode != JITCompileMode::IncludeSubpatterns
-            && !m_pattern.global() && !m_pattern.sticky() && !m_pattern.unicode()
+            && !m_pattern.global() && !m_pattern.sticky() && !m_pattern.eitherUnicode()
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
             && !m_containsNestedSubpatterns
 #endif

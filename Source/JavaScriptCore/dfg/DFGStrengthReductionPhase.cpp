@@ -833,7 +833,7 @@ private:
                 if (regExp->globalOrSticky())
                     return false;
 
-                if (regExp->unicode())
+                if (regExp->eitherUnicode())
                     return false;
 
                 auto jitCodeBlock = regExp->getRegExpJITCodeBlock();

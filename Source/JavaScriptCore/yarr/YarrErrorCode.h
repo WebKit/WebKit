@@ -52,6 +52,7 @@ enum class ErrorCode : uint8_t {
     CharacterClassUnmatched,
     CharacterClassRangeOutOfOrder,
     CharacterClassRangeInvalid,
+    ClassStringDIsjunctionUnmatched,
     EscapeUnterminated,
     InvalidUnicodeEscape,
     InvalidUnicodeCodePointEscape,
@@ -64,6 +65,8 @@ enum class ErrorCode : uint8_t {
     TooManyDisjunctions,
     OffsetTooLarge,
     InvalidRegularExpressionFlags,
+    InvalidClassSetOperation,
+    NegatedClassSetMayContainStrings,
 };
 
 JS_EXPORT_PRIVATE ASCIILiteral errorMessage(ErrorCode);

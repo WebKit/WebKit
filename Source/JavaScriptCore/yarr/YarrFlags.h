@@ -39,13 +39,14 @@ namespace JSC { namespace Yarr {
     macro('m', Multiline, multiline, 3) \
     macro('s', DotAll, dotAll, 4) \
     macro('u', Unicode, unicode, 5) \
-    macro('y', Sticky, sticky, 6) \
+    macro('v', UnicodeSets, unicodeSets, 6) \
+    macro('y', Sticky, sticky, 7) \
 
 #define JSC_COUNT_REGEXP_FLAG(key, name, lowerCaseName, index) + 1
 static constexpr unsigned numberOfFlags = 0 JSC_REGEXP_FLAGS(JSC_COUNT_REGEXP_FLAG);
 #undef JSC_COUNT_REGEXP_FLAG
 
-enum class Flags : uint8_t {
+enum class Flags : uint16_t {
 #define JSC_DEFINE_REGEXP_FLAG(key, name, lowerCaseName, index) name = 1 << index,
     JSC_REGEXP_FLAGS(JSC_DEFINE_REGEXP_FLAG)
 #undef JSC_DEFINE_REGEXP_FLAG

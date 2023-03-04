@@ -1322,7 +1322,7 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (
     String s = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (regExp->unicode()) {
+    if (regExp->eitherUnicode()) {
         unsigned stringLength = s.length();
         RELEASE_AND_RETURN(scope, JSValue::encode(collectMatches(
             vm, globalObject, string, s, regExp,

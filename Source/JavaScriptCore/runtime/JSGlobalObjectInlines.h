@@ -200,6 +200,7 @@ inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunction() const {
 inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectSetStrict); }
 inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
+inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
 
 ALWAYS_INLINE VM& getVM(JSGlobalObject* globalObject)
 {

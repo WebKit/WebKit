@@ -203,6 +203,26 @@ public:
             m_floatingTerm.addCharacter(static_cast<UChar>(i), m_patternIsCaseSensitive);
     }
 
+    void atomClassStringDisjunction(Vector<Vector<UChar32>>)
+    {
+        fail(URLFilterParser::AtomCharacter);
+    }
+
+    void atomCharacterClassSetOp(JSC::Yarr::CharacterClassSetOp)
+    {
+        // Nothing to do here.
+    }
+
+    void atomCharacterClassPushNested()
+    {
+        // Nothing to do here.
+    }
+
+    void atomCharacterClassPopNested()
+    {
+        // Nothing to do here.
+    }
+
     void atomCharacterClassEnd()
     {
         // Nothing to do here. The character set atom may have a quantifier, we sink the atom lazily.
@@ -358,7 +378,7 @@ URLFilterParser::ParseStatus URLFilterParser::addPattern(StringView pattern, boo
 
     ParseStatus status = Ok;
     PatternParser patternParser(patternIsCaseSensitive);
-    if (!JSC::Yarr::hasError(JSC::Yarr::parse(patternParser, pattern, false, 0, false)))
+    if (!JSC::Yarr::hasError(JSC::Yarr::parse(patternParser, pattern, JSC::Yarr::CompileMode::Legacy, 0, false)))
         patternParser.finalize(patternId, m_combinedURLFilters);
     else
         status = YarrError;

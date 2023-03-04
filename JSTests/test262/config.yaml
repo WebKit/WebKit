@@ -11,7 +11,6 @@ flags:
   resizable-arraybuffer: useArrayBufferTransfer
 skip:
   features:
-    - regexp-v-flag
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
