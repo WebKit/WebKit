@@ -137,9 +137,15 @@ static QualifiedName subtitleAttr()
     return QualifiedName { nullAtom(), "subtitle"_s, nullAtom() };
 }
 
+static const AtomString& saveAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("save"_s);
+    return identifier;
+}
+
 static QualifiedName saveAttr()
 {
-    return QualifiedName { nullAtom(), "save"_s, nullAtom() };
+    return QualifiedName { nullAtom(), saveAtom(), nullAtom() };
 }
 
 template <typename ElementType>
@@ -187,7 +193,7 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
 
     m_subtitleElement = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentSubtitleIdentifier(), attachmentSubtitleForDisplay());
 
-    updateSaveButton(attributeWithoutSynchronization(saveAttr()));
+    updateSaveButton(!attributeWithoutSynchronization(saveAttr()).isNull());
 }
 
 class AttachmentSaveEventListener final : public EventListener {
@@ -203,8 +209,7 @@ public:
     {
         if (event.type() == eventNames().clickEvent) {
             auto& mouseEvent = downcast<MouseEvent>(event);
-            auto copiedEvent = MouseEvent::create(
-                m_attachment->attributeWithoutSynchronization(saveAttr()), Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::No,
+            auto copiedEvent = MouseEvent::create(saveAtom(), Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::No,
                 mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenX(), mouseEvent.screenY(), mouseEvent.clientX(), mouseEvent.clientY(),
                 mouseEvent.modifierKeys(), mouseEvent.button(), mouseEvent.buttons(), mouseEvent.syntheticClickType(), nullptr);
 
@@ -227,12 +232,12 @@ private:
     WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
 };
 
-void HTMLAttachmentElement::updateSaveButton(const AtomString& eventTypeName)
+void HTMLAttachmentElement::updateSaveButton(bool show)
 {
     if (!m_containerElement)
         return;
 
-    if (eventTypeName.isNull()) {
+    if (!show) {
         if (m_saveButton) {
             m_containerElement->removeChild(*m_saveButton);
             m_saveButton = nullptr;
@@ -388,7 +393,7 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
         if (m_subtitleElement)
             m_subtitleElement->setTextContent(String(value.string()));
     } else if (name == saveAttr())
-        updateSaveButton(value);
+        updateSaveButton(!value.isNull());
 
     if (m_innerLegacyAttachment)
         m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, value);
