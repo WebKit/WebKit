@@ -197,7 +197,7 @@ static bool shouldEnableWebGL(const Settings::Values& settings, bool isWorker)
     if (!settings.webGLEnabled)
         return false;
 
-    if (!settings.allowWebGLInWorkers)
+    if (isWorker && !settings.allowWebGLInWorkers)
         return false;
 
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
