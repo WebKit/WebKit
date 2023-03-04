@@ -22,12 +22,12 @@
 
 header: "ShareableBitmap.h"
 
-[CustomHeader=True] struct WebKit::ShareableBitmapConfiguration {
+[CustomHeader] struct WebKit::ShareableBitmapConfiguration {
     std::optional<WebCore::DestinationColorSpace> colorSpace;
     bool isOpaque;
 }
 
-[CustomHeader=True] class WebKit::ShareableBitmapHandle {
+[CustomHeader] class WebKit::ShareableBitmapHandle {
     WebKit::SharedMemory::Handle m_handle;
     [Validator='m_size->width() >= 0 && m_size->height() >= 0'] WebCore::IntSize m_size;
     [Validator='!WebKit::ShareableBitmap::numBytesForSize(*m_size, *m_configuration).hasOverflowed() && m_handle->size() >= WebKit::ShareableBitmap::numBytesForSize(*m_size, *m_configuration)'] WebKit::ShareableBitmapConfiguration m_configuration;
