@@ -111,6 +111,12 @@ static HashMap<PAL::SessionID, WebsiteDataStore*>& allDataStores()
     return map;
 }
 
+WorkQueue& WebsiteDataStore::websiteDataStoreIOQueue()
+{
+    static auto& queue = WorkQueue::create("com.apple.WebKit.WebsiteDataStoreIO").leakRef();
+    return queue;
+}
+
 void WebsiteDataStore::forEachWebsiteDataStore(Function<void(WebsiteDataStore&)>&& function)
 {
     for (auto* dataStore : allDataStores().values())

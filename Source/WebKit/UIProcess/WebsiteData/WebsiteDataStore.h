@@ -459,6 +459,7 @@ private:
     void removeRecentSearches(WallTime, CompletionHandler<void()>&&);
 
     WebsiteDataStore();
+    static WorkQueue& websiteDataStoreIOQueue();
 
     // FIXME: Only Cocoa ports respect ShouldCreateDirectory, so you cannot rely on it to create
     // directories. This is confusing.
