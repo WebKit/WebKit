@@ -363,8 +363,8 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())

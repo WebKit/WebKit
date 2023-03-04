@@ -5018,8 +5018,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         ShowIdentifier(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         Canonicalize(),
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         PushPullRequestBranch(),
                         UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
@@ -5033,8 +5033,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         ShowIdentifier(),
                         CommitPatch(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(addURLs=False, verifycqplus=True),
                         Canonicalize(),
+                        ValidateChange(addURLs=False, verifycqplus=True),
                         PushCommitToWebKitRepo(),
                     ])
                 return rc
