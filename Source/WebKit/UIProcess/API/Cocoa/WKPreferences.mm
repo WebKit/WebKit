@@ -1632,7 +1632,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->clientBadgeEnabled();
 }
 
-<<<<<<< HEAD
 - (void)setInactiveSchedulingPolicy:(WKInactiveSchedulingPolicy)policy
 {
     switch (policy) {
