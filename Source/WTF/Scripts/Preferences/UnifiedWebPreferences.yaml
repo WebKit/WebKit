@@ -6062,7 +6062,7 @@ StandardFontFamily:
 
 StorageAPIEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Storage API"
   humanReadableDescription: "Enable Storage API"
@@ -6078,7 +6078,7 @@ StorageAPIEnabled:
 
 StorageAPIEstimateEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "Storage API Estimate"
   humanReadableDescription: "Enable Storage API Estimate"
@@ -6086,8 +6086,10 @@ StorageAPIEstimateEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)" : true
       default: false
     WebCore:
+      "PLATFORM(COCOA)" : true
       default: false
 
 StorageAccessAPIEnabled:
