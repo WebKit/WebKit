@@ -6298,7 +6298,8 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     else
 #endif
         userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-    if (m_preferences->verifyWindowOpenUserGestureFromUIProcess() && request.url().string() != Quirks::staticRadioPlayerURLString())
+
+    if (userInitiatedActivity && m_preferences->verifyWindowOpenUserGestureFromUIProcess() && request.url().string() != Quirks::staticRadioPlayerURLString())
         m_process->consumeIfNotVerifiablyFromUIProcess(*userInitiatedActivity, navigationActionData.userGestureAuthorizationToken);
 
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
