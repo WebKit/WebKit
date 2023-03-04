@@ -383,7 +383,7 @@ public:
     // Accessibility Text
     void accessibilityText(Vector<AccessibilityText>&) const override { };
     // A single method for getting a computed label for an AXObject. It condenses the nuances of accessibilityText. Used by Inspector.
-    String computedLabel() override;
+    WEBCORE_EXPORT String computedLabel();
 
     // A programmatic way to set a name on an AccessibleObject.
     void setAccessibleName(const AtomString&) override { }
@@ -439,7 +439,7 @@ public:
     virtual Element* anchorElement() const { return nullptr; }
     bool supportsPressAction() const override;
     Element* actionElement() const override { return nullptr; }
-    LayoutRect boundingBoxRect() const override { return LayoutRect(); }
+    virtual LayoutRect boundingBoxRect() const { return { }; }
     LayoutRect elementRect() const override = 0;
     IntPoint clickPoint() override;
     static IntRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
