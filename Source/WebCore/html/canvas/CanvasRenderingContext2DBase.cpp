@@ -516,6 +516,14 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
         return;
     state.fillStyle.applyFillColor(*c);
     state.unparsedFillColor = String();
+
+    if (!style.srgbaColor())
+        return;
+    if (auto color = style.srgbaColor()->tryGetAsSRGBABytes()) {
+        auto colorValue { PackedColor::RGBA { *color }.value };
+        if (m_suppliedColors.isValidValue(colorValue))
+            m_suppliedColors.add(colorValue);
+    }
 }
 
 void CanvasRenderingContext2DBase::setLineWidth(double width)
@@ -1030,6 +1038,42 @@ void CanvasRenderingContext2DBase::stroke(Path2D& path)
 void CanvasRenderingContext2DBase::clip(Path2D& path, CanvasFillRule windingRule)
 {
     clipInternal(path.path(), windingRule);
+}
+
+static inline IntRect computeImageDataRect(ImageBuffer& buffer, int width, int height, IntRect& destRect, IntSize destOffset)
+{
+    destRect.intersect(IntRect { 0, 0, width, height });
+    destRect.move(destOffset);
+    destRect.intersect(IntRect { { }, buffer.truncatedLogicalSize() });
+    if (destRect.isEmpty())
+        return destRect;
+    IntRect sourceRect { destRect };
+    sourceRect.move(-destOffset);
+    sourceRect.intersect(IntRect { 0, 0, width, height });
+    return sourceRect;
+}
+
+void CanvasRenderingContext2DBase::postProcessPixelBuffer() const
+{
+    if (m_wasLastDrawPutImageData || !canvasBase().scriptExecutionContext()->settingsValues().canvasNoiseInjectionEnabled)
+        return;
+
+    ImageBuffer* buffer = canvasBase().buffer();
+    if (!buffer)
+        return;
+
+    IntRect dirtyRect { static_cast<int>(m_dirtyRect.x()), static_cast<int>(m_dirtyRect.y()), static_cast<int>(m_dirtyRect.width()) + 1, static_cast<int>(m_dirtyRect.height()) + 1 };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_settings.colorSpace) };
+    auto pixelBuffer = buffer->getPixelBuffer(format, dirtyRect);
+    if (!is<ByteArrayPixelBuffer>(*pixelBuffer))
+        return;
+
+
+    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, false, suppliedColors())) {
+        IntSize destOffset { 0, 0 };
+        IntRect sourceRect = computeImageDataRect(*buffer, dirtyRect.width(), dirtyRect.height(), dirtyRect, destOffset);
+        buffer->putPixelBuffer(*pixelBuffer, sourceRect, IntPoint { destOffset });
+    }
 }
 
 void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule windingRule)
@@ -2168,6 +2212,7 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (!state().hasInvertibleTransform)
         return;
 
+    m_wasLastDrawPutImageData = false;
     if (options.contains(DidDrawOption::ApplyTransform))
         dirtyRect = state().transform.mapRect(dirtyRect);
 
@@ -2330,6 +2375,12 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
+    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, m_wasLastDrawPutImageData, suppliedColors())) {
+        IntSize destOffset { 0, 0 };
+        IntRect sourceRect = computeImageDataRect(*buffer, imageDataRect.width(), imageDataRect.height(), imageDataRect, destOffset);
+        buffer->putPixelBuffer(*pixelBuffer, sourceRect, IntPoint { destOffset });
+    }
+
     return { { ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
 }
 
@@ -2357,22 +2408,15 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
         dirtyHeight = -dirtyHeight;
     }
 
-    IntRect clipRect { dirtyX, dirtyY, dirtyWidth, dirtyHeight };
-    clipRect.intersect(IntRect { 0, 0, data.width(), data.height() });
     IntSize destOffset { dx, dy };
-    IntRect destRect = clipRect;
-    destRect.move(destOffset);
-    destRect.intersect(IntRect { { }, buffer->truncatedLogicalSize() });
-    if (destRect.isEmpty())
-        return;
-    IntRect sourceRect { destRect };
-    sourceRect.move(-destOffset);
-    sourceRect.intersect(IntRect { 0, 0, data.width(), data.height() });
+    IntRect destRect { dirtyX, dirtyY, dirtyWidth, dirtyHeight };
+    IntRect sourceRect = computeImageDataRect(*buffer, data.width(), data.height(), destRect, destOffset);
 
     if (!sourceRect.isEmpty())
         buffer->putPixelBuffer(data.pixelBuffer(), sourceRect, IntPoint { destOffset });
 
     didDraw(FloatRect { destRect }, { }); // ignore transform, shadow and clip
+    m_wasLastDrawPutImageData = true;
 }
 
 void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
