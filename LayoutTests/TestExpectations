@@ -4732,9 +4732,6 @@ webkit.org/b/214462 imported/w3c/web-platform-tests/css/css-scoping/slotted-plac
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
 
-# contain-intrinsic-size
-webkit.org/b/246283 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html [ Skip ]
-
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-002.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-003.html [ ImageOnlyFailure ]
@@ -4858,7 +4855,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 # c-v: auto

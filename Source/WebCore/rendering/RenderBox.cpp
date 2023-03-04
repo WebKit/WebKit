@@ -5607,8 +5607,6 @@ LayoutUnit synthesizedBaseline(const RenderBox& box, const RenderStyle& parentSt
 
 LayoutUnit RenderBox::intrinsicLogicalWidth() const
 {
-    if (shouldApplyInlineSizeContainment())
-        return LayoutUnit();
     return style().isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height();
 }
 
