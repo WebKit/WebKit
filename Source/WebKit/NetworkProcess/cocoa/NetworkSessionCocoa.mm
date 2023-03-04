@@ -96,8 +96,10 @@ void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTim
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_add_proxy, void, __cdecl, (nw_context_t, nw_proxy_config_t))
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_clear_proxies, void, __cdecl, (nw_context_t))
+#if __has_include(<Network/proxy_config_private.h>)
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_with_agent_data, nw_proxy_config_t, __cdecl, (const uint8_t*, size_t, const uuid_t))
 #endif
+#endif // HAVE(NW_PROXY_CONFIG)
 
 #import "DeviceManagementSoftLink.h"
 
@@ -2103,8 +2105,12 @@ void NetworkSessionCocoa::setProxyConfigData(const IPC::DataReference& proxyConf
     if (proxyIdentifierData.size_bytes() == sizeof(uuid_t))
         memcpy(identifier, proxyIdentifierData.data(), proxyIdentifierData.size_bytes());
     
+#if __has_include(<Network/proxy_config_private.h>)
     if (auto* createProxyConfig = nw_proxy_config_create_with_agent_dataPtr())
         m_nwProxyConfig = adoptNS(createProxyConfig(proxyConfigData.data(), proxyConfigData.size_bytes(), identifier));
+#else
+    UNUSED_PARAM(proxyConfigData);
+#endif
     
     RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
     forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
