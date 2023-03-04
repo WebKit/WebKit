@@ -108,6 +108,27 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
     void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
 
+    size_t functionWasmSizeImportSpace(uint32_t index) const
+    {
+        ASSERT(index >= importFunctionCount());
+        return functionWasmSize(index - importFunctionCount());
+    }
+
+    size_t functionWasmSize(uint32_t index) const
+    {
+        ASSERT(index < internalFunctionCount());
+        ASSERT(functions[index].finishedValidating);
+        auto size = functions[index].end - functions[index].start + 1;
+        RELEASE_ASSERT(size > 1);
+        return size;
+    }
+
+    bool usesSIMDImportSpace(uint32_t index) const
+    {
+        ASSERT(index >= importFunctionCount());
+        return usesSIMD(index - importFunctionCount());
+    }
+
     bool usesSIMD(uint32_t index) const
     {
         ASSERT(index < internalFunctionCount());

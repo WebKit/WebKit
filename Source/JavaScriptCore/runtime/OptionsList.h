@@ -293,6 +293,10 @@ bool canUseWebAssemblyFastMemory();
     v(Unsigned, maximumBinaryStringSwitchTotalLength, 2000, Normal, nullptr) \
     v(Unsigned, maximumRegExpTestInlineCodesize, 500, Normal, "Maximum code size in bytes for inlined RegExp.test JIT code.") \
     \
+    v(Unsigned, maximumWasmDepthForInlining, 2, Normal, "Maximum inlining depth to consider inlining a wasm function.") \
+    v(Unsigned, maximumWasmCalleeSizeForInlining, 200, Normal, "Maximum wasm size in bytes to consider inlining a wasm function.") \
+    v(Unsigned, maximumWasmCallerSizeForInlining, 10000, Normal, "Maximum wasm size in bytes for the caller of an inlined function.") \
+    \
     v(Double, jitPolicyScale, 1.0, Normal, "scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).") \
     v(Bool, forceEagerCompilation, false, Normal, nullptr) \
     v(Int32, thresholdForJITAfterWarmUp, 500, Normal, nullptr) \
