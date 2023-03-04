@@ -243,7 +243,7 @@ public:
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(std::optional<UUID>, uint64_t);
 
-    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction&, std::optional<UUID>);
+    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction*, std::optional<UUID>);
 
     bool isResponsive() const;
 

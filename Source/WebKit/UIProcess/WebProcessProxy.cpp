@@ -1285,11 +1285,12 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::opt
     return userInitiatedActivity(identifier);
 }
 
-void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction& action, std::optional<UUID> authToken)
+void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction* action, std::optional<UUID> authToken)
 {
     if (authToken && m_userInitiatedActionByAuthorizationTokenMap.remove(*authToken))
         return;
-    action.setConsumed();
+    if (action)
+        action->setConsumed();
 }
 
 bool WebProcessProxy::isResponsive() const
