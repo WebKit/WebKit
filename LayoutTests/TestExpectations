@@ -2765,13 +2765,14 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html [ Pass Failure ]
 
-# text-transform: full-width support
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html [ ImageOnlyFailure ]
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html [ ImageOnlyFailure ]
+# text-transform: full-width
+# no full width mapping for characters ( and )
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht [ ImageOnlyFailure ]
+# full width and space concatenation issue
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html [ ImageOnlyFailure ]
+
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-009.html [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-writing-modes/full-width-003.html [ ImageOnlyFailure ]

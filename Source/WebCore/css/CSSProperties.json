@@ -5997,6 +5997,7 @@
                 "uppercase",
                 "lowercase",
                 "full-size-kana",
+                "full-width",
                 "none"
             ],
             "codegen-properties": {

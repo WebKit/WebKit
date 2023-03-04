@@ -1585,6 +1585,11 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.h
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 
+# text-transform: full-width
+webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002.xht [ ImageOnlyFailure ]
+webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
+webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
+
 Bug(WPE) media/crash-closing-page-with-media-as-plugin-fallback.html [ Timeout ]
 Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
 Bug(WPE) media/video-canvas-createPattern.html [ Failure ]

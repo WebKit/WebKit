@@ -27,6 +27,7 @@
 "text-transform" is inherited
 "text-transform" has keyword values:
  - "none"
+ - "full-width"
  - "capitalize"
  - "uppercase"
  - "lowercase"

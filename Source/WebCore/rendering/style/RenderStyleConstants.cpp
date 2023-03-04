@@ -1158,6 +1158,7 @@ TextStream& operator<<(TextStream& ts, TextTransform textTransform)
     case TextTransform::Uppercase: ts << "uppercase"; break;
     case TextTransform::Lowercase: ts << "lowercase"; break;
     case TextTransform::FullSizeKana: ts << "full-size-kana"; break;
+    case TextTransform::FullWidth: ts << "full-width"; break;
     case TextTransform::None: ts << "none"; break;
     }
     return ts;

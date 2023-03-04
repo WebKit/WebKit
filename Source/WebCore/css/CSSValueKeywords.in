@@ -577,7 +577,8 @@ capitalize
 uppercase
 lowercase
 full-size-kana
-//none
+// full-width
+// none
 //
 // CSS_PROP_VISIBILITY:
 //
