@@ -1,5 +1,5 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -68,21 +68,19 @@ const char kOutOfRangeIntegerValue[] = "Integer values must be between INT64_MIN
 
 } // namespace
 
-CBORReader::CBORReader(Bytes::iterator it, Bytes::iterator end)
-    : m_it(it)
-    , m_end(end)
+CBORReader::CBORReader(const Bytes& data)
+    : m_data(data)
+    , m_it(data.begin())
     , m_errorCode(DecoderError::CBORNoError)
 {
 }
 
-CBORReader::~CBORReader()
-{
-}
+CBORReader::~CBORReader() = default;
 
 // static
 std::optional<CBORValue> CBORReader::read(const Bytes& data, DecoderError* errorCodeOut, int maxNestingLevel)
 {
-    CBORReader reader(data.begin(), data.end());
+    CBORReader reader(data);
     std::optional<CBORValue> decodedCbor = reader.decodeCBOR(maxNestingLevel);
 
     if (decodedCbor)
@@ -222,7 +220,7 @@ std::optional<CBORValue> CBORReader::readString(uint64_t numBytes)
     }
 
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
-    String cborString = String::fromUTF8(m_it, static_cast<size_t>(numBytes));
+    String cborString = String::fromUTF8(m_data.data() + std::distance(m_data.begin(), m_it), static_cast<size_t>(numBytes));
     m_it += numBytes;
 
     // Invalid UTF8 bytes produce an empty WTFString.
@@ -241,7 +239,7 @@ std::optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
 
     Vector<uint8_t> cborByteString;
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
-    cborByteString.append(m_it, static_cast<size_t>(numBytes));
+    cborByteString.append(m_data.data() + std::distance(m_data.begin(), m_it), static_cast<size_t>(numBytes));
     m_it += numBytes;
 
     return CBORValue(WTFMove(cborByteString));
@@ -283,7 +281,7 @@ std::optional<CBORValue> CBORReader::readCBORMap(uint64_t length, int maxNesting
 
 bool CBORReader::canConsume(uint64_t bytes)
 {
-    if (static_cast<uint64_t>(std::distance(m_it, m_end)) >= bytes)
+    if (static_cast<uint64_t>(std::distance(m_it, m_data.end())) >= bytes)
         return true;
     m_errorCode = DecoderError::IncompleteCBORData;
     return false;
@@ -300,7 +298,7 @@ bool CBORReader::checkMinimalEncoding(uint8_t additionalBytes, uint64_t uintData
 
 void CBORReader::checkExtraneousData()
 {
-    if (m_it != m_end)
+    if (m_it != m_data.end())
         m_errorCode = DecoderError::ExtraneousData;
 }
 

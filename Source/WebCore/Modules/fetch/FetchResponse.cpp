@@ -357,7 +357,7 @@ void FetchResponse::Loader::didReceiveData(const SharedBuffer& buffer)
     ASSERT(m_response.m_readableStreamSource || m_consumeDataCallback);
 
     if (m_consumeDataCallback) {
-        Span chunk { buffer.data(), buffer.size() };
+        auto chunk = buffer.dataAsSpanForContiguousData();
         m_consumeDataCallback(&chunk);
         return;
     }
@@ -413,7 +413,7 @@ void FetchResponse::Loader::consumeDataByChunk(ConsumeDataByChunkCallback&& cons
         return;
 
     auto contiguousBuffer = data->makeContiguous();
-    Span chunk { contiguousBuffer->data(), data->size() };
+    auto chunk = contiguousBuffer->dataAsSpanForContiguousData();
     m_consumeDataCallback(&chunk);
 }
 

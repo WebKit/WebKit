@@ -288,8 +288,7 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
                 if (found == tags.end())
                     return { };
 
-                return Span { found->value };
-                
+                return found->value.span();
             };
 
             auto addFeatureTagWithValue = [&features, &lookupTags] (const auto& name, const auto& tags, const FontTag& codename) {

@@ -41,7 +41,7 @@ public:
     WTF_EXPORT_PRIVATE ~Decoder();
 
     size_t length() const { return m_buffer.size(); }
-    size_t currentOffset() const { return m_bufferPosition - m_buffer.begin(); }
+    size_t currentOffset() const { return static_cast<size_t>(std::distance(m_buffer.begin(), m_bufferPosition)); }
     
     WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool rewind(size_t);
 
@@ -97,7 +97,7 @@ private:
     template<typename Type> Decoder& decodeNumber(std::optional<Type>&);
 
     const Span<const uint8_t> m_buffer;
-    const uint8_t* m_bufferPosition { nullptr };
+    Span<const uint8_t>::iterator m_bufferPosition;
 
     SHA1 m_sha1;
 };

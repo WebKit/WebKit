@@ -117,7 +117,7 @@ static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<
         encoder << caches[index]->uniqueName();
     }
 
-    FileSystem::overwriteEntireFile(cachesListFilePath, Span { const_cast<uint8_t*>(encoder.buffer()), encoder.bufferSize() });
+    FileSystem::overwriteEntireFile(cachesListFilePath, makeSpan(const_cast<uint8_t*>(encoder.buffer()), encoder.bufferSize()));
     return true;
 }
 
@@ -144,7 +144,7 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
     auto value = String::number(size).utf8();
-    return FileSystem::overwriteEntireFile(sizeFilePath, Span { reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length() }) != -1;
+    return FileSystem::overwriteEntireFile(sizeFilePath, makeSpan(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length())) != -1;
 }
 
 String CacheStorageManager::cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)

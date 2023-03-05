@@ -120,7 +120,8 @@ std::optional<Vector<uint8_t>> decryptAES128GCM(Span<const uint8_t> key, Span<co
         return std::nullopt;
 
     Vector<uint8_t> plainText(cipherTextWithTag.size() - aes128GCMTagLength);
-    auto result = CCCryptorGCMOneshotDecrypt(kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), nullptr /* additionalData */, 0 /* additionalDataLength */, cipherTextWithTag.data(), cipherTextWithTag.size() - aes128GCMTagLength, plainText.data(), cipherTextWithTag.end() - aes128GCMTagLength, aes128GCMTagLength);
+    auto nonTagCipherTextLength = cipherTextWithTag.size() - aes128GCMTagLength;
+    auto result = CCCryptorGCMOneshotDecrypt(kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), nullptr /* additionalData */, 0 /* additionalDataLength */, cipherTextWithTag.data(), nonTagCipherTextLength, plainText.data(), cipherTextWithTag.data() + nonTagCipherTextLength, aes128GCMTagLength);
     if (result != kCCSuccess)
         return std::nullopt;
 

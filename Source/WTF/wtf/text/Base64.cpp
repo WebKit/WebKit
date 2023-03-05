@@ -142,7 +142,7 @@ template<typename CharacterType> static void base64EncodeInternal(Span<const uin
 
 template<typename CharacterType> static void base64EncodeInternal(Span<const std::byte> input, Span<CharacterType> destinationDataBuffer, Base64EncodePolicy policy, Base64EncodeMap map)
 {
-    base64EncodeInternal(Span { reinterpret_cast<const uint8_t*>(input.data()), input.size() }, destinationDataBuffer, policy, map);
+    base64EncodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, policy, map);
 }
 
 static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
@@ -152,7 +152,7 @@ static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64E
         return { };
 
     Vector<uint8_t> destinationVector(destinationLength);
-    base64EncodeInternal(input, Span { destinationVector }, policy, map);
+    base64EncodeInternal(input, makeSpan(destinationVector), policy, map);
     return destinationVector;
 }
 
@@ -263,15 +263,15 @@ std::optional<Vector<uint8_t>> base64Decode(Span<const std::byte> input, OptionS
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
-    return base64DecodeInternal(Span { reinterpret_cast<const uint8_t*>(input.data()), input.size() }, options, map);
+    return base64DecodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), options, map);
 }
 
 std::optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
-        return base64DecodeInternal(Span { input.characters8(), length }, options, map);
-    return base64DecodeInternal(Span { input.characters16(), length }, options, map);
+        return base64DecodeInternal(makeSpan(input.characters8(), length), options, map);
+    return base64DecodeInternal(makeSpan(input.characters16(), length), options, map);
 }
 
 } // namespace WTF

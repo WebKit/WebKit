@@ -453,12 +453,12 @@ void RegistrationDatabase::doPushChangesWithOpenDatabase(Vector<ServiceWorkerCon
             || insertStatement->bindText(6, StringView { updateViaCacheToString(data.registration.updateViaCache) }) != SQLITE_OK
             || insertStatement->bindText(7, data.scriptURL.string()) != SQLITE_OK
             || insertStatement->bindText(8, StringView { workerTypeToString(data.workerType) }) != SQLITE_OK
-            || insertStatement->bindBlob(9, Span { cspEncoder.buffer(), cspEncoder.bufferSize() }) != SQLITE_OK
-            || insertStatement->bindBlob(10, Span { coepEncoder.buffer(), coepEncoder.bufferSize() }) != SQLITE_OK
+            || insertStatement->bindBlob(9, makeSpan(cspEncoder.buffer(), cspEncoder.bufferSize())) != SQLITE_OK
+            || insertStatement->bindBlob(10, makeSpan(coepEncoder.buffer(), coepEncoder.bufferSize())) != SQLITE_OK
             || insertStatement->bindText(11, data.referrerPolicy) != SQLITE_OK
-            || insertStatement->bindBlob(12, Span { scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize() }) != SQLITE_OK
-            || insertStatement->bindBlob(13, Span { certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize() }) != SQLITE_OK
-            || insertStatement->bindBlob(14, Span { navigationPreloadStateEncoder.buffer(), navigationPreloadStateEncoder.bufferSize() }) != SQLITE_OK
+            || insertStatement->bindBlob(12, makeSpan(scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize())) != SQLITE_OK
+            || insertStatement->bindBlob(13, makeSpan(certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize())) != SQLITE_OK
+            || insertStatement->bindBlob(14, makeSpan(navigationPreloadStateEncoder.buffer(), navigationPreloadStateEncoder.bufferSize())) != SQLITE_OK
             || insertStatement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return completionHandler(false, WTFMove(updatedRegistrations), WTFMove(removedRegistrations));

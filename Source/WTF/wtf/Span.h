@@ -7,8 +7,64 @@
 //
 //===---------------------------------------------------------------------===//
 
-#ifndef _WTF_LIBCPP_SPAN
-#define _WTF_LIBCPP_SPAN
+#pragma once
+
+#if HAVE(STD_SPAN)
+
+#include <span>
+
+namespace WTF {
+
+inline constexpr std::size_t dynamic_extent = std::dynamic_extent;
+
+template <typename _Tp, std::size_t _Extent = std::dynamic_extent>
+using Span = typename std::span<_Tp, _Extent>;
+
+template <typename _Tp>
+auto makeSpan(_Tp* __ptr, std::size_t __count)
+{
+    return std::span(__ptr, __count);
+}
+
+template <typename _Tp>
+auto makeSpan(_Tp* __f, _Tp* __l)
+{
+    return std::span(__f, __l);
+}
+
+template<typename _Element_Type, std::size_t _Extent>
+auto makeSpan(std::array<_Element_Type, _Extent>& __a)
+{
+    return std::span(__a);
+}
+
+template<typename _Element_Type, std::size_t _Extent>
+auto makeSpan(const std::array<_Element_Type, _Extent>& __a)
+{
+    return std::span(__a);
+}
+
+template<class _Container>
+auto makeSpan(_Container& __c)
+{
+    return std::span<typename _Container::value_type>(std::data(__c), std::size(__c));
+}
+
+template<class _Container>
+auto makeSpan(const _Container& __c)
+{
+    return std::span<typename _Container::value_type>(std::data(__c), std::size(__c));
+}
+
+template <class _Tp, std::size_t _Extent>
+auto asBytes(std::span<_Tp, _Extent> __s) { return std::as_bytes(__s); }
+
+template <class _Tp, std::size_t _Extent>
+auto asWritableBytes(std::span<_Tp, _Extent> __s) { return std::as_writable_bytes(__s); }
+
+} // namespace WTF
+
+#else // !HAVE(STD_SPAN)
 
 // Imports a copy of <span> from e892705d74c7366a1404a3b3471001edaa7659f8 of the
 // libc++ project (https://github.com/llvm/llvm-project.git) and modifies it to
@@ -74,7 +130,7 @@ struct __is_span_compatible_container<_Tp, _ElementType,
             typename std::enable_if<!__is_span<_Tp>::value, std::nullptr_t>::type,
         // is not a specialization of array
             typename std::enable_if<!__is_std_array<_Tp>::value, std::nullptr_t>::type,
-        // sd::is_array_v<Container> is false,
+        // std::is_array_v<Container> is false,
             typename std::enable_if<!std::is_array_v<_Tp>, std::nullptr_t>::type,
         // std::data(cont) and std::size(cont) are well formed
             decltype(std::data(std::declval<_Tp>())),
@@ -449,10 +505,47 @@ template<class _Container>
 template<class _Container>
     Span(const _Container&) -> Span<const typename _Container::value_type>;
 
+template <typename _Tp>
+auto makeSpan(_Tp* __ptr, std::size_t __count)
+{
+    return Span(__ptr, __count);
+}
+
+template <typename _Tp>
+auto makeSpan(_Tp* __f, _Tp* __l)
+{
+    return Span(__f, __l);
+}
+
+template<typename _Element_Type, std::size_t _Extent>
+auto makeSpan(std::array<_Element_Type, _Extent>& __a)
+{
+    return Span(__a);
+}
+
+template<typename _Element_Type, std::size_t _Extent>
+auto makeSpan(const std::array<_Element_Type, _Extent>& __a)
+{
+    return Span(__a);
+}
+
+template<class _Container>
+auto makeSpan(_Container& __c)
+{
+    return Span<typename _Container::value_type>(std::data(__c), std::size(__c));
+}
+
+template<class _Container>
+auto makeSpan(const _Container& __c)
+{
+    return Span<typename _Container::value_type>(std::data(__c), std::size(__c));
+}
+
 _WTF_LIBCPP_END_NAMESPACE
+
+#endif // HAVE(STD_SPAN)
 
 using WTF::Span;
 using WTF::asBytes;
 using WTF::asWritableBytes;
-
-#endif // _WTF_LIBCPP_SPAN
+using WTF::makeSpan;

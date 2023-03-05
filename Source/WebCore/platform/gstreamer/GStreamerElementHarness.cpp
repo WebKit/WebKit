@@ -589,7 +589,7 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
 Span<uint8_t> MermaidBuilder::span()
 {
     auto data = m_stringBuilder.span<uint8_t>();
-    return Span { const_cast<uint8_t*>(data.data()), data.size_bytes() };
+    return makeSpan(const_cast<uint8_t*>(data.data()), data.size_bytes());
 }
 #endif
 

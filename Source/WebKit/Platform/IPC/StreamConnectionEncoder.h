@@ -76,7 +76,7 @@ public:
     bool encodeObject(const T& object)
     {
         static_assert(std::is_trivially_copyable_v<T>);
-        return encodeSpan(Span { std::addressof(object), 1 });
+        return encodeSpan(makeSpan(std::addressof(object), 1));
     }
 
     template<typename T>

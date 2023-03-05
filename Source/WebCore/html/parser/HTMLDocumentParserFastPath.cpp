@@ -516,7 +516,7 @@ private:
 
             m_parsingBuffer.advance();
         }
-        return Span { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+        return makeSpan(start, static_cast<size_t>(m_parsingBuffer.position() - start));
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a

@@ -1260,7 +1260,7 @@ void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, co
         // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
         // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
         for (const auto& element : buffer)
-            encoder.encodeSpan(Span { element.segment->data(), element.segment->size() });
+            encoder.encodeSpan(makeSpan(element.segment->data(), element.segment->size()));
     } else {
         SharedMemory::Handle handle;
         {
