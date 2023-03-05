@@ -487,13 +487,16 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
 
 bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout& lineLayout, TypeOfChangeForInvalidation typeOfChange)
 {
-    if (!is<RenderText>(renderer) || !is<RenderBlockFlow>(renderer.parent()))
+    auto isSupportedRenderer = [](auto& renderer) {
+        return is<RenderText>(renderer) || is<RenderLineBreak>(renderer);
+    };
+    if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
         return true;
     if (!renderer.style().isLeftToRightDirection() || !renderer.style().isHorizontalWritingMode())
         return true;
     if (lineLayout.hasOutOfFlowContent())
         return true;
-    if (Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))
+    if (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))
         return true;
     if (lineLayout.contentNeedsVisualReordering())
         return true;
@@ -502,9 +505,9 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         return true;
     }
 
-    auto rootHasNonTextContent = [&] {
+    auto rootHasNonSupportedRenderer = [&] {
         for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
-            if (!is<RenderText>(sibling))
+            if (!isSupportedRenderer(sibling))
                 return true;
         }
         return false;
@@ -514,13 +517,13 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         // Last text child?
         if (!renderer.previousSibling() && !renderer.nextSibling())
             return true;
-        return rootHasNonTextContent();
+        return rootHasNonSupportedRenderer();
     case TypeOfChangeForInvalidation::NodeInsertion:
         if (renderer.nextSibling())
             return true;
-        return rootHasNonTextContent();
+        return rootHasNonSupportedRenderer();
     case TypeOfChangeForInvalidation::NodeMutation:
-        return rootHasNonTextContent();
+        return rootHasNonSupportedRenderer();
     default:
         ASSERT_NOT_REACHED();
         return true;

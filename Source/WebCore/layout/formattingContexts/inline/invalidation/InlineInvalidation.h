@@ -55,7 +55,7 @@ public:
     void textWillBeRemoved(UniqueRef<Box>&&);
 
     void inlineLevelBoxInserted(const Box&);
-    void inlineLevelBoxWillBeRemoved(const Box&);
+    void inlineLevelBoxWillBeRemoved(UniqueRef<Box>&&);
 
     void horizontalConstraintChanged();
 
