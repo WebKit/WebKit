@@ -104,10 +104,7 @@ String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHand
     // Shrink the vector.
     temporaryFilePath.shrink(strlen(temporaryFilePath.data()));
 
-    // FIXME: Change to a runtime assertion that the path ends with a slash once <rdar://problem/23579077> is
-    // fixed in all iOS Simulator versions that we use.
-    if (temporaryFilePath.last() != '/')
-        temporaryFilePath.append('/');
+    ASSERT(temporaryFilePath.last() == '/');
 
     // Append the file name.
     CString prefixUTF8 = prefix.utf8();
