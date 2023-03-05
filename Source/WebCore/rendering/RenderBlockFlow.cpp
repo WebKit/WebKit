@@ -4001,6 +4001,14 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     auto updateRepaintTopAndBottomIfNeeded = [&] {
         auto isFullLayout = selfNeedsLayout() || relayoutChildren;
         if (isFullLayout) {
+            if (!selfNeedsLayout()) {
+                // In order to really trigger full repaint, the block container has to have the self layout flag set (see LegacyLineLayout::layoutRunsAndFloats).
+                // Without having it set, repaint after layout logic (see RenderElement::repaintAfterLayoutIfNeeded) only issues repaint on the diff of
+                // before/after repaint bounds. It results in incorrect repaint when the inline content changes (new text) and expands the same time.
+                // (it only affects shrink-to-fit type of containers).
+                // FIXME: We have the exact damaged rect here, should be able to issue repaint on both inline and block directions.
+                setNeedsLayout(MarkOnlyThis);
+            }
             // Let's trigger full repaint instead for now (matching legacy line layout).
             // FIXME: We should revisit this behavior and run repaints strictly on visual overflow.
             repaintLogicalTop = { };
