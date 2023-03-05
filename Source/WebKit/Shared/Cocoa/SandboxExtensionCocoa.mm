@@ -357,7 +357,7 @@ auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> servi
 
 auto SandboxExtension::createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
 {
-    return createHandlesForMachLookup(Span { services.begin(), services.size() }, auditToken, machBootstrapOptions, flags);
+    return createHandlesForMachLookup(makeSpan(services.begin(), services.size()), auditToken, machBootstrapOptions, flags);
 }
 
 auto SandboxExtension::createHandleForReadByAuditToken(StringView path, audit_token_t auditToken) -> std::optional<Handle>

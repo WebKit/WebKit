@@ -78,6 +78,7 @@ public:
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
     static bool canUseForAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
     static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
+    static bool shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
     bool shouldSwitchToLegacyOnInvalidation() const;
 
@@ -87,6 +88,7 @@ public:
     void updateOverflow();
     // Partial invalidation.
     void insertedIntoTree(const RenderElement& parent, RenderObject& child);
+    void removedFromTree(const RenderElement& parent, RenderObject& child);
     void updateTextContent(const RenderText&, size_t offset, int delta);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();

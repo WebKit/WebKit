@@ -95,7 +95,6 @@ class RenderView;
 class RenderWidget;
 class ScriptController;
 class SecurityOrigin;
-class Settings;
 class VisiblePosition;
 class Widget;
 
@@ -138,9 +137,6 @@ public:
     void removeDestructionObserver(FrameDestructionObserver&);
 
     WEBCORE_EXPORT void willDetachPage();
-
-    AbstractFrame& mainFrame() const;
-    bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
 
     Document* document() const;
     FrameView* view() const;
@@ -186,8 +182,6 @@ public:
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
     WEBCORE_EXPORT static Frame* frameForWidget(const Widget&);
-
-    Settings& settings() const { return *m_settings; }
 
     WEBCORE_EXPORT void setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot);
     bool shouldUsePrintingLayout() const;
@@ -313,8 +307,6 @@ private:
 
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
-    AbstractFrame& m_mainFrame;
-    const RefPtr<Settings> m_settings;
     UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
@@ -374,11 +366,6 @@ inline FrameView* Frame::view() const
 inline Document* Frame::document() const
 {
     return m_doc.get();
-}
-
-inline AbstractFrame& Frame::mainFrame() const
-{
-    return m_mainFrame;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Frame&);

@@ -129,7 +129,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
         if (UNLIKELY(!size))
             return;
 
-        (..., encoder.encodeSpan(Span { arrayReference.template data<Indices>(), size }));
+        (..., encoder.encodeSpan(makeSpan(arrayReference.template data<Indices>(), size)));
     }
 
     template<typename Decoder>
@@ -773,7 +773,7 @@ template<> struct ArgumentCoder<StringView> {
 template<> struct ArgumentCoder<SHA1::Digest> {
     static void encode(Encoder& encoder, const SHA1::Digest& digest)
     {
-        encoder.encodeSpan(Span { digest.data(), digest.size() });
+        encoder.encodeSpan(makeSpan(digest.data(), digest.size()));
     }
 
     static std::optional<SHA1::Digest> decode(Decoder& decoder)

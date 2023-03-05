@@ -1720,21 +1720,27 @@ void RenderObject::willBeDestroyed()
     removeRareData();
 }
 
+enum class IsRemoval : uint8_t { Yes, No };
+static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer, IsRemoval isRemoval)
+{
+    auto* container = LayoutIntegration::LineLayout::blockContainer(renderer);
+    if (!container)
+        return;
+    auto shouldInvalidateLineLayoutPath = true;
+    if (auto* modernLineLayout = container->modernLineLayout()) {
+        shouldInvalidateLineLayoutPath = LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, *modernLineLayout, isRemoval == IsRemoval::Yes);
+        if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container)) {
+            isRemoval == IsRemoval::Yes ? modernLineLayout->removedFromTree(*renderer.parent(), renderer) : modernLineLayout->insertedIntoTree(*renderer.parent(), renderer);
+            shouldInvalidateLineLayoutPath = !modernLineLayout->isDamaged();
+        }
+    }
+    if (shouldInvalidateLineLayoutPath)
+        container->invalidateLineLayoutPath();
+}
+
 void RenderObject::insertedIntoTree(IsInternalMove)
 {
-    if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this)) {
-        auto shouldInvalidateLineLayoutPath = true;
-        if (auto* modernLineLayout = container->modernLineLayout()) {
-            shouldInvalidateLineLayoutPath = LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, *this, *modernLineLayout);
-            if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container)) {
-                modernLineLayout->insertedIntoTree(*parent(), *this);
-                shouldInvalidateLineLayoutPath = !modernLineLayout->isDamaged();
-            }
-        }
-        if (shouldInvalidateLineLayoutPath)
-            container->invalidateLineLayoutPath();
-    }
-
+    invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::No);
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);
@@ -1742,9 +1748,7 @@ void RenderObject::insertedIntoTree(IsInternalMove)
 
 void RenderObject::willBeRemovedFromTree(IsInternalMove)
 {
-    if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
-        container->invalidateLineLayoutPath();
-
+    invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::Yes);
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
     // Update cached boundaries in SVG renderers, if a child is removed.
     parent()->setNeedsBoundariesUpdate();

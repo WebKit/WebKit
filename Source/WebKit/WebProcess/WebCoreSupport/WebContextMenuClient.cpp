@@ -39,11 +39,6 @@
 
 namespace WebKit {
 
-void WebContextMenuClient::contextMenuDestroyed()
-{
-    delete this;
-}
-
 void WebContextMenuClient::downloadURL(const URL&)
 {
     // This is handled in the UI process.
@@ -74,7 +69,7 @@ void WebContextMenuClient::lookUpInDictionary(WebCore::Frame*)
     notImplemented();
 }
 
-bool WebContextMenuClient::isSpeaking()
+bool WebContextMenuClient::isSpeaking() const
 {
     notImplemented();
     return false;

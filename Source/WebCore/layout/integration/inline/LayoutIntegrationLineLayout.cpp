@@ -174,7 +174,13 @@ bool LineLayout::canUseForAfterInlineBoxStyleChange(const RenderInline& inlineBo
 bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
 {
     ASSERT(isEnabled());
-    return shouldInvalidateLineLayoutPathAfterContentChangeFor(parent, rendererWithNewContent, lineLayout);
+    return shouldInvalidateLineLayoutPathAfterChangeFor(parent, rendererWithNewContent, lineLayout, TypeOfChangeForInvalidation::NodeMutation);
+}
+
+bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout& lineLayout, bool isRemoval)
+{
+    ASSERT(isEnabled());
+    return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
 bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
@@ -1221,27 +1227,68 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
 void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& child)
 {
+    if (!m_inlineContent) {
+        // This should only be called on partial layout.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     auto& childLayoutBox = m_boxTree.insert(parent, child);
-    if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox)) {
+    if (is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
         invalidation.textInserted();
         return;
     }
+
+    if (childLayoutBox.isLineBreakBox()) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.inlineLevelBoxInserted(childLayoutBox);
+        return;
+    }
+
+    ASSERT_NOT_IMPLEMENTED_YET();
+}
+
+void LineLayout::removedFromTree(const RenderElement& parent, RenderObject& child)
+{
+    if (!m_inlineContent) {
+        // This should only be called on partial layout.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto childLayoutBox = m_boxTree.remove(parent, child);
+    if (is<Layout::InlineTextBox>(childLayoutBox.get())) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.textWillBeRemoved(WTFMove(childLayoutBox));
+        return;
+    }
+
+    if (childLayoutBox->isLineBreakBox()) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.inlineLevelBoxWillBeRemoved(WTFMove(childLayoutBox));
+        return;
+    }
+
     ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, int delta)
 {
-    m_boxTree.updateContent(textRenderer);
-    if (m_inlineContent) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
-        auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
-        if (delta >= 0)
-            invalidation.textInserted(&inlineTextBox, offset);
-        else
-            invalidation.textWillBeRemoved(inlineTextBox, offset);
+    if (!m_inlineContent) {
+        // This should only be called on partial layout.
+        ASSERT_NOT_REACHED();
         return;
     }
+
+    m_boxTree.updateContent(textRenderer);
+    auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+    auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
+    if (delta >= 0) {
+        invalidation.textInserted(&inlineTextBox, offset);
+        return;
+    }
+    invalidation.textWillBeRemoved(inlineTextBox, offset);
 }
 
 void LineLayout::releaseCaches(RenderView& view)

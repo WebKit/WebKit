@@ -31,6 +31,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/URL.h>
 
+// FIXME: Why is this distinct from EmptyPaymentCoordinatorClient?
 WebPaymentCoordinatorClient::WebPaymentCoordinatorClient()
 {
 }
@@ -39,7 +40,7 @@ WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient()
 {
 }
 
-std::optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)
+std::optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&) const
 {
     return std::nullopt;
 }
@@ -102,11 +103,6 @@ void WebPaymentCoordinatorClient::abortPaymentSession()
 
 void WebPaymentCoordinatorClient::cancelPaymentSession()
 {
-}
-
-void WebPaymentCoordinatorClient::paymentCoordinatorDestroyed()
-{
-    delete this;
 }
 
 #endif

@@ -4288,6 +4288,22 @@ CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, std::optional<bool
     return wrapper->property();
 }
 
+std::optional<CSSPropertyID> CSSPropertyAnimation::getAcceleratedPropertyAtIndex(int i, const Settings& settings)
+{
+    // FIXME: We really ought to expose an iterator to go over all animatable properties.
+    // https://bugs.webkit.org/show_bug.cgi?id=252807
+    auto& map = CSSPropertyAnimationWrapperMap::singleton();
+
+    if (i < 0 || static_cast<unsigned>(i) >= map.size())
+        return std::nullopt;
+
+    auto* wrapper = map.wrapperForIndex(i);
+    if (wrapper->isShorthandWrapper() || !wrapper->animationIsAccelerated(settings))
+        return std::nullopt;
+
+    return wrapper->property();
+}
+
 int CSSPropertyAnimation::getNumProperties()
 {
     return CSSPropertyAnimationWrapperMap::singleton().size();

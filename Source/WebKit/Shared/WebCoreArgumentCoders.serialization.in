@@ -1903,6 +1903,14 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     std::optional<WebCore::KeyboardScroll> keyboardScroll;
 };
 
+header: <WebCore/ScrollingCoordinatorTypes.h>
+[OptionSet] enum class WebCore::WheelEventProcessingSteps : uint8_t {
+    AsyncScrolling,
+    SynchronousScrolling,
+    NonBlockingDOMEventDispatch,
+    BlockingDOMEventDispatch,
+};
+
 header: <WebCore/ScrollingConstraints.h>
 [CustomHeader] class WebCore::AbsolutePositionConstraints {
     WebCore::FloatSize alignmentOffset();

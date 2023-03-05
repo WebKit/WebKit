@@ -67,6 +67,7 @@ public:
     virtual void animationWasCanceled() { };
     virtual void animationSuspensionStateDidChange(bool) { };
     virtual void animationTimelineDidChange(AnimationTimeline*) { };
+    virtual void animationDidFinish() { };
 
     WebAnimation* animation() const { return m_animation.get(); }
     virtual void setAnimation(WebAnimation*);

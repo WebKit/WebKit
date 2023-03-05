@@ -224,6 +224,15 @@ private:
         case Identity:
         case Opaque:
             return true;
+        case VectorExtractLane: {
+            // If VectorExtractLane meets the following conditions,
+            //   1. an operand is f32x4 or f64x2
+            //   2. extracting lane is 0
+            // this is effectively the same to Trunc for V128.
+            SIMDValue* simdValue = value->as<SIMDValue>();
+            auto lane = simdValue->simdLane();
+            return simdValue->immediate() == 0 && (lane == SIMDLane::f32x4 || lane == SIMDLane::f64x2);
+        }
         default:
             return false;
         }
@@ -3791,6 +3800,10 @@ private:
             SIMDValue* value = m_value->as<SIMDValue>();
             auto lane = value->simdLane();
             auto signMode = value->signMode();
+            if (value->immediate() == 0 && (lane == SIMDLane::f32x4 || lane == SIMDLane::f64x2)) {
+                ASSERT(tmp(m_value->child(0)) == tmp(m_value));
+                return;
+            }
             append(GET_SIGNED_SIMD_OPCODE(lane, signMode, Air::VectorExtractLane), Arg::imm(value->immediate()), tmp(value->child(0)), tmp(value));
             return;
         }

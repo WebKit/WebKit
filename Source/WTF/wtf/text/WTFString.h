@@ -509,7 +509,7 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
 {
     if (!m_impl) {
         constexpr const char* emptyString = "";
-        return function(Span { emptyString, emptyString });
+        return function(makeSpan(emptyString, emptyString));
     }
     return m_impl->tryGetUTF8(function, mode);
 }

@@ -177,16 +177,16 @@ struct ScrollUpdate {
 };
 
 enum class WheelEventProcessingSteps : uint8_t {
-    ScrollingThread                             = 1 << 0,
-    MainThreadForScrolling                      = 1 << 1,
-    MainThreadForNonBlockingDOMEventDispatch    = 1 << 2,
-    MainThreadForBlockingDOMEventDispatch       = 1 << 3,
+    AsyncScrolling                      = 1 << 0,
+    SynchronousScrolling                = 1 << 1, // Synchronous with painting and script.
+    NonBlockingDOMEventDispatch         = 1 << 2,
+    BlockingDOMEventDispatch            = 1 << 3,
 };
 
 struct WheelEventHandlingResult {
     OptionSet<WheelEventProcessingSteps> steps;
     bool wasHandled { false };
-    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }); }
+    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch, WheelEventProcessingSteps::BlockingDOMEventDispatch }); }
 
     static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
     {
@@ -255,16 +255,6 @@ template<> struct EnumTraits<WebCore::KeyboardScrollAction> {
         WebCore::KeyboardScrollAction::StartAnimation,
         WebCore::KeyboardScrollAction::StopWithAnimation,
         WebCore::KeyboardScrollAction::StopImmediately
-    >;
-};
-
-template<> struct EnumTraits<WebCore::WheelEventProcessingSteps> {
-    using values = EnumValues<
-        WebCore::WheelEventProcessingSteps,
-        WebCore::WheelEventProcessingSteps::ScrollingThread,
-        WebCore::WheelEventProcessingSteps::MainThreadForScrolling,
-        WebCore::WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch,
-        WebCore::WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch
     >;
 };
 

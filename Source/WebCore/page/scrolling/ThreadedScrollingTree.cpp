@@ -75,7 +75,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
     OptionSet<WheelEventProcessingSteps> processingSteps;
     if (gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
         allowLatching = true;
-        processingSteps = { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+        processingSteps = { WheelEventProcessingSteps::AsyncScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
 
     SetForScope disallowLatchingScope(m_allowLatching, allowLatching);

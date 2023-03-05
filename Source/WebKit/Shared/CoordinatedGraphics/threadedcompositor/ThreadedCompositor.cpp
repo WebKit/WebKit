@@ -56,7 +56,7 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
     : m_client(client)
     , m_paintFlags(paintFlags)
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
-    , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient))
+    , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient, WebCore::DisplayUpdate { 0, c_defaultRefreshRate / 1000 }))
 {
     {
         // Locking isn't really necessary here, but it's done for consistency.

@@ -570,6 +570,7 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWebAssemblySIMD() = false;
+    Options::useSinglePassBBQJIT() = false;
 #endif
 
     if (!Options::allowDoubleShape())

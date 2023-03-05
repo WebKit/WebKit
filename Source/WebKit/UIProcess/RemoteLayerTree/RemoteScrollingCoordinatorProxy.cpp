@@ -114,7 +114,7 @@ void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent
         m_scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(platformWheelEvent);
-    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread)) {
+    if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling)) {
         continueWheelEventHandling(wheelEvent, { processingSteps, false });
         return;
     }
@@ -268,6 +268,45 @@ OverscrollBehavior RemoteScrollingCoordinatorProxy::mainFrameHorizontalOverscrol
 OverscrollBehavior RemoteScrollingCoordinatorProxy::mainFrameVerticalOverscrollBehavior() const
 {
     return m_scrollingTree->mainFrameVerticalOverscrollBehavior();
+}
+
+WebCore::FloatRect RemoteScrollingCoordinatorProxy::computeVisibleContentRect()
+{
+    auto scrollPosition = currentMainFrameScrollPosition();
+    auto visibleContentRect = scrollingTree()->layoutViewport();
+    visibleContentRect.setX(scrollPosition.x());
+    visibleContentRect.setY(scrollPosition.y());
+    return visibleContentRect;
+}
+
+WebCore::FloatPoint RemoteScrollingCoordinatorProxy::currentMainFrameScrollPosition() const
+{
+    return m_scrollingTree->mainFrameScrollPosition();
+}
+
+IntPoint RemoteScrollingCoordinatorProxy::scrollOrigin() const
+{
+    return m_scrollingTree->mainFrameScrollOrigin();
+}
+
+int RemoteScrollingCoordinatorProxy::headerHeight() const
+{
+    return m_scrollingTree->mainFrameHeaderHeight();
+}
+
+int RemoteScrollingCoordinatorProxy::footerHeight() const
+{
+    return m_scrollingTree->mainFrameFooterHeight();
+}
+
+float RemoteScrollingCoordinatorProxy::mainFrameScaleFactor() const
+{
+    return m_scrollingTree->mainFrameScaleFactor();
+}
+
+FloatSize RemoteScrollingCoordinatorProxy::totalContentsSize() const
+{
+    return m_scrollingTree->totalContentsSize();
 }
 
 void RemoteScrollingCoordinatorProxy::displayDidRefresh(PlatformDisplayID displayID)

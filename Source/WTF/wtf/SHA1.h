@@ -59,7 +59,7 @@ public:
 
     void addBytes(const uint8_t* input, size_t length)
     {
-        addBytes(Span { input, length });
+        addBytes(makeSpan(input, length));
     }
 
     // Size of the SHA1 hash

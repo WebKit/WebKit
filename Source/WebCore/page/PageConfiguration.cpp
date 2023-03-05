@@ -61,13 +61,46 @@
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorCoordinatorClient.h"
 #endif
+#if ENABLE(APPLE_PAY)
+#include "PaymentCoordinatorClient.h"
+#endif
 
 namespace WebCore {
 
-PageConfiguration::PageConfiguration(PAL::SessionID sessionID, UniqueRef<EditorClient>&& editorClient, Ref<SocketProvider>&& socketProvider, UniqueRef<WebRTCProvider>&& webRTCProvider, Ref<CacheStorageProvider>&& cacheStorageProvider, Ref<UserContentProvider>&& userContentProvider, Ref<BackForwardClient>&& backForwardClient, Ref<CookieJar>&& cookieJar, UniqueRef<ProgressTrackerClient>&& progressTrackerClient, UniqueRef<FrameLoaderClient>&& loaderClientForMainFrame, UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider, UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider, Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry, UniqueRef<StorageProvider>&& storageProvider, UniqueRef<ModelPlayerProvider>&& modelPlayerProvider, Ref<BadgeClient>&& badgeClient)
+PageConfiguration::PageConfiguration(
+    PAL::SessionID sessionID,
+    UniqueRef<EditorClient>&& editorClient,
+    Ref<SocketProvider>&& socketProvider,
+    UniqueRef<WebRTCProvider>&& webRTCProvider,
+    Ref<CacheStorageProvider>&& cacheStorageProvider,
+    Ref<UserContentProvider>&& userContentProvider,
+    Ref<BackForwardClient>&& backForwardClient,
+    Ref<CookieJar>&& cookieJar,
+    UniqueRef<ProgressTrackerClient>&& progressTrackerClient,
+    UniqueRef<FrameLoaderClient>&& loaderClientForMainFrame,
+    UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider,
+    UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider,
+    Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry,
+    UniqueRef<StorageProvider>&& storageProvider,
+    UniqueRef<ModelPlayerProvider>&& modelPlayerProvider,
+    Ref<BadgeClient>&& badgeClient,
+#if ENABLE(CONTEXT_MENUS)
+    UniqueRef<ContextMenuClient>&& contextMenuClient,
+#endif
+#if ENABLE(APPLE_PAY)
+    UniqueRef<PaymentCoordinatorClient>&& paymentCoordinatorClient,
+#endif
+    UniqueRef<ChromeClient>&& chromeClient)
     : sessionID(sessionID)
+    , chromeClient(WTFMove(chromeClient))
+#if ENABLE(CONTEXT_MENUS)
+    , contextMenuClient(WTFMove(contextMenuClient))
+#endif
     , editorClient(WTFMove(editorClient))
     , socketProvider(WTFMove(socketProvider))
+#if ENABLE(APPLE_PAY)
+    , paymentCoordinatorClient(WTFMove(paymentCoordinatorClient))
+#endif
     , webRTCProvider(WTFMove(webRTCProvider))
     , progressTrackerClient(WTFMove(progressTrackerClient))
     , backForwardClient(WTFMove(backForwardClient))

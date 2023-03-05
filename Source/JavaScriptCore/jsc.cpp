@@ -1816,13 +1816,13 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
         if (arrayBuffer->impl()->isDetached())
             data = emptyString();
         else
-            data = Span { static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength() };
+            data = makeSpan(static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength());
     } else if (dataValue.inherits<JSArrayBufferView>()) {
         auto* view = jsCast<JSArrayBufferView*>(dataValue);
         if (view->isDetached())
             data = emptyString();
         else
-            data = Span { static_cast<const uint8_t*>(view->vector()), view->byteLength() };
+            data = makeSpan(static_cast<const uint8_t*>(view->vector()), view->byteLength());
     } else {
         data = dataValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });

@@ -629,6 +629,8 @@ void SourceBuffer::removeTimerFired()
 
         // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
         scheduleEvent(eventNames().updateendEvent);
+
+        m_source->monitorSourceBuffers();
     });
 }
 
@@ -1380,8 +1382,10 @@ void SourceBuffer::memoryPressure()
     if (!isManaged())
         return;
     m_private->memoryPressure(maximumBufferSize(), m_source->currentTime(), m_source->isEnded(), [this, protectedThis = Ref { *this }] (bool bufferedChange) {
-        if (bufferedChange)
-            scheduleEvent(eventNames().bufferedchangeEvent);
+        if (!bufferedChange)
+            return;
+        scheduleEvent(eventNames().bufferedchangeEvent);
+        m_source->monitorSourceBuffers();
     });
 }
 

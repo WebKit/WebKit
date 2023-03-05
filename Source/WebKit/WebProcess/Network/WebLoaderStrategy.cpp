@@ -887,7 +887,8 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
         return;
     }
 
-    if (auto* document = webPage.mainFrame()->document()) {
+    auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(webPage.mainFrame());
+    if (auto* document = mainFrame ? mainFrame->document() : nullptr) {
         if (shouldPreconnectAsFirstParty == ShouldPreconnectAsFirstParty::Yes)
             request.setFirstPartyForCookies(request.url());
         else

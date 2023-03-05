@@ -50,33 +50,30 @@
 
 namespace WebCore {
 
-PaymentCoordinator::PaymentCoordinator(PaymentCoordinatorClient& client)
-    : m_client { client }
+PaymentCoordinator::PaymentCoordinator(UniqueRef<PaymentCoordinatorClient>&& client)
+    : m_client(WTFMove(client))
 {
 }
 
-PaymentCoordinator::~PaymentCoordinator()
-{
-    m_client.paymentCoordinatorDestroyed();
-}
+PaymentCoordinator::~PaymentCoordinator() = default;
 
 bool PaymentCoordinator::supportsVersion(Document&, unsigned version) const
 {
-    auto supportsVersion = m_client.supportsVersion(version);
+    auto supportsVersion = m_client->supportsVersion(version);
     PAYMENT_COORDINATOR_RELEASE_LOG("supportsVersion(%d) -> %d", version, supportsVersion);
     return supportsVersion;
 }
 
 bool PaymentCoordinator::canMakePayments()
 {
-    auto canMakePayments = m_client.canMakePayments();
+    auto canMakePayments = m_client->canMakePayments();
     PAYMENT_COORDINATOR_RELEASE_LOG("canMakePayments() -> %d", canMakePayments);
     return canMakePayments;
 }
 
 void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
-    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = WeakPtr { *this }, document = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
+    m_client->canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = WeakPtr { *this }, document = WeakPtr<Document, WeakPtrImplWithEventTargetData> { document }, completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
         if (!weakThis)
             return completionHandler(false);
 
@@ -95,7 +92,7 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const
 void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("openPaymentSetup()");
-    m_client.openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
+    m_client->openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
 bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession& paymentSession, const ApplePaySessionPaymentRequest& paymentRequest)
@@ -105,7 +102,7 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
     auto linkIconURLs = LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }).map([](auto& icon) {
         return icon.url;
     });
-    auto showPaymentUI = m_client.showPaymentUI(document.url(), WTFMove(linkIconURLs), paymentRequest);
+    auto showPaymentUI = m_client->showPaymentUI(document.url(), WTFMove(linkIconURLs), paymentRequest);
     PAYMENT_COORDINATOR_RELEASE_LOG("beginPaymentSession() -> %d", showPaymentUI);
     if (!showPaymentUI)
         return false;
@@ -118,28 +115,28 @@ void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("completeMerchantValidation()");
-    m_client.completeMerchantValidation(paymentMerchantSession);
+    m_client->completeMerchantValidation(paymentMerchantSession);
 }
 
 void PaymentCoordinator::completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("completeShippingMethodSelection()");
-    m_client.completeShippingMethodSelection(WTFMove(update));
+    m_client->completeShippingMethodSelection(WTFMove(update));
 }
 
 void PaymentCoordinator::completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&& update)
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("completeShippingContactSelection()");
-    m_client.completeShippingContactSelection(WTFMove(update));
+    m_client->completeShippingContactSelection(WTFMove(update));
 }
 
 void PaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("completePaymentMethodSelection()");
-    m_client.completePaymentMethodSelection(WTFMove(update));
+    m_client->completePaymentMethodSelection(WTFMove(update));
 }
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
@@ -148,7 +145,7 @@ void PaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCouponCo
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("completeCouponCodeChange()");
-    m_client.completeCouponCodeChange(WTFMove(update));
+    m_client->completeCouponCodeChange(WTFMove(update));
 }
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
@@ -159,7 +156,7 @@ void PaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResu
 
     bool isFinalState = result.isFinalState();
     PAYMENT_COORDINATOR_RELEASE_LOG("completePaymentSession() (isFinalState: %d)", isFinalState);
-    m_client.completePaymentSession(WTFMove(result));
+    m_client->completePaymentSession(WTFMove(result));
 
     if (!isFinalState)
         return;
@@ -171,7 +168,7 @@ void PaymentCoordinator::abortPaymentSession()
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("abortPaymentSession()");
-    m_client.abortPaymentSession();
+    m_client->abortPaymentSession();
     m_activeSession = nullptr;
 }
 
@@ -179,7 +176,7 @@ void PaymentCoordinator::cancelPaymentSession()
 {
     ASSERT(m_activeSession);
     PAYMENT_COORDINATOR_RELEASE_LOG("cancelPaymentSession()");
-    m_client.cancelPaymentSession();
+    m_client->cancelPaymentSession();
 }
 
 void PaymentCoordinator::validateMerchant(URL&& validationURL)
@@ -272,13 +269,13 @@ std::optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, uns
     if (version < 3 && equalIgnoringASCIICase(paymentNetwork, "carteBancaire"_s))
         return std::nullopt;
 
-    return m_client.validatedPaymentNetwork(paymentNetwork);
+    return m_client->validatedPaymentNetwork(paymentNetwork);
 }
 
 void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("getSetupFeatures()");
-    m_client.getSetupFeatures(configuration, url, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
+    m_client->getSetupFeatures(configuration, url, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
         if (!weakThis)
             return;
         PAYMENT_COORDINATOR_RELEASE_LOG("getSetupFeatures() completed (features: %zu)", features.size());
@@ -289,7 +286,7 @@ void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& conf
 void PaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL& url, Vector<RefPtr<ApplePaySetupFeature>>&& features, CompletionHandler<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("beginApplePaySetup()");
-    m_client.beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    m_client->beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool success) mutable {
         if (!weakThis)
             return;
         PAYMENT_COORDINATOR_RELEASE_LOG("beginApplePaySetup() completed (success: %d)", success);
@@ -300,7 +297,7 @@ void PaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& co
 void PaymentCoordinator::endApplePaySetup()
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("endApplePaySetup()");
-    m_client.endApplePaySetup();
+    m_client->endApplePaySetup();
 }
 
 } // namespace WebCore

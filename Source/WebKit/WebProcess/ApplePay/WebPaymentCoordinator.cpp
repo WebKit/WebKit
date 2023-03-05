@@ -65,7 +65,7 @@ void WebPaymentCoordinator::networkProcessConnectionClosed()
 #endif
 }
 
-std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
+std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork) const
 {
     if (!m_availablePaymentNetworks)
         m_availablePaymentNetworks = platformAvailablePaymentNetworks();
@@ -154,11 +154,6 @@ void WebPaymentCoordinator::abortPaymentSession()
 void WebPaymentCoordinator::cancelPaymentSession()
 {
     send(Messages::WebPaymentCoordinatorProxy::CancelPaymentSession());
-}
-
-void WebPaymentCoordinator::paymentCoordinatorDestroyed()
-{
-    delete this;
 }
 
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const

@@ -271,11 +271,11 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
     }
 
     if (!nonMatchingColorIndex)
-        return averageColor(Span { samples }.subspan<1, numSamples - 1>());
+        return averageColor(makeSpan(samples).subspan<1, numSamples - 1>());
     else if (nonMatchingColorIndex == numSamples - 1)
-        return averageColor(Span { samples }.subspan<0, numSamples - 1>());
+        return averageColor(makeSpan(samples).subspan<0, numSamples - 1>());
     else
-        return averageColor(Span { samples });
+        return averageColor(makeSpan(samples));
 }
 
 } // namespace WebCore

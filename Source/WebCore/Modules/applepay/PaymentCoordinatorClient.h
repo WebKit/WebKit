@@ -46,9 +46,9 @@ struct ApplePayShippingMethodUpdate;
 
 class PaymentCoordinatorClient {
 public:
-    bool supportsVersion(unsigned version);
+    bool supportsVersion(unsigned version) const;
 
-    virtual std::optional<String> validatedPaymentNetwork(const String&) = 0;
+    virtual std::optional<String> validatedPaymentNetwork(const String&) const = 0;
     virtual bool canMakePayments() = 0;
     virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) = 0;
     virtual void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) = 0;
@@ -64,7 +64,6 @@ public:
     virtual void completePaymentSession(ApplePayPaymentAuthorizationResult&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;
-    virtual void paymentCoordinatorDestroyed() = 0;
 
     virtual bool isMockPaymentCoordinator() const { return false; }
     virtual bool isWebPaymentCoordinator() const { return false; }
@@ -73,7 +72,6 @@ public:
     virtual void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void endApplePaySetup() { }
 
-protected:
     virtual ~PaymentCoordinatorClient() = default;
 };
 

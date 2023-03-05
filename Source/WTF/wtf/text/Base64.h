@@ -343,7 +343,7 @@ public:
 
     template<typename CharacterType> void writeTo(CharacterType* destination) const
     {
-        base64Encode(m_base64.input, Span { destination, m_encodedLength }, m_base64.policy, m_base64.map);
+        base64Encode(m_base64.input, makeSpan(destination, m_encodedLength), m_base64.policy, m_base64.map);
     }
 
 private:

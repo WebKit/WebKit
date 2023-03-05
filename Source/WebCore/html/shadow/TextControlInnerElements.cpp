@@ -162,7 +162,7 @@ void TextControlInnerTextElement::updateInnerTextElementEditabilityImpl(bool isE
     const auto& value = isEditable ? plaintextOnlyAtom() : falseAtom();
     if (initialization) {
         Attribute attribute(contenteditableAttr, value);
-        parserSetAttributes(Span { &attribute, 1 });
+        parserSetAttributes(makeSpan(&attribute, 1));
     } else
         setAttributeWithoutSynchronization(contenteditableAttr, value);
 }

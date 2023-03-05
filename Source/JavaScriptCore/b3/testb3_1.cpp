@@ -871,6 +871,8 @@ void run(const char* filter)
         RUN(testVectorOrSelf());
         RUN(testVectorAndSelf());
         RUN(testVectorXorSelf());
+        RUN(testVectorExtractLane0Float());
+        RUN(testVectorExtractLane0Double());
         RUN_UNARY(testVectorXorOrAllOnesConstantToVectorAndXor, v128Operands());
         RUN_UNARY(testVectorXorAndAllOnesConstantToVectorOrXor, v128Operands());
         RUN_BINARY(testVectorOrConstants, v128Operands(), v128Operands());

@@ -81,9 +81,6 @@ SVGImage::~SVGImage()
         // Clear m_page, so that SVGImageChromeClient knows we're destructed.
         m_page = nullptr;
     }
-
-    // Verify that page teardown destroyed the Chrome
-    ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
 inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
@@ -466,8 +463,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
     if (allDataReceived) {
         auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
-        m_chromeClient = makeUnique<SVGImageChromeClient>(this);
-        pageConfiguration.chromeClient = m_chromeClient.get();
+        pageConfiguration.chromeClient = makeUniqueRef<SVGImageChromeClient>(this);
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The Cache code does not know about CachedImages holding Frames and

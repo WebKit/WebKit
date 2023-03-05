@@ -166,7 +166,7 @@ protected:
 
     void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
-    virtual void animationDidFinish() { };
+    virtual void animationDidFinish();
 
 private:
     enum class DidSeek : uint8_t { Yes, No };

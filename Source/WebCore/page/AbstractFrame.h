@@ -37,6 +37,7 @@ class AbstractDOMWindow;
 class AbstractFrameView;
 class HTMLFrameOwnerElement;
 class Page;
+class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
 
@@ -54,6 +55,10 @@ public:
     FrameTree& tree() const { return m_treeNode; }
     FrameIdentifier frameID() const { return m_frameID; }
     inline Page* page() const; // Defined in Page.h.
+    Settings& settings() const { return m_settings.get(); }
+    AbstractFrame& mainFrame() const { return m_mainFrame; }
+    bool isMainFrame() const { return this == &m_mainFrame; }
+
     WEBCORE_EXPORT void detachFromPage();
     inline HTMLFrameOwnerElement* ownerElement() const; // Defined in HTMLFrameOwnerElement.h.
     WEBCORE_EXPORT void disconnectOwnerElement();
@@ -74,6 +79,8 @@ private:
     mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
+    AbstractFrame& m_mainFrame;
+    const Ref<Settings> m_settings;
 };
 
 } // namespace WebCore

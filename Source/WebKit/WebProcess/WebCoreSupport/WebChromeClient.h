@@ -46,11 +46,11 @@ class WebChromeClient final : public WebCore::ChromeClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebChromeClient(WebPage&);
+    ~WebChromeClient();
 
     WebPage& page() const { return m_page; }
 
 private:
-    ~WebChromeClient();
 
     void didInsertMenuElement(WebCore::HTMLMenuElement&) final;
     void didRemoveMenuElement(WebCore::HTMLMenuElement&) final;
@@ -60,14 +60,14 @@ private:
     void chromeDestroyed() final;
     
     void setWindowRect(const WebCore::FloatRect&) final;
-    WebCore::FloatRect windowRect() final;
+    WebCore::FloatRect windowRect() const final;
     
-    WebCore::FloatRect pageRect() final;
+    WebCore::FloatRect pageRect() const final;
     
     void focus() final;
     void unfocus() final;
     
-    bool canTakeFocus(WebCore::FocusDirection) final;
+    bool canTakeFocus(WebCore::FocusDirection) const final;
     void takeFocus(WebCore::FocusDirection) final;
 
     void focusedElementChanged(WebCore::Element*) final;
@@ -80,22 +80,22 @@ private:
     WebCore::Page* createWindow(WebCore::Frame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
     
-    bool canRunModal() final;
+    bool canRunModal() const final;
     void runModal() final;
 
     void reportProcessCPUTime(Seconds, WebCore::ActivityStateForCPUSampling) final;
     
     void setToolbarsVisible(bool) final;
-    bool toolbarsVisible() final;
+    bool toolbarsVisible() const final;
     
     void setStatusbarVisible(bool) final;
-    bool statusbarVisible() final;
+    bool statusbarVisible() const final;
     
     void setScrollbarsVisible(bool) final;
-    bool scrollbarsVisible() final;
+    bool scrollbarsVisible() const final;
     
     void setMenubarVisible(bool) final;
-    bool menubarVisible() final;
+    bool menubarVisible() const final;
     
     void setResizable(bool) final;
     

@@ -2471,4 +2471,64 @@ void testVectorFmulByElementDouble()
     }
 }
 
+void testVectorExtractLane0Float()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address0);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<SIMDValue>(proc, Origin(), VectorExtractLane, B3::Float, SIMDLane::f32x4, SIMDSignMode::None, static_cast<uint8_t>(0), input0));
+
+    auto code = compileProc(proc);
+
+    auto checkFloat = [&](float a, float b) {
+        if (std::isnan(a))
+            CHECK(std::isnan(b));
+        else
+            CHECK(a == b);
+    };
+
+    for (auto& operand0 : floatingPointOperands<float>()) {
+        alignas(16) v128_t vector0;
+
+        vector0.f32x4[0] = operand0.value;
+        vector0.f32x4[1] = 1;
+        vector0.f32x4[2] = 2;
+        vector0.f32x4[3] = 3;
+
+        float result = invoke<float>(*code, &vector0);
+        checkFloat(result, operand0.value);
+    }
+}
+
+void testVectorExtractLane0Double()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address0);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<SIMDValue>(proc, Origin(), VectorExtractLane, B3::Double, SIMDLane::f64x2, SIMDSignMode::None, static_cast<uint8_t>(0), input0));
+
+    auto code = compileProc(proc);
+
+    auto checkDouble = [&](double a, double b) {
+        if (std::isnan(a))
+            CHECK(std::isnan(b));
+        else
+            CHECK(a == b);
+    };
+
+    for (auto& operand0 : floatingPointOperands<double>()) {
+        alignas(16) v128_t vector0;
+
+        vector0.f64x2[0] = operand0.value;
+        vector0.f64x2[1] = 32;
+
+        double result = invoke<double>(*code, &vector0);
+        checkDouble(result, operand0.value);
+    }
+}
+
 #endif // ENABLE(B3_JIT)

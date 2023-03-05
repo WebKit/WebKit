@@ -30,13 +30,13 @@
 #if ENABLE(APPLE_PAY)
 
 class WebPaymentCoordinatorClient final : public WebCore::PaymentCoordinatorClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebPaymentCoordinatorClient();
-
-private:
     ~WebPaymentCoordinatorClient();
 
-    std::optional<String> validatedPaymentNetwork(const String&) override;
+private:
+    std::optional<String> validatedPaymentNetwork(const String&) const override;
     bool canMakePayments() override;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) override;
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
@@ -51,7 +51,6 @@ private:
     void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&) override;
     void abortPaymentSession() override;
     void cancelPaymentSession() override;
-    void paymentCoordinatorDestroyed() override;
 };
 
 #endif

@@ -85,11 +85,7 @@ public:
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
-#if USE(GSTREAMER)
-    void monitorSourceBuffers() final;
-#else
-    void monitorSourceBuffers();
-#endif
+    void monitorSourceBuffers() override;
     bool isSeeking() const { return m_pendingSeekTime.isValid(); }
     Ref<TimeRanges> seekable();
     ExceptionOr<void> setLiveSeekableRange(double start, double end);
@@ -135,6 +131,12 @@ public:
 protected:
     explicit MediaSource(ScriptExecutionContext&);
 
+    bool hasBufferedTime(const MediaTime&);
+    bool hasCurrentTime();
+    bool hasFutureTime();
+
+    void scheduleEvent(const AtomString& eventName);
+
 private:
     // ActiveDOMObject.
     void stop() final;
@@ -157,11 +159,6 @@ private:
     Vector<PlatformTimeRanges> activeRanges() const;
 
     ExceptionOr<Ref<SourceBufferPrivate>> createSourceBufferPrivate(const ContentType&);
-    void scheduleEvent(const AtomString& eventName);
-
-    bool hasBufferedTime(const MediaTime&);
-    bool hasCurrentTime();
-    bool hasFutureTime();
 
     void regenerateActiveSourceBuffers();
     void updateBufferedIfNeeded();

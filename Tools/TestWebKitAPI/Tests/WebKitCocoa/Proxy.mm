@@ -40,7 +40,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
-#if HAVE(NW_PROXY_CONFIG)
+#if HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_http_connect, nw_proxy_config_t, __cdecl, (nw_endpoint_t, nw_protocol_options_t))
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_socksv5, nw_proxy_config_t, __cdecl, (nw_endpoint_t))
@@ -162,7 +162,7 @@ TEST(WebKit, SOCKS5)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
 
-#if HAVE(NW_PROXY_CONFIG)
+#if HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
 // FIXME: Enabling blocked by rdar://106168249
 TEST(WebKit, DISABLED_HTTPSProxyAPI)
 {
@@ -249,7 +249,7 @@ TEST(WebKit, SOCKS5API)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
-#endif // HAVE(NW_PROXY_CONFIG)
+#endif // HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
 
 static HTTPServer proxyAuthenticationServer()
 {

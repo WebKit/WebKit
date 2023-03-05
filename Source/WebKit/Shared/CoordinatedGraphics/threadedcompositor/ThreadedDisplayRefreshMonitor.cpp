@@ -37,10 +37,11 @@
 
 namespace WebKit {
 
-ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client)
+ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client, WebCore::DisplayUpdate displayUpdate)
     : WebCore::DisplayRefreshMonitor(displayID)
     , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
     , m_client(&client)
+    , m_displayUpdate(displayUpdate)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_displayRefreshTimer.setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);

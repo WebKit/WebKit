@@ -99,7 +99,6 @@ private:
 
     RefPtr<SVGSVGElement> rootElement() const;
 
-    std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;
     FloatSize m_intrinsicSize;
 

@@ -581,7 +581,7 @@ public:
 
     WebFrame& mainWebFrame() const { return m_mainFrame; }
 
-    WebCore::Frame* mainFrame() const; // May return nullptr.
+    WebCore::AbstractFrame* mainFrame() const; // May return nullptr.
     WebCore::FrameView* mainFrameView() const; // May return nullptr.
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
@@ -1030,7 +1030,7 @@ public:
     void confirmCompositionForTesting(const String& compositionString);
 
 #if PLATFORM(COCOA)
-    bool isSpeaking();
+    bool isSpeaking() const;
     void speak(const String&);
     void stopSpeaking();
 

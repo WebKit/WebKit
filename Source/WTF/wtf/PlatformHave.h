@@ -1371,6 +1371,11 @@
 #define HAVE_VPIO_DUCKING_LEVEL_API 1
 #endif
 
+// Set for GCC in Source/cmake/OptionsCommon.cmake and WebKitCompilerFlags.cmake.
+#if !defined(HAVE_STD_SPAN) && (COMPILER(CLANG) || COMPILER(MSVC))
+#define HAVE_STD_SPAN 1
+#endif
+
 #if !defined(HAVE_CGSTYLE_CREATE_SHADOW2) \
     && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000) \
     || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) \
@@ -1425,4 +1430,9 @@
 #if __has_include(<Network/proxy_config.h>)
 #define HAVE_NW_PROXY_CONFIG 1
 #endif
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
+    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000)
+#define HAVE_LOCKDOWN_MODE_ADDITIONS 1
 #endif

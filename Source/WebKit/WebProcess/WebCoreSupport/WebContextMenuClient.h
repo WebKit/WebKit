@@ -43,12 +43,10 @@ public:
     }
     
 private:
-    void contextMenuDestroyed() override;
-
     void downloadURL(const URL&) override;
     void searchWithGoogle(const WebCore::Frame*) override;
     void lookUpInDictionary(WebCore::Frame*) override;
-    bool isSpeaking() override;
+    bool isSpeaking() const override;
     void speak(const String&) override;
     void stopSpeaking() override;
 

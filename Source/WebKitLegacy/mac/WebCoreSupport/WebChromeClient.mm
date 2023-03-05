@@ -157,7 +157,6 @@ WebChromeClient::WebChromeClient(WebView *webView)
 
 void WebChromeClient::chromeDestroyed()
 {
-    delete this;
 }
 
 // These functions scale between window and WebView coordinates because JavaScript/DOM operations 
@@ -171,7 +170,7 @@ void WebChromeClient::setWindowRect(const FloatRect& rect)
 #endif
 }
 
-FloatRect WebChromeClient::windowRect()
+FloatRect WebChromeClient::windowRect() const
 {
 #if !PLATFORM(IOS_FAMILY)
     NSRect windowRect = [[m_webView _UIDelegateForwarder] webViewFrame:m_webView];
@@ -182,7 +181,7 @@ FloatRect WebChromeClient::windowRect()
 }
 
 // FIXME: We need to add API for setting and getting this.
-FloatRect WebChromeClient::pageRect()
+FloatRect WebChromeClient::pageRect() const
 {
     return [m_webView frame];
 }
@@ -197,7 +196,7 @@ void WebChromeClient::unfocus()
     [[m_webView _UIDelegateForwarder] webViewUnfocus:m_webView];
 }
 
-bool WebChromeClient::canTakeFocus(FocusDirection)
+bool WebChromeClient::canTakeFocus(FocusDirection) const
 {
     // There's unfortunately no way to determine if we will become first responder again
     // once we give it up, so we just have to guess that we won't.
@@ -285,7 +284,7 @@ void WebChromeClient::show()
     [[m_webView _UIDelegateForwarder] webViewShow:m_webView];
 }
 
-bool WebChromeClient::canRunModal()
+bool WebChromeClient::canRunModal() const
 {
     return [[m_webView UIDelegate] respondsToSelector:@selector(webViewRunModal:)];
 }
@@ -300,7 +299,7 @@ void WebChromeClient::setToolbarsVisible(bool b)
     [[m_webView _UIDelegateForwarder] webView:m_webView setToolbarsVisible:b];
 }
 
-bool WebChromeClient::toolbarsVisible()
+bool WebChromeClient::toolbarsVisible() const
 {
     return CallUIDelegateReturningBoolean(NO, m_webView, @selector(webViewAreToolbarsVisible:));
 }
@@ -310,7 +309,7 @@ void WebChromeClient::setStatusbarVisible(bool b)
     [[m_webView _UIDelegateForwarder] webView:m_webView setStatusBarVisible:b];
 }
 
-bool WebChromeClient::statusbarVisible()
+bool WebChromeClient::statusbarVisible() const
 {
     return CallUIDelegateReturningBoolean(NO, m_webView, @selector(webViewIsStatusBarVisible:));
 }
@@ -320,7 +319,7 @@ void WebChromeClient::setScrollbarsVisible(bool b)
     [[[m_webView mainFrame] frameView] setAllowsScrolling:b];
 }
 
-bool WebChromeClient::scrollbarsVisible()
+bool WebChromeClient::scrollbarsVisible() const
 {
     return [[[m_webView mainFrame] frameView] allowsScrolling];
 }
@@ -331,7 +330,7 @@ void WebChromeClient::setMenubarVisible(bool)
     return;
 }
 
-bool WebChromeClient::menubarVisible()
+bool WebChromeClient::menubarVisible() const
 {
     // The menubar is always visible in Mac OS X.
     return true;

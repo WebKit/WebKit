@@ -1004,8 +1004,8 @@ sub printTagNameCppFile
     print F "TagName findTagName(const String& name)\n";
     print F "{\n";
     print F "    if (name.is8Bit())\n";
-    print F "        return findTagFromBuffer(Span(name.characters8(), name.length()));\n";
-    print F "    return findTagFromBuffer(Span(name.characters16(), name.length()));\n";
+    print F "        return findTagFromBuffer(makeSpan(name.characters8(), name.length()));\n";
+    print F "    return findTagFromBuffer(makeSpan(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "#endif\n";
     print F "\n";
@@ -1167,8 +1167,8 @@ sub printElementNameCppFile
     print F "ElementName findElementName(Namespace ns, const String& name)\n";
     print F "{\n";
     print F "    if (name.is8Bit())\n";
-    print F "        return findElementFromBuffer(ns, Span(name.characters8(), name.length()));\n";
-    print F "    return findElementFromBuffer(ns, Span(name.characters16(), name.length()));\n";
+    print F "        return findElementFromBuffer(ns, makeSpan(name.characters8(), name.length()));\n";
+    print F "    return findElementFromBuffer(ns, makeSpan(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "\n";
     print F "const QualifiedName& qualifiedNameForElement(ElementName elementName)\n";

@@ -516,7 +516,7 @@ private:
 
             m_parsingBuffer.advance();
         }
-        return Span { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+        return makeSpan(start, static_cast<size_t>(m_parsingBuffer.position() - start));
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a
@@ -827,24 +827,23 @@ private:
                 }
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             }
-            if (attributeName.size() >= 2 && attributeName[0] == 'o' && attributeName[1] == 'n') {
+            if (attributeName.size() > 2 && attributeName[0] == 'o' && attributeName[1] == 'n') {
                 // These attributes likely contain script that may be executed at random
                 // points, which could cause problems if parsing via the fast path
                 // fails. For example, an image's onload event.
                 return didFail(HTMLFastPathResult::FailedOnAttribute);
             }
+            if (attributeName.size() == 2 && attributeName[0] == 'i' && attributeName[1] == 's')
+                return didFail(HTMLFastPathResult::FailedParsingAttributes);
             skipWhile<isHTMLSpace>(m_parsingBuffer);
             std::variant<LCharSpan, UCharSpan> attributeValue;
-            if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '=') {
-                m_parsingBuffer.advance();
+            if (skipExactly(m_parsingBuffer, '=')) {
                 attributeValue = scanAttributeValue();
                 skipWhile<isHTMLSpace>(m_parsingBuffer);
             }
             auto attribute = processAttribute(attributeName, attributeValue);
-            m_attributeBuffer.append(attribute);
-            if (attribute.name() == HTMLNames::isAttr)
-                return didFail(HTMLFastPathResult::FailedParsingAttributes);
             m_attributeNames.append(attribute.localName().impl());
+            m_attributeBuffer.append(WTFMove(attribute));
         }
         std::sort(m_attributeNames.begin(), m_attributeNames.end());
         if (std::adjacent_find(m_attributeNames.begin(), m_attributeNames.end()) != m_attributeNames.end()) {

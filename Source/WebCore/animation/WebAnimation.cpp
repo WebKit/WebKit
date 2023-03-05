@@ -794,6 +794,12 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
     }
 }
 
+void WebAnimation::animationDidFinish()
+{
+    if (m_effect)
+        m_effect->animationDidFinish();
+}
+
 void WebAnimation::resetPendingTasks()
 {
     // The procedure to reset an animation's pending tasks for animation is as follows:
@@ -1424,7 +1430,9 @@ bool WebAnimation::virtualHasPendingActivity() const
 
 void WebAnimation::updateRelevance()
 {
-    m_isRelevant = computeRelevance();
+    auto wasRelevant = std::exchange(m_isRelevant, computeRelevance());
+    if (wasRelevant != m_isRelevant && is<KeyframeEffect>(m_effect))
+        downcast<KeyframeEffect>(*m_effect).animationRelevancyDidChange();
 }
 
 bool WebAnimation::computeRelevance()

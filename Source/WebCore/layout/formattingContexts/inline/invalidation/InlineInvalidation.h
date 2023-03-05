@@ -52,9 +52,10 @@ public:
 
     void textInserted(const InlineTextBox* damagedInlineTextBox = nullptr, std::optional<size_t> offset = { });
     void textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
+    void textWillBeRemoved(UniqueRef<Box>&&);
 
     void inlineLevelBoxInserted(const Box&);
-    void inlineLevelBoxWillBeRemoved(const Box&);
+    void inlineLevelBoxWillBeRemoved(UniqueRef<Box>&&);
 
     void horizontalConstraintChanged();
 

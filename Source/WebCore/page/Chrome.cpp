@@ -72,126 +72,126 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-Chrome::Chrome(Page& page, ChromeClient& client)
+Chrome::Chrome(Page& page, UniqueRef<ChromeClient>&& client)
     : m_page(page)
-    , m_client(client)
+    , m_client(WTFMove(client))
 {
 }
 
 Chrome::~Chrome()
 {
-    m_client.chromeDestroyed();
+    m_client->chromeDestroyed();
 }
 
 void Chrome::invalidateRootView(const IntRect& updateRect)
 {
-    m_client.invalidateRootView(updateRect);
+    m_client->invalidateRootView(updateRect);
 }
 
 void Chrome::invalidateContentsAndRootView(const IntRect& updateRect)
 {
-    m_client.invalidateContentsAndRootView(updateRect);
+    m_client->invalidateContentsAndRootView(updateRect);
 }
 
 void Chrome::invalidateContentsForSlowScroll(const IntRect& updateRect)
 {
-    m_client.invalidateContentsForSlowScroll(updateRect);
+    m_client->invalidateContentsForSlowScroll(updateRect);
 }
 
 void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    m_client.scroll(scrollDelta, rectToScroll, clipRect);
+    m_client->scroll(scrollDelta, rectToScroll, clipRect);
     InspectorInstrumentation::didScroll(m_page);
 }
 
 IntPoint Chrome::screenToRootView(const IntPoint& point) const
 {
-    return m_client.screenToRootView(point);
+    return m_client->screenToRootView(point);
 }
 
 IntRect Chrome::rootViewToScreen(const IntRect& rect) const
 {
-    return m_client.rootViewToScreen(rect);
+    return m_client->rootViewToScreen(rect);
 }
     
 IntPoint Chrome::accessibilityScreenToRootView(const IntPoint& point) const
 {
-    return m_client.accessibilityScreenToRootView(point);
+    return m_client->accessibilityScreenToRootView(point);
 }
 
 IntRect Chrome::rootViewToAccessibilityScreen(const IntRect& rect) const
 {
-    return m_client.rootViewToAccessibilityScreen(rect);
+    return m_client->rootViewToAccessibilityScreen(rect);
 }
 
 PlatformPageClient Chrome::platformPageClient() const
 {
-    return m_client.platformPageClient();
+    return m_client->platformPageClient();
 }
 
 void Chrome::contentsSizeChanged(Frame& frame, const IntSize& size) const
 {
-    m_client.contentsSizeChanged(frame, size);
+    m_client->contentsSizeChanged(frame, size);
 }
 
 void Chrome::scrollContainingScrollViewsToRevealRect(const IntRect& rect) const
 {
-    m_client.scrollContainingScrollViewsToRevealRect(rect);
+    m_client->scrollContainingScrollViewsToRevealRect(rect);
 }
 
 void Chrome::scrollMainFrameToRevealRect(const IntRect& rect) const
 {
-    m_client.scrollMainFrameToRevealRect(rect);
+    m_client->scrollMainFrameToRevealRect(rect);
 }
 
-void Chrome::setWindowRect(const FloatRect& rect) const
+void Chrome::setWindowRect(const FloatRect& rect)
 {
-    m_client.setWindowRect(rect);
+    m_client->setWindowRect(rect);
 }
 
 FloatRect Chrome::windowRect() const
 {
-    return m_client.windowRect();
+    return m_client->windowRect();
 }
 
 FloatRect Chrome::pageRect() const
 {
-    return m_client.pageRect();
+    return m_client->pageRect();
 }
 
-void Chrome::focus() const
+void Chrome::focus()
 {
-    m_client.focus();
+    m_client->focus();
 }
 
-void Chrome::unfocus() const
+void Chrome::unfocus()
 {
-    m_client.unfocus();
+    m_client->unfocus();
 }
 
 bool Chrome::canTakeFocus(FocusDirection direction) const
 {
-    return m_client.canTakeFocus(direction);
+    return m_client->canTakeFocus(direction);
 }
 
-void Chrome::takeFocus(FocusDirection direction) const
+void Chrome::takeFocus(FocusDirection direction)
 {
-    m_client.takeFocus(direction);
+    m_client->takeFocus(direction);
 }
 
-void Chrome::focusedElementChanged(Element* element) const
+void Chrome::focusedElementChanged(Element* element)
 {
-    m_client.focusedElementChanged(element);
+    m_client->focusedElementChanged(element);
 }
 
-void Chrome::focusedFrameChanged(Frame* frame) const
+void Chrome::focusedFrameChanged(Frame* frame)
 {
-    m_client.focusedFrameChanged(frame);
+    m_client->focusedFrameChanged(frame);
 }
 
-Page* Chrome::createWindow(Frame& frame, const WindowFeatures& features, const NavigationAction& action) const
+Page* Chrome::createWindow(Frame& frame, const WindowFeatures& features, const NavigationAction& action)
 {
-    Page* newPage = m_client.createWindow(frame, features, action);
+    Page* newPage = m_client->createWindow(frame, features, action);
     if (!newPage)
         return nullptr;
 
@@ -201,17 +201,17 @@ Page* Chrome::createWindow(Frame& frame, const WindowFeatures& features, const N
     return newPage;
 }
 
-void Chrome::show() const
+void Chrome::show()
 {
-    m_client.show();
+    m_client->show();
 }
 
 bool Chrome::canRunModal() const
 {
-    return m_client.canRunModal();
+    return m_client->canRunModal();
 }
 
-void Chrome::runModal() const
+void Chrome::runModal()
 {
     // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
@@ -227,57 +227,57 @@ void Chrome::runModal() const
     SetForScope entryScopeNullifier { localMainFrame->document()->vm().entryScope, nullptr };
 
     TimerBase::fireTimersInNestedEventLoop();
-    m_client.runModal();
+    m_client->runModal();
 }
 
-void Chrome::setToolbarsVisible(bool b) const
+void Chrome::setToolbarsVisible(bool b)
 {
-    m_client.setToolbarsVisible(b);
+    m_client->setToolbarsVisible(b);
 }
 
 bool Chrome::toolbarsVisible() const
 {
-    return m_client.toolbarsVisible();
+    return m_client->toolbarsVisible();
 }
 
-void Chrome::setStatusbarVisible(bool b) const
+void Chrome::setStatusbarVisible(bool b)
 {
-    m_client.setStatusbarVisible(b);
+    m_client->setStatusbarVisible(b);
 }
 
 bool Chrome::statusbarVisible() const
 {
-    return m_client.statusbarVisible();
+    return m_client->statusbarVisible();
 }
 
-void Chrome::setScrollbarsVisible(bool b) const
+void Chrome::setScrollbarsVisible(bool b)
 {
-    m_client.setScrollbarsVisible(b);
+    m_client->setScrollbarsVisible(b);
 }
 
 bool Chrome::scrollbarsVisible() const
 {
-    return m_client.scrollbarsVisible();
+    return m_client->scrollbarsVisible();
 }
 
-void Chrome::setMenubarVisible(bool b) const
+void Chrome::setMenubarVisible(bool b)
 {
-    m_client.setMenubarVisible(b);
+    m_client->setMenubarVisible(b);
 }
 
 bool Chrome::menubarVisible() const
 {
-    return m_client.menubarVisible();
+    return m_client->menubarVisible();
 }
 
-void Chrome::setResizable(bool b) const
+void Chrome::setResizable(bool b)
 {
-    m_client.setResizable(b);
+    m_client->setResizable(b);
 }
 
 bool Chrome::canRunBeforeUnloadConfirmPanel()
 {
-    return m_client.canRunBeforeUnloadConfirmPanel();
+    return m_client->canRunBeforeUnloadConfirmPanel();
 }
 
 bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
@@ -286,12 +286,12 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
-    return m_client.runBeforeUnloadConfirmPanel(message, frame);
+    return m_client->runBeforeUnloadConfirmPanel(message, frame);
 }
 
 void Chrome::closeWindow()
 {
-    m_client.closeWindow();
+    m_client->closeWindow();
 }
 
 void Chrome::runJavaScriptAlert(Frame& frame, const String& message)
@@ -303,7 +303,7 @@ void Chrome::runJavaScriptAlert(Frame& frame, const String& message)
     notifyPopupOpeningObservers();
     String displayMessage = frame.displayStringModifiedByEncoding(message);
 
-    m_client.runJavaScriptAlert(frame, displayMessage);
+    m_client->runJavaScriptAlert(frame, displayMessage);
 }
 
 bool Chrome::runJavaScriptConfirm(Frame& frame, const String& message)
@@ -313,7 +313,7 @@ bool Chrome::runJavaScriptConfirm(Frame& frame, const String& message)
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     notifyPopupOpeningObservers();
-    return m_client.runJavaScriptConfirm(frame, frame.displayStringModifiedByEncoding(message));
+    return m_client->runJavaScriptConfirm(frame, frame.displayStringModifiedByEncoding(message));
 }
 
 bool Chrome::runJavaScriptPrompt(Frame& frame, const String& prompt, const String& defaultValue, String& result)
@@ -325,7 +325,7 @@ bool Chrome::runJavaScriptPrompt(Frame& frame, const String& prompt, const Strin
     notifyPopupOpeningObservers();
     String displayPrompt = frame.displayStringModifiedByEncoding(prompt);
 
-    bool ok = m_client.runJavaScriptPrompt(frame, displayPrompt, frame.displayStringModifiedByEncoding(defaultValue), result);
+    bool ok = m_client->runJavaScriptPrompt(frame, displayPrompt, frame.displayStringModifiedByEncoding(defaultValue), result);
     if (ok)
         result = frame.displayStringModifiedByEncoding(result);
 
@@ -334,7 +334,7 @@ bool Chrome::runJavaScriptPrompt(Frame& frame, const String& prompt, const Strin
 
 void Chrome::setStatusbarText(Frame& frame, const String& status)
 {
-    m_client.setStatusbarText(frame.displayStringModifiedByEncoding(status));
+    m_client->setStatusbarText(frame.displayStringModifiedByEncoding(status));
 }
 
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
@@ -349,7 +349,7 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
     String toolTip;
     TextDirection toolTipDirection;
     getToolTip(result, toolTip, toolTipDirection);
-    m_client.mouseDidMoveOverElement(result, modifierFlags, toolTip, toolTipDirection);
+    m_client->mouseDidMoveOverElement(result, modifierFlags, toolTip, toolTipDirection);
 
     InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
 }
@@ -419,18 +419,18 @@ bool Chrome::print(Frame& frame)
         return false;
     }
 
-    m_client.print(frame, frame.document()->titleWithDirection());
+    m_client->print(frame, frame.document()->titleWithDirection());
     return true;
 }
 
 void Chrome::enableSuddenTermination()
 {
-    m_client.enableSuddenTermination();
+    m_client->enableSuddenTermination();
 }
 
 void Chrome::disableSuddenTermination()
 {
-    m_client.disableSuddenTermination();
+    m_client->disableSuddenTermination();
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -443,7 +443,7 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& cli
     return nullptr;
 #else
     notifyPopupOpeningObservers();
-    return m_client.createColorChooser(client, initialColor);
+    return m_client->createColorChooser(client, initialColor);
 #endif
 }
 
@@ -454,7 +454,7 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& cli
 std::unique_ptr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
     notifyPopupOpeningObservers();
-    return m_client.createDataListSuggestionPicker(client);
+    return m_client->createDataListSuggestionPicker(client);
 }
 
 #endif
@@ -468,7 +468,7 @@ std::unique_ptr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserCl
     return nullptr;
 #else
     notifyPopupOpeningObservers();
-    return m_client.createDateTimeChooser(client);
+    return m_client->createDateTimeChooser(client);
 #endif
 }
 
@@ -477,42 +477,42 @@ std::unique_ptr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserCl
 void Chrome::runOpenPanel(Frame& frame, FileChooser& fileChooser)
 {
     notifyPopupOpeningObservers();
-    m_client.runOpenPanel(frame, fileChooser);
+    m_client->runOpenPanel(frame, fileChooser);
 }
 
 void Chrome::showShareSheet(ShareDataWithParsedURL& shareData, CompletionHandler<void(bool)>&& callback)
 {
-    m_client.showShareSheet(shareData, WTFMove(callback));
+    m_client->showShareSheet(shareData, WTFMove(callback));
 }
 
 void Chrome::showContactPicker(const ContactsRequestData& requestData, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback)
 {
-    m_client.showContactPicker(requestData, WTFMove(callback));
+    m_client->showContactPicker(requestData, WTFMove(callback));
 }
 
 void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {
-    m_client.loadIconForFiles(filenames, loader);
+    m_client->loadIconForFiles(filenames, loader);
 }
 
 FloatSize Chrome::screenSize() const
 {
-    return m_client.screenSize();
+    return m_client->screenSize();
 }
 
 FloatSize Chrome::availableScreenSize() const
 {
-    return m_client.availableScreenSize();
+    return m_client->availableScreenSize();
 }
 
 FloatSize Chrome::overrideScreenSize() const
 {
-    return m_client.overrideScreenSize();
+    return m_client->overrideScreenSize();
 }
 
 void Chrome::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const
 {
-    m_client.dispatchDisabledAdaptationsDidChange(disabledAdaptations);
+    m_client->dispatchDisabledAdaptationsDidChange(disabledAdaptations);
 }
 
 void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
@@ -521,51 +521,51 @@ void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& argume
     if (m_isDispatchViewportDataDidChangeSuppressed)
         return;
 #endif
-    m_client.dispatchViewportPropertiesDidChange(arguments);
+    m_client->dispatchViewportPropertiesDidChange(arguments);
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
 void Chrome::storeAppHighlight(AppHighlight&& highlight) const
 {
-    m_client.storeAppHighlight(WTFMove(highlight));
+    m_client->storeAppHighlight(WTFMove(highlight));
 }
 #endif
 
 void Chrome::setCursor(const Cursor& cursor)
 {
-    m_client.setCursor(cursor);
+    m_client->setCursor(cursor);
 }
 
 void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
-    m_client.setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
+    m_client->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
 RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck) const
 {
-    return m_client.createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheck);
+    return m_client->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheck);
 }
 
 RefPtr<ImageBuffer> Chrome::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
-    return m_client.sinkIntoImageBuffer(WTFMove(imageBuffer));
+    return m_client->sinkIntoImageBuffer(WTFMove(imageBuffer));
 }
 
 std::unique_ptr<WorkerClient> Chrome::createWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
-    return m_client.createWorkerClient(dispatcher);
+    return m_client->createWorkerClient(dispatcher);
 }
 
 #if ENABLE(WEBGL)
 RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
-    return m_client.createGraphicsContextGL(attributes);
+    return m_client->createGraphicsContextGL(attributes);
 }
 #endif
 
 RefPtr<PAL::WebGPU::GPU> Chrome::createGPUForWebGPU() const
 {
-    return m_client.createGPUForWebGPU();
+    return m_client->createGPUForWebGPU();
 }
 
 PlatformDisplayID Chrome::displayID() const
@@ -580,29 +580,29 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fr
 
 bool Chrome::selectItemWritingDirectionIsNatural()
 {
-    return m_client.selectItemWritingDirectionIsNatural();
+    return m_client->selectItemWritingDirectionIsNatural();
 }
 
 bool Chrome::selectItemAlignmentFollowsMenuWritingDirection()
 {
-    return m_client.selectItemAlignmentFollowsMenuWritingDirection();
+    return m_client->selectItemAlignmentFollowsMenuWritingDirection();
 }
 
 RefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient& client) const
 {
     notifyPopupOpeningObservers();
-    return m_client.createPopupMenu(client);
+    return m_client->createPopupMenu(client);
 }
 
 RefPtr<SearchPopupMenu> Chrome::createSearchPopupMenu(PopupMenuClient& client) const
 {
     notifyPopupOpeningObservers();
-    return m_client.createSearchPopupMenu(client);
+    return m_client->createSearchPopupMenu(client);
 }
 
 bool Chrome::requiresFullscreenForVideoPlayback()
 {
-    return m_client.requiresFullscreenForVideoPlayback();
+    return m_client->requiresFullscreenForVideoPlayback();
 }
 
 void Chrome::didReceiveDocType(Frame& frame)
@@ -614,7 +614,7 @@ void Chrome::didReceiveDocType(Frame& frame)
         return;
 
     auto* doctype = frame.document()->doctype();
-    m_client.didReceiveMobileDocType(doctype && doctype->publicId().containsIgnoringASCIICase("xhtml mobile"_s));
+    m_client->didReceiveMobileDocType(doctype && doctype->publicId().containsIgnoringASCIICase("xhtml mobile"_s));
 #endif
 }
 

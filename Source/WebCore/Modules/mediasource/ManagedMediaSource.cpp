@@ -28,11 +28,18 @@
 
 #if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
 
+#include "Event.h"
+#include "EventNames.h"
+#include "SourceBufferList.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ManagedMediaSource);
+
+static constexpr double lowThreshold = 10.0;
+static constexpr double highThreshold = 30.0;
+static constexpr double rebufferingThreshold = 10.0;
 
 Ref<ManagedMediaSource> ManagedMediaSource::create(ScriptExecutionContext& context)
 {
@@ -61,6 +68,86 @@ ExceptionOr<ManagedMediaSource::PreferredQuality> ManagedMediaSource::quality() 
 bool ManagedMediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
 {
     return MediaSource::isTypeSupported(context, type);
+}
+
+void ManagedMediaSource::startStreaming()
+{
+    if (m_streaming)
+        return;
+    m_streaming = true;
+    scheduleEvent(eventNames().startstreamingEvent);
+}
+
+void ManagedMediaSource::endStreaming()
+{
+    if (!m_streaming)
+        return;
+    m_streaming = false;
+    scheduleEvent(eventNames().endstreamingEvent);
+}
+
+bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
+{
+    if (ranges.length() < 1)
+        return true;
+
+    ASSERT(ranges.length() == 1);
+
+    auto bufferedRanges = buffered();
+    if (!bufferedRanges || !bufferedRanges->length())
+        return false;
+    bufferedRanges->intersectWith(ranges);
+
+    if (!bufferedRanges->length())
+        return false;
+
+    auto hasBufferedTime = [&] (const MediaTime& time) {
+        return abs(bufferedRanges->nearest(time) - time) <= currentTimeFudgeFactor();
+    };
+
+    if (!hasBufferedTime(ranges.minimumBufferedTime()) || !hasBufferedTime(ranges.maximumBufferedTime()))
+        return false;
+
+    if (bufferedRanges->length() == 1)
+        return true;
+
+    // Ensure that if we have a gap in the buffered range, it is smaller than the fudge factor;
+    for (unsigned i = 1; i < bufferedRanges->length(); i++) {
+        if (bufferedRanges->end(i) - bufferedRanges->start(i-1) > currentTimeFudgeFactor())
+            return false;
+    }
+
+    return true;
+}
+
+void ManagedMediaSource::monitorSourceBuffers()
+{
+    if (isClosed()) {
+        endStreaming();
+        return;
+    }
+
+    MediaSource::monitorSourceBuffers();
+
+    if (!activeSourceBuffers() || !activeSourceBuffers()->length()) {
+        startStreaming();
+        return;
+    }
+
+    auto currentTime = this->currentTime();
+
+    if (!m_streaming) {
+        MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(lowThreshold));
+        PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, aheadTime) };
+        if (!isBuffered(neededBufferedRange))
+            startStreaming();
+        return;
+    }
+
+    MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(highThreshold));
+    PlatformTimeRanges neededBufferedRange { currentTime, aheadTime };
+    if (isBuffered(neededBufferedRange))
+        endStreaming();
 }
 
 }

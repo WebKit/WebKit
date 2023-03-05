@@ -153,14 +153,14 @@ public:
     virtual void chromeDestroyed() = 0;
 
     virtual void setWindowRect(const FloatRect&) = 0;
-    virtual FloatRect windowRect() = 0;
+    virtual FloatRect windowRect() const = 0;
 
-    virtual FloatRect pageRect() = 0;
+    virtual FloatRect pageRect() const = 0;
 
     virtual void focus() = 0;
     virtual void unfocus() = 0;
 
-    virtual bool canTakeFocus(FocusDirection) = 0;
+    virtual bool canTakeFocus(FocusDirection) const = 0;
     virtual void takeFocus(FocusDirection) = 0;
 
     virtual void focusedElementChanged(Element*) = 0;
@@ -174,20 +174,20 @@ public:
     virtual Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) = 0;
     virtual void show() = 0;
 
-    virtual bool canRunModal() = 0;
+    virtual bool canRunModal() const = 0;
     virtual void runModal() = 0;
 
     virtual void setToolbarsVisible(bool) = 0;
-    virtual bool toolbarsVisible() = 0;
+    virtual bool toolbarsVisible() const = 0;
 
     virtual void setStatusbarVisible(bool) = 0;
-    virtual bool statusbarVisible() = 0;
+    virtual bool statusbarVisible() const = 0;
 
     virtual void setScrollbarsVisible(bool) = 0;
-    virtual bool scrollbarsVisible() = 0;
+    virtual bool scrollbarsVisible() const = 0;
 
     virtual void setMenubarVisible(bool) = 0;
-    virtual bool menubarVisible() = 0;
+    virtual bool menubarVisible() const = 0;
 
     virtual void setResizable(bool) = 0;
 
@@ -632,9 +632,10 @@ public:
 
     virtual void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) = 0;
 
+    WEBCORE_EXPORT virtual ~ChromeClient();
+
 protected:
     WEBCORE_EXPORT ChromeClient();
-    WEBCORE_EXPORT virtual ~ChromeClient();
 };
 
 } // namespace WebCore

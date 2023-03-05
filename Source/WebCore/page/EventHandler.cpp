@@ -3019,7 +3019,7 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
 #endif
 
     m_isHandlingWheelEvent = true;
-    auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling));
+    auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling));
     
     setFrameWasScrolledByUser();
 
@@ -3050,7 +3050,7 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
             }
         }
 
-        auto isCancelable = processingSteps.contains(WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch) ? Event::IsCancelable::Yes : Event::IsCancelable::No;
+        auto isCancelable = processingSteps.contains(WheelEventProcessingSteps::BlockingDOMEventDispatch) ? Event::IsCancelable::Yes : Event::IsCancelable::No;
         if (!element->dispatchWheelEvent(event, handling, isCancelable)) {
             m_isHandlingWheelEvent = false;
             if (scrollableArea && scrollableArea->scrollShouldClearLatchedState()) {

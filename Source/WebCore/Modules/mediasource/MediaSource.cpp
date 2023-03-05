@@ -209,6 +209,9 @@ void MediaSource::seekToTime(const MediaTime& time)
         // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
         // than HAVE_METADATA.
         m_private->waitForSeekCompleted();
+
+        monitorSourceBuffers();
+
         return;
     }
     // ↳ Otherwise
@@ -1046,16 +1049,20 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 
     if (isOpen()) {
         scheduleEvent(eventNames().sourceopenEvent);
+        monitorSourceBuffers();
         return;
     }
 
     if (oldState == ReadyState::Open && newState == ReadyState::Ended) {
         scheduleEvent(eventNames().sourceendedEvent);
+        monitorSourceBuffers();
         return;
     }
 
     ASSERT(isClosed());
     scheduleEvent(eventNames().sourcecloseEvent);
+
+    monitorSourceBuffers();
 }
 
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const

@@ -71,7 +71,7 @@ WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent
 {
 #if ENABLE(SCROLLING_THREAD)
     if (hasSynchronousScrollingReasons() && eventTargeting != EventTargeting::NodeOnly)
-        return { { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch }, false };
+        return { { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch }, false };
 #endif
 
     if (!canHandleWheelEvent(wheelEvent, eventTargeting))

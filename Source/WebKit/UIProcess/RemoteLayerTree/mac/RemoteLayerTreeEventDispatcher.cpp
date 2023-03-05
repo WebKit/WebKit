@@ -202,7 +202,7 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::scrollingThreadHandleWh
 {
     auto platformWheelEvent = platform(wheelEvent);
     auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
-    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
+    if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling))
         return WheelEventHandlingResult { processingSteps, false };
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
@@ -217,7 +217,7 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::scrollingThreadHandleWh
 WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    ASSERT(processingSteps.contains(WheelEventProcessingSteps::ScrollingThread));
+    ASSERT(processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling));
 
     auto scrollingTree = this->scrollingTree();
     if (!scrollingTree)
@@ -363,7 +363,7 @@ void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pa
 
     auto platformWheelEvent = platform(event);
     auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
-    if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
+    if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling))
         return;
 
     internalHandleWheelEvent(platformWheelEvent, processingSteps);

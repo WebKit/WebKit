@@ -149,11 +149,11 @@ bool EventHandler::wheelEvent(NSEvent *event)
 
     CurrentEventScope scope(event, nil);
     auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event, page->chrome().platformPageClient());
-    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
         if (m_frame.settings().wheelEventGesturesBecomeNonBlocking() && m_wheelScrollGestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
-            processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+            processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
     return handleWheelEvent(wheelEvent, processingSteps);
 }

@@ -1,5 +1,5 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -107,7 +107,7 @@ public:
     static const char* errorCodeToString(DecoderError errorCode);
 
 private:
-    CBORReader(Bytes::iterator, const Bytes::iterator);
+    explicit CBORReader(const Bytes&);
     std::optional<CBORValue> decodeCBOR(int maxNestingLevel);
     std::optional<CBORValue> decodeValueToNegative(uint64_t value);
     std::optional<CBORValue> decodeValueToUnsigned(uint64_t value);
@@ -126,8 +126,8 @@ private:
 
     DecoderError getErrorCode();
 
+    const Bytes& m_data;
     Bytes::iterator m_it;
-    const Bytes::iterator m_end;
     DecoderError m_errorCode;
 };
 

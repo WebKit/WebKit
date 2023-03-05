@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool PaymentCoordinatorClient::supportsVersion(unsigned version)
+bool PaymentCoordinatorClient::supportsVersion(unsigned version) const
 {
     ASSERT(version);
     return version <= PaymentAPIVersion::current();
