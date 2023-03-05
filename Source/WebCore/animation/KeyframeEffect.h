@@ -126,6 +126,7 @@ public:
     void invalidate();
 
     void animationTimingDidChange();
+    void animationRelevancyDidChange();
     void transformRelatedPropertyDidChange();
     enum class RecomputationReason : uint8_t { LogicalPropertyChange, Other };
     std::optional<RecomputationReason> recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
@@ -142,12 +143,7 @@ public:
     // FIXME: These ignore the fact that some timing functions can prevent acceleration.
     bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
 
-    // The CoreAnimation animation code can only use direct function interpolation when all keyframes share the same
-    // prefix of shared transform function primitives, whereas software animations simply calls blend(...) which can do
-    // direct interpolation based on the function list of any two particular keyframes. The prefix serves as a way to
-    // make sure that the results of blend(...) can be made to return the same results as rendered by the hardware
-    // animation code.
-    std::optional<unsigned> transformFunctionListPrefix() const final { return (!preventsAcceleration()) ? std::optional<unsigned>(m_transformFunctionListsMatchPrefix) : std::nullopt; }
+    std::optional<unsigned> transformFunctionListPrefix() const override;
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
@@ -198,6 +194,7 @@ private:
     private:
         KeyframeEffect* m_effect;
         bool m_couldOriginallyPreventAcceleration;
+        bool m_couldOriginallyBeAccelerated;
     };
 
     void updateEffectStackMembership();
@@ -230,8 +227,20 @@ private:
     void updateAcceleratedAnimationIfNecessary();
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    class StackMembershipMutationScope {
+        WTF_MAKE_NONCOPYABLE(StackMembershipMutationScope);
+    public:
+        StackMembershipMutationScope(KeyframeEffect*);
+        ~StackMembershipMutationScope();
+
+    private:
+        KeyframeEffect* m_effect;
+        RefPtr<Element> m_originalTarget;
+        PseudoId m_originalPseudoId;
+    };
+
     bool threadedAnimationResolutionEnabled() const;
-    void updateAssociatedThreadedEffectStack(const std::optional<const Styleable>&);
+    void updateAssociatedThreadedEffectStack(const std::optional<const Styleable>& = std::nullopt);
 #endif
 
     // AnimationEffect
@@ -241,6 +250,7 @@ private:
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
+    void animationDidFinish() final;
     void setAnimation(WebAnimation*) final;
     Seconds timeToNextTick(const BasicEffectTiming&) const final;
     bool ticksContinouslyWhileActive() const final;

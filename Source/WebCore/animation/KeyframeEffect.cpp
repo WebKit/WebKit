@@ -1030,6 +1030,27 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
     m_transformFunctionListsMatchPrefix = prefix.primitives().size();
 }
 
+std::optional<unsigned> KeyframeEffect::transformFunctionListPrefix() const
+{
+    auto isTransformFunctionListsMatchPrefixRelevant = [&]() {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        if (threadedAnimationResolutionEnabled()) {
+            // The prefix is only relevant if the animation is fully replaced.
+            if (m_compositeOperation != CompositeOperation::Replace || m_hasKeyframeComposingAcceleratedProperty)
+                return false;
+        }
+#endif
+        // The CoreAnimation animation code can only use direct function interpolation when all keyframes share the same
+        // prefix of shared transform function primitives, whereas software animations simply calls blend(...) which can do
+        // direct interpolation based on the function list of any two particular keyframes. The prefix serves as a way to
+        // make sure that the results of blend(...) can be made to return the same results as rendered by the hardware
+        // animation code.
+        return !preventsAcceleration();
+    };
+
+    return isTransformFunctionListsMatchPrefixRelevant() ? std::optional<unsigned>(m_transformFunctionListsMatchPrefix) : std::nullopt;
+}
+
 void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     ASSERT(is<DeclarativeAnimation>(animation()));
@@ -1134,6 +1155,10 @@ void KeyframeEffect::animationTimelineDidChange(AnimationTimeline* timeline)
     if (!target)
         return;
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    StackMembershipMutationScope stackMembershipMutationScope(this);
+#endif
+
     if (timeline)
         m_inTargetEffectStack = target->ensureKeyframeEffectStack().addEffect(*this);
     else {
@@ -1147,11 +1172,23 @@ void KeyframeEffect::animationTimingDidChange()
     updateEffectStackMembership();
 }
 
+void KeyframeEffect::animationRelevancyDidChange()
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        updateEffectStackMembership();
+#endif
+}
+
 void KeyframeEffect::updateEffectStackMembership()
 {
     auto target = targetStyleable();
     if (!target)
         return;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    StackMembershipMutationScope stackMembershipMutationScope(this);
+#endif
 
     bool isRelevant = animation() && animation()->isRelevant();
     if (isRelevant && !m_inTargetEffectStack)
@@ -1243,6 +1280,10 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
     // Likewise, we need to invalidate styles on the previous target so that
     // any animated styles are removed immediately.
     invalidateElement(previousTargetStyleable);
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    StackMembershipMutationScope stackMembershipMutationScope(this);
+#endif
 
     if (previousTargetStyleable) {
         previousTargetStyleable->ensureKeyframeEffectStack().removeEffect(*this);
@@ -1684,6 +1725,11 @@ bool KeyframeEffect::canBeAccelerated() const
 
 bool KeyframeEffect::preventsAcceleration() const
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return false;
+#endif
+
     // We cannot run accelerated transform animations if a motion path is applied
     // to an element, either through the underlying style, or through a keyframe.
     if (auto target = targetStyleable()) {
@@ -1788,6 +1834,14 @@ void KeyframeEffect::animationDidChangeTimingProperties()
 
 void KeyframeEffect::updateAcceleratedAnimationIfNecessary()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        if (canBeAccelerated())
+            updateAssociatedThreadedEffectStack();
+        return;
+    }
+#endif
+
     if (isRunningAccelerated() || isAboutToRunAccelerated()) {
         if (canBeAccelerated())
             addPendingAcceleratedAction(AcceleratedAction::UpdateProperties);
@@ -1797,6 +1851,14 @@ void KeyframeEffect::updateAcceleratedAnimationIfNecessary()
         }
     } else if (canBeAccelerated())
         m_runningAccelerated = RunningAccelerated::NotStarted;
+}
+
+void KeyframeEffect::animationDidFinish()
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        updateAcceleratedAnimationIfNecessary();
+#endif
 }
 
 void KeyframeEffect::transformRelatedPropertyDidChange()
@@ -1896,18 +1958,39 @@ std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyf
 
 void KeyframeEffect::animationWasCanceled()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        updateAcceleratedAnimationIfNecessary();
+        return;
+    }
+#endif
+
     if (isRunningAccelerated() || isAboutToRunAccelerated())
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
 void KeyframeEffect::willChangeRenderer()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        updateAcceleratedAnimationIfNecessary();
+        return;
+    }
+#endif
+
     if (isRunningAccelerated() || isAboutToRunAccelerated())
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
 void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended)
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        updateAssociatedThreadedEffectStack();
+        return;
+    }
+#endif
+
     if (isRunningAccelerated() || isAboutToRunAccelerated())
         addPendingAcceleratedAction(animationIsSuspended ? AcceleratedAction::Pause : AcceleratedAction::Play);
 }
@@ -2323,6 +2406,11 @@ void KeyframeEffect::setComposite(CompositeOperation compositeOperation)
     CanBeAcceleratedMutationScope mutationScope(this);
     m_compositeOperation = compositeOperation;
     invalidate();
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        updateAcceleratedAnimationIfNecessary();
+#endif
 }
 
 CompositeOperation KeyframeEffect::bindingsComposite() const
@@ -2499,6 +2587,13 @@ void KeyframeEffect::effectStackNoLongerAllowsAcceleration()
 
 void KeyframeEffect::abilityToBeAcceleratedDidChange()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        updateAssociatedThreadedEffectStack();
+        return;
+    }
+#endif
+
     if (!m_inTargetEffectStack)
         return;
 
@@ -2518,16 +2613,100 @@ KeyframeEffect::CanBeAcceleratedMutationScope::CanBeAcceleratedMutationScope(Key
 {
     ASSERT(effect);
     m_couldOriginallyPreventAcceleration = effect->preventsAcceleration();
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    m_couldOriginallyBeAccelerated = effect->canBeAccelerated();
+#endif
 }
 
 KeyframeEffect::CanBeAcceleratedMutationScope::~CanBeAcceleratedMutationScope()
 {
-    if (m_effect && m_couldOriginallyPreventAcceleration != m_effect->preventsAcceleration())
+    if (!m_effect)
+        return;
+
+    if (m_couldOriginallyPreventAcceleration != m_effect->preventsAcceleration())
         m_effect->abilityToBeAcceleratedDidChange();
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    else if (m_couldOriginallyBeAccelerated != m_effect->canBeAccelerated())
+        m_effect->abilityToBeAcceleratedDidChange();
+#endif
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+static bool acceleratedPropertyDidChange(AnimatableProperty property, const RenderStyle& previousStyle, const RenderStyle& currentStyle, const Settings& settings)
+{
+#if !defined(NDEBUG)
+    ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));
+#else
+    UNUSED_PARAM(settings);
+#endif
+    ASSERT(std::holds_alternative<CSSPropertyID>(property));
+
+    switch (std::get<CSSPropertyID>(property)) {
+    case CSSPropertyOpacity:
+        return previousStyle.opacity() != currentStyle.opacity();
+    case CSSPropertyTransform:
+        return previousStyle.transform() != currentStyle.transform();
+    case CSSPropertyTranslate:
+        return previousStyle.translate() != currentStyle.translate();
+    case CSSPropertyScale:
+        return previousStyle.scale() != currentStyle.scale();
+    case CSSPropertyRotate:
+        return previousStyle.rotate() != currentStyle.rotate();
+    case CSSPropertyOffsetPath:
+        return previousStyle.offsetPath() != currentStyle.offsetPath();
+    case CSSPropertyOffsetDistance:
+        return previousStyle.offsetDistance() != currentStyle.offsetDistance();
+    case CSSPropertyOffsetPosition:
+        return previousStyle.offsetPosition() != currentStyle.offsetPosition();
+    case CSSPropertyOffsetAnchor:
+        return previousStyle.offsetAnchor() != currentStyle.offsetAnchor();
+    case CSSPropertyOffsetRotate:
+        return previousStyle.offsetRotate() != currentStyle.offsetRotate();
+    case CSSPropertyFilter:
+        return previousStyle.filter() != currentStyle.filter();
+#if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyWebkitBackdropFilter:
+        return previousStyle.backdropFilter() != currentStyle.backdropFilter();
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return false;
+}
+#endif
 
 void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle)
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled()) {
+        if (!isRunningAccelerated())
+            return;
+
+        if ((previousStyle && !currentStyle) || (!previousStyle && currentStyle)) {
+            updateAssociatedThreadedEffectStack();
+            return;
+        }
+
+        ASSERT(document());
+        auto& settings = document()->settings();
+
+        ASSERT(previousStyle && currentStyle);
+        auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
+        for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
+            if (auto property = CSSPropertyAnimation::getAcceleratedPropertyAtIndex(propertyIndex, settings)) {
+                if (acceleratedPropertyDidChange(*property, *previousStyle, *currentStyle, settings)) {
+                    updateAssociatedThreadedEffectStack();
+                    return;
+                }
+            }
+        }
+
+        return;
+    }
+#endif
+
     auto hasMotionPath = [](const RenderStyle* style) {
         return style && style->offsetPath();
     };
@@ -2545,6 +2724,31 @@ bool KeyframeEffect::preventsAnimationReadiness() const
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+KeyframeEffect::StackMembershipMutationScope::StackMembershipMutationScope(KeyframeEffect* effect)
+    : m_effect(effect)
+{
+    ASSERT(effect);
+    if (m_effect->m_target) {
+        m_originalTarget = m_effect->m_target;
+        m_originalPseudoId = m_effect->m_pseudoId;
+    }
+}
+
+KeyframeEffect::StackMembershipMutationScope::~StackMembershipMutationScope()
+{
+    auto originalTargetStyleable = [&]() -> const std::optional<const Styleable> {
+        if (m_originalTarget)
+            return Styleable(*m_originalTarget, m_originalPseudoId);
+        return std::nullopt;
+    }();
+
+    if (m_effect->isRunningAccelerated()) {
+        if (originalTargetStyleable != m_effect->targetStyleable())
+            m_effect->updateAssociatedThreadedEffectStack(originalTargetStyleable);
+        m_effect->updateAssociatedThreadedEffectStack();
+    }
+}
+
 bool KeyframeEffect::threadedAnimationResolutionEnabled() const
 {
     auto* document = this->document();

@@ -50,6 +50,7 @@ public:
     static bool propertiesEqual(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
     static bool canPropertyBeInterpolated(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
     static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
+    static std::optional<CSSPropertyID> getAcceleratedPropertyAtIndex(int, const Settings&);
     static int getNumProperties();
 
     static void blendProperty(const CSSPropertyBlendingClient&, AnimatableProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
