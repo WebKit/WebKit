@@ -109,8 +109,7 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorBackToBack)
         RetainPtr<LoadAlternateHTMLStringFromProvisionalLoadErrorController> delegate = adoptNS([[LoadAlternateHTMLStringFromProvisionalLoadErrorController alloc] init]);
         [webView setNavigationDelegate:delegate.get()];
 
-        char literal[] = "https://www.example.com<>/";
-        NSURL* targetURL = WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+        NSURL* targetURL = [NSURL URLWithString:@"https://www.example.com<>/"];
         [webView loadRequest:[NSURLRequest requestWithURL:targetURL]];
         [webView loadRequest:[NSURLRequest requestWithURL:targetURL]];
 

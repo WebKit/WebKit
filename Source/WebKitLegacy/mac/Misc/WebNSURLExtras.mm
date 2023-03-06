@@ -57,22 +57,12 @@
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string
 {
-    return [self _web_URLWithDataAsString:string relativeToURL:nil];
+    return [NSURL URLWithString:string];
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL
 {
-    return WTF::URLWithData([[string _webkit_stringByTrimmingWhitespace] dataUsingEncoding:NSISOLatin1StringEncoding], baseURL);
-}
-
-- (NSData *)_web_originalData
-{
-    return WTF::originalURLData(self);
-}
-
-- (NSString *)_web_originalDataAsString
-{
-    return adoptNS([[NSString alloc] initWithData:WTF::originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
+    return [NSURL URLWithString:[string _webkit_stringByTrimmingWhitespace] relativeToURL:baseURL];
 }
 
 - (NSString *)_web_userVisibleString
@@ -84,13 +74,13 @@
 {
     if (!CFURLGetBaseURL(bridge_cast(self)))
         return !CFURLGetBytes(bridge_cast(self), nullptr, 0);
-    return ![WTF::originalURLData(self) length];
+    return ![self.dataRepresentation length];
 }
 
 - (const char*)_web_URLCString
 {
     NSMutableData *data = [NSMutableData data];
-    [data appendData:WTF::originalURLData(self)];
+    [data appendData:self.dataRepresentation];
     [data appendBytes:"\0" length:1];
     return (const char*)[data bytes];
  }
@@ -118,17 +108,17 @@
 
 - (BOOL)_webkit_isJavaScriptURL
 {
-    return [[self _web_originalDataAsString] _webkit_isJavaScriptURL];
+    return [self.absoluteString _webkit_isJavaScriptURL];
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
 {
-    return [[self absoluteString] _webkit_scriptIfJavaScriptURL];
+    return [self.absoluteString _webkit_scriptIfJavaScriptURL];
 }
 
 - (BOOL)_webkit_isFileURL
-{    
-    return [[self _web_originalDataAsString] _webkit_isFileURL];
+{
+    return [self.absoluteString _webkit_isFileURL];
 }
 
 -(NSData *)_web_schemeData

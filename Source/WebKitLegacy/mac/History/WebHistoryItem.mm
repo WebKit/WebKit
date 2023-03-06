@@ -337,7 +337,7 @@ WebHistoryItem *kit(HistoryItem* item)
     if (![URLString canBeConvertedToEncoding:NSISOLatin1StringEncoding]) {
         NSURL *tempURL = [NSURL _webkit_URLWithUserTypedString:URLString];
         ASSERT(tempURL);
-        NSString *newURLString = [tempURL _web_originalDataAsString];
+        NSString *newURLString = tempURL.absoluteString;
         core(_private)->setURLString(newURLString);
         core(_private)->setOriginalURLString(newURLString);
     } 
@@ -388,7 +388,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
+    return [self initWithURLString:URL.absoluteString title:title lastVisitedTimeInterval:0];
 }
 
 // FIXME: The only iOS difference here should be whether YES or NO is passed to dictionaryRepresentationIncludingChildren:

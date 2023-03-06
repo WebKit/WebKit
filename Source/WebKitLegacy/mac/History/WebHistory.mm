@@ -279,8 +279,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 {
     ASSERT(url);
     ASSERT(title);
-    
-    NSString *URLString = [url _web_originalDataAsString];
+
+    NSString *URLString = url.absoluteString;
     if (!URLString)
         URLString = @"";
     auto entry = retainPtr([_entriesByURL objectForKey:URLString]);
@@ -464,12 +464,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)containsURL:(NSURL *)URL
 {
-    return [self itemForURLString:[URL _web_originalDataAsString]] != nil;
+    return [self itemForURLString:URL.absoluteString] != nil;
 }
 
 - (WebHistoryItem *)itemForURL:(NSURL *)URL
 {
-    return [self itemForURLString:[URL _web_originalDataAsString]];
+    return [self itemForURLString:URL.absoluteString];
 }
 
 - (NSArray *)allItems

@@ -317,7 +317,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
             // FIXME: seems poor form to do this as a side effect of getting a document fragment
             toPrivate(_private)->loader->addAllArchiveResources(*[archive _coreLegacyWebArchive]);
 
-            return [[self webFrame] _documentFragmentWithMarkupString:markupString.get() baseURLString:[[mainResource URL] _web_originalDataAsString]];
+            return [[self webFrame] _documentFragmentWithMarkupString:markupString.get() baseURLString:[mainResource URL].absoluteString];
         } else if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
             return [self _documentFragmentWithImageResource:mainResource];
     }
@@ -342,11 +342,9 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
     [self addSubresource:resource];
     
     DOMElement *imageElement = [[[self webFrame] DOMDocument] createElement:@"img"];
-    
-    // FIXME: calling _web_originalDataAsString on a file URL returns an absolute path. Workaround this.
-    NSURL *URL = [resource URL];
-    [imageElement setAttribute:@"src" value:[URL isFileURL] ? [URL absoluteString] : [URL _web_originalDataAsString]];
-    
+
+    [imageElement setAttribute:@"src" value:[resource URL].absoluteString];
+
     return imageElement;
 }
 

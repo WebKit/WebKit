@@ -790,7 +790,7 @@ public:
     NSString *locationString = [self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey];
 
     if ([locationString _webkit_looksLikeAbsoluteURL]) {
-        return [NSURL _web_URLWithDataAsString:locationString];
+        return [NSURL URLWithString:locationString];
     } else {
         locationString = [locationString stringByExpandingTildeInPath];
         return [NSURL fileURLWithPath:locationString isDirectory:NO];
@@ -804,7 +804,7 @@ public:
     if ([URL isFileURL]) {
         locationString = [[URL path] _web_stringByAbbreviatingWithTildeInPath];
     } else {
-        locationString = [URL _web_originalDataAsString];
+        locationString = URL.absoluteString;
     }
 
     if (!locationString)

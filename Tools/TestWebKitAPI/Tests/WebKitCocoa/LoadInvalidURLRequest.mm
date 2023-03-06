@@ -40,7 +40,7 @@ static const char literal[] = "https://www.example.com<>/";
 
 static NSURL *literalURL(const char* literal)
 {
-    return WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+    return [NSURL URLWithString:@(literal)];
 }
 
 @interface LoadInvalidURLNavigationActionDelegate : NSObject <WKNavigationDelegate>

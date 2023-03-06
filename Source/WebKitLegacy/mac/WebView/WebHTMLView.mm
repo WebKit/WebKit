@@ -2358,7 +2358,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!document)
             return nil;
         DOMHTMLAnchorElement *anchor = (DOMHTMLAnchorElement *)[document createElement:@"a"];
-        NSString *URLString = [URL _web_originalDataAsString]; // Original data is ASCII-only, so there is no need to precompose.
+        NSString *URLString = URL.absoluteString; // Original data is ASCII-only, so there is no need to precompose.
         if ([URLString length] == 0)
             return nil;
         NSString *URLTitleString = [[pasteboard stringForType:WebURLNamePboardType] precomposedStringWithCanonicalMapping];

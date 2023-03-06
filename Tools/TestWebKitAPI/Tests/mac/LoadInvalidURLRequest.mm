@@ -50,8 +50,7 @@ static bool didFailProvisionalLoad;
     EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
     EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
 
-    static char literal[] = "https://www.example.com$/";
-    NSURL *failedURL = WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+    NSURL *failedURL = [NSURL URLWithString:@"https://www.example.com$/"];
     EXPECT_TRUE([error.userInfo[@"NSErrorFailingURLKey"] isEqual:failedURL]);
 
     didFailProvisionalLoad = true;

@@ -30,18 +30,6 @@
 
 namespace WTF {
 
-RetainPtr<CFDataRef> bytesAsCFData(CFURLRef url)
-{
-    if (!url)
-        return nullptr;
-    auto bytesLength = CFURLGetBytes(url, nullptr, 0);
-    RELEASE_ASSERT(bytesLength != -1);
-    auto buffer = static_cast<uint8_t*>(malloc(bytesLength));
-    RELEASE_ASSERT(buffer);
-    CFURLGetBytes(url, buffer, bytesLength);
-    return adoptCF(CFDataCreateWithBytesNoCopy(nullptr, buffer, bytesLength, kCFAllocatorMalloc));
-}
-
 String bytesAsString(CFURLRef url)
 {
     if (!url)

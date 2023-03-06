@@ -38,7 +38,6 @@ _WebLocalizedString
 -[NSString(WebKitExtras) _webkit_stringByTrimmingWhitespace]
 -[NSString(WebNSURLExtras) _web_isUserVisibleURL]
 -[NSURL(WebNSURLExtras) _web_userVisibleString]
--[NSURL(WebNSURLExtras) _web_originalDataAsString]
 -[NSString(WebKitExtras) _web_widthWithFont:]
 __ZN7WebCore10FontGlyphsD2Ev
 __ZN7WebCore15FontDescriptionD2Ev

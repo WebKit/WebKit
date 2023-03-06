@@ -2933,7 +2933,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(MAC)
     // This parses the user stylesheet synchronously so anything that may affect it should be done first.
     if ([preferences userStyleSheetEnabled]) {
-        NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
+        NSString *location = [preferences userStyleSheetLocation].absoluteString;
         settings.setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
         settings.setUserStyleSheetLocation([NSURL URLWithString:@""]);
@@ -6649,7 +6649,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     if ([URLString hasPrefix:@"/"])
         url = [NSURL fileURLWithPath:URLString isDirectory:NO];
     else
-        url = [NSURL _web_URLWithDataAsString:URLString];
+        url = [NSURL URLWithString:URLString];
 
     [[self mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
@@ -6660,7 +6660,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     ds = [[self mainFrame] provisionalDataSource];
     if (!ds)
         ds = [[self mainFrame] _dataSource];
-    return [[[ds request] URL] _web_originalDataAsString];
+    return [[ds request] URL].absoluteString;
 }
 
 - (BOOL)isLoading
@@ -7042,7 +7042,7 @@ static WebFrameView *containingFrameView(NSView *view)
 {
     NSString *URLString = [sender stringValue];
 
-    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL _web_URLWithDataAsString: URLString]]];
+    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL URLWithString: URLString]]];
 }
 
 - (BOOL)canGoBack

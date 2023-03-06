@@ -69,7 +69,7 @@
     URLStrings = [NSMutableArray arrayWithCapacity:count];
     titlesOrEmptyStrings = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLStrings addObject:[[URLs objectAtIndex:index] _web_originalDataAsString]];
+        [URLStrings addObject:[[URLs objectAtIndex:index] absoluteString]];
         [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [[titles objectAtIndex:index] _webkit_stringByTrimmingWhitespace]];
     }
 

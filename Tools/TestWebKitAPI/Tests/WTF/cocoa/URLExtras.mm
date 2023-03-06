@@ -35,11 +35,6 @@
 
 namespace TestWebKitAPI {
 
-static NSData *literalAsData(const char* literal)
-{
-    return [NSData dataWithBytes:literal length:strlen(literal)];
-}
-
 static const char* dataAsString(NSData *data)
 {
     static char buffer[1000];
@@ -52,26 +47,18 @@ static const char* dataAsString(NSData *data)
     return buffer;
 }
 
-static const char* originalDataAsString(NSURL *URL)
-{
-    return dataAsString(WTF::originalURLData(URL));
-}
-
 static const char* userVisibleString(NSURL *URL)
 {
-    return [WTF::userVisibleString(URL) UTF8String];
+    return dataAsString(URL.dataRepresentation);
 }
 
 static NSURL *literalURL(const char* literal)
 {
-    return WTF::URLWithData(literalAsData(literal), nil);
+    return [NSURL URLWithString:@(literal)];
 }
 
 TEST(WTF_URLExtras, URLExtras)
 {
-    EXPECT_STREQ("http://site.com", originalDataAsString(literalURL("http://site.com")));
-    EXPECT_STREQ("http://%77ebsite.com", originalDataAsString(literalURL("http://%77ebsite.com")));
-
     EXPECT_STREQ("http://site.com", userVisibleString(literalURL("http://site.com")));
     EXPECT_STREQ("http://%77ebsite.com", userVisibleString(literalURL("http://%77ebsite.com")));
 
@@ -222,13 +209,10 @@ TEST(WTF_URLExtras, URLExtras_DivisionSign)
     // Selected the division sign as an example of a non-ASCII character that is allowed in host names, since it's a lookalike character.
 
     // Code path similar to the one used when typing in a URL.
-    EXPECT_STREQ("http://site.xn--comothersite-kjb.org", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xC3\xB7othersite.org", nil)));
     EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xC3\xB7othersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
-    EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", originalDataAsString(literalURL("http://site.com\xC3\xB7othersite.org")));
     EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", userVisibleString(literalURL("http://site.com\xC3\xB7othersite.org")));
-    EXPECT_STREQ("http://site.com%C3%B7othersite.org", originalDataAsString(literalURL("http://site.com%C3%B7othersite.org")));
     EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", userVisibleString(literalURL("http://site.com%C3%B7othersite.org")));
 
     // Separate functions that deal with just a host name on its own.
@@ -241,13 +225,10 @@ TEST(WTF, URLExtras_Solidus)
     // Selected full width solidus, which looks like the solidus, which is the character that indicates the end of the host name.
 
     // Code path similar to the one used when typing in a URL.
-    EXPECT_STREQ("http://site.com/othersite.org", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xEF\xBC\x8Fothersite.org", nil)));
     EXPECT_STREQ("http://site.com/othersite.org", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xEF\xBC\x8Fothersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
-    EXPECT_STREQ("http://site.com\xEF\xBC\x8Fothersite.org", originalDataAsString(literalURL("http://site.com\xEF\xBC\x8Fothersite.org")));
     EXPECT_STREQ("http://site.com%EF%BC%8Fothersite.org", userVisibleString(literalURL("http://site.com\xEF\xBC\x8Fothersite.org")));
-    EXPECT_STREQ("http://site.com%EF%BC%8Fothersite.org", originalDataAsString(literalURL("http://site.com%EF%BC%8Fothersite.org")));
     EXPECT_STREQ("http://site.com%EF%BC%8Fothersite.org", userVisibleString(literalURL("http://site.com%EF%BC%8Fothersite.org")));
 
     // Separate functions that deal with just a host name on its own.
@@ -260,13 +241,10 @@ TEST(WTF_URLExtras, URLExtras_Space)
     // Selected ideographic space, which looks like the ASCII space, which is not allowed unescaped.
 
     // Code path similar to the one used when typing in a URL.
-    EXPECT_STREQ("http://site.com%20othersite.org", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
     EXPECT_STREQ("http://site.com%20othersite.org", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
-    EXPECT_STREQ("http://site.com\xE3\x80\x80othersite.org", originalDataAsString(literalURL("http://site.com\xE3\x80\x80othersite.org")));
     EXPECT_STREQ("http://site.com%E3%80%80othersite.org", userVisibleString(literalURL("http://site.com\xE3\x80\x80othersite.org")));
-    EXPECT_STREQ("http://site.com%E3%80%80othersite.org", originalDataAsString(literalURL("http://site.com%E3%80%80othersite.org")));
     EXPECT_STREQ("http://site.com%E3%80%80othersite.org", userVisibleString(literalURL("http://site.com%E3%80%80othersite.org")));
 
     // Separate functions that deal with just a host name on its own.
