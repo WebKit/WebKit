@@ -108,7 +108,7 @@ private:
 
     bool possiblyHasMarkers(OptionSet<DocumentMarker::MarkerType>);
     void removeMarkers(OptionSet<DocumentMarker::MarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
-    void removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::MarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
+    OptionSet<DocumentMarker::MarkerType> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::MarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 
     void fadeAnimationTimerFired();
 
