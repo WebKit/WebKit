@@ -33,6 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderChildIterator.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"

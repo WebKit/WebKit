@@ -51,6 +51,8 @@ class RenderTextControl;
 class RenderView;
 class VisibleSelection;
 
+enum class ApplePayButtonType : uint8_t;
+
 class AccessibilityRenderObject : public AccessibilityNodeObject {
 public:
     static Ref<AccessibilityRenderObject> create(RenderObject*);

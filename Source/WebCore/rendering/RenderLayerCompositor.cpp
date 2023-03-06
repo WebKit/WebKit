@@ -55,6 +55,7 @@
 #include "RenderImage.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderObjectInlines.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScrollingConstraints.h"

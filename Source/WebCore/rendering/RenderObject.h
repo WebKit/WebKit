@@ -35,7 +35,6 @@
 #include "LayoutRect.h"
 #include "Page.h"
 #include "RenderObjectEnums.h"
-#include "RenderStyle.h"
 #include "ScrollAlignment.h"
 #include "StyleImage.h"
 #include "TextAffinity.h"
@@ -71,6 +70,7 @@ class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderFragmentContainer;
+class RenderStyle;
 class RenderTheme;
 class RenderTreeBuilder;
 class HighlightData;
@@ -207,7 +207,7 @@ public:
     bool isRenderInline() const;
     bool isRenderLayerModelObject() const;
 
-    bool isAtomicInlineLevelBox() const;
+    inline bool isAtomicInlineLevelBox() const;
 
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
@@ -281,9 +281,9 @@ public:
     inline bool isBeforeContent() const;
     inline bool isAfterContent() const;
     inline bool isBeforeOrAfterContent() const;
-    static inline bool isBeforeContent(const RenderObject* obj) { return obj && obj->isBeforeContent(); }
-    static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
-    static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
+    static inline bool isBeforeContent(const RenderObject*);
+    static inline bool isAfterContent(const RenderObject*);
+    static inline bool isBeforeOrAfterContent(const RenderObject*);
 
     bool beingDestroyed() const { return m_bitfields.beingDestroyed(); }
 
@@ -416,11 +416,11 @@ public:
     bool isPositioned() const { return m_bitfields.isPositioned(); }
     bool isInFlowPositioned() const { return m_bitfields.isRelativelyPositioned() || m_bitfields.isStickilyPositioned(); }
     bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
-    bool isFixedPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Fixed; }
-    bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Absolute; }
+    inline bool isFixedPositioned() const;
+    inline bool isAbsolutelyPositioned() const;
     bool isRelativelyPositioned() const { return m_bitfields.isRelativelyPositioned(); }
     bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
-    bool shouldUsePositionedClipping() const { return isAbsolutelyPositioned() || isSVGForeignObject(); }
+    inline bool shouldUsePositionedClipping() const;
 
     bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isLineBreak() const { return m_bitfields.isLineBreak(); }
@@ -476,11 +476,11 @@ public:
 
     bool hasNonVisibleOverflow() const { return m_bitfields.hasNonVisibleOverflow(); }
 
-    bool hasPotentiallyScrollableOverflow() const;
+    inline bool hasPotentiallyScrollableOverflow() const;
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
-    bool isTransformed() const { return hasTransformRelatedProperty() && (style().affectsTransform() || hasSVGTransform()); }
-    bool hasTransformOrPerspective() const { return hasTransformRelatedProperty() && (isTransformed() || style().hasPerspective()); }
+    inline bool isTransformed() const;
+    inline bool hasTransformOrPerspective() const;
 
     inline bool preservesNewline() const;
 
@@ -1051,31 +1051,6 @@ inline bool RenderObject::renderTreeBeingDestroyed() const
     return document().renderTreeBeingDestroyed();
 }
 
-inline bool RenderObject::isBeforeContent() const
-{
-    // Text nodes don't have their own styles, so ignore the style on a text node.
-    if (isText())
-        return false;
-    if (style().styleType() != PseudoId::Before)
-        return false;
-    return true;
-}
-
-inline bool RenderObject::isAfterContent() const
-{
-    // Text nodes don't have their own styles, so ignore the style on a text node.
-    if (isText())
-        return false;
-    if (style().styleType() != PseudoId::After)
-        return false;
-    return true;
-}
-
-inline bool RenderObject::isBeforeOrAfterContent() const
-{
-    return isBeforeContent() || isAfterContent();
-}
-
 inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
 {
     ASSERT(!isSetNeedsLayoutForbidden());
@@ -1086,14 +1061,6 @@ inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
         markContainingBlocksForLayout();
     if (hasLayer())
         setLayerNeedsFullRepaint();
-}
-
-inline bool RenderObject::preservesNewline() const
-{
-    if (isSVGInlineText())
-        return false;
-        
-    return style().preserveNewline();
 }
 
 inline void RenderObject::setSelectionStateIfNeeded(HighlightState state)
@@ -1143,24 +1110,6 @@ inline RenderFragmentedFlow* RenderObject::enclosingFragmentedFlow() const
         return nullptr;
 
     return locateEnclosingFragmentedFlow();
-}
-
-inline bool RenderObject::isAnonymousBlock() const
-{
-    // This function must be kept in sync with anonymous block creation conditions in RenderBlock::createAnonymousBlock().
-    // FIXME: That seems difficult. Can we come up with a simpler way to make behavior correct?
-    // FIXME: Does this relatively long function benefit from being inlined?
-    return isAnonymous()
-        && (style().display() == DisplayType::Block || style().display() == DisplayType::Box)
-        && style().styleType() == PseudoId::None
-        && isRenderBlock()
-#if ENABLE(MATHML)
-        && !isRenderMathMLBlock()
-#endif
-        && !isListMarker()
-        && !isRenderFragmentedFlow()
-        && !isRenderMultiColumnSet()
-        && !isRenderView();
 }
 
 inline bool RenderObject::needsLayout() const
@@ -1247,18 +1196,6 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
     while (nextSibling && !nextSibling->isInFlow())
         nextSibling = nextSibling->nextSibling();
     return nextSibling;
-}
-
-inline bool RenderObject::isAtomicInlineLevelBox() const
-{
-    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplacedOrInlineBlock());
-}
-
-inline bool RenderObject::hasPotentiallyScrollableOverflow() const
-{
-    // We only need to test one overflow dimension since 'visible' and 'clip' always get accompanied
-    // with 'clip' or 'visible' in the other dimension (see Style::Adjuster::adjust).
-    return hasNonVisibleOverflow() && style().overflowX() != Overflow::Clip && style().overflowX() != Overflow::Visible;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);

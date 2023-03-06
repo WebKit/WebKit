@@ -30,6 +30,7 @@
 #include "LayoutRepainter.h"
 #include "Page.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"

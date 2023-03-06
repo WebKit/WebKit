@@ -41,6 +41,7 @@
 #include "LayoutRepainter.h"
 #include "LineSelection.h"
 #include "RenderBlock.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -496,6 +497,16 @@ double RenderReplaced::computeIntrinsicAspectRatio() const
     FloatSize intrinsicSize;
     computeAspectRatioInformationForRenderBox(embeddedContentBox(), intrinsicSize, intrinsicRatio);
     return intrinsicRatio.aspectRatioDouble();
+}
+
+LayoutSize RenderReplaced::intrinsicSize() const
+{
+    LayoutSize size = m_intrinsicSize;
+    if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
+        size.setWidth(explicitIntrinsicInnerWidth().value_or(0));
+    if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
+        size.setHeight(explicitIntrinsicInnerHeight().value_or(0));
+    return size;
 }
 
 RoundedRect RenderReplaced::roundedContentBoxRect() const

@@ -25,7 +25,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
-#include "RenderObject.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"

@@ -29,6 +29,7 @@
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectInlines.h"
 #include "RenderRuby.h"
 #include "RenderRubyRun.h"
 #include "RenderTextControl.h"

@@ -53,6 +53,7 @@
 #include "RenderChildIterator.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
@@ -63,6 +64,7 @@
 #include "RenderLayoutState.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
+#include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTextFragment.h"
@@ -174,7 +176,7 @@ public:
         auto isNewEntry = false;
         if (!is<RenderView>(containingBlock) || descendants->isEmpty())
             isNewEntry = descendants->add(&positionedDescendant).isNewEntry;
-        else if (positionedDescendant.isFixedPositioned() || isInTopLayerOrBackdrop(positionedDescendant.style(), positionedDescendant.element()))
+        else if (positionedDescendant.isFixedPositioned() || isInTopLayerOrStyleTypeIsBackdrop(positionedDescendant.style().styleType(), positionedDescendant.element()))
             isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
         else {
             auto ensureLayoutDepentBoxPosition = [&] {

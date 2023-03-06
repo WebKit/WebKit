@@ -85,7 +85,7 @@ public:
 
     bool mayAffectLayout() const;
 
-    bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || shouldApplyPaintContainment() || willChangeCreatesStackingContext() || hasRunningAcceleratedAnimations(); }
+    bool requiresLayer() const override;
 
 protected:
     void willBeDestroyed() override;

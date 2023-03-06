@@ -27,6 +27,7 @@
 
 #include "ContainerQueryEvaluator.h"
 #include "RenderBox.h"
+#include "RenderElementInlines.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore::CQ::Features {

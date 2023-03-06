@@ -43,6 +43,7 @@
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
+#include "RenderObjectInlines.h"
 #include "RenderTable.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
@@ -222,6 +223,16 @@ bool RenderInline::mayAffectLayout() const
             || parentStyle->lineHeight() != childStyle.lineHeight();
     }
     return mayAffectLayout;
+}
+
+bool RenderInline::requiresLayer() const
+{
+    return isInFlowPositioned() 
+        || createsGroup()
+        || hasClipPath()
+        || shouldApplyPaintContainment()
+        || willChangeCreatesStackingContext()
+        || hasRunningAcceleratedAnimations();
 }
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

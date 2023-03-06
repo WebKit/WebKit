@@ -36,6 +36,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "PointerEventsHitRules.h"
 #include "RenderIterator.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"

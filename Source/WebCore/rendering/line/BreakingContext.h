@@ -26,6 +26,7 @@
 
 #include "BreakLines.h"
 #include "Hyphenation.h"
+#include "LegacyInlineIteratorInlines.h"
 #include "LineBreaker.h"
 #include "LineInfo.h"
 #include "LineLayoutState.h"

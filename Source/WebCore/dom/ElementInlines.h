@@ -30,7 +30,7 @@
 #include "Element.h"
 #include "ElementData.h"
 #include "HTMLNames.h"
-#include "RenderStyle.h"
+#include "RenderStyleConstants.h"
 #include "StyleChange.h"
 
 namespace WebCore {
@@ -207,9 +207,9 @@ inline const AtomString& Element::getAttribute(const QualifiedName& name, const 
     return getAttribute(names...);
 }
 
-inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* element)
+inline bool isInTopLayerOrStyleTypeIsBackdrop(const PseudoId& styleType, const Element* element)
 {
-    return (element && element->isInTopLayer()) || style.styleType() == PseudoId::Backdrop;
+    return (element && element->isInTopLayer()) || styleType == PseudoId::Backdrop;
 }
 
 }

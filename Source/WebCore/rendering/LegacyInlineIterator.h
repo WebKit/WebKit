@@ -97,15 +97,9 @@ public:
     void fastDecrement();
     bool atEnd() const;
 
-    bool atTextParagraphSeparator() const
-    {
-        return is<RenderText>(m_renderer) && m_renderer->preservesNewline() && downcast<RenderText>(*m_renderer).characterAt(m_pos) == '\n';
-    }
+    inline bool atTextParagraphSeparator() const;
     
-    bool atParagraphSeparator() const
-    {
-        return (m_renderer && m_renderer->isBR()) || atTextParagraphSeparator();
-    }
+    inline bool atParagraphSeparator() const;
 
     UChar current() const;
     UChar previousInSameNode() const;

@@ -29,6 +29,7 @@
 #include "Grid.h"
 #include "GridArea.h"
 #include "GridLayoutFunctions.h"
+#include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "rendering/style/RenderStyleConstants.h"
 

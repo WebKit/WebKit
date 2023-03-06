@@ -598,12 +598,7 @@ public:
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
     bool hasAncestorWithFilterOutsets() const;
 
-    bool canUseOffsetFromAncestor() const
-    {
-        // FIXME: This really needs to know if there are transforms on this layer and any of the layers
-        // between it and the ancestor in question.
-        return !renderer().isTransformed() && !renderer().isSVGRootOrLegacySVGRoot();
-    }
+    inline bool canUseOffsetFromAncestor() const;
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.
     enum ColumnOffsetAdjustment { DontAdjustForColumns, AdjustForColumns };
@@ -735,7 +730,7 @@ public:
     void setStaticInlinePosition(LayoutUnit position) { m_offsetForPosition.setWidth(position); }
     void setStaticBlockPosition(LayoutUnit position) { m_offsetForPosition.setHeight(position); }
 
-    bool isTransformed() const { return renderer().isTransformed(); }
+    inline bool isTransformed() const;
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const { return m_transform.get(); }
     // updateTransformFromStyle computes a transform according to the passed options (e.g. transform-origin baked in or excluded) and the given style.

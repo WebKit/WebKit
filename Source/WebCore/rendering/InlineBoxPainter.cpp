@@ -33,6 +33,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderObjectInlines.h"
 #include "RenderView.h"
 
 namespace WebCore {
