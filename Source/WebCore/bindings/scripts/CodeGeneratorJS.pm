@@ -4103,11 +4103,15 @@ sub GenerateRuntimeEnableConditionalString
     if ($context->extendedAttributes->{EnabledBySetting}) {
         assert("Must specify value for EnabledBySetting.") if $context->extendedAttributes->{EnabledBySetting} eq "VALUE_IS_MISSING";
 
-        AddToImplIncludes("ScriptExecutionContext.h");
-
         my @flags = split(/&/, $context->extendedAttributes->{EnabledBySetting});
+        my $exposedToWindowOnly = $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} eq "Window";
+        AddToImplIncludes($exposedToWindowOnly ? "Document.h" : "ScriptExecutionContext.h");
         foreach my $flag (@flags) {
-            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($flag));
+            if ($exposedToWindowOnly) {
+                push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($flag));
+            } else {
+                push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($flag));
+            }
         }
     }
 
