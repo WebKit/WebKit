@@ -144,7 +144,7 @@ void HTTPCookieStore::deleteCookiesForHostnames(const Vector<WTF::String>& hostn
 void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkProcess = networkProcessLaunchingIfNecessary())
-        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy), WTFMove(completionHandler));
+        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(m_sessionID, policy), WTFMove(completionHandler));
     else
         completionHandler();
 }
