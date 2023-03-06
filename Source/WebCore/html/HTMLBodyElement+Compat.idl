@@ -25,5 +25,5 @@
 
 // https://compat.spec.whatwg.org/#windoworientation-interface
 partial interface HTMLBodyElement {
-    [WindowEventHandler] attribute EventHandler onorientationchange;
+    [Conditional=ORIENTATION_EVENTS, WindowEventHandler] attribute EventHandler onorientationchange;
 };

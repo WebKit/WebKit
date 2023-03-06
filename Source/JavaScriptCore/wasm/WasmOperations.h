@@ -115,7 +115,7 @@ JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Thr
  * together (not enough return registers are available in the ABI and we don't
  * handle stack arguments when calling C functions), so, instead, return the
  * payload and return the thrown value via an out pointer */
-JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void*, (Instance*, EncodedJSValue*));
+JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable32, void*, (Instance*, EncodedJSValue*));
 #endif // USE(JSVALUE64)
 
 } } // namespace JSC::Wasm

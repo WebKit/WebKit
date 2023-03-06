@@ -35,6 +35,7 @@
 #include "CompilerTimingScope.h"
 #include "GPRInfo.h"
 #include "JSCast.h"
+#include "JSWebAssemblyException.h"
 #include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include "WasmB3IRGenerator.h"
@@ -6312,57 +6313,22 @@ public:
         return { };
     }
 
-    std::tuple<GPRReg, GPRReg> emitCatchPrologue()
+    void emitCatchPrologue()
     {
-        JIT_COMMENT(m_jit, "catch prologue");
-        m_jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
-        m_jit.move(GPRInfo::regT0, GPRInfo::regT3);
-        m_jit.and64(CCallHelpers::TrustedImm64(JSValue::WasmMask), GPRInfo::regT3);
-        auto isWasmCallee = m_jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::WasmTag));
-        CCallHelpers::JumpList doneCases;
-        {
-            // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
-            // https://bugs.webkit.org/show_bug.cgi?id=231213
-            auto preciseAllocationCase = m_jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
-            m_jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
-            m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
-            doneCases.append(m_jit.jump());
-
-            preciseAllocationCase.link(&m_jit);
-            m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
-            doneCases.append(m_jit.jump());
+        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), GPRInfo::nonPreservedNonArgumentGPR0));
+        m_jit.subPtr(GPRInfo::callFrameRegister, GPRInfo::nonPreservedNonArgumentGPR0, MacroAssembler::stackPointerRegister);
+        if (!!m_info.memory) {
+            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_scratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         }
-
-        isWasmCallee.link(&m_jit);
-        m_jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
-        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
-
-        doneCases.link(&m_jit);
-
-        JIT_COMMENT(m_jit, "restore callee saves from vm entry buffer");
-        m_jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
-
-        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()), GPRInfo::callFrameRegister);
-        m_jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()));
-
-        JIT_COMMENT(m_jit, "Configure wasm context instance");
-        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
-        m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), GPRInfo::regT0));
-        m_jit.subPtr(GPRInfo::callFrameRegister, GPRInfo::regT0, MacroAssembler::stackPointerRegister);
-
-        restoreWebAssemblyGlobalState();
-        m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-        m_jit.setupArguments<decltype(operationWasmRetrieveAndClearExceptionIfCatchable)>(GPRInfo::wasmContextInstancePointer);
-        m_jit.callOperation(operationWasmRetrieveAndClearExceptionIfCatchable);
         static_assert(noOverlap(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2));
-        return std::tuple { GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2 };
     }
 
     void emitCatchAllImpl(ControlData& dataCatch)
     {
         m_catchEntrypoints.append(m_jit.label());
-        auto [exceptionGPR, bufferGPR] = emitCatchPrologue();
-        bind(this->exception(dataCatch), Location::fromGPR(exceptionGPR));
+        emitCatchPrologue();
+        bind(this->exception(dataCatch), Location::fromGPR(GPRInfo::returnValueGPR));
         Stack emptyStack { };
         dataCatch.startBlock(*this, emptyStack);
     }
@@ -6370,55 +6336,60 @@ public:
     void emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results)
     {
         m_catchEntrypoints.append(m_jit.label());
-        auto [exceptionGPR, bufferGPR] = emitCatchPrologue();
-        bind(this->exception(dataCatch), Location::fromGPR(exceptionGPR));
+        emitCatchPrologue();
+        bind(this->exception(dataCatch), Location::fromGPR(GPRInfo::returnValueGPR));
         Stack emptyStack { };
         dataCatch.startBlock(*this, emptyStack);
 
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-            Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
-            Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
-            Location slot = canonicalSlot(result);
-            switch (type.kind) {
-            case TypeKind::I32:
-                m_jit.load32(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchGPR);
-                m_jit.store32(m_scratchGPR, slot.asAddress());
-                break;
-            case TypeKind::I31ref:
-            case TypeKind::I64:
-            case TypeKind::Ref:
-            case TypeKind::RefNull:
-            case TypeKind::Arrayref:
-            case TypeKind::Structref:
-            case TypeKind::Funcref:
-            case TypeKind::Externref:
-            case TypeKind::Rec:
-            case TypeKind::Sub:
-            case TypeKind::Array:
-            case TypeKind::Struct:
-            case TypeKind::Func: {
-                m_jit.load64(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchGPR);
-                m_jit.store64(m_scratchGPR, slot.asAddress());
-                break;
+        if (exceptionSignature.as<FunctionSignature>()->argumentCount()) {
+            ScratchScope<1, 0> scratches(*this);
+            GPRReg bufferGPR = scratches.gpr(0);
+            m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), bufferGPR);
+            for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
+                Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+                Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
+                Location slot = canonicalSlot(result);
+                switch (type.kind) {
+                case TypeKind::I32:
+                    m_jit.load32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), m_scratchGPR);
+                    m_jit.store32(m_scratchGPR, slot.asAddress());
+                    break;
+                case TypeKind::I31ref:
+                case TypeKind::I64:
+                case TypeKind::Ref:
+                case TypeKind::RefNull:
+                case TypeKind::Arrayref:
+                case TypeKind::Structref:
+                case TypeKind::Funcref:
+                case TypeKind::Externref:
+                case TypeKind::Rec:
+                case TypeKind::Sub:
+                case TypeKind::Array:
+                case TypeKind::Struct:
+                case TypeKind::Func: {
+                    m_jit.load64(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), m_scratchGPR);
+                    m_jit.store64(m_scratchGPR, slot.asAddress());
+                    break;
+                }
+                case TypeKind::F32:
+                    m_jit.loadFloat(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), m_scratchFPR);
+                    m_jit.storeFloat(m_scratchFPR, slot.asAddress());
+                    break;
+                case TypeKind::F64:
+                    m_jit.loadDouble(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), m_scratchFPR);
+                    m_jit.storeDouble(m_scratchFPR, slot.asAddress());
+                    break;
+                case TypeKind::V128:
+                    materializeVectorConstant(v128_t { }, Location::fromFPR(m_scratchFPR));
+                    m_jit.storeVector(m_scratchFPR, slot.asAddress());
+                    break;
+                case TypeKind::Void:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                bind(result, slot);
+                results.append(result);
             }
-            case TypeKind::F32:
-                m_jit.loadFloat(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchFPR);
-                m_jit.storeFloat(m_scratchFPR, slot.asAddress());
-                break;
-            case TypeKind::F64:
-                m_jit.loadDouble(Address(bufferGPR, i * sizeof(uint64_t)), m_scratchFPR);
-                m_jit.storeDouble(m_scratchFPR, slot.asAddress());
-                break;
-            case TypeKind::V128:
-                materializeVectorConstant(v128_t { }, Location::fromFPR(m_scratchFPR));
-                m_jit.storeVector(m_scratchFPR, slot.asAddress());
-                break;
-            case TypeKind::Void:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            bind(result, slot);
-            results.append(result);
         }
     }
 
@@ -9167,7 +9138,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
 {
     CompilerTimingScope totalTime("BBQ", "Total BBQ");
 
-    UNUSED_PARAM(tierUp);
+    Thunks::singleton().stub(catchInWasmThunkGenerator);
+
     auto result = makeUnique<InternalFunction>();
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WasmAirIRGeneratorBase.h"
+#include "WasmThunks.h"
 #include <cstddef>
 
 #if USE(JSVALUE64) && ENABLE(WEBASSEMBLY_B3JIT)
@@ -97,6 +98,8 @@ public:
     static constexpr bool tierSupportsSIMD = true;
     static constexpr bool generatesB3OriginData = true;
     static constexpr bool supportsPinnedStateRegisters = true;
+
+    void finalizeEntrypoints();
 
     void emitMaterializeConstant(Type, uint64_t value, TypedTmp& dest);
     void emitMaterializeConstant(BasicBlock*, Type, uint64_t value, TypedTmp& dest);
@@ -1894,6 +1897,53 @@ auto AirIRGenerator64::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType point
     return { };
 }
 
+void AirIRGenerator64::finalizeEntrypoints()
+{
+    unsigned numEntrypoints = Checked<unsigned>(1) + m_catchEntrypoints.size() + m_loopEntryVariableData.size();
+    m_proc.setNumEntrypoints(numEntrypoints);
+    m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+    for (unsigned i = 1 + m_catchEntrypoints.size(); i < numEntrypoints; ++i)
+        m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+
+    if (m_catchEntrypoints.size()) {
+        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([](CCallHelpers& jit, B3::Air::Code& code) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD : buildEntryBufferForCatchNoSIMD), nullptr, code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
+        });
+
+        for (unsigned i = 0; i < m_catchEntrypoints.size(); ++i)
+            m_code.setPrologueForEntrypoint(1 + i, catchPrologueGenerator.copyRef());
+    }
+
+    BasicBlock::SuccessorList successors;
+    successors.append(m_mainEntrypointStart);
+    successors.appendVector(m_catchEntrypoints);
+
+    ASSERT(!m_loopEntryVariableData.size() || !m_proc.usesSIMD());
+    for (auto& pair : m_loopEntryVariableData) {
+        BasicBlock* loopBody = pair.first;
+        BasicBlock* entry = m_code.addBlock();
+        successors.append(entry);
+        m_currentBlock = entry;
+
+        auto& temps = pair.second;
+        m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, static_cast<unsigned>(temps.size()));
+        Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
+
+        for (size_t i = 0; i < temps.size(); ++i) {
+            size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
+            self().emitLoad(basePtr, offset, temps[i]);
+        }
+
+        append(Jump);
+        entry->setSuccessors(loopBody);
+    }
+
+    RELEASE_ASSERT(numEntrypoints == successors.size());
+    m_rootBlock->successors() = successors;
+}
+
 Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned exceptionIndex)
 {
     m_currentBlock = m_code.addBlock();
@@ -1925,6 +1975,7 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
         Tmp bufferPtr = Tmp(GPRInfo::argumentGPR0);
         emitLoad(bufferPtr, offset, result);
     };
+    append(Move, Tmp(GPRInfo::argumentGPR1), data.exception());
     forEachLiveValue([&] (TypedTmp tmp) {
         // We set our current ControlEntry's exception below after the patchpoint, it's
         // not in the incoming buffer of live values.
@@ -1933,31 +1984,7 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
             loadFromScratchBuffer(tmp);
     });
 
-    B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
-    patch->effects.exitsSideways = true;
-    patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
-    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
-    clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
-    patch->clobberLate(clobberLate);
-    patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
-    patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));
-    patch->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        JIT_COMMENT(jit, "Catch entrypoint patchpoint after loading from scratch buffer");
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-        jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
-        CCallHelpers::Call call = jit.call(OperationPtrTag);
-        jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-            linkBuffer.link<OperationPtrTag>(call, operationWasmRetrieveAndClearExceptionIfCatchable);
-        });
-    });
-
-    Tmp exception = Tmp(GPRInfo::returnValueGPR);
-    Tmp buffer = Tmp(GPRInfo::returnValueGPR2);
-    emitPatchpoint(m_currentBlock, patch, Vector<Tmp, 8>::from(exception, buffer), Vector<ConstrainedTmp, 1>::from(instanceValue()));
-    append(Move, exception, data.exception());
-
-    return buffer;
+    return Tmp(GPRInfo::argumentGPR2);
 }
 
 auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnValues) -> PartialResult
@@ -2580,6 +2607,7 @@ auto AirIRGenerator64::addI64Or(ExpressionType arg0, ExpressionType arg1, Expres
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
+    Wasm::Thunks::singleton().stub(Wasm::catchInWasmThunkGenerator);
     return parseAndCompileAirImpl<AirIRGenerator64>(compilationContext, callee, function, signature, unlinkedWasmToWasmCalls, info, mode, functionIndex, hasExceptionHandlers, tierUp);
 }
 

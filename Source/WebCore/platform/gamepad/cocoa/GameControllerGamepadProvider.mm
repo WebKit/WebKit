@@ -125,14 +125,14 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
 
 
     if (visibility == ConnectionVisibility::Invisible) {
-        m_invisibleGamepads.add(m_gamepadVector[index]);
+        m_invisibleGamepads.add(*m_gamepadVector[index]);
         return;
     }
 
     makeInvisibleGamepadsVisible();
 
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], EventMakesGamepadsVisible::Yes);
+        client.platformGamepadConnected(*m_gamepadVector[index], EventMakesGamepadsVisible::Yes);
 }
 
 void GameControllerGamepadProvider::controllerDidDisconnect(GCController *controller)
@@ -146,10 +146,10 @@ void GameControllerGamepadProvider::controllerDidDisconnect(GCController *contro
     if (i != notFound)
         m_gamepadVector[i] = nullptr;
 
-    m_invisibleGamepads.remove(removedGamepad.get());
+    m_invisibleGamepads.remove(*removedGamepad.get());
 
     for (auto& client : m_clients)
-        client->platformGamepadDisconnected(*removedGamepad);
+        client.platformGamepadDisconnected(*removedGamepad);
 }
 
 void GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary()
@@ -183,8 +183,8 @@ void GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary()
 
 void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 
     if (m_connectObserver)
         return;
@@ -217,10 +217,10 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
 
 void GameControllerGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
 
-    if (!m_connectObserver || !m_clients.isEmpty())
+    if (!m_connectObserver || !m_clients.isEmptyIgnoringNullReferences())
         return;
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_connectObserver.get()];
@@ -250,9 +250,9 @@ void GameControllerGamepadProvider::gamepadHadInput(GameControllerGamepad&, bool
 
 void GameControllerGamepadProvider::makeInvisibleGamepadsVisible()
 {
-    for (auto* gamepad : m_invisibleGamepads) {
+    for (auto& gamepad : m_invisibleGamepads) {
         for (auto& client : m_clients)
-            client->platformGamepadConnected(*gamepad, EventMakesGamepadsVisible::Yes);
+            client.platformGamepadConnected(gamepad, EventMakesGamepadsVisible::Yes);
     }
 
     m_invisibleGamepads.clear();
@@ -274,7 +274,7 @@ void GameControllerGamepadProvider::playEffect(unsigned gamepadIndex, const Stri
 {
     if (gamepadIndex >= m_gamepadVector.size())
         return completionHandler(false);
-    auto* gamepad = m_gamepadVector[gamepadIndex];
+    auto gamepad = m_gamepadVector[gamepadIndex];
     if (!gamepad || gamepad->id() != gamepadID)
         return completionHandler(false);
 
@@ -285,7 +285,7 @@ void GameControllerGamepadProvider::stopEffects(unsigned gamepadIndex, const Str
 {
     if (gamepadIndex >= m_gamepadVector.size())
         return completionHandler();
-    auto* gamepad = m_gamepadVector[gamepadIndex];
+    auto gamepad = m_gamepadVector[gamepadIndex];
     if (!gamepad || gamepad->id() != gamepadID)
         return completionHandler();
 

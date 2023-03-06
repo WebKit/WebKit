@@ -42,25 +42,10 @@
 #include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
-#if USE(CG)
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#endif
-
-using std::min;
-
-namespace WebCore
-{
+namespace WebCore {
 
 void FontCache::platformInit()
 {
-#if USE(CG)
-    // Turn on CG's local font cache.
-    size_t size = 1536 * 1024 * 4; // This size matches Mac.
-    CGFontSetShouldUseMulticache(true);
-    CGFontCache* fontCache = CGFontCacheGetLocalCache();
-    CGFontCacheSetShouldAutoExpire(fontCache, false);
-    CGFontCacheSetMaxSize(fontCache, size);
-#endif
 }
 
 IMLangFontLinkType* FontCache::getFontLinkInterface()
@@ -656,7 +641,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool fontCreationFailed = !result->scaledFont();
 
     if (fontCreationFailed) {
-        // The creation of the CGFontRef failed for some reason.  We already asserted in debug builds, but to make
+        // The creation of the cairo scaled font failed for some reason. We already asserted in debug builds, but to make
         // absolutely sure that we don't use this font, go ahead and return 0 so that we can fall back to the next
         // font.
         return nullptr;

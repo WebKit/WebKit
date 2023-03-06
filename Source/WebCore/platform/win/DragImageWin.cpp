@@ -31,8 +31,7 @@
 #include "FontCascade.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
-#include "GraphicsContext.h"
-#include "GraphicsContextWin.h"
+#include "GraphicsContextCairo.h"
 #include "HWndDC.h"
 #include "Image.h"
 #include "StringTruncator.h"
@@ -172,7 +171,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
         return 0;
         
     ::SelectObject(workingDC.get(), image.get());
-    GraphicsContextWin context(contextRef);
+    GraphicsContextCairo context(contextRef);
     // On Mac alpha is {0.7, 0.7, 0.7, 0.8}, however we can't control alpha
     // for drag images on win, so we use 1
     constexpr auto backgroundColor = SRGBA<uint8_t> { 140, 140, 140 };

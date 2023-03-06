@@ -537,15 +537,18 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::MarkerTyp
         return;
     ASSERT(!m_markers.isEmpty());
 
+    auto removedMarkerTypes = types;
     for (auto& node : copyToVector(m_markers.keys()))
-        removeMarkersFromList(m_markers.find(node), types, filter);
-    m_possiblyExistingMarkerTypes.remove(types);
+        removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
+
+    m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
 }
 
-void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarker::MarkerType> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
+OptionSet<DocumentMarker::MarkerType> DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarker::MarkerType> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
 {
     bool needsRepainting = false;
     bool listCanBeRemoved;
+    auto removedMarkerTypes = types;
 
     if (types == DocumentMarker::allMarkers() && !filter) {
         needsRepainting = true;
@@ -557,13 +560,15 @@ void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterato
             auto& marker = list->at(i);
 
             // skip nodes that are not of the specified type
-            if (!types.contains(marker.type())) {
+            auto markerType = marker.type();
+            if (!types.contains(markerType)) {
                 ++i;
                 continue;
             }
 
             if (filter && filter(marker) == FilterMarkerResult::Keep) {
                 ++i;
+                removedMarkerTypes.remove(markerType);
                 continue;
             }
 
@@ -586,6 +591,8 @@ void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterato
         if (m_markers.isEmpty())
             m_possiblyExistingMarkerTypes = { };
     }
+
+    return removedMarkerTypes;
 }
 
 void DocumentMarkerController::repaintMarkers(OptionSet<DocumentMarker::MarkerType> types)

@@ -27,15 +27,12 @@
 import os
 import re
 
-from webkitpy.common import checksvnconfigfile
 from webkitpy.common import read_checksum_from_png
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.checkout.scm.detection import SCMDetector
 
 
 class PNGChecker(object):
-    """Check svn:mime-type for checking style"""
-
     categories = set(['image/png'])
 
     def __init__(self, file_path, handle_style_error, scm=None, host=None):
@@ -54,22 +51,3 @@ class PNGChecker(object):
             with self._fs.open_binary_file_for_reading(self._file_path) as filehandle:
                 if not read_checksum_from_png.read_checksum(filehandle):
                     self._handle_style_error(0, 'image/png', 5, "Image lacks a checksum. Generate pngs using run-webkit-tests to ensure they have a checksum.")
-
-        if detection == "git":
-            (file_missing, autoprop_missing, png_missing) = checksvnconfigfile.check(self._host, self._fs)
-            config_file_path = checksvnconfigfile.config_file_path(self._host, self._fs)
-
-            if file_missing:
-                self._handle_style_error(0, 'image/png', 5, "There is no SVN config file. (%s)" % config_file_path)
-            elif autoprop_missing and png_missing:
-                self._handle_style_error(0, 'image/png', 5, checksvnconfigfile.errorstr_autoprop(config_file_path) + checksvnconfigfile.errorstr_png(config_file_path))
-            elif autoprop_missing:
-                self._handle_style_error(0, 'image/png', 5, checksvnconfigfile.errorstr_autoprop(config_file_path))
-            elif png_missing:
-                self._handle_style_error(0, 'image/png', 5, checksvnconfigfile.errorstr_png(config_file_path))
-
-        elif detection == "svn":
-            prop_get = self._detector.propget("svn:mime-type", self._file_path)
-            if prop_get != "image/png":
-                errorstr = "Set the svn:mime-type property (svn propset svn:mime-type image/png %s)." % self._file_path
-                self._handle_style_error(0, 'image/png', 5, errorstr)

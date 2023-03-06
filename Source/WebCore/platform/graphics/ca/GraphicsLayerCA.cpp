@@ -4130,11 +4130,7 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
 {
     if (isPageTiledBackingLayer()) {
         color = pageTiledBackingBorderColor();
-#if OS(WINDOWS)
-        width = 1.0;
-#else
         width = 0.5;
-#endif
         return;
     }
 

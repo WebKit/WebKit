@@ -289,6 +289,14 @@ void BifurcatedGraphicsContext::clipPath(const Path& path, WindRule windRule)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
+{
+    m_primaryContext.clipToImageBuffer(imageBuffer, destRect);
+    m_secondaryContext.clipToImageBuffer(imageBuffer, destRect);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 IntRect BifurcatedGraphicsContext::clipBounds() const
 {
     return m_primaryContext.clipBounds();
@@ -567,13 +575,6 @@ void BifurcatedGraphicsContext::verifyStateSynchronization()
         m_hasLoggedAboutDesynchronizedState = true;
     }
 }
-
-#if OS(WINDOWS) && !USE(CAIRO)
-GraphicsContextPlatformPrivate* BifurcatedGraphicsContext::deprecatedPrivateContext() const
-{
-    return m_primaryContext.deprecatedPrivateContext();
-}
-#endif
 
 } // namespace WebCore
 

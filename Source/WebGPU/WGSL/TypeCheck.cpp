@@ -491,39 +491,35 @@ Type* TypeChecker::infer(AST::Expression& expression)
     AST::Visitor::visit(expression);
     ASSERT(m_inferredType);
 
-    auto* type = m_inferredType;
-
     if (shouldDumpInferredTypes) {
         dataLog("> Type inference [expression]: ");
         dumpNode(WTF::dataFile(), expression);
         dataLog(" : ");
-        dataLogLn(*type);
+        dataLogLn(*m_inferredType);
     }
 
-    // FIXME: store resolved type in the expression
+    expression.m_inferredType = m_inferredType;
+    Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
-    return type;
+    return inferredType;
 }
 
 Type* TypeChecker::resolve(AST::TypeName& type)
 {
     ASSERT(!m_inferredType);
-    // FIXME: this should call the base class and TypeChecker::visit should assert
-    // that it is never called directly on types
     AST::Visitor::visit(type);
     ASSERT(m_inferredType);
-
-    auto* inferredType = m_inferredType;
 
     if (shouldDumpInferredTypes) {
         dataLog("> Type inference [type]: ");
         dumpNode(WTF::dataFile(), type);
         dataLog(" : ");
-        dataLogLn(*inferredType);
+        dataLogLn(*m_inferredType);
     }
 
-    // FIXME: store resolved type in the AST type
+    type.m_resolvedType = m_inferredType;
+    Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
     return inferredType;

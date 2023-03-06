@@ -1580,9 +1580,20 @@ RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const AtomString& name,
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     ASSERT(m_webFrame);
-    
+
+    auto* ownerFrame = ownerElement.document().frame();
+    if (!ownerFrame) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    auto* page = ownerFrame->page();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     auto childView = adoptNS([[WebFrameView alloc] init]);
-    auto result = [WebFrame _createSubframeWithOwnerElement:&ownerElement frameName:name frameView:childView.get()];
+    auto result = [WebFrame _createSubframeWithOwnerElement:ownerElement page:*page frameName:name frameView:childView.get()];
     auto newFrame = kit(result.ptr());
 
     if ([newFrame _dataSource])

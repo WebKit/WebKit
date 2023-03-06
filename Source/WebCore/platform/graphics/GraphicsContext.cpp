@@ -404,11 +404,6 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
-{
-    imageBuffer.clipToMask(*this, destinationRect);
-}
-
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();

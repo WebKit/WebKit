@@ -31,6 +31,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "B3StackmapValue.h"
 #include "CCallHelpers.h"
+#include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
@@ -164,62 +165,23 @@ static inline void buildEntryBufferForCatch(Probe::Context& context)
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
     OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asWasmCallee());
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
-    VM* vm = context.gpr<VM*>(GPRInfo::regT0);
-    uint64_t* buffer = vm->wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
+    Instance* instance = context.gpr<Instance*>(GPRInfo::wasmContextInstancePointer);
+    EncodedJSValue exception = context.gpr<EncodedJSValue>(GPRInfo::returnValueGPR);
+    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
     loadValuesIntoBuffer(context, stackmap, buffer, savedFPWidth);
 
+    JSValue thrownValue = JSValue::decode(exception);
+    void* payload = nullptr;
+    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
+        payload = bitwise_cast<void*>(wasmException->payload().data());
+
     context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<uintptr_t>(buffer);
+    context.gpr(GPRInfo::argumentGPR1) = exception;
+    context.gpr(GPRInfo::argumentGPR2) = bitwise_cast<uintptr_t>(payload);
 }
 
 static inline void buildEntryBufferForCatchSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::SaveVectors>(context); }
 static inline void buildEntryBufferForCatchNoSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::DontSaveVectors>(context); }
-
-static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& jit)
-{
-    JIT_COMMENT(jit, "shared catch prologue");
-#if USE(JSVALUE64)
-    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
-    jit.move(GPRInfo::regT0, GPRInfo::regT3);
-    jit.and64(CCallHelpers::TrustedImm64(JSValue::WasmMask), GPRInfo::regT3);
-    auto isWasmCallee = jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::WasmTag));
-#else
-    jit.loadPtr(CCallHelpers::tagFor(CallFrameSlot::callee), GPRInfo::regT0);
-    auto isWasmCallee = jit.branch32(CCallHelpers::Equal, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSValue::WasmTag));
-    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
-#endif
-    CCallHelpers::JumpList doneCases;
-    {
-        // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
-        // https://bugs.webkit.org/show_bug.cgi?id=231213
-        auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
-        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
-        doneCases.append(jit.jump());
-
-        preciseAllocationCase.link(&jit);
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
-        doneCases.append(jit.jump());
-    }
-
-    isWasmCallee.link(&jit);
-    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
-
-    doneCases.link(&jit);
-
-    JIT_COMMENT(jit, "restore callee saves from vm entry buffer");
-    jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
-
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()), GPRInfo::callFrameRegister);
-    jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()));
-
-    JIT_COMMENT(jit, "Configure wasm context instance");
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
-    jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD : buildEntryBufferForCatchNoSIMD), nullptr,
-        code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
-
-    jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-}
 
 static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGenerationParams& params, const Checked<int32_t>& tailCallStackOffsetFromFP)
 {

@@ -46,10 +46,10 @@ MockGamepadProvider::MockGamepadProvider() = default;
 
 void MockGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
     WeakHashSet<PlatformGamepad> invisibleGamepads;
-    for (PlatformGamepad *gamepad : m_connectedGamepadVector) {
+    for (auto& gamepad : m_connectedGamepadVector) {
         if (gamepad)
             invisibleGamepads.add(*gamepad);
     }
@@ -59,8 +59,8 @@ void MockGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 
 void MockGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
     m_invisibleGamepadsForClient.remove(client);
 }
 
@@ -96,11 +96,11 @@ bool MockGamepadProvider::connectMockGamepad(unsigned index)
     m_connectedGamepadVector[index] = m_mockGamepadVector[index].get();
 
     for (auto& client : m_clients) {
-        client->platformGamepadConnected(*m_connectedGamepadVector[index], EventMakesGamepadsVisible::Yes);
-        auto gamepadsForClient = m_invisibleGamepadsForClient.find(*client);
+        client.platformGamepadConnected(*m_connectedGamepadVector[index], EventMakesGamepadsVisible::Yes);
+        auto gamepadsForClient = m_invisibleGamepadsForClient.find(client);
         if (gamepadsForClient != m_invisibleGamepadsForClient.end()) {
             for (auto& invisibleGamepad : gamepadsForClient->value)
-                client->platformGamepadConnected(invisibleGamepad, EventMakesGamepadsVisible::Yes);
+                client.platformGamepadConnected(invisibleGamepad, EventMakesGamepadsVisible::Yes);
             m_invisibleGamepadsForClient.remove(gamepadsForClient);
         }
     }
@@ -123,9 +123,9 @@ bool MockGamepadProvider::disconnectMockGamepad(unsigned index)
 
     auto gamepadToRemove = m_mockGamepadVector[index].get();
     for (auto& client : m_clients) {
-        auto gamepadsForClient = m_invisibleGamepadsForClient.find(*client);
+        auto gamepadsForClient = m_invisibleGamepadsForClient.find(client);
         if (gamepadsForClient == m_invisibleGamepadsForClient.end() || !gamepadsForClient->value.remove(*gamepadToRemove))
-            client->platformGamepadDisconnected(*m_mockGamepadVector[index]);
+            client.platformGamepadDisconnected(*m_mockGamepadVector[index]);
     }
 
     return true;

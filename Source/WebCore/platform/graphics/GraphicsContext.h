@@ -294,7 +294,7 @@ public:
     virtual void clipOut(const Path&) = 0;
     WEBCORE_EXPORT virtual void clipOutRoundedRect(const FloatRoundedRect&);
     virtual void clipPath(const Path&, WindRule = WindRule::EvenOdd) = 0;
-    WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&);
+    WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&) = 0;
     WEBCORE_EXPORT virtual IntRect clipBounds() const;
 
     // Text
@@ -366,12 +366,6 @@ public:
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
-#endif
-
-#if OS(WINDOWS) && !USE(CAIRO)
-    // FIXME: This should not exist; we need a different place to
-    // put code shared between Windows CG and Windows Cairo backends.
-    virtual GraphicsContextPlatformPrivate* deprecatedPrivateContext() const { return nullptr; }
 #endif
 
 private:

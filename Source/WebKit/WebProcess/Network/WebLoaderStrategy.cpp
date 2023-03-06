@@ -108,12 +108,11 @@ WebLoaderStrategy::~WebLoaderStrategy()
 void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
     if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
-        if (!localMainFrame)
-            return;
-        if (auto* document = localMainFrame->document()) {
-            if (document && document->loader())
-                request.setIsAppInitiated(document->loader()->lastNavigationWasAppInitiated());
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame())) {
+            if (auto* document = localMainFrame->document()) {
+                if (document && document->loader())
+                    request.setIsAppInitiated(document->loader()->lastNavigationWasAppInitiated());
+            }
         }
     }
 

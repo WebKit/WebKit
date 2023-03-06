@@ -27,10 +27,16 @@
 
 #include "ASTNode.h"
 
-namespace WGSL::AST {
+namespace WGSL {
+class TypeChecker;
+struct Type;
+
+namespace AST {
 
 class Expression : public Node {
     WTF_MAKE_FAST_ALLOCATED;
+    friend TypeChecker;
+
 public:
     using Ref = UniqueRef<Expression>;
     using Ptr = std::unique_ptr<Expression>;
@@ -41,9 +47,15 @@ public:
     { }
 
     virtual ~Expression() { }
+
+    const Type* inferredType() const { return m_inferredType; }
+
+private:
+    const Type* m_inferredType;
 };
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Expression)
 static bool isType(const WGSL::AST::Node& node)

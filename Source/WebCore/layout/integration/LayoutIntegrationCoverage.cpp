@@ -492,7 +492,7 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     };
     if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
         return true;
-    if (!renderer.style().isLeftToRightDirection() || !renderer.style().isHorizontalWritingMode())
+    if (!renderer.style().isLeftToRightDirection())
         return true;
     if (lineLayout.hasOutOfFlowContent())
         return true;

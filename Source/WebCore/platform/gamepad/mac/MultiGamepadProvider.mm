@@ -46,10 +46,10 @@ MultiGamepadProvider& MultiGamepadProvider::singleton()
 
 void MultiGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    bool monitorOtherProviders = m_clients.isEmpty();
+    bool monitorOtherProviders = m_clients.isEmptyIgnoringNullReferences();
 
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 
     if (!m_usesOnlyHIDProvider) {
         HIDGamepadProvider::singleton().ignoreGameControllerFrameworkDevices();
@@ -65,9 +65,9 @@ void MultiGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client
 
 void MultiGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
-    ASSERT(m_clients.contains(&client));
+    ASSERT(m_clients.contains(client));
 
-    bool shouldStopMonitoringOtherProviders = m_clients.remove(&client) && m_clients.isEmpty();
+    bool shouldStopMonitoringOtherProviders = m_clients.remove(client) && m_clients.isEmptyIgnoringNullReferences();
 
     if (shouldStopMonitoringOtherProviders) {
         HIDGamepadProvider::singleton().stopMonitoringGamepads(*this);
@@ -110,19 +110,19 @@ void MultiGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Ev
 
     ASSERT(m_gamepadVector.size() > index);
 
-    auto addResult = m_gamepadMap.set(&gamepad, WTF::makeUnique<PlatformGamepadWrapper>(index, &gamepad));
+    auto addResult = m_gamepadMap.add(gamepad, WTF::makeUnique<PlatformGamepadWrapper>(index, &gamepad));
     ASSERT(addResult.isNewEntry);
     m_gamepadVector[index] = addResult.iterator->value.get();
 
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
+        client.platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
 }
 
 void MultiGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 {
     LOG(Gamepad, "MultiGamepadProvider disconnecting gamepad from a %s source", gamepad.source());
 
-    auto gamepadWrapper = m_gamepadMap.take(&gamepad);
+    auto gamepadWrapper = m_gamepadMap.take(gamepad);
 
     ASSERT(gamepadWrapper);
     ASSERT(gamepadWrapper->index() < m_gamepadVector.size());
@@ -131,7 +131,7 @@ void MultiGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
     m_gamepadVector[gamepadWrapper->index()] = nullptr;
 
     for (auto& client : m_clients)
-        client->platformGamepadDisconnected(*gamepadWrapper);
+        client.platformGamepadDisconnected(*gamepadWrapper);
 }
 
 void MultiGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible eventVisibility)
@@ -140,7 +140,7 @@ void MultiGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisibl
         GameControllerGamepadProvider::singleton().makeInvisibleGamepadsVisible();
 
     for (auto& client : m_clients)
-        client->platformGamepadInputActivity(eventVisibility);
+        client.platformGamepadInputActivity(eventVisibility);
 }
 
 } // namespace WebCore

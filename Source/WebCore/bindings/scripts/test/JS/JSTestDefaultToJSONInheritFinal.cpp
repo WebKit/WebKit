@@ -23,6 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DeprecatedGlobalSettings.h"
+#include "Document.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
@@ -263,7 +264,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritFinalPrototypeFunction_to
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "longAttribute"_s), longAttributeValue);
     }
-    if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
+    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         auto enabledBySettingsAttributeValue = toJS<IDLUnsignedShort>(*lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "enabledBySettingsAttribute"_s), enabledBySettingsAttributeValue);

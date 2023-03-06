@@ -35,7 +35,7 @@
 #include "WebView.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GDIUtilities.h>
-#include <WebCore/GraphicsContextWin.h>
+#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -839,7 +839,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
         ::SelectObject(m_DC.get(), m_bmp.get());
     }
 
-    GraphicsContextWin context(m_DC.get());
+    GraphicsContextCairo context(m_DC.get());
 
     IntRect translatedDamageRect = damageRect;
     translatedDamageRect.move(IntSize(0, m_scrollOffset * m_itemHeight));

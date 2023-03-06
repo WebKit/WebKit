@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_gamepadVector; }
     void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
 
@@ -77,7 +77,7 @@ private:
 
     unsigned indexForNewlyConnectedDevice();
 
-    Vector<PlatformGamepad*> m_gamepadVector;
+    Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
     HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
 
     RetainPtr<IOHIDManagerRef> m_manager;

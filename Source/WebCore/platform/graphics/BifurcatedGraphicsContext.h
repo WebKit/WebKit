@@ -89,6 +89,8 @@ public:
 
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final;
 
+    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+
     IntRect clipBounds() const final;
 
     void setLineCap(LineCap) final;
@@ -139,10 +141,6 @@ public:
     bool supportsInternalLinks() const final;
 
     void didUpdateState(GraphicsContextState&) final;
-
-#if OS(WINDOWS) && !USE(CAIRO)
-    GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
-#endif
 
 private:
     void verifyStateSynchronization();

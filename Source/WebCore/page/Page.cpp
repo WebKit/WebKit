@@ -280,7 +280,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_settings(Settings::create(this))
     , m_progress(makeUnique<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
     , m_backForwardController(makeUnique<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
-    , m_mainFrame(Frame::create(this, nullptr, WTFMove(pageConfiguration.loaderClientForMainFrame), pageConfiguration.mainFrameIdentifier ? *pageConfiguration.mainFrameIdentifier : FrameIdentifier::generate()))
+    , m_mainFrame(Frame::createMainFrame(*this, WTFMove(pageConfiguration.loaderClientForMainFrame), pageConfiguration.mainFrameIdentifier ? *pageConfiguration.mainFrameIdentifier : FrameIdentifier::generate()))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
@@ -1905,18 +1905,19 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
         document.prepareCanvasesForDisplayIfNeeded();
     });
 
-    ASSERT(localMainFrame);
-    ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
+    if (localMainFrame) {
+        ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
 #if ASSERT_ENABLED
-    for (AbstractFrame* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(child);
-        auto* frameView = localFrame->view();
-        ASSERT(!frameView || !frameView->needsLayout());
-    }
+        for (AbstractFrame* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(child);
+            auto* frameView = localFrame->view();
+            ASSERT(!frameView || !frameView->needsLayout());
+        }
 #endif
 
-    if (auto* view = localMainFrame->view())
-        view->notifyAllFramesThatContentAreaWillPaint();
+        if (auto* view = localMainFrame->view())
+            view->notifyAllFramesThatContentAreaWillPaint();
+    }
 
     if (!m_sampledPageTopColor) {
         m_sampledPageTopColor = PageColorSampler::sampleTop(*this);

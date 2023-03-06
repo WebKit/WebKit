@@ -9,11 +9,12 @@ PASS caretBefore.left is 18
 PASS caretBefore.top is 12
 PASS caretBefore.width is 2
 PASS caretBefore.height is 24
-PASS caretAfter.left is 18
+FAIL caretAfter.left should be 18. Was 17.
 PASS caretAfter.top is 12
-PASS caretAfter.width is 2
+FAIL caretAfter.width should be 2. Was 3.
 PASS caretAfter.height is 24
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

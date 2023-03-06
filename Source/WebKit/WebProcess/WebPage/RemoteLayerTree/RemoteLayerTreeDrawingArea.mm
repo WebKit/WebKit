@@ -297,8 +297,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     auto size = m_webPage.size();
     FloatRect visibleRect(FloatPoint(), size);
-    if (auto exposedRect = m_webPage.mainFrameView()->viewExposedRect())
-        visibleRect.intersect(*exposedRect);
+    if (auto* mainFrameView = m_webPage.mainFrameView()) {
+        if (auto exposedRect = mainFrameView->viewExposedRect())
+            visibleRect.intersect(*exposedRect);
+    }
 
     OptionSet<FinalizeRenderingUpdateFlags> flags;
     if (m_nextRenderingUpdateRequiresSynchronousImageDecoding)

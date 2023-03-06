@@ -99,7 +99,7 @@ bool BBQPlan::prepareImpl()
     return true;
 }
 
-void BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer)
+void BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
 {
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::BBQMode))) {
         if (!Options::useSinglePassBBQJIT()) {
@@ -119,6 +119,7 @@ void BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
                 }
             });
 
+            dataLogLnIf(Options::dumpDisassembly(), "Generated BBQ code for WebAssembly BBQ function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
             disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);
         }
     }
@@ -178,8 +179,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     computePCToCodeOriginMap(context, linkBuffer);
 
-    dataLogLnIf(shouldDumpDisassemblyFor(CompilationMode::BBQMode), "Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
-    dumpDisassembly(context, linkBuffer);
+    dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
     bool shouldDumpDisassemblyDuringFinalize = Options::useSinglePassBBQJIT() && (JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly());
     if (!Options::useSinglePassBBQJIT() && context.procedure && context.procedure->shouldDumpIR())
         shouldDumpDisassemblyDuringFinalize = true;
@@ -324,9 +324,10 @@ void BBQPlan::didCompleteCompilation()
 
             computePCToCodeOriginMap(context, linkBuffer);
 
-            dataLogLnIf(Options::dumpDisassembly(), "Generated BBQ code for WebAssembly BBQ function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
-            dumpDisassembly(context, linkBuffer);
+            dumpDisassembly(context, linkBuffer, functionIndex, signature, functionIndexSpace);
             bool shouldDumpDisassemblyDuringFinalize = Options::useSinglePassBBQJIT() && (JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly());
+            if (!Options::useSinglePassBBQJIT() && context.procedure && context.procedure->shouldDumpIR())
+                shouldDumpDisassemblyDuringFinalize = true;
             function->entrypoint.compilation = makeUnique<Compilation>(
                 FINALIZE_CODE_IF(shouldDumpDisassemblyDuringFinalize, linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                 WTFMove(context.wasmEntrypointByproducts));

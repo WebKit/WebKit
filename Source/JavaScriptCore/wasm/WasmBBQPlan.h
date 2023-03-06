@@ -79,7 +79,7 @@ public:
 
 private:
     bool prepareImpl() final;
-    void dumpDisassembly(CompilationContext&, LinkBuffer&);
+    void dumpDisassembly(CompilationContext&, LinkBuffer&, unsigned functionIndex, const TypeDefinition&, unsigned functionIndexSpace);
     void compileFunction(uint32_t functionIndex) final;
     void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 

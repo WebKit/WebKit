@@ -117,8 +117,6 @@ public:
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext& destination);
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
 
-    virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
-
     WEBCORE_EXPORT void convertToLuminanceMask();
     virtual void transformToColorSpace(const DestinationColorSpace&) { }
 

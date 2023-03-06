@@ -692,8 +692,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     auto* topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
 
     ASSERT(m_frame->document());
-    ASSERT(topFrame);
-    ASSERT(topFrame->document());
     
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
@@ -715,7 +713,9 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (isRedirectToGetAfterPost(m_request, newRequest))
         newRequest.clearHTTPOrigin();
 
-    if (topFrame != m_frame) {
+    // FIXME: Get mixed content checking working when the top frame is a RemoteFrame.
+    if (topFrame && topFrame != m_frame) {
+        ASSERT(topFrame->document());
         if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, m_frame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url(), MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes)) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));

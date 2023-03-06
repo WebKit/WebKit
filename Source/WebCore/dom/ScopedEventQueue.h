@@ -58,7 +58,7 @@ private:
 
     void dispatchEvent(const ScopedEvent&) const;
     void dispatchAllEvents();
-    void incrementScopingLevel();
+    void incrementScopingLevel() { ++m_scopingLevel; }
     void decrementScopingLevel();
 
     Vector<ScopedEvent> m_queuedEvents;

@@ -86,6 +86,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTag, (JSGlobalObject* globalObjec
 
     RefPtr<Wasm::TypeDefinition> typeDefinition = Wasm::TypeInformation::typeDefinitionForFunction({ }, parameters);
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyTagStructure, asObject(callFrame->newTarget()), callFrame->jsCallee());
+    RETURN_IF_EXCEPTION(scope, { });
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyTag::create(vm, globalObject, structure, Wasm::Tag::create(*typeDefinition).get())));
 }
 

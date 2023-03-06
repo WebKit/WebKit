@@ -460,14 +460,6 @@ void ImageBuffer::drawConsuming(RefPtr<ImageBuffer> imageBuffer, GraphicsContext
     imageBuffer->drawConsuming(context, destRect, srcRect, options);
 }
 
-void ImageBuffer::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
-{
-    if (auto* backend = ensureBackendCreated()) {
-        flushContext();
-        backend->clipToMask(destContext, destRect);
-    }
-}
-
 void ImageBuffer::convertToLuminanceMask()
 {
     if (auto* backend = ensureBackendCreated()) {

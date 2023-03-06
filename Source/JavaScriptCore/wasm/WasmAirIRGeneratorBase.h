@@ -352,8 +352,6 @@ struct AirIRGeneratorBase {
 
     AirIRGeneratorBase(const ModuleInformation&, Callee&, B3::Procedure&, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount*, const TypeDefinition& originalSignature, unsigned& osrEntryScratchBufferSize);
 
-    void finalizeEntrypoints();
-
     PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
@@ -1103,53 +1101,6 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
     }
 
     emitEntryTierUpCheck();
-}
-
-template <typename Derived, typename ExpressionType>
-void AirIRGeneratorBase<Derived, ExpressionType>::finalizeEntrypoints()
-{
-    unsigned numEntrypoints = Checked<unsigned>(1) + m_catchEntrypoints.size() + m_loopEntryVariableData.size();
-    m_proc.setNumEntrypoints(numEntrypoints);
-    m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
-    for (unsigned i = 1 + m_catchEntrypoints.size(); i < numEntrypoints; ++i)
-        m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
-
-    if (m_catchEntrypoints.size()) {
-        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([](CCallHelpers& jit, B3::Air::Code& code) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            emitCatchPrologueShared(code, jit);
-        });
-
-        for (unsigned i = 0; i < m_catchEntrypoints.size(); ++i)
-            m_code.setPrologueForEntrypoint(1 + i, catchPrologueGenerator.copyRef());
-    }
-
-    BasicBlock::SuccessorList successors;
-    successors.append(m_mainEntrypointStart);
-    successors.appendVector(m_catchEntrypoints);
-
-    ASSERT(!m_loopEntryVariableData.size() || !m_proc.usesSIMD());
-    for (auto& pair : m_loopEntryVariableData) {
-        BasicBlock* loopBody = pair.first;
-        BasicBlock* entry = m_code.addBlock();
-        successors.append(entry);
-        m_currentBlock = entry;
-
-        auto& temps = pair.second;
-        m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, static_cast<unsigned>(temps.size()));
-        Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
-
-        for (size_t i = 0; i < temps.size(); ++i) {
-            size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
-            self().emitLoad(basePtr, offset, temps[i]);
-        }
-
-        append(Jump);
-        entry->setSuccessors(loopBody);
-    }
-
-    RELEASE_ASSERT(numEntrypoints == successors.size());
-    m_rootBlock->successors() = successors;
 }
 
 template<typename Derived, typename ExpressionType>

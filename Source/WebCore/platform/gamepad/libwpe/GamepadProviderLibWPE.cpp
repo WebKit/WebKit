@@ -79,10 +79,10 @@ void GamepadProviderLibWPE::startMonitoringGamepads(GamepadProviderClient& clien
     if (!m_provider)
         return;
 
-    bool shouldOpenAndScheduleManager = m_clients.isEmpty();
+    bool shouldOpenAndScheduleManager = m_clients.isEmptyIgnoringNullReferences();
 
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 
     if (!shouldOpenAndScheduleManager)
         return;
@@ -104,9 +104,9 @@ void GamepadProviderLibWPE::stopMonitoringGamepads(GamepadProviderClient& client
     if (!m_provider)
         return;
 
-    ASSERT(m_clients.contains(&client));
+    ASSERT(m_clients.contains(client));
 
-    bool shouldCloseAndUnscheduleManager = m_clients.remove(&client) && m_clients.isEmpty();
+    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.isEmptyIgnoringNullReferences();
     if (!shouldCloseAndUnscheduleManager)
         return;
 
@@ -146,7 +146,7 @@ void GamepadProviderLibWPE::gamepadConnected(uintptr_t id)
 
     auto eventVisibility = m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No;
     for (auto& client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
+        client.platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
 }
 
 void GamepadProviderLibWPE::gamepadDisconnected(uintptr_t id)
@@ -160,7 +160,7 @@ void GamepadProviderLibWPE::gamepadDisconnected(uintptr_t id)
         m_lastActiveGamepad = nullptr;
 
     for (auto& client : m_clients)
-        client->platformGamepadDisconnected(*removedGamepad);
+        client.platformGamepadDisconnected(*removedGamepad);
 }
 
 unsigned GamepadProviderLibWPE::indexForNewlyConnectedDevice()

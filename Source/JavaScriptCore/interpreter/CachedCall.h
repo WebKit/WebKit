@@ -35,53 +35,55 @@
 #include <wtf/ForbidHeapAllocation.h>
 
 namespace JSC {
-    class CachedCall {
-        WTF_MAKE_NONCOPYABLE(CachedCall);
-        WTF_FORBID_HEAP_ALLOCATION;
-    public:
-        CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
-            : m_vm(globalObject->vm())
-            , m_interpreter(m_vm.interpreter)
-            , m_entryScope(m_vm, function->scope()->globalObject())
-        {
-            VM& vm = m_entryScope.vm();
-            auto scope = DECLARE_THROW_SCOPE(vm);
 
-            ASSERT(!function->isHostFunctionNonInline());
-            if (LIKELY(vm.isSafeToRecurseSoft())) {
-                m_arguments.ensureCapacity(argumentCount);
-                if (LIKELY(!m_arguments.hasOverflowed()))
-                    m_closure = m_interpreter.prepareForRepeatCall(function->jsExecutable(), &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
-                else
-                    throwOutOfMemoryError(globalObject, scope);
-            } else
-                throwStackOverflowError(globalObject, scope);
+class CachedCall {
+    WTF_MAKE_NONCOPYABLE(CachedCall);
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
+        : m_vm(globalObject->vm())
+        , m_interpreter(m_vm.interpreter)
+        , m_entryScope(m_vm, function->scope()->globalObject())
+    {
+        VM& vm = m_entryScope.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        ASSERT(!function->isHostFunctionNonInline());
+        if (LIKELY(vm.isSafeToRecurseSoft())) {
+            m_arguments.ensureCapacity(argumentCount);
+            if (LIKELY(!m_arguments.hasOverflowed()))
+                m_closure = m_interpreter.prepareForRepeatCall(function->jsExecutable(), &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
+            else
+                throwOutOfMemoryError(globalObject, scope);
+        } else
+            throwStackOverflowError(globalObject, scope);
 #if ASSERT_ENABLED
-            m_valid = !scope.exception();
+        m_valid = !scope.exception();
 #endif
-        }
+    }
 
-        ALWAYS_INLINE JSValue call()
-        {
-            ASSERT(m_valid);
-            ASSERT(m_arguments.size() == static_cast<size_t>(m_protoCallFrame.argumentCount()));
-            return m_interpreter.executeCachedCall(m_closure);
-        }
-        void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
+    ALWAYS_INLINE JSValue call()
+    {
+        ASSERT(m_valid);
+        ASSERT(m_arguments.size() == static_cast<size_t>(m_protoCallFrame.argumentCount()));
+        return m_interpreter.executeCachedCall(m_closure);
+    }
+    void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
 
-        void clearArguments() { m_arguments.clear(); }
-        void appendArgument(JSValue v) { m_arguments.append(v); }
-        bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
+    void clearArguments() { m_arguments.clear(); }
+    void appendArgument(JSValue v) { m_arguments.append(v); }
+    bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
 
-    private:
+private:
 #if ASSERT_ENABLED
-        bool m_valid { false };
+    bool m_valid { false };
 #endif
-        VM& m_vm;
-        Interpreter& m_interpreter;
-        VMEntryScope m_entryScope;
-        ProtoCallFrame m_protoCallFrame;
-        MarkedArgumentBuffer m_arguments;
-        CallFrameClosure m_closure;
-    };
-}
+    VM& m_vm;
+    Interpreter& m_interpreter;
+    VMEntryScope m_entryScope;
+    ProtoCallFrame m_protoCallFrame;
+    MarkedArgumentBuffer m_arguments;
+    CallFrameClosure m_closure;
+};
+
+} // namespace JSC
