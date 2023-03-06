@@ -30,7 +30,6 @@
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
 #include "JITCode.h"
-#include "JSGlobalObject.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedFunctionExecutable.h"
 

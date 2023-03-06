@@ -53,6 +53,7 @@
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
+#include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSWebAssembly.h>
 #include <JavaScriptCore/Microtask.h>
@@ -69,41 +70,45 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-
 namespace WebCore {
+
 using namespace JSC;
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window"_s, &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
-const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    &queueMicrotaskToEventLoop,
-    &shouldInterruptScriptBeforeTimeout,
-    &moduleLoaderImportModule,
-    &moduleLoaderResolve,
-    &moduleLoaderFetch,
-    &moduleLoaderCreateImportMetaProperties,
-    &moduleLoaderEvaluate,
-    &promiseRejectionTracker,
-    &reportUncaughtExceptionAtEventLoop,
-    &currentScriptExecutionOwner,
-    &scriptExecutionStatus,
-    &reportViolationForUnsafeEval,
-    [] { return defaultLanguage(); },
+const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
+{
+    static constexpr GlobalObjectMethodTable table = {
+        supportsRichSourceInfo,
+        shouldInterruptScript,
+        javaScriptRuntimeFlags,
+        queueMicrotaskToEventLoop,
+        shouldInterruptScriptBeforeTimeout,
+        moduleLoaderImportModule,
+        moduleLoaderResolve,
+        moduleLoaderFetch,
+        moduleLoaderCreateImportMetaProperties,
+        moduleLoaderEvaluate,
+        promiseRejectionTracker,
+        reportUncaughtExceptionAtEventLoop,
+        currentScriptExecutionOwner,
+        scriptExecutionStatus,
+        reportViolationForUnsafeEval,
+        [] { return defaultLanguage(); },
 #if ENABLE(WEBASSEMBLY)
-    &compileStreaming,
-    &instantiateStreaming,
+        compileStreaming,
+        instantiateStreaming,
 #else
-    nullptr,
-    nullptr,
+        nullptr,
+        nullptr,
 #endif
-    &deriveShadowRealmGlobalObject
+        deriveShadowRealmGlobalObject
+    };
+    return &table;
 };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
-    : JSDOMGlobalObject(vm, structure, proxy->world(), &s_globalObjectMethodTable)
+    : JSDOMGlobalObject(vm, structure, proxy->world(), globalObjectMethodTable())
     , m_wrapped(WTFMove(window))
 {
     m_proxy.set(vm, this, proxy);

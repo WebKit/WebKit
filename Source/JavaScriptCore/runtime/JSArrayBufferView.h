@@ -259,12 +259,12 @@ public:
     TypedArrayMode mode() const { return m_mode; }
     bool hasArrayBuffer() const { return JSC::hasArrayBuffer(mode()); }
     
-    bool isShared();
+    inline bool isShared();
     JS_EXPORT_PRIVATE ArrayBuffer* unsharedBuffer();
     inline ArrayBuffer* possiblySharedBuffer();
     JSArrayBuffer* unsharedJSBuffer(JSGlobalObject* globalObject);
     JSArrayBuffer* possiblySharedJSBuffer(JSGlobalObject* globalObject);
-    RefPtr<ArrayBufferView> unsharedImpl();
+    inline RefPtr<ArrayBufferView> unsharedImpl();
     JS_EXPORT_PRIVATE RefPtr<ArrayBufferView> possiblySharedImpl();
     bool isDetached() const { return hasArrayBuffer() && !hasVector(); }
     bool isResizableOrGrowableShared() const { return JSC::isResizableOrGrowableShared(m_mode); }
@@ -348,8 +348,8 @@ public:
     static ptrdiff_t offsetOfByteOffset() { return OBJECT_OFFSETOF(JSArrayBufferView, m_byteOffset); }
     static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
     
-    static RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
-    static RefPtr<ArrayBufferView> toWrappedAllowShared(VM&, JSValue);
+    static inline RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
+    static inline RefPtr<ArrayBufferView> toWrappedAllowShared(VM&, JSValue);
 
     bool isIteratorProtocolFastAndNonObservable();
 
@@ -371,7 +371,7 @@ protected:
     TypedArrayMode m_mode;
 };
 
-JSArrayBufferView* validateTypedArray(JSGlobalObject*, JSValue);
+inline JSArrayBufferView* validateTypedArray(JSGlobalObject*, JSValue);
 
 inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
 {

@@ -32,7 +32,6 @@
 #include "JSCallbackFunction.h"
 #include "JSClassRef.h"
 #include "JSFunction.h"
-#include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObjectRef.h"
 #include "JSString.h"

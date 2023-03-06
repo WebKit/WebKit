@@ -44,6 +44,7 @@
 #include "EvalCodeBlock.h"
 #include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
+#include "GlobalObjectMethodTable.h"
 #include "InterpreterInlines.h"
 #include "JITCode.h"
 #include "JSArrayInlines.h"

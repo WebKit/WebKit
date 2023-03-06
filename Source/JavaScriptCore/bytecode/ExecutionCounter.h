@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSGlobalObject.h"
 #include "Options.h"
 #include <wtf/PrintStream.h>
 

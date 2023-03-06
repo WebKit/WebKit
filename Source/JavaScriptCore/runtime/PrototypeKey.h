@@ -25,12 +25,14 @@
 
 #pragma once
 
-#include <wtf/HashTable.h>
+#include <wtf/HashTraits.h>
 
 namespace JSC {
 
 class FunctionExecutable;
 class JSObject;
+
+struct ClassInfo;
 
 class PrototypeKey {
 public:
@@ -97,4 +99,3 @@ template<typename> struct HashTraits;
 template<> struct HashTraits<JSC::PrototypeKey> : SimpleClassHashTraits<JSC::PrototypeKey> { };
 
 } // namespace WTF
-

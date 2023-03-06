@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+/**
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "Completion.h"
 #import "Error.h"
 #import "Exception.h"
+#import "GlobalObjectMethodTable.h"
 #import "IdentifierInlines.h"
 #import "JSContextInternal.h"
 #import "JSInternalPromise.h"
@@ -54,28 +55,30 @@
 
 namespace JSC {
 
-const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
-
-const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    nullptr, // queueMicrotaskToEventLoop
-    &shouldInterruptScriptBeforeTimeout,
-    &moduleLoaderImportModule, // moduleLoaderImportModule
-    &moduleLoaderResolve, // moduleLoaderResolve
-    &moduleLoaderFetch, // moduleLoaderFetch
-    &moduleLoaderCreateImportMetaProperties, // moduleLoaderCreateImportMetaProperties
-    &moduleLoaderEvaluate, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
-    &reportUncaughtExceptionAtEventLoop,
-    &currentScriptExecutionOwner,
-    &scriptExecutionStatus,
-    &reportViolationForUnsafeEval,
-    nullptr, // defaultLanguage
-    nullptr, // compileStreaming
-    nullptr, // instantiateStreaming
-    &deriveShadowRealmGlobalObject,
+const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
+{
+    static constexpr GlobalObjectMethodTable table = {
+        &supportsRichSourceInfo,
+        &shouldInterruptScript,
+        &javaScriptRuntimeFlags,
+        nullptr, // queueMicrotaskToEventLoop
+        &shouldInterruptScriptBeforeTimeout,
+        &moduleLoaderImportModule, // moduleLoaderImportModule
+        &moduleLoaderResolve, // moduleLoaderResolve
+        &moduleLoaderFetch, // moduleLoaderFetch
+        &moduleLoaderCreateImportMetaProperties, // moduleLoaderCreateImportMetaProperties
+        &moduleLoaderEvaluate, // moduleLoaderEvaluate
+        nullptr, // promiseRejectionTracker
+        &reportUncaughtExceptionAtEventLoop,
+        &currentScriptExecutionOwner,
+        &scriptExecutionStatus,
+        &reportViolationForUnsafeEval,
+        nullptr, // defaultLanguage
+        nullptr, // compileStreaming
+        nullptr, // instantiateStreaming
+        &deriveShadowRealmGlobalObject,
+    };
+    return &table;
 };
 
 void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)

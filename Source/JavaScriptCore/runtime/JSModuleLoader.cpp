@@ -29,6 +29,7 @@
 
 #include "BuiltinNames.h"
 #include "CatchScope.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSCInlines.h"
 #include "JSInternalPromise.h"
 #include "JSMap.h"

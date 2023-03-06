@@ -27,6 +27,7 @@
 #include "JSRemoteDOMWindowBase.h"
 
 #include "JSWindowProxy.h"
+#include <JavaScriptCore/GlobalObjectMethodTable.h>
 
 using namespace JSC;
 
@@ -34,30 +35,34 @@ namespace WebCore {
 
 const ClassInfo JSRemoteDOMWindowBase::s_info = { "Window"_s, &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRemoteDOMWindowBase) };
 
-const GlobalObjectMethodTable JSRemoteDOMWindowBase::s_globalObjectMethodTable = {
-    nullptr, // shellSupportsRichSourceInfo
-    nullptr, // shouldInterruptScript
-    &javaScriptRuntimeFlags,
-    nullptr, // queueMicrotaskToEventLoop
-    nullptr, // shouldInterruptScriptBeforeTimeout
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
-    nullptr, // reportUncaughtExceptionAtEventLoop
-    &currentScriptExecutionOwner,
-    &scriptExecutionStatus,
-    &reportViolationForUnsafeEval,
-    nullptr, // defaultLanguage
-    nullptr, // compileStreaming
-    nullptr, // instantiateStreaming
-    nullptr, // deriveShadowRealmGlobalObject
+const GlobalObjectMethodTable* JSRemoteDOMWindowBase::globalObjectMethodTable()
+{
+    static constexpr GlobalObjectMethodTable table = {
+        nullptr, // shellSupportsRichSourceInfo
+        nullptr, // shouldInterruptScript
+        &javaScriptRuntimeFlags,
+        nullptr, // queueMicrotaskToEventLoop
+        nullptr, // shouldInterruptScriptBeforeTimeout
+        nullptr, // moduleLoaderImportModule
+        nullptr, // moduleLoaderResolve
+        nullptr, // moduleLoaderFetch
+        nullptr, // moduleLoaderCreateImportMetaProperties
+        nullptr, // moduleLoaderEvaluate
+        nullptr, // promiseRejectionTracker
+        nullptr, // reportUncaughtExceptionAtEventLoop
+        &currentScriptExecutionOwner,
+        &scriptExecutionStatus,
+        &reportViolationForUnsafeEval,
+        nullptr, // defaultLanguage
+        nullptr, // compileStreaming
+        nullptr, // instantiateStreaming
+        nullptr, // deriveShadowRealmGlobalObject
+    };
+    return &table;
 };
 
 JSRemoteDOMWindowBase::JSRemoteDOMWindowBase(VM& vm, Structure* structure, RefPtr<RemoteDOMWindow>&& window, JSWindowProxy* proxy)
-    : JSDOMGlobalObject(vm, structure, proxy->world(), &s_globalObjectMethodTable)
+    : JSDOMGlobalObject(vm, structure, proxy->world(), globalObjectMethodTable())
     , m_wrapped(WTFMove(window))
 {
 }

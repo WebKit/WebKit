@@ -67,6 +67,7 @@
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/GetterSetter.h>
+#include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSCustomGetterFunction.h>
 #include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>

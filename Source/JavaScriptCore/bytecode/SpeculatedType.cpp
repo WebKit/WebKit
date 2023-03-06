@@ -41,6 +41,7 @@
 #include "JSFunction.h"
 #include "JSGenericTypedArrayView.h"
 #include "JSMap.h"
+#include "JSPromise.h"
 #include "JSSet.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"

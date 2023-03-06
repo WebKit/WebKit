@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ActiveDOMCallback.h"
-#include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCell.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>

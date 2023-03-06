@@ -33,7 +33,6 @@
 #include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>

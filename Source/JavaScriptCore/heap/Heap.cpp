@@ -62,6 +62,7 @@
 #include "MarkedJSValueRefArray.h"
 #include "MarkedSpaceInlines.h"
 #include "MarkingConstraintSet.h"
+#include "NumberObject.h"
 #include "PreventCollectionScope.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"

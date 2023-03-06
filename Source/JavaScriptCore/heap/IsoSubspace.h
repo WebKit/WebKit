@@ -100,10 +100,5 @@ ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 
 #define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type, (heap), (heapCellType), sizeof(type), type::numberOfLowerTierCells)
 
-template<typename T>
-struct isAllocatedFromIsoSubspace {
-    static constexpr bool value = std::is_same<std::invoke_result_t<decltype(T::template subspaceFor<T, SubspaceAccess::OnMainThread>)&, VM&>, IsoSubspace*>::value;
-};
-
 } // namespace JSC
 

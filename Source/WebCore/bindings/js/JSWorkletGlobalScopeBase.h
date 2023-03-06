@@ -53,8 +53,6 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
     }
 
-    static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
-
     static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
     static bool shouldInterruptScript(const JSC::JSGlobalObject*);
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
@@ -70,6 +68,8 @@ protected:
     DECLARE_VISIT_CHILDREN;
 
 private:
+    static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
+
     RefPtr<WorkletGlobalScope> m_wrapped;
 };
 

@@ -42,6 +42,7 @@
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSONObject.h"
+#include "JSPromise.h"
 #include "JSString.h"
 #include "LinkBuffer.h"
 #include "Options.h"

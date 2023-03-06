@@ -31,6 +31,7 @@
 
 #include "Error.h"
 #include "FunctionPrototype.h"
+#include "GlobalObjectMethodTable.h"
 #include "IntlCollator.h"
 #include "IntlCollatorConstructor.h"
 #include "IntlCollatorPrototype.h"

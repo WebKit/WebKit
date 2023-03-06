@@ -25,11 +25,8 @@
 
 #pragma once
 
-#include "JSGlobalObject.h"
-#include "JSSourceCode.h"
 #include "ParserError.h"
 #include <variant>
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 

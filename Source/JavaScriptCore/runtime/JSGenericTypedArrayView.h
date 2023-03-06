@@ -99,131 +99,30 @@ public:
     static JSGenericTypedArrayView* create(VM&, Structure*, RefPtr<typename Adaptor::ViewType>&& impl);
     static JSGenericTypedArrayView* create(Structure*, JSGlobalObject*, RefPtr<typename Adaptor::ViewType>&& impl);
     
-    size_t byteLength() const
-    {
-        // https://tc39.es/proposal-resizablearraybuffer/#sec-get-%typedarray%.prototype.bytelength
-        if (LIKELY(canUseRawFieldsDirectly()))
-            return byteLengthRaw();
-        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-        return integerIndexedObjectByteLength(const_cast<JSGenericTypedArrayView*>(this), getter);
-    }
-
-    size_t byteLengthRaw() const { return lengthRaw() << logElementSize(Adaptor::typeValue); }
+    inline size_t byteLength() const;
+    inline size_t byteLengthRaw() const;
     
-    const typename Adaptor::Type* typedVector() const
-    {
-        return bitwise_cast<const typename Adaptor::Type*>(vector());
-    }
-    typename Adaptor::Type* typedVector()
-    {
-        return bitwise_cast<typename Adaptor::Type*>(vector());
-    }
+    inline const typename Adaptor::Type* typedVector() const;
+    inline typename Adaptor::Type* typedVector();
 
-    bool inBounds(size_t i) const
-    {
-        if (LIKELY(canUseRawFieldsDirectly()))
-            return i < lengthRaw();
-        size_t bufferByteLength = const_cast<JSGenericTypedArrayView*>(this)->existingBufferInButterfly()->byteLength();
-        size_t byteOffset = const_cast<JSGenericTypedArrayView*>(this)->byteOffsetRaw();
-        size_t byteLength = byteLengthRaw() + byteOffset; // Keep in mind that byteLengthRaw returns 0 for AutoLength TypedArray.
-        if (byteLength > bufferByteLength)
-            return false;
-        if (isAutoLength()) {
-            constexpr size_t logSize = logElementSize(Adaptor::typeValue);
-            size_t remainingLength = bufferByteLength - byteOffset;
-            return i < (remainingLength >> logSize);
-        }
-        return i < lengthRaw();
-    }
+    inline bool inBounds(size_t) const;
 
     // These methods are meant to match indexed access methods that JSObject
     // supports - hence the slight redundancy.
-    bool canGetIndexQuickly(size_t i) const
-    {
-        return inBounds(i) && Adaptor::canConvertToJSQuickly;
-    }
-    bool canSetIndexQuickly(size_t i, JSValue value) const
-    {
-        return inBounds(i) && value.isNumber() && Adaptor::canConvertToJSQuickly;
-    }
-    
-    typename Adaptor::Type getIndexQuicklyAsNativeValue(size_t i) const
-    {
-        ASSERT(inBounds(i));
-        return typedVector()[i];
-    }
-    
-    JSValue getIndexQuickly(size_t i) const
-    {
-        return Adaptor::toJSValue(nullptr, getIndexQuicklyAsNativeValue(i));
-    }
-    
-    void setIndexQuicklyToNativeValue(size_t i, typename Adaptor::Type value)
-    {
-        ASSERT(inBounds(i));
-        typedVector()[i] = value;
-    }
-    
-    void setIndexQuickly(size_t i, JSValue value)
-    {
-        ASSERT(!value.isObject());
-        setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
-    }
-    
-    bool setIndex(JSGlobalObject* globalObject, size_t i, JSValue jsValue)
-    {
-        VM& vm = getVM(globalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
+    inline bool canGetIndexQuickly(size_t) const;
+    inline bool canSetIndexQuickly(size_t, JSValue) const;
+    inline typename Adaptor::Type getIndexQuicklyAsNativeValue(size_t) const;
+    inline JSValue getIndexQuickly(size_t) const;
+    inline void setIndexQuicklyToNativeValue(size_t, typename Adaptor::Type);
+    inline void setIndexQuickly(size_t, JSValue);
+    inline bool setIndex(JSGlobalObject*, size_t, JSValue);
 
-        typename Adaptor::Type value = toNativeFromValue<Adaptor>(globalObject, jsValue);
-        RETURN_IF_EXCEPTION(scope, false);
+    static inline ElementType toAdaptorNativeFromValue(JSGlobalObject*, JSValue);
+    static inline std::optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue);
 
-        if (isDetached())
-            return true;
+    inline bool sort();
 
-        if (!inBounds(i))
-            return false;
-
-        setIndexQuicklyToNativeValue(i, value);
-        return true;
-    }
-
-    static ElementType toAdaptorNativeFromValue(JSGlobalObject* globalObject, JSValue jsValue)
-    {
-        return toNativeFromValue<Adaptor>(globalObject, jsValue);
-    }
-
-    static std::optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue jsValue)
-    {
-        return toNativeFromValueWithoutCoercion<Adaptor>(jsValue);
-    }
-
-    bool sort()
-    {
-        RELEASE_ASSERT(!isDetached());
-        switch (Adaptor::typeValue) {
-        case TypeFloat32:
-            return sortFloat<int32_t>();
-        case TypeFloat64:
-            return sortFloat<int64_t>();
-        default: {
-            IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-            auto lengthValue = integerIndexedObjectLength(this, getter);
-            if (!lengthValue)
-                return false;
-
-            size_t length = lengthValue.value();
-            ElementType* array = typedVector();
-            std::sort(array, array + length);
-            return true;
-        }
-        }
-    }
-
-    bool canAccessRangeQuickly(size_t offset, size_t length)
-    {
-        return isSumSmallerThanOrEqual(offset, length, this->length());
-    }
+    inline bool canAccessRangeQuickly(size_t offset, size_t length);
     
     // Like canSetQuickly, except: if it returns false, it will throw the
     // appropriate exception.
@@ -238,66 +137,22 @@ public:
     RefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
     RefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(typeForTypedArrayType(Adaptor::typeValue), StructureFlags), info(), NonArray);
-    }
+    static inline Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
-    
-    static const ClassInfo* info()
-    {
-        switch (Adaptor::typeValue) {
-#define JSC_GET_CLASS_INFO(type) \
-        case Type##type: return get##type##ArrayClassInfo();
-            FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_GET_CLASS_INFO)
-#undef JSC_GET_CLASS_INFO
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-    }
+    static inline const ClassInfo* info();
 
-    template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
-    {
-        switch (Adaptor::typeValue) {
-        case TypeInt8:
-            return vm.int8ArraySpace<mode>();
-        case TypeInt16:
-            return vm.int16ArraySpace<mode>();
-        case TypeInt32:
-            return vm.int32ArraySpace<mode>();
-        case TypeUint8:
-            return vm.uint8ArraySpace<mode>();
-        case TypeUint8Clamped:
-            return vm.uint8ClampedArraySpace<mode>();
-        case TypeUint16:
-            return vm.uint16ArraySpace<mode>();
-        case TypeUint32:
-            return vm.uint32ArraySpace<mode>();
-        case TypeFloat32:
-            return vm.float32ArraySpace<mode>();
-        case TypeFloat64:
-            return vm.float64ArraySpace<mode>();
-        case TypeBigInt64:
-            return vm.bigInt64ArraySpace<mode>();
-        case TypeBigUint64:
-            return vm.bigUint64ArraySpace<mode>();
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-    }
+    template<typename CellType, SubspaceAccess mode> static inline GCClient::IsoSubspace* subspaceFor(VM&);
     
     ArrayBuffer* existingBuffer();
 
     static constexpr TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
 
     // This is the default DOM unwrapping. It calls toUnsharedNativeTypedView().
-    static RefPtr<typename Adaptor::ViewType> toWrapped(VM&, JSValue);
+    static inline RefPtr<typename Adaptor::ViewType> toWrapped(VM&, JSValue);
+
     // [AllowShared] annotation allows accepting TypedArray originated from SharedArrayBuffer.
-    static RefPtr<typename Adaptor::ViewType> toWrappedAllowShared(VM&, JSValue);
+    static inline RefPtr<typename Adaptor::ViewType> toWrappedAllowShared(VM&, JSValue);
     
 protected:
     friend struct TypedArrayClassInfos;
@@ -349,41 +204,7 @@ protected:
     // For NaN, we normalize the NaN to a peticular representation; the sign bit is 0, all exponential bits
     // are 1 and only the MSB of the mantissa is 1. So, NaN is recognized as the largest integral numbers.
 
-    template<typename IntegralType>
-    bool sortFloat()
-    {
-        // FIXME: Need to get m_length once.
-        ASSERT(sizeof(IntegralType) == sizeof(ElementType));
-
-        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-        auto lengthValue = integerIndexedObjectLength(this, getter);
-        if (!lengthValue)
-            return false;
-
-        size_t length = lengthValue.value();
-
-        auto purifyArray = [&]() {
-            ElementType* array = typedVector();
-            for (size_t i = 0; i < length; i++)
-                array[i] = purifyNaN(array[i]);
-        };
-
-        // Since there might be another view that sets the bits of
-        // our floats to NaNs with negative sign bits we need to
-        // purify the array.
-        // We use a separate function here to avoid the strict aliasing rule.
-        // We could use a union but ASAN seems to frown upon that.
-        purifyArray();
-
-        IntegralType* array = reinterpret_cast_ptr<IntegralType*>(typedVector());
-        std::sort(array, array + length, [] (IntegralType a, IntegralType b) {
-            if (a >= 0 || b >= 0)
-                return a < b;
-            return a > b;
-        });
-
-        return true;
-    }
+    template<typename IntegralType> inline bool sortFloat();
 };
 
 template<typename PassedAdaptor>
@@ -396,60 +217,11 @@ public:
 
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
 
-    static const ClassInfo* info()
-    {
-        switch (Base::Adaptor::typeValue) {
-#define JSC_GET_CLASS_INFO(type) \
-        case Type##type: return getResizableOrGrowableShared##type##ArrayClassInfo();
-            FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_GET_CLASS_INFO)
-#undef JSC_GET_CLASS_INFO
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-    }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(typeForTypedArrayType(Base::Adaptor::typeValue), StructureFlags), info(), NonArray);
-    }
+    static inline const ClassInfo* info();
+    static inline Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
 
-template<typename Adaptor>
-inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(VM&, JSValue value)
-{
-    typename Adaptor::JSViewType* wrapper = jsDynamicCast<typename Adaptor::JSViewType*>(value);
-    if (!wrapper)
-        return nullptr;
-    return wrapper->possiblySharedTypedImpl();
-}
-
-template<typename Adaptor>
-inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(VM& vm, JSValue value)
-{
-    RefPtr<typename Adaptor::ViewType> result = toPossiblySharedNativeTypedView<Adaptor>(vm, value);
-    if (!result || result->isShared())
-        return nullptr;
-    return result;
-}
-
-template<typename Adaptor>
-RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(VM& vm, JSValue value)
-{
-    auto result = JSC::toUnsharedNativeTypedView<Adaptor>(vm, value);
-    if (!result || result->isResizableOrGrowableShared())
-        return nullptr;
-    return result;
-}
-
-template<typename Adaptor>
-RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrappedAllowShared(VM& vm, JSValue value)
-{
-    auto result = JSC::toPossiblySharedNativeTypedView<Adaptor>(vm, value);
-    if (!result || result->isResizableOrGrowableShared())
-        return nullptr;
-    return result;
-}
-
+template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(VM&, JSValue);
+template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(VM&, JSValue);
 
 } // namespace JSC

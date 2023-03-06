@@ -33,6 +33,7 @@
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "LiteralParser.h"
+#include "NumberObject.h"
 #include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
 #include "VMInlines.h"

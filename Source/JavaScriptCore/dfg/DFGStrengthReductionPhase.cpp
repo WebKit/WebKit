@@ -38,6 +38,7 @@
 #include "JSObjectInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "MathCommon.h"
+#include "NumberPrototype.h"
 #include "RegExpObject.h"
 #include "StringPrototypeInlines.h"
 #include "WasmCallingConvention.h"

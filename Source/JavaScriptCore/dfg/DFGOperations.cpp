@@ -69,6 +69,8 @@
 #include "JSWeakMapInlines.h"
 #include "JSWeakSet.h"
 #include "NumberConstructor.h"
+#include "NumberObject.h"
+#include "NumberPrototype.h"
 #include "ObjectConstructorInlines.h"
 #include "ObjectPrototypeInlines.h"
 #include "Operations.h"

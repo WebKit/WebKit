@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "JSArrayInlines.h"
 #include "JSFunction.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "JSObject.h"
 #include "JSTypedArrays.h"
 #include "Lookup.h"

@@ -31,9 +31,11 @@
 #include <pal/text/TextEncoding.h>
 #include "WebKitMediaKeyError.h"
 #include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/GenericTypedArrayView.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/TypedArrayAdaptors.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>

@@ -26,11 +26,11 @@
 #pragma once
 
 #include "LazyProperty.h"
-#include "Structure.h"
 
 namespace JSC {
 
 class JSGlobalObject;
+class Structure;
 class VM;
 
 class LazyClassStructure {

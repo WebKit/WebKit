@@ -21,36 +21,14 @@
 
 #pragma once
 
-#include "ArrayAllocationProfile.h"
-#include "ArrayBufferSharingMode.h"
-#include "BigIntPrototype.h"
-#include "BooleanPrototype.h"
-#include "ErrorType.h"
-#include "ExceptionHelpers.h"
-#include "GetVM.h"
-#include "InternalFunction.h"
-#include "JSArray.h"
-#include "JSClassRef.h"
-#include "JSGlobalLexicalEnvironment.h"
-#include "JSPromise.h"
 #include "JSSegmentedVariableObject.h"
-#include "JSWeakObjectMapRefInternal.h"
 #include "LazyClassStructure.h"
-#include "LazyProperty.h"
-#include "NumberPrototype.h"
-#include "ParserModes.h"
 #include "RegExpGlobalData.h"
 #include "RuntimeFlags.h"
-#include "StringPrototype.h"
 #include "StructureCache.h"
-#include "SymbolPrototype.h"
-#include "VM.h"
 #include "Watchpoint.h"
 #include "WeakGCSet.h"
-#include <JavaScriptCore/JSBase.h>
-#include <array>
 #include <wtf/FixedVector.h>
-#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -65,6 +43,8 @@
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
+struct OpaqueJSWeakObjectMap;
+
 OBJC_CLASS JSWrapperMap;
 
 namespace Inspector {
@@ -72,34 +52,27 @@ class JSGlobalObjectInspectorController;
 }
 
 namespace JSC {
+
+class ArrayAllocationProfile;
 class ArrayConstructor;
-class ArrayPrototype;
 class ArrayIteratorPrototype;
-class AsyncIteratorPrototype;
+class ArrayPrototype;
 class AsyncFunctionPrototype;
-class AsyncGeneratorPrototype;
 class AsyncGeneratorFunctionPrototype;
-class BooleanPrototype;
+class AsyncGeneratorPrototype;
+class AsyncIteratorPrototype;
 class ChainedWatchpoint;
 class ConsoleClient;
 class Debugger;
-class ErrorConstructor;
-class ErrorPrototype;
-class EvalCodeBlock;
-class EvalExecutable;
 class FunctionConstructor;
 class FunctionPrototype;
-class GeneratorPrototype;
 class GeneratorFunctionPrototype;
+class GeneratorPrototype;
 class GetterSetter;
-class GlobalCodeBlock;
 class ImportMap;
-class IndirectEvalExecutable;
-class InputCursor;
-class IntlObject;
 class IntlCollator;
+class IteratorPrototype;
 class JSArrayBuffer;
-class JSArrayBufferPrototype;
 class JSCallee;
 class JSCustomGetterFunction;
 class JSCustomSetterFunction;
@@ -110,43 +83,40 @@ class JSModuleRecord;
 class JSPromise;
 class JSPromiseConstructor;
 class JSPromisePrototype;
-class JSSharedArrayBufferPrototype;
 class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
-class DirectEvalExecutable;
-class LLIntOffsetsExtractor;
 class MapIteratorPrototype;
 class MapPrototype;
 class Microtask;
-class ModuleLoader;
-class ModuleProgramExecutable;
-class NativeErrorConstructorBase;
 class NullGetterFunction;
 class NullSetterFunction;
+class ObjectAdaptiveStructureWatchpoint;
 class ObjectConstructor;
-class ProgramCodeBlock;
-class ProgramExecutable;
-class ShadowRealmConstructor;
-class ShadowRealmPrototype;
+class ObjectPrototype;
 class RegExpConstructor;
 class RegExpPrototype;
 class SetIteratorPrototype;
 class SetPrototype;
-class SourceCode;
+class ShadowRealmConstructor;
+class ShadowRealmPrototype;
 class SourceOrigin;
 class StringConstructor;
-class UnlinkedModuleProgramCodeBlock;
-class VariableEnvironment;
-struct ActivationStackNode;
-struct HashTable;
+class WrapperMap;
+
+enum class ArrayBufferSharingMode : bool;
+enum class CodeGenerationMode : uint8_t;
+enum class ErrorType : uint8_t;
 enum class LinkTimeConstant : int32_t;
 
-#ifdef JSC_GLIB_API_ENABLED
-class WrapperMap;
-#endif
+struct GlobalObjectMethodTable;
 
 template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
-class ObjectAdaptiveStructureWatchpoint;
+
+enum class ScriptExecutionStatus {
+    Running,
+    Suspended,
+    Stopped,
+};
 
 constexpr bool typeExposedByDefault = true;
 
@@ -205,7 +175,6 @@ constexpr bool typeExposedByDefault = true;
     class capitalName ## Prototype; \
     class capitalName ## Constructor;
 
-class IteratorPrototype;
 FOR_EACH_SIMPLE_BUILTIN_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 FOR_EACH_LAZY_BUILTIN_TYPE_WITH_DECLARATION(DECLARE_SIMPLE_BUILTIN_TYPE)
 FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
@@ -213,96 +182,8 @@ FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 
 #undef DECLARE_SIMPLE_BUILTIN_TYPE
 
-enum class JSPromiseRejectionOperation : unsigned {
-    Reject, // When a promise is rejected without any handlers.
-    Handle, // When a handler is added to a rejected promise for the first time.
-};
-
-enum class ScriptExecutionStatus {
-    Running,
-    Suspended,
-    Stopped,
-};
-
-struct GlobalObjectMethodTable {
-    typedef bool (*SupportsRichSourceInfoFunctionPtr)(const JSGlobalObject*);
-    SupportsRichSourceInfoFunctionPtr supportsRichSourceInfo;
-
-    typedef bool (*ShouldInterruptScriptFunctionPtr)(const JSGlobalObject*);
-    ShouldInterruptScriptFunctionPtr shouldInterruptScript;
-
-    typedef RuntimeFlags (*JavaScriptRuntimeFlagsFunctionPtr)(const JSGlobalObject*);
-    JavaScriptRuntimeFlagsFunctionPtr javaScriptRuntimeFlags;
-
-    typedef void (*QueueMicrotaskToEventLoopFunctionPtr)(JSGlobalObject&, Ref<Microtask>&&);
-    QueueMicrotaskToEventLoopFunctionPtr queueMicrotaskToEventLoop;
-
-    typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
-    ShouldInterruptScriptBeforeTimeoutPtr shouldInterruptScriptBeforeTimeout;
-
-    typedef JSInternalPromise* (*ModuleLoaderImportModulePtr)(JSGlobalObject*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);
-    ModuleLoaderImportModulePtr moduleLoaderImportModule;
-
-    typedef Identifier (*ModuleLoaderResolvePtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
-    ModuleLoaderResolvePtr moduleLoaderResolve;
-
-    typedef JSInternalPromise* (*ModuleLoaderFetchPtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
-    ModuleLoaderFetchPtr moduleLoaderFetch;
-
-    typedef JSObject* (*ModuleLoaderCreateImportMetaPropertiesPtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
-    ModuleLoaderCreateImportMetaPropertiesPtr moduleLoaderCreateImportMetaProperties;
-
-    typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, JSModuleLoader*, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher, JSValue awaitedValue, JSValue resumeMode);
-    ModuleLoaderEvaluatePtr moduleLoaderEvaluate;
-
-    typedef void (*PromiseRejectionTrackerPtr)(JSGlobalObject*, JSPromise*, JSPromiseRejectionOperation);
-    PromiseRejectionTrackerPtr promiseRejectionTracker;
-
-    typedef void (*ReportUncaughtExceptionAtEventLoopPtr)(JSGlobalObject*, Exception*);
-    ReportUncaughtExceptionAtEventLoopPtr reportUncaughtExceptionAtEventLoop;
-
-    // For most contexts this is just the global object. For JSDOMWindow, however, this is the JSDocument.
-    typedef JSObject* (*CurrentScriptExecutionOwnerPtr)(JSGlobalObject*);
-    CurrentScriptExecutionOwnerPtr currentScriptExecutionOwner;
-
-    typedef ScriptExecutionStatus (*ScriptExecutionStatusPtr)(JSGlobalObject*, JSObject* scriptExecutionOwner);
-    ScriptExecutionStatusPtr scriptExecutionStatus;
-    
-    typedef void (*ReportViolationForUnsafeEvalPtr)(JSGlobalObject*, JSString*);
-    ReportViolationForUnsafeEvalPtr reportViolationForUnsafeEval;
-
-    typedef String (*DefaultLanguageFunctionPtr)();
-    DefaultLanguageFunctionPtr defaultLanguage;
-
-    typedef JSPromise* (*CompileStreamingPtr)(JSGlobalObject*, JSValue);
-    CompileStreamingPtr compileStreaming;
-
-    typedef JSPromise* (*InstantiateStreamingPtr)(JSGlobalObject*, JSValue, JSObject*);
-    InstantiateStreamingPtr instantiateStreaming;
-
-    typedef JSGlobalObject* (*DeriveShadowRealmGlobalFunctionPtr)(JSGlobalObject*);
-    DeriveShadowRealmGlobalFunctionPtr deriveShadowRealmGlobalObject;
-};
-
 class JSGlobalObject : public JSSegmentedVariableObject {
 private:
-    typedef HashSet<RefPtr<OpaqueJSWeakObjectMap>> WeakMapSet;
-    typedef HashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> OpaqueJSClassDataMap;
-
-    struct JSGlobalObjectRareData {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        JSGlobalObjectRareData()
-            : profileGroup(0)
-        {
-        }
-
-        WeakMapSet weakMaps;
-        unsigned profileGroup;
-        
-        OpaqueJSClassDataMap opaqueJSClassData;
-    };
-
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
     VM* const m_vm;
@@ -532,7 +413,8 @@ public:
     Ref<WatchpointSet> m_varReadOnlyWatchpointSet;
     Ref<WatchpointSet> m_regExpRecompiledWatchpointSet;
 
-    std::unique_ptr<JSGlobalObjectRareData> m_rareData;
+    struct RareData;
+    std::unique_ptr<RareData> m_rareData;
 
     WeakRandom m_weakRandom;
     RegExpGlobalData m_regExpGlobalData;
@@ -601,47 +483,9 @@ public:
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT)
 #undef DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT
 
-    std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_typedArrayInt8ConstructorSpeciesAbsenceWatchpoint;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## ConstructorSpeciesAbsenceWatchpoint;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_typedArrayInt8ConstructorSpeciesAbsenceWatchpoint;
-    }
-
-    std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_typedArrayInt8PrototypeSymbolIteratorAbsenceWatchpoint;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## PrototypeSymbolIteratorAbsenceWatchpoint;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_typedArrayInt8PrototypeSymbolIteratorAbsenceWatchpoint;
-    }
-
-    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& typedArrayPrototypeConstructorWatchpoint(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_typedArrayInt8PrototypeConstructorWatchpoint;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## PrototypeConstructorWatchpoint;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_typedArrayInt8PrototypeConstructorWatchpoint;
-    }
+    inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType);
+    inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);
+    inline std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& typedArrayPrototypeConstructorWatchpoint(TypedArrayType);
 
 public:
     JSCallee* stackOverflowFrameCallee() const { return m_stackOverflowFrameCallee.get(); }
@@ -665,44 +509,10 @@ public:
         return m_numberToStringWatchpointSet;
     }
     InlineWatchpointSet& structureCacheClearedWatchpointSet() { return m_structureCacheClearedWatchpointSet; }
-    InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode sharingMode)
-    {
-        switch (sharingMode) {
-        case ArrayBufferSharingMode::Default:
-            return m_arrayBufferSpeciesWatchpointSet;
-        case ArrayBufferSharingMode::Shared:
-            return m_sharedArrayBufferSpeciesWatchpointSet;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_arrayBufferSpeciesWatchpointSet;
-    }
+    inline InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode);
 
-    InlineWatchpointSet& typedArraySpeciesWatchpointSet(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_typedArrayInt8SpeciesWatchpointSet;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## SpeciesWatchpointSet;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_typedArrayInt8SpeciesWatchpointSet;
-    }
-    InlineWatchpointSet& typedArrayIteratorProtocolWatchpointSet(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_typedArrayInt8IteratorProtocolWatchpointSet;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## IteratorProtocolWatchpointSet;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_typedArrayInt8IteratorProtocolWatchpointSet;
-    }
+    inline InlineWatchpointSet& typedArraySpeciesWatchpointSet(TypedArrayType);
+    inline InlineWatchpointSet& typedArrayIteratorProtocolWatchpointSet(TypedArrayType);
     InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() { return m_typedArrayConstructorSpeciesWatchpointSet; }
     InlineWatchpointSet& typedArrayPrototypeIteratorProtocolWatchpointSet() { return m_typedArrayPrototypeIteratorProtocolWatchpointSet; }
 
@@ -752,15 +562,9 @@ public:
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
 #endif
 
-    static JS_EXPORT_PRIVATE const GlobalObjectMethodTable s_globalObjectMethodTable;
     const GlobalObjectMethodTable* m_globalObjectMethodTable;
 
-    void createRareDataIfNeeded()
-    {
-        if (m_rareData)
-            return;
-        m_rareData = makeUnique<JSGlobalObjectRareData>();
-    }
+    inline void createRareDataIfNeeded();
         
 public:
     using Base = JSSegmentedVariableObject;
@@ -809,14 +613,10 @@ public:
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-    void addVar(JSGlobalObject* globalObject, const Identifier& propertyName)
-    {
-        if (!hasOwnProperty(globalObject, propertyName))
-            addGlobalVar(propertyName);
-    }
+    inline void addVar(JSGlobalObject*, const Identifier&);
     void addFunction(JSGlobalObject*, const Identifier&);
 
-    JSScope* globalScope() { return m_globalLexicalEnvironment.get(); }
+    inline JSScope* globalScope();
     JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }
 
     JSScope* globalScopeExtension() { return m_globalScopeExtension.get(); }
@@ -927,10 +727,7 @@ public:
         return m_arrayStructureForIndexingShapeDuringAllocation[arrayIndexFromIndexingType(indexingType)].get();
     }
     Structure* arrayStructureForIndexingTypeDuringAllocation(JSGlobalObject* globalObject, IndexingType indexingType, JSValue newTarget) const;
-    Structure* arrayStructureForProfileDuringAllocation(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, JSValue newTarget) const
-    {
-        return arrayStructureForIndexingTypeDuringAllocation(globalObject, ArrayAllocationProfile::selectIndexingTypeFor(profile), newTarget);
-    }
+    inline Structure* arrayStructureForProfileDuringAllocation(JSGlobalObject*, ArrayAllocationProfile*, JSValue newTarget) const;
         
     bool isOriginalArrayStructure(Structure* structure)
     {
@@ -953,29 +750,7 @@ public:
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(this); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
     Structure* errorStructure() const { return m_errorStructure.get(this); }
-    Structure* errorStructure(ErrorType errorType) const
-    {
-        switch (errorType) {
-        case ErrorType::Error:
-            return errorStructure();
-        case ErrorType::EvalError:
-            return m_evalErrorStructure.get(this);
-        case ErrorType::RangeError:
-            return m_rangeErrorStructure.get(this);
-        case ErrorType::ReferenceError:
-            return m_referenceErrorStructure.get(this);
-        case ErrorType::SyntaxError:
-            return m_syntaxErrorStructure.get(this);
-        case ErrorType::TypeError:
-            return m_typeErrorStructure.get(this);
-        case ErrorType::URIError:
-            return m_URIErrorStructure.get(this);
-        case ErrorType::AggregateError:
-            return m_aggregateErrorStructure.get(this);
-        }
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+    inline Structure* errorStructure(ErrorType) const;
     template<ErrorType errorType> Structure* errorStructureWithErrorType() const { return errorStructure(errorType); }
 
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
@@ -1105,41 +880,10 @@ public:
     static ScriptExecutionStatus scriptExecutionStatus(JSGlobalObject*, JSObject*) { return ScriptExecutionStatus::Running; }
     static void reportViolationForUnsafeEval(JSGlobalObject*, JSString*) { }
 
-    JSObject* arrayBufferPrototype(ArrayBufferSharingMode sharingMode) const
-    {
-        switch (sharingMode) {
-        case ArrayBufferSharingMode::Default:
-            return m_arrayBufferStructure.prototype(this);
-        case ArrayBufferSharingMode::Shared:
-            return m_sharedArrayBufferStructure.prototype(this);
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-    Structure* arrayBufferStructure(ArrayBufferSharingMode sharingMode) const
-    {
-        switch (sharingMode) {
-        case ArrayBufferSharingMode::Default:
-            return m_arrayBufferStructure.get(this);
-        case ArrayBufferSharingMode::Shared:
-            return m_sharedArrayBufferStructure.get(this);
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+    inline JSObject* arrayBufferPrototype(ArrayBufferSharingMode) const;
+    inline Structure* arrayBufferStructure(ArrayBufferSharingMode) const;
     template<ArrayBufferSharingMode sharingMode> Structure* arrayBufferStructureWithSharingMode() const { return arrayBufferStructure(sharingMode); }
-    JSObject* arrayBufferConstructor(ArrayBufferSharingMode sharingMode) const
-    {
-        switch (sharingMode) {
-        case ArrayBufferSharingMode::Default:
-            return m_arrayBufferStructure.constructor(this);
-        case ArrayBufferSharingMode::Shared:
-            return m_sharedArrayBufferStructure.constructor(this);
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
+    inline JSObject* arrayBufferConstructor(ArrayBufferSharingMode) const;
 
 #define DEFINE_ACCESSORS_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     Structure* properName ## Structure() { return m_ ## properName ## Structure.get(); }
@@ -1158,88 +902,21 @@ public:
 
 #undef DEFINE_ACCESSORS_FOR_LAZY_TYPE
 
-    LazyClassStructure& lazyTypedArrayStructure(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_typedArrayInt8;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_typedArrayInt8;
-    }
-    const LazyClassStructure& lazyTypedArrayStructure(TypedArrayType type) const
-    {
-        return const_cast<const LazyClassStructure&>(const_cast<JSGlobalObject*>(this)->lazyTypedArrayStructure(type));
-    }
-    LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType type)
-    {
-        switch (type) {
-        case NotTypedArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            return m_resizableOrGrowableSharedTypedArrayInt8Structure;
-#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_resizableOrGrowableSharedTypedArray ## name ## Structure;
-            FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
-#undef TYPED_ARRAY_TYPE_CASE
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return m_resizableOrGrowableSharedTypedArrayInt8Structure;
-    }
-    const LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType type) const
-    {
-        return const_cast<const LazyProperty<JSGlobalObject, Structure>&>(const_cast<JSGlobalObject*>(this)->lazyResizableOrGrowableSharedTypedArrayStructure(type));
-    }
-
-    Structure* typedArrayStructure(TypedArrayType type, bool isResizableOrGrowableShared) const
-    {
-        if (isResizableOrGrowableShared)
-            return lazyResizableOrGrowableSharedTypedArrayStructure(type).get(this);
-        return lazyTypedArrayStructure(type).get(this);
-    }
-    Structure* typedArrayStructureConcurrently(TypedArrayType type, bool isResizableOrGrowableShared) const
-    {
-        if (isResizableOrGrowableShared)
-            return lazyResizableOrGrowableSharedTypedArrayStructure(type).getConcurrently();
-        return lazyTypedArrayStructure(type).getConcurrently();
-    }
-    bool isOriginalTypedArrayStructure(Structure* structure, bool isResizableOrGrowableShared)
-    {
-        TypedArrayType type = typedArrayType(structure->typeInfo().type());
-        if (type == NotTypedArray)
-            return false;
-        return typedArrayStructureConcurrently(type, isResizableOrGrowableShared) == structure;
-    }
+    inline LazyClassStructure& lazyTypedArrayStructure(TypedArrayType);
+    inline const LazyClassStructure& lazyTypedArrayStructure(TypedArrayType) const;
+    inline LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType);
+    inline const LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType) const;
+    inline Structure* typedArrayStructure(TypedArrayType, bool isResizableOrGrowableShared) const;
+    inline Structure* typedArrayStructureConcurrently(TypedArrayType, bool isResizableOrGrowableShared) const;
+    inline bool isOriginalTypedArrayStructure(Structure*, bool isResizableOrGrowableShared);
     template<TypedArrayType type> Structure* typedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ false); }
     template<TypedArrayType type> Structure* resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ true); }
 
-    JSObject* typedArrayConstructor(TypedArrayType type) const
-    {
-        return lazyTypedArrayStructure(type).constructor(this);
-    }
+    inline JSObject* typedArrayConstructor(TypedArrayType) const;
+    inline JSObject* typedArrayPrototype(TypedArrayType) const;
 
-    JSObject* typedArrayPrototype(TypedArrayType type) const
-    {
-        return lazyTypedArrayStructure(type).prototype(this);
-    }
-
-    JSCell* linkTimeConstant(LinkTimeConstant value) const
-    {
-        JSCell* result = m_linkTimeConstants[static_cast<unsigned>(value)].getInitializedOnMainThread(this);
-        ASSERT(result);
-        return result;
-    }
-
-    template<typename Type>
-    Type linkTimeConstantConcurrently(LinkTimeConstant value) const
-    {
-        JSCell* result = m_linkTimeConstants[static_cast<unsigned>(value)].getConcurrently();
-        if (!result)
-            return nullptr;
-        return jsCast<Type>(result);
-    }
+    inline JSCell* linkTimeConstant(LinkTimeConstant) const;
+    template<typename Type> inline Type linkTimeConstantConcurrently(LinkTimeConstant) const;
 
     WatchpointSet& masqueradesAsUndefinedWatchpointSet() { return m_masqueradesAsUndefinedWatchpointSet.get(); }
     WatchpointSet& havingABadTimeWatchpointSet() { return m_havingABadTimeWatchpointSet.get(); }
@@ -1267,13 +944,8 @@ public:
         return m_regExpRecompiledWatchpointSet->hasBeenInvalidated();
     }
 
-    void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
-    unsigned profileGroup() const
-    { 
-        if (!m_rareData)
-            return 0;
-        return m_rareData->profileGroup;
-    }
+    inline void setProfileGroup(unsigned);
+    inline unsigned profileGroup() const;
 
     Debugger* debugger() const { return m_debugger; }
     void setDebugger(Debugger*);
@@ -1282,12 +954,7 @@ public:
 
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
-    static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject* globalObject)
-    {
-        auto& vm = globalObject->vm();
-        JSGlobalObject* result = JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructureForShadowRealm(vm, jsNull()), globalObject->globalObjectMethodTable());
-        return result;
-    }
+    static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject*);
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
@@ -1325,36 +992,13 @@ public:
     WriteBarrier<JSObject>* addressOfGlobalThis() { return &m_globalThis; }
     OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
 
-    static Structure* createStructure(VM& vm, JSValue prototype)
-    {
-        Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
-        result->setTransitionWatchpointIsLikelyToBeFired(true);
-        return result;
-    }
-    static Structure* createStructureForShadowRealm(VM& vm, JSValue prototype)
-    {
-        Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags & ~IsImmutablePrototypeExoticObject), info());
-        result->setTransitionWatchpointIsLikelyToBeFired(true);
-        return result;
-    }
+    static inline Structure* createStructure(VM&, JSValue prototype);
+    static inline Structure* createStructureForShadowRealm(VM&, JSValue prototype);
 
-    void registerWeakMap(OpaqueJSWeakObjectMap* map)
-    {
-        createRareDataIfNeeded();
-        m_rareData->weakMaps.add(map);
-    }
+    inline void registerWeakMap(OpaqueJSWeakObjectMap*);
+    inline void unregisterWeakMap(OpaqueJSWeakObjectMap*);
 
-    void unregisterWeakMap(OpaqueJSWeakObjectMap* map)
-    {
-        if (m_rareData)
-            m_rareData->weakMaps.remove(map);
-    }
-
-    OpaqueJSClassDataMap& opaqueJSClassData()
-    {
-        createRareDataIfNeeded();
-        return m_rareData->opaqueJSClassData;
-    }
+    inline std::unique_ptr<OpaqueJSClassContextData>& contextData(OpaqueJSClass*);
 
     static ptrdiff_t weakRandomOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_weakRandom); }
     double weakRandomNumber() { return m_weakRandom.get(); }
@@ -1403,25 +1047,15 @@ protected:
     template<typename SpeciesWatchpoint>
     void tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<SpeciesWatchpoint>&, InlineWatchpointSet&, HasSpeciesProperty);
 
-    struct GlobalPropertyInfo {
-        GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
-            : identifier(i)
-            , value(v)
-            , attributes(a)
-        {
-            ASSERT(Thread::current().stack().contains(this));
-        }
-
-        const Identifier identifier;
-        JSValue value;
-        unsigned attributes;
-    };
+    struct GlobalPropertyInfo;
     JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     void setNeedsSiteSpecificQuirks(bool needQuirks) { m_needsSiteSpecificQuirks = needQuirks; }
 
 private:
     friend class LLIntOffsetsExtractor;
+
+    static const GlobalObjectMethodTable* baseGlobalObjectMethodTable();
 
     void fireWatchpointAndMakeAllArrayStructuresSlowPut(VM&);
     void setGlobalThis(VM&, JSObject* globalThis);
@@ -1445,53 +1079,6 @@ private:
 #endif
 };
 
-inline JSArray* constructEmptyArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, unsigned initialLength = 0, JSValue newTarget = JSValue())
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    Structure* structure;
-    if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
-        structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(globalObject, ArrayWithArrayStorage, newTarget);
-    else
-        structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-    JSArray* result = JSArray::tryCreate(vm, structure, initialLength);
-    if (UNLIKELY(!result)) {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, result);
-}
-
-inline JSArray* constructArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const ArgList& values, JSValue newTarget = JSValue())
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(globalObject, structure, values));
-}
-
-inline JSArray* constructArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(globalObject, structure, values, length));
-}
-
-inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(globalObject, structure, values, length));
-}
-
 inline JSObject* JSScope::globalThis()
 { 
     return globalObject()->globalThis();
@@ -1500,18 +1087,6 @@ inline JSObject* JSScope::globalThis()
 inline JSObject* JSGlobalObject::globalThis() const
 { 
     return m_globalThis.get();
-}
-
-inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const
-{
-    OptionSet<CodeGenerationMode> codeGenerationMode;
-    if (hasInteractiveDebugger() || Options::forceDebuggerBytecodeGeneration() || Options::debuggerTriggersBreakpointException())
-        codeGenerationMode.add(CodeGenerationMode::Debugger);
-    if (vm().typeProfiler())
-        codeGenerationMode.add(CodeGenerationMode::TypeProfiler);
-    if (vm().controlFlowProfiler())
-        codeGenerationMode.add(CodeGenerationMode::ControlFlowProfiler);
-    return codeGenerationMode;
 }
 
 } // namespace JSC

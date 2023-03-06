@@ -30,6 +30,7 @@
 
 #include "SerializedPlatformDataCue.h"
 #include "TextTrackCue.h"
+#include <JavaScriptCore/Strong.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TypeCasts.h>
 
