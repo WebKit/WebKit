@@ -112,7 +112,7 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
+void WebFrame::initWithCoreMainFrame(WebPage& page, AbstractFrame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
     ASSERT(!m_frameID);
     m_frameID = coreFrame.frameID();
@@ -124,7 +124,8 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool recei
 
     m_coreFrame = coreFrame;
     m_coreFrame->tree().setName(nullAtom());
-    coreFrame.init();
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(coreFrame))
+        localFrame->init();
 }
 
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
@@ -531,11 +532,7 @@ bool WebFrame::isFrameSet() const
 
 bool WebFrame::isMainFrame() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame)
-        return false;
-
-    return localFrame->isMainFrame();
+    return m_coreFrame && m_coreFrame->isMainFrame();
 }
 
 String WebFrame::name() const

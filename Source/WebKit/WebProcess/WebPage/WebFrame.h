@@ -79,7 +79,7 @@ public:
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
     ~WebFrame();
 
-    void initWithCoreMainFrame(WebPage&, WebCore::Frame&, bool receivedMainFrameIdentifierFromUIProcess);
+    void initWithCoreMainFrame(WebPage&, WebCore::AbstractFrame&, bool receivedMainFrameIdentifierFromUIProcess);
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
     void invalidate();

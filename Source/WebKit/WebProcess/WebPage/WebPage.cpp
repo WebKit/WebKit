@@ -745,8 +745,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // in modern WebKit.
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        m_mainFrame->initWithCoreMainFrame(*this, *localMainFrame, receivedMainFrameIdentifierFromUIProcess);
+    m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame(), receivedMainFrameIdentifierFromUIProcess);
 
     m_drawingArea->updatePreferences(parameters.store);
 
@@ -1983,6 +1982,10 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     m_viewSize = viewSize;
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    if (!view) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     view->resize(viewSize);
     m_drawingArea->setNeedsDisplay();
@@ -6175,6 +6178,9 @@ static bool hasEnabledHorizontalScrollbar(ScrollableArea* scrollableArea)
 
 static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
 {
+    if (!mainFrame)
+        return false;
+
     if (FrameView* frameView = mainFrame->view()) {
         if (hasEnabledHorizontalScrollbar(frameView))
             return true;

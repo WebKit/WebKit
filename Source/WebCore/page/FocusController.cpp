@@ -416,7 +416,7 @@ void FocusController::setFocusedInternal(bool focused)
             setFocusedFrame(localMainFrame);
     }
 
-    if (m_focusedFrame->view()) {
+    if (m_focusedFrame && m_focusedFrame->view()) {
         m_focusedFrame->selection().setFocused(focused);
         dispatchEventsOnWindowAndFocusedElement(m_focusedFrame->document(), focused);
     }

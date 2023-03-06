@@ -45,9 +45,10 @@ public:
     ~NavigationDisabler()
     {
         if (m_frame) {
-            auto& mainFrame = *dynamicDowncast<LocalFrame>(m_frame->mainFrame());
-            ASSERT(mainFrame.m_navigationDisableCount);
-            --mainFrame.m_navigationDisableCount;
+            if (auto* mainFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame())) {
+                ASSERT(mainFrame->m_navigationDisableCount);
+                --mainFrame->m_navigationDisableCount;
+            }
         } else {
             ASSERT(s_globalNavigationDisableCount);
             --s_globalNavigationDisableCount;
@@ -56,10 +57,9 @@ public:
 
     static bool isNavigationAllowed(Frame& frame)
     {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
-        if (localFrame)
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame()))
             return !localFrame->m_navigationDisableCount && !s_globalNavigationDisableCount;
-        return false;
+        return true;
     }
 
 private:

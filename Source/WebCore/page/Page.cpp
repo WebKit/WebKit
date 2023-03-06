@@ -1906,18 +1906,19 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
         document.prepareCanvasesForDisplayIfNeeded();
     });
 
-    ASSERT(localMainFrame);
-    ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
+    if (localMainFrame) {
+        ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
 #if ASSERT_ENABLED
-    for (AbstractFrame* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(child);
-        auto* frameView = localFrame->view();
-        ASSERT(!frameView || !frameView->needsLayout());
-    }
+        for (AbstractFrame* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(child);
+            auto* frameView = localFrame->view();
+            ASSERT(!frameView || !frameView->needsLayout());
+        }
 #endif
 
-    if (auto* view = localMainFrame->view())
-        view->notifyAllFramesThatContentAreaWillPaint();
+        if (auto* view = localMainFrame->view())
+            view->notifyAllFramesThatContentAreaWillPaint();
+    }
 
     if (!m_sampledPageTopColor) {
         m_sampledPageTopColor = PageColorSampler::sampleTop(*this);
