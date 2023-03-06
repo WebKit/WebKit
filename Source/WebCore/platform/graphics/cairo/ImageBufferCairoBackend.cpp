@@ -42,12 +42,6 @@
 
 namespace WebCore {
 
-void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
-{
-    if (auto image = copyNativeImage(DontCopyBackingStore))
-        Cairo::clipToImageBuffer(*destContext.platformContext(), image->platformImage().get(), destRect);
-}
-
 void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)

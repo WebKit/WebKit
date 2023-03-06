@@ -87,6 +87,8 @@ public:
 
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final;
 
+    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+
     IntRect clipBounds() const final;
 
     void setLineCap(LineCap) final;

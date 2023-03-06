@@ -45,8 +45,6 @@ protected:
     using ImageBufferBackend::ImageBufferBackend;
     void applyBaseTransform(GraphicsContextCG&) const;
 
-    void clipToMask(GraphicsContext&, const FloatRect& destRect) override;
-
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
     bool originAtBottomLeftCorner() const override;

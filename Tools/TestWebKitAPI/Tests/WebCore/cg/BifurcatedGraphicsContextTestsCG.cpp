@@ -304,6 +304,38 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
     EXPECT_EQ(primaryCTM.yScale(), 2);
 }
 
+TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
+{
+    InMemoryDisplayList primaryDisplayList;
+    RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+
+    InMemoryDisplayList secondaryDisplayList;
+    RecorderImpl secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    ctx.clipToImageBuffer(*imageBuffer, { 0, 0, 100, 100 });
+
+    auto runTest = [&] (InMemoryDisplayList& displayList) {
+        EXPECT_FALSE(displayList.isEmpty());
+        bool sawClipToImageBuffer = false;
+        for (auto displayListItem : displayList) {
+            auto handle = displayListItem->item;
+            if (handle.type() != ItemType::ClipToImageBuffer)
+                continue;
+            sawClipToImageBuffer = true;
+        }
+
+        EXPECT_GT(displayList.sizeInBytes(), 0U);
+        EXPECT_TRUE(sawClipToImageBuffer);
+    };
+
+    // Ensure that both contexts have clip-to-image-buffer commands.
+    runTest(primaryDisplayList);
+    runTest(secondaryDisplayList);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)
