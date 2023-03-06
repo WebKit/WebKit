@@ -36,21 +36,21 @@
 namespace WGSL {
 
 template<TokenType TT, TokenType... TTs>
-struct Types {
+struct TemplateTypes {
     static bool includes(TokenType tokenType)
     {
-        return TT == tokenType || Types<TTs...>::includes(tokenType);
+        return TT == tokenType || TemplateTypes<TTs...>::includes(tokenType);
     }
 
     static void appendNameTo(StringBuilder& builder)
     {
         builder.append(toString(TT), ", ");
-        Types<TTs...>::appendNameTo(builder);
+        TemplateTypes<TTs...>::appendNameTo(builder);
     }
 };
 
 template <TokenType TT>
-struct Types<TT> {
+struct TemplateTypes<TT> {
     static bool includes(TokenType tokenType)
     {
         return TT == tokenType;
@@ -132,7 +132,7 @@ struct Types<TT> {
     if (!name##Expected) { \
         StringBuilder builder; \
         builder.append("Expected one of ["); \
-        Types<__VA_ARGS__>::appendNameTo(builder); \
+        TemplateTypes<__VA_ARGS__>::appendNameTo(builder); \
         builder.append("], but got a "); \
         builder.append(toString(name##Expected.error())); \
         FAIL(builder.toString()); \
@@ -326,7 +326,7 @@ template<TokenType... TTs>
 Expected<Token, TokenType> Parser<Lexer>::consumeTypes()
 {
     auto token = m_current;
-    if (Types<TTs...>::includes(token.m_type)) {
+    if (TemplateTypes<TTs...>::includes(token.m_type)) {
         m_current = m_lexer.lex();
         return { token };
     }

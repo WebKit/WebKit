@@ -102,8 +102,7 @@ private:
     ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
 
-    // FIXME: move this into a class that contains the AST
-    TypeStore m_types;
+    TypeStore& m_types;
     Vector<Error> m_errors;
     // FIXME: maybe these should live in the context
     HashMap<String, WTF::Vector<OverloadCandidate>> m_overloadedOperations;
@@ -111,6 +110,7 @@ private:
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
+    , m_types(shaderModule.types())
 {
     introduceVariable(AST::Identifier::make("void"_s), m_types.voidType());
     introduceVariable(AST::Identifier::make("bool"_s), m_types.boolType());
