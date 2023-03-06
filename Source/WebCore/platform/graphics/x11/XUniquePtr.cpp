@@ -29,11 +29,7 @@
 #if PLATFORM(X11)
 
 #if USE(GLX)
-#if USE(LIBEPOXY)
 #include <epoxy/glx.h>
-#else
-extern "C" void glXDestroyContext(::Display*, GLXContext);
-#endif
 #endif
 
 namespace WebCore {

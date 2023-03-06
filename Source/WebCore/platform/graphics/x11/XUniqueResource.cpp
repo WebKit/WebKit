@@ -36,11 +36,7 @@
 #endif
 
 #if USE(GLX)
-#if USE(LIBEPOXY)
 #include <epoxy/glx.h>
-#else
-#include <GL/glx.h>
-#endif
 #endif
 
 namespace WebCore {

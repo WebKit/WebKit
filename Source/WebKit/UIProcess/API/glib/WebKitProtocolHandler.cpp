@@ -29,6 +29,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformScreen.h>
+#include <epoxy/gl.h>
 #include <gio/gio.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
@@ -51,30 +52,14 @@
 #endif
 #endif
 
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#elif USE(OPENGL_ES)
-#include <GLES2/gl2.h>
-#else
-#include <WebCore/OpenGLShims.h>
-#endif
-
 #if USE(EGL)
-#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
-#else
-#include <EGL/egl.h>
-#endif
 #endif
 
 #if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
 #if USE(GLX)
-#if USE(LIBEPOXY)
 #include <epoxy/glx.h>
-#else
-#include <GL/glx.h>
-#endif
 #endif
 #endif
 
@@ -151,21 +136,9 @@ static bool webGLEnabled(WebKitURISchemeRequest* request)
 
 static const char* openGLAPI(bool isEGL)
 {
-#if USE(LIBEPOXY)
     if (epoxy_is_desktop_gl())
         return "OpenGL (libepoxy)";
     return "OpenGL ES 2 (libepoxy)";
-#else
-#if USE(EGL)
-    if (isEGL) {
-#if USE(OPENGL_ES)
-        return "OpenGL ES 2";
-#endif
-    }
-#endif
-    return "OpenGL";
-#endif
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)

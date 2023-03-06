@@ -25,12 +25,7 @@
 #include "XErrorTrapper.h"
 #include "XUniquePtr.h"
 #include <X11/Xlib.h>
-
-#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
-#else
-#include <EGL/egl.h>
-#endif
 
 namespace WebCore {
 

@@ -24,52 +24,23 @@
 #include "PlatformDisplayX11.h"
 #include "XErrorTrapper.h"
 #include <cairo.h>
-
-#if USE(LIBEPOXY)
 #include <epoxy/glx.h>
-#else
-#include "OpenGLShims.h"
-#include <GL/glx.h>
-#endif
 
 namespace WebCore {
 
-#if !defined(PFNGLXSWAPINTERVALSGIPROC)
-typedef int (*PFNGLXSWAPINTERVALSGIPROC) (int);
-#endif
-#if !defined(PFNGLXCREATECONTEXTATTRIBSARBPROC)
-typedef GLXContext (*PFNGLXCREATECONTEXTATTRIBSARBPROC) (Display *dpy, GLXFBConfig config, GLXContext share_context, Bool direct, const int *attrib_list);
-#endif
+static bool s_hasSGISwapControlExtension;
+static bool s_hasGLXARBCreateContextExtension;
 
-static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
-static PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB;
-
-static bool hasSGISwapControlExtension(Display* display)
+static void checkExtensions(Display* display)
 {
     static bool initialized = false;
     if (initialized)
-        return !!glXSwapIntervalSGI;
+        return;
 
     initialized = true;
-    if (!GLContext::isExtensionSupported(glXQueryExtensionsString(display, 0), "GLX_SGI_swap_control"))
-        return false;
-
-    glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXSwapIntervalSGI")));
-    return !!glXSwapIntervalSGI;
-}
-
-static bool hasGLXARBCreateContextExtension(Display* display)
-{
-    static bool initialized = false;
-    if (initialized)
-        return !!glXCreateContextAttribsARB;
-
-    initialized = true;
-    if (!GLContext::isExtensionSupported(glXQueryExtensionsString(display, 0), "GLX_ARB_create_context"))
-        return false;
-
-    glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXCreateContextAttribsARB")));
-    return !!glXCreateContextAttribsARB;
+    const auto* extensions = glXQueryExtensionsString(display, 0);
+    s_hasSGISwapControlExtension = GLContext::isExtensionSupported(extensions, "GLX_SGI_swap_control");
+    s_hasGLXARBCreateContextExtension = GLContext::isExtensionSupported(extensions, "GLX_ARB_create_context");
 }
 
 static GLXContext createGLXARBContext(Display* display, GLXFBConfig config, GLXContext sharingContext)
@@ -138,6 +109,8 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowTy
     if (!XGetWindowAttributes(display, static_cast<Window>(window), &attributes))
         return nullptr;
 
+    checkExtensions(display);
+
     XVisualInfo visualInfo;
     visualInfo.visualid = XVisualIDFromVisual(attributes.visual);
 
@@ -183,7 +156,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowTy
         if (compatibleVisuals(windowVisualInfo.get(), configVisualInfo.get())) {
             // Try to create a context with this config. Use the trapper in case we get an XError.
             XErrorTrapper trapper(display, XErrorTrapper::Policy::Ignore);
-            if (hasGLXARBCreateContextExtension(display))
+            if (s_hasGLXARBCreateContextExtension)
                 context.reset(createGLXARBContext(display, configs.get()[i], sharingContext));
             else {
                 // Legacy OpenGL version.
@@ -197,7 +170,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowTy
 
     // Fallback to the config used by the window. We don't probably have the buffers we need in
     // this config and that will cause artifacts, but it's better than not rendering anything.
-    if (hasGLXARBCreateContextExtension(display))
+    if (s_hasGLXARBCreateContextExtension)
         context.reset(createGLXARBContext(display, windowConfig, sharingContext));
     else {
         // Legacy OpenGL version.
@@ -235,8 +208,10 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(PlatformDisplay
     if (!pbuffer)
         return nullptr;
 
+    checkExtensions(display);
+
     XUniqueGLXContext context;
-    if (hasGLXARBCreateContextExtension(display))
+    if (s_hasGLXARBCreateContextExtension)
         context.reset(createGLXARBContext(display, configs.get()[0], sharingContext));
     else {
         // Legacy OpenGL version.
@@ -395,9 +370,9 @@ void GLContextGLX::waitNative()
 
 void GLContextGLX::swapInterval(int interval)
 {
-    if (!hasSGISwapControlExtension(m_x11Display))
-        return;
-    glXSwapIntervalSGI(interval);
+    checkExtensions(m_x11Display);
+    if (!s_hasSGISwapControlExtension)
+        glXSwapIntervalSGI(interval);
 }
 
 GCGLContext GLContextGLX::platformContext()

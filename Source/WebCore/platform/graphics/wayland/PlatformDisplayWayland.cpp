@@ -35,12 +35,7 @@
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-egl.h>
-#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
-#else
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
 
 #if PLATFORM(GTK)
 #if USE(GTK4)
@@ -128,21 +123,13 @@ void PlatformDisplayWayland::initialize()
     wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
     wl_display_roundtrip(m_display);
 
-#if defined(EGL_KHR_platform_wayland) || defined(EGL_EXT_platform_wayland)
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-#if defined(EGL_KHR_platform_wayland)
-    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
-        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplay")))
-            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, m_display, nullptr);
-    }
-#endif
-#if defined(EGL_EXT_platform_wayland)
-    if (m_eglDisplay == EGL_NO_DISPLAY && GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")) {
-        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT")))
-            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_WAYLAND_EXT, m_display, nullptr);
-    }
-#endif
-#endif
+    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, m_display, nullptr);
+
+    if (m_eglDisplay == EGL_NO_DISPLAY && GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_WAYLAND_EXT, m_display, nullptr);
+
     if (m_eglDisplay == EGL_NO_DISPLAY)
         m_eglDisplay = eglGetDisplay(m_display);
 
