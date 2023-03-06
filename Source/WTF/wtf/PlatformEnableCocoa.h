@@ -485,6 +485,7 @@
 #define ENABLE_OFFSCREEN_CANVAS 1
 #endif
 
+// ORIENTATION_EVENTS should never get enabled on Desktop, only Mobile.
 #if !defined(ENABLE_ORIENTATION_EVENTS) && PLATFORM(IOS_FAMILY)
 #define ENABLE_ORIENTATION_EVENTS 1
 #endif

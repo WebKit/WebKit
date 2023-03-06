@@ -24,7 +24,9 @@
  */
 
 // https://compat.spec.whatwg.org/#windoworientation-interface
-partial interface DOMWindow {
+[
+    Conditional=ORIENTATION_EVENTS
+] partial interface DOMWindow {
     readonly attribute short orientation;
     [WindowEventHandler] attribute EventHandler onorientationchange;
 };
