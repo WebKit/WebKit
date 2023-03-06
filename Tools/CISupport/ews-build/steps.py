@@ -624,7 +624,8 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         self.remotes = remotes
         self.additionalArguments = additionalArguments
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         if self.platform and self.platform != '*':
             self.setProperty('platform', self.platform, 'config.json')
         if self.fullPlatform and self.fullPlatform != '*':
@@ -645,10 +646,9 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
             self.setProperty('additionalArguments', self.additionalArguments, 'config.json')
 
         self.add_patch_id_url()
-        self.add_pr_details()
+        yield self.add_pr_details()
 
-        self.finished(SUCCESS)
-        return defer.succeed(None)
+        defer.returnValue(SUCCESS)
 
     def add_patch_id_url(self):
         patch_id = self.getProperty('patch_id', '')
@@ -657,6 +657,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
             self.setProperty('change_id', patch_id, 'ConfigureBuild')
             self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
+    @defer.inlineCallbacks
     def add_pr_details(self):
         pr_number = self.getProperty('github.number')
         if not pr_number:
@@ -685,7 +686,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
             email, errors = GitHub.email_for_owners(owners)
             for error in errors:
                 print(error)
-                self._addToLog('stdio', error)
+                yield self._addToLog('stdio', error)
             if email:
                 display_name = '{} ({})'.format(email, owners[0])
             else:
