@@ -88,15 +88,6 @@ public:
 
     bool needsCachedNativeImageInvalidationWorkaround(WebCore::RenderingMode) override { return true; }
 
-protected:
-    void setCGShadow(WebCore::RenderingMode renderingMode, const WebCore::FloatSize& offset, float blur, const WebCore::Color& color, bool shadowsIgnoreTransforms) override
-    {
-        // This doesn't use `m_immutableBaseTransform.mapSize` because it doesn't output negative lengths.
-        WebCore::FloatSize scaledOffset = offset;
-        scaledOffset.scale(m_resolutionScale, -m_resolutionScale);
-        GraphicsContextCG::setCGShadow(renderingMode, scaledOffset, blur * m_resolutionScale, color, shadowsIgnoreTransforms);
-    }
-
 private:
     WebCore::AffineTransform m_immutableBaseTransform;
     WebCore::AffineTransform m_inverseImmutableBaseTransform;
