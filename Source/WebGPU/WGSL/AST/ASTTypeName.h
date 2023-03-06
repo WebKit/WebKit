@@ -30,13 +30,16 @@
 
 namespace WGSL {
 class ResolveTypeReferences;
-} // namespace WGSL
+class TypeChecker;
+struct Type;
 
-namespace WGSL::AST {
+namespace AST {
 class Structure;
 
 class TypeName : public Node, public RefCounted<TypeName> {
     WTF_MAKE_FAST_ALLOCATED;
+    friend TypeChecker;
+
 public:
     using Ref = WTF::Ref<TypeName>;
     using Ptr = RefPtr<TypeName>;
@@ -44,6 +47,11 @@ public:
     TypeName(SourceSpan span)
         : Node(span)
     { }
+
+    const Type* resolvedType() const { return m_resolvedType; }
+
+private:
+    const Type* m_resolvedType;
 };
 
 class ArrayTypeName : public TypeName {
@@ -183,7 +191,8 @@ private:
 };
 
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL
 
 #define SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
