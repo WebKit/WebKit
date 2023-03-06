@@ -746,6 +746,26 @@ bool WKPreferencesGetMainContentUserGestureOverrideEnabled(WKPreferencesRef pref
     return toImpl(preferencesRef)->mainContentUserGestureOverrideEnabled();
 }
 
+void WKPreferencesSetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef, double threshold)
+{
+    toImpl(preferencesRef)->setManagedMediaSourceLowThreshold(threshold);
+}
+
+double WKPreferencesGetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->managedMediaSourceLowThreshold();
+}
+
+void WKPreferencesSetManagedMediaSourceHighThreshold(WKPreferencesRef preferencesRef, double threshold)
+{
+    toImpl(preferencesRef)->setManagedMediaSourceHighThreshold(threshold);
+}
+
+double WKPreferencesGetManagedMediaSourceHighThreshold(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->managedMediaSourceHighThreshold();
+}
+
 void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setAllowsInlineMediaPlayback(flag);

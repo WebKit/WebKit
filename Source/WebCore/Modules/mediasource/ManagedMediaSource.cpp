@@ -37,10 +37,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ManagedMediaSource);
 
-static constexpr double lowThreshold = 10.0;
-static constexpr double highThreshold = 30.0;
-static constexpr double rebufferingThreshold = 10.0;
-
 Ref<ManagedMediaSource> ManagedMediaSource::create(ScriptExecutionContext& context)
 {
     auto mediaSource = adoptRef(*new ManagedMediaSource(context));
@@ -133,18 +129,22 @@ void ManagedMediaSource::monitorSourceBuffers()
         startStreaming();
         return;
     }
-
     auto currentTime = this->currentTime();
 
+    if (!m_lowThreshold || !m_highThreshold) {
+        m_lowThreshold = mediaElement()->document().settings().managedMediaSourceLowThreshold();
+        m_highThreshold = mediaElement()->document().settings().managedMediaSourceHighThreshold();
+    }
+
     if (!m_streaming) {
-        MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(lowThreshold));
+        MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(*m_lowThreshold));
         PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, aheadTime) };
         if (!isBuffered(neededBufferedRange))
             startStreaming();
         return;
     }
 
-    MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(highThreshold));
+    MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(*m_highThreshold));
     PlatformTimeRanges neededBufferedRange { currentTime, aheadTime };
     if (isBuffered(neededBufferedRange))
         endStreaming();

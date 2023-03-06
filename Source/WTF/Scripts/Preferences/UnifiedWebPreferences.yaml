@@ -3863,6 +3863,26 @@ ManagedMediaSourceEnabled:
     WebCore:
       default: true
 
+ManagedMediaSourceHighThreshold:
+  type: double
+  status: embedder
+  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  defaultValue:
+    WebKit:
+      default: 30
+    WebCore:
+      default: 30
+
+ManagedMediaSourceLowThreshold:
+  type: double
+  status: embedder
+  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  defaultValue:
+    WebKit:
+      default: 10
+    WebCore:
+      default: 10
+
 MarkedTextInputEnabled:
   type: bool
   status: embedder

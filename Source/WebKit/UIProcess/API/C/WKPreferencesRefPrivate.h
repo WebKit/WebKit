@@ -177,6 +177,14 @@ WK_EXPORT bool WKPreferencesGetAudioPlaybackRequiresUserGesture(WKPreferencesRef
 WK_EXPORT void WKPreferencesSetMainContentUserGestureOverrideEnabled(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetMainContentUserGestureOverrideEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to 10.0.
+WK_EXPORT void WKPreferencesSetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef, double threshold);
+WK_EXPORT double WKPreferencesGetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef);
+
+// Defaults to 30.0.
+WK_EXPORT void WKPreferencesSetManagedMediaSourceHighThreshold(WKPreferencesRef preferencesRef, double threshold);
+WK_EXPORT double WKPreferencesGetManagedMediaSourceHighThreshold(WKPreferencesRef preferencesRef);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef);

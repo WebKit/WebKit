@@ -28,6 +28,7 @@
 #if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
 
 #include "MediaSource.h"
+#include <optional>
 
 namespace WebCore {
 
@@ -54,6 +55,8 @@ private:
     void startStreaming();
     void endStreaming();
     bool m_streaming { false };
+    std::optional<double> m_lowThreshold;
+    std::optional<double> m_highThreshold;
 };
 
 } // namespace WebCore
