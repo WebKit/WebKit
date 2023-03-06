@@ -310,7 +310,7 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name {
     position: relative;
 }
 
-.tab-bar > .tabs.static-layout > :matches(.flexible-space, .item) {
+.tab-bar > .tabs.static-layout > :is(.flexible-space, .item) {
     position: absolute;
     top: 0;
 }
@@ -321,7 +321,7 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name {
     transition-timing-function: ease-in-out;
 }
 
-.tab-bar > .tabs.animating:matches(.expanding-tabs, .inserting-tab) > .item {
+.tab-bar > .tabs.animating:is(.expanding-tabs, .inserting-tab) > .item {
     transition-property: left, width;
     transition-duration: 250ms;
     transition-timing-function: ease-in-out;

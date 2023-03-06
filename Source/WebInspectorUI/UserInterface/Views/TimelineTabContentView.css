@@ -28,15 +28,15 @@
     filter: brightness(100%);
 }
 
-.timeline.tab.content-view .navigation-bar > .item:matches(.record-start-stop, .record-continue):hover {
+.timeline.tab.content-view .navigation-bar > .item:is(.record-start-stop, .record-continue):hover {
     filter: brightness(95%);
 }
 
-.timeline.tab.content-view .navigation-bar > .item:matches(.record-start-stop, .record-continue):active {
+.timeline.tab.content-view .navigation-bar > .item:is(.record-start-stop, .record-continue):active {
     filter: brightness(80%);
 }
 
-.timeline.tab.content-view .navigation-bar > .item:matches(.record-start-stop, .record-continue) * {
+.timeline.tab.content-view .navigation-bar > .item:is(.record-start-stop, .record-continue) * {
     pointer-events: none;
 }
 

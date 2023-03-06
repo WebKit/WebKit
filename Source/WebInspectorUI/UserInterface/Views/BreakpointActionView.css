@@ -35,7 +35,7 @@ body[dir=rtl] .breakpoint-action-button-container {
     float: left;
 }
 
-:matches(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
+:is(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
     background-origin: border-box;
     width: 13px;
     height: 13px;

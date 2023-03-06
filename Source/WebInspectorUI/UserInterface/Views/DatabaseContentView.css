@@ -64,7 +64,7 @@
     content: url(../Images/UserInputPrompt.svg);
 }
 
-:matches(.database-user-query, .database-query-result)::before {
+:is(.database-user-query, .database-query-result)::before {
     position: absolute;
     display: block;
     z-index: 1;

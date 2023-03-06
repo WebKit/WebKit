@@ -78,11 +78,11 @@
     color: var(--glyph-color-pressed);
 }
 
-.navigation-bar .item.button:not(.disabled):matches(.activate.activated, .radio.selected) > .glyph {
+.navigation-bar .item.button:not(.disabled):is(.activate.activated, .radio.selected) > .glyph {
     color: var(--glyph-color-active);
 }
 
-.navigation-bar .item.button:not(.disabled):active:matches(.activate.activated, .radio.selected) > .glyph {
+.navigation-bar .item.button:not(.disabled):active:is(.activate.activated, .radio.selected) > .glyph {
     color: var(--glyph-color-active-pressed);
 }
 

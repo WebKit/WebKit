@@ -65,7 +65,7 @@
     content: url(../Images/TypeIcons.svg#Program-light);
 }
 
-.profile > .data-grid tr:matches(.selected, :hover) .go-to-arrow {
+.profile > .data-grid tr:is(.selected, :hover) .go-to-arrow {
     float: none;
     display: inline-block;
     vertical-align: top;

@@ -81,11 +81,11 @@
     inset-inline-end: 0;
 }
 
-.spring-editor > :matches(.spring-preview, .spring-timing) > div {
+.spring-editor > :is(.spring-preview, .spring-timing) > div {
     transition-property: none;
 }
 
-.spring-editor > .animate:matches(.spring-preview, .spring-timing) > div {
+.spring-editor > .animate:is(.spring-preview, .spring-timing) > div {
     transition-property: transform;
 }
 

@@ -42,12 +42,12 @@
 
 .item.resource.resource-type-websocket:not(.selected) .status .ready-state.open,
 .tree-outline:not(:focus-within) .item.resource.resource-type-websocket.selected .status .ready-state.open,
-body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.open {
+body:is(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.open {
     background-color: limegreen;
 }
 
 .item.resource.resource-type-websocket:not(.selected) .status .ready-state.connecting,
 .tree-outline:not(:focus-within) .item.resource.resource-type-websocket.selected .status .ready-state.connecting,
-body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.connecting {
+body:is(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.connecting {
     background-color: yellow;
 }

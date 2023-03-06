@@ -29,7 +29,7 @@
     height: 12px;
 }
 
-.timeline-record-bar > :matches(img, .segment) {
+.timeline-record-bar > :is(img, .segment) {
     position: absolute;
     z-index: var(--timeline-record-z-index);
 }
@@ -164,7 +164,7 @@ body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
     background-color: var(--text-color-quaternary);
 }
 
-.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment:matches(.css-animation-delay, .media-element-paused) {
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment:is(.css-animation-delay, .media-element-paused) {
     background-color: hsl(143, 24%, 84%);
 }
 

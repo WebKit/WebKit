@@ -85,7 +85,7 @@
     opacity: 0;
 }
 
-.gradient-slider-knob > :matches(img, div) {
+.gradient-slider-knob > :is(img, div) {
     position: absolute;
 
     left: 5px;

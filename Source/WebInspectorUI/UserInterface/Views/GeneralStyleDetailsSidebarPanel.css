@@ -144,7 +144,7 @@
     margin: 0;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .class-list-container > *:matches(.new-class, .class-toggle) {
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > *:is(.new-class, .class-toggle) {
     margin: 1px 3px;
 }
 

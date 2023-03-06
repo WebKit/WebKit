@@ -45,11 +45,11 @@
     content: url(../Images/TypeIcons.svg#PseudoElement-light);
 }
 
-.panel.details.layer-tree .name-column :matches(.pseudo-element, .reflection) {
+.panel.details.layer-tree .name-column :is(.pseudo-element, .reflection) {
     color: hsl(0, 0%, 50%);
 }
 
-.panel.details.layer-tree tr.selected .name-column :matches(.pseudo-element, .reflection) {
+.panel.details.layer-tree tr.selected .name-column :is(.pseudo-element, .reflection) {
     color: hsla(0, 0%, 100%, 0.75);
 }
 

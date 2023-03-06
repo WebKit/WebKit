@@ -37,11 +37,11 @@
 }
 
 .inline-swatch:not(.box-shadow),
-.inline-swatch.box-shadow:matches(:hover, :active) {
+.inline-swatch.box-shadow:is(:hover, :active) {
     background-color: var(--background-color-content);
 }
 
-.inline-swatch:matches(.color, .gradient) {
+.inline-swatch:is(.color, .gradient) {
     /* Make a checkered background for transparent colors to show against. */
     background-image: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%)),
                       linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%));
@@ -50,19 +50,19 @@
     background-repeat: no-repeat;
 }
 
-.inline-swatch:matches(.bezier, .spring, .variable) {
+.inline-swatch:is(.bezier, .spring, .variable) {
     color: var(--glyph-color-active);
 }
 
-.inline-swatch:matches(.bezier, .box-shadow, .spring, .variable) {
+.inline-swatch:is(.bezier, .box-shadow, .spring, .variable) {
     margin-right: 2px;
 }
 
-.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable, .alignment):hover {
+.inline-swatch:not(.read-only):is(.bezier, .box-shadow, .spring, .variable, .alignment):hover {
     filter: brightness(0.9);
 }
 
-.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable, .alignment):active {
+.inline-swatch:not(.read-only):is(.bezier, .box-shadow, .spring, .variable, .alignment):active {
     filter: brightness(0.8);
 }
 
@@ -94,7 +94,7 @@
     border-color: hsl(0, 0%, 25%);
 }
 
-.inline-swatch:matches(.bezier, .box-shadow, .spring, .variable) > span {
+.inline-swatch:is(.bezier, .box-shadow, .spring, .variable) > span {
     display: none;
 }
 
