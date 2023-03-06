@@ -1548,7 +1548,6 @@
         "background": {
             "codegen-properties": {
                 "longhands": [
-                    "background-color",
                     "background-image",
                     "background-position-x",
                     "background-position-y",
@@ -1556,7 +1555,8 @@
                     "background-repeat",
                     "background-attachment",
                     "background-origin",
-                    "background-clip"
+                    "background-clip",
+                    "background-color"
                 ]
             },
             "specification": {
