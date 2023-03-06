@@ -40,10 +40,9 @@ class WeakPtrImplWithEventTargetData;
 
 class RemoteFrame final : public AbstractFrame {
 public:
-    static Ref<RemoteFrame> create(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client, LayerHostingContextIdentifier layerHostingContextIdentifier)
-    {
-        return adoptRef(*new RemoteFrame(page, frameID, ownerElement, WTFMove(client), layerHostingContextIdentifier));
-    }
+    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, AbstractFrame& parent);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, LayerHostingContextIdentifier);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;
@@ -59,10 +58,10 @@ public:
     RemoteFrameView* view() const { return m_view.get(); }
     WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
 
-    LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+    Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, UniqueRef<RemoteFrameClient>&&, LayerHostingContextIdentifier);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame*, Markable<LayerHostingContextIdentifier>);
 
     FrameType frameType() const final { return FrameType::Remote; }
     void frameDetached() final;
@@ -75,7 +74,7 @@ private:
     RefPtr<AbstractFrame> m_opener;
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
-    LayerHostingContextIdentifier m_layerHostingContextIdentifier;
+    Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
     bool m_preventsParentFromBeingComplete { true };
 };
 

@@ -67,7 +67,7 @@ public:
     virtual bool preventsParentFromBeingComplete() const = 0;
 
 protected:
-    AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*);
+    AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame* parent);
     void resetWindowProxy();
 
 private:

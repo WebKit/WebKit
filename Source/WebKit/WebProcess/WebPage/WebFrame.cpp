@@ -130,7 +130,8 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool recei
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frame = create(page);
-    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate());
+    ASSERT(page.corePage());
+    auto coreFrame = Frame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
@@ -274,31 +275,48 @@ void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
 void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
 {
     RefPtr coreFrame = m_coreFrame.get();
-    if (!coreFrame)
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     RefPtr webPage = m_page.get();
-    if (!webPage)
+    if (!webPage) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     auto* corePage = webPage->corePage();
-    if (!corePage)
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     RefPtr parent = coreFrame->tree().parent();
-    if (!parent)
+    if (!parent) {
+        // FIXME: This shouldn't be hit but currently is in a SiteIsolation API test. Investigate and fix.
         return;
+    }
 
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(coreFrame.get());
-    if (!localFrame)
+    if (!localFrame) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     auto* frameLoaderClient = this->frameLoaderClient();
-    if (!frameLoaderClient)
+    if (!frameLoaderClient) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+
+    RefPtr ownerElement = coreFrame->ownerElement();
+    if (!ownerElement) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     auto invalidator = frameLoaderClient->takeFrameInvalidator();
-    RefPtr ownerElement = coreFrame->ownerElement();
     auto* ownerRenderer = localFrame->ownerRenderer();
     localFrame->setView(nullptr);
 
@@ -306,7 +324,7 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     coreFrame->disconnectOwnerElement();
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
 
-    auto newFrame = WebCore::RemoteFrame::create(*corePage, m_frameID, ownerElement.get(), WTFMove(client), layerHostingContextIdentifier);
+    auto newFrame = WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier);
     auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
     // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle.
     newFrame->setView(remoteFrameView.ptr());
@@ -314,12 +332,11 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
         ownerRenderer->setWidget(remoteFrameView.ptr());
 
     m_coreFrame = newFrame.get();
-    if (ownerElement) {
-        // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
-        ownerElement->setContentFrame(*m_coreFrame);
 
-        ownerElement->scheduleInvalidateStyleAndLayerComposition();
-    }
+    // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
+    ownerElement->setContentFrame(*m_coreFrame);
+
+    ownerElement->scheduleInvalidateStyleAndLayerComposition();
 }
 
 void WebFrame::didFinishLoadInAnotherProcess()

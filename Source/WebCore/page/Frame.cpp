@@ -149,8 +149,8 @@ static inline float parentTextZoomFactor(Frame* frame)
     return parent->textZoomFactor();
 }
 
-Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier)
-    : AbstractFrame(page, identifier, ownerElement)
+Frame::Frame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, AbstractFrame* parent)
+    : AbstractFrame(page, identifier, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -181,10 +181,19 @@ void Frame::init()
     m_loader->init();
 }
 
-Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
+Ref<Frame> Frame::createMainFrame(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
 {
-    ASSERT(page);
-    return adoptRef(*new Frame(*page, ownerElement, WTFMove(client), identifier));
+    return adoptRef(*new Frame(page, WTFMove(client), identifier, nullptr, nullptr));
+}
+
+Ref<Frame> Frame::createSubframe(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
+{
+    return adoptRef(*new Frame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame()));
+}
+
+Ref<Frame> Frame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, AbstractFrame& parent)
+{
+    return adoptRef(*new Frame(page, WTFMove(client), identifier, nullptr, &parent));
 }
 
 Frame::~Frame()
