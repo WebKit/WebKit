@@ -2221,6 +2221,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);
 #endif
 static JSC_DECLARE_HOST_FUNCTION(functionAssertFrameAligned);
+static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
 
@@ -3988,6 +3989,20 @@ JSC_DEFINE_HOST_FUNCTION(functionAssertFrameAligned, (JSGlobalObject*, CallFrame
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    VMEntryScope* origEntryScope = vm.entryScope;
+    vm.entryScope = nullptr;
+
+    auto restoreEntryScope = makeScopeExit([&] {
+        vm.entryScope = origEntryScope;
+    });
+
+    return functionCallFromCPP(globalObject, callFrame);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionCallFromCPP, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -4239,6 +4254,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "assertFrameAligned"_s, functionAssertFrameAligned, 0);
 
+    addFunction(vm, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
     addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
     addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1883,7 +1883,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         return encodeResult(nullptr, nullptr);
     }
     
-    if (UNLIKELY(vm.terminationInProgress())) {
+    if (UNLIKELY(vm.hasTerminationRequest())) {
         // If termination of the current stack of execution is in progress,
         // then we need to hold off on optimized compiles so that termination
         // checks will be called, and we can unwind out of the current stack.
