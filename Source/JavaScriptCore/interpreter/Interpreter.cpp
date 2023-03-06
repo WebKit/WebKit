@@ -73,6 +73,7 @@
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
 #include "VirtualRegister.h"
+#include "WasmThunks.h"
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
@@ -555,10 +556,16 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
     if (m_valid) {
         m_type = HandlerType::Catch;
         m_nativeCode = handler->m_nativeCode;
+        m_nativeCodeForDispatchAndCatch = nullptr;
+        m_catchPCForInterpreter = { static_cast<WasmInstruction*>(nullptr) };
         if (callee->compilationMode() == Wasm::CompilationMode::LLIntMode)
             m_catchPCForInterpreter = { static_cast<const Wasm::LLIntCallee*>(callee)->instructions().at(handler->m_target).ptr() };
-        else
-            m_catchPCForInterpreter = { static_cast<WasmInstruction*>(nullptr) };
+        else {
+#if USE(JSVALUE64)
+            m_nativeCode = Wasm::Thunks::singleton().stub(Wasm::catchInWasmThunkGenerator).template retagged<ExceptionHandlerPtrTag>().code();
+            m_nativeCodeForDispatchAndCatch = handler->m_nativeCode;
+#endif
+        }
     }
 }
 #endif

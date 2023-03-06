@@ -755,7 +755,9 @@ public:
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch { nullptr };
     void* targetMachinePCForThrow;
+    void* targetMachinePCAfterCatch;
     JSOrWasmInstruction targetInterpreterPCForThrow;
+
     unsigned varargsLength;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;

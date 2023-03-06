@@ -112,8 +112,8 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         HandlerType m_type;
 #if ENABLE(JIT)
         CodePtr<ExceptionHandlerPtrTag> m_nativeCode;
+        CodePtr<ExceptionHandlerPtrTag> m_nativeCodeForDispatchAndCatch;
 #endif
-
         JSOrWasmInstruction m_catchPCForInterpreter;
     };
 

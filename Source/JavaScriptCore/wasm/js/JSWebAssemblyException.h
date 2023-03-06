@@ -36,6 +36,7 @@ class JSWebAssemblyException final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static constexpr bool needsDestruction = true;
+    using Payload = FixedVector<uint64_t>;
 
     static void destroy(JSCell*);
 
@@ -65,13 +66,15 @@ public:
     const FixedVector<uint64_t>& payload() const { return m_payload; }
     JSValue getArg(JSGlobalObject*, unsigned) const;
 
+    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyException, m_payload); }
+
 protected:
     JSWebAssemblyException(VM&, Structure*, const Wasm::Tag&, FixedVector<uint64_t>&&);
 
     void finishCreation(VM&);
 
     Ref<const Wasm::Tag> m_tag;
-    FixedVector<uint64_t> m_payload;
+    Payload m_payload;
 };
 
 } // namespace JSC
