@@ -29,7 +29,7 @@
 
 #include "Error.h"
 #include "JSArrayBuffer.h"
-#include "JSArrayBufferView.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSCJSValue.h"
 #include "JSDataView.h"
 #include "JSSourceCode.h"

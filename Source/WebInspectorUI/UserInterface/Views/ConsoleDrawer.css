@@ -40,7 +40,7 @@
     cursor: default;
 }
 
-.console-drawer > .navigation-bar > :matches(.item.button, .log-scope-bar) {
+.console-drawer > .navigation-bar > :is(.item.button, .log-scope-bar) {
     pointer-events: none;
 }
 

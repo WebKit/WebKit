@@ -28,6 +28,8 @@
 
 #import "APIString.h"
 #import "AuthenticationChallengeDispositionCocoa.h"
+#import "BackgroundFetchChange.h"
+#import "BackgroundFetchState.h"
 #import "CompletionHandlerCallChecker.h"
 #import "NetworkProcessProxy.h"
 #import "ShouldGrandfatherStatistics.h"
@@ -177,7 +179,7 @@ private:
         [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() workerOrigin:wrapper(apiOrigin.get()) updatedAppBadge:(NSNumber *)nsBadge];
     }
 
-    void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
+    void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler) final
     {
         if (!m_hasRequestBackgroundFetchPermissionSelector) {
             completionHandler(false);
@@ -196,6 +198,23 @@ private:
         URL frameURL { frameOrigin.toString() };
 
         [m_delegate.getAutoreleased() requestBackgroundFetchPermission:mainFrameURL frameOrigin:frameURL decisionHandler:decisionHandler.get()];
+    }
+
+    void notifyBackgroundFetchChange(const String& backgroundFetchIdentifier, WebKit::BackgroundFetchChange backgroundFetchChange) final
+    {
+        WKBackgroundFetchChange change;
+        switch (backgroundFetchChange) {
+        case WebKit::BackgroundFetchChange::Addition:
+            change = WKBackgroundFetchChangeAddition;
+            break;
+        case WebKit::BackgroundFetchChange::Removal:
+            change = WKBackgroundFetchChangeRemoval;
+            break;
+        case WebKit::BackgroundFetchChange::Update:
+            change = WKBackgroundFetchChangeUpdate;
+            break;
+        }
+        [m_delegate.getAutoreleased() notifyBackgroundFetchChange:backgroundFetchIdentifier change:change];
     }
 
     WeakObjCPtr<WKWebsiteDataStore> m_dataStore;
@@ -1003,6 +1022,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         for (auto identifier : identifiers)
             [result addObject:(NSString *)identifier];
         completionHandler(result.autorelease());
+    });
+#else
+    completionHandler(nil);
+#endif
+}
+
+-(void)_getBackgroundFetchState:(NSString *) identifier completionHandler:(void(^)(NSDictionary *state))completionHandler
+{
+#if ENABLE(SERVICE_WORKER)
+    _websiteDataStore->networkProcess().getBackgroundFetchState(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] (auto state) {
+        completionHandler(state ? state->toDictionary() : nil);
     });
 #else
     completionHandler(nil);

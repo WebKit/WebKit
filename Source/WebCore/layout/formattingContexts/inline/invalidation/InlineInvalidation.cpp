@@ -163,7 +163,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDisplayBox(const I
             if (!displayBox.isTextOrSoftLineBreak())
                 return InlineItemPosition { damagedInlineItemIndex, 0 };
             // 1. A display box could consist of one or more InlineItems.
-            // 2. A display box could start at any offset inide and InlineItem.
+            // 2. A display box could start at any offset inside and InlineItem.
             auto startOffset = displayBox.text().start();
             while (true) {
                 auto inlineTextItemRange = [&]() -> WTF::Range<unsigned> {
@@ -187,6 +187,15 @@ static std::optional<InlineItemPosition> inlineItemPositionForDisplayBox(const I
             return { };
         };
         return damagedInlineItemPosition(index);
+    }
+    return { };
+}
+
+static std::optional<size_t> firstInlineItemIndexForLayoutBox(const Box& layoutBox, const InlineItems& inlineItems)
+{
+    for (size_t index = 0; index < inlineItems.size(); ++index) {
+        if (&inlineItems[index].layoutBox() == &layoutBox)
+            return index;
     }
     return { };
 }
@@ -215,6 +224,27 @@ static std::optional<DamagedLine> leadingInlineItemPositionForDamage(std::option
             ASSERT_NOT_REACHED();
             lineIndex = 0;
         }
+        auto adjustInlineItemPositionForCollapsedLeadingContentIfNeeded = [&] {
+            auto shouldCheckForCollapsedLeadingContent = damagedContent
+                && !damagedContent->offset
+                && is<InlineTextBox>(damagedContent->layoutBox)
+                && &leadingContentDisplayBoxOnDamagedLine->layoutBox() == &damagedContent->layoutBox;
+            if (!shouldCheckForCollapsedLeadingContent)
+                return;
+            auto firstInlineItemIndex = firstInlineItemIndexForLayoutBox(damagedContent->layoutBox, inlineItems);
+            if (!firstInlineItemIndex) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
+            ASSERT(*firstInlineItemIndex <= damagedInlineItemPosition->index);
+            if (*firstInlineItemIndex == damagedInlineItemPosition->index)
+                return;
+            ASSERT(is<InlineTextItem>(inlineItems[*firstInlineItemIndex]) && downcast<InlineTextItem>(inlineItems[*firstInlineItemIndex]).isWhitespace());
+            damagedInlineItemPosition = { *firstInlineItemIndex, { } };
+            // FIXME: Should check if there's a content display box between leadingContentDisplayBoxOnDamagedLine and the line's root inline box.
+        };
+        if (*damagedInlineItemPosition)
+            adjustInlineItemPositionForCollapsedLeadingContentIfNeeded();
         return DamagedLine { *lineIndex, *damagedInlineItemPosition };
     }
     return { };

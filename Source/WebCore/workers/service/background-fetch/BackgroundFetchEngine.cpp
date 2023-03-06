@@ -59,9 +59,9 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
     }
 
     auto result = iterator->value.ensure(backgroundFetchIdentifier, [&]() mutable {
-        return makeUnique<BackgroundFetch>(registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), Ref { m_store }, [weakThis = WeakPtr { *this }](auto&& information) {
+        return makeUnique<BackgroundFetch>(registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), Ref { m_store }, [weakThis = WeakPtr { *this }](auto& fetch) {
             if (weakThis)
-                weakThis->notifyBackgroundFetchUpdate(WTFMove(information));
+                weakThis->notifyBackgroundFetchUpdate(fetch);
         });
     });
     if (!result.isNewEntry) {
@@ -93,8 +93,9 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
 }
 
 // https://wicg.github.io/background-fetch/#update-background-fetch-instance-algorithm
-void BackgroundFetchEngine::notifyBackgroundFetchUpdate(BackgroundFetchInformation&& information)
+void BackgroundFetchEngine::notifyBackgroundFetchUpdate(BackgroundFetch& fetch)
 {
+    auto information = fetch.information();
     auto* registration = m_server->getRegistration(information.registrationIdentifier);
     if (!registration)
         return;
@@ -107,7 +108,11 @@ void BackgroundFetchEngine::notifyBackgroundFetchUpdate(BackgroundFetchInformati
     if (information.result == BackgroundFetchResult::EmptyString)
         return;
 
-    m_server->fireBackgroundFetchEvent(*registration, WTFMove(information));
+    // FIXME: We should delay events if the service worker (or related page) is not running.
+    m_server->fireBackgroundFetchEvent(*registration, WTFMove(information), [weakFetch = WeakPtr { fetch }]() {
+        if (weakFetch)
+            weakFetch->unsetRecordsAvailableFlag();
+    });
 }
 
 void BackgroundFetchEngine::backgroundFetchInformation(SWServerRegistration& registration, const String& backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
@@ -262,9 +267,9 @@ void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIden
 
 void BackgroundFetchEngine::addFetchFromStore(Span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
 {
-    auto fetch = BackgroundFetch::createFromStore(data, *m_server, m_store.get(), [weakThis = WeakPtr { *this }](auto&& information) {
+    auto fetch = BackgroundFetch::createFromStore(data, *m_server, m_store.get(), [weakThis = WeakPtr { *this }](auto& fetch) {
         if (weakThis)
-            weakThis->notifyBackgroundFetchUpdate(WTFMove(information));
+            weakThis->notifyBackgroundFetchUpdate(fetch);
     });
     if (!fetch) {
         RELEASE_LOG_ERROR(ServiceWorker, "BackgroundFetchEngine failed adding fetch entry as registration is missing");
@@ -315,6 +320,15 @@ void BackgroundFetchEngine::clickBackgroundFetch(const ServiceWorkerRegistration
         return;
 
     m_server->fireBackgroundFetchClickEvent(*registration, fetchIterator->value->information());
+}
+
+WeakPtr<BackgroundFetch> BackgroundFetchEngine::backgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier) const
+{
+    auto iterator = m_fetches.find(key);
+    if (iterator == m_fetches.end())
+        return { };
+
+    return iterator->value.get(identifier);
 }
 
 } // namespace WebCore

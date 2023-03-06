@@ -45,20 +45,11 @@
 #endif
 
 #if USE(EGL)
-#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
-#else
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
 #endif
 
 #if USE(GLX)
-#if USE(LIBEPOXY)
 #include <epoxy/glx.h>
-#else
-#include <GL/glx.h>
-#endif
 #endif
 
 namespace WebCore {
@@ -136,16 +127,12 @@ void PlatformDisplayX11::sharedDisplayDidClose()
 #if USE(EGL)
 void PlatformDisplayX11::initializeEGLDisplay()
 {
-#if defined(EGL_KHR_platform_x11)
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
-        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplay")))
-            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
-    } else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")) {
-        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT")))
-            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
-    } else
-#endif
+    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
+    else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_X11_KHR, m_display, nullptr);
+    else
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();

@@ -32,7 +32,7 @@
     overflow-y: auto;
 }
 
-.content-view.resource.font > :matches(.local-resource-override-label-view, .local-resource-override-warning-view):not([hidden]) ~ .drop-zone {
+.content-view.resource.font > :is(.local-resource-override-label-view, .local-resource-override-warning-view):not([hidden]) ~ .drop-zone {
     top: calc(var(--navigation-bar-height) - 2px); /* borders */
 }
 

@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008, 2010, 2013, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2010-2018 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -163,13 +163,16 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
     size_t offset = 0;
     size_t reducedLength = length;
 
+    // Remove whitespace from the rule start
     while (reducedLength && isHTMLSpace(characters[offset])) {
         ++offset;
         --reducedLength;
     }
+    // Remove whitespace from the rule end
     while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
         --reducedLength;
 
+    // Skip the "url(" prefix and the ")" suffix
     if (reducedLength >= 5
             && (characters[offset] == 'u' || characters[offset] == 'U')
             && (characters[offset + 1] == 'r' || characters[offset + 1] == 'R')
@@ -180,24 +183,21 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
         reducedLength -= 5;
     }
 
+    // Skip whitespace before and after the URL inside the "url()" parenthesis.
     while (reducedLength && isHTMLSpace(characters[offset])) {
         ++offset;
         --reducedLength;
     }
     while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
         --reducedLength;
-
-    if (reducedLength < 2 || characters[offset] != characters[offset + reducedLength - 1] || !(characters[offset] == '\'' || characters[offset] == '"'))
-        return String();
-    offset++;
-    reducedLength -= 2;
-
-    while (reducedLength && isHTMLSpace(characters[offset])) {
-        ++offset;
-        --reducedLength;
-    }
-    while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
-        --reducedLength;
+    
+    // Remove single-quotes or double-quotes from the URL
+    if ((reducedLength >= 2) 
+        && (characters[offset] == characters[offset + reducedLength - 1])
+        && (characters[offset] == '\'' || characters[offset] == '"')) {
+            ++offset;
+            reducedLength -= 2;            
+        }
 
     return String(characters + offset, reducedLength);
 }

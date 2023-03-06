@@ -28,7 +28,6 @@
  */
 
 #include "config.h"
-#include "JSCast.h"
 #include "JSGlobalObject.h"
 
 #include "AggregateError.h"
@@ -74,6 +73,7 @@
 #include "GeneratorFunctionPrototype.h"
 #include "GeneratorPrototype.h"
 #include "GetterSetter.h"
+#include "GlobalObjectMethodTable.h"
 #include "HeapIterationScope.h"
 #include "ImportMap.h"
 #include "IntlCollator.h"
@@ -116,6 +116,7 @@
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
+#include "JSCast.h"
 #include "JSCustomGetterFunction.h"
 #include "JSCustomSetterFunction.h"
 #include "JSDataView.h"
@@ -129,6 +130,7 @@
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSInternalPromisePrototype.h"
@@ -196,6 +198,7 @@
 #include "ProxyRevoke.h"
 #include "ReflectObject.h"
 #include "RegExpConstructor.h"
+#include "RegExpGlobalDataInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
@@ -573,26 +576,30 @@ namespace JSC {
 
 const ClassInfo JSGlobalObject::s_info = { "GlobalObject"_s, &Base::s_info, &globalObjectTable, nullptr, CREATE_METHOD_TABLE(JSGlobalObject) };
 
-const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    nullptr, // queueMicrotaskToEventLoop
-    &shouldInterruptScriptBeforeTimeout,
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
-    &reportUncaughtExceptionAtEventLoop,
-    &currentScriptExecutionOwner,
-    &scriptExecutionStatus,
-    &reportViolationForUnsafeEval,
-    nullptr, // defaultLanguage
-    nullptr, // compileStreaming
-    nullptr, // instantiateStreaming
-    &deriveShadowRealmGlobalObject
+const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
+{
+    static constexpr GlobalObjectMethodTable table = {
+        &supportsRichSourceInfo,
+        &shouldInterruptScript,
+        &javaScriptRuntimeFlags,
+        nullptr, // queueMicrotaskToEventLoop
+        &shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleLoaderImportModule
+        nullptr, // moduleLoaderResolve
+        nullptr, // moduleLoaderFetch
+        nullptr, // moduleLoaderCreateImportMetaProperties
+        nullptr, // moduleLoaderEvaluate
+        nullptr, // promiseRejectionTracker
+        &reportUncaughtExceptionAtEventLoop,
+        &currentScriptExecutionOwner,
+        &scriptExecutionStatus,
+        &reportViolationForUnsafeEval,
+        nullptr, // defaultLanguage
+        nullptr, // compileStreaming
+        nullptr, // instantiateStreaming
+        &deriveShadowRealmGlobalObject
+    };
+    return &table;
 };
 
 /* Source for JSGlobalObject.lut.h
@@ -678,7 +685,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_customGetterFunctionSet(vm)
     , m_customSetterFunctionSet(vm)
     , m_importMap(ImportMap::create())
-    , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
+    , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : baseGlobalObjectMethodTable())
 {
 }
 
@@ -2749,6 +2756,48 @@ void JSGlobalObject::tryInstallArrayBufferSpeciesWatchpoint(ArrayBufferSharingMo
     static_assert(static_cast<unsigned>(ArrayBufferSharingMode::Shared) == 1);
     unsigned index = static_cast<unsigned>(sharingMode);
     tryInstallSpeciesWatchpoint(arrayBufferPrototype(sharingMode), arrayBufferConstructor(sharingMode), m_arrayBufferPrototypeConstructorWatchpoints[index], m_arrayBufferConstructorSpeciesWatchpoints[index], arrayBufferSpeciesWatchpointSet(sharingMode), HasSpeciesProperty::Yes);
+}
+
+inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& JSGlobalObject::typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType type)
+{
+    switch (type) {
+    case NotTypedArray:
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_typedArrayInt8ConstructorSpeciesAbsenceWatchpoint;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## ConstructorSpeciesAbsenceWatchpoint;
+        FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return m_typedArrayInt8ConstructorSpeciesAbsenceWatchpoint;
+}
+
+inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& JSGlobalObject::typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType type)
+{
+    switch (type) {
+    case NotTypedArray:
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_typedArrayInt8PrototypeSymbolIteratorAbsenceWatchpoint;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## PrototypeSymbolIteratorAbsenceWatchpoint;
+        FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return m_typedArrayInt8PrototypeSymbolIteratorAbsenceWatchpoint;
+}
+
+inline std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& JSGlobalObject::typedArrayPrototypeConstructorWatchpoint(TypedArrayType type)
+{
+    switch (type) {
+    case NotTypedArray:
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_typedArrayInt8PrototypeConstructorWatchpoint;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_typedArray ## name ## PrototypeConstructorWatchpoint;
+        FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return m_typedArrayInt8PrototypeConstructorWatchpoint;
 }
 
 void JSGlobalObject::tryInstallTypedArraySpeciesWatchpoint(TypedArrayType type)

@@ -42,6 +42,7 @@ class SWServer;
 namespace WebKit {
 
 class NetworkStorageManager;
+struct BackgroundFetchState;
 
 class BackgroundFetchStoreImpl :  public WebCore::BackgroundFetchStore {
 public:
@@ -49,6 +50,7 @@ public:
     ~BackgroundFetchStoreImpl();
 
     void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
+    void getBackgroundFetchState(const String&, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
     void abortBackgroundFetch(const String&, CompletionHandler<void()>&&);
     void pauseBackgroundFetch(const String&, CompletionHandler<void()>&&);
     void resumeBackgroundFetch(const String&, CompletionHandler<void()>&&);

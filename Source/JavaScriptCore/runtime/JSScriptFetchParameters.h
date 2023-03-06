@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "ScriptFetchParameters.h"
 #include <wtf/Ref.h>

@@ -332,13 +332,13 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInf
         RefPtr<ExtendableEvent> event;
         switch (info.failureReason) {
         case BackgroundFetchFailureReason::EmptyString:
-            event = BackgroundFetchUpdateUIEvent::create(eventNames().backgroundfetchsuccessEvent, WTFMove(eventInit));
+            event = BackgroundFetchUpdateUIEvent::create(eventNames().backgroundfetchsuccessEvent, WTFMove(eventInit), Event::IsTrusted::Yes);
             break;
         case BackgroundFetchFailureReason::Aborted:
-            event = BackgroundFetchEvent::create(eventNames().backgroundfetchabortEvent, WTFMove(eventInit));
+            event = BackgroundFetchEvent::create(eventNames().backgroundfetchabortEvent, WTFMove(eventInit), Event::IsTrusted::Yes);
             break;
         default:
-            event = BackgroundFetchEvent::create(eventNames().backgroundfetchfailEvent, WTFMove(eventInit));
+            event = BackgroundFetchEvent::create(eventNames().backgroundfetchfailEvent, WTFMove(eventInit), Event::IsTrusted::Yes);
             break;
         };
 

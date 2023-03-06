@@ -59,7 +59,7 @@
     --scope-bar-border-color-override: transparent;
 }
 
-.content-view.timeline-recording > .content-browser :matches(.recording-progress, .recording-imported) {
+.content-view.timeline-recording > .content-browser :is(.recording-progress, .recording-imported) {
     position: absolute;
     left: 0;
     right: 0;
@@ -69,7 +69,7 @@
     background-color: var(--panel-background-color-light);
 }
 
-.content-view.timeline-recording > .content-browser :matches(.recording-progress, .recording-imported) > .status {
+.content-view.timeline-recording > .content-browser :is(.recording-progress, .recording-imported) > .status {
     margin-top: 40px;
     margin-bottom: 10px;
     text-align: center;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2010 Research In Motion Limited. All rights reserved.
  *
@@ -81,10 +81,19 @@ public:
     DateCache();
     ~DateCache();
 
+    bool hasTimeZoneChange()
+    {
+#if PLATFORM(COCOA)
+        return m_cachedTimezoneID != lastTimeZoneID;
+#else
+        return true; // always force a time zone check.
+#endif
+    }
+
     void resetIfNecessary()
     {
 #if PLATFORM(COCOA)
-        if (LIKELY(m_cachedTimezoneID == lastTimeZoneID))
+        if (LIKELY(!hasTimeZoneChange()))
             return;
         m_cachedTimezoneID = lastTimeZoneID;
 #endif

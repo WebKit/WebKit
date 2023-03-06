@@ -1054,16 +1054,14 @@ void SourceBufferPrivate::append(Vector<unsigned char>&&)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(bool)>&& completionHandler)
+void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)
 {
-    auto oldBuffered = m_buffered->ranges();
-    if (isActive())
+    if (isActive()) {
         evictFrames(maximumBufferSize, maximumBufferSize, currentTime, isEnded);
-    else {
-        resetTrackBuffers();
-        clearTrackBuffers(true);
+        return;
     }
-    completionHandler(m_buffered->ranges() != oldBuffered);
+    resetTrackBuffers();
+    clearTrackBuffers(true);
 }
 
 bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)

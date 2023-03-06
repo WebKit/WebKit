@@ -31,6 +31,7 @@
 #include "Attachment.h"
 #include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
+#include "BackgroundFetchState.h"
 #include "DataReference.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
@@ -2389,6 +2390,17 @@ void NetworkProcess::getAllBackgroundFetchIdentifiers(PAL::SessionID sessionID, 
     }
 
     session->getAllBackgroundFetchIdentifiers(WTFMove(callback));
+}
+
+void NetworkProcess::getBackgroundFetchState(PAL::SessionID sessionID, const String& identifier, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&& callback)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        callback({ });
+        return;
+    }
+
+    session->getBackgroundFetchState(identifier, WTFMove(callback));
 }
 
 void NetworkProcess::abortBackgroundFetch(PAL::SessionID sessionID, const String& identifier, CompletionHandler<void()>&& callback)

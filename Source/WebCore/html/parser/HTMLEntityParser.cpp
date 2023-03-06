@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010-2014 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ public:
         }
         notEnoughCharacters = source.isEmpty();
         if (notEnoughCharacters) {
-            // We can't an entity because there might be a longer entity
+            // We can't decide on an entity because there might be a longer entity
             // that we could match if we had more data.
             unconsumeCharacters(source, consumedCharacters);
             return false;
@@ -96,11 +96,10 @@ public:
             // actual entity.
             unconsumeCharacters(source, consumedCharacters);
             consumedCharacters.clear();
-            const int length = entitySearch.mostRecentMatch()->length;
-            const LChar* reference = entitySearch.mostRecentMatch()->entity;
+            const auto* mostRecent = entitySearch.mostRecentMatch();
+            const int length = mostRecent->length;
             for (int i = 0; i < length; ++i) {
                 cc = source.currentCharacter();
-                ASSERT_UNUSED(reference, cc == *reference++);
                 consumedCharacters.append(cc);
                 source.advancePastNonNewline();
                 ASSERT(!source.isEmpty());

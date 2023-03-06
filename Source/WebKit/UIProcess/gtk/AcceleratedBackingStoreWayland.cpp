@@ -32,6 +32,10 @@
 #include "WebPageProxy.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GLContext.h>
+#include <epoxy/egl.h>
+#include <epoxy/gl.h>
+#include <wpe/fdo-egl.h>
+#include <wpe/wpe.h>
 
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and eglplatform.h, included by egl.h, checks that to decide whether it's Wayland platform.
@@ -40,34 +44,11 @@
 #else
 #include <gdk/gdkwayland.h>
 #endif
-#if USE(LIBEPOXY)
-#include <epoxy/egl.h>
-#else
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
 
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#elif USE(OPENGL_ES)
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#else
-#include <WebCore/OpenGLShims.h>
-#endif
-
-#include <wpe/wpe.h>
-#include <wpe/fdo-egl.h>
 #if WPE_FDO_CHECK_VERSION(1, 7, 0)
 #include <wayland-server.h>
 #include <wpe/unstable/fdo-shm.h>
 #endif
-
-#if !defined(PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)
-typedef void (*PFNGLEGLIMAGETARGETTEXTURE2DOESPROC) (GLenum target, GLeglImageOES);
-#endif
-
-static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glImageTargetTexture2D;
 
 namespace WebKit {
 using namespace WebCore;
@@ -119,13 +100,11 @@ static bool tryInitializeEGL()
         return false;
 
 #if USE(OPENGL_ES)
-    if (isEGLImageAvailable(false))
+    if (!isEGLImageAvailable(false))
+        return false;
 #else
-    if (isEGLImageAvailable(GLContext::current()->version() >= 320))
+    if (!isEGLImageAvailable(GLContext::current()->version() >= 320))
 #endif
-        glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
-
-    if (!glImageTargetTexture2D)
         return false;
 
     s_waylandImpl = WaylandImpl::EGL;
@@ -411,7 +390,7 @@ bool AcceleratedBackingStoreWayland::tryEnsureTexture(unsigned& texture, IntSize
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
     glBindTexture(GL_TEXTURE_2D, m_egl.viewTexture);
-    glImageTargetTexture2D(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_egl.committedImage));
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_egl.committedImage));
 
     texture = m_egl.viewTexture;
     textureSize = { static_cast<int>(wpe_fdo_egl_exported_image_get_width(m_egl.committedImage)), static_cast<int>(wpe_fdo_egl_exported_image_get_height(m_egl.committedImage)) };

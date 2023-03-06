@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include "BigIntPrototype.h"
 #include "BrandedStructure.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "PropertyTable.h"
+#include "StringPrototype.h"
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"

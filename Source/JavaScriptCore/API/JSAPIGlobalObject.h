@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2019-2022 Apple Inc.  All rights reserved.
+/**
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@ public:
     using Base = JSGlobalObject;
 
     DECLARE_EXPORT_INFO;
-    static const GlobalObjectMethodTable s_globalObjectMethodTable;
 
     static constexpr bool needsDestruction = true;
     template<typename CellType, SubspaceAccess mode>
@@ -45,34 +44,22 @@ public:
         return vm.apiGlobalObjectSpace<mode>();
     }
 
-    static JSAPIGlobalObject* create(VM& vm, Structure* structure)
-    {
-        auto* object = new (NotNull, allocateCell<JSAPIGlobalObject>(vm)) JSAPIGlobalObject(vm, structure);
-        object->finishCreation(vm);
-        return object;
-    }
-
-    static Structure* createStructure(VM& vm, JSValue prototype)
-    {
-        auto* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
-        result->setTransitionWatchpointIsLikelyToBeFired(true);
-        return result;
-    }
+    static JSAPIGlobalObject* create(VM&, Structure*);
+    static Structure* createStructure(VM&, JSValue prototype);
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
+
+    JSValue loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *);
+
+private:
+    static const GlobalObjectMethodTable* globalObjectMethodTable();
+    JSAPIGlobalObject(VM&, Structure*);
 
     static JSInternalPromise* moduleLoaderImportModule(JSGlobalObject*, JSModuleLoader*, JSString* moduleNameValue, JSValue parameters, const SourceOrigin&);
     static Identifier moduleLoaderResolve(JSGlobalObject*, JSModuleLoader*, JSValue keyValue, JSValue referrerValue, JSValue);
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
     static JSValue moduleLoaderEvaluate(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue, JSValue, JSValue);
-
-    JSValue loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *);
-
-private:
-    JSAPIGlobalObject(VM& vm, Structure* structure)
-        : Base(vm, structure, &s_globalObjectMethodTable)
-    { }
 };
 
 }

@@ -2,5 +2,5 @@ This page tests whether or not the background shorthand properly omits initial v
 
 PASS: document.body.style.background should be green and is.
 PASS: document.getElementById('div1').style.background should be and is.
-PASS: document.getElementById('div2').style.background should be blue 50% 50% and is.
-PASS: document.getElementById('div3').style.background should be rgb(255, 255, 255) repeat and is.
+PASS: document.getElementById('div2').style.background should be 50% 50% blue and is.
+PASS: document.getElementById('div3').style.background should be repeat rgb(255, 255, 255) and is.

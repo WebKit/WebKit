@@ -26,13 +26,6 @@
 #pragma once
 
 #include "ErrorPrototype.h"
-#include "IsoSubspace.h"
-#include "JSCJSValue.h"
-#include "JSCell.h"
-#include "JSGlobalObject.h"
-#include "JSTypeInfo.h"
-#include "Structure.h"
-#include "VM.h"
 
 namespace JSC {
 

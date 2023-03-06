@@ -32,6 +32,7 @@
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"
 #include "StructuredSerializeOptions.h"
+#include <JavaScriptCore/Exception.h>
 
 namespace WebCore {
 

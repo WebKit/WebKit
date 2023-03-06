@@ -261,6 +261,9 @@ interface TestRunner {
 
     undefined setAllowsAnySSLCertificate(boolean value);
     undefined setBackgroundFetchPermission(boolean value);
+    DOMString lastAddedBackgroundFetchIdentifier();
+    DOMString lastRemovedBackgroundFetchIdentifier();
+    DOMString lastUpdatedBackgroundFetchIdentifier();
 
     undefined setShouldSwapToEphemeralSessionOnNextNavigation(boolean value);
     undefined setShouldSwapToDefaultSessionOnNextNavigation(boolean value);

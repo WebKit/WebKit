@@ -37,7 +37,7 @@
     white-space: nowrap;
 }
 
-.color-picker :matches(.color-square, .slider) {
+.color-picker :is(.color-square, .slider) {
     display: inline-block;
 }
 

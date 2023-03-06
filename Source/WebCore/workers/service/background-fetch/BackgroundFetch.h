@@ -52,7 +52,7 @@ struct CacheQueryOptions;
 class BackgroundFetch : public CanMakeWeakPtr<BackgroundFetch> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using NotificationCallback = Function<void(BackgroundFetchInformation&&)>;
+    using NotificationCallback = Function<void(BackgroundFetch&)>;
     BackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
     BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
     ~BackgroundFetch();
@@ -60,8 +60,9 @@ public:
     static std::unique_ptr<BackgroundFetch> createFromStore(Span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
     String identifier() const { return m_identifier; }
-    BackgroundFetchInformation information() const;
+    WEBCORE_EXPORT BackgroundFetchInformation information() const;
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
+    const BackgroundFetchOptions& options() const { return m_options; }
 
     using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;

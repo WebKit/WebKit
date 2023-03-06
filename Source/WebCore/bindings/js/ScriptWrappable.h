@@ -34,10 +34,6 @@
 #include <JavaScriptCore/Weak.h>
 #include <wtf/IsoMalloc.h>
 
-namespace JSC {
-class WeakHandleOwner;
-}
-
 namespace WebCore {
 
 class JSDOMObject;
@@ -45,9 +41,9 @@ class JSDOMObject;
 class ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(ScriptWrappable);
 public:
-    JSDOMObject* wrapper() const;
-    void setWrapper(JSDOMObject*, JSC::WeakHandleOwner*, void*);
-    void clearWrapper(JSDOMObject*);
+    inline JSDOMObject* wrapper() const;
+    inline void setWrapper(JSDOMObject*, JSC::WeakHandleOwner*, void*);
+    inline void clearWrapper(JSDOMObject*);
 
     template<typename Derived>
     static ptrdiff_t offsetOfWrapper() { return CAST_OFFSET(Derived*, ScriptWrappable*) + OBJECT_OFFSETOF(ScriptWrappable, m_wrapper); }

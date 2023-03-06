@@ -28,6 +28,7 @@
 
 #include "AbstractSlotVisitor.h"
 #include "DeferredWorkTimer.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 

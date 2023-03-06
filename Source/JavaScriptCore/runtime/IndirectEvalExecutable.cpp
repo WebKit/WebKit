@@ -29,11 +29,11 @@
 #include "CodeCache.h"
 #include "Debugger.h"
 #include "Error.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSCJSValueInlines.h"
 #include "ParserError.h"
 
 namespace JSC {
-
 
 template<typename ErrorHandlerFunctor>
 inline IndirectEvalExecutable* IndirectEvalExecutable::createImpl(JSGlobalObject* globalObject, const SourceCode& source, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType, ErrorHandlerFunctor errorHandler)

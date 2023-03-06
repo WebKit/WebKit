@@ -31,7 +31,7 @@
     font-size: 11px;
 }
 
-.object-tree > :matches(.title, .object-preview)::before {
+.object-tree > :is(.title, .object-preview)::before {
     display: inline-block;
 
     vertical-align: baseline;
@@ -49,15 +49,15 @@
     content: "";
 }
 
-.object-tree:not(.lossless-preview) > :matches(.title, .object-preview) {
+.object-tree:not(.lossless-preview) > :is(.title, .object-preview) {
     margin-left: 0;
 }
 
-.object-tree.expanded > :matches(.title, .object-preview)::before {
+.object-tree.expanded > :is(.title, .object-preview)::before {
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
-.object-tree.properties-only > :matches(.title, .object-preview) {
+.object-tree.properties-only > :is(.title, .object-preview) {
     display: none;
 }
 
@@ -69,7 +69,7 @@
     line-height: 16px;
 }
 
-.object-tree.lossless-preview > :matches(.title, .object-preview)::before {
+.object-tree.lossless-preview > :is(.title, .object-preview)::before {
     background: none;
     width: 0px;
 }

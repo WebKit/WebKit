@@ -30,6 +30,12 @@
 #include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/Forward.h>
 
+namespace JSC {
+
+enum class JSPromiseRejectionOperation : unsigned;
+
+}
+
 namespace WebCore {
 
 class DOMConstructors;

@@ -27,6 +27,7 @@
 #include "AggregateErrorConstructor.h"
 
 #include "AggregateError.h"
+#include "AggregateErrorPrototype.h"
 #include "ClassInfo.h"
 #include "ExceptionScope.h"
 #include "GCAssertions.h"

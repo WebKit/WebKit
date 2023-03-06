@@ -39,10 +39,7 @@
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyDMABuf.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
-
-#if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#endif
 
 namespace Nicosia {
 

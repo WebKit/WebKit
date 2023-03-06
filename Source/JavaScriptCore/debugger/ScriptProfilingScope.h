@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Debugger.h"
-#include "JSGlobalObject.h"
 
 namespace JSC {
 

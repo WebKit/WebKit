@@ -14,13 +14,25 @@ promise_test(async t => {
   if (!window.testRunner)
     return;
 
+  const internalId = testRunner.getBackgroundFetchIdentifier();
+  assert_equals(testRunner.lastAddedBackgroundFetchIdentifier(), internalId, "added");
+
+  let counter = 0;
+  while (testRunner.lastUpdatedBackgroundFetchIdentifier() != internalId && ++counter < 100)
+    await new Promise(resolve => setTimeout(resolve, 20));
+  assert_less_than(counter, 100);
+
   const channel = new MessageChannel();
   serviceWorkerRegistration.active.postMessage({ type:'waitForAbort', port:channel.port1 }, [channel.port1]);
   const abortPromise = new Promise(resolve => channel.port2.onmessage = (event) => resolve(event.data));
 
-  const internalId = testRunner.getBackgroundFetchIdentifier();
   assert_greater_than(internalId.length, 0);
   testRunner.abortBackgroundFetch(internalId);
 
   assert_equals(await abortPromise, id);
+
+  counter = 0;
+  while (testRunner.lastRemovedBackgroundFetchIdentifier() != internalId && ++counter < 100)
+    await new Promise(resolve => setTimeout(resolve, 20));
+  assert_less_than(counter, 100);
 }, "background fetch abort should trigger an abort event");

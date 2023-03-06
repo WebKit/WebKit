@@ -29,7 +29,6 @@
 #include "CPU.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "MathCommon.h"
 #include <wtf/CagedUniquePtr.h>

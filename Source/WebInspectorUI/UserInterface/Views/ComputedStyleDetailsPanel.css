@@ -28,7 +28,7 @@
     --disclosure-button-size: 15px;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed > .details-section:not(.collapsed) > :matches(.header, .content) {
+.sidebar > .panel.details.css-style > .content > .computed > .details-section:not(.collapsed) > :is(.header, .content) {
     background-color: var(--background-color);
 }
 

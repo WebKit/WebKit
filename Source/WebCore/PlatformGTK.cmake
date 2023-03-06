@@ -94,12 +94,6 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${UPOWERGLIB_INCLUDE_DIRS}
 )
 
-if (USE_OPENGL AND NOT USE_LIBEPOXY)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/OpenGLShims.cpp
-    )
-endif ()
-
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/wayland/PlatformDisplayWayland.h

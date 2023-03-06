@@ -25,17 +25,11 @@
 
 #pragma once
 
-#include "AggregateErrorPrototype.h"
-#include "ErrorType.h"
 #include "InternalFunction.h"
-#include "JSCJSValue.h"
-#include "JSCell.h"
-#include "JSGlobalObject.h"
-#include "JSTypeInfo.h"
-#include "Structure.h"
-#include "VM.h"
 
 namespace JSC {
+
+class AggregateErrorPrototype;
 
 class AggregateErrorConstructor final : public InternalFunction {
 public:

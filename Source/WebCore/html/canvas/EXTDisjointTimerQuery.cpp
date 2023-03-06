@@ -26,13 +26,12 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
+
 #include "EXTDisjointTimerQuery.h"
 
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
-#include "WebGLAnyInlines.h"
 #include "WebGLRenderingContext.h"
-
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>

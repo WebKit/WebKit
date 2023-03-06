@@ -46,11 +46,11 @@
     z-index: -1;
 }
 
-.navigation-bar .item.radio.button.text-only:matches(.selected, :hover) {
+.navigation-bar .item.radio.button.text-only:is(.selected, :hover) {
     color: var(--selected-foreground-color);
 }
 
-.navigation-bar .item.radio.button.text-only:matches(.selected, :hover)::before {
+.navigation-bar .item.radio.button.text-only:is(.selected, :hover)::before {
     background-color: var(--glyph-color-active);
 }
 

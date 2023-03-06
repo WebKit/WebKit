@@ -34,18 +34,18 @@
 }
 
 .cm-s-default .cm-comment,
-.syntax-highlighted :matches(.css-comment, .javascript-comment, .html-comment) {
+.syntax-highlighted :is(.css-comment, .javascript-comment, .html-comment) {
     color: var(--syntax-highlight-comment-color);
 }
 
-.cm-s-default :matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
-.cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property),
-.syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
+.cm-s-default :is(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default .cm-m-css:is(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property),
+.syntax-highlighted :is(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
     color: var(--syntax-highlight-boolean-color);
 }
 
-.cm-s-default :matches(.cm-number, .cm-atom.cm-hex-color),
-.syntax-highlighted :matches(.css-number, .javascript-number) {
+.cm-s-default :is(.cm-number, .cm-atom.cm-hex-color),
+.syntax-highlighted :is(.css-number, .javascript-number) {
     color: var(--syntax-highlight-number-color);
 }
 
@@ -54,14 +54,14 @@
     color: var(--syntax-highlight-bigint-color);
 }
 
-.cm-s-default :matches(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
-.cm-s-default .cm-m-css:matches(.cm-tag, .cm-string-2, .cm-builtin, .cm-qualifier),
-.syntax-highlighted :matches(.css-property, .css-selector, .javascript-ident) {
+.cm-s-default :is(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
+.cm-s-default .cm-m-css:is(.cm-tag, .cm-string-2, .cm-builtin, .cm-qualifier),
+.syntax-highlighted :is(.css-property, .css-selector, .javascript-ident) {
     color: inherit;
 }
 
 .cm-s-default .cm-string,
-.syntax-highlighted :matches(.css-string, .javascript-string, .html-attribute-value) {
+.syntax-highlighted :is(.css-string, .javascript-string, .html-attribute-value) {
     color: var(--syntax-highlight-string-color);
 }
 
@@ -71,7 +71,7 @@
 }
 
 .cm-s-default .cm-m-xml.cm-meta,
-.syntax-highlighted :matches(.html-doctype, .html-processing-instruction) {
+.syntax-highlighted :is(.html-doctype, .html-processing-instruction) {
     color: hsl(0, 0%, 75%);
 }
 
@@ -111,12 +111,12 @@
     color: hsl(119, 27%, 65%);
 }
 
-.cm-s-default .basic-block-has-not-executed:matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
-.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property) {
+.cm-s-default .basic-block-has-not-executed:is(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default .basic-block-has-not-executed.cm-m-css:is(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property) {
     color: hsl(309, 21%, 70%);
 }
 
-.cm-s-default .basic-block-has-not-executed:matches(.cm-number, .cm-atom.cm-hex-color) {
+.cm-s-default .basic-block-has-not-executed:is(.cm-number, .cm-atom.cm-hex-color) {
     color: hsl(248, 52%, 78%);
 }
 

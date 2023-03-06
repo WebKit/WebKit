@@ -542,6 +542,7 @@ void WorkerSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordI
                 if (!error.isNull()) {
                     iterator->value(makeUnexpected(WTFMove(error)));
                     callbacks.remove(iterator);
+                    return;
                 }
                 bool isDone = !buffer;
                 iterator->value(WTFMove(buffer));

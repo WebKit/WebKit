@@ -55,11 +55,11 @@
     content: url(../Images/DocumentIcons.svg#font-light-override);
 }
 
-:matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
+:is(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
     content: url(../Images/DocumentIcons.svg#css-light);
 }
 
-:matches(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
+:is(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
     content: url(../Images/DocumentIcons.svg#css-light-override);
 }
 
@@ -148,10 +148,10 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
         content: url(../Images/DocumentIcons.svg#font-dark-override);
     }
 
-    :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
+    :is(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
         content: url(../Images/DocumentIcons.svg#css-dark);
     }
-    :matches(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
+    :is(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
         content: url(../Images/DocumentIcons.svg#css-dark-override);
     }
 

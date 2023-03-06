@@ -39,11 +39,11 @@
     -webkit-user-select: none;
 }
 
-.spreadsheet-css-declaration :matches(.header, .header-groupings) {
+.spreadsheet-css-declaration :is(.header, .header-groupings) {
     padding: 0 var(--css-declaration-horizontal-padding);
 }
 
-.spreadsheet-css-declaration :matches(.header, .header-groupings):first-child {
+.spreadsheet-css-declaration :is(.header, .header-groupings):first-child {
     padding-top: var(--css-declaration-vertical-padding);
 }
 

@@ -54,20 +54,20 @@ static CFHTTPCookieStorageAcceptPolicy toCFHTTPCookieStorageAcceptPolicy(HTTPCoo
     return CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
-    saveCookies([NSHTTPCookieStorage sharedHTTPCookieStorage], [callbackAggregator] { });
+    auto* storageSession = m_process.storageSession(sessionID);
+    if (!storageSession)
+        return completionHandler();
 
-    m_process.forEachNetworkStorageSession([&] (const auto& networkStorageSession) {
-        if (auto cookieStorage = networkStorageSession.cookieStorage())
-            CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), toCFHTTPCookieStorageAcceptPolicy(policy));
-        if (auto *storage = networkStorageSession.nsCookieStorage())
-            saveCookies(storage, [callbackAggregator] { });
-    });
+    auto* nsCookieStorage = storageSession->nsCookieStorage();
+    if (!nsCookieStorage)
+        return completionHandler();
+
+    CFHTTPCookieStorageSetCookieAcceptPolicy([nsCookieStorage _cookieStorage], toCFHTTPCookieStorageAcceptPolicy(policy));
+    saveCookies(nsCookieStorage, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

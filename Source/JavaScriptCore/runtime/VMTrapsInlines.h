@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,8 @@ inline void VMTraps::deferTermination(DeferAction deferAction)
 inline void VMTraps::undoDeferTermination(DeferAction deferAction)
 {
     ASSERT(m_deferTerminationCount > 0);
-    ASSERT(!m_suspendedTerminationException || vm().terminationInProgress());
-    if (UNLIKELY(--m_deferTerminationCount == 0 && vm().terminationInProgress()))
+    ASSERT(!m_suspendedTerminationException || vm().hasTerminationRequest());
+    if (UNLIKELY(--m_deferTerminationCount == 0 && vm().hasTerminationRequest()))
         undoDeferTerminationSlow(deferAction);
 }
 

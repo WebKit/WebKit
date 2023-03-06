@@ -27,7 +27,6 @@
 
 #include "CallFrame.h"
 #include "JSCallee.h"
-#include "JSGlobalObject.h"
 #include "RegisterInlines.h"
 
 namespace JSC {

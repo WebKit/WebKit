@@ -27,6 +27,7 @@
 #include "NetworkSession.h"
 
 #include "BackgroundFetchLoad.h"
+#include "BackgroundFetchState.h"
 #include "BackgroundFetchStoreImpl.h"
 #include "CacheStorageEngine.h"
 #include "LoadedWebArchive.h"
@@ -761,6 +762,11 @@ BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore()
 void NetworkSession::getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&& callback)
 {
     ensureBackgroundFetchStore().getAllBackgroundFetchIdentifiers(WTFMove(callback));
+}
+
+void NetworkSession::getBackgroundFetchState(const String& identifier, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&& callback)
+{
+    ensureBackgroundFetchStore().getBackgroundFetchState(identifier, WTFMove(callback));
 }
 
 void NetworkSession::abortBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)

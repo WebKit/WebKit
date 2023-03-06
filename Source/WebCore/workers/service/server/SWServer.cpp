@@ -1556,17 +1556,20 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
     });
 }
 
-void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, BackgroundFetchInformation&& info)
+void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, BackgroundFetchInformation&& info, CompletionHandler<void()>&& callback)
 {
     RefPtr worker = registration.activeWorker();
     if (!worker) {
         RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch update message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().data());
+        callback();
         return;
     }
 
-    fireFunctionalEvent(registration, [weakThis = WeakPtr { *this }, worker = worker.releaseNonNull(), info = WTFMove(info)](auto&& connectionOrStatus) mutable {
-        if (!connectionOrStatus.has_value())
+    fireFunctionalEvent(registration, [weakThis = WeakPtr { *this }, worker = worker.releaseNonNull(), info = WTFMove(info), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+        if (!connectionOrStatus.has_value()) {
+            callback();
             return;
+        }
 
         auto serviceWorkerIdentifier = worker->identifier();
 
@@ -1576,12 +1579,13 @@ void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, Back
             worker->decrementFunctionalEventCounter();
         });
         terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-        connectionOrStatus.value()->fireBackgroundFetchEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+        connectionOrStatus.value()->fireBackgroundFetchEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker), callback = WTFMove(callback)](bool succeeded) mutable {
             RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Background fetch event was not successfully handled");
             if (terminateWorkerTimer->isActive()) {
                 worker->decrementFunctionalEventCounter();
                 terminateWorkerTimer->stop();
             }
+            callback();
         });
     });
 }

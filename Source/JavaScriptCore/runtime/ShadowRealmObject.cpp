@@ -28,6 +28,7 @@
 #include "ShadowRealmObject.h"
 
 #include "AuxiliaryBarrierInlines.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSObjectInlines.h"
 #include "StructureInlines.h"
 

@@ -35,14 +35,14 @@
     height: 100%;
 }
 
-.tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
+.tree-outline .item.audit:is(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
     width: 75%;
     height: 75%;
     margin: 0 auto;
     content: url(../Images/AuditStart.svg) !important;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active).selected:hover > .status > img,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit:is(.test-case, .test-group):not(.unsupported, .manager-active).selected:hover > .status > img,
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-case.selected > .status > .indeterminate-progress-spinner,
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-group.selected > .status > progress {
     filter: var(--filter-invert);
@@ -60,7 +60,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     display: none;
 }
 
-.tree-outline .item.audit.unsupported:not(.selected) > :matches(.icon, .titles) {
+.tree-outline .item.audit.unsupported:not(.selected) > :is(.icon, .titles) {
     opacity: 0.5;
 }
 
@@ -108,7 +108,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 }
 
 @media (prefers-color-scheme: dark) {
-    .tree-outline .item.audit:matches(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
+    .tree-outline .item.audit:is(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
         filter: var(--filter-invert) brightness(90%);
     }
 

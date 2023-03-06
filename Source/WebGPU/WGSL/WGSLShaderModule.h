@@ -29,6 +29,7 @@
 #include "ASTFunction.h"
 #include "ASTStructure.h"
 #include "ASTVariable.h"
+#include "TypeStore.h"
 #include "WGSL.h"
 
 #include <wtf/text/StringHash.h>
@@ -54,6 +55,7 @@ public:
     AST::Function::List& functions() { return m_functions; }
     AST::Structure::List& structures() { return m_structures; }
     AST::Variable::List& variables() { return m_variables; }
+    TypeStore& types() { return m_types; }
 
 private:
     String m_source;
@@ -62,6 +64,7 @@ private:
     AST::Function::List m_functions;
     AST::Structure::List m_structures;
     AST::Variable::List m_variables;
+    TypeStore m_types;
 };
 
 } // namespace WGSL

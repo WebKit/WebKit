@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeferredWorkTimer.h"
 
+#include "GlobalObjectMethodTable.h"
 #include "JSPromise.h"
 #include "StrongInlines.h"
 #include "VM.h"

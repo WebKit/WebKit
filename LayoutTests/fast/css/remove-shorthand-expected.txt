@@ -7,7 +7,7 @@ removes "background"
 and adds "".
 Removing background-position
 removes "background"
-and adds "background-color, background-image, background-size, background-repeat, background-attachment, background-origin, background-clip".
+and adds "background-image, background-size, background-repeat, background-attachment, background-origin, background-clip, background-color".
 Removing border
 removes "border"
 and adds "".

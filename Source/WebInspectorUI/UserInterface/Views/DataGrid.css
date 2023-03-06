@@ -102,7 +102,7 @@
     background-color: var(--background-color-pressed);
 }
 
-.data-grid th:matches(.sort-ascending, .sort-descending) {
+.data-grid th:is(.sort-ascending, .sort-descending) {
     font-weight: var(--sorted-header-font-weight);
 }
 
@@ -197,7 +197,7 @@
     border-inline-end-color: var(--border-end-color);
 }
 
-.data-grid :matches(th, td) > div {
+.data-grid :is(th, td) > div {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -220,11 +220,11 @@
     position: relative;
 }
 
-.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child {
+.data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child {
     padding-inline-end: calc(12px + var(--data-grid-header-horizontal-padding)); /* Add 12px for the sorting chevron. */
 }
 
-.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
+.data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
     position: absolute;
     top: 1px;
     bottom: 0;
@@ -339,7 +339,7 @@ body[dir=rtl] .data-grid td .go-to-arrow {
     float: left;
 }
 
-.data-grid tr:matches(.selected, :hover) .go-to-arrow {
+.data-grid tr:is(.selected, :hover) .go-to-arrow {
     display: block;
 }
 
@@ -389,7 +389,7 @@ body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable
         background-color: unset;
     }
 
-    .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
+    .data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
         filter: invert();
     }
 }

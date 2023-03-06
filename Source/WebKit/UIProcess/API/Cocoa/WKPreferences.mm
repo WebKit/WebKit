@@ -885,6 +885,26 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->mediaSourceEnabled();
 }
 
+- (void)_setManagedMediaSourceLowThreshold:(double)threshold
+{
+    _preferences->setManagedMediaSourceLowThreshold(threshold);
+}
+
+- (double)_managedMediaSourceLowThreshold
+{
+    return _preferences->managedMediaSourceLowThreshold();
+}
+
+- (void)_setManagedMediaSourceHighThreshold:(double)threshold
+{
+    _preferences->setManagedMediaSourceHighThreshold(threshold);
+}
+
+- (double)_managedMediaSourceHighThreshold
+{
+    return _preferences->managedMediaSourceHighThreshold();
+}
+
 - (BOOL)_secureContextChecksEnabled
 {
     return _preferences->secureContextChecksEnabled();

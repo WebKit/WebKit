@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2010-2014 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +30,14 @@
 
 namespace WebCore {
 
+// Member order to optimize packing. There will be thousands of these objects.
 struct HTMLEntityTableEntry {
-    LChar lastCharacter() const { return entity[length - 1]; }
+    LChar lastCharacter() const;
 
-    const LChar* entity;
-    int length;
     UChar32 firstValue;
-    UChar32 secondValue;
+    UChar secondValue; // UChar since double char sequences only use BMP chars.
+    uint16_t entityOffset;
+    uint8_t length;
 };
 
 class HTMLEntityTable {
@@ -45,6 +47,8 @@ public:
 
     static const HTMLEntityTableEntry* firstEntryStartingWith(UChar);
     static const HTMLEntityTableEntry* lastEntryStartingWith(UChar);
+
+    static const LChar* characters(const HTMLEntityTableEntry&);
 };
 
 } // namespace WebCore

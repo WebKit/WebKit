@@ -38,6 +38,7 @@
 #include "JSGenerator.h"
 #include "JSImmutableButterfly.h"
 #include "JSMapIterator.h"
+#include "JSPromise.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "LabelScope.h"

@@ -48,7 +48,7 @@
     border-color: red;
 }
 
-.content-view.canvas-overview > .content-view.canvas > :matches(header, footer) {
+.content-view.canvas-overview > .content-view.canvas > :is(header, footer) {
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
@@ -76,7 +76,7 @@
     color: var(--text-color-gray-dark);
 }
 
-.content-view.canvas-overview > .content-view.canvas > header > .titles > :matches(.subtitle, .color-space),
+.content-view.canvas-overview > .content-view.canvas > header > .titles > :is(.subtitle, .color-space),
 .content-view.canvas-overview > .content-view.canvas > footer .memory-cost {
     color: var(--text-color-gray-medium);
 }
@@ -108,7 +108,7 @@
     transition: opacity 200ms ease-in-out;
 }
 
-.content-view.canvas-overview > .content-view.canvas:matches(:hover, .recording-active) > header > .navigation-bar {
+.content-view.canvas-overview > .content-view.canvas:is(:hover, .recording-active) > header > .navigation-bar {
     opacity: 1;
     transition: opacity 200ms ease-in-out;
 }
@@ -160,7 +160,7 @@
     align-items: center;
 }
 
-.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > :matches(.view-shader, .view-recording) {
+.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > :is(.view-shader, .view-recording) {
     width: 16px;
     height: 16px;
 }

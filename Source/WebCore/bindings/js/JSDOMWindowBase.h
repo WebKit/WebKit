@@ -72,8 +72,6 @@ public:
         return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
     }
 
-    static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
-
     static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
     static bool shouldInterruptScript(const JSC::JSGlobalObject*);
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
@@ -100,7 +98,7 @@ protected:
     RefPtr<JSC::WatchpointSet> m_windowCloseWatchpoints;
 
 private:
-    using ResponseCallback = Function<void(const char*, size_t)>;
+    static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
 
     RefPtr<DOMWindow> m_wrapped;
     RefPtr<Event> m_currentEvent;

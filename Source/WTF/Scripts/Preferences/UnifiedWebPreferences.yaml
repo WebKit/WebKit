@@ -2858,18 +2858,18 @@ ImageAnalysisDuringFindInPageEnabled:
 
 ImageAnimationControlEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Image Animation Control Enabled"
   humanReadableDescription: "Control image animations."
   condition: ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 ImageControlsEnabled:
   type: bool
@@ -3862,6 +3862,26 @@ ManagedMediaSourceEnabled:
       default: WebKit::defaultManagedMediaSourceEnabled()
     WebCore:
       default: true
+
+ManagedMediaSourceHighThreshold:
+  type: double
+  status: embedder
+  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  defaultValue:
+    WebKit:
+      default: 30
+    WebCore:
+      default: 30
+
+ManagedMediaSourceLowThreshold:
+  type: double
+  status: embedder
+  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  defaultValue:
+    WebKit:
+      default: 10
+    WebCore:
+      default: 10
 
 MarkedTextInputEnabled:
   type: bool

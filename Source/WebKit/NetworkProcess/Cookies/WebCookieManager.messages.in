@@ -35,7 +35,7 @@ messages -> WebCookieManager NotRefCounted {
     void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie) -> ()
     void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time) -> ()
 
-    void SetHTTPCookieAcceptPolicy(enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy) -> ()
+    void SetHTTPCookieAcceptPolicy(PAL::SessionID sessionID, enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy) -> ()
     void GetHTTPCookieAcceptPolicy(PAL::SessionID sessionID) -> (enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy)
     
     void StartObservingCookieChanges(PAL::SessionID sessionID)

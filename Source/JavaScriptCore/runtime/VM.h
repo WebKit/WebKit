@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -347,8 +347,17 @@ public:
     WeakRandom& heapRandom() { return m_heapRandom; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
 
-    bool terminationInProgress() const { return m_terminationInProgress; }
-    void setTerminationInProgress(bool value) { m_terminationInProgress = value; }
+    bool hasTerminationRequest() const { return m_hasTerminationRequest; }
+    void clearHasTerminationRequest()
+    {
+        m_hasTerminationRequest = false;
+        clearEntryScopeService(EntryScopeService::ResetTerminationRequest);
+    }
+    void setHasTerminationRequest()
+    {
+        m_hasTerminationRequest = true;
+        requestEntryScopeService(EntryScopeService::ResetTerminationRequest);
+    }
 
     bool executionForbidden() const { return m_executionForbidden; }
     void setExecutionForbidden() { m_executionForbidden = true; }
@@ -378,6 +387,28 @@ public:
 
     void throwTerminationException();
 
+    enum class EntryScopeService : uint8_t {
+        // Sticky services i.e. if set, these will never be cleared.
+        SamplingProfiler = 1 << 0,
+        TracePoints = 1 << 1,
+        Watchdog = 1 << 2,
+
+        // Transient services i.e. these will never be cleared after they are serviced once, and can be set again later.
+        ClearScratchBuffers = 1 << 3,
+        FirePrimitiveGigacageEnabled = 1 << 4,
+        PopListeners = 1 << 5,
+        ResetTerminationRequest = 1 << 6,
+    };
+
+    bool hasAnyEntryScopeServiceRequest() { return !m_entryScopeServices.isEmpty(); }
+    void executeEntryScopeServicesOnEntry();
+    void executeEntryScopeServicesOnExit();
+
+    void requestEntryScopeService(EntryScopeService service)
+    {
+        m_entryScopeServices.add(service);
+    }
+
 private:
     VMIdentifier m_identifier;
     RefPtr<JSLock> m_apiLock;
@@ -392,6 +423,18 @@ private:
     WeakRandom m_random;
     WeakRandom m_heapRandom;
     Integrity::Random m_integrityRandom;
+
+    OptionSet<EntryScopeService> m_entryScopeServices;
+
+    bool hasEntryScopeServiceRequest(EntryScopeService service)
+    {
+        return m_entryScopeServices.contains(service);
+    }
+
+    void clearEntryScopeService(EntryScopeService service)
+    {
+        m_entryScopeServices.remove(service);
+    }
 
 public:
     Heap heap;
@@ -708,14 +751,6 @@ public:
     void* lastStackTop() { return m_lastStackTop; }
     void setLastStackTop(const Thread&);
     
-    void firePrimitiveGigacageEnabledIfNecessary()
-    {
-        if (UNLIKELY(m_needToFirePrimitiveGigacageEnabled)) {
-            m_needToFirePrimitiveGigacageEnabled = false;
-            m_primitiveGigacageEnabled.fireAll(*this, "Primitive gigacage disabled asynchronously");
-        }
-    }
-
     EncodedJSValue encodedHostCallReturnValue { };
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch { nullptr };
@@ -733,13 +768,6 @@ public:
     ScratchBuffer* scratchBufferForSize(size_t size);
     void clearScratchBuffers();
     bool isScratchBuffer(void*);
-
-    void invokeDidPopListeners()
-    {
-        auto listeners = WTFMove(m_didPopListeners);
-        for (auto& listener : listeners)
-            listener();
-    }
 
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {
@@ -795,7 +823,7 @@ public:
     JS_EXPORT_PRIVATE void dumpRegExpTrace();
 #endif
 
-    void resetDateCacheIfNecessary() { dateCache.resetIfNecessary(); }
+    bool hasTimeZoneChange() { return dateCache.hasTimeZoneChange(); }
 
     RegExpCache* regExpCache() { return m_regExpCache; }
 
@@ -871,7 +899,7 @@ public:
     void notifyNeedShellTimeoutCheck() { m_traps.fireTrap(VMTraps::NeedShellTimeoutCheck); }
     void notifyNeedTermination()
     {
-        setTerminationInProgress(true);
+        setHasTerminationRequest();
         m_traps.fireTrap(VMTraps::NeedTermination);
     }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
@@ -1005,7 +1033,6 @@ private:
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount { 0 };
-    bool m_needToFirePrimitiveGigacageEnabled { false };
     bool m_isInService { false };
     Lock m_scratchBufferLock;
     Vector<ScratchBuffer*> m_scratchBuffers;
@@ -1033,7 +1060,7 @@ private:
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
     uintptr_t m_currentWeakRefVersion { 0 };
 
-    bool m_terminationInProgress { false };
+    bool m_hasTerminationRequest { false };
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
 

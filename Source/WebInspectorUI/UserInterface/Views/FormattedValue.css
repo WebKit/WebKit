@@ -29,7 +29,7 @@
     color: black;
 }
 
-:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size {
+:is(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size {
     font-style: normal;
     color: var(--console-secondary-text-color);
 }

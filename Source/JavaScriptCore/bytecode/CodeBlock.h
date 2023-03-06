@@ -52,7 +52,6 @@
 #include "JITCodeMap.h"
 #include "JITMathICForwards.h"
 #include "JSCast.h"
-#include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "LazyOperandValueProfile.h"
 #include "MetadataTable.h"

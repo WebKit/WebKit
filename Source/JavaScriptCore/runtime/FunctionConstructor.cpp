@@ -23,6 +23,7 @@
 
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSFunction.h"

@@ -29,7 +29,6 @@
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "ValidatedFormListedElement.h"
 #include "ValidityStateFlags.h"
-#include <JavaScriptCore/JSGlobalObject.h>
 
 namespace WebCore {
 

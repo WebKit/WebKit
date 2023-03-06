@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+class UnlinkedModuleProgramCodeBlock;
+
 class ModuleProgramExecutable final : public GlobalExecutable {
     friend class LLIntOffsetsExtractor;
 public:

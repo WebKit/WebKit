@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTTypeName.h"
+#include "Types.h"
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

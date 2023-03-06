@@ -457,6 +457,24 @@ void TestRunner::setBackgroundFetchPermission(bool enabled)
     postSynchronousPageMessage("SetBackgroundFetchPermission", enabled);
 }
 
+JSRetainPtr<JSStringRef>  TestRunner::lastAddedBackgroundFetchIdentifier() const
+{
+    auto identifier = InjectedBundle::singleton().lastAddedBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
+JSRetainPtr<JSStringRef>  TestRunner::lastRemovedBackgroundFetchIdentifier() const
+{
+    auto identifier = InjectedBundle::singleton().lastRemovedBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
+JSRetainPtr<JSStringRef> TestRunner::lastUpdatedBackgroundFetchIdentifier() const
+{
+    auto identifier = InjectedBundle::singleton().lastUpdatedBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
 void TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation(bool shouldSwap)
 {
     postSynchronousPageMessage("SetShouldSwapToEphemeralSessionOnNextNavigation", shouldSwap);

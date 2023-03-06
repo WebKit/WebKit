@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SharedMemory.h"
+#include <cstddef>
 #include <wtf/Atomics.h>
 #include <wtf/Ref.h>
 #include <wtf/Span.h>

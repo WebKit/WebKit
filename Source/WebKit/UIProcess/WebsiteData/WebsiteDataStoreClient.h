@@ -28,6 +28,7 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
+#include "BackgroundFetchChange.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -76,6 +77,10 @@ public:
     virtual void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
     {
         completionHandler(false);
+    }
+
+    virtual void notifyBackgroundFetchChange(const String&, BackgroundFetchChange)
+    {
     }
 };
 

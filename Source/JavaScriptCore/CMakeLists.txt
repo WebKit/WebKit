@@ -1044,6 +1044,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GetterSetter.h
     runtime/GetVM.h
     runtime/GlobalExecutable.h
+    runtime/GlobalObjectMethodTable.h
     runtime/HashMapImpl.h
     runtime/HashMapImplInlines.h
     runtime/Identifier.h

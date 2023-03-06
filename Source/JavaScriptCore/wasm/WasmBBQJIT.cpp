@@ -341,6 +341,36 @@ private:
     }
 
 public:
+    static ALWAYS_INLINE uint32_t sizeOfType(TypeKind type)
+    {
+        switch (type) {
+        case TypeKind::I32:
+        case TypeKind::F32:
+        case TypeKind::I31ref:
+            return 4;
+        case TypeKind::I64:
+        case TypeKind::F64:
+            return 8;
+        case TypeKind::V128:
+            return 16;
+        case TypeKind::Func:
+        case TypeKind::Funcref:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
+        case TypeKind::Rec:
+        case TypeKind::Sub:
+        case TypeKind::Struct:
+        case TypeKind::Structref:
+        case TypeKind::Externref:
+        case TypeKind::Array:
+        case TypeKind::Arrayref:
+            return sizeof(EncodedJSValue);
+        case TypeKind::Void:
+            return 0;
+        }
+        return 0;
+    }
+
     class Value {
     public:
         // Represents the location in which this value is stored.
@@ -515,31 +545,7 @@ public:
 
         ALWAYS_INLINE uint32_t size() const
         {
-            switch (m_type) {
-            case TypeKind::I32:
-            case TypeKind::F32:
-            case TypeKind::I31ref:
-                return 4;
-            case TypeKind::I64:
-            case TypeKind::F64:
-                return 8;
-            case TypeKind::V128:
-                return 16;
-            case TypeKind::Func:
-            case TypeKind::Funcref:
-            case TypeKind::Ref:
-            case TypeKind::RefNull:
-            case TypeKind::Rec:
-            case TypeKind::Sub:
-            case TypeKind::Struct:
-            case TypeKind::Structref:
-            case TypeKind::Externref:
-            case TypeKind::Array:
-            case TypeKind::Arrayref:
-                return sizeof(EncodedJSValue);
-            case TypeKind::Void:
-                return 0;
-            }
+            return sizeOfType(m_type);
         }
 
         ALWAYS_INLINE bool isFloat() const
@@ -5920,34 +5926,92 @@ public:
         });
         m_jit.move(m_scratchGPR, MacroAssembler::stackPointerRegister);
 
+        LocalOrTempIndex i = 0;
+        for (; i < m_arguments.size(); ++i)
+            flushValue(Value::fromLocal(m_parser->typeOfLocal(i).kind, i));
+
         // Zero all locals that aren't initialized by arguments.
-        // This is kind of icky...we can evaluate replacing this a memset() or a tracker for which
-        // locals have been initialized.
-        for (LocalOrTempIndex i = 0; i < m_locals.size(); ++i) {
-            if (i < m_arguments.size()) {
-                flushValue(Value::fromLocal(m_parser->typeOfLocal(i).kind, i));
-                continue;
+        enum class ClearMode { Zero, JSNull };
+        std::optional<int32_t> highest;
+        std::optional<int32_t> lowest;
+        auto flushZeroClear = [&]() {
+            if (!lowest)
+                return;
+            size_t size = highest.value() - lowest.value();
+            int32_t pointer = lowest.value();
+
+            // Adjust pointer offset to be efficient for paired-stores.
+            if (pointer & 4 && size >= 4) {
+                m_jit.store32(TrustedImm32(0), Address(GPRInfo::callFrameRegister, pointer));
+                pointer += 4;
+                size -= 4;
             }
 
-            Value zero;
-            switch (m_parser->typeOfLocal(i).kind) {
+#if CPU(ARM64)
+            if (pointer & 8 && size >= 8) {
+                m_jit.store64(TrustedImm64(0), Address(GPRInfo::callFrameRegister, pointer));
+                pointer += 8;
+                size -= 8;
+            }
+
+            unsigned count = size / 16;
+            for (unsigned i = 0; i < count; ++i) {
+                m_jit.storePair64(ARM64Registers::zr, ARM64Registers::zr, GPRInfo::callFrameRegister, TrustedImm32(pointer));
+                pointer += 16;
+                size -= 16;
+            }
+            if (size & 8) {
+                m_jit.store64(TrustedImm64(0), Address(GPRInfo::callFrameRegister, pointer));
+                pointer += 8;
+                size -= 8;
+            }
+#else
+            unsigned count = size / 8;
+            for (unsigned i = 0; i < count; ++i) {
+                m_jit.store64(TrustedImm64(0), Address(GPRInfo::callFrameRegister, pointer));
+                pointer += 8;
+                size -= 8;
+            }
+#endif
+
+            if (size & 4) {
+                m_jit.store32(TrustedImm32(0), Address(GPRInfo::callFrameRegister, pointer));
+                pointer += 4;
+                size -= 4;
+            }
+            ASSERT(size == 0);
+
+            highest = std::nullopt;
+            lowest = std::nullopt;
+        };
+
+        auto clear = [&](ClearMode mode, TypeKind type, Location location) {
+            if (mode == ClearMode::JSNull) {
+                flushZeroClear();
+                emitStoreConst(Value::fromI64(bitwise_cast<uint64_t>(JSValue::encode(jsNull()))), location);
+                return;
+            }
+            if (!highest)
+                highest = location.asStackOffset() + sizeOfType(type);
+            lowest = location.asStackOffset();
+        };
+
+        JIT_COMMENT(m_jit, "initialize locals");
+        for (; i < m_locals.size(); ++i) {
+            TypeKind type = m_parser->typeOfLocal(i).kind;
+            switch (type) {
             case TypeKind::I32:
             case TypeKind::I31ref:
-                emitStoreConst(Value::fromI32(0), m_locals[i]);
-                break;
             case TypeKind::F32:
-                emitStoreConst(Value::fromF32(0), m_locals[i]);
-                break;
             case TypeKind::F64:
-                emitStoreConst(Value::fromF64(0), m_locals[i]);
-                break;
             case TypeKind::I64:
             case TypeKind::Struct:
             case TypeKind::Rec:
             case TypeKind::Func:
             case TypeKind::Array:
             case TypeKind::Sub:
-                emitStoreConst(Value::fromI64(0), m_locals[i]);
+            case TypeKind::V128:
+                clear(ClearMode::Zero, type, m_locals[i]);
                 break;
             case TypeKind::Externref:
             case TypeKind::Funcref:
@@ -5955,17 +6019,14 @@ public:
             case TypeKind::RefNull:
             case TypeKind::Structref:
             case TypeKind::Arrayref:
-                emitStoreConst(Value::fromI64(bitwise_cast<uint64_t>(JSValue::encode(jsNull()))), m_locals[i]);
+                clear(ClearMode::JSNull, type, m_locals[i]);
                 break;
-            case TypeKind::V128: {
-                m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR);
-                m_jit.storeVector(m_scratchFPR, m_locals[i].asAddress());
-                break;
-            }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
+        flushZeroClear();
+        JIT_COMMENT(m_jit, "initialize locals done");
 
         for (size_t i = 0; i < m_functionSignature->argumentCount(); i ++)
             m_topLevel.touch(i); // Ensure arguments are flushed to persistent locations when this block ends.

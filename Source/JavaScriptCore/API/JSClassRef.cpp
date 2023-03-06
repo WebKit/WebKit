@@ -144,7 +144,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
 
 OpaqueJSClassContextData& OpaqueJSClass::contextData(JSGlobalObject* globalObject)
 {
-    std::unique_ptr<OpaqueJSClassContextData>& contextData = globalObject->opaqueJSClassData().add(this, nullptr).iterator->value;
+    auto& contextData = globalObject->contextData(this);
     if (!contextData)
         contextData = makeUnique<OpaqueJSClassContextData>(globalObject->vm(), this);
     return *contextData;

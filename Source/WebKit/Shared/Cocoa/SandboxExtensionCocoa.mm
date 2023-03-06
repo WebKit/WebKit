@@ -280,11 +280,8 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     // Shrink the vector.   
     path.shrink(strlen(path.data()));
 
-    // FIXME: Change to a runtime assertion that the path ends with a slash once <rdar://problem/23579077> is
-    // fixed in all iOS Simulator versions that we use.
-    if (path.last() != '/')
-        path.append('/');
-    
+    ASSERT(path.last() == '/');
+
     // Append the file name.
     auto prefixAsUTF8 = prefix.utf8();
     path.append(prefixAsUTF8.data(), prefixAsUTF8.length());

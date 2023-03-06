@@ -1438,6 +1438,22 @@ void TestController::setBackgroundFetchPermission(bool)
 {
     // FIXME: Add support.
 }
+
+WKRetainPtr<WKStringRef> TestController::lastAddedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastRemovedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastUpdatedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
+
 #endif
 
 WKURLRef TestController::createTestURL(const char* pathOrURL)

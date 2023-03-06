@@ -1481,7 +1481,6 @@ void RenderText::secureText(UChar maskingCharacter)
         characters[revealedCharactersOffset] = characterToReveal;
 }
 
-#define ALLOW_PARTIAL_CONTENT_INVALIDATION 0
 static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& renderer, size_t offset, int delta)
 {
     auto* container = LayoutIntegration::LineLayout::blockContainer(renderer);
@@ -1496,15 +1495,9 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& re
         container->invalidateLineLayoutPath();
         return;
     }
-#if ALLOW_PARTIAL_CONTENT_INVALIDATION
     modernLineLayout->updateTextContent(renderer, offset, delta);
     if (!modernLineLayout->isDamaged())
         container->invalidateLineLayoutPath();
-#else
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(delta);
-    container->invalidateLineLayoutPath();
-#endif
 }
 
 void RenderText::setTextInternal(const String& text, bool force)

@@ -1350,6 +1350,8 @@ void SourceBuffer::sourceBufferPrivateBufferedDirtyChanged(bool flag)
     m_bufferedDirty = flag;
     if (!isRemoved())
         m_source->sourceBufferDidChangeBufferedDirty(*this, flag);
+    if (flag && isManaged())
+        scheduleEvent(eventNames().bufferedchangeEvent);
 }
 
 bool SourceBuffer::isBufferedDirty() const
@@ -1381,12 +1383,7 @@ void SourceBuffer::memoryPressure()
 {
     if (!isManaged())
         return;
-    m_private->memoryPressure(maximumBufferSize(), m_source->currentTime(), m_source->isEnded(), [this, protectedThis = Ref { *this }] (bool bufferedChange) {
-        if (!bufferedChange)
-            return;
-        scheduleEvent(eventNames().bufferedchangeEvent);
-        m_source->monitorSourceBuffers();
-    });
+    m_private->memoryPressure(maximumBufferSize(), m_source->currentTime(), m_source->isEnded());
 }
 
 #if !RELEASE_LOG_DISABLED

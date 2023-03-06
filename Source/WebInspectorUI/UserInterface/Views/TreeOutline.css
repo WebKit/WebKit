@@ -70,12 +70,12 @@
     background-color: var(--selected-background-color-unfocused);
 }
 
-body[dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon),
-body[dir=rtl] [dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon) {
+body[dir=ltr] .tree-outline .item :is(.disclosure-button, .icon),
+body[dir=rtl] [dir=ltr] .tree-outline .item :is(.disclosure-button, .icon) {
     float: left;
 }
 
-body[dir=rtl] .tree-outline .item :matches(.disclosure-button, .icon) {
+body[dir=rtl] .tree-outline .item :is(.disclosure-button, .icon) {
     float: right;
 }
 

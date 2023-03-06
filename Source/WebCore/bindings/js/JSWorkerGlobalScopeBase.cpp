@@ -34,6 +34,7 @@
 #include "JSMicrotaskCallback.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSProxy.h>
@@ -45,35 +46,39 @@ using namespace JSC;
 
 const ClassInfo JSWorkerGlobalScopeBase::s_info = { "WorkerGlobalScope"_s, &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopeBase) };
 
-const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    &queueMicrotaskToEventLoop,
-    &shouldInterruptScriptBeforeTimeout,
-    &moduleLoaderImportModule,
-    &moduleLoaderResolve,
-    &moduleLoaderFetch,
-    &moduleLoaderCreateImportMetaProperties,
-    &moduleLoaderEvaluate,
-    &promiseRejectionTracker,
-    &reportUncaughtExceptionAtEventLoop,
-    &currentScriptExecutionOwner,
-    &scriptExecutionStatus,
-    &reportViolationForUnsafeEval,
-    [] { return defaultLanguage(); },
+const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable()
+{
+    static constexpr GlobalObjectMethodTable table = {
+        &supportsRichSourceInfo,
+        &shouldInterruptScript,
+        &javaScriptRuntimeFlags,
+        &queueMicrotaskToEventLoop,
+        &shouldInterruptScriptBeforeTimeout,
+        &moduleLoaderImportModule,
+        &moduleLoaderResolve,
+        &moduleLoaderFetch,
+        &moduleLoaderCreateImportMetaProperties,
+        &moduleLoaderEvaluate,
+        &promiseRejectionTracker,
+        &reportUncaughtExceptionAtEventLoop,
+        &currentScriptExecutionOwner,
+        &scriptExecutionStatus,
+        &reportViolationForUnsafeEval,
+        [] { return defaultLanguage(); },
 #if ENABLE(WEBASSEMBLY)
-    &compileStreaming,
-    &instantiateStreaming,
+        &compileStreaming,
+        &instantiateStreaming,
 #else
-    nullptr,
-    nullptr,
+        nullptr,
+        nullptr,
 #endif
-    deriveShadowRealmGlobalObject,
+        deriveShadowRealmGlobalObject,
+    };
+    return &table;
 };
 
 JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, RefPtr<WorkerGlobalScope>&& impl)
-    : JSDOMGlobalObject(vm, structure, normalWorld(vm), &s_globalObjectMethodTable)
+    : JSDOMGlobalObject(vm, structure, normalWorld(vm), globalObjectMethodTable())
     , m_wrapped(WTFMove(impl))
 {
 }
