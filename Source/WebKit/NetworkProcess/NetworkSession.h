@@ -86,6 +86,7 @@ class WebSharedWorkerServer;
 class WebSocketTask;
 class WebSWOriginStore;
 class WebSWServerConnection;
+struct BackgroundFetchState;
 struct NetworkSessionCreationParameters;
 struct SessionSet;
 
@@ -218,6 +219,7 @@ public:
     bool hasServiceWorkerDatabasePath() const;
 
     void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
+    void getBackgroundFetchState(const String&, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
     void abortBackgroundFetch(const String&, CompletionHandler<void()>&&);
     void pauseBackgroundFetch(const String&, CompletionHandler<void()>&&);
     void resumeBackgroundFetch(const String&, CompletionHandler<void()>&&);

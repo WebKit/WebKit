@@ -8,7 +8,7 @@
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
- *    and/or other materials provided with the distribution.
+ *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
@@ -23,21 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SERVICE_WORKER,
-    ExportMacro=WEBCORE_EXPORT,
-] enum BackgroundFetchFailureReason {
-    // The background fetch has not completed yet, or was successful.
-    "",
-    // The operation was aborted by the user, or abort() was called.
-    "aborted",
-    // A response had a not-ok-status.
-    "bad-status",
-    // A fetch failed for other reasons, e.g. CORS, MIX, an invalid partial response,
-    // or a general network failure for a fetch that cannot be retried.
-    "fetch-error",
-    // Storage quota was reached during the operation.
-    "quota-exceeded",
-    // The provided downloadTotal was exceeded.
-    "download-total-exceeded"
+#pragma once
+
+#include <WebCore/BackgroundFetchFailureReason.h>
+#include <WebCore/BackgroundFetchOptions.h>
+#include <WebCore/BackgroundFetchResult.h>
+#include <WebCore/SecurityOriginData.h>
+#include <wtf/URL.h>
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSDictionary;
+#endif
+
+namespace WebKit {
+
+struct BackgroundFetchState {
+    WebCore::SecurityOriginData topOrigin;
+    URL scope;
+    String identifier;
+    
+    WebCore::BackgroundFetchOptions options;
+    
+    uint64_t downloadTotal { 0 };
+    uint64_t downloaded { 0 };
+    uint64_t uploadTotal { 0 };
+    uint64_t uploaded { 0 };
+    
+    WebCore::BackgroundFetchResult result { WebCore::BackgroundFetchResult::EmptyString };
+    WebCore::BackgroundFetchFailureReason failureReason { WebCore::BackgroundFetchFailureReason::EmptyString };
+    
+    bool isActive { false };
+    
+#if PLATFORM(COCOA)
+    NSDictionary *toDictionary() const;
+#endif
 };
+
+} // namespace WebKit
+

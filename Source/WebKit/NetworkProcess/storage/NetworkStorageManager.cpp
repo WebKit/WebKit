@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageManager.h"
 
+#include "BackgroundFetchChange.h"
 #include "BackgroundFetchStoreManager.h"
 #include "CacheStorageCache.h"
 #include "CacheStorageManager.h"
@@ -1357,7 +1358,12 @@ void NetworkStorageManager::dispatchTaskToBackgroundFetchManager(const WebCore::
         callback(&originStorageManager.backgroundFetchManager(WTFMove(queue)));
     });
 }
-#endif
+
+void NetworkStorageManager::notifyBackgroundFetchChange(const String& identifier, BackgroundFetchChange change)
+{
+    IPC::Connection::send(m_parentConnection, Messages::NetworkProcessProxy::NotifyBackgroundFetchChange(m_sessionID, identifier, change), 0);
+}
+#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit
 

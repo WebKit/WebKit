@@ -114,6 +114,10 @@ public:
     void setAsynchronousSpellCheckingEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
     void setBackgroundFetchPermission(bool);
+    JSRetainPtr<JSStringRef> lastAddedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> lastRemovedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> lastUpdatedBackgroundFetchIdentifier() const;
+
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool);
     void setShouldSwapToDefaultSessionOnNextNavigation(bool);
     void setCustomUserAgent(JSStringRef);

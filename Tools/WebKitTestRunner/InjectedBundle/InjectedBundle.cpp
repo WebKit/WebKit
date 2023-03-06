@@ -910,6 +910,27 @@ bool InjectedBundle::statisticsNotifyObserver()
     return WKBundleResourceLoadStatisticsNotifyObserver(m_bundle.get());
 }
 
+WKRetainPtr<WKStringRef> InjectedBundle::lastAddedBackgroundFetchIdentifier() const
+{
+    WKTypeRef result = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("LastAddedBackgroundFetchIdentifier").get(), 0, &result);
+    return static_cast<WKStringRef>(result);
+}
+
+WKRetainPtr<WKStringRef> InjectedBundle::lastRemovedBackgroundFetchIdentifier() const
+{
+    WKTypeRef result = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("LastRemovedBackgroundFetchIdentifier").get(), 0, &result);
+    return static_cast<WKStringRef>(result);
+}
+
+WKRetainPtr<WKStringRef> InjectedBundle::lastUpdatedBackgroundFetchIdentifier() const
+{
+    WKTypeRef result = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("LastUpdatedBackgroundFetchIdentifier").get(), 0, &result);
+    return static_cast<WKStringRef>(result);
+}
+
 void InjectedBundle::textDidChangeInTextField()
 {
     m_testRunner->textDidChangeInTextFieldCallback();

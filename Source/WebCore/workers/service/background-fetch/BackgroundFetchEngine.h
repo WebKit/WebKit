@@ -57,6 +57,7 @@ public:
 
     void remove(SWServerRegistration&);
 
+    WEBCORE_EXPORT WeakPtr<BackgroundFetch> backgroundFetch(const ServiceWorkerRegistrationKey&, const String&) const;
     WEBCORE_EXPORT void addFetchFromStore(Span<const uint8_t>, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&&);
 
     WEBCORE_EXPORT void abortBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
@@ -65,7 +66,7 @@ public:
     WEBCORE_EXPORT void clickBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
 
 private:
-    void notifyBackgroundFetchUpdate(BackgroundFetchInformation&&);
+    void notifyBackgroundFetchUpdate(BackgroundFetch&);
 
     WeakPtr<SWServer> m_server;
     Ref<BackgroundFetchStore> m_store;

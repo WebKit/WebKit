@@ -8,7 +8,7 @@
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
- *    and/or other materials provided with the distribution.
+ *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
@@ -23,21 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SERVICE_WORKER,
-    ExportMacro=WEBCORE_EXPORT,
-] enum BackgroundFetchFailureReason {
-    // The background fetch has not completed yet, or was successful.
-    "",
-    // The operation was aborted by the user, or abort() was called.
-    "aborted",
-    // A response had a not-ok-status.
-    "bad-status",
-    // A fetch failed for other reasons, e.g. CORS, MIX, an invalid partial response,
-    // or a general network failure for a fetch that cannot be retried.
-    "fetch-error",
-    // Storage quota was reached during the operation.
-    "quota-exceeded",
-    // The provided downloadTotal was exceeded.
-    "download-total-exceeded"
+#pragma once
+
+#include <wtf/EnumTraits.h>
+
+namespace WebKit {
+
+enum class BackgroundFetchChange : uint8_t {
+    Addition,
+    Removal,
+    Update
 };
+
+} // namespace WebKit
+
+namespace WTF {
+    
+template<> struct EnumTraits<WebKit::BackgroundFetchChange> {
+    using values = EnumValues<
+    WebKit::BackgroundFetchChange,
+    WebKit::BackgroundFetchChange::Addition,
+    WebKit::BackgroundFetchChange::Removal,
+    WebKit::BackgroundFetchChange::Update
+    >;
+};
+    
+} // namespace WTF
+
+

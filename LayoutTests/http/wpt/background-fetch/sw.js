@@ -21,7 +21,8 @@ onbackgroundfetchabort= (event) => {
     waitForAbortPort.postMessage(event.registration.id);
 }
 
-onbackgroundfetchsuccess = async (event) => {
+async function sendResponseText(event)
+{
   if (!waitForSuccessPort)
     return;
   try {
@@ -31,4 +32,8 @@ onbackgroundfetchsuccess = async (event) => {
   } catch(e) {
     waitForSuccessPort.postMessage("" + e);
   }
+}
+
+onbackgroundfetchsuccess = async (event) => {
+  event.waitUntil(sendResponseText(event));
 }

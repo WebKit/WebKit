@@ -46,7 +46,7 @@
     auto totalSpaceRequired = currentSize + spaceRequired;
     if (_shouldAllowRaisingQuota || totalSpaceRequired <= _quota)
         return decisionHandler(totalSpaceRequired);
-
+    
     // Deny request by not changing quota.
     decisionHandler(currentQuota);
 }
@@ -83,9 +83,9 @@
 {
     auto* newView = WTR::TestController::singleton().createOtherPlatformWebView(nullptr, nullptr, nullptr, nullptr);
     WKWebView *webView = newView->platformView();
-
+    
     ASSERT(webView.configuration.websiteDataStore == dataStore);
-
+    
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     completionHandler(webView);
 }
@@ -100,4 +100,30 @@
 {
     decisionHandler(_shouldAllowBackgroundFetchPermission);
 }
+
+- (void)notifyBackgroundFetchChange:(NSString *)backgroundFetchIdentifier change:(WKBackgroundFetchChange)change
+{
+    if (change == WKBackgroundFetchChangeAddition) {
+        _lastAddedBackgroundFetchIdentifier = backgroundFetchIdentifier;
+        return;
+    }
+    if (change == WKBackgroundFetchChangeRemoval) {
+        _lastRemovedBackgroundFetchIdentifier = backgroundFetchIdentifier;
+        return;
+    }
+    _lastUpdatedBackgroundFetchIdentifier = backgroundFetchIdentifier;
+}
+
+- (NSString*)lastAddedBackgroundFetchIdentifier {
+    return _lastAddedBackgroundFetchIdentifier.get();
+}
+
+- (NSString*)lastRemovedBackgroundFetchIdentifier {
+    return _lastRemovedBackgroundFetchIdentifier.get();
+}
+
+- (NSString*)lastUpdatedBackgroundFetchIdentifier {
+    return _lastUpdatedBackgroundFetchIdentifier.get();
+}
+
 @end

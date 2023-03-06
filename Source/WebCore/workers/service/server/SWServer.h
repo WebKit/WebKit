@@ -259,7 +259,7 @@ public:
 
     enum class ShouldSkipEvent : bool { No, Yes };
     void fireFunctionalEvent(SWServerRegistration&, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&&);
-    void fireBackgroundFetchEvent(SWServerRegistration&, BackgroundFetchInformation&&);
+    void fireBackgroundFetchEvent(SWServerRegistration&, BackgroundFetchInformation&&, CompletionHandler<void()>&&);
     void fireBackgroundFetchClickEvent(SWServerRegistration&, BackgroundFetchInformation&&);
 
     ScriptExecutionContextIdentifier clientIdFromVisibleClientId(const String& visibleIdentifier) const { return m_visibleClientIdToInternalClientIdMap.get(visibleIdentifier); }

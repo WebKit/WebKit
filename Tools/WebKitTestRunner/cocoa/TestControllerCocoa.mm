@@ -539,6 +539,21 @@ void TestController::setBackgroundFetchPermission(bool value)
     [globalWebsiteDataStoreDelegateClient() setBackgroundFetchPermission: value];
 }
 
+WKRetainPtr<WKStringRef> TestController::lastAddedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastAddedBackgroundFetchIdentifier]));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastRemovedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastRemovedBackgroundFetchIdentifier]));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastUpdatedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastUpdatedBackgroundFetchIdentifier]));
+}
+
 void TestController::setAllowedMenuActions(const Vector<String>& actions)
 {
 #if PLATFORM(IOS_FAMILY)

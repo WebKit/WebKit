@@ -189,15 +189,17 @@ void BackgroundFetch::updateBackgroundFetchStatus(BackgroundFetchResult result, 
     m_result = result;
     m_failureReason = failureReason;
     m_isActive = m_result == BackgroundFetchResult::EmptyString && m_failureReason == BackgroundFetchFailureReason::EmptyString;
-    m_notificationCallback(information());
+    m_notificationCallback(*this);
 }
 
 void BackgroundFetch::unsetRecordsAvailableFlag()
 {
-    ASSERT(m_recordsAvailableFlag);
+    if (!m_recordsAvailableFlag)
+        return;
+
     m_recordsAvailableFlag = false;
     m_store->clearFetch(m_registrationKey, m_identifier);
-    m_notificationCallback(information());
+    m_notificationCallback(*this);
 }
 
 BackgroundFetch::Record::Record(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t index)

@@ -31,6 +31,19 @@
 @class WKWebView;
 @class _WKNotificationData;
 
+/*! @enum WKNavigationActionPolicy
+ @abstract The policy to pass back to the decision handler from the
+ webView:decidePolicyForNavigationAction:decisionHandler: method.
+ @constant WKNavigationActionPolicyCancel   Cancel the navigation.
+ @constant WKNavigationActionPolicyAllow    Allow the navigation to continue.
+ @constant WKNavigationActionPolicyDownload    Turn the navigation into a download.
+ */
+typedef NS_ENUM(NSInteger, WKBackgroundFetchChange) {
+    WKBackgroundFetchChangeAddition,
+    WKBackgroundFetchChangeRemoval,
+    WKBackgroundFetchChangeUpdate,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_API_AVAILABLE(macos(10.15), ios(13.0))
 @protocol _WKWebsiteDataStoreDelegate <NSObject>
 
@@ -42,4 +55,5 @@ WK_API_AVAILABLE(macos(10.15), ios(13.0))
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData;
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore workerOrigin:(WKSecurityOrigin *)workerOrigin updatedAppBadge:(NSNumber *)badge;
 - (void)requestBackgroundFetchPermission:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL  decisionHandler:(void (^)(bool isGranted))decisionHandler;
+- (void)notifyBackgroundFetchChange:(NSString *)backgroundFetchIdentifier change:(WKBackgroundFetchChange)change;
 @end

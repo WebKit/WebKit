@@ -529,6 +529,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
 
+    Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
     Shared/EditorState.serialization.in

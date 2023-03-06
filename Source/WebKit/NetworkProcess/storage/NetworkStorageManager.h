@@ -70,6 +70,7 @@ enum class StorageType : uint8_t;
 
 namespace WebKit {
 
+enum class BackgroundFetchChange : uint8_t;
 enum class UnifiedOriginStorageLevel : uint8_t;
 class FileSystemStorageHandleRegistry;
 class IDBStorageRegistry;
@@ -112,6 +113,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
+    void notifyBackgroundFetchChange(const String&, BackgroundFetchChange);
 #endif // ENABLE(SERVICE_WORKER)
 
 private:
