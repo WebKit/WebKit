@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
 
 #include "CachedResourceLoader.h"
+#include "CairoOperations.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
@@ -38,11 +39,6 @@
 #include <shlwapi.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-
-#if USE(CAIRO)
-#include "CairoOperations.h"
-#include <cairo.h>
-#endif
 
 // MFSamplePresenterSampleCounter
 // Data type: UINT32
@@ -2799,7 +2795,6 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
     if (SUCCEEDED(m_memSurface->LockRect(&lockedRect, nullptr, D3DLOCK_READONLY))) {
         void* data = lockedRect.pBits;
         int pitch = lockedRect.Pitch;
-#if USE(CAIRO)
         D3DFORMAT format = D3DFMT_UNKNOWN;
         D3DSURFACE_DESC desc;
         if (SUCCEEDED(m_memSurface->GetDesc(&desc)))
@@ -2827,9 +2822,6 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
             FloatRect srcRect(0, 0, width, height);
             context.drawNativeImage(*image, srcRect.size(), destRect, srcRect);
         }
-#else
-#error "Platform needs to implement drawing of Direct3D surface to graphics context!"
-#endif
         m_memSurface->UnlockRect();
     }
 }

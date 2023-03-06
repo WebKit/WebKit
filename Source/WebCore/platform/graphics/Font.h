@@ -209,11 +209,7 @@ public:
     bool hasAnyComplexColorFormatGlyphs(const GlyphBufferGlyph*, unsigned count) const;
 
 #if PLATFORM(WIN)
-    SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
-    WEBCORE_EXPORT static void setShouldApplyMacAscentHack(bool);
-    static bool shouldApplyMacAscentHack();
-    static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
 #endif
 
     void setIsUsedInSystemFallbackFontCache() { m_isUsedInSystemFallbackFontCache = true; }
@@ -235,13 +231,6 @@ private:
 
     struct DerivedFonts;
     DerivedFonts& ensureDerivedFontData() const;
-
-#if PLATFORM(WIN)
-    void initGDIFont();
-    void platformCommonDestroy();
-    FloatRect boundsForGDIGlyph(Glyph) const;
-    float widthForGDIGlyph(Glyph) const;
-#endif
 
     FloatRect platformBoundsForGlyph(Glyph) const;
     float platformWidthForGlyph(Glyph) const;
@@ -333,8 +322,7 @@ private:
 #endif
 
 #if PLATFORM(WIN)
-    mutable SCRIPT_CACHE m_scriptCache;
-    mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
+    mutable SCRIPT_CACHE m_scriptCache { 0 };
 #endif
 
     Glyph m_spaceGlyph { 0 };

@@ -32,15 +32,6 @@
 #include "WebCoreInstanceHandle.h"
 #include <windows.h>
 
-#if USE(CG)
-#include <CoreGraphics/CGColor.h>
-#endif
-
-#if USE(CA)
-#include "CACFLayerTreeHost.h"
-#include "PlatformCALayer.h"
-#endif
-
 namespace WebCore {
 
 FullScreenWindow::FullScreenWindow(FullScreenClient* client)
@@ -86,46 +77,8 @@ void FullScreenWindow::createWindow(HWND parentHwnd)
         parentHwnd, 0, instanceHandle(), this);
     ASSERT(IsWindow(m_hwnd));
 
-#if USE(CA)
-    if (m_layerTreeHost)
-        m_layerTreeHost->setWindow(m_hwnd);
-#endif
-
     ::SetFocus(m_hwnd);
 }
-
-#if USE(CA)
-void FullScreenWindow::setRootChildLayer(Ref<PlatformCALayer>&& rootChild)
-{
-    if (m_rootChild == rootChild.ptr())
-        return;
-
-    if (m_rootChild)
-        m_rootChild->removeFromSuperlayer();
-
-    m_rootChild = WTFMove(rootChild);
-
-    if (!m_layerTreeHost) {
-        m_layerTreeHost = CACFLayerTreeHost::create();
-        if (m_hwnd) {
-            m_layerTreeHost->setWindow(m_hwnd);
-            m_layerTreeHost->createRenderer();
-        }
-    }
-
-    m_layerTreeHost->setRootChildLayer(m_rootChild.get());
-    PlatformCALayer* rootLayer = m_rootChild->rootLayer();
-    CGRect rootBounds = m_rootChild->rootLayer()->bounds();
-    m_rootChild->setPosition(rootBounds.origin);
-    m_rootChild->setBounds(FloatRect(FloatPoint(), FloatSize(rootBounds.size)));
-    m_rootChild->setBackgroundColor(Color::black);
-#ifndef NDEBUG
-    rootLayer->setBackgroundColor(Color::red);
-#else
-    rootLayer->setBackgroundColor(Color::black);
-#endif
-}
-#endif
 
 LRESULT FullScreenWindow::staticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -152,35 +105,15 @@ LRESULT FullScreenWindow::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
         break;
     case WM_DESTROY:
         m_hwnd = 0;
-#if USE(CA)
-        if (m_layerTreeHost)
-            m_layerTreeHost->setWindow(0);
-#endif
         break;
     case WM_WINDOWPOSCHANGED:
         {
             LPWINDOWPOS wp = reinterpret_cast<LPWINDOWPOS>(lParam);
             if (wp->flags & SWP_NOSIZE)
                 break;
-#if USE(CA)
-            if (m_layerTreeHost) {
-                m_layerTreeHost->resize();
-                PlatformCALayer* rootLayer = m_rootChild->rootLayer();
-                CGRect rootBounds = m_rootChild->rootLayer()->bounds();
-                m_rootChild->setPosition(rootBounds.origin);
-                m_rootChild->setBounds(FloatRect(FloatPoint(), FloatSize(rootBounds.size)));
-                m_rootChild->setNeedsLayout();
-            }
-#endif
         }
         break;
     case WM_PAINT:
-#if USE(CA)
-        if (m_layerTreeHost) {
-            m_layerTreeHost->paint();
-            ::ValidateRect(m_hwnd, 0);
-        } else
-#endif
         {
             PAINTSTRUCT ps;
             HDC hdc = ::BeginPaint(m_hwnd, &ps);

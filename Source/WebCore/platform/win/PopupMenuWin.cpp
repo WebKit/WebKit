@@ -32,8 +32,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GDIUtilities.h"
-#include "GraphicsContext.h"
-#include "GraphicsContextWin.h"
+#include "GraphicsContextCairo.h"
 #include "HTMLNames.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
@@ -610,7 +609,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         ::SelectObject(m_DC.get(), m_bmp.get());
     }
 
-    GraphicsContextWin context(m_DC.get());
+    GraphicsContextCairo context(m_DC.get());
 
     // listRect is the damageRect translated into the coordinates of the entire menu list (which is listSize * m_itemHeight pixels tall)
     IntRect listRect = damageRect;

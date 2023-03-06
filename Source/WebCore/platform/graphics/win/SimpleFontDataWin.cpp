@@ -39,73 +39,6 @@
 
 namespace WebCore {
 
-static bool g_shouldApplyMacAscentHack;
-
-void Font::setShouldApplyMacAscentHack(bool b)
-{
-    g_shouldApplyMacAscentHack = b;
-}
-
-bool Font::shouldApplyMacAscentHack()
-{
-    return g_shouldApplyMacAscentHack;
-}
-
-float Font::ascentConsideringMacAscentHack(const WCHAR* faceName, float ascent, float descent)
-{
-    if (!shouldApplyMacAscentHack())
-        return ascent;
-
-    // This code comes from FontDataMac.mm. We only ever do this when running regression tests so that our metrics will match Mac.
-
-    // We need to adjust Times, Helvetica, and Courier to closely match the
-    // vertical metrics of their Microsoft counterparts that are the de facto
-    // web standard. The AppKit adjustment of 20% is too big and is
-    // incorrectly added to line spacing, so we use a 15% adjustment instead
-    // and add it to the ascent.
-    if (!wcscmp(faceName, L"Times") || !wcscmp(faceName, L"Helvetica") || !wcscmp(faceName, L"Courier"))
-        ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
-
-    return ascent;
-}
-
-void Font::initGDIFont()
-{
-    if (!m_platformData.size()) {
-        m_fontMetrics.reset();
-        m_avgCharWidth = 0;
-        m_maxCharWidth = 0;
-        return;
-    }
-
-    HWndDC hdc(0);
-    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
-    OUTLINETEXTMETRIC metrics;
-    GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
-    TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-    // FIXME: Needs to take OS/2 USE_TYPO_METRICS flag into account
-    // https://bugs.webkit.org/show_bug.cgi?id=199186
-    float ascent = textMetrics.tmAscent;
-    float descent = textMetrics.tmDescent;
-    float lineGap = textMetrics.tmExternalLeading;
-    m_fontMetrics.setAscent(ascent);
-    m_fontMetrics.setDescent(descent);
-    m_fontMetrics.setLineGap(lineGap);
-    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
-    m_avgCharWidth = textMetrics.tmAveCharWidth;
-    m_maxCharWidth = textMetrics.tmMaxCharWidth;
-    float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
-    GLYPHMETRICS gm;
-    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
-    DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
-    if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
-        xHeight = gm.gmptGlyphOrigin.y;
-    m_fontMetrics.setXHeight(xHeight);
-    m_fontMetrics.setUnitsPerEm(metrics.otmEMSquare);
-
-    SelectObject(hdc, oldFont);
-}
-
 void Font::platformCharWidthInit()
 {
     m_avgCharWidth = 0;
@@ -116,7 +49,6 @@ void Font::platformCharWidthInit()
 void Font::platformDestroy()
 {
     ScriptFreeCache(&m_scriptCache);
-    delete m_scriptFontProperties;
 }
 
 RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
@@ -130,56 +62,6 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
     winfont.lfHeight = -lroundf(scaledSize * cWindowsFontScaleFactor);
     auto hfont = adoptGDIObject(::CreateFontIndirect(&winfont));
     return Font::create(FontPlatformData(WTFMove(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique()), origin());
-}
-
-FloatRect Font::boundsForGDIGlyph(Glyph glyph) const
-{
-    HWndDC hdc(0);
-    SetGraphicsMode(hdc, GM_ADVANCED);
-    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
-
-    GLYPHMETRICS gdiMetrics;
-    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
-    GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
-
-    SelectObject(hdc, oldFont);
-
-    return FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
-        gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY); 
-}
-
-float Font::widthForGDIGlyph(Glyph glyph) const
-{
-    HWndDC hdc(0);
-    SetGraphicsMode(hdc, GM_ADVANCED);
-    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
-
-    GLYPHMETRICS gdiMetrics;
-    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
-    GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
-    float result = gdiMetrics.gmCellIncX + m_syntheticBoldOffset;
-
-    SelectObject(hdc, oldFont);
-
-    return result;
-}
-
-SCRIPT_FONTPROPERTIES* Font::scriptFontProperties() const
-{
-    if (!m_scriptFontProperties) {
-        m_scriptFontProperties = new SCRIPT_FONTPROPERTIES;
-        memset(m_scriptFontProperties, 0, sizeof(SCRIPT_FONTPROPERTIES));
-        m_scriptFontProperties->cBytes = sizeof(SCRIPT_FONTPROPERTIES);
-        HRESULT result = ScriptGetFontProperties(0, scriptCache(), m_scriptFontProperties);
-        if (result == E_PENDING) {
-            HWndDC dc(0);
-            SaveDC(dc);
-            SelectObject(dc, m_platformData.hfont());
-            ScriptGetFontProperties(dc, scriptCache(), m_scriptFontProperties);
-            RestoreDC(dc, -1);
-        }
-    }
-    return m_scriptFontProperties;
 }
 
 } // namespace WebCore

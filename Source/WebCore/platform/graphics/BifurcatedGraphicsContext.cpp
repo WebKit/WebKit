@@ -576,12 +576,5 @@ void BifurcatedGraphicsContext::verifyStateSynchronization()
     }
 }
 
-#if OS(WINDOWS) && !USE(CAIRO)
-GraphicsContextPlatformPrivate* BifurcatedGraphicsContext::deprecatedPrivateContext() const
-{
-    return m_primaryContext.deprecatedPrivateContext();
-}
-#endif
-
 } // namespace WebCore
 

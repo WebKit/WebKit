@@ -44,15 +44,11 @@ namespace WebCore {
 void Font::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
-    m_scriptCache = 0;
-    m_scriptFontProperties = 0;
 
     if (!m_platformData.size()) {
         m_fontMetrics.reset();
         m_avgCharWidth = 0;
         m_maxCharWidth = 0;
-        m_scriptCache = 0;
-        m_scriptFontProperties = 0;
         return;
     }
 
@@ -91,9 +87,6 @@ void Font::platformInit()
     float xHeight = -extents.y_bearing;
 
     m_fontMetrics.setXHeight(xHeight);
-
-    m_scriptCache = 0;
-    m_scriptFontProperties = 0;
 }
 
 void Font::determinePitch()

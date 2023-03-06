@@ -28,15 +28,7 @@
 
 #include <wtf/Forward.h>
 
-#if USE(CF)
-typedef struct __CFBundle* CFBundleRef;
-#endif
-
 namespace WebCore {
-
-#if USE(CF)
-WEBCORE_EXPORT CFBundleRef webKitBundle();
-#endif
 
 WEBCORE_EXPORT String webKitBundlePath();
 WEBCORE_EXPORT String webKitBundlePath(StringView path);

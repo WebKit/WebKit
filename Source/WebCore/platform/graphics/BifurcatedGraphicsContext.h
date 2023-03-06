@@ -142,10 +142,6 @@ public:
 
     void didUpdateState(GraphicsContextState&) final;
 
-#if OS(WINDOWS) && !USE(CAIRO)
-    GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
-#endif
-
 private:
     void verifyStateSynchronization();
 

@@ -28,10 +28,6 @@
 
 #include <wtf/Forward.h>
 
-#if USE(CF)
-typedef const struct __CFString * CFStringRef;
-#endif
-
 #ifndef _PREFAST_
 typedef wchar_t* BSTR;
 #else // _PREFAST_
@@ -48,9 +44,6 @@ namespace WebCore {
         WEBCORE_EXPORT BString(const String&);
         WEBCORE_EXPORT BString(const AtomString&);
         WEBCORE_EXPORT BString(const URL&);
-#if USE(CF)
-        WEBCORE_EXPORT BString(CFStringRef);
-#endif
         WEBCORE_EXPORT ~BString();
 
         WEBCORE_EXPORT void adoptBSTR(BSTR);
