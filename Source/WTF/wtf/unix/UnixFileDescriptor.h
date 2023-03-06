@@ -27,12 +27,14 @@
 
 #include <utility>
 #include <wtf/Compiler.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniStdExtras.h>
 
 namespace WTF {
 
 class UnixFileDescriptor {
+    WTF_MAKE_NONCOPYABLE(UnixFileDescriptor);
 public:
     UnixFileDescriptor() = default;
 
@@ -53,10 +55,6 @@ public:
         m_value = o.release();
     }
 
-    UnixFileDescriptor(const UnixFileDescriptor& o)
-        : UnixFileDescriptor(o.m_value, Duplicate)
-    { }
-
     UnixFileDescriptor& operator=(UnixFileDescriptor&& o)
     {
         if (&o == this)
@@ -64,16 +62,6 @@ public:
 
         this->~UnixFileDescriptor();
         new (this) UnixFileDescriptor(WTFMove(o));
-        return *this;
-    }
-
-    UnixFileDescriptor& operator=(const UnixFileDescriptor& o)
-    {
-        if (&o == this)
-            return *this;
-
-        this->~UnixFileDescriptor();
-        new (this) UnixFileDescriptor(o);
         return *this;
     }
 
