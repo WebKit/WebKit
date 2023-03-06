@@ -135,6 +135,8 @@ void RemoteScrollingTreeMac::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAn
 
 void RemoteScrollingTreeMac::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction action)
 {
+    ScrollingTree::scrollingTreeNodeDidScroll(node, action);
+
     std::optional<FloatPoint> layoutViewportOrigin;
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
@@ -290,14 +292,15 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
         return nullptr;
 
     RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
-    auto scrollPosition = rootScrollingNode->currentScrollPosition();
+
+    auto rootContentsLayerPosition = FrameView::positionForRootContentLayer(rootScrollingNode->currentScrollPosition(), rootScrollingNode->scrollOrigin(), rootScrollingNode->topContentInset(), rootScrollingNode->headerHeight());
     auto pointInContentsLayer = point;
-    pointInContentsLayer.moveBy(scrollPosition);
+    pointInContentsLayer.moveBy(rootContentsLayerPosition);
 
     Vector<LayerAndPoint, 16> layersAtPoint;
     collectDescendantLayersAtPoint(layersAtPoint, scrolledContentsLayer.get(), pointInContentsLayer, layerEventRegionContainsPoint);
 
-    LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
+    LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " (converted to layer point " << pointInContentsLayer << ") found " << layersAtPoint.size() << " layers");
 #if !LOG_DISABLED
     for (auto [layer, point] : WTF::makeReversedRange(layersAtPoint))
         LOG_WITH_STREAM(UIHitTesting, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));

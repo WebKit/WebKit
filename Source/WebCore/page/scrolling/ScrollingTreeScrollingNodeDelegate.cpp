@@ -49,17 +49,17 @@ FloatPoint ScrollingTreeScrollingNodeDelegate::lastCommittedScrollPosition() con
     return m_scrollingNode.lastCommittedScrollPosition();
 }
 
-const FloatSize& ScrollingTreeScrollingNodeDelegate::totalContentsSize()
+FloatSize ScrollingTreeScrollingNodeDelegate::totalContentsSize()
 {
     return m_scrollingNode.totalContentsSize();
 }
 
-const FloatSize& ScrollingTreeScrollingNodeDelegate::reachableContentsSize()
+FloatSize ScrollingTreeScrollingNodeDelegate::reachableContentsSize()
 {
     return m_scrollingNode.reachableContentsSize();
 }
 
-const IntPoint& ScrollingTreeScrollingNodeDelegate::scrollOrigin() const
+IntPoint ScrollingTreeScrollingNodeDelegate::scrollOrigin() const
 {
     return m_scrollingNode.scrollOrigin();
 }

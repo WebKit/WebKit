@@ -59,10 +59,11 @@ public:
 
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
+
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;
-    WEBCORE_EXPORT const FloatSize& totalContentsSize();
-    WEBCORE_EXPORT const FloatSize& reachableContentsSize();
-    WEBCORE_EXPORT const IntPoint& scrollOrigin() const;
+    WEBCORE_EXPORT FloatSize totalContentsSize();
+    WEBCORE_EXPORT FloatSize reachableContentsSize();
+    WEBCORE_EXPORT IntPoint scrollOrigin() const;
 
     FloatPoint currentScrollPosition() const { return m_scrollingNode.currentScrollPosition(); }
     FloatPoint minimumScrollPosition() const { return m_scrollingNode.minimumScrollPosition(); }
