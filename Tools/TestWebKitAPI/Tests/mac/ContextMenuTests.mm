@@ -150,6 +150,28 @@ static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
     TestWebKitAPI::Util::run(&selectedItem);
 }
 
+- (_WKContextMenuElementInfo *)rightClickAtPointAndWaitForContextMenu:(NSPoint)clickLocation
+{
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+
+    __block RetainPtr<_WKContextMenuElementInfo> result;
+    __block bool gotProposedMenu = false;
+    [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        result = elementInfo;
+        gotProposedMenu = true;
+        completion(nil);
+    }];
+
+    EXPECT_NULL(self.UIDelegate);
+    self.UIDelegate = uiDelegate.get();
+    [self rightClickAtPoint:clickLocation];
+    TestWebKitAPI::Util::run(&gotProposedMenu);
+    [self waitForNextPresentationUpdate];
+
+    self.UIDelegate = nil;
+    return result.autorelease();
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -318,8 +340,7 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringDefaultC
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600)]);
     [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
 
-    [webView rightClickAtPoint:NSMakePoint(300, 300)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 }
 
@@ -331,12 +352,10 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadString)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
 
-    [webView rightClickAtPoint:NSMakePoint(150, 150)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 
-    [webView rightClickAtPoint:NSMakePoint(300, 300)];
-    elementInfo = [webView _test_waitForContextMenu];
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
@@ -348,8 +367,7 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringInsideLi
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<a href='https://www.webkit.org'><img src='qr-code.png'></img></a>"];
 
-    [webView rightClickAtPoint:NSMakePoint(300, 300)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 }
 
@@ -382,12 +400,10 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringCanvas)
     [webView stringByEvaluatingJavaScript:drawImageToCanvasScript];
     Util::run(&imageLoaded);
 
-    [webView rightClickAtPoint:NSMakePoint(150, 150)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 
-    [webView rightClickAtPoint:NSMakePoint(300, 300)];
-    elementInfo = [webView _test_waitForContextMenu];
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
@@ -399,12 +415,10 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVG)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:qrCodeSVGString()];
 
-    [webView rightClickAtPoint:NSMakePoint(150, 150)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 
-    [webView rightClickAtPoint:NSMakePoint(300, 300)];
-    elementInfo = [webView _test_waitForContextMenu];
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
@@ -416,12 +430,10 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringObscured
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"%@<div style='width: 400px; height: 100px; background: red; position: absolute; top: 0px; left: 0px;'></div>", qrCodeSVGString()]];
 
-    [webView rightClickAtPoint:NSMakePoint(150, 550)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 550)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 
-    [webView rightClickAtPoint:NSMakePoint(300, 300)];
-    elementInfo = [webView _test_waitForContextMenu];
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
@@ -433,12 +445,10 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGInsid
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<div style='transform: translateX(100px);'>%@</div>", qrCodeSVGString()]];
 
-    [webView rightClickAtPoint:NSMakePoint(50, 550)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(50, 550)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 
-    [webView rightClickAtPoint:NSMakePoint(150, 550)];
-    elementInfo = [webView _test_waitForContextMenu];
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 550)];
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
@@ -451,12 +461,10 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGPageZ
     [webView setPageZoom:1.3];
     [webView synchronouslyLoadHTMLString:qrCodeSVGString()];
 
-    [webView rightClickAtPoint:NSMakePoint(550, 50)];
-    _WKContextMenuElementInfo *elementInfo = [webView _test_waitForContextMenu];
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(550, 50)];
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 
-    [webView rightClickAtPoint:NSMakePoint(500, 100)];
-    elementInfo = [webView _test_waitForContextMenu];
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(500, 100)];
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
