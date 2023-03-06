@@ -247,6 +247,13 @@ bool PlatformDisplay::eglCheckVersion(int major, int minor) const
     return (m_eglMajorVersion > major) || ((m_eglMajorVersion == major) && (m_eglMinorVersion >= minor));
 }
 
+const PlatformDisplay::EGLExtensions& PlatformDisplay::eglExtensions() const
+{
+    if (!m_eglDisplayInitialized)
+        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
+    return m_eglExtensions;
+}
+
 void PlatformDisplay::initializeEGLDisplay()
 {
     m_eglDisplayInitialized = true;
