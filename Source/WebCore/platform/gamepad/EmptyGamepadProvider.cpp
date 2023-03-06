@@ -42,9 +42,9 @@ void EmptyGamepadProvider::stopMonitoringGamepads(GamepadProviderClient&)
 {
 }
 
-const Vector<PlatformGamepad*>& EmptyGamepadProvider::platformGamepads()
+const Vector<WeakPtr<PlatformGamepad>>& EmptyGamepadProvider::platformGamepads()
 {
-    static NeverDestroyed<Vector<PlatformGamepad*>> emptyGamepads;
+    static NeverDestroyed<Vector<WeakPtr<PlatformGamepad>>> emptyGamepads;
     return emptyGamepads;
 }
 

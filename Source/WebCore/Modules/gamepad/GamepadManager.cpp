@@ -63,7 +63,7 @@ void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad, 
         return;
 
     // Notify blind Navigators and Windows about all gamepads except for this one.
-    for (auto* gamepad : GamepadProvider::singleton().platformGamepads()) {
+    for (auto& gamepad : GamepadProvider::singleton().platformGamepads()) {
         if (!gamepad || gamepad == &platformGamepad)
             continue;
 
@@ -120,7 +120,7 @@ void GamepadManager::platformGamepadInputActivity(EventMakesGamepadsVisible even
     if (m_gamepadBlindNavigators.isEmptyIgnoringNullReferences() && m_gamepadBlindDOMWindows.isEmptyIgnoringNullReferences())
         return;
 
-    for (auto* gamepad : GamepadProvider::singleton().platformGamepads()) {
+    for (auto& gamepad : GamepadProvider::singleton().platformGamepads()) {
         if (gamepad)
             makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
     }

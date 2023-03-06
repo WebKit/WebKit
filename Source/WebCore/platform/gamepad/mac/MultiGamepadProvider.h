@@ -46,7 +46,7 @@ public:
     // GamepadProvider
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_gamepadVector; }
     bool isMockGamepadProvider() const { return false; }
     void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
@@ -64,7 +64,7 @@ private:
 
     bool m_shouldMakeGamepadsVisible { false };
     size_t m_initialGamepadsCount { 0 };
-    Vector<PlatformGamepad*> m_gamepadVector;
+    Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
 
     // We create our own Gamepad type - to wrap both HID and GameController gamepads -
     // because MultiGamepadProvider needs to manage the indexes of its own gamepads
@@ -87,10 +87,10 @@ private:
         const char* source() const final { return m_platformGamepad->source(); }
 
     private:
-        PlatformGamepad* m_platformGamepad;
+        WeakPtr<PlatformGamepad> m_platformGamepad;
     };
 
-    HashMap<PlatformGamepad*, std::unique_ptr<PlatformGamepadWrapper>> m_gamepadMap;
+    WeakHashMap<PlatformGamepad, std::unique_ptr<PlatformGamepadWrapper>> m_gamepadMap;
     bool m_hidImportComplete { false };
     bool m_usesOnlyHIDProvider { false };
 };

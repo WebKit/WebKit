@@ -148,7 +148,7 @@ void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     });
 }
 
-const Vector<PlatformGamepad*>& WebGamepadProvider::platformGamepads()
+const Vector<WeakPtr<PlatformGamepad>>& WebGamepadProvider::platformGamepads()
 {
     return m_rawGamepads;
 }

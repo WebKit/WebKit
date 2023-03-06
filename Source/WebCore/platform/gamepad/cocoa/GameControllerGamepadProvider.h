@@ -48,7 +48,7 @@ public:
 
     WEBCORE_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_gamepadVector; }
     void playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
 
@@ -82,8 +82,8 @@ private:
     void inputNotificationTimerFired();
 
     HashMap<CFTypeRef, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
-    Vector<PlatformGamepad*> m_gamepadVector;
-    HashSet<PlatformGamepad*> m_invisibleGamepads;
+    Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
+    WeakHashSet<PlatformGamepad> m_invisibleGamepads;
 
     RetainPtr<NSObject> m_connectObserver;
     RetainPtr<NSObject> m_disconnectObserver;

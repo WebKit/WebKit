@@ -51,7 +51,7 @@ public:
 
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_gamepadVector; }
     void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
 
@@ -72,7 +72,7 @@ private:
     void initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
-    Vector<PlatformGamepad*> m_gamepadVector;
+    Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
     HashMap<uintptr_t, std::unique_ptr<GamepadLibWPE>> m_gamepadMap;
     bool m_initialGamepadsConnected { false };
 
