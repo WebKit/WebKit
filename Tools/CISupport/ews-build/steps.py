@@ -2010,7 +2010,12 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         repository_url = self.getProperty('repository', '')
         pr_json = self.get_pr_json(pr_number, repository_url)
 
-        if self._is_hash_outdated(pr_json) == 0 and CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+        if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
+            yield self._addToLog('stdio', 'Skipping this step on non-production instance.\n')
+        elif self._is_hash_outdated(pr_json) != 0:
+            pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
+            yield self._addToLog('stdio', f'Skipping this step as hash {pr_sha} is outdated.\n')
+        else:
             repository_url = self.getProperty('repository', '')
             rc = SUCCESS
             did_remove_labels = yield self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
