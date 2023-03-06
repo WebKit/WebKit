@@ -368,10 +368,9 @@ void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdenti
 
 void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
-    m_sourceBufferPrivate->memoryPressure(maximumBufferSize, currentTime, isEnded, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool) mutable {
-        auto buffered = m_sourceBufferPrivate->buffered()->ranges();
-        completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
-    });
+    m_sourceBufferPrivate->memoryPressure(maximumBufferSize, currentTime, isEnded);
+    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+    completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 
 } // namespace WebKit
