@@ -410,6 +410,7 @@
 #define ENABLE_THUNDER 0
 #endif
 
+// ORIENTATION_EVENTS should never get enabled on Desktop, only Mobile.
 #if !defined(ENABLE_ORIENTATION_EVENTS)
 #define ENABLE_ORIENTATION_EVENTS 0
 #endif
