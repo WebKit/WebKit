@@ -68,6 +68,10 @@
 #import <WebCore/TextDetectorImplementation.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
+#endif
+
 #if ENABLE(IPC_TESTING_API)
 #define WEB_PROCESS_TERMINATE_CONDITION !m_gpuConnectionToWebProcess->connection().ignoreInvalidMessageForTesting()
 #else
@@ -229,7 +233,14 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
     creationContext.resourceOwner = m_resourceOwner;
 
     if (renderingMode == RenderingMode::Accelerated) {
-        imageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
+#if PLATFORM(COCOA)
+        const unsigned maxAcceleratedBitmapArea = 1 << 14;
+        if (purpose == RenderingPurpose::LayerBacking && logicalSize.area() * resolutionScale < maxAcceleratedBitmapArea && (pixelFormat == PixelFormat::BGRA8 || pixelFormat == PixelFormat::BGRX8))
+            imageBuffer = RemoteImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
+
+#endif
+        if (!imageBuffer)
+            imageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
     }
 
     if (!imageBuffer)

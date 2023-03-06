@@ -32,8 +32,9 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
+namespace WebCore {
 class ScrollingCoordinator;
-class Scrollbar;
+}
 
 namespace WebKit {
 
@@ -48,7 +49,7 @@ public:
     void mouseExitedScrollbar(WebCore::Scrollbar*) const final;
     bool shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar*) final;
     
-    void setScrollbarVisibilityState(ScrollbarOrientation, bool) final;
+    void setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
 
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };
@@ -56,6 +57,6 @@ private:
     ThreadSafeWeakPtr<WebCore::ScrollingCoordinator> m_coordinator;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // PLATFORM(MAC)

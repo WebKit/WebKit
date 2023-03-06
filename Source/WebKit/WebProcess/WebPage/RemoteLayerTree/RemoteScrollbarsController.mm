@@ -76,12 +76,12 @@ bool RemoteScrollbarsController::shouldScrollbarParticipateInHitTesting(WebCore:
     ASSERT(scrollbar->isOverlayScrollbar());
 
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
-    return scrollbar->orientation() == ScrollbarOrientation::Horizontal ? m_horizontalOverlayScrollbarIsVisible :  m_verticalOverlayScrollbarIsVisible;
+    return scrollbar->orientation() == WebCore::ScrollbarOrientation::Horizontal ? m_horizontalOverlayScrollbarIsVisible :  m_verticalOverlayScrollbarIsVisible;
 }
 
-void RemoteScrollbarsController::setScrollbarVisibilityState(ScrollbarOrientation orientation, bool isVisible)
+void RemoteScrollbarsController::setScrollbarVisibilityState(WebCore::ScrollbarOrientation orientation, bool isVisible)
 {
-    if (orientation == ScrollbarOrientation::Horizontal)
+    if (orientation == WebCore::ScrollbarOrientation::Horizontal)
         m_horizontalOverlayScrollbarIsVisible = isVisible;
     else
         m_verticalOverlayScrollbarIsVisible = isVisible;
