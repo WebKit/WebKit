@@ -44,7 +44,7 @@
     left: 0;
 }
 
-.hover-menu > svg > :matches(path, rect) {
+.hover-menu > svg > :is(path, rect) {
     stroke: hsla(0, 0%, 0%, 0.22);
     stroke-width: 2px;
     fill: none;
@@ -67,7 +67,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .hover-menu > svg > :matches(path, rect) {
+    .hover-menu > svg > :is(path, rect) {
         stroke: hsla(0, 0%, 100%, 0.3);
     }
 }

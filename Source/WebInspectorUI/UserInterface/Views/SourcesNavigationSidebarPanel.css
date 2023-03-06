@@ -66,7 +66,7 @@
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container, .local-overrides-container, .console-snippets-container) {
+.sidebar > .panel.navigation.sources > .content > :is(.pause-reason-container, .call-stack-container, .breakpoints-container, .local-overrides-container, .console-snippets-container) {
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -126,7 +126,7 @@
         --details-section-header-top: 0;
     }
 
-    .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container, .local-overrides-container, .console-snippets-container) {
+    .sidebar > .panel.navigation.sources > .content > :is(.call-stack-container, .breakpoints-container, .resources-container, .local-overrides-container, .console-snippets-container) {
         height: 100%;
         overflow-y: auto;
     }

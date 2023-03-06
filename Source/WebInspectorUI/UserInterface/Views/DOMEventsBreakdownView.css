@@ -38,7 +38,7 @@
     border-collapse: collapse;
 }
 
-.dom-events-breakdown tr > :matches(th, td) {
+.dom-events-breakdown tr > :is(th, td) {
     padding: 4px;
     text-align: start;
 }
@@ -57,7 +57,7 @@
     --img-size: 14px;
 }
 
-.dom-events-breakdown .graph > :matches(img, .area) {
+.dom-events-breakdown .graph > :is(img, .area) {
     position: absolute;
 }
 

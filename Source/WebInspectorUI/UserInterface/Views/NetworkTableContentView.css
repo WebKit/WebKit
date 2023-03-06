@@ -171,7 +171,7 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
     color: hsla(0, 0%, 100%, 0.9);
 }
 
-.network-table > .table li:not(.selected) .cell:matches(.cache-type, .multiple) {
+.network-table > .table li:not(.selected) .cell:is(.cache-type, .multiple) {
     color: var(--text-color-gray-medium);
 }
 
@@ -222,7 +222,7 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     color: transparent;
 }
 
-.network-table > .table .header .cell.waterfall:matches(.sort-ascending, .sort-descending) {
+.network-table > .table .header .cell.waterfall:is(.sort-ascending, .sort-descending) {
     background-color: var(--background-color-selected);
 }
 
@@ -336,8 +336,8 @@ body[dir=rtl] .waterfall.network .block {
     --end-radius: 0;
 }
 
-.waterfall.network .block:matches(.mouse-tracking, .filler) + .block:not(.mouse-tracking, .filler),
-.waterfall.network .block:not(.request, .response) + :matches(.request, .response) {
+.waterfall.network .block:is(.mouse-tracking, .filler) + .block:not(.mouse-tracking, .filler),
+.waterfall.network .block:not(.request, .response) + :is(.request, .response) {
     --start-radius: 2px;
 }
 

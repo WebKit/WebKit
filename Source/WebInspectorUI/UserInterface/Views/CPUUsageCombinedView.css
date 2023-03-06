@@ -31,8 +31,8 @@
 }
 
 .cpu-usage-combined-view > .graph,
-.cpu-usage-combined-view > .graph > :matches(.stacked-area-chart, .range-chart),
-.cpu-usage-combined-view > .graph > :matches(.stacked-area-chart, .range-chart) > svg {
+.cpu-usage-combined-view > .graph > :is(.stacked-area-chart, .range-chart),
+.cpu-usage-combined-view > .graph > :is(.stacked-area-chart, .range-chart) > svg {
     width: 100%;
     height: 100%;
 }
@@ -63,7 +63,7 @@
     -webkit-user-select: text;
 }
 
-.cpu-usage-combined-view > :matches(.details, .legend) > .name {
+.cpu-usage-combined-view > :is(.details, .legend) > .name {
     color: var(--text-color);
     white-space: nowrap;
 }

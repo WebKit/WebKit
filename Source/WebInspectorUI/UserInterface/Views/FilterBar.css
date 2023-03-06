@@ -54,7 +54,7 @@
     margin-inline-start: 6px;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"] {
+:is(.filter-bar, .search-bar) > input[type="search"] {
     height: 22px;
     padding-top: 0;
     color: var(--text-color-active);
@@ -66,11 +66,11 @@
     appearance: none;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"]:matches(:focus, :not(:placeholder-shown)) {
+:is(.filter-bar, .search-bar) > input[type="search"]:is(:focus, :not(:placeholder-shown)) {
     background-color: var(--background-color-content);
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-decoration {
+:is(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-decoration {
     align-self: center;
     width: 13px;
     height: 13px;
@@ -79,40 +79,40 @@
     appearance: none;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {
+:is(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {
     margin-inline-end: 4px;
 }
 
 /* FIXME: use a different image for ::-webkit-search-decoration when :not(:placeholder-shown) */
 
-:matches(.filter-bar, .search-bar) > input[type="search"]::placeholder {
+:is(.filter-bar, .search-bar) > input[type="search"]::placeholder {
     color: var(--text-color-secondary);
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"]:matches(:not(:focus), :placeholder-shown)::-webkit-search-cancel-button {
+:is(.filter-bar, .search-bar) > input[type="search"]:is(:not(:focus), :placeholder-shown)::-webkit-search-cancel-button {
     display: none;
 }
 
-:matches(.filter-bar, .search-bar) > .navigation-bar + input[type="search"] {
+:is(.filter-bar, .search-bar) > .navigation-bar + input[type="search"] {
     margin-inline-start: 0;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"]:focus {
+:is(.filter-bar, .search-bar) > input[type="search"]:focus {
     margin-inline-end: 6px;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"] + :empty {
+:is(.filter-bar, .search-bar) > input[type="search"] + :empty {
     margin-inline-start: 6px;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
+:is(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
     display: none;
 }
 
-:matches(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
+:is(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
     margin-inline-end: 4px;
 }
 
-:matches(.filter-bar, .search-bar).invalid > input[type="search"] {
+:is(.filter-bar, .search-bar).invalid > input[type="search"] {
     border-color: var(--error-text-color);
 }

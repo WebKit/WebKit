@@ -50,12 +50,12 @@
     background-color: var(--background-color-pressed);
 }
 
-.table > .header > :matches(.sort-ascending, .sort-descending) {
+.table > .header > :is(.sort-ascending, .sort-descending) {
     font-weight: var(--sorted-header-font-weight);
     padding-inline-end: 18px;
 }
 
-.table > .header > :matches(.sort-ascending, .sort-descending)::after {
+.table > .header > :is(.sort-ascending, .sort-descending)::after {
     position: absolute;
     top: 1px;
     bottom: 0;
@@ -179,7 +179,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .table > .header > :matches(.sort-ascending, .sort-descending)::after {
+    .table > .header > :is(.sort-ascending, .sort-descending)::after {
         filter: invert();
     }
 }

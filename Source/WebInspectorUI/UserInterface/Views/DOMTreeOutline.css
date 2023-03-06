@@ -111,13 +111,13 @@ body:is(.window-inactive, .window-docked-inactive) .content-view.dom-tree.deemph
     display: block;
 }
 
-.tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
+.tree-outline.dom li:is(.hovered, .selected) + ol.children.expanded {
     margin-inline-start: var(--sublist-margin-start);
     padding-inline-start: var(--sublist-padding-start);
     border: 0 solid hsla(0, 0%, 83%, 0.5);
 }
 
-.tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
+.tree-outline.dom li:is(.hovered, .selected) + ol.children.expanded {
     border-left-width: var(--sublist-border-width-start);
 }
 

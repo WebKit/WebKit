@@ -31,12 +31,12 @@
     bottom: 0;
 }
 
-.content-view.dom-storage > .data-grid tr:matches(.duplicate-key, .missing-key) td.key-column,
+.content-view.dom-storage > .data-grid tr:is(.duplicate-key, .missing-key) td.key-column,
 .content-view.dom-storage > .data-grid tr.missing-value td.value-column {
     background-color: hsl(0, 100%, 96%);
 }
 
-.content-view.dom-storage > .data-grid:focus tr.selected:matches(.duplicate-key, .missing-key) td.key-column,
+.content-view.dom-storage > .data-grid:focus tr.selected:is(.duplicate-key, .missing-key) td.key-column,
 .content-view.dom-storage > .data-grid:focus tr.selected.missing-value td.value-column {
     background-color: hsl(0, 42%, 76%);
 }

@@ -71,7 +71,7 @@
     outline: none;
 }
 
-.scope-bar > li:matches(.selected, :hover) {
+.scope-bar > li:is(.selected, :hover) {
     --scope-bar-text-color-default: var(--selected-foreground-color);
     --scope-bar-background-color-default: var(--glyph-color-active);
     --scope-bar-border-color-default: var(--glyph-color-active);

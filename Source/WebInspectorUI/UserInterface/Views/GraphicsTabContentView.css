@@ -31,7 +31,7 @@
     content: url(../Images/Canvas2D.svg);
 }
 
-.content-view.tab.graphics .navigation-bar > .item .canvas:matches(.webgl, .webgl2, .webgpu, .webmetal) .icon {
+.content-view.tab.graphics .navigation-bar > .item .canvas:is(.webgl, .webgl2, .webgpu, .webmetal) .icon {
     content: url(../Images/Canvas3D.svg);
 }
 

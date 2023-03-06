@@ -281,7 +281,7 @@ body[dir=rtl] .details-section > .header::before {
     word-break: break-all;
 }
 
-.details-section > .content > .group > .row:matches(.empty, .text) {
+.details-section > .content > .group > .row:is(.empty, .text) {
     padding: 0 6px 7px 6px;
     text-align: center;
     color: var(--text-color-secondary);

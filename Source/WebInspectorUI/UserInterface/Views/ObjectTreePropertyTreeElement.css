@@ -111,7 +111,7 @@
     padding-inline-start: 0px;
 }
 
-.object-tree-property :matches(.getter, .setter) {
+.object-tree-property :is(.getter, .setter) {
     position: relative;
     opacity: 0.6;
     vertical-align: top;
@@ -143,7 +143,7 @@
     margin-left: 1px;
 }
 
-.object-tree-property :matches(.getter, .setter).disabled {
+.object-tree-property :is(.getter, .setter).disabled {
     opacity: 0.35;
 }
 
