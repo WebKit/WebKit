@@ -25,7 +25,7 @@
 
 WI.CSSRule = class CSSRule extends WI.Object
 {
-    constructor(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings)
+    constructor(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings, isImplicitlyNested)
     {
         super();
 
@@ -36,6 +36,7 @@ WI.CSSRule = class CSSRule extends WI.Object
         this._id = id || null;
         this._type = type || null;
         this._initialState = null;
+        this._isImplicitlyNested = isImplicitlyNested || false;
 
         this.update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings, true);
     }
@@ -51,6 +52,7 @@ WI.CSSRule = class CSSRule extends WI.Object
     get matchedSelectorIndices() { return this._matchedSelectorIndices; }
     get style() { return this._style; }
     get groupings() { return this._groupings; }
+    get isImplicitlyNested() { return this._isImplicitlyNested; }
 
     get editable()
     {

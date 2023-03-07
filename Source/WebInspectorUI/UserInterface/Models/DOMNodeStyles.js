@@ -768,7 +768,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (styleSheet)
             this._trackedStyleSheets.add(styleSheet);
 
-        rule = new WI.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings);
+        rule = new WI.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings, payload.isImplicitlyNested);
 
         if (mapKey)
             this._rulesMap.set(mapKey, rule);
