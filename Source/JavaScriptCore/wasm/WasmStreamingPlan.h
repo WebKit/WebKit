@@ -61,8 +61,8 @@ private:
     }
 
     Ref<LLIntPlan> m_plan;
-    bool m_completed { false };
     uint32_t m_functionIndex;
+    bool m_completed { false };
 };
 
 } } // namespace JSC::Wasm
