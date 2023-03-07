@@ -30,6 +30,9 @@
 #include "Connection.h"
 #include "DisplayListRecorderFlushIdentifier.h"
 #include "ImageBufferBackendHandle.h"
+#if PLATFORM(COCOA)
+#include "LayerHostingContext.h"
+#endif
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
@@ -128,7 +131,7 @@ private:
     void releaseAllResources();
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
-    void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);
+    void prepareBuffersForDisplay(LayerHostingContextID, Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);
 
     // Received messages translated to use QualifiedRenderingResourceIdentifier.
     void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);
@@ -138,7 +141,9 @@ private:
     void releaseResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
     void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
 
-    void prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData&, PrepareBackingStoreBuffersOutputData&);
+    void prepareLayerBuffersForDisplay(LayerHostingContextID, const PrepareBackingStoreBuffersInputData&, PrepareBackingStoreBuffersOutputData&);
+
+    std::optional<ImageBufferBackendHandle> handleFromBuffer(LayerHostingContextID, WebCore::ImageBuffer&);
 
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;
@@ -149,6 +154,10 @@ private:
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
 #if HAVE(IOSURFACE)
     Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
+#endif
+
+#if PLATFORM(COCOA)
+    std::unique_ptr<LayerHostingContext> m_context;
 #endif
 
     Lock m_remoteDisplayListsLock;

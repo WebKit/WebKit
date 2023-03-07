@@ -257,7 +257,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     {
         auto* backingStore = properties.backingStore.get();
         if (backingStore && properties.backingStoreAttached)
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore());
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore(), layerTreeHost->layerHostingContextID());
         else
             [layer _web_clearContents];
     }

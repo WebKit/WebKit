@@ -36,6 +36,7 @@ using ImageBufferBackendHandle = std::variant<
     ShareableBitmapHandle
 #if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
     , MachSendRight
+    , uint32_t
 #endif
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     , CGDisplayList

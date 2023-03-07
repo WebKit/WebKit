@@ -84,15 +84,19 @@ typedef struct _CARenderContext CARenderContext;
 
 @interface CAContext ()
 + (NSArray *)allContexts;
++ (CAContext *)contextWithId:(uint32_t)contextId;
 + (CAContext *)currentContext;
 + (CAContext *)localContext;
 + (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
 #if PLATFORM(MAC)
 + (CAContext *)contextWithCGSConnection:(CGSConnectionID)cid options:(NSDictionary *)dict;
 #endif
+- (uint32_t)createSlot;
+- (void)setObject:(id)obj forSlot:(uint32_t)name;
 + (id)objectForSlot:(uint32_t)name;
 - (uint32_t)createImageSlot:(CGSize)size hasAlpha:(BOOL)flag;
 - (void)deleteSlot:(uint32_t)name;
+- (void)transferSlot:(uint32_t)name toContextWithId:(uint32_t)contextId;
 - (void)invalidate;
 - (void)invalidateFences;
 - (mach_port_t)createFencePort;
@@ -226,6 +230,12 @@ typedef struct _CAMachPort *CAMachPortRef;
 CAMachPortRef CAMachPortCreate(mach_port_t);
 mach_port_t CAMachPortGetPort(CAMachPortRef);
 CFTypeID CAMachPortGetTypeID(void);
+
+typedef struct _CAIOSurface *CAIOSurfaceRef;
+
+@interface CAContext ()
+- (bool)createSlotArray:(uint32_t)count slots:(uint32_t*)array;
+@end
 
 void CABackingStoreCollectBlocking(void);
 

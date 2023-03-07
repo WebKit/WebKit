@@ -168,6 +168,8 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
                 node->layer().borderWidth = properties.borderWidth / indicatorScaleFactor;
             node->layer().masksToBounds = false;
         }
+
+        ensureHostingContext(node);
     }
     
     for (const auto& layerAndClone : clonesToUpdate)
@@ -233,6 +235,17 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
 #endif
 
     m_nodes.remove(layerID);
+}
+
+void RemoteLayerTreeHost::ensureHostingContext(RemoteLayerTreeNode* node)
+{
+    if (!m_contextID && m_drawingArea) {
+        CAContext *context = [node->layer() context];
+        if (context) {
+            m_contextID = [context contextId];
+            m_drawingArea->setLayerHostingContextID(*m_contextID);
+        }
+    }
 }
 
 void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, MonotonicTime startTime)
@@ -328,6 +341,8 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
             [node->layer() setSortsSublayers:NO];
     }
 #endif
+
+    ensureHostingContext(node.get());
 
     if (properties.hostIdentifier) {
         m_hostingLayers.set(*properties.hostIdentifier, properties.layerID);

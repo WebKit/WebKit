@@ -100,6 +100,8 @@ private:
     void acceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, MonotonicTime startTime) override;
     void acceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, const String& key) override;
 
+    void setHostingContextID(WebCore::LayerHostingContextID) override;
+
     WebCore::FloatRect exposedContentRect() const override;
     void setExposedContentRect(const WebCore::FloatRect&) override;
 

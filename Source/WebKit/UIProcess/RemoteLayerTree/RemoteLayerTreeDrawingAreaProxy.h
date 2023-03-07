@@ -55,6 +55,8 @@ public:
     void acceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, const String& key);
 
+    void setLayerHostingContextID(LayerHostingContextID);
+
     TransactionID nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID.next(); }
     TransactionID lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
 

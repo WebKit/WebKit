@@ -21,6 +21,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/NetworkConnectionIntegritySoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
     cocoa/PassKitSoftLink.h
+    cocoa/QuartzCoreSoftLink.h
     cocoa/RevealSoftLink.h
     cocoa/SpeechSoftLink.h
     cocoa/TranslationUIServicesSoftLink.h
@@ -178,6 +179,7 @@ list(APPEND PAL_SOURCES
     cocoa/NetworkConnectionIntegritySoftLink.mm
     cocoa/OpenGLSoftLinkCocoa.mm
     cocoa/PassKitSoftLink.mm
+    cocoa/QuartzCoreSoftLink.mm
     cocoa/RevealSoftLink.mm
     cocoa/SpeechSoftLink.mm
     cocoa/TranslationUIServicesSoftLink.mm

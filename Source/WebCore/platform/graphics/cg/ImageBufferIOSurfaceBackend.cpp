@@ -217,8 +217,11 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
 
 SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
-    setVolatilityState(VolatilityState::NonVolatile);
-    return m_surface->setVolatile(false);
+    if (m_volatilityState == VolatilityState::Volatile) {
+        setVolatilityState(VolatilityState::NonVolatile);
+        return m_surface->setVolatile(false);
+    }
+    return SetNonVolatileResult::Valid;
 }
 
 VolatilityState ImageBufferIOSurfaceBackend::volatilityState() const

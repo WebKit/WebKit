@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImageBufferBackendHandle.h"
+#include "LayerHostingContext.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/Region.h>
@@ -126,7 +127,7 @@ public:
     PlatformCALayerRemote* layer() const { return m_layer; }
 
     enum class LayerContentsType { IOSurface, CAMachPort };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore, LayerHostingContextID);
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStore&);
@@ -163,7 +164,7 @@ public:
 
     void clearBackingStore();
 
-    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
+    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType, LayerHostingContextID = 0);
 
 private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;

@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
@@ -65,6 +66,9 @@ public:
 
 #endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 
+    static void beginTransaction();
+    static void commitTransaction();
+
     LayerHostingContext();
     ~LayerHostingContext();
 
@@ -96,6 +100,10 @@ public:
     void updateCachedContextID(LayerHostingContextID);
     LayerHostingContextID cachedContextID();
 
+    // Assigns obj to a new slot on the current hosting context, and
+    // transfers ownership of the slot to destContext.
+    uint32_t assignToSlotAndTransfer(RetainPtr<id>&&, LayerHostingContextID destContext);
+
 private:
     LayerHostingMode m_layerHostingMode;
     // Denotes the contextID obtained from GPU process, should be returned
@@ -103,6 +111,8 @@ private:
     // is enabled. This is done to avoid making calls to CARenderServer from webprocess
     LayerHostingContextID m_cachedContextID;
     RetainPtr<CAContext> m_context;
+
+    WTF::Vector<uint32_t> m_slots;
 };
 
 } // namespace WebKit

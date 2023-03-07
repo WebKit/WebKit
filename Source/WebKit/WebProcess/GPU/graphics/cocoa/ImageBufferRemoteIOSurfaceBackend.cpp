@@ -56,7 +56,7 @@ size_t ImageBufferRemoteIOSurfaceBackend::calculateExternalMemoryCost(const Para
 
 std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
-    if (!std::holds_alternative<MachSendRight>(handle)) {
+    if (!std::holds_alternative<MachSendRight>(handle) && !std::holds_alternative<uint32_t>(handle)) {
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -66,6 +66,9 @@ std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBac
 
 ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
 {
+    if (std::holds_alternative<uint32_t>(m_handle))
+        return std::get<uint32_t>(m_handle);
+
     if (!std::holds_alternative<MachSendRight>(m_handle)) {
         RELEASE_ASSERT_NOT_REACHED();
         return { };

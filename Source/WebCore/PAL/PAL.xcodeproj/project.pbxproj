@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -112,6 +112,8 @@
 		CD6122CD2559B6AC00FC657A /* OutputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6122CB2559B6AC00FC657A /* OutputContext.mm */; };
 		CD6122D12559B8F200FC657A /* OutputDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6122CF2559B8F200FC657A /* OutputDevice.mm */; };
 		CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */; };
+		D065131629B69F11008C65C4 /* QuartzCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = D065131429B69F11008C65C4 /* QuartzCoreSoftLink.mm */; };
+		D065131729B69F12008C65C4 /* QuartzCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = D065131529B69F11008C65C4 /* QuartzCoreSoftLink.h */; };
 		DD05A36027BF0ACE0096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD05A35F27BF0AC40096EFAB /* libWTF.a */; };
 		DD0B43C227F679A7009E31FC /* WebGPU.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD0B43C127F67999009E31FC /* WebGPU.framework */; };
 		DD20DD1227BC90D60093D175 /* MediaTimeAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -997,6 +999,8 @@
 		CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSoftLink.h; sourceTree = "<group>"; };
 		CDF91112220E4EEC001EA39E /* CelestialSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestialSPI.h; sourceTree = "<group>"; };
 		CE5673862151A7B9002F92D7 /* IOKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
+		D065131429B69F11008C65C4 /* QuartzCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuartzCoreSoftLink.mm; sourceTree = "<group>"; };
+		D065131529B69F11008C65C4 /* QuartzCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSoftLink.h; sourceTree = "<group>"; };
 		DD05A35F27BF0AC40096EFAB /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD0B43C127F67999009E31FC /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE99300278D07B800F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1438,6 +1442,8 @@
 				31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */,
 				A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */,
 				A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */,
+				D065131529B69F11008C65C4 /* QuartzCoreSoftLink.h */,
+				D065131429B69F11008C65C4 /* QuartzCoreSoftLink.mm */,
 				F4974EA1265EEA2200B49B8C /* RevealSoftLink.h */,
 				F4974EA2265EEA2200B49B8C /* RevealSoftLink.mm */,
 				93B38EBD25821CB600198E63 /* SpeechSoftLink.h */,
@@ -1912,6 +1918,7 @@
 				E34F26F62846D0D90076E549 /* PowerLogSPI.h in Headers */,
 				DD20DE0427BC90D80093D175 /* pthreadSPI.h in Headers */,
 				5CB898B2286274FA00CA3485 /* QuarantineSPI.h in Headers */,
+				D065131729B69F12008C65C4 /* QuartzCoreSoftLink.h in Headers */,
 				DD20DE0527BC90D80093D175 /* QuartzCoreSPI.h in Headers */,
 				DD20DE3F27BC90D80093D175 /* QuickLookMacSPI.h in Headers */,
 				DD20DDC127BC90D70093D175 /* QuickLookSoftLink.h in Headers */,
@@ -2271,6 +2278,7 @@
 				CD6122D12559B8F200FC657A /* OutputDevice.mm in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
+				D065131629B69F11008C65C4 /* QuartzCoreSoftLink.mm in Sources */,
 				4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */,
 				F4C85A4E2658551A005B89CC /* QuickLookUISoftLink.mm in Sources */,
 				071C00372707EDF000D027C7 /* ReplayKitSoftLink.mm in Sources */,

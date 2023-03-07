@@ -49,6 +49,7 @@ public:
     void setOwnershipIdentity(const WebCore::ProcessIdentity&);
 
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
+    RetainPtr<id> createLayerContentsHandle() const final;
 
 private:
     // ImageBufferBackendSharing

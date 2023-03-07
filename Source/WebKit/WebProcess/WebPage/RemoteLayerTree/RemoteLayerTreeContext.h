@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayerHostingContext.h"
 #include "LayerTreeContext.h"
 #include "RemoteLayerBackingStoreCollection.h"
 #include "RemoteLayerTreeTransaction.h"
@@ -98,6 +99,9 @@ public:
 
     WebPage& webPage() { return m_webPage; }
 
+    void setHostingContextID(WebCore::LayerHostingContextID id) { m_layerHostingContextID = id; }
+    WebCore::LayerHostingContextID hostingContextID() { return m_layerHostingContextID; }
+
 private:
     // WebCore::GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -118,6 +122,8 @@ private:
     std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 
     WebCore::LayerPool m_layerPool;
+
+    LayerHostingContextID m_layerHostingContextID;
 
     RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
 

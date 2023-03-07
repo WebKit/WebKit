@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayerHostingContext.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include "RemoteLayerTreeNode.h"
 #include "RemoteLayerTreeTransaction.h"
@@ -84,13 +85,18 @@ public:
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     const HashSet<WebCore::GraphicsLayer::PlatformLayerID>& overlayRegionIDs() const { return m_overlayRegionIDs; }
     void updateOverlayRegionIDs(const HashSet<WebCore::GraphicsLayer::PlatformLayerID> &overlayRegionNodes) { m_overlayRegionIDs = overlayRegionNodes; }
+
 #endif
+
+    LayerHostingContextID layerHostingContextID() { return m_contextID.value_or(0); }
 
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
+
+    void ensureHostingContext(RemoteLayerTreeNode*);
 
     RemoteLayerBackingStore::LayerContentsType layerContentsType() const;
 
@@ -106,6 +112,8 @@ private:
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_overlayRegionIDs;
 #endif
+    std::optional<LayerHostingContextID> m_contextID;
+
     bool m_isDebugLayerTreeHost { false };
 };
 

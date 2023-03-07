@@ -105,6 +105,8 @@ public:
     virtual void acceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, const String& /*key*/) { }
     virtual void addFence(const WTF::MachSendRight&) { }
 
+    virtual void setHostingContextID(WebCore::LayerHostingContextID) { }
+
     virtual WebCore::FloatRect exposedContentRect() const = 0;
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;
 #endif

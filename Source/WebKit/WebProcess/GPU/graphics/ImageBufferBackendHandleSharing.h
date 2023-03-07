@@ -26,13 +26,22 @@
 #pragma once
 
 #include "ImageBufferBackendHandle.h"
+#include "LayerHostingContext.h"
 #include <WebCore/ImageBufferBackend.h>
+
+#if PLATFORM(COCOA)
+#import <wtf/RetainPtr.h>
+typedef struct objc_object* id;
+#endif
 
 namespace WebKit {
 
 class ImageBufferBackendHandleSharing : public WebCore::ImageBufferBackendSharing {
 public:
     virtual ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const = 0;
+#if PLATFORM(COCOA)
+    virtual RetainPtr<id> createLayerContentsHandle() const { return nullptr; }
+#endif
     virtual RefPtr<ShareableBitmap> bitmap() const { return nullptr; }
 
     virtual void setBackendHandle(ImageBufferBackendHandle&&) { }

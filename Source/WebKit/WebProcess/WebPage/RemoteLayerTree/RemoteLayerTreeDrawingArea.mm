@@ -382,6 +382,11 @@ void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
     DrawingArea::didCompleteRenderingUpdateDisplay();
 }
 
+void RemoteLayerTreeDrawingArea::setHostingContextID(WebCore::LayerHostingContextID id)
+{
+    m_remoteLayerTreeContext->setHostingContextID(id);
+}
+
 void RemoteLayerTreeDrawingArea::displayDidRefresh()
 {
     // FIXME: This should use a counted replacement for setLayerTreeStateIsFrozen, but

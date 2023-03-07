@@ -176,4 +176,38 @@ LayerHostingContextID LayerHostingContext::cachedContextID()
     return m_cachedContextID;
 }
 
+void LayerHostingContext::beginTransaction()
+{
+    [CATransaction begin];
+}
+
+void LayerHostingContext::commitTransaction()
+{
+    [CATransaction flush];
+    [CATransaction commit];
+}
+
+uint32_t LayerHostingContext::assignToSlotAndTransfer(RetainPtr<id>&& obj, LayerHostingContextID destContext)
+{
+    if (!m_slots.size() && [m_context respondsToSelector:@selector(createSlotArray:slots:)]) {
+        m_slots.grow(100);
+        [m_context createSlotArray:100 slots:m_slots.data()];
+    }
+
+    // Assign the object to the slot (which increments the use-count for
+    // IOSurfaces, and transfer ownership of the slot to the context that
+    // will be used for rendering. The slot should get deleted once it's been
+    // used in the rendering tree, removing the use-count.
+    uint32_t slot;
+    if (m_slots.size())
+        slot = m_slots.takeLast();
+    else
+        slot = [m_context createSlot];
+    [m_context setObject:obj.get() forSlot:slot];
+
+    [m_context transferSlot:slot toContextWithId:destContext];
+
+    return slot;
+}
+
 } // namespace WebKit

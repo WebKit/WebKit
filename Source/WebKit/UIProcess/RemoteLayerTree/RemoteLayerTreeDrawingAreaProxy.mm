@@ -28,6 +28,7 @@
 
 #import "DrawingAreaMessages.h"
 #import "Logging.h"
+#import "PageClient.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
@@ -342,6 +343,11 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
         RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace, components));
         [m_exposedRectIndicatorLayer setBorderColor:color.get()];
     }
+}
+
+void RemoteLayerTreeDrawingAreaProxy::setLayerHostingContextID(LayerHostingContextID id)
+{
+    m_webPageProxy.send(Messages::DrawingArea::SetHostingContextID(id), m_identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()

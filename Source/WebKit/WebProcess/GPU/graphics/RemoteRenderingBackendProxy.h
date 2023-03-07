@@ -119,7 +119,7 @@ public:
         SwapBuffersDisplayRequirement displayRequirement;
     };
 
-    Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
+    Vector<SwapBuffersResult> prepareBuffersForDisplay(LayerHostingContextID, const Vector<LayerPrepareBuffersData>&);
 
     void finalizeRenderingUpdate();
     void didPaintLayers();

@@ -38,6 +38,8 @@ messages -> DrawingArea NotRefCounted {
     AcceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, String key)
     
     DispatchAfterEnsuringDrawing() -> () CallWithReplyID
+
+    SetHostingContextID(uint32_t id)
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)

@@ -79,6 +79,11 @@ ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBacke
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
+RetainPtr<id> ImageBufferShareableMappedIOSurfaceBackend::createLayerContentsHandle() const
+{
+    return m_surface->asCachedLayerContents();
+}
+
 void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
 {
     m_surface->setOwnershipIdentity(resourceOwner);

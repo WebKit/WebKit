@@ -556,7 +556,7 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context,
     }
 }
 
-RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&& backendHandle, LayerContentsType contentsType)
+RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&& backendHandle, LayerContentsType contentsType, LayerHostingContextID hostingContextID)
 {
     RetainPtr<id> contents;
     WTF::switchOn(backendHandle,
@@ -575,6 +575,14 @@ RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(Imag
                 contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
                 break;
             }
+        },
+        [&] (uint32_t slot) {
+            contents = [CAContext objectForSlot:slot];
+
+            [CATransaction addCommitHandler:[slot, hostingContextID] {
+                CAContext *context = [CAContext contextWithId:hostingContextID];
+                [context deleteSlot:slot];
+            } forPhase:kCATransactionPhasePostCommit];
         }
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         , [&] (CGDisplayList& handle) {
@@ -586,14 +594,14 @@ RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(Imag
     return contents;
 }
 
-void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
+void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore, LayerHostingContextID hostingContextID)
 {
     layer.contentsOpaque = m_parameters.isOpaque;
 
     RetainPtr<id> contents;
     // m_bufferHandle can be unset here if IPC with the GPU process timed out.
     if (m_bufferHandle)
-        contents = layerContentsBufferFromBackendHandle(WTFMove(*m_bufferHandle), contentsType);
+        contents = layerContentsBufferFromBackendHandle(WTFMove(*m_bufferHandle), contentsType, hostingContextID);
 
     if (!contents) {
         [layer _web_clearContents];

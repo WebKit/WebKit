@@ -119,6 +119,7 @@ public:
     WEBCORE_EXPORT static void setBytesPerRowAlignment(size_t);
 
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
+    WEBCORE_EXPORT RetainPtr<id> createRenderingHandle() const;
 
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.
@@ -128,6 +129,8 @@ public:
 #ifdef __OBJC__
     id asLayerContents() const { return (__bridge id)m_surface.get(); }
 #endif
+    WEBCORE_EXPORT id asCachedLayerContents() const;
+    
     IOSurfaceRef surface() const { return m_surface.get(); }
     WEBCORE_EXPORT CGContextRef ensurePlatformContext(PlatformDisplayID = 0);
     // The graphics context cached on the surface counts as a "user", so to get
@@ -188,6 +191,8 @@ private:
     RetainPtr<CGContextRef> m_cgContext;
 
     RetainPtr<IOSurfaceRef> m_surface;
+
+    mutable RetainPtr<id> m_caSurface;
 
     static std::optional<IntSize> s_maximumSize;
 

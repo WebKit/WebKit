@@ -397,32 +397,50 @@ void RemoteRenderingBackend::releaseResourceWithQualifiedIdentifier(QualifiedRen
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 
-static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
+std::optional<ImageBufferBackendHandle> RemoteRenderingBackend::handleFromBuffer(LayerHostingContextID destContext, ImageBuffer& buffer)
 {
     auto* backend = buffer.ensureBackendCreated();
     if (!backend)
         return std::nullopt;
 
     auto* sharing = backend->toBackendSharing();
-    if (is<ImageBufferBackendHandleSharing>(sharing))
+    if (is<ImageBufferBackendHandleSharing>(sharing)) {
+#if PLATFORM(COCOA)
+        RetainPtr<id> handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createLayerContentsHandle();
+        if (handle)
+            return m_context->assignToSlotAndTransfer(WTFMove(handle), destContext);
+#endif
         return downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
+    }
 
     return std::nullopt;
 }
 
-void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&& completionHandler)
+void RemoteRenderingBackend::prepareBuffersForDisplay(LayerHostingContextID destContext, Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&& completionHandler)
 {
+#if PLATFORM(COCOA)
+    if (!m_context)
+        m_context = LayerHostingContext::createForExternalHostingProcess();
+    LayerHostingContext::beginTransaction();
+#endif
+
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     outputData.resizeToFit(swapBuffersInput.size());
 
+    // Pass both the currentContext, and the passed in dest context into the
+    // per-layer func.
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i)
-        prepareLayerBuffersForDisplay(swapBuffersInput[i], outputData[i]);
+        prepareLayerBuffersForDisplay(destContext, swapBuffersInput[i], outputData[i]);
+
+#if PLATFORM(COCOA)
+    LayerHostingContext::commitTransaction();
+#endif
 
     completionHandler(WTFMove(outputData));
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
-void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData& inputData, PrepareBackingStoreBuffersOutputData& outputData)
+void RemoteRenderingBackend::prepareLayerBuffersForDisplay(LayerHostingContextID destContext, const PrepareBackingStoreBuffersInputData& inputData, PrepareBackingStoreBuffersOutputData& outputData)
 {
     auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> ImageBuffer* {
         return identifier ? m_remoteResourceCache.cachedImageBuffer({ *identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }) : nullptr;
@@ -453,7 +471,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
 
     if (frontBuffer && !needsFullDisplay && inputData.hasEmptyDirtyRegion) {
         // No swap necessary, but we do need to return the front buffer handle.
-        outputData.frontBufferHandle = handleFromBuffer(*frontBuffer);
+        outputData.frontBufferHandle = handleFromBuffer(destContext, *frontBuffer);
         outputData.bufferSet = BufferIdentifierSet { bufferIdentifier(frontBuffer), bufferIdentifier(backBuffer), bufferIdentifier(secondaryBackBuffer) };
         outputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
         return;
@@ -480,7 +498,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
         if (previousState == SetNonVolatileResult::Empty)
             needsFullDisplay = true;
 
-        outputData.frontBufferHandle = handleFromBuffer(*frontBuffer);
+        outputData.frontBufferHandle = handleFromBuffer(destContext, *frontBuffer);
     } else
         needsFullDisplay = true;
 

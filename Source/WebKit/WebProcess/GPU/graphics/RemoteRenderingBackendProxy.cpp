@@ -272,7 +272,7 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
     send(Messages::RemoteRenderingBackend::ReleaseResource(renderingResourceIdentifier));
 }
 
-auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
+auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(LayerHostingContextID context, const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
 {
     if (prepareBuffersInput.isEmpty())
         return { };
@@ -316,7 +316,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
     }
 
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
-    auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(context, inputData));
     if (!sendResult) {
         // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
         outputData.resize(inputData.size());

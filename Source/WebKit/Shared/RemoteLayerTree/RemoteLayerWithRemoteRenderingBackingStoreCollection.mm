@@ -99,7 +99,7 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
     }
 
     auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
-    auto swapResult = remoteRenderingBackend.prepareBuffersForDisplay(WTFMove(prepareBuffersData));
+    auto swapResult = remoteRenderingBackend.prepareBuffersForDisplay(layerTreeContext().hostingContextID(), WTFMove(prepareBuffersData));
 
     RELEASE_ASSERT(swapResult.size() == backingStoreList.size());
     for (unsigned i = 0; i < swapResult.size(); ++i) {
