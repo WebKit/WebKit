@@ -122,7 +122,7 @@ public:
 private:
     void setAtEnd() { m_lineIndex = lines().size(); }
 
-    const LayoutIntegration::InlineContent::Lines& lines() const { return m_inlineContent->lines; }
+    const LayoutIntegration::InlineContent::Lines& lines() const { return m_inlineContent->displayContent().lines; }
     const InlineDisplay::Line& line() const { return lines()[m_lineIndex]; }
 
     WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;

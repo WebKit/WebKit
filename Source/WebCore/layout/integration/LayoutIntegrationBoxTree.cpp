@@ -367,8 +367,8 @@ Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
 #if ENABLE(TREE_DEBUGGING)
 void showInlineContent(TextStream& stream, const InlineContent& inlineContent, size_t depth)
 {
-    auto& lines = inlineContent.lines;
-    auto& boxes = inlineContent.boxes;
+    auto& lines = inlineContent.displayContent().lines;
+    auto& boxes = inlineContent.displayContent().boxes;
 
     for (size_t lineIndex = 0, boxIndex = 0; lineIndex < lines.size() && boxIndex < boxes.size(); ++lineIndex) {
         auto addSpacing = [&](auto& streamToUse) {

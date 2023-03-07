@@ -59,8 +59,17 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     using Boxes = Vector<InlineDisplay::Box>;
     using Lines = Vector<InlineDisplay::Line>;
 
-    Boxes boxes;
-    Lines lines;
+    struct DisplayContent {
+        void clear()
+        {
+            lines.clear();
+            boxes.clear();
+        }
+        Boxes boxes;
+        Lines lines;
+    };
+    DisplayContent& displayContent() { return m_displayContent; }
+    const DisplayContent& displayContent() const { return m_displayContent; }
 
     float clearGapBeforeFirstLine { 0 };
     float clearGapAfterLastLine { 0 };
@@ -74,7 +83,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     bool hasVisualOverflow() const { return m_hasVisualOverflow; }
     void setHasVisualOverflow() { m_hasVisualOverflow = true; }
     
-    const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const { return lines[box.lineIndex()]; }
+    const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const { return displayContent().lines[box.lineIndex()]; }
 
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
 
@@ -97,6 +106,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
 private:
     CheckedPtr<const LineLayout> m_lineLayout;
 
+    DisplayContent m_displayContent;
     using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;
     mutable std::unique_ptr<FirstBoxIndexCache> m_firstBoxIndexCache;
 
@@ -108,7 +118,7 @@ private:
 template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const Layout::Box& layoutBox, Function&& function)
 {
     for (auto index : nonRootInlineBoxIndexesForLayoutBox(layoutBox))
-        function(boxes[index]);
+        function(displayContent().boxes[index]);
 }
 
 }

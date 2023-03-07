@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 
 Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, RenderBlockFlow& flow)
 {
-    auto lineCount = inlineContent.lines.size();
+    auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
 
     std::optional<size_t> previousPageBreakIndex;
@@ -53,7 +53,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
         if (adjustment.isFirstAfterPageBreak) {
             auto remainingLines = lineCount - lineIndex;
             // Ignore the last line if it is completely empty.
-            if (inlineContent.lines.last().lineBoxRect().isEmpty())
+            if (inlineContent.displayContent().lines.last().lineBoxRect().isEmpty())
                 remainingLines--;
 
             // See if there are enough lines left to meet the widow requirement.
@@ -91,15 +91,15 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
         return;
 
     inlineContent.isPaginated = true;
-
-    for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex) {
-        auto& line = inlineContent.lines[lineIndex];
+    auto& displayContent = inlineContent.displayContent();
+    for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex) {
+        auto& line = displayContent.lines[lineIndex];
         auto& adjustment = adjustments[lineIndex];
         line.moveVertically(adjustment.offset);
         if (adjustment.isFirstAfterPageBreak)
             line.setIsFirstAfterPageBreak();
     }
-    for (auto& box : inlineContent.boxes)
+    for (auto& box : displayContent.boxes)
         box.moveVertically(adjustments[box.lineIndex()].offset);
 
     inlineContent.firstLinePaginationOffset = adjustments[0].offset;
