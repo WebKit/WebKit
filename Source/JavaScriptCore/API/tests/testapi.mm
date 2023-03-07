@@ -649,10 +649,6 @@ static void testObjectiveCAPIMain()
         checkResult(@"Should be a created from Obj-C", symbol.isSymbol);
     }
 
-// Older platforms ifdef the type of some selectors so these tests don't work.
-// FIXME: Remove this when we stop building for macOS 10.14/iOS 12.
-#if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
-
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         JSValue *arrayIterator = [context evaluateScript:@"Array.prototype[Symbol.iterator]"];
@@ -737,8 +733,6 @@ static void testObjectiveCAPIMain()
         checkResult(@"iterator should not throw", ![context exception]);
         checkResult(@"iteration count should be 1", [count toUInt32] == 1);
     }
-
-#endif
 
     @autoreleasepool {
         JSCollection* myPrivateProperties = [[JSCollection alloc] init];
