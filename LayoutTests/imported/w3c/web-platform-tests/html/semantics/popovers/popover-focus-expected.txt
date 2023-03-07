@@ -2,8 +2,8 @@ This is a popover
 
 autofocus button  second autofocus button
 
-FAIL Popover focus test: default behavior - popover is not focused assert_true: expected true got false
-FAIL Popover button click focus test: default behavior - popover is not focused assert_equals: focus should return to the prior focus expected Element node <button id="priorFocus"></button> but got Element node <body>
+PASS Popover focus test: default behavior - popover is not focused
+FAIL Popover button click focus test: default behavior - popover is not focused assert_equals: Focus should go to unrelated button on light dismiss expected Element node <button></button> but got Element node <body>
 
 <div popover="" data-test="autofocus popover" aut...
 PASS Popover corner cases test: default behavior - popover is not focused

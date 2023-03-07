@@ -4113,12 +4113,12 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
 void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute)
 {
     if (m_document.settings().ariaReflectionForElementReferencesEnabled()) {
-        if (Element::isElementReflectionAttribute(attribute)) {
+        if (Element::isElementReflectionAttribute(m_document.settings(), attribute)) {
             if (auto reflectedElement = origin.getElementAttribute(attribute)) {
                 addRelation(&origin, reflectedElement, attributeToRelationType(attribute));
                 return;
             }
-        } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+        } else if (Element::isElementsArrayReflectionAttribute(m_document.settings(), attribute)) {
             if (auto reflectedElements = origin.getElementsArrayAttribute(attribute)) {
                 for (auto reflectedElement : reflectedElements.value())
                     addRelation(&origin, reflectedElement.get(), attributeToRelationType(attribute));

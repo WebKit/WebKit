@@ -1234,19 +1234,54 @@ static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilit
     return { };
 }
 
-static HTMLElement* topmostPopoverAncestor(Element& element)
+// https://html.spec.whatwg.org/#topmost-popover-ancestor
+// Consider both DOM ancestors and popovers where the given popover was invoked from as ancestors.
+// Use top layer positions to disambiguate the topmost one when both exist.
+static HTMLElement* topmostPopoverAncestor(Element& newPopover)
 {
-    for (auto& element : lineageOfType<HTMLElement>(element)) {
-        if (element.popoverState() != PopoverState::Auto)
+    // Store positions to avoid having to do O(n) search for every popover invoker.
+    HashMap<Ref<Element>, size_t> topLayerPositions;
+    size_t i = 0;
+    for (auto& element : newPopover.document().topLayerElements()) {
+        if (!is<HTMLElement>(element) || downcast<HTMLElement>(element.get()).popoverState() != PopoverState::Auto)
             continue;
-        if (element.popoverData()->visibilityState() != PopoverVisibilityState::Showing)
-            continue;
-        return &element;
+        topLayerPositions.add(element, i++);
     }
 
-    // FIXME: Include popover invokers and compare them in top layer order once they are implemented.
+    topLayerPositions.add(newPopover, i);
 
-    return nullptr;
+    RefPtr<HTMLElement> topmostAncestor;
+
+    auto checkAncestor = [&](Element* candidate) {
+        if (!candidate)
+            return;
+
+        // https://html.spec.whatwg.org/#nearest-inclusive-open-popover
+        auto nearestInclusiveOpenPopover = [](Element& candidate) -> HTMLElement* {
+            for (auto& element : lineageOfType<HTMLElement>(candidate)) {
+                if (element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+                    return &element;
+            }
+            return nullptr;
+        };
+
+        auto* candidateAncestor = nearestInclusiveOpenPopover(*candidate);
+        if (!candidateAncestor)
+            return;
+        if (!topmostAncestor || topLayerPositions.get(*topmostAncestor) < topLayerPositions.get(*candidateAncestor))
+            topmostAncestor = candidateAncestor;
+    };
+
+    checkAncestor(newPopover.parentElement());
+
+    // Iterate over all popover invokers in the document.
+    for (auto& invoker : descendantsOfType<HTMLFormControlElement>(newPopover.document())) {
+        // popoverTargetElement() already checks if the form control can invoke popovers.
+        if (invoker.popoverTargetElement() == &newPopover)
+            checkAncestor(&invoker);
+    }
+
+    return topmostAncestor.get();
 }
 
 void HTMLElement::queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState)
@@ -1333,6 +1368,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
             return check.releaseException();
     }
+
+    popoverData()->setInvoker(nullptr);
 
     if (fireEvents == FireEvents::Yes)
         dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));

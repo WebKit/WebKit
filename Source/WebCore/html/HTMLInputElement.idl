@@ -95,3 +95,5 @@
     // See http://www.w3.org/TR/html-media-capture/
     [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;
 };
+
+HTMLInputElement includes PopoverInvokerElement;

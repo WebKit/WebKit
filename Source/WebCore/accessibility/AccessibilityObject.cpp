@@ -3746,13 +3746,13 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
 
     auto& element = downcast<Element>(*node);
     if (document()->settings().ariaReflectionForElementReferencesEnabled()) {
-        if (Element::isElementReflectionAttribute(attribute)) {
+        if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
             if (auto reflectedElement = element.getElementAttribute(attribute)) {
                 Vector<Element*> elements;
                 elements.append(reflectedElement);
                 return elements;
             }
-        } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+        } else if (Element::isElementsArrayReflectionAttribute(document()->settings(), attribute)) {
             if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
                 return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Element* {
                     return element.get();
