@@ -18,6 +18,9 @@
 
     window.addEventListener('load', async event => {
         try {
+            // VP9 is explicitly required for this test to run
+            internals.setVP9DecoderDisabledForTesting(false);
+
             findMediaElement();
             loader = new MediaSourceLoader('content/test-vp9-long-manifest.json');
             await loaderPromise(loader);
