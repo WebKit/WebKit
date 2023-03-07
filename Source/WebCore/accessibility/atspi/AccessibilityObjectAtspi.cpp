@@ -1200,7 +1200,7 @@ void AccessibilityObjectAtspi::loadEvent(const char* event)
 
 std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
 {
-    if (m_coreObject->isPasswordField())
+    if (m_coreObject->isSecureField())
         return Atspi::Role::PasswordText;
 
     auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
@@ -1423,7 +1423,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // Entries and password fields have extraneous children which we want to ignore.
-    if (parent->isPasswordField() || parent->isTextControl())
+    if (parent->isSecureField() || parent->isTextControl())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // We expose the slider as a whole but not its value indicator.

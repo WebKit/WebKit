@@ -123,8 +123,8 @@ public:
     virtual bool isAttachmentElement() const { return false; }
     bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
-    bool isPasswordField() const override { return false; }
-    bool isContainedByPasswordField() const;
+    bool isSecureField() const override { return false; }
+    bool isContainedBySecureField() const;
     bool isNativeTextControl() const override { return false; }
     virtual bool isSearchField() const { return false; }
     bool isListBoxOption() const override { return false; }
@@ -596,7 +596,7 @@ public:
     virtual String descriptionForMSAA() const { return String(); }
     virtual AccessibilityRole roleValueForMSAA() const { return roleValue(); }
 
-    virtual String passwordFieldValue() const { return String(); }
+    virtual String secureFieldValue() const { return String(); }
     bool isValueAutofillAvailable() const override;
     AutoFillButtonType valueAutofillButtonType() const override;
 
@@ -718,7 +718,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    int accessibilityPasswordFieldLength() override;
+    int accessibilitySecureFieldLength() override;
     bool hasTouchEventListener() const override;
     bool isInputTypePopupButton() const override;
 #endif

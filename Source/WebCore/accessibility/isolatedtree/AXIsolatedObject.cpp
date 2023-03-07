@@ -103,11 +103,11 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsMenuListPopup, object.isMenuListPopup());
     setProperty(AXPropertyName::IsMenuRelated, object.isMenuRelated());
     setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
-    setProperty(AXPropertyName::IsPasswordField, object.isPasswordField());
     setProperty(AXPropertyName::IsPressed, object.isPressed());
     setProperty(AXPropertyName::IsProgressIndicator, object.isProgressIndicator());
     setProperty(AXPropertyName::IsRequired, object.isRequired());
     setProperty(AXPropertyName::IsScrollbar, object.isScrollbar());
+    setProperty(AXPropertyName::IsSecureField, object.isSecureField());
     setProperty(AXPropertyName::IsSelected, object.isSelected());
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());

@@ -635,16 +635,13 @@ bool AccessibilityNodeObject::isNativeImage() const
     return false;
 }
 
-bool AccessibilityNodeObject::isPasswordField() const
+bool AccessibilityNodeObject::isSecureField() const
 {
-    auto* node = this->node();
-    if (!is<HTMLInputElement>(node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node());
+    if (!input || ariaRoleAttribute() != AccessibilityRole::Unknown)
         return false;
 
-    if (ariaRoleAttribute() != AccessibilityRole::Unknown)
-        return false;
-
-    return downcast<HTMLInputElement>(*node).isPasswordField();
+    return input->isSecureField();
 }
 
 bool AccessibilityNodeObject::isInputImage() const

@@ -1400,6 +1400,9 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
+
+    if (auto* cache = document().existingAXObjectCache())
+        cache->onTextSecurityChanged(*this);
 }
 
 void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonType)
