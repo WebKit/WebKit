@@ -869,6 +869,9 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(copySize.width, 1, 1);
+        if (!sourceSize.width)
+            return;
+
         auto sourceOrigin = MTLOriginMake(source.origin.x, 0, 0);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
 
@@ -892,6 +895,9 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(copySize.width, copySize.height, 1);
+        if (!sourceSize.width || !sourceSize.height)
+            return;
+
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 0);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
 
@@ -913,6 +919,9 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
     }
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(copySize.width, copySize.height, copySize.depthOrArrayLayers);
+        if (!sourceSize.width || !sourceSize.height || !sourceSize.depth)
+            return;
+
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, source.origin.z);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
 
