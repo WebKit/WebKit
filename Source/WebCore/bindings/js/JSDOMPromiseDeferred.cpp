@@ -56,6 +56,14 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
     if (shouldIgnoreRequestToFulfill())
         return;
 
+    if (UNLIKELY(!resolution)) {
+        auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+        ASSERT(scope.exception());
+        if (scope.exception())
+            handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+        return;
+    }
+
     if (activeDOMObjectsAreSuspended()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
         ASSERT(scriptExecutionContext()->eventLoop().isSuspended());
