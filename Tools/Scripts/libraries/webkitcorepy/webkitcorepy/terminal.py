@@ -154,7 +154,7 @@ class Terminal(object):
                 return False
 
         if sys.platform.startswith('win'):
-            process = run(['explorer', url])
+            process = run(['start', url])
         else:
             # TODO: Use shutil directly when Python 2.7 is removed
             from whichcraft import which
