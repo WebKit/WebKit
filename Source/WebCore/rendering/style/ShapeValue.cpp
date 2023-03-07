@@ -71,4 +71,11 @@ Ref<ShapeValue> ShapeValue::blend(const ShapeValue& to, const BlendingContext& c
     return ShapeValue::create(to.shape()->blend(*m_shape, context), m_cssBox);
 }
 
+CSSBoxType ShapeValue::effectiveCSSBox() const
+{
+    if (m_cssBox == CSSBoxType::BoxMissing)
+        return m_type == ShapeValue::Type::Image ? CSSBoxType::ContentBox : CSSBoxType::MarginBox;
+    return m_cssBox;
+}
+
 } // namespace WebCore

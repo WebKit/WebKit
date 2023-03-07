@@ -92,7 +92,7 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
+std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
 {
     bool horizontalWritingMode = isHorizontalWritingMode(writingMode);
     float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
@@ -107,6 +107,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
         float centerY = floatValueForCenterCoordinate(circle.centerY(), boxHeight);
         float radius = circle.floatValueForRadiusInBox(boxWidth, boxHeight);
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
+        logicalCenter.moveBy(borderBoxOffset);
 
         shape = createCircleShape(logicalCenter, radius);
         break;
@@ -119,6 +120,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
         float radiusX = ellipse.floatValueForRadiusInBox(ellipse.radiusX(), centerX, boxWidth);
         float radiusY = ellipse.floatValueForRadiusInBox(ellipse.radiusY(), centerY, boxHeight);
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
+        logicalCenter.moveBy(borderBoxOffset);
 
         shape = createEllipseShape(logicalCenter, FloatSize(radiusX, radiusY));
         break;
@@ -134,6 +136,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
             FloatPoint vertex(
                 floatValueForLength(values.at(i), boxWidth),
                 floatValueForLength(values.at(i + 1), boxHeight));
+            vertex.moveBy(borderBoxOffset);
             vertices[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
         shape = createPolygonShape(WTFMove(vertices), polygon.windRule());
@@ -149,6 +152,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
             std::max<float>(boxWidth - left - floatValueForLength(inset.right(), boxWidth), 0),
             std::max<float>(boxHeight - top - floatValueForLength(inset.bottom(), boxHeight), 0));
         FloatRect logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
+        logicalRect.moveBy(borderBoxOffset);
 
         FloatSize boxSize(boxWidth, boxHeight);
         FloatSize topLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topLeftRadius(), boxSize), writingMode);
@@ -239,8 +243,7 @@ std::unique_ptr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, Wri
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
-    FloatRect rect(0, 0, roundedRect.rect().width(), roundedRect.rect().height());
-    FloatRoundedRect bounds(rect, roundedRect.radii());
+    FloatRoundedRect bounds { roundedRect };
     auto shape = makeUnique<BoxShape>(bounds);
     shape->m_writingMode = writingMode;
     shape->m_margin = margin;
