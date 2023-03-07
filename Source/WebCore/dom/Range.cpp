@@ -30,6 +30,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
+#include "DocumentType.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "Frame.h"
@@ -311,6 +312,13 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
 
     RefPtr<Node> commonRoot = commonAncestorContainer();
     ASSERT(commonRoot);
+    
+    if (action == Extract) {
+        auto& commonRootDocument = commonRoot->document();
+        RefPtr doctype = commonRootDocument.doctype();
+        if (doctype && contains(makeSimpleRange(*this), { *doctype, 0 }))
+            return Exception { HierarchyRequestError };
+    }
 
     if (&startContainer() == &endContainer()) {
         auto result = processContentsBetweenOffsets(action, fragment, &startContainer(), m_start.offset(), m_end.offset());
