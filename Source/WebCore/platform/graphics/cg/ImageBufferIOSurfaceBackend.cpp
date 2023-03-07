@@ -162,11 +162,18 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(Graph
         // The destination backend needs to read the actual pixels. Returning non-refence will
         // copy the pixels and but still cache the image to the context. This means we must
         // return the reference or cleanup later if we return the non-reference.
-        return NativeImage::create(adoptCF(CGIOSurfaceContextCreateImageReference(m_surface->ensurePlatformContext())));
+        if (auto image = adoptCF(CGIOSurfaceContextCreateImageReference(m_surface->ensurePlatformContext()))) {
+            // CG has internal caches for some operations related to software bitmap draw. 
+            // One of these caches are per-image color matching cache. Since these will not get any hits
+            // from an image that is recreated every time, mark the image transient to skip these caches.
+            // This also skips WebKit GraphicsContext subimage cache.
+            CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+            return NativeImage::create(WTFMove(image));
+        }
+        return nullptr;
     }
     // Other backends are deferred (iosurface, display list) or potentially deferred. Must copy for drawing.
     return ImageBufferIOSurfaceBackend::copyNativeImage(CopyBackingStore);
-
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
