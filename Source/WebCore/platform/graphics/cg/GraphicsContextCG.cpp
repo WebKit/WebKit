@@ -290,10 +290,10 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         }
 
 #if CACHE_SUBIMAGES
-        return CGSubimageCacheWithTimer::getSubimage(image, physicalSubimageRect);
-#else
-        return adoptCF(CGImageCreateWithImageInRect(image, physicalSubimageRect));
+        if (!(CGImageGetCachingFlags(image) & kCGImageCachingTransient))
+            return CGSubimageCacheWithTimer::getSubimage(image, physicalSubimageRect);
 #endif
+        return adoptCF(CGImageCreateWithImageInRect(image, physicalSubimageRect));
     };
 
     auto imageLogicalSize = [](CGImageRef image, const ImagePaintingOptions& options) -> FloatSize {

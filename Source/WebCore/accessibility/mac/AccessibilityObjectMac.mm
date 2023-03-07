@@ -220,7 +220,7 @@ String AccessibilityObject::rolePlatformString() const
 
 String AccessibilityObject::subrolePlatformString() const
 {
-    if (isPasswordField())
+    if (isSecureField())
         return NSAccessibilitySecureTextFieldSubrole;
     if (isSearchField())
         return NSAccessibilitySearchFieldSubrole;

@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
@@ -464,6 +465,16 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
             aggregator->addChildFrameData(index, WTFMove(data));
         });
     }
+}
+
+FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
+{
+    return {
+        m_frameID,
+        WTF::map(m_childFrames, [] (auto& frame) {
+            return frame->frameTreeCreationParameters();
+        })
+    };
 }
 
 } // namespace WebKit

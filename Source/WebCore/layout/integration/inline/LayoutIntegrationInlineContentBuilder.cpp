@@ -57,19 +57,20 @@ InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, Box
 
 void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    if (inlineContent.boxes.isEmpty()) {
-        inlineContent.boxes = WTFMove(inlineFormattingState.boxes());
-        inlineContent.lines = WTFMove(inlineFormattingState.lines());
+    auto& displayContent = inlineContent.displayContent();
+    if (displayContent.boxes.isEmpty()) {
+        displayContent.boxes = WTFMove(inlineFormattingState.boxes());
+        displayContent.lines = WTFMove(inlineFormattingState.lines());
     } else {
-        inlineContent.boxes.appendVector(WTFMove(inlineFormattingState.boxes()));
-        inlineContent.lines.appendVector(WTFMove(inlineFormattingState.lines()));
+        displayContent.boxes.appendVector(WTFMove(inlineFormattingState.boxes()));
+        displayContent.lines.appendVector(WTFMove(inlineFormattingState.lines()));
         inlineFormattingState.boxes().clear();
         inlineFormattingState.lines().clear();
     }
 
     auto updateIfTextRenderersNeedVisualReordering = [&] {
         // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content. 
-        for (auto& displayBox : inlineContent.boxes) {
+        for (auto& displayBox : displayContent.boxes) {
             auto& layoutBox = displayBox.layoutBox();
             if (!is<Layout::InlineTextBox>(layoutBox))
                 continue;
@@ -88,8 +89,8 @@ void InlineContentBuilder::updateLineOverflow(InlineContent& inlineContent) cons
 
 void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent) const
 {
-    auto& lines = inlineContent.lines;
-    auto& boxes = inlineContent.boxes;
+    auto& lines = inlineContent.displayContent().lines;
+    auto& boxes = inlineContent.displayContent().boxes;
 
     size_t boxIndex = 0;
     auto& rootBoxStyle = m_blockFlow.style();

@@ -84,14 +84,15 @@ protected:
     virtual bool isComplete() const = 0;
     virtual void complete() WTF_REQUIRES_LOCK(m_lock) = 0;
 
+    MemoryMode m_mode { MemoryMode::BoundsChecking };
+    Lock m_lock;
+    Condition m_completed;
+
     Ref<ModuleInformation> m_moduleInformation;
 
     Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
 
     String m_errorMessage;
-    MemoryMode m_mode { MemoryMode::BoundsChecking };
-    Lock m_lock;
-    Condition m_completed;
 };
 
 

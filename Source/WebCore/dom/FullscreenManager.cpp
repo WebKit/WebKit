@@ -70,6 +70,11 @@ Element* FullscreenManager::fullscreenElement() const
     return nullptr;
 }
 
+inline bool isInPopoverShowingState(Element& element)
+{
+    return element.popoverData() && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+}
+
 // https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen
 void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefPtr<DeferredPromise>&& promise, FullscreenCheckType checkType)
 {
@@ -99,6 +104,12 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     // node document:
     if (is<HTMLDialogElement>(element)) {
         ERROR_LOG(identifier, "Element to fullscreen is a <dialog>; failing.");
+        failedPreflights(WTFMove(element), WTFMove(promise));
+        return;
+    }
+
+    if (isInPopoverShowingState(element)) {
+        ERROR_LOG(identifier, "Element to fullscreen is an open popover; failing.");
         failedPreflights(WTFMove(element), WTFMove(promise));
         return;
     }
@@ -190,6 +201,13 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         // The context object is not in a document.
         if (!element->isConnected()) {
             ERROR_LOG(identifier, "task - element not in document; failing.");
+            failedPreflights(WTFMove(element), WTFMove(promise));
+            return;
+        }
+
+        // The element is an open popover.
+        if (isInPopoverShowingState(element)) {
+            ERROR_LOG(identifier, "Element to fullscreen is an open popover; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
             return;
         }
@@ -456,6 +474,12 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
         return false;
     }
 
+    // The element is an open popover.
+    if (isInPopoverShowingState(element)) {
+        ERROR_LOG(LOGIDENTIFIER, "Element to fullscreen is an open popover; bailing.");
+        return false;
+    }
+
     // If pending fullscreen element is unset or another element's was requested,
     // issue a cancel fullscreen request to the client
     if (m_pendingFullscreenElement != &element) {
@@ -480,6 +504,8 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     } while ((ancestor = ancestor->document().ownerElement()));
 
     for (auto ancestor : makeReversedRange(ancestorsInTreeOrder)) {
+        ancestor->document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+
         ancestor->setFullscreenFlag(true);
 
         ancestor->document().resolveStyle(Document::ResolveStyleType::Rebuild);

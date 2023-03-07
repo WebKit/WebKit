@@ -263,7 +263,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue result = vm.interpreter.executeEval(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
+    JSValue result = vm.interpreter.executeEval(eval, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

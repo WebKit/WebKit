@@ -263,7 +263,7 @@ public:
     {
     }
 
-    bool isElementRareData() { return m_isElementRareData; }
+    bool isElementRareData() const { return m_isElementRareData; }
 
     void clearNodeLists() { m_nodeLists = nullptr; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
@@ -292,8 +292,6 @@ public:
         OptionSet<UseType> result;
         if (m_unusualTabIndex)
             result.add(UseType::TabIndex);
-        if (m_childIndex)
-            result.add(UseType::ChildIndex);
         if (m_nodeLists)
             result.add(UseType::NodeList);
         if (m_mutationObserverData)
@@ -306,17 +304,11 @@ public:
 
     void operator delete(NodeRareData*, std::destroying_delete_t);
 
-protected:
-    // Used by ElementRareData. Defined here for better packing in 64-bit.
-    int m_unusualTabIndex { 0 };
-    unsigned short m_childIndex { 0 };
-
 private:
-    bool m_isElementRareData;
-
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_manuallyAssignedSlot;
+    bool m_isElementRareData; // Keep last for better bit packing with ElementRareData.
 };
 
 template<> struct NodeListTypeIdentifier<NameNodeList> {

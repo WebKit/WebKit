@@ -3,22 +3,61 @@ Tests for the CSS.getMatchedStyleForNode command and container rule groups.
 
 == Running test suite: CSS.getMatchedStyleForNode.NestingStyleGrouping
 -- Running test case: CSS.getMatchedStyleForNode.NestingStyleGrouping.NormalProperty
-PASS: Should have 1 authored rules.
+PASS: Should have 3 authored rules.
 - Testing rule #0
+PASS: Selector text should be "&".
+PASS: Rule should not be an implicitly nested rule.
+PASS: "color" property value should be "yellow".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "media-rule".
+PASS: Grouping 0 should have a text of "(min-width: 0px)".
+PASS: Grouping 1 should have a type of "style-rule".
+PASS: Grouping 1 should have a text of "#outerA".
+- Testing rule #1
+PASS: Selector text should be "&".
+PASS: Rule should be an implicitly nested rule.
+PASS: "color" property value should be "purple".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "media-rule".
+PASS: Grouping 0 should have a text of "(min-width: 0px)".
+PASS: Grouping 1 should have a type of "style-rule".
+PASS: Grouping 1 should have a text of "#outerA".
+- Testing rule #2
 PASS: Selector text should be "#outerA".
+PASS: Rule should not be an implicitly nested rule.
 PASS: "color" property value should be "red".
 PASS: Rule should have no groupings.
 
 -- Running test case: CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand
-PASS: Should have 2 authored rules.
+PASS: Should have 4 authored rules.
 - Testing rule #0
 PASS: Selector text should be ".innerA".
+PASS: Rule should not be an implicitly nested rule.
 PASS: "color" property value should be "green".
 PASS: Rule should have 1 grouping(s).
 PASS: Grouping 0 should have a type of "style-rule".
 PASS: Grouping 0 should have a text of "#outerA".
 - Testing rule #1
+PASS: Selector text should be "&".
+PASS: Rule should not be an implicitly nested rule.
+PASS: "color" property value should be "yellow".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "media-rule".
+PASS: Grouping 0 should have a text of "(min-width: 0px)".
+PASS: Grouping 1 should have a type of "style-rule".
+PASS: Grouping 1 should have a text of "#outerA".
+- Testing rule #2
+PASS: Selector text should be "&".
+PASS: Rule should be an implicitly nested rule.
+PASS: "color" property value should be "purple".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "media-rule".
+PASS: Grouping 0 should have a text of "(min-width: 0px)".
+PASS: Grouping 1 should have a type of "style-rule".
+PASS: Grouping 1 should have a text of "#outerA".
+- Testing rule #3
 PASS: Selector text should be "#outerA".
+PASS: Rule should not be an implicitly nested rule.
 PASS: "color" property value should be "red".
 PASS: Rule should have no groupings.
 
@@ -26,6 +65,7 @@ PASS: Rule should have no groupings.
 PASS: Should have 1 authored rules.
 - Testing rule #0
 PASS: Selector text should be ".outer:not(&)".
+PASS: Rule should not be an implicitly nested rule.
 PASS: "color" property value should be "blue".
 PASS: Rule should have 1 grouping(s).
 PASS: Grouping 0 should have a type of "style-rule".

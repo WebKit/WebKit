@@ -645,7 +645,7 @@ webkit_web_view_evaluate_javascript                  (WebKitWebView             
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
 
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_API JSCValue *
 webkit_web_view_evaluate_javascript_finish           (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
@@ -661,7 +661,7 @@ webkit_web_view_call_async_javascript_function       (WebKitWebView             
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
 
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_API JSCValue *
 webkit_web_view_call_async_javascript_function_finish(WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);

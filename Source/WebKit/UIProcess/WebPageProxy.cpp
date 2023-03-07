@@ -69,6 +69,7 @@
 #include "EventDispatcherMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
@@ -4664,6 +4665,13 @@ void WebPageProxy::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& c
     if (!m_mainFrame)
         return completionHandler({ });
     m_mainFrame->getFrameInfo(WTFMove(completionHandler));
+}
+
+std::optional<FrameTreeCreationParameters> WebPageProxy::frameTreeCreationParameters() const
+{
+    if (!m_mainFrame)
+        return std::nullopt;
+    return m_mainFrame->frameTreeCreationParameters();
 }
 
 void WebPageProxy::getBytecodeProfile(CompletionHandler<void(const String&)>&& callback)

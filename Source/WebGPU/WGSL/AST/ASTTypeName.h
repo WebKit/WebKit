@@ -29,7 +29,6 @@
 #include "ASTIdentifier.h"
 
 namespace WGSL {
-class ResolveTypeReferences;
 class TypeChecker;
 struct Type;
 
@@ -75,7 +74,7 @@ private:
 
 class NamedTypeName : public TypeName {
     WTF_MAKE_FAST_ALLOCATED;
-    friend class ::WGSL::ResolveTypeReferences;
+
 public:
     NamedTypeName(SourceSpan span, Identifier&& name)
         : TypeName(span)
@@ -84,16 +83,9 @@ public:
 
     NodeKind kind() const override;
     Identifier& name() { return m_name; }
-    TypeName* maybeResolvedReference() const { return m_resolvedReference.get(); }
 
 private:
-    void resolveTypeReference(TypeName::Ref&& typeName)
-    {
-        m_resolvedReference = WTFMove(typeName);
-    }
-
     Identifier m_name;
-    TypeName::Ptr m_resolvedReference;
 };
 
 class ParameterizedTypeName : public TypeName {
@@ -174,23 +166,6 @@ private:
     TypeName::Ref m_type;
 };
 
-class StructTypeName final : public TypeName {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructTypeName(SourceSpan span, Structure& structure)
-        : TypeName(span)
-        , m_structure(structure)
-    { }
-
-    NodeKind kind() const override;
-    Structure& structure() const { return m_structure; }
-
-private:
-    // FIXME: Should this be Ref<Structure>?
-    Structure& m_structure;
-};
-
-
 } // namespace AST
 } // namespace WGSL
 
@@ -206,7 +181,6 @@ static bool isType(const WGSL::AST::Node& node)
     case WGSL::AST::NodeKind::ArrayTypeName:
     case WGSL::AST::NodeKind::NamedTypeName:
     case WGSL::AST::NodeKind::ParameterizedTypeName:
-    case WGSL::AST::NodeKind::StructTypeName:
     case WGSL::AST::NodeKind::ReferenceTypeName:
         return true;
     default:
@@ -218,5 +192,4 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayTypeName)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(NamedTypeName)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(ParameterizedTypeName)
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructTypeName)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(ReferenceTypeName)

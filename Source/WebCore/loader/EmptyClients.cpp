@@ -70,6 +70,7 @@
 #include "PaymentCoordinatorClient.h"
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
+#include "RemoteFrameClient.h"
 #include "SecurityOriginData.h"
 #include "SocketProvider.h"
 #include "StorageArea.h"
@@ -1195,7 +1196,8 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
-        makeUniqueRef<EmptyFrameLoaderClient>(),
+        UniqueRef<FrameLoaderClient>(makeUniqueRef<EmptyFrameLoaderClient>()),
+        FrameIdentifier::generate(),
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<EmptyMediaRecorderProvider>(),
         EmptyBroadcastChannelRegistry::create(),

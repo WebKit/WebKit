@@ -61,11 +61,9 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers()
     m_delegate->updateScrollbarLayers();
 }
 
-WheelEventHandlingResult ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
+void ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEventPhase(const PlatformWheelEventPhase phase)
 {
-    auto result = ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(wheelEvent, eventTargeting);
-    m_delegate->handleWheelEventForScrollbars(wheelEvent);
-    return result;
+    m_delegate->handleWheelEventPhase(phase);
 }
 
 bool ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)

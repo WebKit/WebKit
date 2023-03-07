@@ -194,6 +194,8 @@ void TypeChecker::visit(AST::Variable& variable)
 void TypeChecker::visit(AST::Function& function)
 {
     // FIXME: allocate and build function type fromp parameters and return type
+    if (function.maybeReturnType())
+        resolve(*function.maybeReturnType());
     Type* functionType = nullptr;
     introduceVariable(function.name(), functionType);
 }

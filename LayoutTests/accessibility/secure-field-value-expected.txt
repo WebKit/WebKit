@@ -1,0 +1,13 @@
+This tests that the AX exposed value of secure inputs is the rendered (and therefore censored) text.
+
+Password field value: AXValue: ••••
+#autofill-input value before being obscured: AXValue: foo
+Making #autofill-input obscured.
+#autofill-input value after being obscured: AXValue: •••
+Making #autofill-input viewable.
+#autofill-input value after being made viewable: AXValue: foo
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

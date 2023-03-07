@@ -36,6 +36,7 @@
 #include "WasmIndexOrName.h"
 #include "WasmLLIntTierUpCounter.h"
 #include "WasmTierUpCount.h"
+#include <wtf/EmbeddedFixedVector.h>
 #include <wtf/FixedVector.h>
 #include <wtf/RefCountedFixedVector.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -272,6 +273,13 @@ public:
         m_loopEntrypoints = WTFMove(loopEntrypoints);
         m_osrEntryScratchBufferSize = osrEntryScratchBufferSize;
         OptimizingJITCallee::setEntrypoint(WTFMove(entrypoint), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations));
+        m_switchJumpTables.shrinkToFit();
+    }
+
+    EmbeddedFixedVector<CodeLocationLabel<JSSwitchPtrTag>>* addJumpTable(unsigned size)
+    {
+        m_switchJumpTables.append(EmbeddedFixedVector<CodeLocationLabel<JSSwitchPtrTag>>::create(size));
+        return m_switchJumpTables.last().ptr();
     }
 
 private:
@@ -290,6 +298,7 @@ private:
     unsigned m_osrEntryScratchBufferSize { 0 };
     bool m_didStartCompilingOSREntryCallee { false };
     SavedFPWidth m_savedFPWidth { SavedFPWidth::DontSaveVectors };
+    Vector<UniqueRef<EmbeddedFixedVector<CodeLocationLabel<JSSwitchPtrTag>>>> m_switchJumpTables;
 };
 #endif
 

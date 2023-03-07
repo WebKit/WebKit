@@ -234,7 +234,6 @@ class Publish(Command):
         if run(
             command,
             cwd=repository.root_path,
-            capture_output=True,
             encoding='utf-8',
         ).returncode:
             sys.stderr.write('Failed to push branches to {}\n'.format(args.remote))
@@ -247,7 +246,6 @@ class Publish(Command):
             if run(
                 command,
                 cwd=repository.root_path,
-                capture_output=True,
                 encoding='utf-8',
             ).returncode:
                 sys.stderr.write('Failed to push tags to {}\n'.format(args.remote))

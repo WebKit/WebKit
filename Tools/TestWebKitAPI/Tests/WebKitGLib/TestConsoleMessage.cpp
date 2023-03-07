@@ -45,7 +45,11 @@ public:
         CString sourceID;
     };
 
+#if ENABLE(2022_GLIB_API)
+    static void consoleMessageReceivedCallback(WebKitUserContentManager*, JSCValue* message, ConsoleMessageTest* test)
+#else
     static void consoleMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, ConsoleMessageTest* test)
+#endif
     {
         g_assert_nonnull(message);
         GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(message));

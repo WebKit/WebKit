@@ -2364,17 +2364,6 @@ webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/pay
 
 webkit.org/b/245967 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
 
-# webkit.org/b/253035 REGRESSION(260774@main):[ iOS ] 7X media/video layout-tests broke (253035)
-fast/mediastream/getUserMedia-to-canvas-2.html [ Timeout ]
-media/track/track-description-cue.html [ Failure ]
-media/track/track-extended-descriptions.html [ Failure ]
-media/track/track-language-preference.html [ Pass Failure ]
-webrtc/concurrentVideoPlayback.html [ Timeout ]
-webrtc/concurrentVideoPlayback2.html [ Timeout ] 
-webrtc/video-rotation.html [ Timeout ]
-webrtc/video-sframe.html [ Timeout ]
-webrtc/video-unmute.html [ Timeout ] 
-
 webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Pass Failure ]
 webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Pass Failure ]
 

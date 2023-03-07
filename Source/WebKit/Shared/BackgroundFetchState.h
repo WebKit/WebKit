@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(SERVICE_WORKER)
+
 #include <WebCore/BackgroundFetchFailureReason.h>
 #include <WebCore/BackgroundFetchOptions.h>
 #include <WebCore/BackgroundFetchResult.h>
@@ -61,3 +63,4 @@ struct BackgroundFetchState {
 
 } // namespace WebKit
 
+#endif

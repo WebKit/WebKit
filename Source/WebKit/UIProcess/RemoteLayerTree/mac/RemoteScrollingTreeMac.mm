@@ -55,9 +55,10 @@ RemoteScrollingTreeMac::RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy& 
 
 RemoteScrollingTreeMac::~RemoteScrollingTreeMac() = default;
 
-void RemoteScrollingTreeMac::handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase)
+void RemoteScrollingTreeMac::handleWheelEventPhase(ScrollingNodeID nodeID, PlatformWheelEventPhase phase)
 {
-    // FIXME: Is this needed?
+    RefPtr targetNode = nodeForID(nodeID);
+    dynamicDowncast<ScrollingTreeScrollingNode>(*targetNode)->handleWheelEventPhase(phase);
 }
 
 void RemoteScrollingTreeMac::displayDidRefresh(PlatformDisplayID)

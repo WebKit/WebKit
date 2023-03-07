@@ -43,7 +43,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 4, 0)
+version = Version(0, 5, 0)
 
 AutoInstall.register(Package('click', Version(7, 1, 2)))
 AutoInstall.register(Package('flask', Version(1, 1, 2)))
@@ -65,5 +65,6 @@ from webkitflaskpy.authed_blueprint import AuthedBlueprint  # noqa: E402
 from webkitflaskpy.response import Response
 from webkitflaskpy.mock_app import mock_app
 from webkitflaskpy.database import Database
+from webkitflaskpy.ipc_manager import IPCManager
 
 name = 'webkitflaskpy'

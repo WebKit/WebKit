@@ -492,14 +492,12 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     };
     if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
         return true;
-    if (!renderer.style().isLeftToRightDirection())
-        return true;
     if (lineLayout.hasOutOfFlowContent())
         return true;
-    if (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))
+    if (lineLayout.contentNeedsVisualReordering() || (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))) {
+        // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
         return true;
-    if (lineLayout.contentNeedsVisualReordering())
-        return true;
+    }
     if (lineLayout.isDamaged()) {
         // Single mutation only atm.
         return true;

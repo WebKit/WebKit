@@ -175,22 +175,22 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     g_assert_true(test->loadTargetListPageAndWaitUntilFinished());
 
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    g_assert_cmpint(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 1);
+    g_assert_cmpint(WebViewTest::javascriptResultToNumber(value), ==, 1);
 
     GUniquePtr<char> valueString;
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targeturl')[0].innerText;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targeturl')[0].innerText;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(valueString.get(), ==, "http://127.0.0.1:2999/");
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[0].onclick.toString();", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[0].onclick.toString();", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_nonnull(g_strrstr(valueString.get(), "window.webkit.messageHandlers.inspector.postMessage('1:1:WebPage');"));
 }
 
@@ -202,22 +202,22 @@ static void testInspectorHTTPServerPageList(InspectorHTTPServerTest* test, gcons
     g_assert_true(test->loadTargetListPageAndWaitUntilFinished());
 
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    g_assert_cmpint(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 1);
+    g_assert_cmpint(WebViewTest::javascriptResultToNumber(value), ==, 1);
 
     GUniquePtr<char> valueString;
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targeturl')[0].innerText;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targeturl')[0].innerText;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(valueString.get(), ==, "http://127.0.0.1:2999/");
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[0].onclick.toString();", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('input')[0].onclick.toString();", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_nonnull(g_strrstr(valueString.get(), "window.open('Main.html?ws=' + window.location.host + '/socket/1/1/WebPage', '_blank', 'location=no,menubar=no,status=no,toolbar=no');"));
 }
 

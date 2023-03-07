@@ -161,7 +161,8 @@
                 { "name": "sourceLine", "type": "integer", "description": "Line ordinal of the rule selector start character in the resource."},
                 { "name": "origin", "$ref": "StyleSheetOrigin", "description": "Parent stylesheet's origin."},
                 { "name": "style", "$ref": "CSSStyle", "description": "Associated style declaration." },
-                { "name": "groupings", "type": "array", "items": { "$ref": "Grouping" }, "optional": true, "description": "Grouping list array (for rules involving @media/@supports). The array enumerates CSS groupings starting with the innermost one, going outwards." }
+                { "name": "groupings", "type": "array", "items": { "$ref": "Grouping" }, "optional": true, "description": "Grouping list array (for rules involving @media/@supports). The array enumerates CSS groupings starting with the innermost one, going outwards." },
+                { "name": "isImplicitlyNested", "type": "boolean", "optional": true, "description": "<code>true</code> if this style is for a rule implicitly wrapping properties declared inside of CSSGrouping." }
             ]
         },
         {

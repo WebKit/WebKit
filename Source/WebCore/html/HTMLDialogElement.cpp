@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "FocusOptions.h"
 #include "HTMLNames.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScopedEventQueue.h"
@@ -70,6 +71,9 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     // If subject is not connected, then throw an "InvalidStateError" DOMException.
     if (!isConnected())
+        return Exception { InvalidStateError };
+
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
         return Exception { InvalidStateError };
 
     // setBooleanAttribute will dispatch a DOMSubtreeModified event.
@@ -126,6 +130,8 @@ void HTMLDialogElement::queueCancelTask()
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps
 void HTMLDialogElement::runFocusingSteps()
 {
+    document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+
     RefPtr control = findFocusDelegate();
 
     if (!control)

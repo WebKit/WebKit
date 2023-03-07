@@ -193,11 +193,16 @@ public:
             result.add(UseType::ExplicitlySetAttrElementsMap);
         if (m_popoverData)
             result.add(UseType::Popover);
+        if (m_childIndex)
+            result.add(UseType::ChildIndex);
         return result;
     }
 #endif
 
 private:
+    unsigned short m_childIndex { 0 }; // Keep on top for better bit packing with NodeRareData.
+    int m_unusualTabIndex { 0 }; // Keep on top for better bit packing with NodeRareData.
+
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
     std::unique_ptr<RenderStyle> m_displayContentsStyle;
@@ -234,8 +239,6 @@ private:
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 
     std::unique_ptr<PopoverData> m_popoverData;
-
-    void releasePseudoElement(PseudoElement*);
 };
 
 inline ElementRareData::ElementRareData()

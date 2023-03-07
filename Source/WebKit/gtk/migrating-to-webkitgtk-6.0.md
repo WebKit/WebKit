@@ -146,3 +146,8 @@ gained parameters to specify the script world to use.
 [method@WebKit.Download.set_destination], [method@WebKit.Download.get_destination],
 [property@WebKit.Download:destination], and [signal@WebKit.Download::created-destination]
 now all use a filesystem path rather than a URI. All uses must be updated accordingly.
+
+## JavaScript Results
+
+WebKitJavascriptResult has been removed. [signal@WebKit.UserContentManager::script-message-received]
+now directly returns a [class@JSC.Value] instead.

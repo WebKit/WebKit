@@ -118,6 +118,7 @@
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
 #include "Range.h"
+#include "RemoteFrame.h"
 #include "RenderDescendantIterator.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
@@ -261,6 +262,15 @@ static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
+static Ref<AbstractFrame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
+{
+    return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<AbstractFrame> {
+        return LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
+    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<AbstractFrame> {
+        return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
+    });
+}
+
 Page::Page(PageConfiguration&& pageConfiguration)
     : m_chrome(makeUnique<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
     , m_dragCaretController(makeUnique<DragCaretController>())
@@ -280,7 +290,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_settings(Settings::create(this))
     , m_progress(makeUnique<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
     , m_backForwardController(makeUnique<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
-    , m_mainFrame(Frame::createMainFrame(*this, WTFMove(pageConfiguration.loaderClientForMainFrame), pageConfiguration.mainFrameIdentifier ? *pageConfiguration.mainFrameIdentifier : FrameIdentifier::generate()))
+    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientForMainFrame), pageConfiguration.mainFrameIdentifier))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))

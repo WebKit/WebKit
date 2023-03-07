@@ -1466,6 +1466,15 @@ void AXObjectCache::onSelectedChanged(Node* node)
     handleMenuItemSelected(node);
 }
 
+void AXObjectCache::onTextSecurityChanged(HTMLInputElement& inputElement)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(get(&inputElement), AXTextSecurityChanged);
+#else
+    UNUSED_PARAM(inputElement);
+#endif
+}
+
 void AXObjectCache::onTitleChange(Document& document)
 {
     postNotification(get(&document), nullptr, AXTextChanged);
@@ -1606,9 +1615,9 @@ void AXObjectCache::setIsSynchronizingSelection(bool isSynchronizing)
 }
 
 #if PLATFORM(COCOA)
-static bool isPasswordFieldOrContainedByPasswordField(AccessibilityObject* object)
+static bool isSecureFieldOrContainedBySecureField(AccessibilityObject* object)
 {
-    return object && (object->isPasswordField() || object->isContainedByPasswordField());
+    return object && (object->isSecureField() || object->isContainedBySecureField());
 }
 #endif
 
@@ -1668,7 +1677,7 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
 #if PLATFORM(COCOA) || USE(ATSPI)
     if (object) {
 #if PLATFORM(COCOA)
-        if (isPasswordFieldOrContainedByPasswordField(object))
+        if (isSecureFieldOrContainedBySecureField(object))
             return;
 #endif
         if (auto observableObject = object->observableObject())
@@ -1772,7 +1781,7 @@ void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTextFormCo
 bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* object)
 {
 #if PLATFORM(COCOA)
-    if (!isPasswordFieldOrContainedByPasswordField(object))
+    if (!isSecureFieldOrContainedBySecureField(object))
         return false;
 
     AccessibilityObject* observableObject = object->observableObject();
@@ -2532,7 +2541,7 @@ TextMarkerData AXObjectCache::textMarkerDataForCharacterOffset(const CharacterOf
         return { };
 
     if (is<HTMLInputElement>(characterOffset.node)
-        && downcast<HTMLInputElement>(*characterOffset.node).isPasswordField())
+        && downcast<HTMLInputElement>(*characterOffset.node).isSecureField())
         return { *this, { }, true };
 
     setNodeInUse(characterOffset.node);
@@ -2801,7 +2810,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     if (!node)
         return std::nullopt;
 
-    if (is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).isPasswordField())
+    if (is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).isSecureField())
         return std::nullopt;
 
     // If the visible position has an anchor type referring to a node other than the anchored node, we should
@@ -2821,7 +2830,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
 // This function exists as a performance optimization to avoid a synchronous layout.
 std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement& textControl)
 {
-    if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(textControl).isPasswordField())
+    if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(textControl).isSecureField())
         return std::nullopt;
 
     auto* cache = textControl.document().axObjectCache();
@@ -3749,6 +3758,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowSpanChanged:
         case AXSelectedChildrenChanged:
         case AXTextChanged:
+        case AXTextSecurityChanged:
         case AXValueChanged:
             updateNode(notification.first);
             break;

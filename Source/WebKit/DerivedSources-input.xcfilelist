@@ -180,6 +180,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionEventListenerType.serialization.in
 $(PROJECT_DIR)/Shared/FileSystemSyncAccessHandleInfo.serialization.in
 $(PROJECT_DIR)/Shared/FocusedElementInformation.serialization.in
 $(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
+$(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
 $(PROJECT_DIR)/Shared/Gamepad/GamepadData.serialization.in
 $(PROJECT_DIR)/Shared/GPUProcessConnectionParameters.serialization.in

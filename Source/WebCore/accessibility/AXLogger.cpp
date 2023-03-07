@@ -605,6 +605,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXTextChanged:
         stream << "AXTextChanged";
         break;
+    case AXObjectCache::AXNotification::AXTextSecurityChanged:
+        stream << "AXTextSecurityChanged";
+        break;
     case AXObjectCache::AXNotification::AXElementBusyChanged:
         stream << "AXElementBusyChanged";
         break;

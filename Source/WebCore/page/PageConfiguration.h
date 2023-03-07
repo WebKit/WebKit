@@ -70,6 +70,7 @@ class PaymentCoordinatorClient;
 class PerformanceLoggingClient;
 class PluginInfoProvider;
 class ProgressTrackerClient;
+class RemoteFrameClient;
 class ScreenOrientationManager;
 class SocketProvider;
 class SpeechRecognitionProvider;
@@ -96,7 +97,8 @@ public:
         Ref<BackForwardClient>&&,
         Ref<CookieJar>&&,
         UniqueRef<ProgressTrackerClient>&&,
-        UniqueRef<FrameLoaderClient>&&,
+        std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&&,
+        FrameIdentifier mainFrameIdentifier,
         UniqueRef<SpeechRecognitionProvider>&&,
         UniqueRef<MediaRecorderProvider>&&,
         Ref<BroadcastChannelRegistry>&&,
@@ -142,7 +144,8 @@ public:
     Ref<BackForwardClient> backForwardClient;
     Ref<CookieJar> cookieJar;
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
-    UniqueRef<FrameLoaderClient> loaderClientForMainFrame;
+    std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame;
+    FrameIdentifier mainFrameIdentifier;
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;
 #if ENABLE(WEBGL)
@@ -187,7 +190,6 @@ public:
     Ref<BadgeClient> badgeClient;
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
-    std::optional<FrameIdentifier> mainFrameIdentifier;
 };
 
 }

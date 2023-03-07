@@ -272,7 +272,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     }
 }
 
-std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, Callee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, TierUpCount* tierUp)
+std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, BBQCallee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, TierUpCount* tierUp)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];

@@ -131,13 +131,11 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     pas_pgm_storage *value = pas_utility_heap_try_allocate(sizeof(pas_pgm_storage), "pas_pgm_hash_map_VALUE");
     PAS_ASSERT(value);
 
-    value->mem_to_alloc              = mem_to_alloc;
     value->mem_to_waste              = mem_to_waste;
     value->size_of_data_pages        = size + mem_to_waste;
-    value->lower_guard_page          = lower_guard_page;
-    value->upper_guard_page          = upper_guard_page;
     value->start_of_data_pages       = result.begin + page_size;
     value->allocation_size_requested = size;
+    value->page_size                 = page_size;
     value->large_heap                = large_heap;
 
     pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, key, NULL, &pas_large_utility_free_heap_allocation_config);
@@ -190,7 +188,7 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     PAS_ASSERT(removed);
 
     free_wasted_mem  += value->mem_to_waste;
-    free_virtual_mem += value->mem_to_alloc;
+    free_virtual_mem += (2 * value->page_size) + value->allocation_size_requested + value->mem_to_waste;
 
     if (verbose)
         pas_probabilistic_guard_malloc_debug_info(key, value, "Deallocating Memory");
@@ -281,11 +279,9 @@ void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_st
         "\n"
         " Allocation\n"
         " Allocation Size Requested : %zu \n"
-        " Memory Allocated          : %zu \n"
-        " Memory Wasted             : %zu \n"
+        " Page Size                 : %hu \n"
+        " Memory Wasted             : %hu \n"
         " Size of Data Pages        : %zu \n"
-        " Lower Guard Page Address  : %p  \n"
-        " Upper Guard Page Address  : %p  \n"
         " Start of Data Pages       : %p  \n"
         " Memory Address for User   : %p  \n"
         "******************************************************\n\n\n",
@@ -293,11 +289,9 @@ void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_st
         free_wasted_mem,
         free_virtual_mem,
         value->allocation_size_requested,
-        value->mem_to_alloc,
+        value->page_size,
         value->mem_to_waste,
         value->size_of_data_pages,
-        (uintptr_t*) value->lower_guard_page,
-        (uintptr_t*) value->upper_guard_page,
         (uintptr_t*) value->start_of_data_pages,
         key);
 }

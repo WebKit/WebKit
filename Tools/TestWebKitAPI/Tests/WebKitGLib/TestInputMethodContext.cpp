@@ -255,10 +255,17 @@ public:
         bool isComposing;
     };
 
-    static void imEventCallback(WebKitUserContentManager*, WebKitJavascriptResult* javascriptResult, InputMethodTest* test)
+#if ENABLE(2022_GLIB_API)
+    static void imEventCallback(WebKitUserContentManager*, JSCValue* result, InputMethodTest* test)
     {
-        test->imEvent(javascriptResult);
+        test->imEvent(result);
     }
+#else
+    static void imEventCallback(WebKitUserContentManager*, WebKitJavascriptResult* result, InputMethodTest* test)
+    {
+        test->imEvent(webkit_javascript_result_get_js_value(result));
+    }
+#endif
 
     InputMethodTest()
         : m_context(adoptGRef(static_cast<WebKitInputMethodContextMock*>(g_object_new(webkit_input_method_context_mock_get_type(), nullptr))))
@@ -293,9 +300,8 @@ public:
         g_signal_handlers_disconnect_by_data(m_userContentManager.get(), this);
     }
 
-    void imEvent(WebKitJavascriptResult* result)
+    void imEvent(JSCValue* jsEvent)
     {
-        auto* jsEvent = webkit_javascript_result_get_js_value(result);
         g_assert_true(jsc_value_is_object(jsEvent));
 
         GRefPtr<JSCValue> value = adoptGRef(jsc_value_object_get_property(jsEvent, "type"));

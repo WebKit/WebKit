@@ -23,6 +23,7 @@
 
 UIProcess/API/glib/IconDatabase.cpp @no-unify
 UIProcess/API/glib/WebKitFaviconDatabase.cpp @no-unify
+UIProcess/API/glib/WebKitJavascriptResult.cpp @no-unify
 UIProcess/API/glib/WebKitMimeInfo.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 

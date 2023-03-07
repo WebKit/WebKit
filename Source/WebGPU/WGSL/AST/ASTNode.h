@@ -108,7 +108,6 @@ enum class NodeKind : uint8_t {
     NamedTypeName,
     ParameterizedTypeName,
     ReferenceTypeName,
-    StructTypeName,
 
     Variable,
 

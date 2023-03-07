@@ -322,9 +322,9 @@ void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarLayers()
     m_scrollerPair.updateValues();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEventForScrollbars(const PlatformWheelEvent& wheelEvent)
+void ScrollingTreeScrollingNodeDelegateMac::handleWheelEventPhase(const PlatformWheelEventPhase wheelEventPhase)
 {
-    return m_scrollerPair.handleWheelEvent(wheelEvent);
+    m_scrollerPair.handleWheelEventPhase(wheelEventPhase);
 }
 bool ScrollingTreeScrollingNodeDelegateMac::handleMouseEventForScrollbars(const PlatformMouseEvent& mouseEvent)
 {

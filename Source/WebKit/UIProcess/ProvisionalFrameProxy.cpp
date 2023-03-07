@@ -65,6 +65,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     ASSERT(drawingArea);
 
     auto parameters = page.creationParameters(m_process, *drawingArea);
+    parameters.mainFrameCreationParameters = page.frameTreeCreationParameters();
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
     parameters.layerHostingContextIdentifier = m_layerHostingContextIdentifier;

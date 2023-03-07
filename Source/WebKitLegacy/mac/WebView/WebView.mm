@@ -202,6 +202,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/Range.h>
+#import <WebCore/RemoteFrameClient.h>
 #import <WebCore/RenderTheme.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -1527,7 +1528,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        makeUniqueRef<WebFrameLoaderClient>(),
+        UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>()),
+        WebCore::FrameIdentifier::generate(),
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
@@ -1796,7 +1798,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        makeUniqueRef<WebFrameLoaderClient>(),
+        UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>()),
+        WebCore::FrameIdentifier::generate(),
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),

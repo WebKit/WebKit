@@ -44,7 +44,8 @@ private:
     ScrollingTreeFrameScrollingNodeRemoteMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
 
     void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
-    WebCore::WheelEventHandlingResult handleWheelEvent(const WebCore::PlatformWheelEvent&, WebCore::EventTargeting) override;
+    void handleWheelEventPhase(const PlatformWheelEventPhase) override;
+
     void repositionRelatedLayers() override;
 };
 

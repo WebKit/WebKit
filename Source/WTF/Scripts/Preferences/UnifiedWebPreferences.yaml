@@ -717,7 +717,7 @@ BackgroundWebContentRunningBoardThrottlingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultRunningBoardThrottlingEnabled()
+      default: false
 
 BackspaceKeyNavigationEnabled:
   type: bool

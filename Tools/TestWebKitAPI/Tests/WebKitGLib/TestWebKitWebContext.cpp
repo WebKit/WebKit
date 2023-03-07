@@ -290,10 +290,10 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_cmpint(mainResourceDataSize, ==, strlen(charsetHTML));
     g_assert_cmpint(strncmp(mainResourceData, charsetHTML, mainResourceDataSize), ==, 0);
     GUniqueOutPtr<GError> error;
-    auto* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('emoji').innerText", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    auto* value = test->runJavaScriptAndWaitUntilFinished("document.getElementById('emoji').innerText", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> emoji(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> emoji(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(emoji.get(), ==, "🙂");
 
     test->registerURISchemeHandler("empty", nullptr, 0, "text/html");
@@ -496,28 +496,28 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     const char* cLanguage[] = { "C", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), cLanguage);
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> locale(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> locale(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
     // When using the POSIX locale, en-US should be used as default.
     const char* posixLanguage[] = { "POSIX", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), posixLanguage);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    locale.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
     // An invalid locale should not be used.
     const char* invalidLanguage[] = { "A", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), invalidLanguage);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    locale.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(locale.get(), !=, "A");
 }
 
@@ -634,12 +634,21 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
         | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
 }
 
-static void xhrMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, WebKitJavascriptResult** result)
+#if ENABLE(2022_GLIB_API)
+static void xhrMessageReceivedCallback(WebKitUserContentManager*, JSCValue* message, JSCValue** result)
+#else
+static void xhrMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, JSCValue** result)
+#endif
 {
     g_assert_nonnull(message);
     g_assert_nonnull(result);
     g_assert_null(*result);
-    *result = webkit_javascript_result_ref(message);
+
+#if ENABLE(2022_GLIB_API)
+    *result = JSC_VALUE(g_object_ref(message));
+#else
+    *result = JSC_VALUE(g_object_ref(webkit_javascript_result_get_js_value(message)));
+#endif
 }
 
 static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
@@ -651,7 +660,7 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     GUniquePtr<char> jsonURL(g_strdup_printf("file://%s/simple.json", Test::getResourcesDir().data()));
     GUniquePtr<char> xhr(g_strdup_printf("var xhr = new XMLHttpRequest; xhr.open(\"GET\", \"%s\"); xhr.onreadystatechange = ()=> { if (xhr.readyState == 4) { setTimeout(() => { window.webkit.messageHandlers.xhr.postMessage('DONE'); }, 0)} }; xhr.onerror = () => { window.webkit.messageHandlers.xhr.postMessage('ERROR'); }; xhr.send();", jsonURL.get()));
 
-    WebKitJavascriptResult* xhrMessage = nullptr;
+    JSCValue* xhrMessage = nullptr;
 #if !ENABLE(2022_GLIB_API)
     webkit_user_content_manager_register_script_message_handler(test->m_userContentManager.get(), "xhr");
 #else
@@ -666,7 +675,7 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
                 g_main_context_iteration(nullptr, TRUE);
 
             GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(xhrMessage));
-            g_clear_pointer(&xhrMessage, webkit_javascript_result_unref);
+            g_clear_object(&xhrMessage);
 
             if (!g_strcmp0(messageString.get(), "ERROR"))
                 didFail = true;
@@ -679,8 +688,8 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
 
     // By default file access is not allowed, this will show a console message with a cross-origin error.
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
     g_assert_false(waitUntilXHRDone());
 
@@ -688,16 +697,16 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), TRUE);
     test->loadURI(fileURL.get());
     test->waitUntilLoadFinished();
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
     g_assert_true(waitUntilXHRDone());
 
     // It isn't still possible to load file from an HTTP URL.
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
     g_assert_false(waitUntilXHRDone());
 
@@ -1004,31 +1013,31 @@ static void testMemoryPressureSettings(MemoryPressureTest* test, gconstpointer)
 static void testWebContextTimeZoneOverride(WebViewTest* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("const date = new Date(1651511226050); date.getTimezoneOffset()", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("const date = new Date(1651511226050); date.getTimezoneOffset()", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
     // By default the test harness uses the Pacific/Los_Angeles timezone which is 7 hours (420 minutes) compared to GMT.
-    g_assert_cmpint(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 420);
+    g_assert_cmpint(WebViewTest::javascriptResultToNumber(value), ==, 420);
 
     // Create a new context configured with time zone overide set to Berlin which is 120 minutes ahead of the GMT offset.
     auto webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
         "time-zone-override", "Europe/Berlin", nullptr)));
     g_assert_cmpstr(webkit_web_context_get_time_zone_override(webContext.get()), ==, "Europe/Berlin");
     auto webView = Test::adoptView(Test::createWebView(webContext.get()));
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("const date = new Date(1651511226050); date.getTimezoneOffset()", &error.outPtr(), webView.get());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("const date = new Date(1651511226050); date.getTimezoneOffset()", &error.outPtr(), webView.get());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    g_assert_cmpint(WebViewTest::javascriptResultToNumber(javascriptResult), ==, -120);
+    g_assert_cmpint(WebViewTest::javascriptResultToNumber(value), ==, -120);
 }
 
 static void testWebContextTimeZoneOverrideInWorker(WebViewTest* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().timeZone", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().timeZone", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
     // By default the test harness uses the Pacific/Los_Angeles.
-    g_assert_cmpstr(WebViewTest::javascriptResultToCString(javascriptResult), ==, "America/Los_Angeles");
+    g_assert_cmpstr(WebViewTest::javascriptResultToCString(value), ==, "America/Los_Angeles");
     // Create a new context configured with time zone overide set to Berlin which is 120 minutes ahead of the GMT offset.
     auto webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
         "time-zone-override", "Europe/Berlin", nullptr)));
@@ -1042,15 +1051,15 @@ static void testWebContextTimeZoneOverrideInWorker(WebViewTest* test, gconstpoin
         "  worker.onmessage = message => results.push(message.data);"
         "}", &error.outPtr(), webView.get());
     do {
-        javascriptResult = test->runJavaScriptAndWaitUntilFinished("results.length", &error.outPtr(), webView.get());
-        g_assert_nonnull(javascriptResult);
+        value = test->runJavaScriptAndWaitUntilFinished("results.length", &error.outPtr(), webView.get());
+        g_assert_nonnull(value);
         g_assert_no_error(error.get());
-    } while (WebViewTest::javascriptResultToNumber(javascriptResult) < 4);
+    } while (WebViewTest::javascriptResultToNumber(value) < 4);
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("results.join(', ')", &error.outPtr(), webView.get());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("results.join(', ')", &error.outPtr(), webView.get());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    g_assert_cmpstr(WebViewTest::javascriptResultToCString(javascriptResult), ==, "Europe/Berlin, Europe/Berlin, Europe/Berlin, Europe/Berlin");
+    g_assert_cmpstr(WebViewTest::javascriptResultToCString(value), ==, "Europe/Berlin, Europe/Berlin, Europe/Berlin, Europe/Berlin");
 }
 
 static void testNoWebProcessLeakAfterWebKitWebContextDestroy(WebViewTest* test, gconstpointer)

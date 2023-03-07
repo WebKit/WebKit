@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="password" id="password-input" value="test">
+<input type="text" id="autofill-input" value="foo">
+
+<script>
+var output = "This tests that the AX exposed value of secure inputs is the rendered (and therefore censored) text.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const autofillInput = accessibilityController.accessibleElementById("autofill-input");
+    let lastAutofillValue = autofillInput.stringValue;
+    output += `Password field value: ${accessibilityController.accessibleElementById("password-input").stringValue}\n`;
+    output += `#autofill-input value before being obscured: ${lastAutofillValue}\n`;
+
+    output += "Making #autofill-input obscured.\n";
+    window.internals.setAutoFilledAndObscured(document.getElementById("autofill-input"), true);
+    setTimeout(async function() {
+        await waitFor(() => lastAutofillValue !== autofillInput.stringValue);
+        lastAutofillValue = autofillInput.stringValue;
+        output += `#autofill-input value after being obscured: ${autofillInput.stringValue}\n`;
+
+        output += "Making #autofill-input viewable.\n";
+        window.internals.setAutoFilledAndObscured(document.getElementById("autofill-input"), false);
+        window.internals.setAutoFilledAndViewable(document.getElementById("autofill-input"), true);
+        await waitFor(() => lastAutofillValue !== autofillInput.stringValue);
+        output += `#autofill-input value after being made viewable: ${autofillInput.stringValue}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

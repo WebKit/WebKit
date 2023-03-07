@@ -5276,6 +5276,8 @@
 		5C2C6FA827C96FF900CCDA9E /* WKURLSessionTaskDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLSessionTaskDelegate.h; sourceTree = "<group>"; };
 		5C2D5747257FFA1200679A72 /* WKContextDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextDownloadClient.h; sourceTree = "<group>"; };
 		5C2EBDF92564352000D55B05 /* WKDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownloadClient.h; sourceTree = "<group>"; };
+		5C2FEF0E29B665AF0005AB95 /* FrameTreeCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = FrameTreeCreationParameters.serialization.in; sourceTree = "<group>"; };
+		5C2FEF0F29B665AF0005AB95 /* FrameTreeCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameTreeCreationParameters.h; sourceTree = "<group>"; };
 		5C359C0C21547321009E7948 /* WKDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeprecated.h; sourceTree = "<group>"; };
 		5C37A5BE2970DB6000D222A0 /* LoadedWebArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadedWebArchive.h; sourceTree = "<group>"; };
 		5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePoliciesData.cpp; sourceTree = "<group>"; };
@@ -7881,6 +7883,8 @@
 				BCE81D8B1319F7EF00241910 /* FontInfo.h */,
 				1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */,
 				5C4AB4AF28BD65A50059E6CD /* FrameInfoData.serialization.in */,
+				5C2FEF0F29B665AF0005AB95 /* FrameTreeCreationParameters.h */,
+				5C2FEF0E29B665AF0005AB95 /* FrameTreeCreationParameters.serialization.in */,
 				5C121E8324101F7000486F9B /* FrameTreeNodeData.h */,
 				5C4AB4B128BD6FED0059E6CD /* FrameTreeNodeData.serialization.in */,
 				46AC532425DED81E003B57EC /* GPUProcessConnectionParameters.h */,

@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitJavascriptResult.h"
 
+#if !ENABLE(2022_GLIB_API)
+
 #include "APISerializedScriptValue.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include <jsc/JSCContextPrivate.h>
@@ -86,7 +88,7 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
     }
 }
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK)
 /**
  * webkit_javascript_result_get_global_context: (skip)
  * @js_result: a #WebKitJavascriptResult
@@ -141,3 +143,5 @@ JSCValue* webkit_javascript_result_get_js_value(WebKitJavascriptResult* javascri
     g_return_val_if_fail(javascriptResult, nullptr);
     return javascriptResult->jsValue.get();
 }
+
+#endif

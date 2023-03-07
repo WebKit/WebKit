@@ -850,7 +850,7 @@ public:
     bool isImage() const { return roleValue() == AccessibilityRole::Image; }
     bool isImageMap() const { return roleValue() == AccessibilityRole::ImageMap; }
     bool isVideo() const { return roleValue() == AccessibilityRole::Video; }
-    virtual bool isPasswordField() const = 0;
+    virtual bool isSecureField() const = 0;
     virtual bool isNativeTextControl() const = 0;
     bool isWebArea() const { return roleValue() == AccessibilityRole::WebArea; }
     bool isCheckbox() const { return roleValue() == AccessibilityRole::CheckBox; }
@@ -1371,7 +1371,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    virtual int accessibilityPasswordFieldLength() = 0;
+    virtual int accessibilitySecureFieldLength() = 0;
     virtual bool hasTouchEventListener() const = 0;
     virtual bool isInputTypePopupButton() const = 0;
 #endif

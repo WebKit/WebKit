@@ -137,8 +137,6 @@
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
 		979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B5297018290050EA2C /* MetalFunctionWriter.cpp */; };
 		979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240BC29753B2A0050EA2C /* PhaseTimer.h */; };
-		979240C4297558F10050EA2C /* ResolveTypeReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */; };
-		979240C5297558F10050EA2C /* ResolveTypeReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C3297558F10050EA2C /* ResolveTypeReferences.h */; };
 		979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C629769AC00050EA2C /* EntryPointRewriter.h */; };
 		979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C729769AC00050EA2C /* EntryPointRewriter.cpp */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
@@ -365,8 +363,6 @@
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
 		979240B5297018290050EA2C /* MetalFunctionWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalFunctionWriter.cpp; sourceTree = "<group>"; };
 		979240BC29753B2A0050EA2C /* PhaseTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhaseTimer.h; sourceTree = "<group>"; };
-		979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResolveTypeReferences.cpp; sourceTree = "<group>"; };
-		979240C3297558F10050EA2C /* ResolveTypeReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveTypeReferences.h; sourceTree = "<group>"; };
 		979240C629769AC00050EA2C /* EntryPointRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryPointRewriter.h; sourceTree = "<group>"; };
 		979240C729769AC00050EA2C /* EntryPointRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntryPointRewriter.cpp; sourceTree = "<group>"; };
 		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
@@ -511,8 +507,6 @@
 				339B7B1727D7FFA40072BF9A /* Parser.h */,
 				66DC575428627E0B0014CABD /* ParserPrivate.h */,
 				979240BC29753B2A0050EA2C /* PhaseTimer.h */,
-				979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */,
-				979240C3297558F10050EA2C /* ResolveTypeReferences.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
@@ -738,7 +732,6 @@
 				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */,
-				979240C5297558F10050EA2C /* ResolveTypeReferences.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
@@ -910,7 +903,6 @@
 				979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */,
 				9776BE732992A236002D6D93 /* Overload.cpp in Sources */,
 				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
-				979240C4297558F10050EA2C /* ResolveTypeReferences.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */,
 				97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */,

@@ -88,7 +88,7 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
     /**
      * WebKitUserContentManager::script-message-received:
      * @manager: the #WebKitUserContentManager
-     * @js_result: the #WebKitJavascriptResult holding the value received from the JavaScript world.
+     * @value: the value received from the JavaScript world.
      *
      * This signal is emitted when JavaScript in a web view calls
      * <code>window.webkit.messageHandlers.<name>.postMessage()</code>, after registering
@@ -105,12 +105,16 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
             0, nullptr, nullptr,
             g_cclosure_marshal_VOID__BOXED,
             G_TYPE_NONE, 1,
+#if ENABLE(2022_GLIB_API)
+            JSC_TYPE_VALUE);
+#else
             WEBKIT_TYPE_JAVASCRIPT_RESULT);
+#endif
 
     /**
      * WebKitUserContentManager::script-message-with-reply-received:
      * @manager: the #WebKitUserContentManager
-     * @js_result: the #WebKitJavascriptResult holding the value received from the JavaScript world.
+     * @value: the value received from the JavaScript world.
      * @reply: the #WebKitScriptMessageReply to send the reply to the script message.
      *
      * This signal is emitted when JavaScript in a web view calls
@@ -137,9 +141,9 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
             G_TYPE_FROM_CLASS(gObjectClass),
             static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED),
             0, g_signal_accumulator_true_handled, nullptr,
-            g_cclosure_marshal_generic,
+            nullptr,
             G_TYPE_BOOLEAN, 2,
-            WEBKIT_TYPE_JAVASCRIPT_RESULT,
+            JSC_TYPE_VALUE,
             WEBKIT_TYPE_SCRIPT_MESSAGE_REPLY);
 }
 
@@ -398,9 +402,14 @@ public:
 
     void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
+#if ENABLE(2022_GLIB_API)
+        GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
+        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
+#else
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
+#endif
     }
 
     bool supportsAsyncReply() override
@@ -410,11 +419,10 @@ public:
 
     void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue, WTF::Function<void(API::SerializedScriptValue*, const String&)>&& completionHandler) override
     {
-        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
         WebKitScriptMessageReply* message = webKitScriptMessageReplyCreate(WTFMove(completionHandler));
+        GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
         gboolean returnValue;
-        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, jsResult, message, &returnValue);
-        webkit_javascript_result_unref(jsResult);
+        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, value.get(), message, &returnValue);
         webkit_script_message_reply_unref(message);
     }
 

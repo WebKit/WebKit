@@ -482,9 +482,6 @@ void Visitor::visit(AST::TypeName& typeName)
     case AST::NodeKind::ReferenceTypeName:
         checkErrorAndVisit(downcast<AST::ReferenceTypeName>(typeName));
         break;
-    case AST::NodeKind::StructTypeName:
-        checkErrorAndVisit(downcast<AST::StructTypeName>(typeName));
-        break;
     default:
         ASSERT_NOT_REACHED("Unhandled TypeName");
     }
@@ -508,10 +505,6 @@ void Visitor::visit(AST::ParameterizedTypeName& parameterizedTypeName)
 void Visitor::visit(AST::ReferenceTypeName& referenceTypeName)
 {
     checkErrorAndVisit(referenceTypeName.type());
-}
-
-void Visitor::visit(AST::StructTypeName&)
-{
 }
 
 // Variable

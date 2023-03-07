@@ -92,7 +92,6 @@ class TypeName;
 class ArrayTypeName;
 class NamedTypeName;
 class ParameterizedTypeName;
-class StructTypeName;
 class ReferenceTypeName;
 
 class Variable;

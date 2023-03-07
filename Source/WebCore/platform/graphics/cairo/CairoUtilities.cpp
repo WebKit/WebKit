@@ -48,6 +48,14 @@
 
 namespace WebCore {
 
+#if USE(FREETYPE)
+RecursiveLock& cairoFontLock()
+{
+    static RecursiveLock s_lock;
+    return s_lock;
+}
+#endif
+
 static cairo_font_options_t* defaultCairoFontOptions()
 {
     static cairo_font_options_t* s_defaultCairoFontOptions = cairo_font_options_create();

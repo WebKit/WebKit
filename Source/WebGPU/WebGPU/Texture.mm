@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "TextureView.h"
+#import <bmalloc/Algorithm.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
 
@@ -2380,21 +2381,25 @@ WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 
     auto logicalExtent = logicalMiplevelSpecificTextureExtent(mipLevel);
 
+    auto roundUpToMultipleOf = [](size_t a, size_t b) {
+        return static_cast<uint32_t>(bmalloc::roundUpToMultipleOfNonPowerOfTwo(a, b));
+    };
+
     switch (m_dimension) {
     case WGPUTextureDimension_1D:
         return {
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width)),
+            roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
             1,
             logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width)),
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height)),
+            roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
+            roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
             logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width)),
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height)),
+            roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
+            roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
             logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();

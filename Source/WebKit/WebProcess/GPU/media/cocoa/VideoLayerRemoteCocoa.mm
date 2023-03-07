@@ -34,6 +34,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/Timer.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/WeakObjCPtr.h>
@@ -70,6 +71,14 @@ static const Seconds PostAnimationDelay { 100_ms };
     _shouldRestartWhenTimerFires = false;
 
     return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainThread(WKVideoLayerRemote.class, self))
+        return;
+
+    [super dealloc];
 }
 
 - (WebKit::MediaPlayerPrivateRemote*)mediaPlayerPrivateRemote

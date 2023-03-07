@@ -146,6 +146,8 @@ WebChromeClient::WebChromeClient(WebPage& page)
 {
 }
 
+WebChromeClient::~WebChromeClient() = default;
+
 void WebChromeClient::didInsertMenuElement(HTMLMenuElement& element)
 {
     m_page.didInsertMenuElement(element);
@@ -164,10 +166,6 @@ void WebChromeClient::didInsertMenuItemElement(HTMLMenuItemElement& element)
 void WebChromeClient::didRemoveMenuItemElement(HTMLMenuItemElement& element)
 {
     m_page.didRemoveMenuItemElement(element);
-}
-
-inline WebChromeClient::~WebChromeClient()
-{
 }
 
 void WebChromeClient::chromeDestroyed()

@@ -179,6 +179,7 @@ public:
     void childrenChanged(AccessibilityObject*);
     void onFocusChange(Node* oldFocusedNode, Node* newFocusedNode);
     void onSelectedChanged(Node*);
+    void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
     void valueChanged(Element*);
@@ -356,6 +357,7 @@ public:
         AXRequiredStatusChanged,
         AXSortDirectionChanged,
         AXTextChanged,
+        AXTextSecurityChanged,
         AXElementBusyChanged,
         AXDraggingStarted,
         AXDraggingEnded,
@@ -669,6 +671,7 @@ inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
 inline void AXObjectCache::onSelectedChanged(Node*) { }
+inline void AXObjectCache::onTextSecurityChanged(HTMLInputElement&) { }
 inline void AXObjectCache::onTitleChange(Document&) { }
 inline void AXObjectCache::onValidityChange(Element&) { }
 inline void AXObjectCache::valueChanged(Element*) { }

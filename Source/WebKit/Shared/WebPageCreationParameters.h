@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DrawingAreaInfo.h"
+#include "FrameTreeCreationParameters.h"
 #include "LayerTreeContext.h"
 #include "SandboxExtension.h"
 #include "SessionState.h"
@@ -286,7 +287,8 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
-    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
+    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier; // FIXME: Move to frame.
+    std::optional<FrameTreeCreationParameters> mainFrameCreationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     Vector<String> lookalikeCharacterStrings;

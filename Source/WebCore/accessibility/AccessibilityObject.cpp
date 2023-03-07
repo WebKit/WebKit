@@ -1693,7 +1693,7 @@ bool AccessibilityObject::supportsReadOnly() const
         || role == AccessibilityRole::Switch
         || role == AccessibilityRole::TextField
         || role == AccessibilityRole::TreeGrid
-        || isPasswordField();
+        || isSecureField();
 }
 
 String AccessibilityObject::readOnlyValue() const
@@ -2330,8 +2330,8 @@ bool AccessibilityObject::insertText(const String& text)
         return false;
 
     auto& element = downcast<Element>(*node());
-    // Only try to insert text if the field is in editing mode (excluding password fields, which we do still want to try to insert into).
-    if (!isPasswordField() && !element.shouldUseInputMethod())
+    // Only try to insert text if the field is in editing mode (excluding secure fields, which we do still want to try to insert into).
+    if (!isSecureField() && !element.shouldUseInputMethod())
         return false;
 
     // Use Editor::insertText to mimic typing into the field.
@@ -3868,7 +3868,7 @@ bool AccessibilityObject::isOutput() const
     return node && node->hasTagName(outputTag);
 }
     
-bool AccessibilityObject::isContainedByPasswordField() const
+bool AccessibilityObject::isContainedBySecureField() const
 {
     Node* node = this->node();
     if (!node)
@@ -3878,7 +3878,7 @@ bool AccessibilityObject::isContainedByPasswordField() const
         return false;
 
     Element* element = node->shadowHost();
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isPasswordField();
+    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isSecureField();
 }
     
 AccessibilityObject* AccessibilityObject::selectedListItem()

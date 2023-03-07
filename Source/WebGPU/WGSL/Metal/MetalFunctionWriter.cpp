@@ -86,7 +86,6 @@ public:
     void visit(AST::NamedTypeName&) override;
     void visit(AST::ParameterizedTypeName&) override;
     void visit(AST::ReferenceTypeName&) override;
-    void visit(AST::StructTypeName&) override;
 
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
@@ -365,11 +364,6 @@ void FunctionDefinitionWriter::visit(AST::ReferenceTypeName& type)
     m_stringBuilder.append("device ");
     visit(type.type());
     m_stringBuilder.append("&");
-}
-
-void FunctionDefinitionWriter::visit(AST::StructTypeName& structType)
-{
-    m_stringBuilder.append(structType.structure().name());
 }
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)

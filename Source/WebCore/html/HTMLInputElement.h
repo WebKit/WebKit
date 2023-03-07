@@ -142,6 +142,7 @@ public:
     WEBCORE_EXPORT bool isSearchField() const;
     bool isInputTypeHidden() const;
     WEBCORE_EXPORT bool isPasswordField() const;
+    bool isSecureField() const { return isPasswordField() || isAutoFilledAndObscured(); }
     bool isCheckbox() const;
     bool isRangeControl() const;
 #if ENABLE(INPUT_TYPE_COLOR)
