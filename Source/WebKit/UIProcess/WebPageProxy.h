@@ -313,6 +313,7 @@ struct DragItem;
 struct ElementContext;
 struct ExceptionDetails;
 struct FileChooserSettings;
+struct FrameTreeCreationParameters;
 struct GlobalWindowIdentifier;
 struct InteractionRegion;
 struct LinkIcon;
@@ -577,6 +578,7 @@ public:
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
     void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
+    std::optional<FrameTreeCreationParameters> frameTreeCreationParameters() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);

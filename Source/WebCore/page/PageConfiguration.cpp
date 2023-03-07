@@ -44,6 +44,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
+#include "RemoteFrameClient.h"
 #include "ScreenOrientationManager.h"
 #include "SocketProvider.h"
 #include "SpeechRecognitionProvider.h"
@@ -77,7 +78,8 @@ PageConfiguration::PageConfiguration(
     Ref<BackForwardClient>&& backForwardClient,
     Ref<CookieJar>&& cookieJar,
     UniqueRef<ProgressTrackerClient>&& progressTrackerClient,
-    UniqueRef<FrameLoaderClient>&& loaderClientForMainFrame,
+    std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& clientForMainFrame,
+    FrameIdentifier mainFrameIdentifier,
     UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider,
     UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider,
     Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry,
@@ -105,7 +107,8 @@ PageConfiguration::PageConfiguration(
     , progressTrackerClient(WTFMove(progressTrackerClient))
     , backForwardClient(WTFMove(backForwardClient))
     , cookieJar(WTFMove(cookieJar))
-    , loaderClientForMainFrame(WTFMove(loaderClientForMainFrame))
+    , clientForMainFrame(WTFMove(clientForMainFrame))
+    , mainFrameIdentifier(WTFMove(mainFrameIdentifier))
     , cacheStorageProvider(WTFMove(cacheStorageProvider))
     , userContentProvider(WTFMove(userContentProvider))
     , broadcastChannelRegistry(WTFMove(broadcastChannelRegistry))

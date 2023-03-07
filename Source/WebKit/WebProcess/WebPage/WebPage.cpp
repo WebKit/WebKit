@@ -237,6 +237,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteDOMWindow.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/RemoteFrameClient.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTheme.h>
@@ -613,7 +614,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef()),
+        UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef())),
+        parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate(),
         makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
@@ -713,8 +715,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
 #endif
 
-    pageConfiguration.mainFrameIdentifier = parameters.mainFrameIdentifier;
-    bool receivedMainFrameIdentifierFromUIProcess = !!pageConfiguration.mainFrameIdentifier;
+    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.mainFrameIdentifier;
     
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 

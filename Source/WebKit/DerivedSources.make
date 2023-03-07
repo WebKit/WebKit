@@ -488,6 +488,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/FileSystemSyncAccessHandleInfo.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
 	Shared/FrameInfoData.serialization.in \
+	Shared/FrameTreeCreationParameters.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/Gamepad/GamepadData.serialization.in \
 	Shared/GPUProcessConnectionParameters.serialization.in \

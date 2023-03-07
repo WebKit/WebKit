@@ -63,6 +63,7 @@
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
@@ -176,7 +177,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         auto loaderClientForMainFrame = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, effectiveUserAgent);
         if (contextData.serviceWorkerPageIdentifier)
             loaderClientForMainFrame->setServiceWorkerPageIdentifier(*contextData.serviceWorkerPageIdentifier);
-        pageConfiguration.loaderClientForMainFrame = WTFMove(loaderClientForMainFrame);
+        pageConfiguration.clientForMainFrame = UniqueRef<WebCore::FrameLoaderClient>(WTFMove(loaderClientForMainFrame));
 
 #if !RELEASE_LOG_DISABLED
         auto serviceWorkerIdentifier = contextData.serviceWorkerIdentifier;

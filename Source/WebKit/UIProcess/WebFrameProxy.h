@@ -51,7 +51,6 @@ class Decoder;
 }
 
 namespace WebKit {
-struct FrameTreeNodeData;
 class ProvisionalFrameProxy;
 class SafeBrowsingWarning;
 class SubframePageProxy;
@@ -59,6 +58,8 @@ class WebFramePolicyListenerProxy;
 class WebsiteDataStore;
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
+struct FrameTreeCreationParameters;
+struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public IPC::MessageReceiver, public IPC::MessageSender {
@@ -148,6 +149,7 @@ public:
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
+    FrameTreeCreationParameters frameTreeCreationParameters() const;
 
     void updateRemoteFrameSize(WebCore::IntSize);
 

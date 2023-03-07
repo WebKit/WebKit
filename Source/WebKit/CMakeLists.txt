@@ -536,6 +536,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FileSystemSyncAccessHandleInfo.serialization.in
     Shared/FocusedElementInformation.serialization.in
     Shared/FrameInfoData.serialization.in
+    Shared/FrameTreeCreationParameters.serialization.in
     Shared/FrameTreeNodeData.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/LayerTreeContext.serialization.in
