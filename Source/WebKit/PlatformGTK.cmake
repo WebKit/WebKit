@@ -138,7 +138,6 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitHitTestResult.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitInputMethodContext.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.h.in
-    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitJavascriptResult.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMemoryPressureSettings.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNavigationAction.h.in

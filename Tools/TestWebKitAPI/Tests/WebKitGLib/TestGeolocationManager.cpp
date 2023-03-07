@@ -113,11 +113,10 @@ public:
     Position lastPosition()
     {
         GUniqueOutPtr<GError> error;
-        auto* javascriptResult = runJavaScriptAndWaitUntilFinished("position", &error.outPtr());
-        g_assert_nonnull(javascriptResult);
+        auto* jsPosition = runJavaScriptAndWaitUntilFinished("position", &error.outPtr());
+        g_assert_nonnull(jsPosition);
         g_assert_no_error(error.get());
 
-        auto* jsPosition = webkit_javascript_result_get_js_value(javascriptResult);
         g_assert_true(jsc_value_is_object(jsPosition));
         Position result;
         GRefPtr<JSCValue> value = adoptGRef(jsc_value_object_get_property(jsPosition, "latitude"));
@@ -195,17 +194,16 @@ public:
             "  function(e) { error = e.message.toString(); }\n"
             ");";
         GUniqueOutPtr<GError> error;
-        auto* javascriptResult = runJavaScriptAndWaitUntilFinished(getCurrentPosition, &error.outPtr());
+        auto* value = runJavaScriptAndWaitUntilFinished(getCurrentPosition, &error.outPtr());
         g_assert_no_error(error.get());
         g_main_loop_run(m_mainLoop);
         m_errorMessage = nullptr;
 
-        javascriptResult = runJavaScriptAndWaitUntilFinished("error", &error.outPtr());
-        g_assert_nonnull(javascriptResult);
+        value = runJavaScriptAndWaitUntilFinished("error", &error.outPtr());
+        g_assert_nonnull(value);
         g_assert_no_error(error.get());
-        auto* jsErrorMessage = webkit_javascript_result_get_js_value(javascriptResult);
-        g_assert_true(jsc_value_is_string(jsErrorMessage));
-        return GUniquePtr<char>(jsc_value_to_string(jsErrorMessage));
+        g_assert_true(jsc_value_is_string(value));
+        return GUniquePtr<char>(jsc_value_to_string(value));
     }
 
     void startWatch()
@@ -228,8 +226,8 @@ public:
             "  position.timestamp = p.timestamp;\n"
             "});";
         GUniqueOutPtr<GError> error;
-        auto* javascriptResult = runJavaScriptAndWaitUntilFinished(watchPosition, &error.outPtr());
-        g_assert_nonnull(javascriptResult);
+        auto* value = runJavaScriptAndWaitUntilFinished(watchPosition, &error.outPtr());
+        g_assert_nonnull(value);
         g_assert_no_error(error.get());
         g_main_loop_run(m_mainLoop);
     }

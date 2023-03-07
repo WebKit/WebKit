@@ -508,10 +508,10 @@ static void testWebViewEditorInsertImage(EditorTest* test, gconstpointer)
     GUniquePtr<char> imageURI(g_filename_to_uri(imagePath.get(), nullptr, nullptr));
     webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_INSERT_IMAGE, imageURI.get());
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('IMG')[0].src", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('IMG')[0].src", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, imageURI.get());
 }
 
@@ -525,29 +525,29 @@ static void testWebViewEditorCreateLink(EditorTest* test, gconstpointer)
     static const char* webkitGTKURL = "http://www.webkitgtk.org/";
     webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, webkitGTKURL);
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].href;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].href;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].innerText;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].innerText;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    resultString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, "webkitgtk.org");
 
     // When there isn't text selected, the URL is used as link text.
     webkit_web_view_execute_editing_command(test->m_webView, "MoveToEndOfLine");
     webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, webkitGTKURL);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].href;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].href;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    resultString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].innerText;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].innerText;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    resultString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
 }
 
