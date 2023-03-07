@@ -30,6 +30,7 @@
 #include "ScrollerMac.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/PlatformWheelEvent.h>
 
 OBJC_CLASS NSScrollerImpPair;
 OBJC_CLASS WebScrollerImpPairDelegateMac;
@@ -53,7 +54,7 @@ public:
     ScrollerMac& verticalScroller() { return m_verticalScroller; }
     ScrollerMac& horizontalScroller() { return m_horizontalScroller; }
 
-    bool handleWheelEvent(const WebCore::PlatformWheelEvent&);
+    void handleWheelEventPhase(PlatformWheelEventPhase);
     bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
     void updateValues();

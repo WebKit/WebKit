@@ -60,7 +60,7 @@ public:
     void updateScrollbarPainters();
     void updateScrollbarLayers() final;
     
-    bool handleWheelEventForScrollbars(const PlatformWheelEvent&) final;
+    void handleWheelEventPhase(const PlatformWheelEventPhase) final;
     bool handleMouseEventForScrollbars(const PlatformMouseEvent&) final;
     
     void initScrollbars() final;

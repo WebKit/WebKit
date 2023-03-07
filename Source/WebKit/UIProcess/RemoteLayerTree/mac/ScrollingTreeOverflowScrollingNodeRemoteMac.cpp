@@ -63,11 +63,9 @@ void ScrollingTreeOverflowScrollingNodeRemoteMac::repositionRelatedLayers()
     m_delegate->updateScrollbarLayers();
 }
 
-WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
+void ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEventPhase(const PlatformWheelEventPhase phase)
 {
-    auto result = ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(wheelEvent, eventTargeting);
-    m_delegate->handleWheelEventForScrollbars(wheelEvent);
-    return result;
+    m_delegate->handleWheelEventPhase(phase);
 }
 
 bool ScrollingTreeOverflowScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)

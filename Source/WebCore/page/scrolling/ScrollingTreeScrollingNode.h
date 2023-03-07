@@ -67,7 +67,8 @@ public:
 
     virtual bool canHandleWheelEvent(const PlatformWheelEvent&, EventTargeting) const;
     virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting = EventTargeting::Propagate);
-
+    virtual void handleWheelEventPhase(const PlatformWheelEventPhase) { }
+    
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
     FloatPoint currentScrollOffset() const { return ScrollableArea::scrollOffsetFromPosition(m_currentScrollPosition, toFloatSize(m_scrollOrigin)); }
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }

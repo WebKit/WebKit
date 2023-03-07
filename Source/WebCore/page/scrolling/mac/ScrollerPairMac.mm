@@ -144,9 +144,9 @@ ScrollerPairMac::~ScrollerPairMac()
     [m_scrollerImpPair setDelegate:nil];
 }
 
-bool ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
+void ScrollerPairMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
-    switch (event.phase()) {
+    switch (phase) {
     case WebCore::PlatformWheelEventPhase::Began:
         [m_scrollerImpPair beginScrollGesture];
         break;
@@ -161,8 +161,6 @@ bool ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
     default:
         break;
     }
-    // FIXME: this needs to return whether the event was handled.
-    return true;
 }
 
 bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

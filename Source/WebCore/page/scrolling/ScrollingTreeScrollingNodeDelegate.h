@@ -47,7 +47,7 @@ public:
 
     virtual void updateFromStateNode(const ScrollingStateScrollingNode&) { }
     
-    virtual bool handleWheelEventForScrollbars(const PlatformWheelEvent&) { return false; }
+    virtual void handleWheelEventPhase(const PlatformWheelEventPhase) { }
     virtual bool handleMouseEventForScrollbars(const PlatformMouseEvent&) { return false; }
     
     virtual void updateScrollbarLayers() { }
