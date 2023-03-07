@@ -345,11 +345,122 @@ function test() {
         }
     });
 
+    function addTestCase({name, description, selector, authoredRulesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '#item'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refresh();
+
+                let flatInheritedRules = domNodeStyles.inheritedRules.flatMap((inheritedRuleInfo) => inheritedRuleInfo.matchedRules);
+
+                let authoredRules = [...domNodeStyles.matchedRules, ...flatInheritedRules].filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                await authoredRulesHandler(authoredRules, domNodeStyles);
+            },
+        });
+    }
+
+    function findRuleStyleInRules(rules, {selector, nestingRootSelector}) {
+        for (let rule of rules) {
+            if (rule.selectorText !== selector)
+                continue;
+
+            if (!nestingRootSelector)
+                return rule.style;
+
+            for (let grouping of rule.groupings) {
+                if (grouping.type !== WI.CSSGrouping.Type.StyleRule)
+                    continue;
+
+                if (grouping.text !== nestingRootSelector)
+                    continue;
+
+                return rule.style;
+            }
+        }
+        InspectorTest.fail(`No rule found with selector "${selector}" nested under selector "${nestingRootSelector}".`);
+    }
+
+    function getColorProperty(styleDeclaration) {
+        for (let property of styleDeclaration.properties) {
+            if (property.name === "color")
+                return property;
+        }
+        InspectorTest.fail("No color property found in style declaration.");
+    }
+
+    addTestCase({
+        name: "ModifyCSSProperty.EnsureNestedRulesEditingDoesNotTrampleInnerRules",
+        description: "",
+        selector: ".rule-f",
+        async authoredRulesHandler(authoredRules, domNodeStyles) {
+            let outerRuleStyle = findRuleStyleInRules(authoredRules, { selector: ".rule-f" });
+            InspectorTest.expectEqual(outerRuleStyle.text, "\n    color: red;\n\n    @media(min-width: 0px) {\n        &.explicit-nested-rule { \n            color: blue;\n        }\n\n        color: green;\n    }\n", "Outer style declaration text should contain the expected `color` property.");
+            let outerRuleStyleChangedPromise = domNodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+            getColorProperty(outerRuleStyle).rawValue = "magenta";
+            await outerRuleStyleChangedPromise;
+            InspectorTest.expectEqual(outerRuleStyle.text, "\n    color: magenta;\n\n    @media(min-width: 0px) {\n        &.explicit-nested-rule { \n            color: blue;\n        }\n\n        color: green;\n    }\n\n", "Outer style declaration text should contain the new `color` value.");
+
+            let innerImplicitRuleStyle = findRuleStyleInRules(authoredRules, { selector: "&", nestingRootSelector: ".rule-f" });
+            InspectorTest.expectEqual(innerImplicitRuleStyle.text, "\n        &.explicit-nested-rule { \n            color: blue;\n        }\n\n        color: green;\n    ", "Inner implicit style declaration text should contain the expected `color` property.");
+            let innerImplicitRuleStyleChangedPromise = domNodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+            getColorProperty(innerImplicitRuleStyle).rawValue = "yellow";
+            await innerImplicitRuleStyleChangedPromise;
+            InspectorTest.expectEqual(innerImplicitRuleStyle.text, "\n            color: yellow;\n        \n            &.explicit-nested-rule { \n            color: blue;\n        }\n\n        ", "Inner implicit style declaration text should contain the new `color` value.");
+
+            let innerExplicitRuleStyle = findRuleStyleInRules(authoredRules,  { selector: "&.explicit-nested-rule", nestingRootSelector: ".rule-f" });
+            InspectorTest.expectEqual(innerExplicitRuleStyle.text, " \n            color: blue;\n        ", "Inner explicit style declaration text should contain the expected `color` property.");
+            let innerExplicitRuleStyleChangedPromise = domNodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+            getColorProperty(innerExplicitRuleStyle).rawValue = "cyan";
+            await innerExplicitRuleStyleChangedPromise;
+            InspectorTest.expectEqual(innerExplicitRuleStyle.text, "\n            color: cyan;\n        \n        ", "Inner explicit style declaration text should contain the new `color` value.");
+        },
+    })
+
+    addTestCase({
+        name: "ModifyCSSProperty.EnsureNestedRulesEditingDoesNotTrampleInnerRulesOriginalExcludesNewlines",
+        description: "",
+        selector: ".rule-g",
+        async authoredRulesHandler(authoredRules, domNodeStyles) {
+            let outerRuleStyle = findRuleStyleInRules(authoredRules, { selector: ".rule-g" });
+            InspectorTest.expectEqual(outerRuleStyle.text, " color: red; @media(min-width: 0px) { &.explicit-nested-rule { color: blue; } color: green; } ", "Outer style declaration text should contain the expected `color` property.");
+            let outerRuleStyleChangedPromise = domNodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+            getColorProperty(outerRuleStyle).rawValue = "magenta";
+            await outerRuleStyleChangedPromise;
+            InspectorTest.expectEqual(outerRuleStyle.text, "\n    color: magenta;\n\n    @media(min-width: 0px) { &.explicit-nested-rule { color: blue; } color: green; }\n\n", "Outer style declaration text should contain the new `color` value.");
+
+            let innerImplicitRuleStyle = findRuleStyleInRules(authoredRules, { selector: "&", nestingRootSelector: ".rule-g" });
+            InspectorTest.expectEqual(innerImplicitRuleStyle.text, " &.explicit-nested-rule { color: blue; } color: green; ", "Inner implicit style declaration text should contain the expected `color` property.");
+            let innerImplicitRuleStyleChangedPromise = domNodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+            getColorProperty(innerImplicitRuleStyle).rawValue = "yellow";
+            await innerImplicitRuleStyleChangedPromise;
+            InspectorTest.expectEqual(innerImplicitRuleStyle.text, "\n            color: yellow;\n        \n            &.explicit-nested-rule { color: blue; }\n\n        ", "Inner implicit style declaration text should contain the new `color` value.");
+
+            let innerExplicitRuleStyle = findRuleStyleInRules(authoredRules,  { selector: "&.explicit-nested-rule", nestingRootSelector: ".rule-g" });
+            InspectorTest.expectEqual(innerExplicitRuleStyle.text, " color: blue; ", "Inner explicit style declaration text should contain the expected `color` property.");
+            let innerExplicitRuleStyleChangedPromise = domNodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+            getColorProperty(innerExplicitRuleStyle).rawValue = "cyan";
+            await innerExplicitRuleStyleChangedPromise;
+            InspectorTest.expectEqual(innerExplicitRuleStyle.text, "\n            color: cyan;\n        \n        ", "Inner explicit style declaration text should contain the new `color` value.");
+        },
+    })
+
     WI.domManager.requestDocument((documentNode) => {
         documentNode.querySelector("#x", (contentNodeId) => {
             if (contentNodeId) {
                 let domNode = WI.domManager.nodeForId(contentNodeId);
                 nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                let flatInheritedRules = nodeStyles.inheritedRules.flatMap((inheritedRuleInfo) => inheritedRuleInfo.matchedRules);
+                authoredRules = [...nodeStyles.matchedRules, ...flatInheritedRules].filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
 
                 if (nodeStyles.needsRefresh) {
                     nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
@@ -368,6 +479,6 @@ function test() {
 </head>
 <body onload="runTest()">
     <p>Testing that CSSStyleDeclaration update immediately after modifying its properties when it is not locked.</p>
-    <div id="x" class="test-node rule-a rule-b rule-c rule-d rule-e" style="width: 100px"></div>
+    <div id="x" class="test-node rule-a rule-b rule-c rule-d rule-e rule-f rule-g explicit-nested-rule" style="width: 100px"></div>
 </body>
 </html>
