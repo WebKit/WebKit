@@ -84,6 +84,29 @@ static bool shouldAllowElement(const Element& element)
     return true;
 }
 
+static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element& element)
+{
+    switch (AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr))) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::DisclosureTriangle:
+    case AccessibilityRole::ImageMapLink:
+    case AccessibilityRole::Link:
+    case AccessibilityRole::WebCoreLink:
+    case AccessibilityRole::ListBoxOption:
+    case AccessibilityRole::MenuButton:
+    case AccessibilityRole::MenuItem:
+    case AccessibilityRole::MenuItemCheckbox:
+    case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::RadioButton:
+    case AccessibilityRole::ToggleButton:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool shouldAllowNonPointerCursorForElement(const Element& element)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -97,12 +120,7 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
     if (is<SliderThumbElement>(element))
         return true;
 
-    auto role = [](const Element& element) -> AccessibilityRole {
-        return AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr));
-    };
-
-    auto elementRole = role(element);
-    if (elementRole == AccessibilityRole::Button || elementRole == AccessibilityRole::MenuItem)
+    if (shouldAllowAccessibilityRoleAsPointerCursorReplacement(element))
         return true;
 
     return false;

@@ -1,6 +1,8 @@
 This works like a button
+This works like a link
 Menu option 1
 Menu option 2
+Menu option 3
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -15,11 +17,23 @@ Menu option 2
 
       (interaction regions [
         (interaction
-            (rect (40,36) width=760 height=20)
+            (rect (0,0) width=800 height=20)
+)
+        (borderRadius 0.00),
+        (interaction
+            (rect (0,20) width=800 height=20)
 )
         (borderRadius 0.00),
         (interaction
             (rect (40,56) width=760 height=20)
+)
+        (borderRadius 0.00),
+        (interaction
+            (rect (40,76) width=760 height=20)
+)
+        (borderRadius 0.00),
+        (interaction
+            (rect (40,96) width=760 height=20)
 )
         (borderRadius 0.00)])
       )
