@@ -47,7 +47,16 @@ public:
     // Called by the ScrollableArea when the scroll offset changes.
     void offsetDidChange();
 
-    static int pixelsPerLineStep() { return 40; }
+    static int pixelsPerLineStep()
+    {
+#if PLATFORM(COCOA)
+        return 40;
+#else
+        // https://webkit.org/b/168300
+        return 120;
+#endif
+    }
+
     static float minFractionToStepWhenPaging() { return 0.8; }
     WEBCORE_EXPORT static int maxOverlapBetweenPages();
     static int pageStep(int viewWidthOrHeight, int contentWidthOrHeight) { return std::max(std::max<int>(lroundf(viewWidthOrHeight * Scrollbar::minFractionToStepWhenPaging()), lroundf(contentWidthOrHeight - Scrollbar::maxOverlapBetweenPages())), 1); }
