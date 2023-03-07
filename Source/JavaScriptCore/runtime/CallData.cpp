@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallDat
 {
     VM& vm = globalObject->vm();
     ASSERT(callData.type == CallData::Type::JS || callData.type == CallData::Type::Native);
-    return vm.interpreter.executeCall(globalObject, asObject(functionObject), callData, thisValue, args);
+    return vm.interpreter.executeCall(asObject(functionObject), callData, thisValue, args);
 }
 
 JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
