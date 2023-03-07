@@ -1106,6 +1106,16 @@ public:
     [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
 }
 
+- (BOOL)applicationChromeModeEnabled
+{
+    return NO;
+}
+
+- (void)setApplicationChromeModeEnabled:(BOOL)flag
+{
+    // This is still called. See rdar://106306112
+}
+
 - (BOOL)domTimersThrottlingEnabled
 {
     return [self _boolValueForKey:WebKitDOMTimersThrottlingEnabledPreferenceKey];
