@@ -137,6 +137,7 @@ private:
     void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
 
     void clearCGShadow();
+    void setCGStyle(const std::optional<GraphicsStyle>&);
 
     const RetainPtr<CGContextRef> m_cgContext;
     const RenderingMode m_renderingMode : 1; // NOLINT

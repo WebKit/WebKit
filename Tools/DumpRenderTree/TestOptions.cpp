@@ -77,6 +77,7 @@ const TestFeatures& TestOptions::defaults()
             { "EncryptedMediaAPIEnabled", true },
             { "FullScreenEnabled", true },
             { "GamepadsEnabled", true },
+            { "GraphicsContextFiltersEnabled", true },
             { "HiddenPageCSSAnimationSuspensionEnabled", false },
             { "InlineMediaPlaybackRequiresPlaysInlineAttribute", false },
             { "JavaScriptCanAccessClipboard", true },

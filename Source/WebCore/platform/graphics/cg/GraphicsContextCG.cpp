@@ -1122,8 +1122,10 @@ void GraphicsContextCG::clearCGShadow()
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 }
 
-static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
+void GraphicsContextCG::setCGStyle(const std::optional<GraphicsStyle>& style)
 {
+    auto context = platformContext();
+
     if (!style) {
         CGContextSetStyle(context, nullptr);
         return;
@@ -1132,7 +1134,8 @@ static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>&
     auto cgStyle = WTF::switchOn(*style,
         [&] (const GraphicsDropShadow& dropShadow) -> RetainPtr<CGStyleRef> {
 #if HAVE(CGSTYLE_CREATE_SHADOW2)
-            return adoptCF(CGStyleCreateShadow2(dropShadow.offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
+            auto offset = FloatSize { dropShadow.offset.width(), isCALayerContext() ? dropShadow.offset.height() : -dropShadow.offset.height() };
+            return adoptCF(CGStyleCreateShadow2(offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
 #else
             ASSERT_NOT_REACHED();
             UNUSED_PARAM(dropShadow);
@@ -1198,7 +1201,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::Style:
-            setCGStyle(context, state.style());
+            setCGStyle(state.style());
             break;
 
         case GraphicsContextState::Change::Alpha:
