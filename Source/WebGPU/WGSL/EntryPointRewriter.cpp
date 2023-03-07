@@ -29,6 +29,7 @@
 #include "AST.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "Types.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
 
@@ -53,8 +54,7 @@ private:
         Yes = 1,
     };
 
-    static AST::TypeName& getResolvedType(AST::TypeName&);
-
+    void collectStructs();
     void collectParameters();
     void checkReturnType();
     void constructInputStruct();
@@ -72,6 +72,7 @@ private:
     String m_structTypeName;
     String m_structParameterName;
     Reflection::EntryPointInformation m_information;
+    HashMap<String, AST::Structure*> m_structs;
 };
 
 EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, AST::Function& function, AST::StageAttribute::Stage stage)
@@ -92,21 +93,12 @@ EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, AST::Function
     }
 }
 
-AST::TypeName& EntryPointRewriter::getResolvedType(AST::TypeName& type)
-{
-    if (is<AST::NamedTypeName>(type)) {
-        if (auto* resolvedType = downcast<AST::NamedTypeName>(type).maybeResolvedReference())
-            return getResolvedType(*resolvedType);
-    }
-
-    return type;
-}
-
 void EntryPointRewriter::rewrite()
 {
     m_structTypeName = makeString("__", m_function.name(), "_inT");
     m_structParameterName = makeString("__", m_function.name(), "_in");
 
+    collectStructs();
     collectParameters();
     checkReturnType();
 
@@ -137,6 +129,12 @@ Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation(
     return WTFMove(m_information);
 }
 
+void EntryPointRewriter::collectStructs()
+{
+    for (auto& structure : m_shaderModule.structures())
+        m_structs.add(structure.name(), &structure);
+}
+
 void EntryPointRewriter::collectParameters()
 {
     while (m_function.parameters().size()) {
@@ -153,11 +151,12 @@ void EntryPointRewriter::checkReturnType()
 
     // FIXME: we might have to duplicate this struct if it has other uses
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
-        auto& returnType = getResolvedType(*maybeReturnType);
-        if (is<AST::StructTypeName>(returnType)) {
-            auto& structDecl = downcast<AST::StructTypeName>(returnType).structure();
-            ASSERT(structDecl.role() == AST::StructureRole::UserDefined);
-            structDecl.setRole(AST::StructureRole::VertexOutput);
+        if (auto* structType = std::get_if<Types::Struct>(maybeReturnType->resolvedType())) {
+            auto it = m_structs.find(structType->name);
+            ASSERT(it != m_structs.end());
+            auto& structure = *it->value;
+            ASSERT(structure.role() == AST::StructureRole::UserDefined);
+            structure.setRole(AST::StructureRole::VertexOutput);
         }
     }
 }
@@ -246,9 +245,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 
 void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 {
-    auto& type = getResolvedType(data.m_type);
-
-    if (is<AST::StructTypeName>(type)) {
+    if (auto* structType = std::get_if<Types::Struct>(data.m_type->resolvedType())) {
         m_materializations.append(makeUniqueRef<AST::VariableStatement>(
             SourceSpan::empty(),
             makeUniqueRef<AST::Variable>(
@@ -256,13 +253,15 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.m_name),
                 nullptr,
-                &type,
+                data.m_type.copyRef(),
                 nullptr,
                 AST::Attribute::List { }
             )
         ));
         path.append(data.m_name);
-        for (auto& member : downcast<AST::StructTypeName>(type).structure().members())
+        auto it = m_structs.find(structType->name);
+        ASSERT(it != m_structs.end());
+        for (auto& member : it->value->members())
             visit(path, MemberOrParameter { member.name(), member.type(), member.attributes() });
         path.removeLast();
         return;

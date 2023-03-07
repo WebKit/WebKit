@@ -371,11 +371,6 @@ void StringDumper::visit(ReferenceTypeName& type)
     m_out.print("&");
 }
 
-void StringDumper::visit(StructTypeName& type)
-{
-    m_out.print(type.structure().name());
-}
-
 void StringDumper::visit(Parameter& parameter)
 {
     m_out.print(m_indent);

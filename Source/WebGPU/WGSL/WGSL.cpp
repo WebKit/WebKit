@@ -33,7 +33,6 @@
 #include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
 #include "PhaseTimer.h"
-#include "ResolveTypeReferences.h"
 #include "TypeCheck.h"
 #include "WGSLShaderModule.h"
 
@@ -103,7 +102,6 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, Pipeli
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
-        RUN_PASS(resolveTypeReferences, ast);
         RUN_PASS(rewriteEntryPoints, callGraph, result);
         RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
         RUN_PASS(mangleNames, callGraph, result);
