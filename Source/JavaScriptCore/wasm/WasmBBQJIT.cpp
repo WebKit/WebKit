@@ -1629,7 +1629,13 @@ public:
         case Wasm::GlobalInformation::BindingMode::Portable:
             ASSERT(global.mutability == Wasm::Mutability::Mutable);
             m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, offset), m_scratchGPR);
-            result = emitLoadOp(loadOpForTypeKind(type.kind), Location::fromGPR(m_scratchGPR), 0);
+            if (type.kind == TypeKind::V128) {
+                // Vectors aren't handled by the normal load-op helper, but since we know the offset is zero
+                // we don't need the song and dance of addSIMDLoad.
+                result = topValue(type.kind);
+                m_jit.loadVector(Address(m_scratchGPR), loadIfNecessary(result).asFPR());
+            } else
+                result = emitLoadOp(loadOpForTypeKind(type.kind), Location::fromGPR(m_scratchGPR), 0);
             break;
         }
 
@@ -1727,7 +1733,12 @@ public:
         case Wasm::GlobalInformation::BindingMode::Portable: {
             ASSERT(global.mutability == Wasm::Mutability::Mutable);
             m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, offset), m_scratchGPR);
-            emitStoreOp(storeOpForTypeKind(type.kind), Location::fromGPR(m_scratchGPR), value, 0);
+            if (type.kind == TypeKind::V128) {
+                // Vectors aren't handled by the normal load-op helper, but since we know the offset is zero
+                // we don't need the song and dance of addSIMDStore.
+                m_jit.storeVector(loadIfNecessary(value).asFPR(), Address(m_scratchGPR));
+            } else
+                emitStoreOp(storeOpForTypeKind(type.kind), Location::fromGPR(m_scratchGPR), value, 0);
             consume(value);
             if (isRefType(type)) {
                 m_jit.loadPtr(Address(m_scratchGPR, Wasm::Global::offsetOfOwner() - Wasm::Global::offsetOfValue()), m_scratchGPR);
@@ -8423,7 +8434,6 @@ private:
 
     void emitLoad(Value src, Location dst)
     {
-
         ASSERT(dst.isRegister());
         Location srcLocation = locationOf(src);
         ASSERT(srcLocation.isMemory());
