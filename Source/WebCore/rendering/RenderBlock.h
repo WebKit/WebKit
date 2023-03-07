@@ -420,6 +420,8 @@ protected:
     void estimateFragmentRangeForBoxChild(const RenderBox&) const;
     bool updateFragmentRangeForBoxChild(const RenderBox&) const;
 
+    bool childIsFloatWithTrimmedMargin(const RenderBox&) const;
+
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox&);
 
     void preparePaginationBeforeBlockLayout(bool&);

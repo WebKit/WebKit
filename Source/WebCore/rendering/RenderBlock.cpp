@@ -837,6 +837,23 @@ void RenderBlock::setLogicalTopForChild(RenderBox& child, LayoutUnit logicalTop,
     }
 }
 
+bool RenderBlock::childIsFloatWithTrimmedMargin(const RenderBox& child) const
+{
+    if (!child.isFloating() || child.needsLayout())
+        return false;
+
+    // A child's margin should be considered trimmed if:
+    // 1.) The computed value for the margin in its m_marginBox is 0
+    // 2.) The respective margin's value in its style is auto OR
+    //     the computed value for the margin comes out to something other than 0
+    if (RenderStyle::usedFloat(child) == UsedFloat::Left) {
+        auto marginStart = child.style().marginStart();
+        return style().marginTrim().contains(MarginTrimType::InlineStart) && !marginStartForChild(child) && (marginStart.isAuto() || minimumValueForLength(marginStart, availableWidth()));
+    }
+    auto marginEnd = child.style().marginEnd();
+    return style().marginTrim().contains(MarginTrimType::InlineEnd) && !marginEndForChild(child) && (marginEnd.isAuto() || minimumValueForLength(marginEnd, availableWidth()));
+}
+
 void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox& child)
 {
     if (child.isOutOfFlowPositioned())
@@ -844,7 +861,10 @@ void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, R
 
     // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
     // an auto value. Add a method to determine this, so that we can avoid the relayout.
-    if (relayoutChildren || (child.hasRelativeLogicalHeight() && !isRenderView()))
+    // A float with a trimmed margin will also need to perform layout in order to set its margins (and ultimately the
+    // FloatingObject's logical width) to the correct value. If we do not layout and set the margins again then the
+    // float could get set an incorrect position in RenderBlockFlow::computeLogicalLocationForFloat. 
+    if (relayoutChildren || (child.hasRelativeLogicalHeight() && !isRenderView()) || childIsFloatWithTrimmedMargin(child))
         child.setChildNeedsLayout(MarkOnlyThis);
 
     // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
