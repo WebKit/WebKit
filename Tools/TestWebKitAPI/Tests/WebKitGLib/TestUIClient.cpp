@@ -247,9 +247,13 @@ public:
         return TRUE;
     }
 
-    static void permissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* javascriptResult, UIClientTest* test)
+#if ENABLE(2022_GLIB_API)
+    static void permissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, JSCValue* result, UIClientTest* test)
+#else
+    static void permissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* result, UIClientTest* test)
+#endif
     {
-        test->m_permissionResult.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+        test->m_permissionResult.reset(WebViewTest::javascriptResultToCString(result));
         g_main_loop_quit(test->m_mainLoop);
     }
 
@@ -274,9 +278,13 @@ public:
         return TRUE;
     }
 
-    static void queryPermissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* javascriptResult, UIClientTest* test)
+#if ENABLE(2022_GLIB_API)
+    static void queryPermissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, JSCValue* result, UIClientTest* test)
+#else
+    static void queryPermissionResultMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* result, UIClientTest* test)
+#endif
     {
-        test->m_queryPermissionResult.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+        test->m_queryPermissionResult.reset(WebViewTest::javascriptResultToCString(result));
         g_main_loop_quit(test->m_mainLoop);
     }
 

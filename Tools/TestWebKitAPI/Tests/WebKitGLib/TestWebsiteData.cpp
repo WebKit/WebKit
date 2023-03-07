@@ -873,11 +873,9 @@ static void testWebViewHandleCorruptedLocalStorage(WebsiteDataTest* test, gconst
     const char html[] = "<html><script>let foo = (window.localStorage.length ? window.localStorage.getItem('item'):''); window.localStorage.setItem('item','value');</script></html>";
     auto waitForFooChanged = [&test](WebKitWebView* webView) {
         GUniqueOutPtr<GError> error;
-        JSCValue* jscvalue;
-        WebKitJavascriptResult* result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr(), webView);
+        JSCValue* value = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr(), webView);
         g_assert_no_error(error.get());
-        jscvalue = webkit_javascript_result_get_js_value(result);
-        GUniquePtr<char> fooValue(jsc_value_to_string(jscvalue));
+        GUniquePtr<char> fooValue(jsc_value_to_string(value));
         return fooValue;
     };
 

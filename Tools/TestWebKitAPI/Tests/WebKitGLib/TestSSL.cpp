@@ -486,9 +486,13 @@ public:
         static_cast<WebSocketTest*>(userData)->m_events |= WebSocketTest::EventFlags::DidServerCompleteHandshake;
     }
 
-    static void webSocketTestResultCallback(WebKitUserContentManager*, WebKitJavascriptResult* javascriptResult, WebSocketTest* test)
+#if ENABLE(2022_GLIB_API)
+    static void webSocketTestResultCallback(WebKitUserContentManager*, JSCValue* result, WebSocketTest* test)
+#else
+    static void webSocketTestResultCallback(WebKitUserContentManager*, WebKitJavascriptResult* result, WebSocketTest* test)
+#endif
     {
-        GUniquePtr<char> event(WebViewTest::javascriptResultToCString(javascriptResult));
+        GUniquePtr<char> event(WebViewTest::javascriptResultToCString(result));
         if (!g_strcmp0(event.get(), "open"))
             test->m_events |= WebSocketTest::EventFlags::DidOpen;
         else if (!g_strcmp0(event.get(), "close"))

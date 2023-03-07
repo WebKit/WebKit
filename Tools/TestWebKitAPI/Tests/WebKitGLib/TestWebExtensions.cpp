@@ -195,9 +195,9 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     test->runJavaScriptAndWaitUntilFinished(mainWorldScript, 0);
     g_assert_cmpstr(scriptDialogResult.get(), ==, "Main World");
 
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
-    g_assert_nonnull(javascriptResult);
-    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
+    g_assert_nonnull(value);
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 
     static const char* isolatedWorldScript =
@@ -216,9 +216,9 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(scriptDialogResult.get(), ==, "Isolated World");
 
     // Check that 'top.foo' defined in main world is not visible in isolated world.
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
-    g_assert_nonnull(javascriptResult);
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
+    g_assert_nonnull(value);
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(valueString.get(), ==, "undefined");
 
     g_signal_handler_disconnect(test->m_webView, scriptDialogID);
@@ -765,16 +765,16 @@ static void testWebExtensionWindowObjectCleared(UserMessageTest* test, gconstpoi
     g_assert_cmpuint(messages.size(), ==, 2);
 
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.echo('Foo');", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("window.echo('Foo');", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(valueString.get(), ==, "Foo");
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("var f = new GFile('.'); f.path();", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("var f = new GFile('.'); f.path();", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
     GUniquePtr<char> currentDirectory(g_get_current_dir());
     g_assert_cmpstr(valueString.get(), ==, currentDirectory.get());
 }

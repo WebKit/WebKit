@@ -3938,7 +3938,7 @@ WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView
  * Get the global JavaScript context used by @web_view to deserialize the
  * result values of scripts executed with webkit_web_view_run_javascript().
  *
- * Returns: the <function>JSGlobalContextRef</function> used by @web_view to deserialize
+ * Returns: the JSGlobalContextRef used by @web_view to deserialize
  *    the result values of scripts.
  *
  * Deprecated: 2.22: Use jsc_value_get_context() instead.
@@ -3955,10 +3955,17 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
 }
 #endif
 
-static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, RunJavaScriptParameters&& params, const char* worldName, GRefPtr<GTask>&& task)
+enum class RunJavascriptReturnType {
+    JSCValue,
+#if !ENABLE(2022_GLIB_API)
+    WebKitJavascriptResult
+#endif
+};
+
+static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, RunJavaScriptParameters&& params, const char* worldName, RunJavascriptReturnType returnType, GRefPtr<GTask>&& task)
 {
     auto world = worldName ? API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName)) : Ref<API::ContentWorld> { API::ContentWorld::pageContentWorld() };
-    getPage(webView).runJavaScriptInFrameInScriptWorld(WTFMove(params), std::nullopt, world.get(), [task = WTFMove(task)] (auto&& result) {
+    getPage(webView).runJavaScriptInFrameInScriptWorld(WTFMove(params), std::nullopt, world.get(), [task = WTFMove(task), returnType] (auto&& result) {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 
@@ -3966,8 +3973,20 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, RunJava
             if (!result.value())
                 g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_RESULT, "Unsupported result type");
             else {
-                g_task_return_pointer(task.get(), webkitJavascriptResultCreate(result.value()->internalRepresentation()),
-                    reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
+#if ENABLE(2022_GLIB_API)
+                ASSERT_UNUSED(returnType, returnType == RunJavascriptReturnType::JSCValue);
+                g_task_return_pointer(task.get(), API::SerializedScriptValue::deserialize(result.value()->internalRepresentation()).leakRef(),
+                    reinterpret_cast<GDestroyNotify>(g_object_unref));
+#else
+                if (returnType == RunJavascriptReturnType::JSCValue) {
+                    g_task_return_pointer(task.get(), API::SerializedScriptValue::deserialize(result.value()->internalRepresentation()).leakRef(),
+                        reinterpret_cast<GDestroyNotify>(g_object_unref));
+                } else {
+                    ASSERT(returnType == RunJavascriptReturnType::WebKitJavascriptResult);
+                    g_task_return_pointer(task.get(), webkitJavascriptResultCreate(result.value()->internalRepresentation()),
+                        reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
+                }
+#endif
             }
         } else {
             ExceptionDetails exceptionDetails = WTFMove(result.error());
@@ -3994,7 +4013,16 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(script);
 
     RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::No };
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::JSCValue, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+}
+
+static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, const char* script, gssize length, const char* worldName, const char* sourceURI, RunJavascriptReturnType returnType, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(script);
+
+    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes };
+    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
 /**
@@ -4029,18 +4057,16 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
  *                               GAsyncResult *result,
  *                               gpointer      user_data)
  * {
- *     WebKitJavascriptResult *js_result;
  *     JSCValue               *value;
  *     GError                 *error = NULL;
  *
- *     js_result = webkit_web_view_evaluate_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
- *     if (!js_result) {
+ *     value = webkit_web_view_evaluate_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     if (!value) {
  *         g_warning ("Error running javascript: %s", error->message);
  *         g_error_free (error);
  *         return;
  *     }
  *
- *     value = webkit_javascript_result_get_js_value (js_result);
  *     if (jsc_value_is_string (value)) {
  *         gchar        *str_value = jsc_value_to_string (value);
  *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
@@ -4069,11 +4095,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
  */
 void webkit_web_view_evaluate_javascript(WebKitWebView* webView, const char* script, gssize length, const char* worldName, const char* sourceURI, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(script);
-
-    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes };
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+    webkitWebViewEvaluateJavascriptInternal(webView, script, length, worldName, sourceURI, RunJavascriptReturnType::JSCValue, cancellable, callback, userData);
 }
 
 /**
@@ -4084,17 +4106,17 @@ void webkit_web_view_evaluate_javascript(WebKitWebView* webView, const char* scr
  *
  * Finish an asynchronous operation started with webkit_web_view_evaluate_javascript().
  *
- * Returns: (transfer full): a #WebKitJavascriptResult with the result of the last executed statement in script
+ * Returns: (transfer full): a #JSCValue with the result of the last executed statement in script
  *    or %NULL in case of error
  *
  * Since: 2.40
  */
-WebKitJavascriptResult* webkit_web_view_evaluate_javascript_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+JSCValue* webkit_web_view_evaluate_javascript_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
 
-    return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
+    return static_cast<JSCValue*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 static ArgumentWireBytesMap parseAsyncFunctionArguments(GVariant* arguments, GError** error)
@@ -4120,6 +4142,23 @@ static ArgumentWireBytesMap parseAsyncFunctionArguments(GVariant* arguments, GEr
     }
 
     return argumentsMap;
+}
+
+static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webView, const char* body, gssize length, GVariant* arguments, const char* worldName, const char* sourceURI, RunJavascriptReturnType returnType, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(body);
+    g_return_if_fail(!arguments || g_variant_is_of_type(arguments, G_VARIANT_TYPE("a{sv}")));
+
+    GError* error = nullptr;
+    auto argumentsMap = parseAsyncFunctionArguments(arguments, &error);
+    if (error) {
+        g_task_report_error(webView, callback, userData, nullptr, error);
+        return;
+    }
+
+    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes };
+    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
 /**
@@ -4157,18 +4196,16 @@ static ArgumentWireBytesMap parseAsyncFunctionArguments(GVariant* arguments, GEr
  *                               GAsyncResult *result,
  *                               gpointer      user_data)
  * {
- *     WebKitJavascriptResult *js_result;
  *     JSCValue               *value;
  *     GError                 *error = NULL;
  *
- *     js_result = webkit_web_view_call_async_javascript_function_finish (WEBKIT_WEB_VIEW (object), result, &error);
- *     if (!js_result) {
+ *     value = webkit_web_view_call_async_javascript_function_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     if (!value) {
  *         g_warning ("Error running javascript: %s", error->message);
  *         g_error_free (error);
  *         return;
  *     }
  *
- *     value = webkit_javascript_result_get_js_value (js_result);
  *     if (jsc_value_is_number (value)) {
  *         gint32        int_value = jsc_value_to_string (value);
  *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
@@ -4199,19 +4236,7 @@ static ArgumentWireBytesMap parseAsyncFunctionArguments(GVariant* arguments, GEr
  */
 void webkit_web_view_call_async_javascript_function(WebKitWebView* webView, const char* body, gssize length, GVariant* arguments, const char* worldName, const char* sourceURI, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(body);
-    g_return_if_fail(!arguments || g_variant_is_of_type(arguments, G_VARIANT_TYPE("a{sv}")));
-
-    GError* error = nullptr;
-    auto argumentsMap = parseAsyncFunctionArguments(arguments, &error);
-    if (error) {
-        g_task_report_error(webView, callback, userData, nullptr, error);
-        return;
-    }
-
-    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes };
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
+    webkitWebViewCallAsyncJavascriptFunctionInternal(webView, body, length, arguments, worldName, sourceURI, RunJavascriptReturnType::JSCValue, cancellable, callback, userData);
 }
 
 /**
@@ -4222,17 +4247,17 @@ void webkit_web_view_call_async_javascript_function(WebKitWebView* webView, cons
  *
  * Finish an asynchronous operation started with webkit_web_view_call_async_javascript_function().
  *
- * Returns: (transfer full): a #WebKitJavascriptResult with the return value of the async function
+ * Returns: (transfer full): a #JSCValue with the return value of the async function
  *    or %NULL in case of error
  *
  * Since: 2.40
  */
-WebKitJavascriptResult* webkit_web_view_call_async_javascript_function_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+JSCValue* webkit_web_view_call_async_javascript_function_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
     g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
 
-    return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
+    return static_cast<JSCValue*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 #if !ENABLE(2022_GLIB_API)
@@ -4246,8 +4271,7 @@ WebKitJavascriptResult* webkit_web_view_call_async_javascript_function_finish(We
  *
  * Asynchronously run @script in the context of the current page in @web_view.
  *
- * If
- * WebKitSettings:enable-javascript is FALSE, this method will do nothing.
+ * If WebKitSettings:enable-javascript is FALSE, this method will do nothing.
  *
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_view_run_javascript_finish() to get the result of the operation.
@@ -4256,7 +4280,7 @@ WebKitJavascriptResult* webkit_web_view_call_async_javascript_function_finish(We
  */
 void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
-    webkit_web_view_evaluate_javascript(webView, script, -1, nullptr, nullptr, cancellable, callback, userData);
+    webkitWebViewEvaluateJavascriptInternal(webView, script, -1, nullptr, nullptr, RunJavascriptReturnType::WebKitJavascriptResult, cancellable, callback, userData);
 }
 
 /**
@@ -4350,7 +4374,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
 {
     g_return_if_fail(worldName);
 
-    webkit_web_view_evaluate_javascript(webView, script, -1, worldName, nullptr, cancellable, callback, userData);
+    webkitWebViewEvaluateJavascriptInternal(webView, script, -1, worldName, nullptr, RunJavascriptReturnType::WebKitJavascriptResult, cancellable, callback, userData);
 }
 
 /**
@@ -4424,7 +4448,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
  */
 void webkit_web_view_run_async_javascript_function_in_world(WebKitWebView* webView, const gchar* body, GVariant* arguments, const char* worldName, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
-    webkit_web_view_call_async_javascript_function(webView, body, -1, arguments, worldName, nullptr, cancellable, callback, userData);
+    webkitWebViewCallAsyncJavascriptFunctionInternal(webView, body, -1, arguments, worldName, nullptr, RunJavascriptReturnType::WebKitJavascriptResult, cancellable, callback, userData);
 }
 
 /**
@@ -4464,7 +4488,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     RunJavaScriptParameters params = { String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes };
-    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, WTFMove(task));
+    webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::WebKitJavascriptResult, WTFMove(task));
 }
 
 /**

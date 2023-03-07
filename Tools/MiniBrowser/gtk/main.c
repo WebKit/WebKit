@@ -357,9 +357,13 @@ static void websiteDataClearedCallback(WebKitWebsiteDataManager *manager, GAsync
         webkit_web_view_reload(webkit_uri_scheme_request_get_web_view(dataRequest->request));
 }
 
-static void aboutDataScriptMessageReceivedCallback(WebKitUserContentManager *userContentManager, WebKitJavascriptResult *message, WebKitWebsiteDataManager *manager)
+static void aboutDataScriptMessageReceivedCallback(WebKitUserContentManager *userContentManager, gpointer message, WebKitWebsiteDataManager *manager)
 {
+#if GTK_CHECK_VERSION(3, 98, 0)
+    char *messageString = jsc_value_to_string(message);
+#else
     char *messageString = jsc_value_to_string(webkit_javascript_result_get_js_value(message));
+#endif
     char **tokens = g_strsplit(messageString, ":", 3);
     g_free(messageString);
 

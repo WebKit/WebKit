@@ -406,8 +406,8 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
 {
     GError* error { nullptr };
     std::unique_ptr<JavascriptCallbackData> data(reinterpret_cast<JavascriptCallbackData*>(userData));
-    WebKitJavascriptResult* jsResult = webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
-    if (!jsResult) {
+    JSCValue* value = webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
+    if (!value) {
         qWarning("Error running javascript: %s", error->message);
         g_error_free(error);
         return;
@@ -417,12 +417,11 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
         QQmlEngine* engine = qmlEngine(data->object.data());
         if (!engine) {
             qWarning("No JavaScript engine, unable to handle JavaScript callback!");
-            webkit_javascript_result_unref(jsResult);
+            g_object_unref(value);
             return;
         }
 
         QJSValueList args;
-        JSCValue* value = webkit_javascript_result_get_js_value(jsResult);
         QVariant variant;
         // FIXME: Handle more value types?
         if (jsc_value_is_string(value)) {
@@ -439,7 +438,7 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
         args.append(engine->toScriptValue(variant));
         data->callback.call(args);
     }
-    webkit_javascript_result_unref(jsResult);
+    g_object_unref(value);
 }
 
 /*!
