@@ -40,6 +40,7 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include <wtf/HexNumber.h>

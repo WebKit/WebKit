@@ -70,6 +70,7 @@
 #include "RenderListMarker.h"
 #endif
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderStyle.h"
 #include "RenderTableCaption.h"
@@ -639,9 +640,9 @@ static RenderLayer* findNextLayer(const RenderElement& currRenderer, const Rende
 
 static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& renderer, const RenderLayer& parentLayer)
 {
-    ASSERT_IMPLIES(isInTopLayerOrBackdrop(renderer.style(), renderer.element()), renderer.hasLayer());
+    ASSERT_IMPLIES(isInTopLayerOrStyleTypeIsBackdrop(renderer.style().styleType(), renderer.element()), renderer.hasLayer());
 
-    if (is<RenderLayerModelObject>(renderer) && isInTopLayerOrBackdrop(renderer.style(), renderer.element())) {
+    if (is<RenderLayerModelObject>(renderer) && isInTopLayerOrStyleTypeIsBackdrop(renderer.style().styleType(), renderer.element())) {
         auto& layerModelObject = downcast<RenderLayerModelObject>(renderer);
         ASSERT(layerModelObject.hasLayer());
         auto topLayerLayers = RenderLayer::topLayerRenderLayers(renderer.view());
@@ -659,7 +660,7 @@ static void addLayers(const RenderElement& insertedRenderer, RenderElement& curr
 {
     if (currentRenderer.hasLayer()) {
         auto* layerToUse = &parentLayer;
-        if (isInTopLayerOrBackdrop(currentRenderer.style(), currentRenderer.element())) {
+        if (isInTopLayerOrStyleTypeIsBackdrop(currentRenderer.style().styleType(), currentRenderer.element())) {
             // The special handling of a toplayer/backdrop content may result in trying to insert the associated
             // layer twice as we connect subtrees.
             if (auto* parentLayer = downcast<RenderLayerModelObject>(currentRenderer).layer()->parent()) {
@@ -695,7 +696,7 @@ void RenderElement::removeLayers()
 void RenderElement::moveLayers(RenderLayer& newParent)
 {
     if (hasLayer()) {
-        if (isInTopLayerOrBackdrop(style(), element()))
+        if (isInTopLayerOrStyleTypeIsBackdrop(style().styleType(), element()))
             return;
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         auto* layerParent = layer->parent();
@@ -711,9 +712,9 @@ void RenderElement::moveLayers(RenderLayer& newParent)
 
 RenderLayer* RenderElement::layerParent() const
 {
-    ASSERT_IMPLIES(isInTopLayerOrBackdrop(style(), element()), hasLayer());
+    ASSERT_IMPLIES(isInTopLayerOrStyleTypeIsBackdrop(style().styleType(), element()), hasLayer());
 
-    if (hasLayer() && isInTopLayerOrBackdrop(style(), element()))
+    if (hasLayer() && isInTopLayerOrStyleTypeIsBackdrop(style().styleType(), element()))
         return view().layer();
 
     return parent()->enclosingLayer();

@@ -31,6 +31,7 @@
 #include "HitTestResult.h"
 #include "PaintInfo.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"

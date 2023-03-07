@@ -39,6 +39,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 

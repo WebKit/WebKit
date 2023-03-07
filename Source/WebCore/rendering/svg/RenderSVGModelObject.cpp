@@ -36,6 +36,7 @@
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"

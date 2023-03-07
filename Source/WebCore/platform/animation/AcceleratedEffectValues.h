@@ -32,7 +32,6 @@
 #include "LengthPoint.h"
 #include "OffsetRotation.h"
 #include "PathOperation.h"
-#include "RenderStyle.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "TransformOperations.h"
@@ -43,6 +42,7 @@ namespace WebCore {
 
 class IntRect;
 class Path;
+class RenderStyle;
 
 struct AcceleratedEffectValues {
     float opacity { 1 };

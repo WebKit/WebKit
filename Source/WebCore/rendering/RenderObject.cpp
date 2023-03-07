@@ -52,6 +52,7 @@
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderCounter.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
@@ -63,6 +64,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderObjectInlines.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
@@ -710,7 +712,7 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
         auto containingBlockForFixedPosition = [&] () -> RenderBlock* {
             auto* ancestor = renderer.parent();
             while (ancestor && !ancestor->canContainFixedPositionObjects()) {
-                if (isInTopLayerOrBackdrop(ancestor->style(), ancestor->element()))
+                if (isInTopLayerOrStyleTypeIsBackdrop(ancestor->style().styleType(), ancestor->element()))
                     return &renderer.view();
                 ancestor = ancestor->parent();
             }
@@ -729,7 +731,7 @@ RenderBlock* RenderObject::containingBlock() const
         return containingBlockForPositionType(PositionType::Static, *this);
 
     auto containingBlockForRenderer = [](const auto& renderer) -> RenderBlock* {
-        if (isInTopLayerOrBackdrop(renderer.style(), renderer.element()))
+        if (isInTopLayerOrStyleTypeIsBackdrop(renderer.style().styleType(), renderer.element()))
             return &renderer.view();
         return containingBlockForPositionType(renderer.style().position(), renderer);
     };
@@ -1654,7 +1656,7 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
             }
         }
     };
-    if (isInTopLayerOrBackdrop(renderer.style(), downcast<RenderElement>(renderer).element())) {
+    if (isInTopLayerOrStyleTypeIsBackdrop(renderer.style().styleType(), downcast<RenderElement>(renderer).element())) {
         updateRepaintContainerSkippedFlagIfApplicable();
         return &renderer.view();
     }
@@ -1670,7 +1672,7 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
         return parent;
     }
     for (; parent && !parent->canContainFixedPositionObjects(); parent = parent->parent()) {
-        if (isInTopLayerOrBackdrop(parent->style(), parent->element())) {
+        if (isInTopLayerOrStyleTypeIsBackdrop(parent->style().styleType(), parent->element())) {
             updateRepaintContainerSkippedFlagIfApplicable();
             return &renderer.view();
         }

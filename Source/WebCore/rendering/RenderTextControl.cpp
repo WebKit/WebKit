@@ -24,6 +24,7 @@
 
 #include "HTMLTextFormControlElement.h"
 #include "HitTestResult.h"
+#include "RenderElementInlines.h"
 #include "RenderText.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"

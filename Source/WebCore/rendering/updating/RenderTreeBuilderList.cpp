@@ -29,6 +29,7 @@
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectInlines.h"
 #include "RenderRuby.h"
 #include "RenderTable.h"
 

@@ -91,6 +91,7 @@
 #include "PlatformMouseEvent.h"
 #include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
@@ -101,9 +102,11 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerFilters.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectInlines.h"
 #include "RenderReplica.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGHiddenContainer.h"
@@ -3915,7 +3918,7 @@ Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(const RenderView& renderV
 
 bool RenderLayer::establishesTopLayer() const
 {
-    return isInTopLayerOrBackdrop(renderer().style(), renderer().element());
+    return isInTopLayerOrStyleTypeIsBackdrop(renderer().style().styleType(), renderer().element());
 }
 
 void RenderLayer::establishesTopLayerWillChange()

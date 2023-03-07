@@ -38,7 +38,7 @@
 #include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "ElementIterator.h"
-#include "ElementRareData.h"
+#include "ElementRareDataInlines.h"
 #include "ElementTraversal.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"

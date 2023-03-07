@@ -55,7 +55,7 @@
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderBlockFlow.h>
 #import <WebCore/RenderBox.h>
-#import <WebCore/RenderObject.h>
+#import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderStyleConstants.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/RoundedRect.h>

@@ -27,6 +27,7 @@
 #include "RenderTreeBuilderRuby.h"
 
 #include "RenderAncestorIterator.h"
+#include "RenderObjectInlines.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"

@@ -52,6 +52,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectInlines.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"

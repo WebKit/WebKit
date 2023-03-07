@@ -45,6 +45,7 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
+#include "RenderObjectInlines.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyText.h"
 #include "RenderSVGText.h"

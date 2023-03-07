@@ -46,6 +46,7 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderObjectInlines.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
 #include <wtf/NeverDestroyed.h>

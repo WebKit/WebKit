@@ -48,6 +48,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"

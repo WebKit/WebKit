@@ -25,6 +25,7 @@
 #include "HitTestRequest.h"
 #include "LengthFunctions.h"
 #include "RenderObject.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
@@ -98,14 +99,14 @@ public:
     bool canContainAbsolutelyPositionedObjects() const;
     bool canEstablishContainingBlockWithTransform() const;
 
-    bool shouldApplyLayoutContainment() const;
-    bool shouldApplySizeContainment() const;
-    bool shouldApplyInlineSizeContainment() const;
-    bool shouldApplySizeOrInlineSizeContainment() const;
-    bool shouldApplyStyleContainment() const;
-    bool shouldApplyPaintContainment() const;
-    bool shouldApplyLayoutOrPaintContainment() const;
-    bool shouldApplyAnyContainment() const;
+    inline bool shouldApplyLayoutContainment() const;
+    inline bool shouldApplySizeContainment() const;
+    inline bool shouldApplyInlineSizeContainment() const;
+    inline bool shouldApplySizeOrInlineSizeContainment() const;
+    inline bool shouldApplyStyleContainment() const;
+    inline bool shouldApplyPaintContainment() const;
+    inline bool shouldApplyLayoutOrPaintContainment() const;
+    inline bool shouldApplyAnyContainment() const;
 
     Color selectionColor(CSSPropertyID) const;
     std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
@@ -157,10 +158,6 @@ public:
 
     /* This function performs a layout only if one is needed. */
     void layoutIfNeeded() { if (needsLayout()) layout(); }
-
-    // Updates only the local style ptr of the object. Does not update the state of the object,
-    // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(RenderStyle&& style) { m_style = WTFMove(style); }
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
@@ -365,7 +362,7 @@ protected:
     bool isVisibleInViewport() const;
 
     bool shouldApplyLayoutOrPaintContainment(bool) const;
-    bool shouldApplySizeOrStyleContainment(bool) const;
+    inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
@@ -488,78 +485,9 @@ inline Element* RenderElement::generatingElement() const
     return downcast<Element>(RenderObject::generatingNode());
 }
 
-inline bool RenderElement::canContainFixedPositionObjects() const
-{
-    return isRenderView()
-        || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
-        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned()) // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
-        || isSVGForeignObjectOrLegacySVGForeignObject()
-        || shouldApplyLayoutOrPaintContainment();
-}
-
-inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
-{
-    return isRenderView()
-        || style().position() != PositionType::Static
-        || (canEstablishContainingBlockWithTransform() && hasTransformRelatedProperty())
-        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned()) // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
-        || isSVGForeignObjectOrLegacySVGForeignObject()
-        || shouldApplyLayoutOrPaintContainment();
-}
-
 inline bool RenderElement::canEstablishContainingBlockWithTransform() const
 {
     return isRenderBlock() || (isTablePart() && !isRenderTableCol());
-}
-
-inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAccordingToStyle) const
-{
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isRenderBlockFlow());
-}
-
-inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
-{
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRubyText() && (!isTablePart() || isTableCaption()) && !isTable();
-}
-
-inline bool RenderElement::shouldApplyLayoutContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsLayout() || style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyPaintContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsPaint() || style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint() || style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplySizeContainment() const
-{
-    return shouldApplySizeOrStyleContainment(style().containsSize() || style().contentVisibility() == ContentVisibility::Hidden);
-}
-
-inline bool RenderElement::shouldApplyInlineSizeContainment() const
-{
-    return shouldApplySizeOrStyleContainment(style().containsInlineSize());
-}
-
-inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
-{
-    return shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize() || style().contentVisibility() == ContentVisibility::Hidden);
-}
-
-inline bool RenderElement::shouldApplyStyleContainment() const
-{
-    return shouldApplySizeOrStyleContainment(style().containsStyle() || style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyAnyContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize() || style().containsStyle());
 }
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)

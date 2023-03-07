@@ -37,6 +37,7 @@
 #include "HTMLOptionElement.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
+#include "PopoverData.h"
 #include "SelectorChecker.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

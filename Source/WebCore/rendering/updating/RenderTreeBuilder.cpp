@@ -45,6 +45,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"

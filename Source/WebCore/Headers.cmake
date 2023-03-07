@@ -2080,6 +2080,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderBox.h
     rendering/RenderBoxModelObject.h
     rendering/RenderElement.h
+    rendering/RenderElementInlines.h
     rendering/RenderEmbeddedObject.h
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
@@ -2090,6 +2091,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderLayer.h
     rendering/RenderLayerBacking.h
     rendering/RenderLayerCompositor.h
+    rendering/RenderLayerInlines.h
     rendering/RenderLayerModelObject.h
     rendering/RenderLayerScrollableArea.h
     rendering/RenderLineBoxList.h
@@ -2097,6 +2099,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderModel.h
     rendering/RenderObject.h
     rendering/RenderObjectEnums.h
+    rendering/RenderObjectInlines.h
     rendering/RenderOverflow.h
     rendering/RenderPtr.h
     rendering/RenderReplaced.h

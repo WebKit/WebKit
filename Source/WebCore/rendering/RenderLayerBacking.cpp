@@ -69,6 +69,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderModel.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGModelObject.h"
 #include "RenderVideo.h"
