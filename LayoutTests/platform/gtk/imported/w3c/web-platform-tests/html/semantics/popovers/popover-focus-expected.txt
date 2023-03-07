@@ -3,9 +3,7 @@ This is a popover
 autofocus button  second autofocus button
 
 FAIL Popover focus test: default behavior - popover is not focused assert_true: expected true got false
-FAIL Popover button click focus test: default behavior - popover is not focused assert_equals: focus should return to the prior focus expected Element node <button id="priorFocus"></button> but got Element node <body>
-
-<div popover="" data-test="autofocus popover" aut...
+FAIL Popover button click focus test: default behavior - popover is not focused assert_equals: focus should return to the prior focus expected Element node <button id="priorFocus"></button> but got Element node <button popovertarget="popover-id">Click me</button>
 PASS Popover corner cases test: default behavior - popover is not focused
 FAIL Popover focus test: autofocus popover assert_equals: autofocus popover activated by popover.showPopover() expected Element node <div popover="" data-test="autofocus popover" autofocus="... but got Element node <button id="priorFocus"></button>
 FAIL Popover button click focus test: autofocus popover assert_false: popover should start out hidden expected false got true
