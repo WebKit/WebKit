@@ -965,6 +965,8 @@ public:
         case QuantifierType::Greedy:
             if (backTrack->matchAmount) {
                 --backTrack->matchAmount;
+                if (term.matchDirection() == Backward)
+                    return input.checkInput(matchEnd - matchBegin);
                 input.rewind(matchEnd - matchBegin);
                 return true;
             }
