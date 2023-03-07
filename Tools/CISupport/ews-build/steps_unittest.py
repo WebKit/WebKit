@@ -1232,7 +1232,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release'],
                         )
@@ -1248,7 +1248,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/release/install', '--gtk'],
                         )
@@ -1264,7 +1264,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
                         )
@@ -1275,11 +1275,11 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileWebKit())
-        self.setProperty('fullPlatform', 'mac-bigsur')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=3600,  # only Big Sur uses an 3600 timeout
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )
@@ -1312,7 +1312,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release'],
                         )
@@ -1323,11 +1323,11 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_failure(self):
         self.setupStep(CompileWebKitWithoutChange())
-        self.setProperty('fullPlatform', 'mac-bigsur')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=3600,  # only Big Sur uses an 3600 timeout
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )
@@ -1450,7 +1450,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
@@ -1465,7 +1465,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
@@ -1490,7 +1490,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
@@ -1505,7 +1505,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
@@ -3950,10 +3950,10 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
             rc = self.runStep()
         return rc
 
-    def test_relevant_bigsur_builder_patch(self):
+    def test_relevant_monterey_builder_patch(self):
         file_names = ['Source/xyz', 'Tools/abc']
         self.setupStep(CheckChangeRelevance())
-        self.setProperty('buildername', 'macOS-BigSur-Release-Build-EWS')
+        self.setProperty('buildername', 'macOS-Monterey-Release-Build-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
@@ -3963,7 +3963,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def test_relevant_wk1_patch(self):
         CheckChangeRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckChangeRelevance())
-        self.setProperty('buildername', 'macOS-BigSur-Release-WK1-Tests-EWS')
+        self.setProperty('buildername', 'macOS-Monterey-Release-WK1-Tests-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
@@ -4036,7 +4036,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_non_relevant_patch_on_various_queues(self):
         CheckChangeRelevance._get_patch = lambda x: 'Sample patch'
-        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
+        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-Monterey-Release-Build-EWS',
                   'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
@@ -4047,7 +4047,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_non_relevant_pull_request_on_various_queues(self):
         CheckChangeRelevance._get_patch = lambda x: '\n'
-        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
+        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-Monterey-Release-Build-EWS',
                   'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())

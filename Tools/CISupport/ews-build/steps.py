@@ -1215,7 +1215,7 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools', re.IGNORECASE),
     ]
 
-    big_sur_builder_path_regexes = [
+    monterey_builder_path_regexes = [
         re.compile(rb'Source/', re.IGNORECASE),
         re.compile(rb'Tools/', re.IGNORECASE),
     ]
@@ -1229,7 +1229,7 @@ class CheckChangeRelevance(AnalyzeChange):
 
     group_to_paths_mapping = {
         'bindings': bindings_path_regexes,
-        'bigsur-release-build': big_sur_builder_path_regexes,
+        'monterey-release-build': monterey_builder_path_regexes,
         'services-ews': services_path_regexes,
         'jsc': jsc_path_regexes,
         'webkitpy': webkitpy_path_regexes,
@@ -2656,17 +2656,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
 
         return shell.Compile.start(self)
-
-    def buildCommandKwargs(self, warnings):
-        kwargs = super().buildCommandKwargs(warnings)
-        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
-        # work around log output delays on slower machines.
-        # https://bugs.webkit.org/show_bug.cgi?id=247506: Only applies to Xcode 12.x.
-        if self.getProperty('fullPlatform') == 'mac-bigsur':
-            kwargs['timeout'] = 60 * 60
-        else:
-            kwargs['timeout'] = 60 * 30
-        return kwargs
 
     def errorReceived(self, error):
         self._addToLog('errors', error + '\n')

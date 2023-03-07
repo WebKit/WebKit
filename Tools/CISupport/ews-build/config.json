@@ -40,35 +40,35 @@
     { "name": "wincairo-ews-002", "platform": "wincairo" },
     { "name": "wincairo-ews-003", "platform": "wincairo" },
     { "name": "wincairo-ews-004", "platform": "wincairo" },
-    { "name": "ews100", "platform": "mac-bigsur" },
-    { "name": "ews101", "platform": "mac-bigsur" },
-    { "name": "ews102", "platform": "mac-bigsur" },
-    { "name": "ews103", "platform": "mac-bigsur" },
-    { "name": "ews104", "platform": "mac-bigsur" },
-    { "name": "ews105", "platform": "mac-bigsur" },
-    { "name": "ews106", "platform": "mac-bigsur" },
-    { "name": "ews107", "platform": "mac-bigsur" },
+    { "name": "ews100", "platform": "mac-monterey" },
+    { "name": "ews101", "platform": "mac-monterey" },
+    { "name": "ews102", "platform": "mac-monterey" },
+    { "name": "ews103", "platform": "mac-monterey" },
+    { "name": "ews104", "platform": "mac-monterey" },
+    { "name": "ews105", "platform": "mac-monterey" },
+    { "name": "ews106", "platform": "mac-monterey" },
+    { "name": "ews107", "platform": "mac-monterey" },
     { "name": "ews108", "platform": "*" },
     { "name": "ews109", "platform": "ios-16" },
-    { "name": "ews112", "platform": "mac-bigsur" },
-    { "name": "ews113", "platform": "mac-bigsur" },
+    { "name": "ews112", "platform": "mac-monterey" },
+    { "name": "ews113", "platform": "mac-monterey" },
     { "name": "ews114", "platform": "*" },
-    { "name": "ews115", "platform": "mac-bigsur" },
-    { "name": "ews116", "platform": "mac-bigsur" },
-    { "name": "ews117", "platform": "mac-bigsur" },
-    { "name": "ews118", "platform": "mac-bigsur" },
-    { "name": "ews119", "platform": "mac-bigsur" },
-    { "name": "ews120", "platform": "mac-bigsur" },
-    { "name": "ews129", "platform": "mac-bigsur" },
-    { "name": "ews169", "platform": "mac-bigsur" },
+    { "name": "ews115", "platform": "mac-monterey" },
+    { "name": "ews116", "platform": "mac-monterey" },
+    { "name": "ews117", "platform": "mac-monterey" },
+    { "name": "ews118", "platform": "mac-monterey" },
+    { "name": "ews119", "platform": "mac-monterey" },
+    { "name": "ews120", "platform": "mac-monterey" },
+    { "name": "ews129", "platform": "mac-monterey" },
+    { "name": "ews169", "platform": "mac-monterey" },
     { "name": "ews121", "platform": "ios-simulator-16" },
     { "name": "ews122", "platform": "ios-simulator-16" },
     { "name": "ews123", "platform": "ios-simulator-16" },
     { "name": "ews124", "platform": "ios-simulator-16" },
     { "name": "ews125", "platform": "ios-simulator-16" },
     { "name": "ews126", "platform": "ios-simulator-16" },
-    { "name": "ews127", "platform": "mac-bigsur" },
-    { "name": "ews128", "platform": "mac-bigsur" },
+    { "name": "ews127", "platform": "mac-monterey" },
+    { "name": "ews128", "platform": "mac-monterey" },
     { "name": "ews130", "platform": "*" },
     { "name": "ews131", "platform": "ios-16" },
     { "name": "ews132", "platform": "*" },
@@ -91,8 +91,8 @@
     { "name": "ews158", "platform": "*" },
     { "name": "ews159", "platform": "*" },
     { "name": "ews160", "platform": "*" },
-    { "name": "ews161", "platform": "mac-bigsur" },
-    { "name": "ews162", "platform": "mac-bigsur" },
+    { "name": "ews161", "platform": "mac-monterey" },
+    { "name": "ews162", "platform": "mac-monterey" },
     { "name": "ews163", "platform": "*" },
     { "name": "ews164", "platform": "*" },
     { "name": "ews165", "platform": "*" },
@@ -110,16 +110,16 @@
     { "name": "ews178", "platform": "mac-ventura" },
     { "name": "ews179", "platform": "mac-ventura" },
     { "name": "ews180", "platform": "mac-ventura" },
-    { "name": "ews181", "platform": "mac-bigsur" },
-    { "name": "ews182", "platform": "mac-bigsur" },
+    { "name": "ews181", "platform": "mac-monterey" },
+    { "name": "ews182", "platform": "mac-monterey" },
     { "name": "ews183", "platform": "*" },
     { "name": "ews184", "platform": "ios-simulator-16" },
     { "name": "ews185", "platform": "ios-simulator-16" },
-    { "name": "webkit-cq-01", "platform": "mac-bigsur" },
-    { "name": "webkit-cq-02", "platform": "mac-bigsur" },
-    { "name": "webkit-cq-03", "platform": "mac-bigsur" },
-    { "name": "webkit-cq-04", "platform": "mac-bigsur" },
-    { "name": "webkit-cq-05", "platform": "mac-bigsur" }
+    { "name": "webkit-cq-01", "platform": "mac-monterey" },
+    { "name": "webkit-cq-02", "platform": "mac-monterey" },
+    { "name": "webkit-cq-03", "platform": "mac-monterey" },
+    { "name": "webkit-cq-04", "platform": "mac-monterey" },
+    { "name": "webkit-cq-05", "platform": "mac-monterey" }
   ],
   "builders": [
     {
@@ -181,31 +181,31 @@
       "workernames": ["ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
-      "name": "macOS-BigSur-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
-      "factory": "macOSBuildFactory", "platform": "mac-bigsur",
+      "name": "macOS-Monterey-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
+      "factory": "macOSBuildFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews", "macos-bigsur-release-wk1-tests-ews", "macos-bigsur-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-monterey-release-wk1-tests-ews", "macos-monterey-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
       "workernames": ["ews102", "ews118", "ews119", "ews120", "ews161", "ews162"]
     },
     {
-      "name": "macOS-BigSur-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
-      "factory": "macOSWK1Factory", "platform": "mac-bigsur",
+      "name": "macOS-Monterey-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
+      "factory": "macOSWK1Factory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["macos-bigsur-release-build-ews"],
+      "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews101", "ews103", "ews105", "ews116", "ews112", "ews117"]
     },
     {
-      "name": "macOS-BigSur-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
-      "factory": "macOSWK2Factory", "platform": "mac-bigsur",
+      "name": "macOS-Monterey-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
+      "factory": "macOSWK2Factory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["macos-bigsur-release-build-ews"],
+      "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews169"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
-      "factory": "StressTestFactory", "platform": "mac-bigsur",
+      "factory": "StressTestFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["macos-bigsur-release-build-ews"],
+      "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews181", "ews182"]
     },
     {
@@ -254,7 +254,7 @@
     },
     {
       "name": "JSC-Tests-EWS", "shortname": "jsc", "icon": "buildAndTest",
-      "factory": "JSCBuildAndTestsFactory", "platform": "mac-bigsur",
+      "factory": "JSCBuildAndTestsFactory", "platform": "mac-monterey",
       "configuration": "release", "runTests": "true",
       "workernames": ["ews127", "ews128"]
     },
@@ -323,7 +323,7 @@
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
-      "triggered_by": ["macos-bigsur-release-build-ews"],
+      "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews100", "ews129", "ews150", "ews153", "ews155"]
     },
     {
@@ -340,19 +340,19 @@
     },
     {
       "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
-      "factory": "CommitQueueFactory", "platform": "mac-bigsur",
+      "factory": "CommitQueueFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
     },
     {
       "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
-      "factory": "MergeQueueFactory", "platform": "mac-bigsur",
+      "factory": "MergeQueueFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
     },
     {
       "name": "Unsafe-Merge-Queue", "shortname": "unsafe-merge", "icon": "buildAndTest",
-      "factory": "UnsafeMergeQueueFactory", "platform": "mac-bigsur",
+      "factory": "UnsafeMergeQueueFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
     }
@@ -363,7 +363,7 @@
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
-            "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
@@ -377,7 +377,7 @@
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
-            "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
@@ -391,16 +391,16 @@
       "builderNames": ["Unsafe-Merge-Queue"]
     },
     {
-      "type": "Triggerable", "name": "macos-bigsur-release-build-ews",
-      "builderNames": ["macOS-BigSur-Release-Build-EWS"]
+      "type": "Triggerable", "name": "macos-monterey-release-build-ews",
+      "builderNames": ["macOS-Monterey-Release-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-bigsur-release-wk1-tests-ews",
-      "builderNames": ["macOS-BigSur-Release-WK1-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-monterey-release-wk1-tests-ews",
+      "builderNames": ["macOS-Monterey-Release-WK1-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-bigsur-release-wk2-tests-ews",
-      "builderNames": ["macOS-BigSur-Release-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-monterey-release-wk2-tests-ews",
+      "builderNames": ["macOS-Monterey-Release-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "macos-release-wk2-stress-tests-ews",
