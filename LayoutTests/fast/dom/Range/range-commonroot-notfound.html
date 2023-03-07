@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/gc.js"></script>
+<script>
+function main() {
+    var x1 = document.getElementById("x1");
+    var x2 = document.getElementById("x2");
+    var x3 = document.getElementById("x3");
+    var x7 = document.getElementById("x7");
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        window.testRunner.dumpAsText();
+    }
+
+    x7.addEventListener("DOMNodeInserted", function(){ });
+
+    var range1 = document.createRange();
+    range1.setEndAfter(x3);
+    try { var v1 = range1.extractContents(); } catch(e) {}
+    try { range1.setStartAfter(x1); } catch(e) {}
+    try { range1.setEndBefore(x2); } catch(e) {}
+
+    gc();
+
+    try {var v2 = range1.extractContents(); } catch(e) {}
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="main()">
+    <div id="x7">
+        <div id="x1"></div>
+        <div></div>
+    </div>
+    <div>
+        <div id="x2"></div>
+        <div></div>
+    </div>
+    <div>
+        <div id="x3"></div>
+        <div></div>
+    </div>
+    <p>PASS if no crash.</p>
+</body>
+</html>
