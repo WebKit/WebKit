@@ -5546,9 +5546,12 @@ public:
 
     void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch) 
     {
+        ASSERT(scratch != dest);
+        ASSERT(scratch != a);
+        ASSERT(scratch != b);
         m_assembler.smullv(scratch, a, b, SIMDLane::i16x8);
         m_assembler.smull2v(dest, a, b, SIMDLane::i16x8);
-        m_assembler.addpv(dest, dest, scratch, SIMDLane::i32x4);
+        m_assembler.addpv(dest, scratch, dest, SIMDLane::i32x4);
     }
     void vectorSwizzle(FPRegisterID a, FPRegisterID control, FPRegisterID dest) { m_assembler.tbl(dest, a, control); }
     void vectorSwizzle2(FPRegisterID a, FPRegisterID b, FPRegisterID control, FPRegisterID dest)
