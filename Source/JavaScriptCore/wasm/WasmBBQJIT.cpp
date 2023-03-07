@@ -6287,8 +6287,10 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData& data)
     {
-        // Since the end of the block was unreachable, we don't need to call endBlock() here, since the
-        // block will never actually end.
+        // We want to flush or consume all values on the stack to reset the allocator
+        // state entering the else block.
+        data.flushAtBlockBoundary(*this, 0, m_parser->expressionStack(), true);
+
         ControlData dataElse(*this, BlockType::Block, data.signature(), data.enclosedHeight());
         data.linkJumps(&m_jit);
         dataElse.addBranch(m_jit.jump()); // Still needed even when the parent was unreachable to avoid running code within the else block.
@@ -6297,8 +6299,8 @@ public:
         LOG_INSTRUCTION("Else");
         LOG_INDENT();
 
-        // We don't have anything left on the expression stack after an unreachable block. So let's make a fake
-        // one, containing one temp for each of the parameters we are expecting.
+        // We don't have easy access to the original expression stack we had entering the if block,
+        // so we construct a local stack just to set up temp bindings as we enter the else.
         Stack expressionStack;
         auto functionSignature = dataElse.signature()->as<FunctionSignature>();
         for (unsigned i = 0; i < functionSignature->argumentCount(); i ++)
