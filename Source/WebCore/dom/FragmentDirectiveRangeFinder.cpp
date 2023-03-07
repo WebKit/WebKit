@@ -148,6 +148,7 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     searchBuffer = searchBufferBuilder.toString();
     
     searchBuffer = foldQuoteMarks(searchBuffer);
+    auto foldedQuery = foldQuoteMarks(query);
     
     unsigned searchStart = 0;
     
@@ -161,17 +162,17 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     
     while (!matchIndex) {
         // FIXME: find only using the base characters i.e. also fold accents and others.
-        auto potentialIndex = searchBuffer.findIgnoringASCIICase(query, searchStart);
+        auto potentialIndex = searchBuffer.findIgnoringASCIICase(foldedQuery, searchStart);
 
         if (potentialIndex == notFound)
             return std::nullopt;
         matchIndex = potentialIndex;
         
         start = boundaryPointAtIndexInNodes(*matchIndex, nodes, BoundaryPointIsAtEnd::No);
-        end = boundaryPointAtIndexInNodes(*matchIndex + query.length(), nodes, BoundaryPointIsAtEnd::Yes);
+        end = boundaryPointAtIndexInNodes(*matchIndex + foldedQuery.length(), nodes, BoundaryPointIsAtEnd::Yes);
         
         if (((wordStartBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex))
-            || ((wordEndBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex + query.length()))) {
+            || ((wordEndBounded == WordBounded::Yes) && !indexIsAtWordBoundary(searchBuffer, *matchIndex + foldedQuery.length()))) {
             searchStart = *matchIndex + 1;
             matchIndex = std::nullopt;
         }
@@ -181,7 +182,7 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     if (nodes.last().ptr() == &searchRange.endContainer())
         endInset = searchRange.endContainer().length() - searchRange.endOffset();
     
-    if (*matchIndex + query.length() > searchBuffer.length() - endInset)
+    if (*matchIndex + foldedQuery.length() > searchBuffer.length() - endInset)
         return std::nullopt;
     
     ASSERT_WITH_MESSAGE(start, "Scroll To Text Fragment: Start cannot be null");
