@@ -31,7 +31,9 @@
 
 namespace JSC { namespace Wasm {
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, Callee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned, TierUpCount* = nullptr);
+class BBQCallee;
+
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned, TierUpCount* = nullptr);
 
 } } // namespace JSC::Wasm
 

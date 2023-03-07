@@ -83,7 +83,7 @@ private:
     void compileFunction(uint32_t functionIndex) final;
     void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 
-    std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, Callee&, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&, TierUpCount*);
+    std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, BBQCallee&, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&, TierUpCount*);
 
     Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;
     Vector<std::unique_ptr<LinkBuffer>> m_wasmInternalFunctionLinkBuffers;

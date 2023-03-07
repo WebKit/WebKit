@@ -827,12 +827,12 @@ public:
         }
 
         template<typename Stack, size_t N>
-        void addExit(BBQJIT& generator, const Vector<Location, N>& targetLocations, Stack& expressionStack)
+        bool addExit(BBQJIT& generator, const Vector<Location, N>& targetLocations, Stack& expressionStack)
         {
             unsigned targetArity = targetLocations.size();
 
             if (!targetArity)
-                return;
+                return false;
 
             // We move all passed temporaries to the successor, in its argument slots.
             unsigned offset = expressionStack.size() - targetArity;
@@ -844,6 +844,7 @@ public:
                 resultLocations.append(targetLocations[i]);
             }
             generator.emitShuffle(resultValues, resultLocations);
+            return true;
         }
 
         template<typename Stack>
@@ -920,19 +921,27 @@ public:
             m_branchList.append(jump);
         }
 
-        void addBranch(const JumpList& jumpList)
+        void addLabel(Box<CCallHelpers::Label>&& label)
         {
-            m_branchList.append(jumpList);
+            m_labels.append(WTFMove(label));
+        }
+
+        void delegateJumpsTo(ControlData& delegateTarget)
+        {
+            delegateTarget.m_branchList.append(std::exchange(m_branchList, { }));
+            delegateTarget.m_labels.appendVector(std::exchange(m_labels, { }));
         }
 
         void linkJumps(MacroAssembler::AbstractMacroAssemblerType* masm)
         {
             m_branchList.link(masm);
+            fillLabels(masm->label());
         }
 
         void linkJumpsTo(MacroAssembler::Label label, MacroAssembler::AbstractMacroAssemblerType* masm)
         {
             m_branchList.linkTo(label, masm);
+            fillLabels(label);
         }
 
         void linkIfBranch(MacroAssembler::AbstractMacroAssemblerType* masm)
@@ -940,12 +949,6 @@ public:
             ASSERT(m_blockType == BlockType::If);
             if (m_ifBranch.isSet())
                 m_ifBranch.link(masm);
-        }
-
-        JumpList releaseJumps()
-        {
-            auto branchList = std::exchange(m_branchList, { });
-            return branchList;
         }
 
         void dump(PrintStream& out) const
@@ -1060,12 +1063,19 @@ public:
     private:
         friend class BBQJIT;
 
+        void fillLabels(CCallHelpers::Label label)
+        {
+            for (auto& box : m_labels)
+                *box = label;
+        }
+
         BlockSignature m_signature;
         BlockType m_blockType;
         CatchKind m_catchKind { CatchKind::Catch };
         Vector<Location, 2> m_argumentLocations; // List of input locations to write values into when entering this block.
         Vector<Location, 2> m_resultLocations; // List of result locations to write values into when exiting this block.
         JumpList m_branchList; // List of branch control info for branches targeting the end of this block.
+        Vector<Box<CCallHelpers::Label>> m_labels; // List of labels filled.
         MacroAssembler::Label m_loopLabel;
         MacroAssembler::Jump m_ifBranch;
         LocalOrTempIndex m_enclosedHeight; // Height of enclosed expression stack, used as the base for all temporary locations.
@@ -1230,7 +1240,7 @@ private:
 public:
     static constexpr bool tierSupportsSIMD = true;
 
-    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, Callee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
+    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
         : m_jit(jit)
         , m_callee(callee)
         , m_function(function)
@@ -6418,7 +6428,7 @@ public:
         }
         dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
 
-        dataCatch.addBranch(data.releaseJumps());
+        data.delegateJumpsTo(dataCatch);
         dataCatch.addBranch(m_jit.jump());
         LOG_DEDENT();
         LOG_INSTRUCTION("Catch");
@@ -6440,7 +6450,7 @@ public:
         }
         dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
 
-        dataCatch.addBranch(data.releaseJumps());
+        data.delegateJumpsTo(dataCatch);
         LOG_DEDENT();
         LOG_INSTRUCTION("Catch");
         LOG_INDENT();
@@ -6462,7 +6472,7 @@ public:
         }
         dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
 
-        dataCatch.addBranch(data.releaseJumps());
+        data.delegateJumpsTo(dataCatch);
         dataCatch.addBranch(m_jit.jump());
         LOG_DEDENT();
         LOG_INSTRUCTION("CatchAll");
@@ -6484,7 +6494,7 @@ public:
         }
         dataCatch.setTryInfo(data.tryStart(), data.tryEnd(), data.tryCatchDepth());
 
-        dataCatch.addBranch(data.releaseJumps());
+        data.delegateJumpsTo(dataCatch);
         LOG_DEDENT();
         LOG_INSTRUCTION("CatchAll");
         LOG_INDENT();
@@ -6660,22 +6670,55 @@ public:
         // Flush everything below the top N values.
         currentControlData().flushAtBlockBoundary(*this, defaultTarget.targetLocations().size(), results, true);
 
-        Vector<int64_t> cases;
-        cases.reserveInitialCapacity(targets.size());
-        for (size_t i = 0; i < targets.size(); ++i)
-            cases.uncheckedAppend(i);
+        constexpr unsigned minCasesForTable = 7;
+        if (minCasesForTable <= targets.size()) {
+            Vector<Box<CCallHelpers::Label>> labels;
+            labels.reserveInitialCapacity(targets.size());
+            auto* jumpTable = m_callee.addJumpTable(targets.size());
+            auto fallThrough = m_jit.branch32(RelationalCondition::AboveOrEqual, m_scratchGPR, TrustedImm32(targets.size()));
+            m_jit.zeroExtend32ToWord(m_scratchGPR, m_scratchGPR);
+            m_jit.lshiftPtr(TrustedImm32(3), m_scratchGPR);
+            m_jit.addPtr(TrustedImmPtr(jumpTable->data()), m_scratchGPR);
+            m_jit.farJump(Address(m_scratchGPR), JSSwitchPtrTag);
 
-        BinarySwitch binarySwitch(m_scratchGPR, cases, BinarySwitch::Int32);
-        while (binarySwitch.advance(m_jit)) {
-            unsigned value = binarySwitch.caseValue();
-            unsigned index = binarySwitch.caseIndex();
-            ASSERT_UNUSED(value, value == index);
-            ASSERT(index < targets.size());
-            currentControlData().addExit(*this, targets[index]->targetLocations(), results);
-            targets[index]->addBranch(m_jit.jump());
+            for (unsigned index = 0; index < targets.size(); ++index) {
+                Box<CCallHelpers::Label> label = Box<CCallHelpers::Label>::create(m_jit.label());
+                labels.uncheckedAppend(label);
+                bool isCodeEmitted = currentControlData().addExit(*this, targets[index]->targetLocations(), results);
+                if (isCodeEmitted)
+                    targets[index]->addBranch(m_jit.jump());
+                else {
+                    // It is common that we do not need to emit anything before jumping to the target block.
+                    // In that case, we put Box<Label> which will be filled later when the end of the block is linked.
+                    // We put direct jump to that block in the link task.
+                    targets[index]->addLabel(WTFMove(label));
+                }
+            }
+
+            m_jit.addLinkTask([labels = WTFMove(labels), jumpTable](LinkBuffer& linkBuffer) {
+                for (unsigned index = 0; index < labels.size(); ++index)
+                    jumpTable->at(index) = linkBuffer.locationOf<JSSwitchPtrTag>(*labels[index]);
+            });
+
+            fallThrough.link(&m_jit);
+        } else {
+            Vector<int64_t> cases;
+            cases.reserveInitialCapacity(targets.size());
+            for (size_t i = 0; i < targets.size(); ++i)
+                cases.uncheckedAppend(i);
+
+            BinarySwitch binarySwitch(m_scratchGPR, cases, BinarySwitch::Int32);
+            while (binarySwitch.advance(m_jit)) {
+                unsigned value = binarySwitch.caseValue();
+                unsigned index = binarySwitch.caseIndex();
+                ASSERT_UNUSED(value, value == index);
+                ASSERT(index < targets.size());
+                currentControlData().addExit(*this, targets[index]->targetLocations(), results);
+                targets[index]->addBranch(m_jit.jump());
+            }
+
+            binarySwitch.fallThrough().link(&m_jit);
         }
-
-        binarySwitch.fallThrough().link(&m_jit);
         currentControlData().addExit(*this, defaultTarget.targetLocations(), results);
         defaultTarget.addBranch(m_jit.jump());
 
@@ -9088,7 +9131,7 @@ private:
 #undef RESULT
 
     CCallHelpers& m_jit;
-    Callee& m_callee;
+    BBQCallee& m_callee;
     const FunctionData& m_function;
     const FunctionSignature* m_functionSignature;
     uint32_t m_functionIndex;
@@ -9146,7 +9189,7 @@ private:
     Vector<CCallHelpers::Label> m_catchEntrypoints;
 };
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
 {
     CompilerTimingScope totalTime("BBQ", "Total BBQ");
 
