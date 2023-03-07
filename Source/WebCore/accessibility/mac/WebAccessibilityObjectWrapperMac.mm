@@ -1111,7 +1111,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
     }();
-    static NeverDestroyed passwordFieldAttrs = [] {
+    static NeverDestroyed secureFieldAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
@@ -1166,8 +1166,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     NSArray *objectAttributes = attributes.get().get();
 
-    if (backingObject->isPasswordField())
-        objectAttributes = passwordFieldAttrs.get().get();
+    if (backingObject->isSecureField())
+        objectAttributes = secureFieldAttributes.get().get();
     else if (backingObject->isWebArea())
         objectAttributes = webAreaAttrs.get().get();
     else if (backingObject->isTextControl())
@@ -1668,7 +1668,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute]) {
-        if (backingObject->isPasswordField())
+        if (backingObject->isSecureField())
             return nil;
         // FIXME: Get actual visible range. <rdar://problem/4712101>
         if (backingObject->isTextControl())
@@ -2477,7 +2477,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         webAreaParamAttrs = [[NSArray alloc] initWithArray:tempArray.get()];
     }
 
-    if (backingObject->isPasswordField())
+    if (backingObject->isSecureField())
         return @[ NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute ];
 
     if (backingObject->isTextControl())
