@@ -7911,7 +7911,7 @@ std::optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Eleme
 void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_page)
-        return;
+        return completionHandler();
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
