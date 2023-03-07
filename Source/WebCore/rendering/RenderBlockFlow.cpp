@@ -947,6 +947,9 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     if (childNeededLayout)
         child.layout();
 
+    if (shouldApplyBlockStepSizingForChild(child))
+        adjustChildMarginsForBlockStepSiing(child);
+
     // Cache if we are at the top of the block right now.
     bool atBeforeSideOfBlock = marginInfo.atBeforeSideOfBlock();
 
@@ -1028,6 +1031,40 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     }
 
     ASSERT(view().frameView().layoutContext().layoutDeltaMatches(oldLayoutDelta));
+}
+
+static LayoutUnit computeBlockStepSizeRoundedUp(LayoutUnit marginBoxBlockSize, LayoutUnit blockStepSize)
+{
+    // If the computed box margin block size is <= specified block-step-size, then the
+    // nearested multiple of block-step-size is itself
+    if (marginBoxBlockSize <= blockStepSize)
+        return blockStepSize;
+    if (!blockStepSize)
+        return marginBoxBlockSize;
+    if (auto distanceFromBlockStepSize = intMod(marginBoxBlockSize, blockStepSize))
+        return marginBoxBlockSize + blockStepSize - distanceFromBlockStepSize;
+    return marginBoxBlockSize;
+}
+
+bool RenderBlockFlow::shouldApplyBlockStepSizingForChild(const RenderBox& child) const
+{
+    const auto& childStyle = child.style();
+    // FIXME: Once block step sizing has been implemented for all block level boxes, the 
+    // display type checks below should be replaced with boxStyle.isDisplayBlockLevel()
+    return childStyle.display() == DisplayType::Block && childStyle.blockStepSize();
+}
+
+void RenderBlockFlow::adjustChildMarginsForBlockStepSiing(RenderBox& child)
+{
+    ASSERT(shouldApplyBlockStepSizingForChild(child));
+    auto marginBoxBlockSize = logicalMarginBoxHeightForChild(child);
+    auto goalSize = computeBlockStepSizeRoundedUp(marginBoxBlockSize, LayoutUnit { child.style().blockStepSize()->value() });
+    if (auto extraSpace = (goalSize - marginBoxBlockSize) / 2) {
+        setMarginBeforeForChild(child, marginBeforeForChild(child) + extraSpace);
+        setMarginAfterForChild(child, marginAfterForChild(child) + extraSpace);
+        setLogicalTopForChild(child, logicalTopForChild(child) + extraSpace, ApplyLayoutDelta);
+    }
+
 }
 
 void RenderBlockFlow::adjustPositionedBlock(RenderBox& child, const MarginInfo& marginInfo)

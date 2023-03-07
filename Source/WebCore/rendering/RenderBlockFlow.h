@@ -237,6 +237,10 @@ public:
     void adjustPositionedBlock(RenderBox& child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
 
+
+    bool shouldApplyBlockStepSizingForChild(const RenderBox&) const;
+    void adjustChildMarginsForBlockStepSiing(RenderBox&);
+
     void setStaticInlinePositionForChild(RenderBox& child, LayoutUnit blockOffset, LayoutUnit inlinePosition);
     void updateStaticInlinePositionForChild(RenderBox& child, LayoutUnit logicalTop, IndentTextOrNot shouldIndentText);
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-rhythm/#block-step-size">
+<link rel="match" href="block-step-size-adjustment-round-up-relative-unit-ref.html">
+<meta name="assert" content="Item's margin box block size gets rounded up to the nearested multiple of block-step-size using font relative unit">
+<style>
+.red {
+    inline-size: 100px;
+    block-size: 100px;
+    background-color: red;
+}
+.block-step {
+    font-size: 5px;
+    block-size: 50px;
+    background-color: green;
+    block-step-size: 7em; 
+}
+.cover {
+    background-color: green;
+    block-size: 25px;
+}
+</style>
+</head>
+<body>
+<p>There should be a green square below and no red.</p>
+<div class="red">
+    <div class="cover" style="margin-block-end: -10px;"></div>
+    <div class="block-step"></div>
+    <div class="cover" style="margin-block-start: -10px"></div>
+</div>
+</body>
+</html>

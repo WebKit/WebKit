@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-rhythm/#block-step-size">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="Specifying 0 for block-step-size should not change the size of the box">
+<style>
+.red {
+    display: flow-root;
+    inline-size: 100px;
+    background-color: red;
+}
+.block-step {
+    block-step-size: 0px;
+    block-size: 100px;
+    background-color: green;
+}
+</style>
+</head>
+<body>
+<p>There should be a green square below and no red.</p>
+<div class="red">
+    <div class="block-step"></div>
+</div>
+</head>
+</html>
