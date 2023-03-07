@@ -34,19 +34,20 @@
 
 PAS_BEGIN_EXTERN_C;
 
-/*
- * structure for holding metadata of pgm allocations
- * FIXME : Reduce size of structure
- */
+/* structure for holding pgm metadata allocations */
 typedef struct pas_pgm_storage pas_pgm_storage;
 struct pas_pgm_storage {
     size_t allocation_size_requested;
     size_t size_of_data_pages;
-    size_t mem_to_waste;
-    size_t mem_to_alloc;
     uintptr_t start_of_data_pages;
-    uintptr_t upper_guard_page;
-    uintptr_t lower_guard_page;
+
+    /*
+     * These parameter below rely on page sizes being less than 65536.
+     * I am not aware of any platforms using more than this at the moment.
+     */
+    uint16_t mem_to_waste;
+    uint16_t page_size;
+
     pas_large_heap* large_heap;
 };
 
