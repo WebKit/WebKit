@@ -32,10 +32,12 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKPreferences.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWindowFeaturesPrivate.h>
+#import <WebKit/_WKUserInitiatedAction.h>
 #import <wtf/RetainPtr.h>
 
 @class OpenAndCloseWindowUIDelegate;
@@ -43,6 +45,8 @@
 @class CheckWindowFeaturesUIDelegate;
 
 static RetainPtr<WKWebView> openedWebView;
+static bool hadUnconsumedUserGesture;
+static bool wasUserInitiated;
 static RetainPtr<WKWindowFeatures> openWindowFeatures;
 static RetainPtr<OpenAndCloseWindowUIDelegate> sharedUIDelegate;
 static RetainPtr<OpenAndCloseWindowUIDelegateAsync> sharedUIDelegateAsync;
@@ -55,6 +59,8 @@ static void resetToConsistentState()
     sharedUIDelegate = nil;
     sharedUIDelegateAsync = nil;
     sharedCheckWindowFeaturesUIDelegate = nil;
+    wasUserInitiated = false;
+    hadUnconsumedUserGesture = false;
 }
 
 @interface OpenAndCloseWindowUIDelegate : NSObject <WKUIDelegate>
@@ -177,6 +183,89 @@ TEST(WebKit, OpenAsyncWithNil)
 
     TestWebKitAPI::Util::run(&isDone);
 }
+
+@interface OpenWindowUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation OpenWindowUIDelegate
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    openedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    if (navigationAction && navigationAction._isUserInitiated)
+        wasUserInitiated = true;
+    if (navigationAction && navigationAction._userInitiatedAction && !navigationAction._userInitiatedAction.consumed)
+        hadUnconsumedUserGesture = true;
+
+    isDone = true;
+    return openedWebView.get();
+}
+
+@end
+
+TEST(WebKit, OpenAndCloseWindowNoGestureGesture)
+{
+    resetToConsistentState();
+
+    auto delegate = adoptNS([[OpenWindowUIDelegate alloc] init]);
+
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [webView configuration].preferences._verifyWindowOpenUserGestureFromUIProcess = YES;
+
+    [webView synchronouslyLoadTestPageNamed:@"open-window-button"];
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('pop-button').click()"];
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_FALSE(wasUserInitiated);
+    EXPECT_FALSE(hadUnconsumedUserGesture);
+}
+
+TEST(WebKit, OpenAndCloseWindowSimulatedGesture)
+{
+    resetToConsistentState();
+
+    auto delegate = adoptNS([[OpenWindowUIDelegate alloc] init]);
+
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [webView configuration].preferences._verifyWindowOpenUserGestureFromUIProcess = YES;
+
+    [webView synchronouslyLoadTestPageNamed:@"open-window-button"];
+
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('pop-button').click()"];
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_TRUE(wasUserInitiated);
+    EXPECT_FALSE(hadUnconsumedUserGesture);
+}
+
+#if PLATFORM(MAC)
+TEST(WebKit, OpenAndCloseWindowRealGesture)
+{
+    resetToConsistentState();
+
+    auto delegate = adoptNS([[OpenWindowUIDelegate alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [webView configuration].preferences._verifyWindowOpenUserGestureFromUIProcess = YES;
+
+    [webView synchronouslyLoadTestPageNamed:@"open-window-button"];
+
+    NSPoint clickPoint = NSMakePoint(50, 50);
+    [webView sendClickAtPoint:clickPoint];
+
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_TRUE(wasUserInitiated);
+    EXPECT_TRUE(hadUnconsumedUserGesture);
+}
+#endif
 
 // https://bugs.webkit.org/show_bug.cgi?id=171083 - Try to figure out why this fails for some configs but not others, and resolve.
 //TEST(WebKit, OpenAndCloseWindowAsyncCallbackException)
