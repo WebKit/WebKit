@@ -216,7 +216,7 @@ Worklist::Worklist()
     : m_lock(Box<Lock>::create())
     , m_planEnqueued(AutomaticThreadCondition::create())
 {
-    unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? kernTCSMAwareNumberOfProcessorCores() : 1;
+    unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? Options::numberOfWasmCompilerThreads() : 1;
     m_threads.reserveInitialCapacity(numberOfCompilationThreads);
     Locker locker { *m_lock };
     for (unsigned i = 0; i < numberOfCompilationThreads; ++i)
