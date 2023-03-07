@@ -34,6 +34,7 @@
 
 #if USE(FREETYPE)
 #include <cairo-ft.h>
+#include <wtf/RecursiveLockAdapter.h>
 #endif
 
 namespace WebCore {
@@ -47,18 +48,22 @@ class Path;
 class Region;
 
 #if USE(FREETYPE)
+RecursiveLock& cairoFontLock();
+
 class CairoFtFaceLocker {
 public:
-    CairoFtFaceLocker(cairo_scaled_font_t* scaledFont)
+    explicit CairoFtFaceLocker(cairo_scaled_font_t* scaledFont)
         : m_scaledFont(scaledFont)
-        , m_ftFace(cairo_ft_scaled_font_lock_face(scaledFont))
     {
+        cairoFontLock().lock();
+        m_ftFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
     }
 
     ~CairoFtFaceLocker()
     {
         if (m_ftFace)
             cairo_ft_scaled_font_unlock_face(m_scaledFont);
+        cairoFontLock().unlock();
     }
 
     FT_Face ftFace() const { return m_ftFace; }

@@ -830,6 +830,9 @@ void clearRect(GraphicsContextCairo& platformContext, const FloatRect& rect)
 
 void drawGlyphs(GraphicsContextCairo& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, float xOffset, TextDrawingModeFlags textDrawingMode, float strokeThickness, const FloatSize& shadowOffset, const Color& shadowColor, FontSmoothingMode fontSmoothingMode)
 {
+#if USE(FREETYPE)
+    Locker cairoFontLocker(cairoFontLock());
+#endif
     drawGlyphsShadow(platformContext, shadowState, textDrawingMode, shadowOffset, shadowColor, point, scaledFont, syntheticBoldOffset, glyphs, fontSmoothingMode);
 
     cairo_t* cr = platformContext.cr();
