@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InlineFormattingState.h"
+#include "InlineDisplayContent.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ class InlineContentBuilder {
 public:
     InlineContentBuilder(const RenderBlockFlow&, BoxTree&);
 
-    void build(Layout::InlineFormattingState&, InlineContent&) const;
+    void build(InlineDisplay::Content&& newContent, InlineContent&) const;
     void updateLineOverflow(InlineContent&) const;
 
 private:

@@ -43,6 +43,19 @@ struct Content {
         lines.clear();
         boxes.clear();
     }
+
+    void set(Content&& newContent)
+    {
+        lines = WTFMove(newContent.lines);
+        boxes = WTFMove(newContent.boxes);
+    }
+
+    void append(Content&& newContent)
+    {
+        lines.appendVector(WTFMove(newContent.lines));
+        boxes.appendVector(WTFMove(newContent.boxes));
+    }
+
     Lines lines;
     Boxes boxes;
 };

@@ -27,6 +27,7 @@
 
 #include "FormattingContext.h"
 #include "FormattingState.h"
+#include "InlineDisplayContent.h"
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
@@ -57,7 +58,7 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    void layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
+    InlineDisplay::Content layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:

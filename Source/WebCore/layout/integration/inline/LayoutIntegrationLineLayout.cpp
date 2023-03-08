@@ -567,8 +567,8 @@ std::optional<LayoutRect> LineLayout::layout()
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     };
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
-    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
-    auto repaintRect = LayoutRect { constructContent() };
+    auto newDisplayContent = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
+    auto repaintRect = LayoutRect { constructContent(WTFMove(newDisplayContent)) };
 
     auto adjustments = adjustContent();
 
@@ -579,7 +579,7 @@ std::optional<LayoutRect> LineLayout::layout()
     return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
 }
 
-FloatRect LineLayout::constructContent()
+FloatRect LineLayout::constructContent(InlineDisplay::Content&& newDisplayContent)
 {
     auto damagedRect = FloatRect { };
     auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lastLineIndex) {
@@ -626,10 +626,10 @@ FloatRect LineLayout::constructContent()
     destroyDamagedContent();
 
     auto constructFreshlyLaidOutContent = [&] {
-        if (m_inlineFormattingState.lines().isEmpty())
+        if (newDisplayContent.lines.isEmpty())
             return;
 
-        InlineContentBuilder { flow(), m_boxTree }.build(m_inlineFormattingState, ensureInlineContent());
+        InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(newDisplayContent), ensureInlineContent());
         if (!m_inlineContent->displayContent().lines.isEmpty())
             adjustDamagedRectWithLineRange(!m_lineDamage || !m_lineDamage->contentPosition() ? 0 : m_lineDamage->contentPosition()->lineIndex, m_inlineContent->displayContent().lines.size() - 1);
 
