@@ -849,8 +849,7 @@ void FrameLoader::HistoryController::updateCurrentItem()
         return;
 
     DocumentLoader* documentLoader = m_frame.loader().documentLoader();
-
-    if (!documentLoader->unreachableURL().isEmpty())
+    if (!documentLoader || !documentLoader->unreachableURL().isEmpty())
         return;
 
     if (m_currentItem->url() != documentLoader->url()) {
