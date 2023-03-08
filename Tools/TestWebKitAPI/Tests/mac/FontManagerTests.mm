@@ -397,6 +397,7 @@ TEST(FontManagerTests, ChangeTypingAttributesWithInspectorBar)
     auto inspectorBar = adoptNS([[TestInspectorBar alloc] initWithWebView:webView.get()]);
     {
         [webView selectAll:nil];
+        [webView waitForNextPresentationUpdate];
         NSFont *originalFont = [webView typingAttributes][NSFontAttributeName];
         EXPECT_WK_STREQ("Times", originalFont.familyName);
         EXPECT_EQ(16, originalFont.pointSize);
