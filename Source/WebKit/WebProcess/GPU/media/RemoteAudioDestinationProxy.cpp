@@ -155,6 +155,20 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
 
 void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
+#if PLATFORM(MAC)
+    // FIXME: rdar://104617724
+    // On macOS, page load testing reports a regression on a particular page if we do not
+    // start the GPU process connection and create the audio objects redundantly on a particular earlier
+    // page. This should be fixed once it is understood why.
+    auto* connection = this->connection();
+    if (!connection) {
+        RunLoop::current().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+            // Not calling setIsPlaying(false) intentionally to match the pre-regression state.
+            completionHandler(false);
+        });
+        return;
+    }
+#else
     auto* connection = existingConnection();
     if (!connection) {
         RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -163,6 +177,7 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
         });
         return;
     }
+#endif
 
     connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         protectedThis->setIsPlaying(isPlaying);
