@@ -8318,7 +8318,7 @@ private:
     {
         ASSERT(constant.isConst());
 
-        if (loc.isStack() || loc.isGlobal())
+        if (loc.isMemory())
             return emitStoreConst(constant, loc);
 
         ASSERT(loc.isRegister());
@@ -8714,9 +8714,9 @@ private:
     {
         // Called whenever a value is popped from the expression stack. Mostly, we
         // use this to release the registers temporaries are bound to.
-        Location result = locationOf(value);
-        if (value.isTemp() && result.isRegister())
-            unbind(value, result);
+        Location location = locationOf(value);
+        if (value.isTemp() && location != canonicalSlot(value))
+            unbind(value, location);
     }
 
     Location allocateRegister(TypeKind type)
