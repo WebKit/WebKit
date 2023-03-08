@@ -432,18 +432,6 @@ void HTMLSelectElement::optionElementChildrenChanged()
         cache->childrenChanged(this);
 }
 
-void HTMLSelectElement::setMultiple(bool multiple)
-{
-    bool oldMultiple = this->multiple();
-    int oldSelectedIndex = selectedIndex();
-    setBooleanAttribute(multipleAttr, multiple);
-
-    // Restore selectedIndex after changing the multiple flag to preserve
-    // selection as single-line and multi-line has different defaults.
-    if (oldMultiple != this->multiple())
-        setSelectedIndex(oldSelectedIndex);
-}
-
 void HTMLSelectElement::setSize(unsigned size)
 {
     setUnsignedIntegralAttribute(sizeAttr, limitToOnlyHTMLNonNegative(size));
@@ -1059,10 +1047,18 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
 void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
 {
     bool oldUsesMenuList = usesMenuList();
+    bool oldMultiple = m_multiple;
+    int oldSelectedIndex = selectedIndex();
     m_multiple = !value.isNull();
     updateValidity();
     if (oldUsesMenuList != usesMenuList())
         invalidateStyleAndRenderersForSubtree();
+    if (oldMultiple != m_multiple) {
+        if (oldSelectedIndex >= 0)
+            setSelectedIndex(oldSelectedIndex);
+        else
+            reset();
+    }
 }
 
 bool HTMLSelectElement::appendFormData(DOMFormData& formData)
