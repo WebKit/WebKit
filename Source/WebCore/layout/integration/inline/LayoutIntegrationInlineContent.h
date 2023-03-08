@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "InlineDisplayBox.h"
-#include "InlineDisplayLine.h"
+
+#include "InlineDisplayContent.h"
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
@@ -56,20 +56,8 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     InlineContent(const LineLayout&);
     ~InlineContent();
 
-    using Boxes = Vector<InlineDisplay::Box>;
-    using Lines = Vector<InlineDisplay::Line>;
-
-    struct DisplayContent {
-        void clear()
-        {
-            lines.clear();
-            boxes.clear();
-        }
-        Boxes boxes;
-        Lines lines;
-    };
-    DisplayContent& displayContent() { return m_displayContent; }
-    const DisplayContent& displayContent() const { return m_displayContent; }
+    InlineDisplay::Content& displayContent() { return m_displayContent; }
+    const InlineDisplay::Content& displayContent() const { return m_displayContent; }
 
     float clearGapBeforeFirstLine { 0 };
     float clearGapAfterLastLine { 0 };
@@ -106,7 +94,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
 private:
     CheckedPtr<const LineLayout> m_lineLayout;
 
-    DisplayContent m_displayContent;
+    InlineDisplay::Content m_displayContent;
     using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;
     mutable std::unique_ptr<FirstBoxIndexCache> m_firstBoxIndexCache;
 
