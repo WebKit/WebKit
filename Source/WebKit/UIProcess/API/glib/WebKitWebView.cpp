@@ -46,7 +46,6 @@
 #include "WebKitHitTestResultPrivate.h"
 #include "WebKitIconLoadingClient.h"
 #include "WebKitInputMethodContextPrivate.h"
-#include "WebKitJavascriptResultPrivate.h"
 #include "WebKitNavigationClient.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitPermissionStateQueryPrivate.h"
@@ -106,6 +105,8 @@
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSessionPrivate.h"
+#else
+#include "WebKitJavascriptResultPrivate.h"
 #endif
 
 using namespace WebKit;

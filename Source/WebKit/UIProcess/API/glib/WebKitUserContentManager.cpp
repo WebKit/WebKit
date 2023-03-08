@@ -23,7 +23,6 @@
 #include "APISerializedScriptValue.h"
 #include "InjectUserScriptImmediately.h"
 #include "WebKitInitialize.h"
-#include "WebKitJavascriptResultPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserContentPrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -31,6 +30,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
+
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitJavascriptResultPrivate.h"
+#endif
 
 #if PLATFORM(WPE)
 #include "WPEView.h"
