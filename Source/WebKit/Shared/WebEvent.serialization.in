@@ -86,9 +86,7 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 #if !USE(APPKIT) && PLATFORM(GTK)
     Vector<String> commands();
 #endif
-#if !PLATFORM(GTK) && !USE(LIBWPE)
     bool isAutoRepeat();
-#endif
     bool isKeypad();
 #if !PLATFORM(GTK) && !USE(LIBWPE)
     bool isSystemKey();

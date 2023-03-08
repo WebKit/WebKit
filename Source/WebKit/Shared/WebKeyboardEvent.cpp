@@ -58,7 +58,7 @@ WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const S
 
 #elif PLATFORM(GTK)
 
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands, bool isKeypad)
+WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad)
     : WebEvent(WTFMove(event))
     , m_text(text)
     , m_unmodifiedText(text)
@@ -72,7 +72,7 @@ WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const S
     , m_preeditUnderlines(WTFMove(preeditUnderlines))
     , m_preeditSelectionRange(WTFMove(preeditSelectionRange))
     , m_commands(WTFMove(commands))
-    , m_isAutoRepeat(false)
+    , m_isAutoRepeat(isAutoRepeat)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(false)
 {
@@ -101,7 +101,7 @@ WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const S
 
 #elif USE(LIBWPE)
 
-WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, bool isKeypad)
+WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, bool isAutoRepeat, bool isKeypad)
     : WebEvent(WTFMove(event))
     , m_text(text)
     , m_unmodifiedText(text)
@@ -114,7 +114,7 @@ WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const S
     , m_handledByInputMethod(handledByInputMethod)
     , m_preeditUnderlines(WTFMove(preeditUnderlines))
     , m_preeditSelectionRange(WTFMove(preeditSelectionRange))
-    , m_isAutoRepeat(false)
+    , m_isAutoRepeat(isAutoRepeat)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(false)
 {
