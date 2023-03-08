@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class Shape;
+
 namespace Layout {
 
 class ElementBox;
@@ -176,6 +178,9 @@ public:
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
     void setIsFirstChildForIntegration(bool value) { m_isFirstChildForIntegration = value; }
 
+    const Shape* shape() const;
+    void setShape(std::unique_ptr<Shape>);
+
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
@@ -199,6 +204,7 @@ private:
         CellSpan tableCellSpan;
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
+        std::unique_ptr<Shape> shape;
     };
 
     bool hasRareData() const { return m_hasRareData; }

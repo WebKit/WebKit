@@ -68,6 +68,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "ShapeOutsideInfo.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -405,6 +406,11 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             baseline = replacedOrInlineBlock.style().metricsOfPrimaryFont().ascent();
         }
         layoutBox.setBaselineForIntegration(roundToInt(baseline));
+    }
+
+    if (ShapeOutsideInfo::isEnabledFor(replacedOrInlineBlock)) {
+        auto shape = makeShapeForShapeOutside(replacedOrInlineBlock);
+        layoutBox.setShape(WTFMove(shape));
     }
 }
 

@@ -32,6 +32,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
+#include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -388,13 +389,35 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         adjustingDelta = { adjustedCandidatePosition.x, adjustedCandidateTop - candidateTop };
     }
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
-    auto isCandidateEmpty = adjustedCandidateTop == adjustedCandidateBottom;
+    auto candidateHeight = adjustedCandidateBottom - adjustedCandidateTop;
+
     auto contains = [&] (auto& floatBoxRect) {
         if (floatBoxRect.isEmpty())
             return false;
-        if (isCandidateEmpty)
+        if (!candidateHeight)
             return floatBoxRect.top() <= adjustedCandidateTop && floatBoxRect.bottom() > adjustedCandidateTop;
         return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
+    };
+
+    auto computeFloatEdge = [&](auto& floatItem) -> std::optional<LayoutUnit> {
+        if (auto* shape = floatItem.shape()) {
+            // Shapes are relative to the border box.
+            auto borderRect = floatItem.borderBoxRect();
+
+            auto positionInShape = adjustedCandidateTop - borderRect.top();
+            auto segment = shape->getExcludedInterval(positionInShape, positionInShape + candidateHeight);
+            if (!segment.isValid)
+                return { };
+
+            auto edge = LayoutUnit { floatItem.isLeftPositioned() ? segment.logicalRight : segment.logicalLeft };
+            return borderRect.left() + edge;
+        }
+
+        auto rect = floatItem.rectWithMargin();
+        if (!contains(rect))
+            return { };
+
+        return floatItem.isLeftPositioned() ? rect.right() : rect.left();
     };
 
     auto constraints = Constraints { };
@@ -402,13 +425,18 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         for (auto& floatItem : makeReversedRange(floatingState.floats())) {
             if ((constraints.left && floatItem.isLeftPositioned()) || (constraints.right && !floatItem.isLeftPositioned()))
                 continue;
-            auto floatBoxRect = floatItem.rectWithMargin();
-            if (!contains(floatBoxRect))
+
+            auto edge = computeFloatEdge(floatItem);
+            if (!edge)
                 continue;
+
+            // FIXME: Is this correct with shape-outside?
+            auto bottom = floatItem.rectWithMargin().bottom();
+
             if (floatItem.isLeftPositioned())
-                constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
+                constraints.left = PointInContextRoot { *edge, bottom };
             else
-                constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
+                constraints.right = PointInContextRoot { *edge, bottom };
 
             if ((constraints.left && constraints.right)
                 || (constraints.left && !floatingState.hasRightPositioned())
@@ -417,13 +445,19 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         }
     } else {
         for (auto& floatItem : makeReversedRange(floatingState.floats())) {
-            auto floatBoxRect = floatItem.rectWithMargin();
-            if (!contains(floatBoxRect))
+            auto edge = computeFloatEdge(floatItem);
+            if (!edge)
                 continue;
-            if (floatItem.isLeftPositioned() && (!constraints.left || constraints.left->x < floatBoxRect.right()))
-                constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
-            else if (floatItem.isRightPositioned() && (!constraints.right || constraints.right->x > floatBoxRect.left()))
-                constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
+
+            auto bottom = floatItem.rectWithMargin().bottom();
+
+            if (floatItem.isLeftPositioned()) {
+                if (!constraints.left || constraints.left->x < *edge)
+                    constraints.left = PointInContextRoot { *edge, bottom };
+            } else {
+                if (!constraints.right || constraints.right->x > *edge)
+                    constraints.right = PointInContextRoot { *edge, bottom };
+            }
             // FIXME: Bail out when floats are way above.
         }
     }

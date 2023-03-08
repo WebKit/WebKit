@@ -442,6 +442,18 @@ std::optional<LayoutUnit> Box::columnWidth() const
     return rareData().columnWidth;
 }
 
+const Shape* Box::shape() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData().shape.get();
+}
+
+void Box::setShape(std::unique_ptr<Shape> shape)
+{
+    ensureRareData().shape = WTFMove(shape);
+}
+
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
 {
     ASSERT(!m_cachedLayoutState);

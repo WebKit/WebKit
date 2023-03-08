@@ -62,8 +62,11 @@ public:
         bool isInFormattingContextOf(const ElementBox& formattingContextRoot) const;
 
         Rect rectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
+        Rect borderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
         PositionInContextRoot bottom() const { return { rectWithMargin().bottom() }; }
+
+        const Shape* shape() const { return m_layoutBox ? m_layoutBox->shape() : nullptr; }
 
 #if ASSERT_ENABLED
         const Box* floatBox() const { return m_layoutBox.get(); }
