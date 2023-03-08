@@ -349,7 +349,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
         );
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool handledByInputMethod, std::optional<Vector<CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
 {
     guint keyval;
     gdk_event_get_keyval(event, &keyval);
@@ -369,6 +369,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
         WTFMove(preeditUnderlines),
         WTFMove(preeditSelectionRange),
         WTFMove(commands),
+        isAutoRepeat,
         isGdkKeyCodeFromKeyPad(keyval)
         );
 }

@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "InputMethodFilter.h"
+#include "KeyAutoRepeatHandler.h"
 #include "PageClientImpl.h"
 #include "WebPageProxy.h"
 #include <WebCore/ActivityState.h>
@@ -145,6 +146,7 @@ private:
     bool m_verticalScrollActive { false };
 
     WebKit::InputMethodFilter m_inputMethodFilter;
+    WebKit::KeyAutoRepeatHandler m_keyAutoRepeatHandler;
 };
 
 } // namespace WKWPE

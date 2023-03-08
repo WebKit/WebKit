@@ -126,6 +126,7 @@ UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify
 UIProcess/API/glib/APISerializedScriptValueGLib.cpp @no-unify
 UIProcess/API/glib/IconDatabase.cpp @no-unify
 UIProcess/API/glib/InputMethodFilter.cpp @no-unify
+UIProcess/API/glib/KeyAutoRepeatHandler.cpp @no-unify
 UIProcess/API/glib/WebKitApplicationInfo.cpp @no-unify
 UIProcess/API/glib/WebKitAuthenticationRequest.cpp @no-unify
 UIProcess/API/glib/WebKitAutomationSession.cpp @no-unify
