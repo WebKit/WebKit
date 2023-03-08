@@ -84,12 +84,23 @@ static bool shouldAutomaticDashSubstitutionBeEnabled()
     return [defaults boolForKey:WebAutomaticDashSubstitutionEnabled];
 }
 
+static bool shouldGrammarCheckingBeEnabled()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+#if USE(NSSPELLCHECKER_GRAMMAR_CHECKING_POLICY)
+    if (![defaults objectForKey:WebGrammarCheckingEnabled])
+        return [NSSpellChecker grammarCheckingEnabled];
+#endif
+
+    return [defaults boolForKey:WebGrammarCheckingEnabled];
+}
+
 static TextCheckerState& mutableState()
 {
     static NeverDestroyed state = [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
-        initialState.isGrammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
+        initialState.isGrammarCheckingEnabled = shouldGrammarCheckingBeEnabled();
         initialState.isAutomaticTextReplacementEnabled = shouldAutomaticTextReplacementBeEnabled();
         initialState.isAutomaticSpellingCorrectionEnabled = shouldAutomaticSpellingCorrectionBeEnabled();
         initialState.isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
