@@ -81,7 +81,7 @@ public:
     enum class ExitMode : bool { Resize, NoResize };
     void finishExitFullscreen(Document&, ExitMode);
 
-    void exitRemovedFullscreenElementIfNeeded(Element&);
+    void exitRemovedFullscreenElement(Element&);
 
     WEBCORE_EXPORT bool isAnimatingFullscreen() const;
     WEBCORE_EXPORT void setAnimatingFullscreen(bool);

@@ -660,10 +660,9 @@ void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRe
     }
 }
 
-void FullscreenManager::exitRemovedFullscreenElementIfNeeded(Element& element)
+void FullscreenManager::exitRemovedFullscreenElement(Element& element)
 {
-    if (!element.hasFullscreenFlag())
-        return;
+    ASSERT(element.hasFullscreenFlag());
 
     auto fullscreenElement = fullscreenOrPendingElement();
     if (fullscreenElement == &element) {

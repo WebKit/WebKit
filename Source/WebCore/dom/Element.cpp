@@ -2750,7 +2750,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
 #if ENABLE(FULLSCREEN_API)
-    document().fullscreenManager().exitRemovedFullscreenElementIfNeeded(*this);
+    if (UNLIKELY(hasFullscreenFlag()))
+        document().fullscreenManager().exitRemovedFullscreenElement(*this);
 #endif
 
     if (!parentNode() && is<Document>(oldParentOfRemovedTree)) {
