@@ -33,6 +33,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
