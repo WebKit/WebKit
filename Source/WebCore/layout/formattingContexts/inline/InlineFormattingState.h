@@ -26,18 +26,14 @@
 #pragma once
 
 #include "FormattingState.h"
-#include "InlineDisplayBox.h"
-#include "InlineDisplayLine.h"
+#include "InlineDisplayContent.h"
 #include "InlineItem.h"
-#include "InlineLineBox.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
-using DisplayLines = Vector<InlineDisplay::Line>;
-using DisplayBoxes = Vector<InlineDisplay::Box>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
@@ -51,13 +47,13 @@ public:
     void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
     void appendInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
 
-    const DisplayLines& lines() const { return m_displayLines; }
-    DisplayLines& lines() { return m_displayLines; }
+    const InlineDisplay::Lines& lines() const { return m_displayLines; }
+    InlineDisplay::Lines& lines() { return m_displayLines; }
     void addLine(const InlineDisplay::Line& line) { m_displayLines.append(line); }
 
-    const DisplayBoxes& boxes() const { return m_displayBoxes; }
-    DisplayBoxes& boxes() { return m_displayBoxes; }
-    void addBoxes(DisplayBoxes&& boxes) { m_displayBoxes.appendVector(WTFMove(boxes)); }
+    const InlineDisplay::Boxes& boxes() const { return m_displayBoxes; }
+    InlineDisplay::Boxes& boxes() { return m_displayBoxes; }
+    void addBoxes(InlineDisplay::Boxes&& boxes) { m_displayBoxes.appendVector(WTFMove(boxes)); }
 
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
@@ -75,8 +71,8 @@ public:
 private:
     // Cacheable input to line layout.
     InlineItems m_inlineItems;
-    DisplayLines m_displayLines;
-    DisplayBoxes m_displayBoxes;
+    InlineDisplay::Lines m_displayLines;
+    InlineDisplay::Boxes m_displayBoxes;
     // FIXME: This should be part of a non-persistent formatting state.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffset;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0 };

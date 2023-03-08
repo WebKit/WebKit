@@ -29,6 +29,7 @@
 #include "FloatingContext.h"
 #include "FontCascade.h"
 #include "FormattingContext.h"
+#include "InlineDisplayContent.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingQuirks.h"
 #include "InlineLineBoxVerticalAligner.h"
@@ -194,7 +195,7 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
     return { minimumValueForLength(textIndent, availableWidth) };
 }
 
-static std::optional<size_t> firstDisplayBoxIndexForLayoutBox(const Box& layoutBox, const DisplayBoxes& displayBoxes)
+static std::optional<size_t> firstDisplayBoxIndexForLayoutBox(const Box& layoutBox, const InlineDisplay::Boxes& displayBoxes)
 {
     // FIXME: Build a first/last hashmap for these boxes.
     for (size_t index = 0; index < displayBoxes.size(); ++index) {
@@ -206,7 +207,7 @@ static std::optional<size_t> firstDisplayBoxIndexForLayoutBox(const Box& layoutB
     return { };
 }
 
-static std::optional<size_t> lastDisplayBoxIndexForLayoutBox(const Box& layoutBox, const DisplayBoxes& displayBoxes)
+static std::optional<size_t> lastDisplayBoxIndexForLayoutBox(const Box& layoutBox, const InlineDisplay::Boxes& displayBoxes)
 {
     // FIXME: Build a first/last hashmap for these boxes.
     for (auto index = displayBoxes.size(); index--;) {
@@ -218,7 +219,7 @@ static std::optional<size_t> lastDisplayBoxIndexForLayoutBox(const Box& layoutBo
     return { };
 }
 
-static std::optional<size_t> previousDisplayBoxIndex(const Box& outOfFlowBox, const DisplayBoxes& displayBoxes)
+static std::optional<size_t> previousDisplayBoxIndex(const Box& outOfFlowBox, const InlineDisplay::Boxes& displayBoxes)
 {
     auto previousDisplayBoxIndexOf = [&] (auto& layoutBox) -> std::optional<size_t> {
         for (auto* box = &layoutBox; box; box = box->previousInFlowSibling()) {
@@ -239,7 +240,7 @@ static std::optional<size_t> previousDisplayBoxIndex(const Box& outOfFlowBox, co
     return { };
 }
 
-static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const DisplayBoxes& displayBoxes)
+static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const InlineDisplay::Boxes& displayBoxes)
 {
     auto nextDisplayBoxIndexOf = [&] (auto& layoutBox) -> std::optional<size_t> {
         for (auto* box = &layoutBox; box; box = box->nextInFlowSibling()) {

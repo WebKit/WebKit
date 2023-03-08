@@ -60,7 +60,7 @@ struct DamagedContent {
     };
     Type type { Type::Insertion };
 };
-static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> damagedContent, const DisplayBoxes& displayBoxes)
+static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> damagedContent, const InlineDisplay::Boxes& displayBoxes)
 {
     ASSERT(!displayBoxes.isEmpty());
 
@@ -130,7 +130,7 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
     return { };
 }
 
-static const InlineDisplay::Box* leadingContentDisplayForLineIndex(size_t lineIndex, const DisplayBoxes& displayBoxes)
+static const InlineDisplay::Box* leadingContentDisplayForLineIndex(size_t lineIndex, const InlineDisplay::Boxes& displayBoxes)
 {
     auto rootInlineBoxIndexOnLine = [&]() -> size_t {
         for (auto index = displayBoxes.size(); index--;) {
@@ -204,7 +204,7 @@ struct DamagedLine {
     size_t index { 0 };
     InlineItemPosition leadingInlineItemPosition { };
 };
-static std::optional<DamagedLine> leadingInlineItemPositionForDamage(std::optional<DamagedContent> damagedContent, const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
+static std::optional<DamagedLine> leadingInlineItemPositionForDamage(std::optional<DamagedContent> damagedContent, const InlineItems& inlineItems, const InlineDisplay::Boxes& displayBoxes)
 {
     ASSERT(!displayBoxes.isEmpty());
     // 1. Find the root inline box based on the damaged layout box (this is our damaged line)
@@ -250,12 +250,12 @@ static std::optional<DamagedLine> leadingInlineItemPositionForDamage(std::option
     return { };
 }
 
-static std::optional<DamagedLine> leadingInlineItemPositionOnLastLine(const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
+static std::optional<DamagedLine> leadingInlineItemPositionOnLastLine(const InlineItems& inlineItems, const InlineDisplay::Boxes& displayBoxes)
 {
     return leadingInlineItemPositionForDamage({ }, inlineItems, displayBoxes);
 }
 
-static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedContent damagedContent, const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
+static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedContent damagedContent, const InlineItems& inlineItems, const InlineDisplay::Boxes& displayBoxes)
 {
     return leadingInlineItemPositionForDamage(damagedContent, inlineItems, displayBoxes);
 }

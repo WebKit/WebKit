@@ -34,6 +34,7 @@ namespace Layout {
 
 class FloatingContext;
 class InlineFormattingContext;
+class InlineLevelBox;
 
 class InlineFormattingGeometry : public FormattingGeometry {
 public:
