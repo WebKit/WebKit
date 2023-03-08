@@ -75,6 +75,7 @@ public:
         , m_hasNotificationPermissionsSelector([m_delegate.get() respondsToSelector:@selector(notificationPermissionsForWebsiteDataStore:)])
         , m_hasWorkerUpdatedAppBadgeSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:workerOrigin:updatedAppBadge:)])
         , m_hasRequestBackgroundFetchPermissionSelector([m_delegate.get() respondsToSelector:@selector(requestBackgroundFetchPermission:frameOrigin:decisionHandler:)])
+        , m_hasNotifyBackgroundFetchChangeSelector([m_delegate.get() respondsToSelector:@selector(notifyBackgroundFetchChange:change:)])
     {
     }
 
@@ -202,6 +203,9 @@ private:
 
     void notifyBackgroundFetchChange(const String& backgroundFetchIdentifier, WebKit::BackgroundFetchChange backgroundFetchChange) final
     {
+        if (!m_hasNotifyBackgroundFetchChangeSelector)
+            return;
+
         WKBackgroundFetchChange change;
         switch (backgroundFetchChange) {
         case WebKit::BackgroundFetchChange::Addition:
@@ -226,6 +230,7 @@ private:
     bool m_hasNotificationPermissionsSelector { false };
     bool m_hasWorkerUpdatedAppBadgeSelector { false };
     bool m_hasRequestBackgroundFetchPermissionSelector { false };
+    bool m_hasNotifyBackgroundFetchChangeSelector { false };
 };
 
 @implementation WKWebsiteDataStore
