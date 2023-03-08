@@ -36,7 +36,9 @@
 #include <@API_INCLUDE_PREFIX@/WebKitFormSubmissionRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitHitTestResult.h>
 #include <@API_INCLUDE_PREFIX@/WebKitInputMethodContext.h>
+#if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitJavascriptResult.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitNavigationAction.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNotification.h>
 #include <@API_INCLUDE_PREFIX@/WebKitOptionMenu.h>
