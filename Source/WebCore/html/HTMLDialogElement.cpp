@@ -50,31 +50,35 @@ HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& doc
 {
 }
 
-void HTMLDialogElement::show()
+ExceptionOr<void> HTMLDialogElement::show()
 {
     // If the element already has an open attribute, then return.
     if (isOpen())
-        return;
+        return { };
+
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+        return Exception { InvalidStateError, "Element is already an open popover."_s };
 
     setBooleanAttribute(openAttr, true);
 
     m_previouslyFocusedElement = document().focusedElement();
 
     runFocusingSteps();
+    return { };
 }
 
 ExceptionOr<void> HTMLDialogElement::showModal()
 {
     // If subject already has an open attribute, then throw an "InvalidStateError" DOMException.
     if (isOpen())
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "Element is already open."_s };
 
     // If subject is not connected, then throw an "InvalidStateError" DOMException.
     if (!isConnected())
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "Element is not connected."_s };
 
     if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
-        return Exception { InvalidStateError };
+        return Exception { InvalidStateError, "Element is already an open popover."_s };
 
     // setBooleanAttribute will dispatch a DOMSubtreeModified event.
     // Postpone callback execution that can potentially make the dialog disconnected.
