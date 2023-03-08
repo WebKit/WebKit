@@ -22,7 +22,7 @@
 #include "WebProcessTest.h"
 
 #if USE(GTK4)
-#include <webkit/webkit-web-extension.h>
+#include <webkit/webkit-web-process-extension.h>
 #else
 #include <webkit2/webkit-web-extension.h>
 #endif

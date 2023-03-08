@@ -156,7 +156,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearCachedPage(WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
+    SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
 #endif
 
 #if ENABLE(TRACKING_PREVENTION)

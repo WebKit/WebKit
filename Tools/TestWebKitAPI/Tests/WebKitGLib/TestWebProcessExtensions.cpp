@@ -47,7 +47,7 @@ static void checkTitle(WebViewTest* test, GDBusProxy* proxy, const char* expecte
     g_assert_cmpstr(title, ==, expectedTitle);
 }
 
-static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
+static void testWebProcessExtensionGetTitle(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", "http://bar.com");
     test->waitUntilLoadFinished();
@@ -72,7 +72,7 @@ static gboolean inputElementIsUserEdited(GDBusProxy* proxy, uint64_t pageID, con
     return retval;
 }
 
-static void testWebExtensionInputElementIsUserEdited(WebViewTest* test, gconstpointer)
+static void testWebProcessExtensionInputElementIsUserEdited(WebViewTest* test, gconstpointer)
 {
     test->showInWindow();
     test->loadHtml("<html><body id='body'><input id='input'></input><textarea id='textarea'></textarea></body></html>", nullptr);
@@ -120,9 +120,9 @@ static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
     GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
     guint id = g_dbus_connection_signal_subscribe(connection,
         nullptr,
-        "org.webkit.gtk.WebExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         "DocumentLoaded",
-        "/org/webkit/gtk/WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
         nullptr,
         G_DBUS_SIGNAL_FLAGS_NONE,
         reinterpret_cast<GDBusSignalCallback>(documentLoadedCallback),
@@ -130,7 +130,7 @@ static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
         nullptr);
     g_assert_cmpuint(id, !=, 0);
 
-    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", nullptr);
+    test->loadHtml("<html><head><title>WebKitGTK Web Process Extensions Test</title></head><body></body></html>", nullptr);
     g_main_loop_run(test->m_mainLoop);
     g_dbus_connection_signal_unsubscribe(connection, id);
 }
@@ -180,7 +180,7 @@ static void runJavaScriptInIsolatedWorldFinishedCallback(GDBusProxy* proxy, GAsy
     g_main_loop_quit(test->m_mainLoop);
 }
 
-static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
+static void testWebProcessExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><header></header><body><div id='console'></div></body></html>", 0);
     test->waitUntilLoadFinished();
@@ -229,16 +229,16 @@ static void didAssociateFormControlsCallback(GDBusConnection*, const char*, cons
     g_variant_get(result, "(s)", &formIds->outPtr());
 }
 
-static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpointer)
+static void testWebProcessExtensionFormControlsAssociated(WebViewTest* test, gconstpointer)
 {
     GUniqueOutPtr<char> formIds;
     auto proxy = test->extensionProxy();
     GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
     guint id = g_dbus_connection_signal_subscribe(connection,
         nullptr,
-        "org.webkit.gtk.WebExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         "FormControlsAssociated",
-        "/org/webkit/gtk/WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
         nullptr,
         G_DBUS_SIGNAL_FLAGS_NONE,
         reinterpret_cast<GDBusSignalCallback>(didAssociateFormControlsCallback),
@@ -296,9 +296,9 @@ public:
 
         m_willSendDOMEventCallbackID = g_dbus_connection_signal_subscribe(connection,
             nullptr,
-            "org.webkit.gtk.WebExtensionTest",
+            "org.webkit.gtk.WebProcessExtensionTest",
             "FormSubmissionWillSendDOMEvent",
-            "/org/webkit/gtk/WebExtensionTest",
+            "/org/webkit/gtk/WebProcessExtensionTest",
             nullptr,
             G_DBUS_SIGNAL_FLAGS_NONE,
             reinterpret_cast<GDBusSignalCallback>(willSendDOMEventCallback),
@@ -308,9 +308,9 @@ public:
 
         m_willCompleteCallbackID = g_dbus_connection_signal_subscribe(connection,
             nullptr,
-            "org.webkit.gtk.WebExtensionTest",
+            "org.webkit.gtk.WebProcessExtensionTest",
             "FormSubmissionWillComplete",
-            "/org/webkit/gtk/WebExtensionTest",
+            "/org/webkit/gtk/WebProcessExtensionTest",
             nullptr,
             G_DBUS_SIGNAL_FLAGS_NONE,
             reinterpret_cast<GDBusSignalCallback>(willCompleteCallback),
@@ -367,7 +367,7 @@ public:
     bool m_willCompleteCallbackExecuted { false };
 };
 
-static void testWebExtensionFormSubmissionSteps(FormSubmissionTest* test, gconstpointer)
+static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test, gconstpointer)
 {
     test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
         "<input type=\"text\" name=\"foo\" value=\"first\">"
@@ -408,7 +408,7 @@ static void webViewPageIDChanged(WebKitWebView* webView, GParamSpec*, bool* page
     g_assert_nonnull(Test::s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(webView)));
 }
 
-static void testWebExtensionPageID(WebViewTest* test, gconstpointer)
+static void testWebProcessExtensionPageID(WebViewTest* test, gconstpointer)
 {
     auto pageID = webkit_web_view_get_page_id(test->m_webView);
     g_assert_cmpuint(pageID, >=, 1);
@@ -627,7 +627,7 @@ static bool readFileDescriptor(int fd, char** contents, gsize* length)
     return true;
 }
 
-static void testWebExtensionUserMessages(UserMessageTest* test, gconstpointer)
+static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpointer)
 {
     // Normal message with a reply.
     auto* message = webkit_user_message_new("Test.Hello", g_variant_new("s", "WebProcess"));
@@ -757,7 +757,7 @@ static void testWebExtensionUserMessages(UserMessageTest* test, gconstpointer)
     test->waitUntilContextMessageReceived("Test.FinishedPingRequest");
 }
 
-static void testWebExtensionWindowObjectCleared(UserMessageTest* test, gconstpointer)
+static void testWebProcessExtensionWindowObjectCleared(UserMessageTest* test, gconstpointer)
 {
     test->loadHtml("<html><header></header><body></body></html>", 0);
 
@@ -781,18 +781,18 @@ static void testWebExtensionWindowObjectCleared(UserMessageTest* test, gconstpoi
 
 void beforeAll()
 {
-    WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
+    WebViewTest::add("WebKitWebProcessExtension", "dom-document-title", testWebProcessExtensionGetTitle);
 #if PLATFORM(GTK)
-    WebViewTest::add("WebKitWebExtension", "dom-input-element-is-user-edited", testWebExtensionInputElementIsUserEdited);
+    WebViewTest::add("WebKitWebProcessExtension", "dom-input-element-is-user-edited", testWebProcessExtensionInputElementIsUserEdited);
 #endif
-    WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
+    WebViewTest::add("WebKitWebProcessExtension", "document-loaded-signal", testDocumentLoadedSignal);
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);
-    UserMessageTest::add("WebKitWebExtension", "window-object-cleared", testWebExtensionWindowObjectCleared);
-    WebViewTest::add("WebKitWebExtension", "isolated-world", testWebExtensionIsolatedWorld);
-    WebViewTest::add("WebKitWebExtension", "form-controls-associated-signal", testWebExtensionFormControlsAssociated);
-    FormSubmissionTest::add("WebKitWebExtension", "form-submission-steps", testWebExtensionFormSubmissionSteps);
-    WebViewTest::add("WebKitWebExtension", "page-id", testWebExtensionPageID);
-    UserMessageTest::add("WebKitWebExtension", "user-messages", testWebExtensionUserMessages);
+    UserMessageTest::add("WebKitWebProcessExtension", "window-object-cleared", testWebProcessExtensionWindowObjectCleared);
+    WebViewTest::add("WebKitWebProcessExtension", "isolated-world", testWebProcessExtensionIsolatedWorld);
+    WebViewTest::add("WebKitWebProcessExtension", "form-controls-associated-signal", testWebProcessExtensionFormControlsAssociated);
+    FormSubmissionTest::add("WebKitWebProcessExtension", "form-submission-steps", testWebProcessExtensionFormSubmissionSteps);
+    WebViewTest::add("WebKitWebProcessExtension", "page-id", testWebProcessExtensionPageID);
+    UserMessageTest::add("WebKitWebProcessExtension", "user-messages", testWebProcessExtensionUserMessages);
 }
 
 void afterAll()

@@ -38,16 +38,22 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(GTK) && USE(GTK4)
-#include <webkit/webkit-web-extension.h>
+#include <webkit/webkit-web-process-extension.h>
 #elif PLATFORM(GTK)
 #include <webkit2/webkit-web-extension.h>
+#elif PLATFORM(WPE) && ENABLE(2022_GLIB_API)
+#include <wpe/webkit-web-process-extension.h>
 #elif PLATFORM(WPE)
 #include <wpe/webkit-web-extension.h>
 #endif
 
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitWebExtension WebKitWebProcessExtension;
+#endif
+
 static const char introspectionXML[] =
     "<node>"
-    " <interface name='org.webkit.gtk.WebExtensionTest'>"
+    " <interface name='org.webkit.gtk.WebProcessExtensionTest'>"
     "  <method name='GetTitle'>"
     "   <arg type='t' name='pageID' direction='in'/>"
     "   <arg type='s' name='title' direction='out'/>"
@@ -147,15 +153,15 @@ static void emitDocumentLoaded(GDBusConnection* connection)
     bool ok = g_dbus_connection_emit_signal(
         connection,
         0,
-        "/org/webkit/gtk/WebExtensionTest",
-        "org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         "DocumentLoaded",
         0,
         0);
     g_assert_true(ok);
 }
 
-static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* extension)
+static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebProcessExtension* extension)
 {
 #if PLATFORM(GTK) && !USE(GTK4)
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
@@ -179,15 +185,15 @@ static void emitURIChanged(GDBusConnection* connection, const char* uri)
     bool ok = g_dbus_connection_emit_signal(
         connection,
         0,
-        "/org/webkit/gtk/WebExtensionTest",
-        "org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         "URIChanged",
         g_variant_new("(s)", uri),
         0);
     g_assert_true(ok);
 }
 
-static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKitWebExtension* extension)
+static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKitWebProcessExtension* extension)
 {
     WebKitFrame* frame = webkit_web_page_get_main_frame(webPage);
     g_assert_true(WEBKIT_IS_FRAME(frame));
@@ -334,8 +340,8 @@ static void emitFormControlsAssociated(GDBusConnection* connection, const char* 
     bool ok = g_dbus_connection_emit_signal(
         connection,
         nullptr,
-        "/org/webkit/gtk/WebExtensionTest",
-        "org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         "FormControlsAssociated",
         g_variant_new("(s)", formIds),
         nullptr);
@@ -343,13 +349,13 @@ static void emitFormControlsAssociated(GDBusConnection* connection, const char* 
 }
 
 #if !ENABLE(2022_GLIB_API)
-static void formControlsAssociatedForFrameCallback(WebKitWebPage*, GPtrArray*, WebKitFrame*, WebKitWebExtension*)
+static void formControlsAssociatedForFrameCallback(WebKitWebPage*, GPtrArray*, WebKitFrame*, WebKitWebProcessExtension*)
 {
     g_assert_not_reached();
 }
 #endif
 
-static void formControlsAssociatedCallback(WebKitWebFormManager*, WebKitFrame*, GPtrArray* formElements, WebKitWebExtension* extension)
+static void formControlsAssociatedCallback(WebKitWebFormManager*, WebKitFrame*, GPtrArray* formElements, WebKitWebProcessExtension* extension)
 {
     GString* formIdsBuilder = g_string_new(nullptr);
     for (guint i = 0; i < formElements->len; ++i) {
@@ -377,8 +383,8 @@ static void emitFormSubmissionEvent(GDBusConnection* connection, const char* met
     bool ok = g_dbus_connection_emit_signal(
         connection,
         nullptr,
-        "/org/webkit/gtk/WebExtensionTest",
-        "org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         methodName,
         g_variant_new("(sssbb)", formID ? formID : "", names, values, targetFrameIsMainFrame, sourceFrameIsMainFrame),
         nullptr);
@@ -392,7 +398,7 @@ static void willSubmitFormDeprecatedCallback(WebKitWebPage*, WebKitDOMElement*, 
 }
 #endif
 
-static void handleFormSubmissionCallback(WebKitWebExtension* extension, DelayedSignalType delayedSignalType, const char* methodName, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame)
+static void handleFormSubmissionCallback(WebKitWebProcessExtension* extension, DelayedSignalType delayedSignalType, const char* methodName, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame)
 {
     g_assert_true(jsc_value_is_object(form));
     g_assert_true(jsc_value_object_is_instance_of(form, "HTMLFormElement"));
@@ -435,17 +441,17 @@ static void handleFormSubmissionCallback(WebKitWebExtension* extension, DelayedS
         delayedSignalsQueue.append(DelayedSignal(delayedSignalType, formID.get(), names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame)));
 }
 
-static void willSendSubmitEventCallback(WebKitWebFormManager*, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, WebKitWebExtension* extension)
+static void willSendSubmitEventCallback(WebKitWebFormManager*, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, WebKitWebProcessExtension* extension)
 {
     handleFormSubmissionCallback(extension, FormSubmissionWillSendDOMEventSignal, "FormSubmissionWillSendDOMEvent", form, sourceFrame, targetFrame);
 }
 
-static void willSubmitFormCallback(WebKitWebFormManager*, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, WebKitWebExtension* extension)
+static void willSubmitFormCallback(WebKitWebFormManager*, JSCValue* form, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, WebKitWebProcessExtension* extension)
 {
     handleFormSubmissionCallback(extension, FormSubmissionWillCompleteSignal, "FormSubmissionWillComplete", form, sourceFrame, targetFrame);
 }
 
-static gboolean pageMessageReceivedCallback(WebKitWebPage* webPage, WebKitUserMessage* message, WebKitWebExtension* extension)
+static gboolean pageMessageReceivedCallback(WebKitWebPage* webPage, WebKitUserMessage* message, WebKitWebProcessExtension* extension)
 {
     const char* messageName = webkit_user_message_get_name(message);
     if (!g_strcmp0(messageName, "Test.Hello")) {
@@ -519,23 +525,28 @@ static void emitPageCreated(GDBusConnection* connection, guint64 pageID)
     bool ok = g_dbus_connection_emit_signal(
         connection,
         nullptr,
-        "/org/webkit/gtk/WebExtensionTest",
-        "org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
+        "org.webkit.gtk.WebProcessExtensionTest",
         "PageCreated",
         g_variant_new("(t)", pageID),
         nullptr);
     g_assert_true(ok);
 }
 
-static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* webPage, gpointer)
+static void pageCreatedCallback(WebKitWebProcessExtension* extension, WebKitWebPage* webPage, gpointer)
 {
     if (auto* data = g_object_get_data(G_OBJECT(extension), "dbus-connection"))
         emitPageCreated(G_DBUS_CONNECTION(data), webkit_web_page_get_id(webPage));
     else
         delayedSignalsQueue.append(DelayedSignal(PageCreatedSignal, webkit_web_page_get_id(webPage)));
 
+#if ENABLE(2022_GLIB_API)
+    webkit_web_process_extension_send_message_to_context(extension, webkit_user_message_new("PageCreated", g_variant_new("(t)", webkit_web_page_get_id(webPage))),
+        nullptr, nullptr, nullptr);
+#else
     webkit_web_extension_send_message_to_context(extension, webkit_user_message_new("PageCreated", g_variant_new("(t)", webkit_web_page_get_id(webPage))),
         nullptr, nullptr, nullptr);
+#endif
 
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
@@ -554,18 +565,30 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
     g_signal_connect(formManager, "will-submit-form", G_CALLBACK(willSubmitFormCallback), extension);
 }
 
-static gboolean extensionMessageReceivedCallback(WebKitWebExtension* extension, WebKitUserMessage* message)
+static gboolean extensionMessageReceivedCallback(WebKitWebProcessExtension* extension, WebKitUserMessage* message)
 {
     const char* messageName = webkit_user_message_get_name(message);
     if (g_strcmp0(messageName, "RequestPing")) {
+#if ENABLE(2022_GLIB_API)
+        webkit_web_process_extension_send_message_to_context(extension, webkit_user_message_new("Ping", nullptr), nullptr,
+#else
         webkit_web_extension_send_message_to_context(extension, webkit_user_message_new("Ping", nullptr), nullptr,
+#endif
             [](GObject* object, GAsyncResult* result, gpointer) {
-                auto* extension = WEBKIT_WEB_EXTENSION(object);
+                auto* extension = reinterpret_cast<WebKitWebProcessExtension*>(object);
                 GUniqueOutPtr<GError> error;
+#if ENABLE(2022_GLIB_API)
+                GRefPtr<WebKitUserMessage> reply = adoptGRef(webkit_web_process_extension_send_message_to_context_finish(extension, result, &error.outPtr()));
+#else
                 GRefPtr<WebKitUserMessage> reply = adoptGRef(webkit_web_extension_send_message_to_context_finish(extension, result, &error.outPtr()));
+#endif
                 g_assert_no_error(error.get());
                 g_assert_cmpstr(webkit_user_message_get_name(reply.get()), ==, "Pong");
+#if ENABLE(2022_GLIB_API)
+                webkit_web_process_extension_send_message_to_context(extension, webkit_user_message_new("Test.FinishedPingRequest", nullptr), nullptr, nullptr, nullptr);
+#else
                 webkit_web_extension_send_message_to_context(extension, webkit_user_message_new("Test.FinishedPingRequest", nullptr), nullptr, nullptr, nullptr);
+#endif
             }, nullptr);
         return TRUE;
     }
@@ -578,7 +601,7 @@ static char* echoCallback(const char* message)
     return g_strdup(message);
 }
 
-static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, WebKitWebExtension* extension)
+static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, WebKitWebProcessExtension* extension)
 {
     webkit_web_page_send_message_to_view(page, webkit_user_message_new("WindowObjectCleared", nullptr), nullptr, nullptr, nullptr);
     GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
@@ -597,9 +620,13 @@ static void isolatedWorldWindowObjectCleared(WebKitScriptWorld* world, WebKitWeb
     webkit_web_page_send_message_to_view(page, webkit_user_message_new("WindowObjectClearedIsolatedWorld", nullptr), nullptr, nullptr, nullptr);
 }
 
-static WebKitWebPage* getWebPage(WebKitWebExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)
+static WebKitWebPage* getWebPage(WebKitWebProcessExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)
 {
+#if ENABLE(2022_GLIB_API)
+    WebKitWebPage* page = webkit_web_process_extension_get_page(extension, pageID);
+#else
     WebKitWebPage* page = webkit_web_extension_get_page(extension, pageID);
+#endif
     if (!page) {
         g_dbus_method_invocation_return_error(
             invocation, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS,
@@ -613,13 +640,13 @@ static WebKitWebPage* getWebPage(WebKitWebExtension* extension, uint64_t pageID,
 
 static void methodCallCallback(GDBusConnection* connection, const char* sender, const char* objectPath, const char* interfaceName, const char* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData)
 {
-    if (g_strcmp0(interfaceName, "org.webkit.gtk.WebExtensionTest"))
+    if (g_strcmp0(interfaceName, "org.webkit.gtk.WebProcessExtensionTest"))
         return;
 
     if (!g_strcmp0(methodName, "GetTitle")) {
         uint64_t pageID;
         g_variant_get(parameters, "(t)", &pageID);
-        WebKitWebPage* page = getWebPage(WEBKIT_WEB_EXTENSION(userData), pageID, invocation);
+        WebKitWebPage* page = getWebPage(static_cast<WebKitWebProcessExtension*>(userData), pageID, invocation);
         if (!page)
             return;
 
@@ -631,7 +658,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         uint64_t pageID;
         const char* elementID;
         g_variant_get(parameters, "(t&s)", &pageID, &elementID);
-        WebKitWebPage* page = getWebPage(WEBKIT_WEB_EXTENSION(userData), pageID, invocation);
+        WebKitWebPage* page = getWebPage(static_cast<WebKitWebProcessExtension*>(userData), pageID, invocation);
         if (!page)
             return;
 
@@ -645,7 +672,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         uint64_t pageID;
         const char* script;
         g_variant_get(parameters, "(t&s)", &pageID, &script);
-        WebKitWebPage* page = getWebPage(WEBKIT_WEB_EXTENSION(userData), pageID, invocation);
+        WebKitWebPage* page = getWebPage(static_cast<WebKitWebProcessExtension*>(userData), pageID, invocation);
         if (!page)
             return;
 
@@ -681,7 +708,7 @@ static void dbusConnectionCreated(GObject*, GAsyncResult* result, gpointer userD
 
     unsigned registrationID = g_dbus_connection_register_object(
         connection,
-        "/org/webkit/gtk/WebExtensionTest",
+        "/org/webkit/gtk/WebProcessExtensionTest",
         introspectionData->interfaces[0],
         &interfaceVirtualTable,
         g_object_ref(userData),
@@ -729,11 +756,15 @@ static void registerGResource(void)
     g_resource_unref(resource);
 }
 
-extern "C" WTF_EXPORT_DECLARATION void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
+#if ENABLE(2022_GLIB_API)
+extern "C" WTF_EXPORT_DECLARATION void webkit_web_process_extension_initialize_with_user_data(WebKitWebProcessExtension* extension, GVariant* userData)
+#else
+extern "C" WTF_EXPORT_DECLARATION void webkit_web_extension_initialize_with_user_data(WebKitWebProcessExtension* extension, GVariant* userData)
+#endif
 {
-    WebKitScriptWorld* isolatedWorld = webkit_script_world_new_with_name("WebExtensionTestScriptWorld");
+    WebKitScriptWorld* isolatedWorld = webkit_script_world_new_with_name("WebProcessExtensionTestScriptWorld");
     g_assert_true(WEBKIT_IS_SCRIPT_WORLD(isolatedWorld));
-    g_assert_cmpstr(webkit_script_world_get_name(isolatedWorld), ==, "WebExtensionTestScriptWorld");
+    g_assert_cmpstr(webkit_script_world_get_name(isolatedWorld), ==, "WebProcessExtensionTestScriptWorld");
     g_object_set_data_full(G_OBJECT(extension), "wk-script-world", isolatedWorld, g_object_unref);
 
     g_signal_connect(extension, "user-message-received", G_CALLBACK(extensionMessageReceivedCallback), nullptr);

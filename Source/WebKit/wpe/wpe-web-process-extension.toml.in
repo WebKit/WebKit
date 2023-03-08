@@ -1,5 +1,5 @@
 [library]
-description = "The WPE WebKit library"
+description = "The WPE WebKit web extension and DOM library"
 license = "BSD, LGPL-2.1"
 authors = "The WebKit GTK and WPE teams"
 version = "@PROJECT_VERSION@"

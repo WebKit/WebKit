@@ -1,5 +1,6 @@
+/*** BEGIN file-header ***/
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,13 +18,37 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#pragma once
+#if !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/webkit-web-extension.h> can be included directly."
+#endif
 
-#include "InjectedBundle.h"
-#include "UserMessage.h"
-#include "WKDeclarationSpecifiers.h"
-#include "WebKitWebExtension.h"
+#ifndef WEBKIT_WEB_PROCESS_ENUM_TYPES_H
+#define WEBKIT_WEB_PROCESS_ENUM_TYPES_H
 
-WebKitWebExtension* webkitWebExtensionCreate(WebKit::InjectedBundle*);
-void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension*, WebKit::UserMessage&&);
-WK_EXPORT void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension*);
+#include <glib-object.h>
+#include <wpe/WebKitDefines.h>
+
+G_BEGIN_DECLS
+/*** END file-header ***/
+
+
+/*** BEGIN file-production ***/
+/* Enumerations from @basename@. */
+/*** END file-production ***/
+
+
+/*** BEGIN enumeration-production ***/
+#define WEBKIT_TYPE_@ENUMSHORT@ @enum_name@_get_type ()
+
+WEBKIT_API GType
+@enum_name@_get_type (void);
+
+/*** END enumeration-production ***/
+
+
+/*** BEGIN file-tail ***/
+G_END_DECLS
+
+#endif
+/*** END file-tail ***/
+

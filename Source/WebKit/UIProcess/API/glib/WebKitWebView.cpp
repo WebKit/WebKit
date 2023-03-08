@@ -5123,7 +5123,7 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
     GRefPtr<WebKitUserMessage> adoptedMessage = message;
     auto& page = getPage(webView);
     if (!callback) {
-        page.ensureRunningProcess().send(Messages::WebPage::SendMessageToWebExtension(webkitUserMessageGetMessage(message)), page.webPageID().toUInt64());
+        page.ensureRunningProcess().send(Messages::WebPage::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), page.webPageID().toUInt64());
         return;
     }
 
@@ -5141,7 +5141,7 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
             break;
         }
     };
-    page.ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebExtensionWithReply(webkitUserMessageGetMessage(message)),
+    page.ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebProcessExtensionWithReply(webkitUserMessageGetMessage(message)),
         WTFMove(completionHandler), page.webPageID().toUInt64());
 }
 

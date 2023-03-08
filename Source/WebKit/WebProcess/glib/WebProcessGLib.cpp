@@ -27,10 +27,10 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#include "WebKitExtensionManager.h"
-#include "WebKitWebExtensionPrivate.h"
+#include "WebKitWebProcessExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
+#include "WebProcessExtensionManager.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
@@ -173,10 +173,10 @@ void WebProcess::platformTerminate()
 {
 }
 
-void WebProcess::sendMessageToWebExtension(UserMessage&& message)
+void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)
 {
-    if (auto* extension = WebKitExtensionManager::singleton().extension())
-        webkitWebExtensionDidReceiveUserMessage(extension, WTFMove(message));
+    if (auto* extension = WebProcessExtensionManager::singleton().extension())
+        webkitWebProcessExtensionDidReceiveUserMessage(extension, WTFMove(message));
 }
 
 #if PLATFORM(GTK) && !USE(GTK4)

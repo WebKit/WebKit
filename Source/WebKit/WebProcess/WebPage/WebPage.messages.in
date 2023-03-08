@@ -652,8 +652,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
-    SendMessageToWebExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
+    SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
+    SendMessageToWebProcessExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
     StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> ()
