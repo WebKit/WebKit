@@ -1384,15 +1384,20 @@ YV12_BUFFER_CONFIG *av1_realloc_and_scale_if_required(
       aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                          "Failed to allocate scaled buffer");
 
+    const bool has_optimized_scaler = av1_has_optimized_scaler(
+        unscaled->y_crop_width, unscaled->y_crop_height, scaled_width,
+        scaled_height);
+
 #if CONFIG_AV1_HIGHBITDEPTH
-    if (use_optimized_scaler && cm->seq_params->bit_depth == AOM_BITS_8) {
+    if (use_optimized_scaler && has_optimized_scaler &&
+        cm->seq_params->bit_depth == AOM_BITS_8) {
       av1_resize_and_extend_frame(unscaled, scaled, filter, phase, num_planes);
     } else {
       av1_resize_and_extend_frame_nonnormative(
           unscaled, scaled, (int)cm->seq_params->bit_depth, num_planes);
     }
 #else
-    if (use_optimized_scaler) {
+    if (use_optimized_scaler && has_optimized_scaler) {
       av1_resize_and_extend_frame(unscaled, scaled, filter, phase, num_planes);
     } else {
       av1_resize_and_extend_frame_nonnormative(
