@@ -25,6 +25,6 @@
 
 [EnabledBySetting=PopoverAttributeEnabled]
 interface mixin PopoverInvokerElement {
-    [CEReactions, Reflect=popovertarget] attribute Element? popoverTargetElement;
-    [CEReactions] attribute [AtomString] DOMString popoverTargetAction;
+    [CEReactions=NotNeeded, Reflect=popovertarget] attribute Element? popoverTargetElement;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString popoverTargetAction;
 };
