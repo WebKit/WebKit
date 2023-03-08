@@ -86,16 +86,16 @@ static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder
     };
 
     auto& aReferenceElement = a.element;
-    int aSortingIndex = sortingIndex(a.pseudoId);
-
     auto& bReferenceElement = b.element;
-    int bSortingIndex = sortingIndex(b.pseudoId);
 
     if (&aReferenceElement == &bReferenceElement) {
+        auto aSortingIndex = sortingIndex(a.pseudoId);
+        auto bSortingIndex = sortingIndex(b.pseudoId);
         ASSERT(aSortingIndex != bSortingIndex);
         return aSortingIndex < bSortingIndex;
     }
-    return aReferenceElement.compareDocumentPosition(bReferenceElement) & Node::DOCUMENT_POSITION_FOLLOWING;
+
+    return is_lt(treeOrder<Tree>(aReferenceElement, bReferenceElement));
 }
 
 static bool compareCSSTransitions(const CSSTransition& a, const CSSTransition& b)
