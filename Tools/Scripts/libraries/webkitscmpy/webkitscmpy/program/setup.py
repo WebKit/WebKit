@@ -267,6 +267,15 @@ class Setup(Command):
         ).returncode
         log.info('Set better Objective-C diffing behavior for this repository!')
 
+        log.info('Setting better performance options for this repository...')
+        result += run(
+            [local.Git.executable(), 'config', 'core.fsmonitor', 'true'], capture_output=True, cwd=repository.root_path,
+        ).returncode
+        result += run(
+            [local.Git.executable(), 'config', 'core.untrackedCache', 'true'], capture_output=True, cwd=repository.root_path,
+        ).returncode
+        log.info('Set better performance options for this repository!')
+
         commands_to_color = ('color.status', 'color.diff', 'color.branch')
         need_prompt_color = args.all or any([not local_config.get(command) for command in commands_to_color])
         if args.defaults or (need_prompt_color and Terminal.choose(
