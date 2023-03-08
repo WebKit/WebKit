@@ -29,10 +29,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/LockdownModeSoftLinkAdditions.mm>)
-#import <WebKitAdditions/LockdownModeSoftLinkAdditions.mm>
-#endif
-
 constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpmconfig_ignore";
 
 @implementation _WKSystemPreferences
@@ -44,13 +40,9 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     if (preferenceValue.get() == kCFBooleanTrue)
         return true;
 
-#if USE(APPLE_INTERNAL_SDK) && HAVE(LOCKDOWN_MODE_ADDITIONS) && __has_include(<WebKitAdditions/LockdownModeSoftLinkAdditions.mm>)
-    LOCKDOWN_MODE_ADDITIONS_1
-#else
     key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, LDMEnabledKey, kCFStringEncodingUTF8));
     preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     return preferenceValue.get() == kCFBooleanTrue;
-#endif
 }
 
 + (void)setCaptivePortalModeEnabled:(BOOL)enabled
