@@ -46,6 +46,8 @@ public:
 
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 
+    bool streaming() const { return m_streaming; }
+
     bool isManaged() const final { return true; }
 
 private:
