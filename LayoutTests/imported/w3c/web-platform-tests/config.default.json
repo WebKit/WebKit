@@ -4,6 +4,7 @@
  "external_host": null,
  "ports":{"http":[8000, "auto"],
           "https":[8443],
+          "h2":[9000],
           "ws":["auto"],
           "wss":["auto"]},
  "check_subdomains": true,
