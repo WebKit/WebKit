@@ -82,20 +82,24 @@ template<typename T, typename = void> struct ArgumentCoder {
 
 template<>
 struct ArgumentCoder<bool> {
+    // Boolean type is considered to be arithmetic, but its size isn't guaranteed to be a single byte.
+    // This specialization converts booleans to and from uint8_t to ensure minimum possible size.
+
     template<typename Encoder>
     static void encode(Encoder& encoder, bool value)
     {
-        uint8_t data = value ? 1 : 0;
-        encoder << data;
+        // When converting to an integer type, boolean false/true will be converted to that type's 0/1 value.
+        encoder << static_cast<uint8_t>(value);
     }
 
     template<typename Decoder>
     static std::optional<bool> decode(Decoder& decoder)
     {
         auto data = decoder.template decode<uint8_t>();
-        if (data && *data <= 1) // This ensures that only the lower bit is set in a boolean for IPC messages
-            return !!*data;
-        return std::nullopt;
+        if (!data)
+            return std::nullopt;
+        // When converting to a boolean, a zero integer value will be converted to false, and anything else to true.
+        return static_cast<bool>(*data);
     }
 };
 
