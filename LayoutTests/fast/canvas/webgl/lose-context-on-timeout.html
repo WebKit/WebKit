@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true ] -->
 <head>
 <style>
 canvas {
@@ -25,27 +25,36 @@ debug("");
 async function webGLContextLost(canvas) {
     return new Promise(resolve => canvas.addEventListener("webglcontextlost", resolve));
 }
-var val;
+var val = 0;
+var color = new Uint8Array(4);
 async function runTest() {
     let canvas = document.createElement("canvas");
     canvas.width = 200;
     canvas.height = 200;
     gl = wtu.create3DContext(canvas);
-    wtu.setupColorQuad(gl);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0.0, 1.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     shouldBeFalse("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.NO_ERROR");
+    let webglcontextlost = webGLContextLost(canvas);
     if (window.internals)
         window.internals.simulateEventForWebGLContext("Timeout", gl);
-    gl.clearColor(1.0, 1.0, 0.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    val = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-    await webGLContextLost(canvas);
+    // Call a function that is guaranteed to be run on the remote process.
+    // The timeout simulation does not neccessarily invoke the timeout for the
+    // next gl command, so wait until we know that the command was not
+    // executed. Limit to 1000 iterations in case this is run without internals.
+    do {
+        color[0] = 77;
+        gl.clearColor(1.0, ((++val % 10) / 10.) , 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, color);
+    } while (color[0] != 77 && val < 1000);
+    await webglcontextlost;
+    shouldBe("color[0]", "77");
+    shouldBeLessThanOrEqual("val", "998");
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
-    shouldBe("val", "[0, 0, 0, 0]");
     finishTest();
 }
 

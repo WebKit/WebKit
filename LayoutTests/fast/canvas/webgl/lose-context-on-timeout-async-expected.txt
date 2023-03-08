@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+CONSOLE MESSAGE: WebGL: context lost.
 Checks that a GPU process timeout on a non-result producing WebGL call will lose the context.
 NOTE: This only passes in the test harness because it requires Internals.
 

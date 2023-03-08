@@ -3911,10 +3911,6 @@ webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bi
 # Failing on certain hardware configurations: macOS with Intel GPUs. Also slow.
 webkit.org/b/220753 webgl/conformance/extensions/webgl-multi-draw.html [ Pass Failure Slow ]
 
-# Timeout testing is not applicable to in-process webgl, only webgl in gpu process.
-fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
-fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
-
 # WebGL conformance test suite 1.0.x is skipped until 1.0.3 is retired.
 webgl/1.0.x [ Skip ]
 
