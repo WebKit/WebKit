@@ -3188,6 +3188,12 @@ int main(int argc, char** argv)
     fegetenv( &env );
     env.__fpscr &= ~0x01000000u;
     fesetenv( &env );
+
+    // Let the kernel kill us when OOM
+    {
+        int retval = proc_setpcontrol(PC_KILL);
+        ASSERT_UNUSED(retval, !retval);
+    }
 #endif
 
 #if OS(WINDOWS)
