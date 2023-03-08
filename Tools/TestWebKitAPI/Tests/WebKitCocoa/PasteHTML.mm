@@ -405,7 +405,8 @@ TEST(PasteHTML, ReadSelectionFromPasteboard)
     [generalPasteboard setString:@"Hello world" forType:NSPasteboardTypeString];
 
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
-    [webView synchronouslyLoadHTMLString:@"<input autofocus>"];
+    [webView synchronouslyLoadHTMLString:@"<input>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
     [webView readSelectionFromPasteboard:generalPasteboard];
 
     NSString *inputValue = [webView stringByEvaluatingJavaScript:@"document.querySelector('input').value"];
