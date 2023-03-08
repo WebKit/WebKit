@@ -414,7 +414,7 @@ void AuxiliaryProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
 
 bool AuxiliaryProcessProxy::mayBecomeUnresponsive()
 {
-    return !platformIsBeingDebugged();
+    return !(platformIsBeingDebugged() || throttler().isSuspended());
 }
 
 void AuxiliaryProcessProxy::didBecomeUnresponsive()
