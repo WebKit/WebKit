@@ -400,24 +400,29 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     };
 
     auto computeFloatEdge = [&](auto& floatItem) -> std::optional<LayoutUnit> {
+        auto marginRect = floatItem.rectWithMargin();
+        if (!contains(marginRect))
+            return { };
+
         if (auto* shape = floatItem.shape()) {
             // Shapes are relative to the border box.
             auto borderRect = floatItem.borderBoxRect();
 
             auto positionInShape = adjustedCandidateTop - borderRect.top();
-            auto segment = shape->getExcludedInterval(positionInShape, positionInShape + candidateHeight);
+            auto segment = shape->getExcludedInterval(positionInShape, candidateHeight);
             if (!segment.isValid)
                 return { };
 
-            auto edge = LayoutUnit { floatItem.isLeftPositioned() ? segment.logicalRight : segment.logicalLeft };
-            return borderRect.left() + edge;
+            if (floatItem.isLeftPositioned()) {
+                auto shapeRight = borderRect.left() + LayoutUnit { segment.logicalRight };
+                // Shape can't extend beyond the margin box.
+                return std::min(shapeRight, marginRect.right());
+            }
+            auto shapeLeft = borderRect.left() + LayoutUnit { segment.logicalLeft };
+            return std::max(shapeLeft, marginRect.left());
         }
 
-        auto rect = floatItem.rectWithMargin();
-        if (!contains(rect))
-            return { };
-
-        return floatItem.isLeftPositioned() ? rect.right() : rect.left();
+        return floatItem.isLeftPositioned() ? marginRect.right() : marginRect.left();
     };
 
     auto constraints = Constraints { };
