@@ -17,6 +17,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "api/ref_counted_base.h"
@@ -68,6 +69,18 @@ class RTC_EXPORT RTCStatsReport final
 
   int64_t timestamp_us() const { return timestamp_us_; }
   void AddStats(std::unique_ptr<const RTCStats> stats);
+  // On success, returns a non-owning pointer to `stats`. If the stats ID is not
+  // unique, `stats` is not inserted and nullptr is returned.
+  template <typename T>
+  T* TryAddStats(std::unique_ptr<T> stats) {
+    T* stats_ptr = stats.get();
+    if (!stats_
+             .insert(std::make_pair(std::string(stats->id()), std::move(stats)))
+             .second) {
+      return nullptr;
+    }
+    return stats_ptr;
+  }
   const RTCStats* Get(const std::string& id) const;
   size_t size() const { return stats_.size(); }
 
