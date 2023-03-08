@@ -1412,7 +1412,10 @@ ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
     if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
         return hidePopover();
 
-    return showPopover();
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Hidden && force.value_or(true))
+        return showPopover();
+
+    return { };
 }
 
 void HTMLElement::popoverAttributeChanged(const AtomString& value)
