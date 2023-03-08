@@ -5223,9 +5223,15 @@ bool WebGLRenderingContextBase::validateStencilFunc(const char* functionName, GC
     }
 }
 
-void WebGLRenderingContextBase::printToConsole(MessageLevel level, const String& message)
+bool WebGLRenderingContextBase::shouldPrintToConsole() const
 {
-    if (!m_synthesizedErrorsToConsole || !m_numGLErrorsToConsoleAllowed)
+    return m_synthesizedErrorsToConsole && m_numGLErrorsToConsoleAllowed;
+}
+
+// Frequent call sites should use above condition before constructing the message for the printToConsole().
+void WebGLRenderingContextBase::printToConsole(MessageLevel level, String&& message)
+{
+    if (!shouldPrintToConsole())
         return;
 
     std::unique_ptr<Inspector::ConsoleMessage> consoleMessage;
@@ -5233,16 +5239,16 @@ void WebGLRenderingContextBase::printToConsole(MessageLevel level, const String&
     // Error messages can occur during function calls, so show stack traces for them.
     if (level == MessageLevel::Error) {
         Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
-        consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message, WTFMove(stackTrace));
+        consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, WTFMove(message), WTFMove(stackTrace));
     } else
-        consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message);
+        consoleMessage = makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, WTFMove(message));
 
     auto* canvas = htmlCanvas();
     if (canvas)
         canvas->document().addConsoleMessage(WTFMove(consoleMessage));
 
     --m_numGLErrorsToConsoleAllowed;
-    if (!m_numGLErrorsToConsoleAllowed)
+    if (m_numGLErrorsToConsoleAllowed == 1)
         printToConsole(MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s);
 }
 
@@ -5648,14 +5654,16 @@ namespace {
 
 void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, const char* functionName, const char* description)
 {
-    printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
+    if (shouldPrintToConsole())
+        printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
     if (m_context)
         m_context->synthesizeGLError(error);
 }
 
 void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, const char* functionName, const char* description)
 {
-    printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
+    if (shouldPrintToConsole())
+        printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
     m_contextLostState->errors.add(error);
 }
 
@@ -5874,7 +5882,8 @@ void WebGLRenderingContextBase::forceContextLost()
 
 void WebGLRenderingContextBase::recycleContext()
 {
-    printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost."_s);
+    if (shouldPrintToConsole())
+        printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost."_s);
     // Using SyntheticLostContext means the developer won't be able to force the restoration
     // of the context by calling preventDefault() in a "webglcontextlost" event handler.
     forceLostContext(SyntheticLostContext);
