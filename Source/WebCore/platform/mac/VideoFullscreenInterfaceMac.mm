@@ -35,9 +35,9 @@
 #import "TimeRanges.h"
 #import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenModel.h"
+#import "WebAVPlayerLayer.h"
 #import "WebPlaybackControlsManager.h"
 #import <AVFoundation/AVTime.h>
-#import <WebCore/WebAVPlayerLayer.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/PIPSPI.h>
@@ -108,6 +108,7 @@ enum class PIPState {
     RetainPtr<PIPViewController> _pipViewController;
     RetainPtr<NSViewController> _videoViewContainerController;
     RetainPtr<WebVideoViewContainer> _videoViewContainer;
+    RetainPtr<WebAVPlayerLayer> _playerLayer;
     PIPState _pipState;
     RetainPtr<NSWindow> _returningWindow;
     NSRect _returningRect;
@@ -159,6 +160,7 @@ enum class PIPState {
     [_videoViewContainer setVideoViewContainerDelegate:nil];
     _videoViewContainer = nil;
     _videoViewContainerController = nil;
+    _playerLayer = nil;
     _pipState = PIPState::NotInPIP;
     _exitingToStandardFullscreen = NO;
     _returningWindow = nil;
@@ -183,6 +185,7 @@ enum class PIPState {
 {
     _videoDimensions = videoDimensions;
 
+    [_playerLayer setVideoDimensions:_videoDimensions];
     [_pipViewController setAspectRatio:_videoDimensions];
 }
 
@@ -191,6 +194,7 @@ enum class PIPState {
     ASSERT(!_pipViewController);
     ASSERT(!_videoViewContainerController);
     ASSERT(!_videoViewContainer);
+    ASSERT(!_playerLayer);
 
     _pipViewController = adoptNS([allocPIPViewControllerInstance() init]);
     [_pipViewController setDelegate:self];
@@ -202,11 +206,20 @@ enum class PIPState {
 
     _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
     [_videoViewContainer setVideoViewContainerDelegate:self];
+    [_videoViewContainer setLayer:[CALayer layer]];
     [_videoViewContainer setWantsLayer:YES];
+    [_videoViewContainer setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+    _playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
+    [[_videoViewContainer layer] addSublayer:_playerLayer.get()];
+    [_playerLayer setFrame:[_videoViewContainer layer].bounds];
+    [_playerLayer setFullscreenInterface:_videoFullscreenInterfaceMac];
+    [_playerLayer setVideoSublayer:videoView.layer];
+    [_playerLayer setVideoDimensions:_videoDimensions];
+    [_playerLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
+
     [videoView.layer removeFromSuperlayer];
-    [_videoViewContainer addSubview:videoView];
-    videoView.frame = [_videoViewContainer bounds];
-    videoView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    [_playerLayer addSublayer:videoView.layer];
 
     _videoViewContainerController = adoptNS([[NSViewController alloc] init]);
     [_videoViewContainerController setView:_videoViewContainer.get()];
@@ -269,9 +282,6 @@ enum class PIPState {
         if (auto* observer = _videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
             observer->didEnterFullscreen((WebCore::FloatSize)[_videoViewContainer bounds].size);
     }
-
-    if (auto* model = _videoFullscreenInterfaceMac->videoFullscreenModel())
-        model->setVideoLayerFrame([_videoViewContainer bounds]);
 }
 
 - (void)superviewDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer
