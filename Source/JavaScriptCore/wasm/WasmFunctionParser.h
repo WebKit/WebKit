@@ -32,6 +32,7 @@
 #include "WasmParser.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace Wasm {
@@ -112,6 +113,7 @@ struct FunctionParserTypes {
 
 template<typename Context>
 class FunctionParser : public Parser<void>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType, typename Context::CallType> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using CallType = typename FunctionParser::CallType;
     using ControlType = typename FunctionParser::ControlType;

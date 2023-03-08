@@ -72,6 +72,7 @@
 #include "WasmThunks.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <limits>
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 #if !ENABLE(WEBASSEMBLY)
@@ -98,6 +99,7 @@ static constexpr bool verboseInlining = false;
 }
 
 class B3IRGenerator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
@@ -891,8 +893,8 @@ private:
 
     RefPtr<B3::Air::PrologueGenerator> m_prologueGenerator;
 
-    Vector<B3IRGenerator> m_protectedInlineeGenerators;
-    Vector<FunctionParser<B3IRGenerator>> m_protectedInlineeParsers;
+    Vector<std::unique_ptr<B3IRGenerator>> m_protectedInlineeGenerators;
+    Vector<std::unique_ptr<FunctionParser<B3IRGenerator>>> m_protectedInlineeParsers;
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -4108,10 +4110,10 @@ auto B3IRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const Typ
     BasicBlock* continuation = m_proc.addBlock();
 
     const FunctionData& function = m_info.functions[calleeFunctionIndex];
-    m_protectedInlineeGenerators.constructAndAppend(*this, *m_inlineRoot, calleeFunctionIndex, continuation, WTFMove(getArgs));
-    auto& irGenerator = m_protectedInlineeGenerators.last();
-    m_protectedInlineeParsers.constructAndAppend(irGenerator, function.data.data(), function.data.size(), calleeSignature, m_info);
-    auto& parser = m_protectedInlineeParsers.last();
+    m_protectedInlineeGenerators.append(makeUnique<B3IRGenerator>(*this, *m_inlineRoot, calleeFunctionIndex, continuation, WTFMove(getArgs)));
+    auto& irGenerator = *m_protectedInlineeGenerators.last();
+    m_protectedInlineeParsers.append(makeUnique<FunctionParser<B3IRGenerator>>(irGenerator, function.data.data(), function.data.size(), calleeSignature, m_info));
+    auto& parser = *m_protectedInlineeParsers.last();
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     irGenerator.insertConstants();
