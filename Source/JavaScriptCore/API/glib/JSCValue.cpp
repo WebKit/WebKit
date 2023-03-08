@@ -497,7 +497,7 @@ JSCValue* jsc_value_new_array(JSCContext* context, GType firstItemType, ...)
         GUniqueOutPtr<char> error;
         G_VALUE_COLLECT_INIT(&item, itemType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         if (error) {
-            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: ", error.get())));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: "_s, error.get())));
             jscContextHandleExceptionIfNeeded(context, exception);
             jsArray = nullptr;
             break;
@@ -893,7 +893,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
         GUniqueOutPtr<char> error;
         G_VALUE_COLLECT_INIT(&parameter, parameterType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         if (error) {
-            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: ", error.get())));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: "_s, error.get())));
             jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
             return adoptGRef(jsc_value_new_undefined(priv->context.get()));
         }

@@ -1296,7 +1296,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
             const Identifier& ident = unlinkedCodeBlock->variable(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry, &vm);
             if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, globalObject, ident, slot)) {
-                return throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '", String(ident.impl()), "'"));
+                return throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '"_s, StringView(ident.impl()), '\''));
             }
         }
 
@@ -1304,7 +1304,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry, &vm);
             if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, globalObject, function->name(), slot)) {
-                return throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '", String(function->name().impl()), "'"));
+                return throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '"_s, StringView(function->name().impl()), '\''));
             }
         }
     }
@@ -1344,7 +1344,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
                 JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, function->name());
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
                 if (resolvedScope.isUndefined())
-                    return throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'"));
+                    return throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '"_s, StringView(function->name().impl()), '\''));
                 PutPropertySlot slot(variableObject);
                 // We need create this variables because it will be used to emits code by bytecode generator
                 variableObject->methodTable()->put(variableObject, globalObject, function->name(), jsUndefined(), slot);

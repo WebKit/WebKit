@@ -306,7 +306,7 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
                 return IterationStatus::Continue;
             if (scope->lexicalVariables().contains(impl))
                 return IterationStatus::Continue;
-            errorMessage = makeString("Cannot reference undeclared private names: \"", String(impl), "\"");
+            errorMessage = makeString("Cannot reference undeclared private names: \""_s, StringView(impl), '"');
             return IterationStatus::Done;
         });
         if (!errorMessage.isNull())

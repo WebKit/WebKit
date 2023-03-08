@@ -517,7 +517,7 @@ ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, 
 {
     String name = tryMakeString(strings...);
     if (UNLIKELY(!name)) {
-        throwOutOfMemoryError(globalObject, throwScope, makeString(messagePrefix, "name is too long"));
+        throwOutOfMemoryError(globalObject, throwScope, makeString(messagePrefix, "name is too long"_s));
         return String();
     }
     return name;

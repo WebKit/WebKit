@@ -787,7 +787,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
             return tokenType;
         }
     }
-    m_lexErrorMessage = makeString("Unrecognized token '", StringView { m_ptr, 1 }, '\'');
+    m_lexErrorMessage = makeString("Unrecognized token '"_s, StringView { m_ptr, 1 }, '\'');
     return TokError;
 }
 
@@ -954,7 +954,7 @@ slowPathBegin:
                     } // uNNNN == 5 characters
                     for (int i = 1; i < 5; i++) {
                         if (!isASCIIHexDigit(m_ptr[i])) {
-                            m_lexErrorMessage = makeString("\"\\", StringView { m_ptr, 5 }, "\" is not a valid unicode escape");
+                            m_lexErrorMessage = makeString("\"\\"_s, StringView { m_ptr, 5 }, "\" is not a valid unicode escape"_s);
                             return TokError;
                         }
                     }
@@ -968,7 +968,7 @@ slowPathBegin:
                         m_ptr++;
                         break;
                     }
-                    m_lexErrorMessage = makeString("Invalid escape character ", StringView { m_ptr, 1 });
+                    m_lexErrorMessage = makeString("Invalid escape character "_s, StringView { m_ptr, 1 });
                     return TokError;
             }
         }
@@ -1149,8 +1149,8 @@ ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
         auto tryMakeErrorString = [&] (unsigned length) -> String {
             bool addEllipsis = length != token->stringLength;
             if (token->stringIs8Bit)
-                return tryMakeString("Unexpected identifier \"", StringView { token->stringToken8, length }, addEllipsis ? "..." : "", '"');
-            return tryMakeString("Unexpected identifier \"", StringView { token->stringToken16, length }, addEllipsis ? "..." : "", '"');
+                return tryMakeString("Unexpected identifier \""_s, StringView { token->stringToken8, length }, addEllipsis ? "..."_s : ""_s, '"');
+            return tryMakeString("Unexpected identifier \""_s, StringView { token->stringToken16, length }, addEllipsis ? "..."_s : ""_s, '"');
         };
 
         constexpr unsigned maxLength = 200;

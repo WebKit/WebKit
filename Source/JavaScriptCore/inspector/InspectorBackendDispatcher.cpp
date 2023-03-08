@@ -174,7 +174,7 @@ void BackendDispatcher::dispatch(const String& message)
         String domain = domainAndMethod[0];
         SupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
         if (!domainDispatcher) {
-            reportProtocolError(MethodNotFound, "'" + domain + "' domain was not found");
+            reportProtocolError(MethodNotFound, makeString('\'', domain, "' domain was not found"_s));
             sendPendingErrors();
             return;
         }
@@ -294,21 +294,21 @@ T BackendDispatcher::getPropertyValue(JSON::Object* params, const String& name, 
 
     if (!params) {
         if (required)
-            reportProtocolError(BackendDispatcher::InvalidParams, makeString("'params' object must contain required parameter '", name, "' with type '", typeName, "'."));
+            reportProtocolError(BackendDispatcher::InvalidParams, makeString("'params' object must contain required parameter '"_s, name, "' with type '"_s, typeName, "'."_s));
         return result;
     }
 
     auto findResult = params->find(name);
     if (findResult == params->end()) {
         if (required)
-            reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '", name, "' with type '", typeName, "' was not found."));
+            reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '"_s, name, "' with type '"_s, typeName, "' was not found."_s));
         return result;
     }
 
     result = converter(findResult->value);
 
     if (!result)
-        reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '", name, "' has wrong type. It must be '", typeName, "'."));
+        reportProtocolError(BackendDispatcher::InvalidParams, makeString("Parameter '"_s, name, "' has wrong type. It must be '"_s, typeName, "'."_s));
 
     return result;
 }

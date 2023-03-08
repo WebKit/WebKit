@@ -98,7 +98,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     const auto& formatMessage = [&](const auto& message) {
-        return makeString("WebAssembly.Exception.getArg(): ", message);
+        return makeString("WebAssembly.Exception.getArg(): "_s, message);
     };
 
     JSWebAssemblyException* jsException = getException(globalObject, callFrame->thisValue());

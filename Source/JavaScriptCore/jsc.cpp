@@ -918,7 +918,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     if (!referrer.isLocalFile())
-        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'."))));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier, "'."_s))));
 
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
@@ -957,13 +957,13 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
         }
 
         if (!directoryURL.isLocalFile()) {
-            throwException(globalObject, scope, createError(globalObject, makeString("Could not resolve the referrer's path: ", directoryURL.string())));
+            throwException(globalObject, scope, createError(globalObject, makeString("Could not resolve the referrer's path: "_s, directoryURL.string())));
             return { };
         }
 
         auto resolvedURL = specifierIsAbsolute ? URL::fileURLWithFileSystemPath(specifier) : URL(directoryURL, specifier);
         if (!resolvedURL.isValid()) {
-            throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: ", resolvedURL.string())));
+            throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: "_s, resolvedURL.string())));
             return { };
         }
         ASSERT(resolvedURL.isLocalFile());
@@ -1275,7 +1275,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
     Vector<uint8_t> buffer;
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
-        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '", moduleKey, "'."))));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '"_s, moduleKey, "'."_s))));
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
@@ -1494,7 +1494,7 @@ public:
 
     IterationStatus operator()(StackVisitor& visitor) const
     {
-        m_trace.append(makeString("    ", visitor->index(), "   ", visitor->toString(), '\n'));
+        m_trace.append(makeString("    "_s, visitor->index(), "   "_s, visitor->toString(), '\n'));
         return IterationStatus::Continue;
     }
 
@@ -1719,7 +1719,7 @@ static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* call
     if (callerRelative) {
         path = URL(callFrame->callerSourceOrigin(vm).url(), fileName);
         if (!path.isLocalFile()) {
-            throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: ", path.string())));
+            throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: "_s, path.string())));
             return URL();
         }
     } else

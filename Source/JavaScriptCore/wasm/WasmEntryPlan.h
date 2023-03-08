@@ -107,7 +107,7 @@ protected:
     {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {
             Locker locker { m_lock };
-            fail(WTF::makeString("Failed allocating enough space for ", size, what));
+            fail(WTF::makeString("Failed allocating enough space for "_s, size, what));
             return false;
         }
         return true;

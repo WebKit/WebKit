@@ -477,13 +477,16 @@ void LinkBuffer::linkComments(MacroAssembler& assembler)
     if (LIKELY(!Options::needDisassemblySupport()) || !m_executableMemory)
         return;
     AssemblyCommentRegistry::CommentMap map;
-    for (const auto& [label, str] : assembler.m_comments) {
-        void* commentLocation = locationOf<DisassemblyPtrTag>(label).dataLocation();
+    for (auto& comment : assembler.m_comments) {
+        void* commentLocation = locationOf<DisassemblyPtrTag>(comment.first).dataLocation();
         auto key = reinterpret_cast<uintptr_t>(commentLocation);
-        String strCopy = str.isolatedCopy();
-        if (map.contains(key))
-            strCopy = map.get(key).isolatedCopy() + "\n; " + strCopy;
-        map.set(key, WTFMove(strCopy));
+
+        auto& string = comment.second;
+        auto addResult = map.ensure(key, [&] {
+            return string.isolatedCopy();
+        });
+        if (!addResult.isNewEntry)
+            addResult.iterator->value = addResult.iterator->value + "\n; "_s + string;
     }
 
     AssemblyCommentRegistry::singleton().registerCodeRange(m_executableMemory->start().untaggedPtr(), m_executableMemory->end().untaggedPtr(), WTFMove(map));

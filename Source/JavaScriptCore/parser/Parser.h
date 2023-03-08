@@ -1658,7 +1658,7 @@ private:
     
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMessage, const String& name, const char* afterMessage)
     {
-        m_errorMessage = makeString(beforeMessage, " '", name, "' ", afterMessage);
+        m_errorMessage = makeString(beforeMessage, " '"_s, name, "' "_s, afterMessage);
     }
     
     NEVER_INLINE void updateErrorMessage(const char* msg)

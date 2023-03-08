@@ -92,7 +92,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
         Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-            fail(makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
+            fail(makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex)); // FIXME make this an Expected.
         }
         m_currentIndex = m_moduleInformation->functions.size();
         return;
@@ -174,7 +174,7 @@ void LLIntPlan::didCompleteCompilation()
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-                Base::fail(makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
+                Base::fail(makeString("Out of executable memory in function entrypoint at index "_s, functionIndex));
                 return;
             }
 

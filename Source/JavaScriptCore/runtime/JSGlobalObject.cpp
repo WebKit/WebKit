@@ -875,8 +875,8 @@ void JSGlobalObject::init(VM& vm)
     // We have to manually set this here because we make it a prototype without transition below.
     m_objectPrototype.get()->didBecomePrototype();
     GetterSetter* protoAccessor = GetterSetter::create(vm, this,
-        JSFunction::create(vm, this, 0, makeString("get ", vm.propertyNames->underscoreProto.string()), globalFuncProtoGetter, ImplementationVisibility::Public, UnderscoreProtoIntrinsic),
-        JSFunction::create(vm, this, 0, makeString("set ", vm.propertyNames->underscoreProto.string()), globalFuncProtoSetter, ImplementationVisibility::Public));
+        JSFunction::create(vm, this, 0, makeString("get "_s, vm.propertyNames->underscoreProto.string()), globalFuncProtoGetter, ImplementationVisibility::Public, UnderscoreProtoIntrinsic),
+        JSFunction::create(vm, this, 0, makeString("set "_s, vm.propertyNames->underscoreProto.string()), globalFuncProtoSetter, ImplementationVisibility::Public));
     m_objectPrototype->putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->underscoreProto, protoAccessor, PropertyAttribute::Accessor | PropertyAttribute::DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     m_objectStructureForObjectConstructor.set(vm, this, m_structureCache.emptyObjectStructureForPrototype(this, m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity));

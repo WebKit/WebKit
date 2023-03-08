@@ -3400,14 +3400,14 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
 
 bool JSObject::putDirectNativeIntrinsicGetter(VM& vm, JSGlobalObject* globalObject, Identifier name, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, ImplementationVisibility::Public, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get "_s, name.string()), nativeFunction, ImplementationVisibility::Public, intrinsic);
     GetterSetter* accessor = GetterSetter::create(vm, globalObject, function, nullptr);
     return putDirectNonIndexAccessor(vm, name, accessor, attributes);
 }
 
 void JSObject::putDirectNativeIntrinsicGetterWithoutTransition(VM& vm, JSGlobalObject* globalObject, Identifier name, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
-    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get ", name.string()), nativeFunction, ImplementationVisibility::Public, intrinsic);
+    JSFunction* function = JSFunction::create(vm, globalObject, 0, makeString("get "_s, name.string()), nativeFunction, ImplementationVisibility::Public, intrinsic);
     GetterSetter* accessor = GetterSetter::create(vm, globalObject, function, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, name, accessor, attributes);
 }

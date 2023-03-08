@@ -228,14 +228,14 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
         if (collation.isNull())
             dataLocaleWithExtensions = resolved.dataLocale.utf8();
         else
-            dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-", m_collation).utf8();
+            dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-"_s, m_collation).utf8();
         break;
     case Usage::Search:
         // searchLocaleData filters out "co" unicode extension. However, we need to pass "co" to ICU when Usage::Search is specified.
         // So we need to pass "co" unicode extension through locale. Since the other relevant extensions are handled via ucol_setAttribute,
         // we can just use dataLocale
         // Since searchLocaleData filters out "co" unicode extension, "collation" option is just ignored.
-        dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-search").utf8();
+        dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-search"_s).utf8();
         break;
     }
     dataLogLnIf(IntlCollatorInternal::verbose, "locale:(", resolved.locale, "),dataLocaleWithExtensions:(", dataLocaleWithExtensions, ")");

@@ -456,7 +456,7 @@ bool ProxyObject::validateSetTrapResult(JSGlobalObject* globalObject, JSValue tr
     RETURN_IF_EXCEPTION(scope, false);
     if (!trapResultAsBool) {
         if (shouldThrow)
-            throwTypeError(globalObject, scope, makeString("Proxy object's 'set' trap returned falsy value for property '", String(propertyName.uid()), "'"));
+            throwTypeError(globalObject, scope, makeString("Proxy object's 'set' trap returned falsy value for property '"_s, StringView(propertyName.uid()), '\''));
         return false;
     }
 
@@ -857,7 +857,7 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
 
     if (!trapResultAsBool) {
         if (shouldThrow)
-            throwTypeError(globalObject, scope, makeString("Proxy's 'defineProperty' trap returned falsy value for property '", String(propertyName.uid()), "'"));
+            throwTypeError(globalObject, scope, makeString("Proxy's 'defineProperty' trap returned falsy value for property '"_s, StringView(propertyName.uid()), '\''));
         return false;
     }
 
@@ -990,7 +990,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
 
     for (UniquedStringImpl* impl : targetNonConfigurableKeys) {
         if (!uncheckedResultKeys.remove(impl)) {
-            throwTypeError(globalObject, scope, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+            throwTypeError(globalObject, scope, makeString("Proxy object's 'target' has the non-configurable property '"_s, StringView(impl), "' that was not in the result from the 'ownKeys' trap"_s));
             return;
         }
     }
@@ -998,7 +998,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
     if (!targetIsExensible) {
         for (UniquedStringImpl* impl : targetConfigurableKeys) {
             if (!uncheckedResultKeys.remove(impl)) {
-                throwTypeError(globalObject, scope, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+                throwTypeError(globalObject, scope, makeString("Proxy object's non-extensible 'target' has configurable property '"_s, StringView(impl), "' that was not in the result from the 'ownKeys' trap"_s));
                 return;
             }
         }

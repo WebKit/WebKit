@@ -528,7 +528,7 @@ String Lexer<T>::invalidCharacterMessage() const
     case 96:
         return "Invalid character: '`'"_s;
     default:
-        return makeString("Invalid character '\\u", hex(m_current, 4, Lowercase), '\'');
+        return makeString("Invalid character '\\u"_s, hex(m_current, 4, Lowercase), '\'');
     }
 }
 
@@ -987,7 +987,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
             ident = makeIdentifier(identifierStart, identifierLength);
             if (m_parsingBuiltinFunction) {
                 if (!isSafeBuiltinIdentifier(m_vm, ident)) {
-                    m_lexErrorMessage = makeString("The use of '", ident->string(), "' is disallowed in builtin functions.");
+                    m_lexErrorMessage = makeString("The use of '"_s, ident->string(), "' is disallowed in builtin functions."_s);
                     return ERRORTOK;
                 }
                 if (*ident == m_vm.propertyNames->undefinedKeyword)
@@ -2630,7 +2630,7 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, UChar patternPrefix)
             JSTokenType token = UNTERMINATED_REGEXP_LITERAL_ERRORTOK;
             fillTokenInfo(tokenRecord, token, m_lineNumber, currentOffset(), currentLineStartOffset(), currentPosition());
             m_error = true;
-            m_lexErrorMessage = makeString("Unterminated regular expression literal '", getToken(*tokenRecord), "'");
+            m_lexErrorMessage = makeString("Unterminated regular expression literal '"_s, getToken(*tokenRecord), '\'');
             return token;
         }
 
@@ -2680,7 +2680,7 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, UChar patternPrefix)
         String codePoint = String::fromCodePoint(currentCodePoint());
         if (!codePoint)
             codePoint = "`invalid unicode character`"_s;
-        m_lexErrorMessage = makeString("Invalid non-latin character in RexExp literal's flags '", getToken(*tokenRecord), codePoint, "'");
+        m_lexErrorMessage = makeString("Invalid non-latin character in RexExp literal's flags '"_s, getToken(*tokenRecord), codePoint, '\'');
         return token;
     }
 

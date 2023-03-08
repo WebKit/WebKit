@@ -224,7 +224,7 @@ void JIT::privateCompileMainPass()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(m_bytecodeIndex >= startBytecodeIndex && Options::dumpBaselineJITSizeStatistics())) {
-            String id = makeString("Baseline_fast_", opcodeNames[opcodeID]);
+            String id = makeString("Baseline_fast_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
@@ -523,7 +523,7 @@ void JIT::privateCompileSlowCases()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
-            String id = makeString("Baseline_slow_", opcodeNames[opcodeID]);
+            String id = makeString("Baseline_slow_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 

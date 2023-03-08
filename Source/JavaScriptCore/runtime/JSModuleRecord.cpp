@@ -126,15 +126,15 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
             RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
             case Resolution::Type::NotFound:
-                throwSyntaxError(globalObject, scope, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' is not found."));
+                throwSyntaxError(globalObject, scope, makeString("Indirectly exported binding name '"_s, StringView(exportEntry.exportName.impl()), "' is not found."_s));
                 return;
 
             case Resolution::Type::Ambiguous:
-                throwSyntaxError(globalObject, scope, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                throwSyntaxError(globalObject, scope, makeString("Indirectly exported binding name '"_s, StringView(exportEntry.exportName.impl()), "' cannot be resolved due to ambiguous multiple bindings."_s));
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(globalObject, scope, makeString("Indirectly exported binding name 'default' cannot be resolved by star export entries."));
+                throwSyntaxError(globalObject, scope, "Indirectly exported binding name 'default' cannot be resolved by star export entries."_s);
                 return;
 
             case Resolution::Type::Resolved:
@@ -167,15 +167,15 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
             RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
             case Resolution::Type::NotFound:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' is not found."));
+                throwSyntaxError(globalObject, scope, makeString("Importing binding name '"_s, StringView(importEntry.importName.impl()), "' is not found."_s));
                 return;
 
             case Resolution::Type::Ambiguous:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                throwSyntaxError(globalObject, scope, makeString("Importing binding name '"_s, StringView(importEntry.importName.impl()), "' cannot be resolved due to ambiguous multiple bindings."_s));
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
+                throwSyntaxError(globalObject, scope, "Importing binding name 'default' cannot be resolved by star export entries."_s);
                 return;
 
             case Resolution::Type::Resolved: {

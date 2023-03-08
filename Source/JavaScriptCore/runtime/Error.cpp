@@ -286,17 +286,17 @@ JSObject* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
 
 String makeDOMAttributeGetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
 {
-    return makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName);
+    return makeString("The "_s, interfaceName, '.', attributeName, " getter can only be used on instances of "_s, interfaceName);
 }
 
 String makeDOMAttributeSetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
 {
-    return makeString("The ", interfaceName, '.', attributeName, " setter can only be used on instances of ", interfaceName);
+    return makeString("The "_s, interfaceName, '.', attributeName, " setter can only be used on instances of "_s, interfaceName);
 }
 
 Exception* throwConstructorCannotBeCalledAsFunctionTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const char* constructorName)
 {
-    return throwTypeError(globalObject, scope, makeString("calling ", constructorName, " constructor without new is invalid"));
+    return throwTypeError(globalObject, scope, makeString("calling "_s, constructorName, " constructor without new is invalid"_s));
 }
 
 Exception* throwTypeError(JSGlobalObject* globalObject, ThrowScope& scope)
@@ -395,7 +395,7 @@ JSObject* createOutOfMemoryError(JSGlobalObject* globalObject, const String& mes
 {
     if (message.isEmpty())
         return createOutOfMemoryError(globalObject);
-    auto* error = createRangeError(globalObject, makeString("Out of memory: ", message), nullptr);
+    auto* error = createRangeError(globalObject, makeString("Out of memory: "_s, message), nullptr);
     jsCast<ErrorInstance*>(error)->setOutOfMemoryError();
     return error;
 }
