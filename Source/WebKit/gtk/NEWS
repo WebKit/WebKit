@@ -1,4 +1,23 @@
 =================
+WebKitGTK 2.39.91
+=================
+
+What's new in WebKitGTK 2.39.91?
+
+  - Rename WebKitWebExtension to WebKitWebProcessExtension in GTK4 API.
+  - Remove WebKitJavascriptResult in favor of using JSCValue directly in GTK4 API.
+  - Add new API to get the request body of WebKitURISchemeRequest.
+  - Make it possible to handle WebKitDownload::decide-destination signal asynchronously.
+  - Allow WebKitDownload destination to be a path instead of a URI.
+  - Make webkit://gpu output exportable as JSON.
+  - Improve scrolling performance in accelerated compositing mode.
+  - Implement KeyboardEvent.repeat.
+  - Fix a crash in MiniBrowser when the favicon is updated.
+  - Fix the build in Ubuntu 20.04 and Debian Stable.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Korean, Polish, Swedish, Korean.
+
+=================
 WebKitGTK 2.39.90
 =================
 
