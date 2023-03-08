@@ -11,7 +11,7 @@ list(APPEND WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
 )
 
-list(APPEND WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
+list(APPEND WPE_WEB_PROCESS_EXTENSION_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.h.in
 )
 
@@ -21,7 +21,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM"
 )
 
-list(APPEND WPE_WEB_EXTENSION_API_INSTALLED_HEADERS
+list(APPEND WPE_WEB_PROCESS_EXTENSION_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/webkitdom.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMDefines.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMDocument.h

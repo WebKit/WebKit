@@ -536,9 +536,9 @@ public:
         m_uriChangedSignalID = g_dbus_connection_signal_subscribe(
             g_dbus_proxy_get_connection(m_proxy.get()),
             0,
-            "org.webkit.gtk.WebExtensionTest",
+            "org.webkit.gtk.WebProcessExtensionTest",
             "URIChanged",
-            "/org/webkit/gtk/WebExtensionTest",
+            "/org/webkit/gtk/WebProcessExtensionTest",
             0,
             G_DBUS_SIGNAL_FLAGS_NONE,
             reinterpret_cast<GDBusSignalCallback>(webPageURIChangedCallback),

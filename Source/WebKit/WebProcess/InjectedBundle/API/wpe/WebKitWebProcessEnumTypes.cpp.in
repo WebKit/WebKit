@@ -21,7 +21,8 @@
 #include <config.h>
 #include "WebKitWebProcessEnumTypes.h"
 
-#include <wpe/webkit-web-extension.h>
+#include <wpe/webkit-web-process-extension.h>
+
 extern "C" {
 /*** END file-header ***/
 

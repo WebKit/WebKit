@@ -276,14 +276,106 @@ WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_get_tls_errors_policy) WebKitT
 webkit_web_context_get_tls_errors_policy            (WebKitWebContext              *context);
 #endif
 
+#if ENABLE(2022_GLIB_API)
+/**
+ * webkit_web_context_set_web_process_extensions_directory:
+ * @context: a #WebKitWebContext
+ * @directory: the directory to add
+ *
+ * Set the directory where WebKit will look for web process extensions.
+ *
+ * This method must be called before loading anything in this context,
+ * otherwise it will not have any effect. You can connect to
+ * #WebKitWebContext::initialize-web-process-extensions to call this method
+ * before anything is loaded.
+ */
+WEBKIT_API void
+webkit_web_context_set_web_process_extensions_directory (WebKitWebContext              *context,
+                                                         const gchar                   *directory);
+
+/**
+ * webkit_web_context_set_web_process_extensions_initialization_user_data:
+ * @context: a #WebKitWebContext
+ * @user_data: a #GVariant
+ *
+ * Set user data to be passed to Web Extensions on initialization.
+ *
+ * The data will be passed to the
+ * #WebKitWebProcessExtensionInitializeWithUserDataFunction.
+ * This method must be called before loading anything in this context,
+ * otherwise it will not have any effect. You can connect to
+ * #WebKitWebContext::initialize-web-process-extensions to call this method
+ * before anything is loaded.
+ *
+ * Since: 2.4
+ */
+WEBKIT_API void
+webkit_web_context_set_web_process_extensions_initialization_user_data
+                                                    (WebKitWebContext              *context,
+                                                     GVariant                      *user_data);
+
+/**
+ * WebKitWebContext::initialize-web-process-extensions:
+ * @context: the #WebKitWebContext
+ *
+ * This signal is emitted when a new web process is about to be
+ * launched. It signals the most appropriate moment to use
+ * webkit_web_context_set_web_process_extensions_initialization_user_data()
+ * and webkit_web_context_set_web_process_extensions_directory().
+ *
+ * Since: 2.4
+ */
+#else
+/**
+ * webkit_web_context_set_web_extensions_directory:
+ * @context: a #WebKitWebContext
+ * @directory: the directory to add
+ *
+ * Set the directory where WebKit will look for web process extensions.
+ *
+ * This method must be called before loading anything in this context,
+ * otherwise it will not have any effect. You can connect to
+ * #WebKitWebContext::initialize-web-extensions to call this method
+ * before anything is loaded.
+ */
 WEBKIT_API void
 webkit_web_context_set_web_extensions_directory     (WebKitWebContext              *context,
                                                      const gchar                   *directory);
 
+/**
+ * webkit_web_context_set_web_extensions_initialization_user_data:
+ * @context: a #WebKitWebContext
+ * @user_data: a #GVariant
+ *
+ * Set user data to be passed to web process extensions on initialization.
+ *
+ * The data will be passed to the
+ * #WebKitWebExtensionInitializeWithUserDataFunction.
+ * This method must be called before loading anything in this context,
+ * otherwise it will not have any effect. You can connect to
+ * #WebKitWebContext::initialize-web-extensions to call this method
+ * before anything is loaded.
+ *
+ * Since: 2.4
+ */
 WEBKIT_API void
 webkit_web_context_set_web_extensions_initialization_user_data
                                                     (WebKitWebContext              *context,
                                                      GVariant                      *user_data);
+
+/**
+ * WebKitWebContext::initialize-web-extensions:
+ * @context: the #WebKitWebContext
+ *
+ * This signal is emitted when a new web process is about to be
+ * launched. It signals the most appropriate moment to use
+ * webkit_web_context_set_web_extensions_initialization_user_data()
+ * and webkit_web_context_set_web_extensions_directory().
+ *
+ * Since: 2.4
+ */
+#endif
+
 #if !ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,

@@ -103,7 +103,7 @@ public:
 
     // Prohibit overrides because this is called when the web view is created
     // in our constructor, before a derived class's vtable is ready.
-    void initializeWebExtensions() final { Test::initializeWebExtensions(); }
+    void initializeWebProcessExtensions() final { Test::initializeWebProcessExtensions(); }
 
     static gboolean webProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason, WebViewTest*);
 

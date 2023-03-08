@@ -93,17 +93,17 @@
             }
         }
     },
-    "TestWebExtensions": {
+    "TestWebProcessExtensions": {
         "subtests": {
-            "/webkit/WebKitWebExtension/document-loaded-signal": {
+            "/webkit/WebKitWebProcessExtension/document-loaded-signal": {
                 "expected": {
                     "wpe@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/219980"}
                 }
             },
-            "/webkit/WebKitWebExtension/form-submission-steps": {
+            "/webkit/WebKitWebProcessExtension/form-submission-steps": {
                 "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205333"}}
             },
-            "/webkit/WebKitWebExtension/user-messages": {
+            "/webkit/WebKitWebProcessExtension/user-messages": {
                 "expected": {
                     "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},
                     "wpe": {"status": ["FAIL", "TIMEOUT", "PASS", "CRASH"], "bug": ["webkit.org/b/211336", "webkit.org/b/219980"]}

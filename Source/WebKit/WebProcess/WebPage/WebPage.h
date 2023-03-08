@@ -2067,8 +2067,8 @@ private:
     void paintSnapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize&, SnapshotOptions, WebCore::Frame&, WebCore::FrameView&, WebCore::GraphicsContext&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void sendMessageToWebExtension(UserMessage&&);
-    void sendMessageToWebExtensionWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
+    void sendMessageToWebProcessExtension(UserMessage&&);
+    void sendMessageToWebProcessExtensionWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
 #endif
 
     void platformDidScalePage();

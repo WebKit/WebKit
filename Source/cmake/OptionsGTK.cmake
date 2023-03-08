@@ -551,7 +551,11 @@ set(WebKitGTK_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKitGTK/DerivedSources"
 
 set(JavaScriptCore_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc)
 set(WebKitGTK_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}.pc)
-set(WebKitGTKWebExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit${WEBKITGTK_API_INFIX}gtk-web-extension-${WEBKITGTK_API_VERSION}.pc)
+if (ENABLE_2022_GLIB_API)
+    set(WebKitGTKWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkitgtk-web-process-extension-${WEBKITGTK_API_VERSION}.pc)
+else ()
+    set(WebKitGTKWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}.pc)
+endif ()
 
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(SHOULD_INSTALL_JS_SHELL ON)

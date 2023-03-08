@@ -18,41 +18,37 @@
  */
 
 #include "config.h"
-#include "WebKitExtensionManager.h"
+#include "WebProcessExtensionManager.h"
 
 #include "APIString.h"
 #include "InjectedBundle.h"
-#include "WebKitWebExtensionPrivate.h"
+#include "WebKitWebProcessExtensionPrivate.h"
 #include <memory>
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
 
-WebKitExtensionManager& WebKitExtensionManager::singleton()
+WebProcessExtensionManager& WebProcessExtensionManager::singleton()
 {
-    static NeverDestroyed<WebKitExtensionManager> extensionManager;
+    static NeverDestroyed<WebProcessExtensionManager> extensionManager;
     return extensionManager;
 }
 
-WebKitExtensionManager::WebKitExtensionManager()
+void WebProcessExtensionManager::scanModules(const String& webProcessExtensionsDirectory, Vector<String>& modules)
 {
-}
-
-void WebKitExtensionManager::scanModules(const String& webExtensionsDirectory, Vector<String>& modules)
-{
-    auto moduleNames = FileSystem::listDirectory(webExtensionsDirectory);
+    auto moduleNames = FileSystem::listDirectory(webProcessExtensionsDirectory);
     for (auto& moduleName : moduleNames) {
         if (!moduleName.endsWith(".so"_s))
             continue;
 
-        auto modulePath = FileSystem::pathByAppendingComponent(webExtensionsDirectory, moduleName);
+        auto modulePath = FileSystem::pathByAppendingComponent(webProcessExtensionsDirectory, moduleName);
         if (FileSystem::fileExists(modulePath))
             modules.append(modulePath);
     }
 }
 
-static void parseUserData(API::Object* userData, String& webExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
+static void parseUserData(API::Object* userData, String& webProcessExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
 {
     ASSERT(userData->type() == API::Object::Type::String);
 
@@ -67,21 +63,31 @@ static void parseUserData(API::Object* userData, String& webExtensionsDirectory,
     GVariant* data = nullptr;
     g_variant_get(variant.get(), "(m&smv)", &directory, &data);
 
-    webExtensionsDirectory = FileSystem::stringFromFileSystemRepresentation(directory);
+    webProcessExtensionsDirectory = FileSystem::stringFromFileSystemRepresentation(directory);
     initializationUserData = adoptGRef(data);
 }
 
-bool WebKitExtensionManager::initializeWebExtension(Module* extensionModule, GVariant* userData)
+bool WebProcessExtensionManager::initializeWebProcessExtension(Module* extensionModule, GVariant* userData)
 {
+#if ENABLE(2022_GLIB_API)
+    WebKitWebProcessExtensionInitializeWithUserDataFunction initializeWithUserDataFunction =
+        extensionModule->functionPointer<WebKitWebProcessExtensionInitializeWithUserDataFunction>("webkit_web_process_extension_initialize_with_user_data");
+#else
     WebKitWebExtensionInitializeWithUserDataFunction initializeWithUserDataFunction =
         extensionModule->functionPointer<WebKitWebExtensionInitializeWithUserDataFunction>("webkit_web_extension_initialize_with_user_data");
+#endif
     if (initializeWithUserDataFunction) {
         initializeWithUserDataFunction(m_extension.get(), userData);
         return true;
     }
 
+#if ENABLE(2022_GLIB_API)
+    WebKitWebProcessExtensionInitializeFunction initializeFunction =
+        extensionModule->functionPointer<WebKitWebProcessExtensionInitializeFunction>("webkit_web_process_extension_initialize");
+#else
     WebKitWebExtensionInitializeFunction initializeFunction =
         extensionModule->functionPointer<WebKitWebExtensionInitializeFunction>("webkit_web_extension_initialize");
+#endif
     if (initializeFunction) {
         initializeFunction(m_extension.get());
         return true;
@@ -90,27 +96,27 @@ bool WebKitExtensionManager::initializeWebExtension(Module* extensionModule, GVa
     return false;
 }
 
-void WebKitExtensionManager::initialize(InjectedBundle* bundle, API::Object* userDataObject)
+void WebProcessExtensionManager::initialize(InjectedBundle* bundle, API::Object* userDataObject)
 {
     ASSERT(bundle);
     ASSERT(userDataObject);
-    m_extension = adoptGRef(webkitWebExtensionCreate(bundle));
+    m_extension = adoptGRef(webkitWebProcessExtensionCreate(bundle));
 
-    String webExtensionsDirectory;
+    String webProcessExtensionsDirectory;
     GRefPtr<GVariant> userData;
-    parseUserData(userDataObject, webExtensionsDirectory, userData);
+    parseUserData(userDataObject, webProcessExtensionsDirectory, userData);
 
-    if (webExtensionsDirectory.isNull())
+    if (webProcessExtensionsDirectory.isNull())
         return;
 
     Vector<String> modulePaths;
-    scanModules(webExtensionsDirectory, modulePaths);
+    scanModules(webProcessExtensionsDirectory, modulePaths);
 
     for (size_t i = 0; i < modulePaths.size(); ++i) {
         auto module = makeUnique<Module>(modulePaths[i]);
         if (!module->load())
             continue;
-        if (initializeWebExtension(module.get(), userData.get()))
+        if (initializeWebProcessExtension(module.get(), userData.get()))
             m_extensionModules.append(module.release());
     }
 }

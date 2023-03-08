@@ -20,7 +20,7 @@
 #include "config.h"
 
 #include "InjectedBundle.h"
-#include "WebKitExtensionManager.h"
+#include "WebProcessExtensionManager.h"
 #include <WebKit/WKBundleAPICast.h>
 #include <WebKit/WKBundleInitialize.h>
 
@@ -29,5 +29,5 @@ using namespace WebKit;
 extern "C" __attribute__((visibility("default")))
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef userData)
 {
-    WebKitExtensionManager::singleton().initialize(toImpl(bundle), toImpl(userData));
+    WebProcessExtensionManager::singleton().initialize(toImpl(bundle), toImpl(userData));
 }

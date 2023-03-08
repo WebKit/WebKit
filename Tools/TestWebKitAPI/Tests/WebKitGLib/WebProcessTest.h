@@ -24,9 +24,11 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK) && USE(GTK4)
-#include <webkit/webkit-web-extension.h>
+#include <webkit/webkit-web-process-extension.h>
 #elif PLATFORM(GTK)
 #include <webkit2/webkit-web-extension.h>
+#elif PLATFORM(WPE) && ENABLE(2022_GLIB_API)
+#include <wpe/webkit-web-process-extension.h>
 #elif PLATFORM(WPE)
 #include <wpe/webkit-web-extension.h>
 #endif

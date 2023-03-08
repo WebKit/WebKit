@@ -514,5 +514,5 @@ GRefPtr<GDBusProxy> WebViewTest::extensionProxy()
         connection = s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webView));
 
     return adoptGRef(g_dbus_proxy_new_sync(connection, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
-        nullptr, nullptr, "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", nullptr, nullptr));
+        nullptr, nullptr, "/org/webkit/gtk/WebProcessExtensionTest", "org.webkit.gtk.WebProcessExtensionTest", nullptr, nullptr));
 }

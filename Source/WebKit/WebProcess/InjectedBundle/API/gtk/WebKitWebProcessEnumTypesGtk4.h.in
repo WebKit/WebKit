@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkit${WEBKITGTK_API_INFIX}/webkit-web-extension.h> can be included directly."
+#if !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <webkit${WEBKITGTK_API_INFIX}/webkit-web-process-extension.h> can be included directly."
 #endif
 
 #ifndef WEBKIT_WEB_PROCESS_ENUM_TYPES_H

@@ -86,7 +86,7 @@ static gboolean dbusServerConnection(GDBusServer* server, GDBusConnection* conne
     g_assert(!Test::s_dbusConnections.contains(connection));
     Test::s_dbusConnections.append(connection);
 
-    g_dbus_connection_signal_subscribe(connection, nullptr, "org.webkit.gtk.WebExtensionTest", "PageCreated", "/org/webkit/gtk/WebExtensionTest",
+    g_dbus_connection_signal_subscribe(connection, nullptr, "org.webkit.gtk.WebProcessExtensionTest", "PageCreated", "/org/webkit/gtk/WebProcessExtensionTest",
         nullptr, G_DBUS_SIGNAL_FLAGS_NONE, [](GDBusConnection* connection, const char*, const char*, const char*, const char*, GVariant* parameters, gpointer) {
             guint64 pageID;
             g_variant_get(parameters, "(t)", &pageID);
