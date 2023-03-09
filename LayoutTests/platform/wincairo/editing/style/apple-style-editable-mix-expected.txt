@@ -9,31 +9,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 731x26
-        RenderTableSection {TBODY} at (0,0) size 731x26
-          RenderTableRow {TR} at (0,2) size 731x22
-            RenderTableCell {TD} at (2,2) size 619x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 621x19
-                text run at (1,1) width 621: "This tests that a style can be applied to a selection that contains both editable and non-editable content. "
-            RenderTableCell {TD} at (623,2) size 106x22 [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 104x19
-                RenderInline {B} at (0,0) size 104x19
-                  RenderText {#text} at (1,1) size 104x19
-                    text run at (1,1) width 104: "Editable - line 1"
-              RenderText {#text} at (105,1) size 4x19
-                text run at (105,1) width 4: " "
-      RenderTable {TABLE} at (0,26) size 681x26
-        RenderTableSection {TBODY} at (0,0) size 681x26
-          RenderTableRow {TR} at (0,2) size 681x22
-            RenderTableCell {TD} at (2,2) size 569x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 571x19
-                text run at (1,1) width 571: "The test passes if the editable content is bold, and the non editable content remains unchanged. "
-            RenderTableCell {TD} at (573,2) size 106x22 [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 104x19
-                RenderInline {B} at (0,0) size 104x19
-                  RenderText {#text} at (1,1) size 104x19
-                    text run at (1,1) width 104: "Editable - line 2"
-              RenderText {#text} at (105,1) size 4x19
-                text run at (105,1) width 4: " "
+      RenderTable {TABLE} at (0,0) size 758x26
+        RenderTableSection {TBODY} at (0,0) size 758x26
+          RenderTableRow {TR} at (0,2) size 758x22
+            RenderTableCell {TD} at (2,2) size 644x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 646x19
+                text run at (1,1) width 646: "This tests that a style can be applied to a selection that contains both editable and non-editable content. "
+            RenderTableCell {TD} at (648,2) size 108x22 [r=0 c=1 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 106x19
+                RenderInline {B} at (0,0) size 106x19
+                  RenderText {#text} at (1,1) size 106x19
+                    text run at (1,1) width 106: "Editable - line 1"
+              RenderText {#text} at (107,1) size 4x19
+                text run at (107,1) width 4: " "
+      RenderTable {TABLE} at (0,26) size 710x26
+        RenderTableSection {TBODY} at (0,0) size 710x26
+          RenderTableRow {TR} at (0,2) size 710x22
+            RenderTableCell {TD} at (2,2) size 596x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 598x19
+                text run at (1,1) width 598: "The test passes if the editable content is bold, and the non editable content remains unchanged. "
+            RenderTableCell {TD} at (600,2) size 108x22 [r=0 c=1 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 106x19
+                RenderInline {B} at (0,0) size 106x19
+                  RenderText {#text} at (1,1) size 106x19
+                    text run at (1,1) width 106: "Editable - line 2"
+              RenderText {#text} at (107,1) size 4x19
+                text run at (107,1) width 4: " "
 selection start: position 0 of child 1 {TABLE} of body
 selection end:   position 2 of child 3 {TABLE} of body

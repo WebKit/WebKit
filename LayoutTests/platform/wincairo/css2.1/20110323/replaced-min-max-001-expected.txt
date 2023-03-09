@@ -4,8 +4,8 @@ layer at (0,0) size 800x276
   RenderBlock {HTML} at (0,0) size 800x276
     RenderBody {BODY} at (8,8) size 784x260
       RenderBlock {DIV} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 279x19
-          text run at (0,0) width 279: "All twenty images should be identically square."
+        RenderText {#text} at (0,0) size 298x19
+          text run at (0,0) width 298: "All twenty images should be identically square."
       RenderBlock (anonymous) at (0,20) size 784x240
         RenderInline {P} at (0,0) size 75x19
           RenderImage {IMG} at (0,0) size 75x75

@@ -1,5 +1,5 @@
 [library]
-description = "The WPE WebKit web extension and DOM library"
+description = "The WebKit web extension and DOM library"
 license = "BSD, LGPL-2.1"
 authors = "The WebKit GTK and WPE teams"
 version = "@PROJECT_VERSION@"
@@ -33,4 +33,4 @@ show_class_hierarchy = true
 base_url = "https://github.com/WebKit/WebKit/tree/main"
 
 [extra]
-urlmap_file = "urlmap.js"
+urlmap_file = "gtk@GTK_API_VERSION@-urlmap.js"

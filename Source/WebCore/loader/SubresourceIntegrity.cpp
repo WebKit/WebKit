@@ -162,10 +162,8 @@ static Vector<EncodedResourceCryptographicDigest> strongestMetadataFromSet(Vecto
     return result;
 }
 
-bool matchIntegrityMetadata(const CachedResource& resource, const String& integrityMetadataList)
+bool matchIntegrityMetadataSlow(const CachedResource& resource, const String& integrityMetadataList)
 {
-    // FIXME: Consider caching digests on the CachedResource rather than always recomputing it.
-
     // 1. Let parsedMetadata be the result of parsing metadataList.
     auto parsedMetadata = parseIntegrityMetadata(integrityMetadataList);
     
@@ -183,8 +181,6 @@ bool matchIntegrityMetadata(const CachedResource& resource, const String& integr
 
     // 5. Let metadata be the result of getting the strongest metadata from parsedMetadata.
     auto metadata = strongestMetadataFromSet(WTFMove(*parsedMetadata));
-
-    const auto* sharedBuffer = resource.resourceBuffer();
     
     // 6. For each item in metadata:
     for (auto& item : metadata) {
@@ -195,7 +191,7 @@ bool matchIntegrityMetadata(const CachedResource& resource, const String& integr
         auto expectedValue = decodeEncodedResourceCryptographicDigest(item);
 
         // 3. Let actualValue be the result of applying algorithm to response.
-        auto actualValue = cryptographicDigestForSharedBuffer(algorithm, sharedBuffer);
+        auto actualValue = resource.cryptographicDigest(algorithm);
 
         // 4. If actualValue is a case-sensitive match for expectedValue, return true.
         if (expectedValue && actualValue.value == expectedValue->value)

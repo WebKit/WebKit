@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,13 +17,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#pragma once
+#include "config.h"
+#include "KeyAutoRepeatHandler.h"
 
-#include "InjectedBundle.h"
-#include "UserMessage.h"
-#include "WKDeclarationSpecifiers.h"
-#include "WebKitWebExtension.h"
+namespace WebKit {
 
-WebKitWebExtension* webkitWebExtensionCreate(WebKit::InjectedBundle*);
-void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension*, WebKit::UserMessage&&);
-WK_EXPORT void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension*);
+bool KeyAutoRepeatHandler::keyPress(unsigned keyCode)
+{
+    if (!m_pressedKey.keyCode) {
+        m_pressedKey.keyCode = keyCode;
+        return false;
+    }
+
+    if (m_pressedKey.keyCode.value() == keyCode) {
+        m_pressedKey.isRepeat = true;
+        return true;
+    }
+
+    m_pressedKey.keyCode = keyCode;
+    m_pressedKey.isRepeat = false;
+    return false;
+}
+
+void KeyAutoRepeatHandler::keyRelease()
+{
+    m_pressedKey.keyCode = std::nullopt;
+    m_pressedKey.isRepeat = false;
+}
+
+} // namespace WebKit

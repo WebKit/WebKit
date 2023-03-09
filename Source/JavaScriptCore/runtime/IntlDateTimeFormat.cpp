@@ -659,7 +659,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     hourCycle = parseHourCycle(resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)]);
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
-    CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
+    CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem).utf8();
 
     JSValue tzValue = options->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, void());
@@ -669,7 +669,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         RETURN_IF_EXCEPTION(scope, void());
         tz = canonicalizeTimeZoneName(originalTz);
         if (tz.isNull()) {
-            throwRangeError(globalObject, scope, "invalid time zone: " + originalTz);
+            throwRangeError(globalObject, scope, "invalid time zone: "_s + originalTz);
             return;
         }
     } else

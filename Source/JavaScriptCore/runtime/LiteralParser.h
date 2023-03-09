@@ -106,9 +106,9 @@ public:
     String getErrorMessage()
     { 
         if (!m_lexer.getErrorMessage().isEmpty())
-            return "JSON Parse error: " + m_lexer.getErrorMessage();
+            return "JSON Parse error: "_s + m_lexer.getErrorMessage();
         if (!m_parseErrorMessage.isEmpty())
-            return "JSON Parse error: " + m_parseErrorMessage;
+            return "JSON Parse error: "_s + m_parseErrorMessage;
         return "JSON Parse error: Unable to parse JSON string"_s;
     }
     

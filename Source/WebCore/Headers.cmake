@@ -69,6 +69,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUOrigin3DDict.h
     Modules/WebGPU/GPUOutOfMemoryError.h
     Modules/WebGPU/GPUPipelineDescriptorBase.h
+    Modules/WebGPU/GPUPipelineError.h
+    Modules/WebGPU/GPUPipelineErrorInit.h
+    Modules/WebGPU/GPUPipelineErrorReason.h
     Modules/WebGPU/GPUPipelineLayout.h
     Modules/WebGPU/GPUPipelineLayoutDescriptor.h
     Modules/WebGPU/GPUPowerPreference.h
@@ -1106,6 +1109,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/InlineRect.h
     layout/formattingContexts/inline/InlineTextItem.h
 
+    layout/formattingContexts/inline/display/InlineDisplayContent.h
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/display/InlineDisplayLine.h
 

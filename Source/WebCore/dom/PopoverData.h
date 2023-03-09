@@ -27,6 +27,7 @@
 
 #include "Element.h"
 #include "HTMLElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
@@ -58,11 +59,15 @@ public:
     void setQueuedToggleEventData(PopoverToggleEventData data) { m_queuedToggleEventData = data; }
     void clearQueuedToggleEventData() { m_queuedToggleEventData = std::nullopt; }
 
+    HTMLFormControlElement* invoker() const { return m_invoker.get(); }
+    void setInvoker(const HTMLFormControlElement* element) { m_invoker = element; }
+
 private:
     PopoverState m_popoverState;
     PopoverVisibilityState m_visibilityState;
     std::optional<PopoverToggleEventData> m_queuedToggleEventData;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
+    WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_invoker;
 };
 
 }

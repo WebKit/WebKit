@@ -433,7 +433,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         }, "roundingMode must be either \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, void());
 
-    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-", m_numberingSystem).utf8();
+    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-"_s, m_numberingSystem).utf8();
     dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
 
     // Options are obtained. Configure formatter here.

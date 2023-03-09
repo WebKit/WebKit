@@ -41,6 +41,8 @@ extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
 - (BOOL)deletesAutospaceBeforeString:(NSString *)string language:(NSString *)language;
 - (void)_preflightChosenSpellServer;
 
++ (BOOL)grammarCheckingEnabled;
+
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

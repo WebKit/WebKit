@@ -17,17 +17,17 @@ set(GPUProcess_OUTPUT_NAME WebKitGPUProcess)
 file(MAKE_DIRECTORY ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit)
 file(MAKE_DIRECTORY ${WebKitGTK_FRAMEWORK_HEADERS_DIR})
 file(MAKE_DIRECTORY ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-${WEBKITGTK_API_VERSION})
-file(MAKE_DIRECTORY ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension)
+file(MAKE_DIRECTORY ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension)
 
 configure_file(Shared/glib/BuildRevision.h.in ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/BuildRevision.h)
 configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h)
 configure_file(gtk/webkitgtk.pc.in ${WebKitGTK_PKGCONFIG_FILE} @ONLY)
-configure_file(gtk/webkitgtk-web-extension.pc.in ${WebKitGTKWebExtension_PKGCONFIG_FILE} @ONLY)
+configure_file(gtk/webkitgtk-web-process-extension.pc.in ${WebKitGTKWebProcessExtension_PKGCONFIG_FILE} @ONLY)
 
 if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     add_custom_target(WebKit-build-revision
-        ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/BuildRevision.h ${WebKitGTK_PKGCONFIG_FILE} ${WebKitGTKWebExtension_PKGCONFIG_FILE}
-        DEPENDS ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/BuildRevision.h ${WebKitGTK_PKGCONFIG_FILE} ${WebKitGTKWebExtension_PKGCONFIG_FILE}
+        ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/BuildRevision.h ${WebKitGTK_PKGCONFIG_FILE} ${WebKitGTKWebProcessExtension_PKGCONFIG_FILE}
+        DEPENDS ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/BuildRevision.h ${WebKitGTK_PKGCONFIG_FILE} ${WebKitGTKWebProcessExtension_PKGCONFIG_FILE}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} VERBATIM)
     list(APPEND WebKit_DEPENDENCIES
         WebKit-build-revision
@@ -193,31 +193,41 @@ set(WebKitGTK_INSTALLED_HEADERS
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h
 )
 
-set(WebKitWebExtension_INSTALLED_HEADERS
+set(WebKitWebProcessExtension_INSTALLED_HEADERS
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitWebProcessEnumTypes.h
 )
 
-set(WebKitWebExtension_HEADER_TEMPLATES
+set(WebKitWebProcessExtension_HEADER_TEMPLATES
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitFrame.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebEditor.h.in
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebFormManager.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebPage.h.in
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/webkit-web-extension.h.in
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/webkit-web-process-extension.h.in
 )
 
-if (NOT ENABLE_2022_GLIB_API)
-    list(APPEND WebKitGTK_HEADER_TEMPLATES
+if (ENABLE_2022_GLIB_API)
+    list(APPEND WebKitWebProcessExtension_HEADER_TEMPLATES
+        ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebProcessExtension.h.in
+    )
+    list(APPEND WebKit_SOURCES
+        ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebProcessExtension.cpp
+    )
+else ()
+    list(APPEND WebKitWebProcessExtension_HEADER_TEMPLATES
+        ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.h.in
         ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtensionAutocleanups.h.in
+    )
+    list(APPEND WebKit_SOURCES
+        ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp
     )
 endif ()
 
 set(WebKitGTK_FAKE_API_HEADERS
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkit
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit
-    ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkit
+    ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkit
 )
 
 if (NOT ENABLE_2022_GLIB_API)
@@ -228,7 +238,7 @@ endif ()
 list(INSERT WebKit_INCLUDE_DIRECTORIES 0
     "${WebKitGTK_FRAMEWORK_HEADERS_DIR}"
     "${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-${WEBKITGTK_API_VERSION}"
-    "${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension"
+    "${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension"
     "${WebKitGTK_DERIVED_SOURCES_DIR}/webkit"
     "${WebKitGTK_DERIVED_SOURCES_DIR}"
 )
@@ -352,9 +362,9 @@ GENERATE_GLIB_API_HEADERS(WebKit WebKitGTK_HEADER_TEMPLATES
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
-GENERATE_GLIB_API_HEADERS(WebKit WebKitWebExtension_HEADER_TEMPLATES
+GENERATE_GLIB_API_HEADERS(WebKit WebKitWebProcessExtension_HEADER_TEMPLATES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit
-    WebKitWebExtension_INSTALLED_HEADERS
+    WebKitWebProcessExtension_INSTALLED_HEADERS
     "-DWTF_PLATFORM_GTK=1"
     "-DWTF_PLATFORM_WPE=0"
     "-DUSE_GTK4=$<BOOL:${USE_GTK4}>"
@@ -363,7 +373,7 @@ GENERATE_GLIB_API_HEADERS(WebKit WebKitWebExtension_HEADER_TEMPLATES
 
 if (NOT USE_GTK4)
     list(REMOVE_ITEM WebKitGTK_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit.h)
-    list(REMOVE_ITEM WebKitWebExtension_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h)
+    list(REMOVE_ITEM WebKitWebProcessExtension_INSTALLED_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h)
 endif ()
 
 if (USE_GTK4)
@@ -392,7 +402,7 @@ else ()
     set(WebKitGTK_WEB_PROCESS_ENUM_HEADER_TEMPLATE ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebProcessEnumTypesGtk3.h.in)
 endif ()
 
-set(WebKitGTK_WEB_PROCESS_ENUM_GENERATION_HEADERS ${WebKitWebExtension_INSTALLED_HEADERS})
+set(WebKitGTK_WEB_PROCESS_ENUM_GENERATION_HEADERS ${WebKitWebProcessExtension_INSTALLED_HEADERS})
 list(REMOVE_ITEM WebKitGTK_WEB_PROCESS_ENUM_GENERATION_HEADERS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitWebProcessEnumTypes.h)
 add_custom_command(
     OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitWebProcessEnumTypes.h
@@ -481,12 +491,19 @@ endif ()
 install(TARGETS webkit${WEBKITGTK_API_INFIX}gtkinjectedbundle
         DESTINATION "${LIB_INSTALL_DIR}/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}/injected-bundle"
 )
-install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}.pc"
-              "${CMAKE_BINARY_DIR}/Source/WebKit/webkit${WEBKITGTK_API_INFIX}gtk-web-extension-${WEBKITGTK_API_VERSION}.pc"
-        DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
-)
+if (ENABLE_2022_GLIB_API)
+    install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit/webkitgtk-${WEBKITGTK_API_VERSION}.pc"
+                  "${CMAKE_BINARY_DIR}/Source/WebKit/webkitgtk-web-process-extension-${WEBKITGTK_API_VERSION}.pc"
+            DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
+    )
+else ()
+    install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit/webkit2gtk-${WEBKITGTK_API_VERSION}.pc"
+                  "${CMAKE_BINARY_DIR}/Source/WebKit/webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}.pc"
+            DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
+    )
+endif ()
 install(FILES ${WebKitGTK_INSTALLED_HEADERS}
-              ${WebKitWebExtension_INSTALLED_HEADERS}
+              ${WebKitWebProcessExtension_INSTALLED_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit"
 )
 
@@ -501,9 +518,9 @@ add_custom_command(
     COMMAND ln -n -s -f ${WEBKIT_DIR}/UIProcess/API/gtk ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkit
 )
 add_custom_command(
-    OUTPUT ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkit
+    OUTPUT ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkit
     DEPENDS ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk
-    COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkit
+    COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkit
 )
 
 add_custom_target(WebKit-fake-api-headers
@@ -546,13 +563,24 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX} ${WEBKITGTK_API_VERSION} webkit${WEBK
         UIProcess/API/glib
     NO_IMPLICIT_SOURCES
 )
-GI_DOCGEN(WebKit${WEBKITGTK_API_INFIX} gtk/webkitgtk.toml.in
-    CONTENT_TEMPLATES gtk/urlmap.js
+
+GI_DOCGEN(WebKit${WEBKITGTK_API_INFIX} gtk/gtk${GTK_API_VERSION}-webkitgtk.toml.in
+    CONTENT_TEMPLATES gtk/gtk${GTK_API_VERSION}-urlmap.js
 )
 
-GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX}WebExtension ${WEBKITGTK_API_VERSION} webkit${WEBKITGTK_API_INFIX}/webkit-web-extension.h
+if (ENABLE_2022_GLIB_API)
+    set(WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME "WebKitWebProcessExtension")
+    set(WEBKITGTK_WEB_PROCESS_EXTENSION_PACKAGE_NAME "webkitgtk-web-process-extension")
+    set(WEBKITGTK_WEB_PROCESS_EXTENSION_HEADER_NAME "webkit-web-process-extension.h")
+else ()
+    set(WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME "WebKit2WebExtension")
+    set(WEBKITGTK_WEB_PROCESS_EXTENSION_PACKAGE_NAME "webkit2gtk-web-extension")
+    set(WEBKITGTK_WEB_PROCESS_EXTENSION_HEADER_NAME "webkit-web-extension.h")
+endif ()
+
+GI_INTROSPECT(${WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME} ${WEBKITGTK_API_VERSION} webkit${WEBKITGTK_API_INFIX}/${WEBKITGTK_WEB_PROCESS_EXTENSION_HEADER_NAME}
     TARGET WebKit
-    PACKAGE webkit${WEBKITGTK_API_INFIX}gtk-web-extension
+    PACKAGE ${WEBKITGTK_WEB_PROCESS_EXTENSION_PACKAGE_NAME}
     IDENTIFIER_PREFIX WebKit
     SYMBOL_PREFIX webkit
     DEPENDENCIES
@@ -561,7 +589,7 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX}WebExtension ${WEBKITGTK_API_VERSION} 
         Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
     SOURCES
         ${WebKitDOM_SOURCES_FOR_INTROSPECTION}
-        ${WebKitWebExtension_INSTALLED_HEADERS}
+        ${WebKitWebProcessExtension_INSTALLED_HEADERS}
         ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitContextMenu.h
         ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitContextMenuActions.h
         ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitContextMenuItem.h
@@ -578,6 +606,7 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX}WebExtension ${WEBKITGTK_API_VERSION} 
         WebProcess/InjectedBundle/API/glib
     NO_IMPLICIT_SOURCES
 )
-GI_DOCGEN(WebKit${WEBKITGTK_API_INFIX}WebExtension gtk/webkitgtk-webextension.toml.in
-    CONTENT_TEMPLATES gtk/urlmap.js
+
+GI_DOCGEN(${WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME} gtk/webkitgtk-web-process-extension.toml.in
+    CONTENT_TEMPLATES gtk/gtk${GTK_API_VERSION}-urlmap.js
 )

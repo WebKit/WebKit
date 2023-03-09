@@ -113,9 +113,9 @@ public:
 
     static const char* dataDirectory();
 
-    static void initializeWebExtensionsCallback(WebKitWebContext* context, Test* test)
+    static void initializeWebProcessExtensionsCallback(WebKitWebContext* context, Test* test)
     {
-        test->initializeWebExtensions();
+        test->initializeWebProcessExtensions();
     }
 
     Test()
@@ -141,7 +141,11 @@ public:
             nullptr)));
 #endif
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webContext.get()));
-        g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebExtensionsCallback), this);
+#if ENABLE(2022_GLIB_API)
+        g_signal_connect(m_webContext.get(), "initialize-web-process-extensions", G_CALLBACK(initializeWebProcessExtensionsCallback), this);
+#else
+        g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebProcessExtensionsCallback), this);
+#endif
     }
 
     virtual ~Test()
@@ -163,11 +167,17 @@ public:
         g_assert_true(m_watchedObjects.isEmpty());
     }
 
-    virtual void initializeWebExtensions()
+    virtual void initializeWebProcessExtensions()
     {
-        webkit_web_context_set_web_extensions_directory(m_webContext.get(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
+#if ENABLE(2022_GLIB_API)
+        webkit_web_context_set_web_process_extensions_directory(m_webContext.get(), WEBKIT_TEST_WEB_PROCESS_EXTENSIONS_DIR);
+        webkit_web_context_set_web_process_extensions_initialization_user_data(m_webContext.get(),
+            g_variant_new("(ss)", g_dbus_server_get_guid(s_dbusServer.get()), g_dbus_server_get_client_address(s_dbusServer.get())));
+#else
+        webkit_web_context_set_web_extensions_directory(m_webContext.get(), WEBKIT_TEST_WEB_PROCESS_EXTENSIONS_DIR);
         webkit_web_context_set_web_extensions_initialization_user_data(m_webContext.get(),
             g_variant_new("(ss)", g_dbus_server_get_guid(s_dbusServer.get()), g_dbus_server_get_client_address(s_dbusServer.get())));
+#endif
     }
 
 #if PLATFORM(WPE)

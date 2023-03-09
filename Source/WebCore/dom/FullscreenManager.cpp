@@ -41,6 +41,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
 #include "Settings.h"
@@ -660,10 +661,9 @@ void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRe
     }
 }
 
-void FullscreenManager::exitRemovedFullscreenElementIfNeeded(Element& element)
+void FullscreenManager::exitRemovedFullscreenElement(Element& element)
 {
-    if (!element.hasFullscreenFlag())
-        return;
+    ASSERT(element.hasFullscreenFlag());
 
     auto fullscreenElement = fullscreenOrPendingElement();
     if (fullscreenElement == &element) {

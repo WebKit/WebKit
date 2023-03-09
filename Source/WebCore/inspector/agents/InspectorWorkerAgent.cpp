@@ -28,9 +28,9 @@
 
 #include "Document.h"
 #include "InstrumentingAgents.h"
+#include "Page.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
-
 
 namespace WebCore {
 

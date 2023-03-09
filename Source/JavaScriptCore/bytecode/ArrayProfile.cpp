@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSCellInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSTypedArrays.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>

@@ -324,7 +324,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 662x83
+        RenderInline {SPAN} at (0,0) size 665x83
           RenderInline {I} at (0,0) size 117x27
             RenderText {#text} at (14,14) size 117x27
               text run at (14,14) width 21: "F "
@@ -334,17 +334,17 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 27x26
             RenderText {#text} at (194,14) size 27x26
               text run at (194,14) width 27: "as "
-          RenderText {#text} at (221,14) size 662x55
+          RenderText {#text} at (221,14) size 665x55
             text run at (221,14) width 110: "our fathers "
-            text run at (331,14) width 345: "f upon this continent, a new nation, "
-            text run at (14,42) width 104: "conceived "
-            text run at (118,42) width 6: " "
-            text run at (124,42) width 6: " "
-            text run at (130,42) width 113: " in Liberty, "
-            text run at (243,42) width 387: "and dedicated to the proposition that all "
-          RenderBR {BR} at (630,42) size 0x27
-          RenderText {#text} at (14,70) size 218x27
-            text run at (14,70) width 218: "men are created equal."
+            text run at (331,14) width 348: "f upon this continent, a new nation, "
+            text run at (14,42) width 105: "conceived "
+            text run at (119,42) width 6: " "
+            text run at (125,42) width 6: " "
+            text run at (131,42) width 113: " in Liberty, "
+            text run at (244,42) width 392: "and dedicated to the proposition that all "
+          RenderBR {BR} at (636,42) size 0x27
+          RenderText {#text} at (14,70) size 220x27
+            text run at (14,70) width 220: "men are created equal."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {I} of child 1 {SPAN} of child 1 {DIV} of body
 selection end:   position 1 of child 0 {#text} of child 0 {I} of child 1 {SPAN} of child 1 {DIV} of body

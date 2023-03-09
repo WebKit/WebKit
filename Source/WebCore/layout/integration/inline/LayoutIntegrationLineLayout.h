@@ -145,7 +145,7 @@ private:
 
     void prepareLayoutState();
     void prepareFloatingState();
-    FloatRect constructContent();
+    FloatRect constructContent(InlineDisplay::Content&& newDisplayContent);
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 

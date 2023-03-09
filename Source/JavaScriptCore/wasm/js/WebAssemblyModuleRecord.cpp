@@ -129,7 +129,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
     };
 
     auto importFailMessage = [&] (const Wasm::Import& import, const char* before, const char* after) {
-        return makeString(before, " ", String::fromUTF8(import.module), ":", String::fromUTF8(import.field), " ", after);
+        return makeString(before, ' ', String::fromUTF8(import.module), ':', String::fromUTF8(import.field), ' ', after);
     };
 
     for (const auto& import : moduleInformation.imports) {
@@ -155,15 +155,15 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
             case Resolution::Type::NotFound:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name '", String(fieldName.impl()), "' is not found."));
+                throwSyntaxError(globalObject, scope, makeString("Importing binding name '"_s, StringView(fieldName.impl()), "' is not found."_s));
                 return;
 
             case Resolution::Type::Ambiguous:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name '", String(fieldName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                throwSyntaxError(globalObject, scope, makeString("Importing binding name '"_s, StringView(fieldName.impl()), "' cannot be resolved due to ambiguous multiple bindings."_s));
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
+                throwSyntaxError(globalObject, scope, "Importing binding name 'default' cannot be resolved by star export entries."_s);
                 return;
 
             case Resolution::Type::Resolved:

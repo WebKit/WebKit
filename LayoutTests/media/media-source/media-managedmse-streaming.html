@@ -1,7 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
 <html>
 <head>
-    <title>managedmediasource-memoryPressure</title>
+    <title>managedmediasource-streaming</title>
     <script src="../../media/media-source/media-source-loader.js"></script>
     <script src="../../media/video-test.js"></script>
     <script src="../../media/utilities.js"></script>
@@ -31,10 +31,14 @@
                     break;
             }
 
+            waitFor(video, 'error').then(failTest);
+
             source = new ManagedMediaSource();
             run('video.src = URL.createObjectURL(source)');
-            await Promise.all([waitFor(source, 'sourceopen'), waitFor(source, 'startstreaming') ]);
-            waitFor(video, 'error').then(failTest);
+
+            await waitFor(source, 'sourceopen');
+            testExpected('source.streaming', true);
+            await waitFor(source, 'startstreaming');
 
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
 
@@ -49,8 +53,12 @@
                 await once(sourceBuffer, 'update');
                 sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
             } while (!done);
+            testExpected('source.streaming', false);
 
-            waitForEventOnceOn(source, 'startstreaming', endTest);
+            waitForEventOnceOn(source, 'startstreaming', () => {
+                testExpected('source.streaming', true);
+                endTest();
+            });
 
             sourceBuffer.remove(video.currentTime, video.currentTime + 5);
         } catch (e) {

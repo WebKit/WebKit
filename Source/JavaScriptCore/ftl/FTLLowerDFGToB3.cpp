@@ -19556,7 +19556,7 @@ IGNORE_CLANG_WARNINGS_END
             return result;
         }
         
-        DFG_CRASH(m_graph, m_node, makeString("Value not defined: ", String::number(edge.node()->index())).ascii().data());
+        DFG_CRASH(m_graph, m_node, makeString("Value not defined: "_s, edge.node()->index()).ascii().data());
         return nullptr;
     }
 

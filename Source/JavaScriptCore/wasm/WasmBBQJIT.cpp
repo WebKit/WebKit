@@ -163,6 +163,7 @@ private:
             case ValueLocation::Kind::Stack:
                 return Location::fromStack(argLocation.location.offsetFromFP());
             }
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
         bool isNone() const
@@ -1610,6 +1611,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
             return LoadOpType::I64Load;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     Value topValue(TypeKind type)
@@ -1684,6 +1686,8 @@ public:
         case TypeKind::Void:
             RELEASE_ASSERT_NOT_REACHED();
             return StoreOpType::I64Store;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -1866,9 +1870,8 @@ public:
             return TypeKind::F32;
         case LoadOpType::F64Load:
             return TypeKind::F64;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     Address materializePointer(Location pointerLocation, uint32_t uoffset)
@@ -5516,7 +5519,7 @@ public:
                     m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), m_scratchGPR, m_scratchGPR);
                     m_jit.move32ToFloat(m_scratchGPR, m_scratchFPR);
 
-                    emitMoveConst(Value::fromF32(std::fabsf(lhs.asF32())), resultLocation);
+                    emitMoveConst(Value::fromF32(std::fabs(lhs.asF32())), resultLocation);
                     m_jit.orFloat(resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
                 } else {
                     bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
@@ -8318,7 +8321,7 @@ private:
     {
         ASSERT(constant.isConst());
 
-        if (loc.isStack() || loc.isGlobal())
+        if (loc.isMemory())
             return emitStoreConst(constant, loc);
 
         ASSERT(loc.isRegister());
@@ -8714,9 +8717,9 @@ private:
     {
         // Called whenever a value is popped from the expression stack. Mostly, we
         // use this to release the registers temporaries are bound to.
-        Location result = locationOf(value);
-        if (value.isTemp() && result.isRegister())
-            unbind(value, result);
+        Location location = locationOf(value);
+        if (value.isTemp() && location != canonicalSlot(value))
+            unbind(value, location);
     }
 
     Location allocateRegister(TypeKind type)
@@ -8795,20 +8798,17 @@ private:
     }
 
     template<typename Register>
-    static Register fromJSCReg(Reg);
-
-    template<>
-    RegisterID fromJSCReg<RegisterID>(Reg gpr)
+    static Register fromJSCReg(Reg reg)
     {
-        ASSERT(gpr.isGPR());
-        return gpr.gpr();
-    }
-
-    template<>
-    FPRegisterID fromJSCReg<FPRegisterID>(Reg fpr)
-    {
-        ASSERT(fpr.isFPR());
-        return fpr.fpr();
+        // This pattern avoids an explicit template specialization in class scope, which GCC does not support.
+        if constexpr (std::is_same_v<Register, RegisterID>) {
+            ASSERT(reg.isGPR());
+            return reg.gpr();
+        } else if constexpr (std::is_same_v<Register, FPRegisterID>) {
+            ASSERT(reg.isFPR());
+            return reg.fpr();
+        }
+        ASSERT_NOT_REACHED();
     }
 
     template<typename Register>

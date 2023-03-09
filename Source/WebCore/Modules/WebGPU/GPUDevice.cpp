@@ -39,6 +39,7 @@
 #include "GPUComputePipelineDescriptor.h"
 #include "GPUExternalTexture.h"
 #include "GPUExternalTextureDescriptor.h"
+#include "GPUPipelineError.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
 #include "GPUPresentationContext.h"
@@ -59,6 +60,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
 #include "JSGPUOutOfMemoryError.h"
+#include "JSGPUPipelineError.h"
 #include "JSGPURenderPipeline.h"
 #include "JSGPUValidationError.h"
 #include <wtf/IsoMallocInlines.h>
@@ -181,15 +183,21 @@ Ref<GPURenderPipeline> GPUDevice::createRenderPipeline(const GPURenderPipelineDe
 
 void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor& computePipelineDescriptor, CreateComputePipelineAsyncPromise&& promise)
 {
-    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
-        promise.resolve(GPUComputePipeline::create(WTFMove(computePipeline)));
+    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::ComputePipeline>&& computePipeline) mutable {
+        if (computePipeline.get())
+            promise.resolve(GPUComputePipeline::create(computePipeline.releaseNonNull()));
+        else
+            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
     });
 }
 
 void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor& renderPipelineDescriptor, CreateRenderPipelineAsyncPromise&& promise)
 {
-    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
-        promise.resolve(GPURenderPipeline::create(WTFMove(renderPipeline)));
+    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+        if (renderPipeline.get())
+            promise.resolve(GPURenderPipeline::create(renderPipeline.releaseNonNull()));
+        else
+            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
     });
 }
 

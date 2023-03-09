@@ -443,7 +443,7 @@ void webkit_dom_html_select_element_set_multiple(WebKitDOMHTMLSelectElement* sel
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SELECT_ELEMENT(self));
     WebCore::HTMLSelectElement* item = WebKit::core(self);
-    item->setMultiple(value);
+    item->setBooleanAttribute(WebCore::HTMLNames::multipleAttr, value);
 }
 
 gchar* webkit_dom_html_select_element_get_name(WebKitDOMHTMLSelectElement* self)

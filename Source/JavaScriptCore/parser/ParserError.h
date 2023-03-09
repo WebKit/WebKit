@@ -28,7 +28,9 @@
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "ExceptionHelpers.h"
+#include "JSGlobalObject.h"
 #include "ParserTokens.h"
+#include "SourceCode.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

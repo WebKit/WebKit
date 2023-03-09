@@ -246,6 +246,8 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosSwitchControlledVid
         [webView stringByEvaluatingJavaScript:@"scrollToSecondView()"];
     }];
 
+    [webView waitForNextPresentationUpdate];
+
     EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"second"]);
 }
 

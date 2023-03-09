@@ -13,22 +13,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 773x59
-          text run at (0,0) width 741: "When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge in some cases"
-          text run at (0,20) width 773: "(normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be lost)."
-          text run at (0,40) width 350: "It wasn't requesting a merge in cases where it should have."
+        RenderText {#text} at (0,0) size 776x59
+          text run at (0,0) width 773: "When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge in some cases"
+          text run at (0,20) width 776: "(normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be"
+          text run at (0,40) width 35: "lost). "
+          text run at (35,40) width 368: "It wasn't requesting a merge in cases where it should have."
       RenderBlock {P} at (0,76) size 784x80
-        RenderText {#text} at (0,0) size 779x79
-          text run at (0,0) width 769: "The failing case is where the incoming fragment has more than one block, and the selection being pasted into ends at the end of a"
-          text run at (0,20) width 69: "paragraph. "
-          text run at (69,20) width 710: "Any time the selection being pasted into ends at the end of a paragraph, deleting will leave leave a) a br or b) an empty"
-          text run at (0,40) width 247: "block at the end of the deleted selection. "
-          text run at (247,40) width 522: "So, not merging will leave an extraneous empty line or a collapsed block after the paste"
-          text run at (0,60) width 61: "operation."
+        RenderText {#text} at (0,0) size 783x79
+          text run at (0,0) width 783: "The failing case is where the incoming fragment has more than one block, and the selection being pasted into ends at the end"
+          text run at (0,20) width 99: "of a paragraph. "
+          text run at (99,20) width 683: "Any time the selection being pasted into ends at the end of a paragraph, deleting will leave leave a) a br or b)"
+          text run at (0,40) width 318: "an empty block at the end of the deleted selection. "
+          text run at (318,40) width 457: "So, not merging will leave an extraneous empty line or a collapsed block"
+          text run at (0,60) width 154: "after the paste operation."
       RenderBlock {DIV} at (2,172) size 780x52 [border: (1px solid #000000)]
         RenderBlock {DIV} at (3,3) size 774x22 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 28x19
-            text run at (1,1) width 28: "bfoo"
+          RenderText {#text} at (1,1) size 29x19
+            text run at (1,1) width 29: "bfoo"
         RenderBlock {DIV} at (3,27) size 774x22 [border: (1px solid #000000)]
           RenderText {#text} at (1,1) size 20x19
             text run at (1,1) width 20: "bar"

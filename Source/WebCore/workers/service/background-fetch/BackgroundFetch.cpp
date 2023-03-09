@@ -32,8 +32,10 @@
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "DOMCacheEngine.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "RetrieveRecordsOptions.h"
 #include "SWServerRegistration.h"
 #include "WebCorePersistentCoders.h"
 #include <wtf/persistence/PersistentCoders.h>

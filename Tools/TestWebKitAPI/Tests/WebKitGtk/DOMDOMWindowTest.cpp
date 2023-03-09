@@ -24,9 +24,10 @@
 #include <wtf/RunLoop.h>
 
 #if USE(GTK4)
-#include <webkit/webkit-web-extension.h>
+#include <webkit/webkit-web-process-extension.h>
 #else
 #include <webkit2/webkit-web-extension.h>
+typedef _WebKitWebExtension WebKitWebProcessExtension;
 #endif
 
 class WebKitDOMDOMWindowTest;
@@ -54,11 +55,15 @@ private:
         return 0;
     }
 
-    bool testSignals(WebKitWebExtension* extension, GVariant* args)
+    bool testSignals(WebKitWebProcessExtension* extension, GVariant* args)
     {
         notify("ready", "");
 
+#if ENABLE(2022_GLIB_API)
+        WebKitWebPage* page = webkit_web_process_extension_get_page(extension, webPageFromArgs(args));
+#else
         WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
+#endif
         g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
@@ -102,11 +107,15 @@ private:
         return true;
     }
 
-    bool testDispatchEvent(WebKitWebExtension* extension, GVariant* args)
+    bool testDispatchEvent(WebKitWebProcessExtension* extension, GVariant* args)
     {
         notify("ready", "");
 
+#if ENABLE(2022_GLIB_API)
+        WebKitWebPage* page = webkit_web_process_extension_get_page(extension, webPageFromArgs(args));
+#else
         WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
+#endif
         g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
@@ -165,9 +174,13 @@ private:
         return true;
     }
 
-    bool testGetComputedStyle(WebKitWebExtension* extension, GVariant* args)
+    bool testGetComputedStyle(WebKitWebProcessExtension* extension, GVariant* args)
     {
+#if ENABLE(2022_GLIB_API)
+        WebKitWebPage* page = webkit_web_process_extension_get_page(extension, webPageFromArgs(args));
+#else
         WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
+#endif
         g_assert_true(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
@@ -183,7 +196,7 @@ private:
         return true;
     }
 
-    virtual bool runTest(const char* testName, WebKitWebExtension* extension, GVariant* args)
+    virtual bool runTest(const char* testName, WebKitWebProcessExtension* extension, GVariant* args)
     {
         if (!strcmp(testName, "signals"))
             return testSignals(extension, args);

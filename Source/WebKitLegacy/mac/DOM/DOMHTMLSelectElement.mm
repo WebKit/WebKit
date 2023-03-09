@@ -92,7 +92,7 @@
 - (void)setMultiple:(BOOL)newMultiple
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setMultiple(newMultiple);
+    IMPL->setBooleanAttribute(WebCore::HTMLNames::multipleAttr, newMultiple);
 }
 
 - (NSString *)name

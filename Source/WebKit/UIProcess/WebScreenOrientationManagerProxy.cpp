@@ -76,7 +76,7 @@ static WebCore::ScreenOrientationType resolveScreenOrientationLockType(WebCore::
     case WebCore::ScreenOrientationLockType::LandscapeSecondary:
         return WebCore::ScreenOrientationType::LandscapeSecondary;
     case WebCore::ScreenOrientationLockType::Natural: {
-        auto naturalOrientation = naturalScreenOrientationType();
+        auto naturalOrientation = WebCore::naturalScreenOrientationType();
         if (WebCore::isPortrait(naturalOrientation) == WebCore::isPortrait(currentOrientation))
             return currentOrientation;
         return naturalOrientation;

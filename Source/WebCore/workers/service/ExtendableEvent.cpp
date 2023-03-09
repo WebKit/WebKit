@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Microtask.h>

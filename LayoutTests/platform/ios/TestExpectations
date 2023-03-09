@@ -90,6 +90,7 @@ imported/w3c/web-platform-tests/fullscreen
 compositing/no-compositing-when-full-screen-is-present.html
 webkit.org/b/200308 fast/events/touch/ios/content-observation/non-visible-content-change-in-fullscreen-mode.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Skip ]
 media/video-supports-fullscreen.html [ Skip ]
 
 # Encrypted Media Extensions are not enabled

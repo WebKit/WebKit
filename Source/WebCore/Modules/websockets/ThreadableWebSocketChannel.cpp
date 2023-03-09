@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"

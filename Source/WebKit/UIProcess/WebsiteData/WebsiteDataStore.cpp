@@ -236,6 +236,16 @@ bool WebsiteDataStore::defaultDataStoreExists()
     return !!globalDefaultDataStore();
 }
 
+RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const UUID& identifier)
+{
+    for (auto* dataStore : allDataStores().values()) {
+        if (dataStore && dataStore->configuration().identifier() == identifier)
+            return dataStore;
+    }
+
+    return nullptr;
+}
+
 void WebsiteDataStore::registerWithSessionIDMap()
 {
     auto result = allDataStores().add(m_sessionID, this);
@@ -2350,6 +2360,13 @@ void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const 
     }
 
     networkProcess().send(Messages::NetworkProcess::ResumeDownload(m_sessionID, downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle, callDownloadDidStart), 0);
+}
+
+bool WebsiteDataStore::hasActivePages()
+{
+    return WTF::anyOf(WebProcessPool::allProcessPools(), [&](auto& pool) {
+        return pool->hasPagesUsingWebsiteDataStore(*this);
+    });
 }
 
 #if HAVE(NW_PROXY_CONFIG)

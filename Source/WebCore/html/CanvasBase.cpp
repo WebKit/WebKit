@@ -392,12 +392,11 @@ bool CanvasBase::postProcessPixelBuffer(Ref<PixelBuffer> pixelBuffer, bool wasLa
             continue;
         }
 
-        auto pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
+        const uint64_t pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
+        // +/- ~13 is roughly 5% of the 255 max value.
+        const auto clampedFivePercent = static_cast<uint32_t>(((pixelHash * 26) / std::numeric_limits<uint32_t>::max()) - 13);
 
-        auto clampedFivePercent = static_cast<int>((static_cast<float>(pixelHash / std::numeric_limits<uint32_t>::max())) * 26 - 13);
-        ASSERT(clampedFivePercent);
-
-        auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue) {
+        const auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue) {
             if (colorComponentOffset + originalComponentValue > std::numeric_limits<uint8_t>::max())
                 return std::numeric_limits<uint8_t>::max() - originalComponentValue;
             if (colorComponentOffset + originalComponentValue < 0)

@@ -1168,6 +1168,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/MediaEncryptedEvent.idl
     html/MediaError.idl
     html/OffscreenCanvas.idl
+    html/PopoverInvokerElement.idl
     html/RadioNodeList.idl
     html/SubmitEvent.idl
     html/TextMetrics.idl
@@ -1674,6 +1675,9 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUOrigin3DDict.idl
     Modules/WebGPU/GPUOutOfMemoryError.idl
     Modules/WebGPU/GPUPipelineBase.idl
+    Modules/WebGPU/GPUPipelineError.idl
+    Modules/WebGPU/GPUPipelineErrorInit.idl
+    Modules/WebGPU/GPUPipelineErrorReason.idl
     Modules/WebGPU/GPUPipelineDescriptorBase.idl
     Modules/WebGPU/GPUPipelineLayout.idl
     Modules/WebGPU/GPUPipelineLayoutDescriptor.idl

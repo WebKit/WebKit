@@ -18,17 +18,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x80
-        RenderText {#text} at (0,0) size 763x79
-          text run at (0,0) width 390: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
-          text run at (390,0) width 329: "It should operate on line boundaries and not paragraph"
-          text run at (0,20) width 74: "boundaries. "
-          text run at (74,20) width 689: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right Arrow,"
-          text run at (0,40) width 533: "the selection should extend to the start/end of the line, not the start/end of the paragraph. "
-          text run at (533,40) width 155: "Also, moveTo{Beginning,"
-          text run at (0,60) width 318: "End}OfParagraphAndModifySelection should work."
+        RenderText {#text} at (0,0) size 773x79
+          text run at (0,0) width 418: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
+          text run at (418,0) width 343: "It should operate on line boundaries and not paragraph"
+          text run at (0,20) width 77: "boundaries. "
+          text run at (77,20) width 682: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right"
+          text run at (0,40) width 605: "Arrow, the selection should extend to the start/end of the line, not the start/end of the paragraph. "
+          text run at (605,40) width 168: "Also, moveTo{Beginning,"
+          text run at (0,60) width 335: "End}OfParagraphAndModifySelection should work."
       RenderBlock {DIV} at (0,96) size 200x40
-        RenderText {#text} at (0,0) size 179x39
-          text run at (0,0) width 179: "The quick brown fox jumped "
-          text run at (0,20) width 150: "over the lazy brown dog."
+        RenderText {#text} at (0,0) size 189x39
+          text run at (0,0) width 189: "The quick brown fox jumped "
+          text run at (0,20) width 158: "over the lazy brown dog."
 selection start: position 0 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 51 of child 0 {#text} of child 2 {DIV} of body

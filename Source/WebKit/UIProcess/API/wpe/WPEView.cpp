@@ -420,11 +420,17 @@ void View::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
 
 void View::handleKeyboardEvent(struct wpe_input_keyboard_event* event)
 {
+    auto isAutoRepeat = false;
+    if (event->pressed)
+        isAutoRepeat = m_keyAutoRepeatHandler.keyPress(event->key_code);
+    else
+        m_keyAutoRepeatHandler.keyRelease();
+
     auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
     if (filterResult.handled)
         return;
 
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), isAutoRepeat, NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
 }
 
 void View::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
@@ -434,7 +440,7 @@ void View::synthesizeCompositionKeyPress(const String& text, std::optional<Vecto
     // composition results. WPE doesn't have an equivalent, so we send VoidSymbol
     // here to WebCore. PlatformKeyEvent converts this code into VK_PROCESSKEY.
     static struct wpe_input_keyboard_event event = { 0, WPE_KEY_VoidSymbol, 0, true, 0 };
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(&event, text, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTFMove(underlines), WTFMove(selectionRange)));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(&event, text, false, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTFMove(underlines), WTFMove(selectionRange)));
 }
 
 void View::close()

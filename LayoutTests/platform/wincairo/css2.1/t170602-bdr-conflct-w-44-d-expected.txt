@@ -4,8 +4,8 @@ layer at (0,0) size 800x240
   RenderBlock {HTML} at (0,0) size 800x240
     RenderBody {BODY} at (8,16) size 784x216
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 306x19
-          text run at (0,0) width 306: "There should be no red borders on the table below"
+        RenderText {#text} at (0,0) size 317x19
+          text run at (0,0) width 317: "There should be no red borders on the table below"
       RenderTable {TABLE} at (0,36) size 153x180 [border: (2px none #808080)]
         RenderTableSection {TBODY} at (2,2) size 148x175
           RenderTableRow {TR} at (0,0) size 148x58

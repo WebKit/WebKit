@@ -1,8 +1,8 @@
 Visible button
 
-FAIL Popover combination: Popover Dialog assert_throws_dom: Calling show() on an already-showing Popover should throw InvalidStateError function "() => ex.show()" did not throw
-FAIL Popover combination: Open Non-modal Popover Dialog assert_throws_dom: Calling show() on an already-showing Popover should throw InvalidStateError function "() => ex.show()" did not throw
-FAIL Popover combination: Fullscreen Popover assert_true: Invoking element should be able to invoke all popovers: Popover doesn't match :open expected true got false
-FAIL Popover combination: Fullscreen Popover Dialog assert_throws_dom: Calling show() on an already-showing Popover should throw InvalidStateError function "() => ex.show()" did not throw
-FAIL Popover combination: Fullscreen Open Non-modal Popover Dialog assert_throws_dom: Calling show() on an already-showing Popover should throw InvalidStateError function "() => ex.show()" did not throw
+PASS Popover combination: Popover Dialog
+PASS Popover combination: Open Non-modal Popover Dialog
+PASS Popover combination: Fullscreen Popover
+PASS Popover combination: Fullscreen Popover Dialog
+PASS Popover combination: Fullscreen Open Non-modal Popover Dialog
 

@@ -33,6 +33,7 @@
 #include "LayoutPhase.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
+#include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -440,6 +441,18 @@ std::optional<LayoutUnit> Box::columnWidth() const
     if (!hasRareData())
         return { };
     return rareData().columnWidth;
+}
+
+const Shape* Box::shape() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData().shape.get();
+}
+
+void Box::setShape(std::unique_ptr<Shape> shape)
+{
+    ensureRareData().shape = WTFMove(shape);
 }
 
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const

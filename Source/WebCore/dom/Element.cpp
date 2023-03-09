@@ -369,11 +369,11 @@ void Element::setNonce(const AtomString& newValue)
     ensureElementRareData().setNonce(newValue);
 }
 
-void Element::hideNonce()
+void Element::hideNonceSlow()
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#nonce-attributes
-    if (!isConnected())
-        return;
+    ASSERT(isConnected());
+    ASSERT(hasAttributeWithoutSynchronization(nonceAttr));
 
     const auto& csp = document().contentSecurityPolicy();
     if (!csp->isHeaderDelivered())
@@ -381,10 +381,7 @@ void Element::hideNonce()
 
     // Retain previous IDL nonce.
     AtomString currentNonce = nonce();
-
-    if (!getAttribute(nonceAttr).isEmpty())
-        setAttribute(nonceAttr, emptyAtom());
-
+    setAttribute(nonceAttr, emptyAtom());
     setNonce(currentNonce);
 }
 
@@ -2041,13 +2038,16 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
     return value;
 }
 
-bool Element::isElementReflectionAttribute(const QualifiedName& name)
+bool Element::isElementReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
-    return name == HTMLNames::aria_activedescendantAttr;
+    return (settings.ariaReflectionForElementReferencesEnabled() && name == HTMLNames::aria_activedescendantAttr)
+        || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr);
 }
 
-bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
+bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
+    if (!settings.ariaReflectionForElementReferencesEnabled())
+        return false;
     return name == HTMLNames::aria_controlsAttr
         || name == HTMLNames::aria_describedbyAttr
         || name == HTMLNames::aria_detailsAttr
@@ -2093,7 +2093,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             }
         } else if (name == HTMLNames::partAttr)
             partAttributeChanged(newValue);
-        else if (document().settings().ariaReflectionForElementReferencesEnabled() && (isElementReflectionAttribute(name) || isElementsArrayReflectionAttribute(name))) {
+        else if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
             if (auto* map = explicitlySetAttrElementsMapIfExists())
                 map->remove(name);
         } else if (name == HTMLNames::exportpartsAttr) {
@@ -2158,8 +2158,7 @@ ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() co
 
 Element* Element::getElementAttribute(const QualifiedName& attributeName) const
 {
-    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
-    ASSERT(isElementReflectionAttribute(attributeName));
+    ASSERT(isElementReflectionAttribute(document().settings(), attributeName));
 
     if (auto* map = explicitlySetAttrElementsMapIfExists()) {
         auto it = map->find(attributeName);
@@ -2181,8 +2180,7 @@ Element* Element::getElementAttribute(const QualifiedName& attributeName) const
 
 void Element::setElementAttribute(const QualifiedName& attributeName, Element* element)
 {
-    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
-    ASSERT(isElementReflectionAttribute(attributeName));
+    ASSERT(isElementReflectionAttribute(document().settings(), attributeName));
 
     if (!element) {
         if (auto* map = explicitlySetAttrElementsMapIfExists())
@@ -2202,8 +2200,7 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
 
 std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
 {
-    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
-    ASSERT(isElementsArrayReflectionAttribute(attributeName));
+    ASSERT(isElementsArrayReflectionAttribute(document().settings(), attributeName));
 
     if (auto* map = explicitlySetAttrElementsMapIfExists()) {
         if (auto it = map->find(attributeName); it != map->end()) {
@@ -2233,8 +2230,7 @@ std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const 
 
 void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& elements)
 {
-    ASSERT(document().settings().ariaReflectionForElementReferencesEnabled());
-    ASSERT(isElementsArrayReflectionAttribute(attributeName));
+    ASSERT(isElementsArrayReflectionAttribute(document().settings(), attributeName));
 
     if (!elements) {
         if (auto* map = explicitlySetAttrElementsMapIfExists())
@@ -2766,7 +2762,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
 #if ENABLE(FULLSCREEN_API)
-    document().fullscreenManager().exitRemovedFullscreenElementIfNeeded(*this);
+    if (UNLIKELY(hasFullscreenFlag()))
+        document().fullscreenManager().exitRemovedFullscreenElement(*this);
 #endif
 
     if (!parentNode() && is<Document>(oldParentOfRemovedTree)) {
@@ -3441,6 +3438,9 @@ static bool isProgramaticallyFocusable(Element& element)
 // https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
 static RefPtr<Element> autoFocusDelegate(ContainerNode& target, FocusTrigger trigger)
 {
+    if (auto* root = target.shadowRoot(); root && !root->delegatesFocus())
+        return nullptr;
+
     for (auto& element : descendantsOfType<Element>(target)) {
         if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
             continue;
@@ -3466,6 +3466,8 @@ static RefPtr<Element> autoFocusDelegate(ContainerNode& target, FocusTrigger tri
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
 RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, FocusTrigger trigger)
 {
+    if (auto* root = target.shadowRoot(); root && !root->delegatesFocus())
+        return nullptr;
     if (auto element = autoFocusDelegate(target, trigger))
         return element;
     for (auto& element : descendantsOfType<Element>(target)) {
@@ -3486,6 +3488,12 @@ RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, Focus
         }
     }
     return nullptr;
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
+RefPtr<Element> Element::findAutofocusDelegate(FocusTrigger trigger)
+{
+    return autoFocusDelegate(*this, trigger);
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate

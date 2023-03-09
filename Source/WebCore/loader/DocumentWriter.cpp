@@ -43,6 +43,7 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "MIMETypeRegistry.h"
+#include "Page.h"
 #include "PluginDocument.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"

@@ -1447,13 +1447,7 @@ private:
 
         // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
 
-        auto listContainsReference = [](auto& filterOperations) {
-            return filterOperations.operations().findIf([](auto& filterOperation) {
-                return filterOperation->type() == FilterOperation::Type::Reference;
-            }) != notFound;
-        };
-
-        if (listContainsReference(fromFilterOperations) || listContainsReference(toFilterOperations))
+        if (fromFilterOperations.hasReferenceFilter() || toFilterOperations.hasReferenceFilter())
             return false;
 
         // If one filter is none and the other is a <filter-value-list> without <url>

@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 776x39
-          text run at (0,0) width 627: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
-          text run at (627,0) width 149: "You should see a picture"
-          text run at (0,20) width 193: "of abe followed by a select box."
+        RenderText {#text} at (0,0) size 767x39
+          text run at (0,0) width 660: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
+          text run at (660,0) width 107: "You should see a"
+          text run at (0,20) width 248: "picture of abe followed by a select box."
       RenderBlock {DIV} at (0,56) size 784x112
         RenderImage {IMG} at (0,0) size 76x103
         RenderText {#text} at (76,88) size 4x19

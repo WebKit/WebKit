@@ -161,6 +161,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::PosInSet, object.posInSet());
     setProperty(AXPropertyName::SupportsDropping, object.supportsDropping());
     setProperty(AXPropertyName::SupportsDragging, object.supportsDragging());
+    setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
     setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
     setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
@@ -915,9 +916,6 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
             break;
         case AXPropertyName::RowHeaders:
             value = axIDs(axObject->rowHeaders());
-            break;
-        case AXPropertyName::SupportsPressAction:
-            value = axObject->supportsPressAction();
             break;
         default:
             break;
@@ -1793,12 +1791,6 @@ String AXIsolatedObject::outerHTML() const
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
 {
     return tree()->objectsForIDs(const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AXID>>(AXPropertyName::RowHeaders));
-}
-
-// FIXME: Rather than lazily retrieving this property, we should make it performant enough to retrieve up-front in AXIsolatedObject::initializeProperties.
-bool AXIsolatedObject::supportsPressAction() const
-{
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<bool>(AXPropertyName::SupportsPressAction);
 }
 
 #if !PLATFORM(MAC)

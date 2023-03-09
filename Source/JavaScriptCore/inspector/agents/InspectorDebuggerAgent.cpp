@@ -66,7 +66,7 @@ const ASCIILiteral InspectorDebuggerAgent::backtraceObjectGroup = "backtrace"_s;
 // create objects in the same group.
 static String objectGroupForBreakpointAction(JSC::BreakpointActionID id)
 {
-    return makeString("breakpoint-action-", id);
+    return makeString("breakpoint-action-"_s, id);
 }
 
 static bool isWebKitInjectedScript(const String& sourceURL)
@@ -184,7 +184,7 @@ InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint(JSC::SourceID sou
 }
 
 InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint(const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
-    : m_id(makeString(isRegex ? "/" : "", url, isRegex ? "/" : "", ':', lineNumber, ':', columnNumber))
+    : m_id(makeString(isRegex ? "/"_s : ""_s, url, isRegex ? "/"_s : ""_s, ':', lineNumber, ':', columnNumber))
     , m_url(url)
     , m_isRegex(isRegex)
     , m_lineNumber(lineNumber)

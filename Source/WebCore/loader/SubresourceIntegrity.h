@@ -34,8 +34,15 @@ namespace WebCore {
 
 class CachedResource;
 
-bool matchIntegrityMetadata(const CachedResource&, const String& integrityMetadata);
+bool matchIntegrityMetadataSlow(const CachedResource&, const String& integrityMetadata);
 String integrityMismatchDescription(const CachedResource&, const String& integrityMetadata);
 std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata);
+
+inline bool matchIntegrityMetadata(const CachedResource& resource, const String& integrityMetadata)
+{
+    if (LIKELY(integrityMetadata.isEmpty()))
+        return true;
+    return matchIntegrityMetadataSlow(resource, integrityMetadata);
+}
 
 }

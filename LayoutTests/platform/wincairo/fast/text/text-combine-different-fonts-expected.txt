@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock {P} at (0,0) size 20x584
-        RenderText {#text} at (0,0) size 19x43
-          text run at (0,0) width 43: "Times: "
+        RenderText {#text} at (0,0) size 19x46
+          text run at (0,0) width 46: "Times: "
         RenderInline {SPAN} at (0,0) size 19x16
-          RenderCombineText {#text} at (0,43) size 19x16
-            text run at (0,43) width 16: "\x{FFFC}"
+          RenderCombineText {#text} at (0,46) size 19x16
+            text run at (0,46) width 16: "\x{FFFC}"
       RenderBlock {P} at (36,0) size 20x584
-        RenderText {#text} at (0,0) size 19x134
-          text run at (0,0) width 134: "Hiragino Mincho Pro: "
+        RenderText {#text} at (0,0) size 19x143
+          text run at (0,0) width 143: "Hiragino Mincho Pro: "
         RenderInline {SPAN} at (0,0) size 19x16
-          RenderCombineText {#text} at (0,134) size 19x16
-            text run at (0,134) width 16: "\x{FFFC}"
+          RenderCombineText {#text} at (0,143) size 19x16
+            text run at (0,143) width 16: "\x{FFFC}"
       RenderBlock {P} at (72,0) size 20x584
-        RenderText {#text} at (0,0) size 19x109
-          text run at (0,0) width 109: "STHeitiSC-Light: "
+        RenderText {#text} at (0,0) size 19x117
+          text run at (0,0) width 117: "STHeitiSC-Light: "
         RenderInline {SPAN} at (0,0) size 19x16
-          RenderCombineText {#text} at (0,109) size 19x16
-            text run at (0,109) width 16: "\x{FFFC}"
+          RenderCombineText {#text} at (0,117) size 19x16
+            text run at (0,117) width 16: "\x{FFFC}"

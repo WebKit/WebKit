@@ -46,6 +46,7 @@ enum PreferredQuality {
     readonly attribute BufferingPolicy buffering;
     readonly attribute PreferredQuality quality;
 
+    readonly attribute boolean streaming;
     attribute EventHandler onstartstreaming;
     attribute EventHandler onendstreaming;
 

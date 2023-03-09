@@ -138,8 +138,8 @@ public:
     WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
     WEBCORE_EXPORT std::optional<Vector<RefPtr<Element>>> getElementsArrayAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& value);
-    static bool isElementReflectionAttribute(const QualifiedName&);
-    static bool isElementsArrayReflectionAttribute(const QualifiedName&);
+    static bool isElementReflectionAttribute(const Settings&, const QualifiedName&);
+    static bool isElementsArrayReflectionAttribute(const Settings&, const QualifiedName&);
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
@@ -397,7 +397,7 @@ public:
     // Used by the HTMLElement and SVGElement IDLs.
     WEBCORE_EXPORT const AtomString& nonce() const;
     WEBCORE_EXPORT void setNonce(const AtomString&);
-    void hideNonce();
+    inline void hideNonce(); // Defined in ElementInlines.h.
 
     ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
 
@@ -462,6 +462,7 @@ public:
 
     static RefPtr<Element> findFocusDelegateForTarget(ContainerNode&, FocusTrigger);
     RefPtr<Element> findFocusDelegate(FocusTrigger = FocusTrigger::Other);
+    RefPtr<Element> findAutofocusDelegate(FocusTrigger = FocusTrigger::Other);
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     virtual void focus(const FocusOptions& = { });
@@ -758,6 +759,7 @@ protected:
 
 private:
     Frame* documentFrameWithNonNullView() const;
+    void hideNonceSlow();
 
     bool isTextNode() const;
 

@@ -1215,7 +1215,7 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilityState expectedState)
 {
     if (!element.hasAttributeWithoutSynchronization(HTMLNames::popoverAttr))
-        return Exception { InvalidStateError, "Element does not have the popover attribute"_s };
+        return Exception { NotSupportedError, "Element does not have the popover attribute"_s };
 
     if (!element.isConnected())
         return Exception { InvalidStateError, "Element is not connected"_s };
@@ -1234,19 +1234,72 @@ static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilit
     return { };
 }
 
-static HTMLElement* topmostPopoverAncestor(Element& element)
+// https://html.spec.whatwg.org/#topmost-popover-ancestor
+// Consider both DOM ancestors and popovers where the given popover was invoked from as ancestors.
+// Use top layer positions to disambiguate the topmost one when both exist.
+static HTMLElement* topmostPopoverAncestor(Element& newPopover)
 {
-    for (auto& element : lineageOfType<HTMLElement>(element)) {
-        if (element.popoverState() != PopoverState::Auto)
+    // Store positions to avoid having to do O(n) search for every popover invoker.
+    HashMap<Ref<Element>, size_t> topLayerPositions;
+    size_t i = 0;
+    for (auto& element : newPopover.document().topLayerElements()) {
+        if (!is<HTMLElement>(element) || downcast<HTMLElement>(element.get()).popoverState() != PopoverState::Auto)
             continue;
-        if (element.popoverData()->visibilityState() != PopoverVisibilityState::Showing)
-            continue;
-        return &element;
+        topLayerPositions.add(element, i++);
     }
 
-    // FIXME: Include popover invokers and compare them in top layer order once they are implemented.
+    topLayerPositions.add(newPopover, i);
 
-    return nullptr;
+    RefPtr<HTMLElement> topmostAncestor;
+
+    auto checkAncestor = [&](Element* candidate) {
+        if (!candidate)
+            return;
+
+        // https://html.spec.whatwg.org/#nearest-inclusive-open-popover
+        auto nearestInclusiveOpenPopover = [](Element& candidate) -> HTMLElement* {
+            for (auto& element : lineageOfType<HTMLElement>(candidate)) {
+                if (element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+                    return &element;
+            }
+            return nullptr;
+        };
+
+        auto* candidateAncestor = nearestInclusiveOpenPopover(*candidate);
+        if (!candidateAncestor)
+            return;
+        if (!topmostAncestor || topLayerPositions.get(*topmostAncestor) < topLayerPositions.get(*candidateAncestor))
+            topmostAncestor = candidateAncestor;
+    };
+
+    checkAncestor(newPopover.parentElement());
+
+    // Iterate over all popover invokers in the document.
+    for (auto& invoker : descendantsOfType<HTMLFormControlElement>(newPopover.document())) {
+        // popoverTargetElement() already checks if the form control can invoke popovers.
+        if (invoker.popoverTargetElement() == &newPopover)
+            checkAncestor(&invoker);
+    }
+
+    return topmostAncestor.get();
+}
+
+// https://html.spec.whatwg.org/#popover-focusing-steps
+static void runPopoverFocusingSteps(HTMLElement& popover)
+{
+    RefPtr control = popover.hasAttribute(autofocusAttr) ? &popover : popover.findAutofocusDelegate();
+
+    if (!control)
+        return;
+
+    control->runFocusingStepsForAutofocus();
+
+    if (!control->document().isSameOriginAsTopDocument())
+        return;
+
+    Ref topDocument = control->document().topDocument();
+    topDocument->clearAutofocusCandidates();
+    topDocument->setAutofocusProcessed();
 }
 
 void HTMLElement::queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState)
@@ -1304,13 +1357,13 @@ ExceptionOr<void> HTMLElement::showPopover()
 
     popoverData()->setPreviouslyFocusedElement(nullptr);
 
-    // FIXME: Run popover focusing steps.
-
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
         { CSSSelector::PseudoClassOpen, true },
         { CSSSelector::PseudoClassClosed, false }
     });
     popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
+
+    runPopoverFocusingSteps(*this);
 
     if (shouldRestoreFocus && popoverState() == PopoverState::Auto)
         popoverData()->setPreviouslyFocusedElement(previouslyFocusedElement.get());
@@ -1333,6 +1386,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
             return check.releaseException();
     }
+
+    popoverData()->setInvoker(nullptr);
 
     if (fireEvents == FireEvents::Yes)
         dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));
@@ -1375,7 +1430,10 @@ ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
     if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
         return hidePopover();
 
-    return showPopover();
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Hidden && force.value_or(true))
+        return showPopover();
+
+    return { };
 }
 
 void HTMLElement::popoverAttributeChanged(const AtomString& value)

@@ -118,6 +118,7 @@ UIProcess/API/C/wpe/WKView.cpp
 UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify
 UIProcess/API/glib/APISerializedScriptValueGLib.cpp @no-unify
 UIProcess/API/glib/InputMethodFilter.cpp @no-unify
+UIProcess/API/glib/KeyAutoRepeatHandler.cpp @no-unify
 UIProcess/API/glib/WebKitApplicationInfo.cpp @no-unify
 UIProcess/API/glib/WebKitAuthenticationRequest.cpp @no-unify
 UIProcess/API/glib/WebKitAutomationSession.cpp @no-unify
@@ -245,14 +246,13 @@ WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 
 WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
 
-WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp @no-unify
-WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebFormManager.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebProcessExtensionManager.cpp @no-unify
 
 WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 

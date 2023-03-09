@@ -8952,7 +8952,7 @@ HTMLDialogElement* Document::activeModalDialog() const
 HTMLElement* Document::topmostAutoPopover() const
 {
     for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate->popoverState() == PopoverState::Auto)
+        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate && candidate->popoverState() == PopoverState::Auto)
             return candidate;
     }
 
@@ -8978,6 +8978,7 @@ void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focu
         popover->hidePopoverInternal(focusPreviousElement, fireEvents);
 }
 
+// https://html.spec.whatwg.org/#popover-light-dismiss
 void Document::handlePopoverLightDismiss(PointerEvent& event)
 {
     ASSERT(event.isTrusted());
@@ -8989,15 +8990,41 @@ void Document::handlePopoverLightDismiss(PointerEvent& event)
     RefPtr popoverToAvoidHiding = [&]() -> HTMLElement* {
         auto& target = downcast<Node>(*event.target());
         auto* startElement = is<Element>(target) ? &downcast<Element>(target) : target.parentElement();
-        for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
-            if (element.popoverState() != PopoverState::Auto)
-                continue;
-            if (element.popoverData()->visibilityState() != PopoverVisibilityState::Showing)
-                continue;
-            return &element;
-        }
-        // FIXME: Handle popovertarget attributes.
-        return nullptr;
+        auto [clickedPopover, invokerPopover] = [&]() {
+            RefPtr<HTMLElement> clickedPopover;
+            RefPtr<HTMLElement> invokerPopover;
+            auto isShowingAutoPopover = [](HTMLElement& element) -> bool {
+                return element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+            };
+            for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
+                if (!clickedPopover && isShowingAutoPopover(element))
+                    clickedPopover = &element;
+
+                if (!invokerPopover) {
+                    if (auto* button = dynamicDowncast<HTMLFormControlElement>(element)) {
+                        if (auto* popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
+                            invokerPopover = popover;
+                    }
+                }
+                if (clickedPopover && invokerPopover)
+                    break;
+            }
+            return std::tuple { WTFMove(clickedPopover), WTFMove(invokerPopover) };
+        }();
+
+        auto highestInTopLayer = [&](HTMLElement* first, HTMLElement* second) -> HTMLElement* {
+            if (!first || first == second)
+                return second;
+            if (!second)
+                return first;
+            for (auto& element : makeReversedRange(m_topLayerElements)) {
+                if (element.ptr() == first || element.ptr() == second)
+                    return downcast<HTMLElement>(element.ptr());
+            }
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        };
+        return highestInTopLayer(clickedPopover.get(), invokerPopover.get());
     }();
 
     if (event.type() == eventNames().pointerdownEvent) {

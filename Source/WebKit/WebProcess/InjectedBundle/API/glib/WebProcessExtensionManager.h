@@ -25,7 +25,12 @@
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _WebKitWebExtension WebKitWebExtension;
+#if ENABLE(2022_GLIB_API)
+#include "WebKitWebProcessExtension.h"
+#else
+#include "WebKitWebExtension.h"
+typedef _WebKitWebExtension WebKitWebProcessExtension;
+#endif
 
 namespace API {
 class Object;
@@ -35,25 +40,25 @@ namespace WebKit {
 
 class InjectedBundle;
 
-class WebKitExtensionManager {
-    WTF_MAKE_NONCOPYABLE(WebKitExtensionManager);
+class WebProcessExtensionManager {
+    WTF_MAKE_NONCOPYABLE(WebProcessExtensionManager);
 public:
-    __attribute__((visibility("default"))) static WebKitExtensionManager& singleton();
+    __attribute__((visibility("default"))) static WebProcessExtensionManager& singleton();
 
     __attribute__((visibility("default"))) void initialize(InjectedBundle*, API::Object*);
 
-    WebKitWebExtension* extension() const { return m_extension.get(); }
+    WebKitWebProcessExtension* extension() const { return m_extension.get(); }
 
 private:
-    WebKitExtensionManager();
+    WebProcessExtensionManager() = default;
 
     void scanModules(const String&, Vector<String>&);
-    bool initializeWebExtension(Module* extensionModule, GVariant* userData);
+    bool initializeWebProcessExtension(Module* extensionModule, GVariant* userData);
 
     Vector<Module*> m_extensionModules;
-    GRefPtr<WebKitWebExtension> m_extension;
+    GRefPtr<WebKitWebProcessExtension> m_extension;
 
-    friend NeverDestroyed<WebKitExtensionManager>;
+    friend NeverDestroyed<WebProcessExtensionManager>;
 };
 
 } // namespace WebKit

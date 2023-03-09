@@ -38,6 +38,7 @@
 
 #ifdef __OBJC__
 
+#import <QuartzCore/CAAnimationPrivate.h>
 #import <QuartzCore/CAContext.h>
 #import <QuartzCore/CALayerHost.h>
 #import <QuartzCore/CALayerPrivate.h>
@@ -120,6 +121,16 @@ typedef struct _CARenderContext CARenderContext;
 
 @end
 
+@interface CAPresentationModifierGroup : NSObject
++ (instancetype)groupWithCapacity:(NSUInteger)capacity;
+- (void)flush;
+@end
+
+@interface CAPresentationModifier : NSObject
+- (instancetype)initWithKeyPath:(NSString *)keyPath initialValue:(id)value additive:(BOOL)additive group:(CAPresentationModifierGroup *)group;
+@property (strong) id value;
+@end
+
 @interface CALayer ()
 - (CAContext *)context;
 - (void)setContextId:(uint32_t)contextID;
@@ -127,6 +138,8 @@ typedef struct _CARenderContext CARenderContext;
 - (void *)regionBeingDrawn;
 - (void)reloadValueForKeyPath:(NSString *)keyPath;
 - (void)setCornerRadius:(CGFloat)cornerRadius;
+- (void)addPresentationModifier:(CAPresentationModifier *)modifier;
+- (void)removePresentationModifier:(CAPresentationModifier *)modifier;
 @property BOOL allowsGroupBlending;
 @property BOOL allowsHitTesting;
 @property BOOL canDrawConcurrently;

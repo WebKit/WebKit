@@ -522,7 +522,6 @@ struct YarrPattern {
     void resetForReparsing()
     {
         m_numSubpatterns = 0;
-        m_numNamedSubpatterns = 0;
         m_initialStartValueFrameLocation = 0;
         m_numDuplicateNamedCaptureGroups = 0;
 
@@ -531,6 +530,7 @@ struct YarrPattern {
         m_containsLookbehinds = false;
         m_containsUnsignedLengthPattern = false;
         m_hasCopiedParenSubexpressions = false;
+        m_hasNamedCaptureGroups = false;
         m_saveInitialStartValue = false;
 
         anycharCached = nullptr;
@@ -548,7 +548,7 @@ struct YarrPattern {
         m_disjunctions.clear();
         m_userCharacterClasses.clear();
         m_captureGroupNames.clear();
-        m_namedGroupToParenIndeces.clear();
+        m_namedGroupToParenIndices.clear();
         m_duplicateNamedGroupForSubpatternId.clear();
     }
 
@@ -701,19 +701,23 @@ struct YarrPattern {
     bool m_containsLookbehinds : 1;
     bool m_containsUnsignedLengthPattern : 1;
     bool m_hasCopiedParenSubexpressions : 1;
+    bool m_hasNamedCaptureGroups : 1;
     bool m_saveInitialStartValue : 1;
     OptionSet<Flags> m_flags;
     unsigned m_numSubpatterns { 0 };
-    unsigned m_numNamedSubpatterns { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };
     unsigned m_numDuplicateNamedCaptureGroups { 0 };
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
     Vector<String> m_captureGroupNames;
-    // The first vector entry of m_namedGroupToParenIndeces is the namedSubpatternId.
-    // Subsequent vector entries are the subpatternId(s) when the name is used.
-    HashMap<String, Vector<unsigned>> m_namedGroupToParenIndeces;
+    // The contents of the RHS Vector of m_namedGroupToParenIndices depends on whether the String is a
+    // duplicate named group or not.
+    // For a named group that is only used once in the pattern, the vector size is one and the only entry
+    // is the subpatterenId for a non-duplicate named group.
+    // For a duplicate named group, the size will be greater than 2. The first vector entry it is the
+    // duplicateNamedGroupId. Subsequent vector entries are the subpatternId's for that duplicateNamedGroupId.
+    HashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
     Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
 
 private:

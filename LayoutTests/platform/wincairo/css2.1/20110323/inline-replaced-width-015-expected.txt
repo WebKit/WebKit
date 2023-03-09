@@ -4,8 +4,8 @@ layer at (0,0) size 800x476
   RenderBlock {HTML} at (0,0) size 800x476
     RenderBody {BODY} at (8,16) size 784x452
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 424x19
-          text run at (0,0) width 424: "There should be no red below, just two 300x200 pixel lime rectangles."
+        RenderText {#text} at (0,0) size 443x19
+          text run at (0,0) width 443: "There should be no red below, just two 300x200 pixel lime rectangles."
 layer at (8,52) size 300x200
   RenderBlock (relative positioned) {DIV} at (0,36) size 300x200 [bgcolor=#FF0000]
     RenderBlock {DIV} at (0,0) size 300x100 [bgcolor=#00FF00]

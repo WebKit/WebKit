@@ -764,11 +764,11 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
         RETURN_IF_EXCEPTION(scope, nullptr);
         switch (resolution.type) {
         case Resolution::Type::NotFound:
-            throwSyntaxError(globalObject, scope, makeString("Exported binding name '", String(name.get()), "' is not found."));
+            throwSyntaxError(globalObject, scope, makeString("Exported binding name '"_s, StringView(name.get()), "' is not found."_s));
             return nullptr;
 
         case Resolution::Type::Error:
-            throwSyntaxError(globalObject, scope, makeString("Exported binding name 'default' cannot be resolved by star export entries."));
+            throwSyntaxError(globalObject, scope, "Exported binding name 'default' cannot be resolved by star export entries."_s);
             return nullptr;
 
         case Resolution::Type::Ambiguous:
@@ -858,7 +858,7 @@ static String printableName(const RefPtr<UniquedStringImpl>& uid)
 {
     if (uid->isSymbol())
         return uid.get();
-    return WTF::makeString("'", String(uid.get()), "'");
+    return WTF::makeString('\'', StringView(uid.get()), '\'');
 }
 
 static String printableName(const Identifier& ident)

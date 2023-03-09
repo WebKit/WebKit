@@ -589,7 +589,7 @@ private:
     void clearCurrentModifierStateForTesting();
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void sendMessageToWebExtension(UserMessage&&);
+    void sendMessageToWebProcessExtension(UserMessage&&);
 #endif
 
 #if PLATFORM(GTK) && !USE(GTK4)

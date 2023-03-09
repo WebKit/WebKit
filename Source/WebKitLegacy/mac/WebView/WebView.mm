@@ -5057,7 +5057,7 @@ IGNORE_WARNINGS_END
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     continuousSpellCheckingEnabled = [defaults boolForKey:WebContinuousSpellCheckingEnabled];
-    grammarCheckingEnabled = [defaults boolForKey:WebGrammarCheckingEnabled];
+    grammarCheckingEnabled = [self _shouldGrammarCheckingBeEnabled];
 
     automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];
     automaticLinkDetectionEnabled = [defaults boolForKey:WebAutomaticLinkDetectionEnabled];
@@ -5133,6 +5133,16 @@ IGNORE_WARNINGS_END
 {
     automaticDashSubstitutionEnabled = [self _shouldAutomaticDashSubstitutionBeEnabled];
     [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
++ (BOOL)_shouldGrammarCheckingBeEnabled
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+#if USE(NSSPELLCHECKER_GRAMMAR_CHECKING_POLICY)
+    if (![defaults objectForKey:WebGrammarCheckingEnabled])
+        return [NSSpellChecker grammarCheckingEnabled];
+#endif
+    return [defaults boolForKey:WebGrammarCheckingEnabled];
 }
 
 + (void)_applicationWillTerminate

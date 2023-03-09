@@ -2709,27 +2709,57 @@ bool AccessibilityObject::supportsPressAction() const
     if (roleValue() == AccessibilityRole::Details)
         return true;
     
-    Element* actionElement = this->actionElement();
+    RefPtr actionElement = this->actionElement();
     if (!actionElement)
         return false;
-    
+
+    // [Bug: 133613] Heuristic: If the action element is presentational, we shouldn't expose press as a supported action.
+    if (nodeHasPresentationRole(actionElement.get()))
+        return false;
+
+    auto* axObject = actionElement != element() ? axObjectCache()->getOrCreate(actionElement.get()) : nullptr;
+    if (!axObject)
+        return true;
+
     // [Bug: 136247] Heuristic: element handlers that have more than one accessible descendant should not be exposed as supporting press.
-    if (actionElement != element()) {
-        if (AccessibilityObject* axObj = axObjectCache()->getOrCreate(actionElement)) {
-            AccessibilityChildrenVector results;
-            // Search within for immediate descendants that are static text. If we find more than one
-            // then this is an event delegator actionElement and we should expose the press action.
-            Vector<AccessibilitySearchKey> keys({ AccessibilitySearchKey::StaticText, AccessibilitySearchKey::Control, AccessibilitySearchKey::Graphic, AccessibilitySearchKey::Heading, AccessibilitySearchKey::Link });
-            AccessibilitySearchCriteria criteria(axObj, AccessibilitySearchDirection::Next, emptyString(), 2, false, false);
-            criteria.searchKeys = keys;
-            axObj->findMatchingObjects(&criteria, results);
-            if (results.size() > 1)
+    constexpr unsigned searchLimit = 512;
+    constexpr unsigned halfSearchLimit = searchLimit / 2;
+    unsigned candidatesChecked = 0;
+    unsigned matches = 0;
+
+    Vector<RefPtr<AXCoreObject>> candidates;
+    candidates.reserveInitialCapacity(std::min(static_cast<size_t>(searchLimit), axObject->children().size() + 1));
+    candidates.uncheckedAppend(axObject);
+
+    while (!candidates.isEmpty()) {
+        RefPtr candidate = candidates.takeLast();
+        if (!candidate)
+            continue;
+
+        if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink()) {
+            matches += 1;
+            if (matches >= 2)
                 return false;
         }
+
+        candidatesChecked += 1;
+        // For performance, cut the search off at the limit and return false because
+        // we cannot reasonably determine whether this should support a press action.
+        if (candidatesChecked >= searchLimit)
+            return false;
+
+        size_t candidateCount = candidatesChecked + candidates.size();
+        size_t candidatesLeftUntilLimit = searchLimit > candidateCount ? searchLimit - candidateCount : 0;
+        // Limit the amount of children we take. Some objects can have tens of thousands of children, so we don't want to unconditionally append `children()` to the candidate pool.
+        const auto& children = candidate->children();
+        if (size_t maxChildrenToTake = std::min(static_cast<size_t>(halfSearchLimit), candidatesLeftUntilLimit))
+            candidates.append(children.span().subspan(0, std::min(children.size(), maxChildrenToTake)));
+
+        // `candidates` should never be allowed to grow past `searchLimit`.
+        ASSERT(searchLimit >= candidates.size());
     }
-    
-    // [Bug: 133613] Heuristic: If the action element is presentational, we shouldn't expose press as a supported action.
-    return !nodeHasPresentationRole(actionElement);
+
+    return true;
 }
 
 bool AccessibilityObject::supportsDatetimeAttribute() const
@@ -3746,13 +3776,13 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
 
     auto& element = downcast<Element>(*node);
     if (document()->settings().ariaReflectionForElementReferencesEnabled()) {
-        if (Element::isElementReflectionAttribute(attribute)) {
+        if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
             if (auto reflectedElement = element.getElementAttribute(attribute)) {
                 Vector<Element*> elements;
                 elements.append(reflectedElement);
                 return elements;
             }
-        } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+        } else if (Element::isElementsArrayReflectionAttribute(document()->settings(), attribute)) {
             if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
                 return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Element* {
                     return element.get();

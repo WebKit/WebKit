@@ -46,7 +46,6 @@
 #include "WebKitHitTestResultPrivate.h"
 #include "WebKitIconLoadingClient.h"
 #include "WebKitInputMethodContextPrivate.h"
-#include "WebKitJavascriptResultPrivate.h"
 #include "WebKitNavigationClient.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitPermissionStateQueryPrivate.h"
@@ -106,6 +105,8 @@
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSessionPrivate.h"
+#else
+#include "WebKitJavascriptResultPrivate.h"
 #endif
 
 using namespace WebKit;
@@ -5123,7 +5124,7 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
     GRefPtr<WebKitUserMessage> adoptedMessage = message;
     auto& page = getPage(webView);
     if (!callback) {
-        page.ensureRunningProcess().send(Messages::WebPage::SendMessageToWebExtension(webkitUserMessageGetMessage(message)), page.webPageID().toUInt64());
+        page.ensureRunningProcess().send(Messages::WebPage::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), page.webPageID().toUInt64());
         return;
     }
 
@@ -5141,7 +5142,7 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
             break;
         }
     };
-    page.ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebExtensionWithReply(webkitUserMessageGetMessage(message)),
+    page.ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebProcessExtensionWithReply(webkitUserMessageGetMessage(message)),
         WTFMove(completionHandler), page.webPageID().toUInt64());
 }
 

@@ -34,9 +34,11 @@
 #include "FormAssociatedElement.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLButtonElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RenderBox.h"
@@ -319,6 +321,85 @@ AutofillData HTMLFormControlElement::autofillData() const
 String HTMLFormControlElement::resultForDialogSubmit() const
 {
     return attributeWithoutSynchronization(HTMLNames::valueAttr);
+}
+
+static const AtomString& toggleAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("toggle"_s);
+    return identifier;
+}
+
+static const AtomString& showAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("show"_s);
+    return identifier;
+}
+
+static const AtomString& hideAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("hide"_s);
+    return identifier;
+}
+
+// https://html.spec.whatwg.org/#popover-target-element
+HTMLElement* HTMLFormControlElement::popoverTargetElement() const
+{
+    auto canInvokePopovers = [](const HTMLFormControlElement& element) -> bool {
+        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
+            return inputElement->isTextButton() || inputElement->isImageButton();
+        return is<HTMLButtonElement>(element);
+    };
+
+    if (!canInvokePopovers(*this))
+        return nullptr;
+
+    if (isDisabledFormControl())
+        return nullptr;
+
+    if (form() && isSubmitButton())
+        return nullptr;
+
+    auto* element = dynamicDowncast<HTMLElement>(getElementAttribute(popovertargetAttr));
+    if (element && element->popoverState() != PopoverState::None)
+        return element;
+    return nullptr;
+}
+
+const AtomString& HTMLFormControlElement::popoverTargetAction() const
+{
+    auto value = attributeWithoutSynchronization(HTMLNames::popovertargetactionAttr);
+
+    if (equalIgnoringASCIICase(value, showAtom()))
+        return showAtom();
+    if (equalIgnoringASCIICase(value, hideAtom()))
+        return hideAtom();
+
+    return toggleAtom();
+}
+
+void HTMLFormControlElement::setPopoverTargetAction(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(HTMLNames::popovertargetactionAttr, value);
+}
+
+// https://html.spec.whatwg.org/#popover-target-attribute-activation-behavior
+void HTMLFormControlElement::handlePopoverTargetAction() const
+{
+    RefPtr target = popoverTargetElement();
+    if (!target)
+        return;
+
+    ASSERT(target->popoverData());
+
+    auto action = popoverTargetAction();
+    bool canHide = action == hideAtom() || action == toggleAtom();
+    bool canShow = action == showAtom() || action == toggleAtom();
+    if (canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+        target->hidePopover();
+    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden) {
+        target->popoverData()->setInvoker(this);
+        target->showPopover();
+    }
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

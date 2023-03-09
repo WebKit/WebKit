@@ -27,6 +27,7 @@
 
 #include "BridgeJSC.h"
 #include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 
 namespace JSC {
 

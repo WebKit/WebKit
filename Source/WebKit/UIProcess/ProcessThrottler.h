@@ -143,6 +143,7 @@ public:
     void setAllowsActivities(bool);
     void setShouldTakeSuspendedAssertion(bool);
     void delaySuspension();
+    bool isSuspended() const { return !m_assertion; }
 
 private:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);

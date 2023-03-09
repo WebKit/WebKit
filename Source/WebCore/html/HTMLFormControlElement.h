@@ -95,6 +95,10 @@ public:
 
     virtual String resultForDialogSubmit() const;
 
+    HTMLElement* popoverTargetElement() const;
+    const AtomString& popoverTargetAction() const;
+    void setPopoverTargetAction(const AtomString& value);
+
     using Node::ref;
     using Node::deref;
 
@@ -119,6 +123,8 @@ protected:
     void didRecalcStyle(Style::Change) override;
 
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
+
+    void handlePopoverTargetAction() const;
 
 private:
     void refFormAssociatedElement() const final { ref(); }

@@ -132,6 +132,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUOutOfMemoryError.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineBase.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineDescriptorBase.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineError.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineErrorInit.idl \
+    $(WebCore)/Modules/WebGPU/GPUPipelineErrorReason.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUPowerPreference.idl \
@@ -1162,6 +1165,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/MediaEncryptedEvent.idl \
     $(WebCore)/html/MediaError.idl \
     $(WebCore)/html/OffscreenCanvas.idl \
+    $(WebCore)/html/PopoverInvokerElement.idl \
     $(WebCore)/html/RadioNodeList.idl \
     $(WebCore)/html/SubmitEvent.idl \
     $(WebCore)/html/TextMetrics.idl \

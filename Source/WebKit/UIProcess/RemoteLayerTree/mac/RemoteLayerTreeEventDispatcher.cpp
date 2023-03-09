@@ -101,11 +101,20 @@ RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCo
 {
 }
 
-RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher() = default;
+RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
+{
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    ASSERT(!m_momentumEventDispatcher);
+#endif
+    ASSERT(!m_displayRefreshObserverID);
+}
 
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    m_momentumEventDispatcher = nullptr;
+#endif
     stopDisplayLinkObserver();
     m_displayLinkClient->invalidate();
     m_displayLinkClient = nullptr;
@@ -296,6 +305,7 @@ void RemoteLayerTreeEventDispatcher::startOrStopDisplayLinkOnMainThread()
 
 void RemoteLayerTreeEventDispatcher::startDisplayLinkObserver()
 {
+    ASSERT(m_displayLinkClient);
     if (m_displayRefreshObserverID)
         return;
 

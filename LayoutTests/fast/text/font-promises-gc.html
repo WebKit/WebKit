@@ -31,7 +31,6 @@ if (window.testRunner) {
 var promises = [];
 
 document.fonts.forEach(function(f) {
-    console.log("Font status: " + f.status);
     promises.push(f.loaded);
     f.loaded.then(function() { console.log("Font loaded"); });
     gc();

@@ -263,6 +263,21 @@ class Events(service.BuildbotService):
         self._stepFinishedConsumer.stopConsuming()
 
 
+class logging_disabled(object):
+    def __init__(self):
+        self.saved_logger = None
+
+    def log_disabled(*args, **kwargs):
+        pass
+
+    def __enter__(self):
+        self.saved_logger = log.msg
+        log.msg = self.log_disabled
+
+    def __exit__(self, type, value, tb):
+        log.msg = self.saved_logger
+
+
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     OPEN_STATES = ('open',)
     PUBLIC_REPOS = ('WebKit/WebKit',)
@@ -277,6 +292,11 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         if info.get('status') in ('removed', 'renamed'):
             return '--- {}'.format(info['filename'])
         return '+++ {}'.format(info['filename'])
+
+    def _get_payload(self, request):
+        # Disable excessive logging inside _get_payload()
+        with logging_disabled():
+            return super()._get_payload(request)
 
     def _get_commit_msg(self, repo, sha):
         return ''
@@ -330,26 +350,28 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         state = payload.get('pull_request', {}).get('state')
         labels = [label.get('name') for label in payload.get('pull_request', {}).get('labels', [])]
         sender = payload.get('sender', {}).get('login', '')
+        head_sha = payload.get('pull_request', {}).get('head', {}).get('sha')
 
         if state not in self.OPEN_STATES:
             log.msg("PR #{} is '{}', which triggers nothing".format(pr_number, state))
             return ([], 'git')
 
+        log.msg(f'Handling PR #{pr_number} with hash: {head_sha}')
         if action == 'labeled' and self.UNSAFE_MERGE_QUEUE_LABEL in labels:
-            log.msg("PR #{} was labeled for unsafe-merge-queue".format(pr_number))
+            log.msg(f'PR #{pr_number} ({head_sha}) was labeled for unsafe-merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
             return super().handle_pull_request(payload, 'unsafe_merge_queue')
         if action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
-            log.msg("PR #{} was labeled for merge-queue".format(pr_number))
+            log.msg(f'PR #{pr_number} ({head_sha}) was labeled for merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             time.sleep(self.LABEL_PROCESS_DELAY)
             return super().handle_pull_request(payload, 'merge_queue')
 
         if sender in self.ACCOUNTS_TO_IGNORE:
-            log.msg(f"PR #{pr_number} was updated by '{sender}', ignore it")
+            log.msg(f"PR #{pr_number} ({head_sha}) was updated by '{sender}', ignoring it")
             return ([], 'git')
 
         return super().handle_pull_request(payload, event)

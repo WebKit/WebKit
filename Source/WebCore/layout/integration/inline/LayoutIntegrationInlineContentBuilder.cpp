@@ -27,7 +27,6 @@
 #include "LayoutIntegrationInlineContentBuilder.h"
 
 #include "InlineDisplayBox.h"
-#include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationInlineContent.h"
@@ -55,18 +54,10 @@ InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, Box
 {
 }
 
-void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
+void InlineContentBuilder::build(InlineDisplay::Content&& newDisplayContent, InlineContent& inlineContent) const
 {
     auto& displayContent = inlineContent.displayContent();
-    if (displayContent.boxes.isEmpty()) {
-        displayContent.boxes = WTFMove(inlineFormattingState.boxes());
-        displayContent.lines = WTFMove(inlineFormattingState.lines());
-    } else {
-        displayContent.boxes.appendVector(WTFMove(inlineFormattingState.boxes()));
-        displayContent.lines.appendVector(WTFMove(inlineFormattingState.lines()));
-        inlineFormattingState.boxes().clear();
-        inlineFormattingState.lines().clear();
-    }
+    displayContent.boxes.isEmpty() ? displayContent.set(WTFMove(newDisplayContent)) : displayContent.append(WTFMove(newDisplayContent));
 
     auto updateIfTextRenderersNeedVisualReordering = [&] {
         // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content. 

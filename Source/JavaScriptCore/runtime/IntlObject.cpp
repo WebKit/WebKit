@@ -695,7 +695,7 @@ unsigned intlDefaultNumberOption(JSGlobalObject* globalObject, JSValue value, Pr
         RETURN_IF_EXCEPTION(scope, 0);
 
         if (!(doubleValue >= minimum && doubleValue <= maximum)) {
-            throwException(globalObject, scope, createRangeError(globalObject, *property.publicName() + " is out of range"));
+            throwException(globalObject, scope, createRangeError(globalObject, *property.publicName() + " is out of range"_s));
             return 0;
         }
         return static_cast<unsigned>(doubleValue);
@@ -808,7 +808,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
                 }
             }
 
-            String errorMessage = tryMakeString("invalid language tag: ", tag);
+            String errorMessage = tryMakeString("invalid language tag: "_s, tag);
             if (UNLIKELY(!errorMessage)) {
                 throwException(globalObject, scope, createOutOfMemoryError(globalObject));
                 return { };

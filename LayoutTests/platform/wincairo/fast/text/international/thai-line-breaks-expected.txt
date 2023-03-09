@@ -1,15 +1,16 @@
-layer at (0,0) size 785x29410
+layer at (0,0) size 785x29430
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x576
-      RenderBlock {P} at (0,0) size 769x60
-        RenderText {#text} at (0,0) size 747x59
-          text run at (0,0) width 747: "The column on the right has explicit spaces. Line breaks should be roughly the same if Thai line breaks are working well. The"
-          text run at (0,20) width 734: "original source of this text was ICU, and the test program said \"by it's very nature, Thai word breaking is not exact\", so the"
-          text run at (0,40) width 742: "columns don't match exactly. In a future version we might decide to tweak the right column to match our expected behavior."
-layer at (236,84) size 1x27896
-  RenderBlock (positioned) {DIV} at (235,84) size 2x27896
+      RenderBlock {P} at (0,0) size 769x80
+        RenderText {#text} at (0,0) size 764x79
+          text run at (0,0) width 764: "The column on the right has explicit spaces. Line breaks should be roughly the same if Thai line breaks are working well."
+          text run at (0,20) width 760: "The original source of this text was ICU, and the test program said \"by it's very nature, Thai word breaking is not exact\","
+          text run at (0,40) width 758: "so the columns don't match exactly. In a future version we might decide to tweak the right column to match our expected"
+          text run at (0,60) width 58: "behavior."
+layer at (236,104) size 1x27896
+  RenderBlock (positioned) {DIV} at (235,104) size 2x27896
     RenderText {#text} at (0,2) size 75x27893
       text run at (0,2) width 18: "\x{E1A}\x{E17}"
       text run at (0,24) width 45: "\x{E17}\x{E35}\x{E48}\x{E51}\x{E1E}\x{E32}\x{E22}\x{E38}"
@@ -1279,8 +1280,8 @@ layer at (236,84) size 1x27896
       text run at (0,27832) width 29: "\x{E04}\x{E23}\x{E32}\x{E07}"
       text run at (0,27854) width 25: "\x{E2B}\x{E27}\x{E35}\x{E14}"
       text run at (0,27876) width 24: "\x{E2B}\x{E27}\x{E37}\x{E2D}"
-layer at (471,84) size 1x29326
-  RenderBlock (positioned) {DIV} at (471,84) size 1x29326
+layer at (471,104) size 1x29326
+  RenderBlock (positioned) {DIV} at (471,104) size 1x29326
     RenderText {#text} at (0,2) size 63x29323
       text run at (0,2) width 18: "\x{E1A}\x{E17}"
       text run at (0,24) width 9: "\x{E17}\x{E35}\x{E48}"
@@ -1416,7 +1417,7 @@ layer at (471,84) size 1x29326
       text run at (0,2884) width 21: "\x{E1E}\x{E37}\x{E49}\x{E19}"
       text run at (0,2906) width 28: "\x{E40}\x{E23}\x{E35}\x{E22}\x{E01}"
       text run at (0,2928) width 14: "\x{E27}\x{E48}\x{E32}"
-      text run at (0,2948) width 5: "\""
+      text run at (0,2948) width 7: "\""
       text run at (0,2970) width 31: "\x{E42}\x{E1E}\x{E23}\x{E07}"
       text run at (0,2992) width 48: "\x{E44}\x{E0B}\x{E42}\x{E04}\x{E25}\x{E19}"
       text run at (0,3012) width 5: "\""
@@ -2003,7 +2004,7 @@ layer at (471,84) size 1x29326
       text run at (0,15794) width 20: "\x{E02}\x{E36}\x{E49}\x{E19}"
       text run at (0,15816) width 19: "\x{E17}\x{E31}\x{E19}"
       text run at (0,15838) width 15: "\x{E43}\x{E14}"
-      text run at (0,15858) width 5: "\""
+      text run at (0,15858) width 7: "\""
       text run at (0,15880) width 18: "\x{E25}\x{E21}"
       text run at (0,15902) width 48: "\x{E44}\x{E0B}\x{E42}\x{E04}\x{E25}\x{E19}"
       text run at (0,15924) width 16: "\x{E21}\x{E32}"
@@ -2013,7 +2014,7 @@ layer at (471,84) size 1x29326
       text run at (0,16010) width 21: "\x{E23}\x{E49}\x{E2D}\x{E07}"
       text run at (0,16032) width 26: "\x{E1A}\x{E2D}\x{E01}"
       text run at (0,16054) width 39: "\x{E20}\x{E23}\x{E23}\x{E22}\x{E32}"
-      text run at (0,16074) width 5: "\""
+      text run at (0,16074) width 7: "\""
       text run at (0,16096) width 17: "\x{E02}\x{E49}\x{E32}"
       text run at (0,16118) width 13: "\x{E08}\x{E30}"
       text run at (0,16140) width 15: "\x{E44}\x{E1B}"
@@ -2055,7 +2056,7 @@ layer at (471,84) size 1x29326
       text run at (0,16930) width 16: "\x{E21}\x{E32}"
       text run at (0,16952) width 15: "\x{E16}\x{E36}\x{E07}"
       text run at (0,16974) width 24: "\x{E41}\x{E25}\x{E49}\x{E27}"
-      text run at (0,16994) width 5: "\""
+      text run at (0,16994) width 7: "\""
       text run at (0,17016) width 18: "\x{E40}\x{E23}\x{E47}\x{E27}"
       text run at (0,17038) width 16: "\x{E42}\x{E14}"
       text run at (0,17060) width 22: "\x{E42}\x{E23}\x{E18}\x{E35}"
@@ -2063,7 +2064,7 @@ layer at (471,84) size 1x29326
       text run at (0,17100) width 5: "\""
       text run at (0,17122) width 16: "\x{E1B}\x{E49}\x{E32}"
       text run at (0,17144) width 40: "\x{E15}\x{E30}\x{E42}\x{E01}\x{E19}"
-      text run at (0,17164) width 5: "\""
+      text run at (0,17164) width 7: "\""
       text run at (0,17186) width 13: "\x{E27}\x{E34}\x{E48}\x{E07}"
       text run at (0,17208) width 15: "\x{E44}\x{E1B}"
       text run at (0,17230) width 23: "\x{E2B}\x{E49}\x{E2D}\x{E07}"

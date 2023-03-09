@@ -152,7 +152,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
     };
 }
 
-static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayLine, DisplayBoxes& boxes, float ellipsisWidth, const RenderStyle& rootStyle)
+static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& boxes, float ellipsisWidth, const RenderStyle& rootStyle)
 {
     // We gotta truncate some runs.
     ASSERT(displayLine.lineBoxLogicalRect().x() + displayLine.contentLogicalLeft() + displayLine.contentLogicalWidth() + ellipsisWidth > displayLine.lineBoxLogicalRect().maxX());
@@ -231,7 +231,7 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
     return truncateLeft.value_or(ellipsisWidth) - ellipsisWidth;
 }
 
-std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const InlineDisplay::Line& displayLine, DisplayBoxes& displayBoxes, bool isLastLineWithInlineContent)
+std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes, bool isLastLineWithInlineContent)
 {
     if (displayBoxes.isEmpty())
         return { };

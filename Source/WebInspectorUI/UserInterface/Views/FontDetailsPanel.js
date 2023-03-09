@@ -151,7 +151,15 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             this._basicPropertyRowsMap.set(propertyName, this._createDetailsSectionRowForProperty(propertyName));
         }
 
-        this._basicPropertiesGroup.rows = [...this._basicPropertyRowsMap.values()];
+        this._basicPropertiesGroup.rows = [...this._basicPropertyRowsMap.values()].sort((rowA, rowB) => {
+            if (rowA instanceof WI.DetailsSectionSimpleRow && rowB instanceof WI.FontVariationDetailsSectionRow)
+                return -1;
+
+            if (rowA instanceof WI.FontVariationDetailsSectionRow && rowB instanceof WI.DetailsSectionSimpleRow)
+                return 1;
+
+            return 0;
+        });
 
         for (let [tag, variationRow] of this._fontVariationRowsMap) {
             variationRow.element.remove();

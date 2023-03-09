@@ -4,8 +4,8 @@ layer at (0,0) size 800x200
   RenderBlock {HTML} at (0,0) size 800x200
     RenderBody {BODY} at (8,16) size 784x171
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 365x19
-          text run at (0,0) width 365: "This tests horizontal caret movement in vertical writing mode."
+        RenderText {#text} at (0,0) size 388x19
+          text run at (0,0) width 388: "This tests horizontal caret movement in vertical writing mode."
       RenderBlock {DIV} at (0,36) size 84x135
         RenderBlock {P} at (20,0) size 44x135
           RenderText {#text} at (0,27) size 22x108

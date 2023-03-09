@@ -26,6 +26,8 @@
 #pragma once
 
 #include "LazyProperty.h"
+#include "Structure.h"
+#include "WriteBarrier.h"
 
 namespace JSC {
 

@@ -159,6 +159,18 @@
 #define FRAMELOADER_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 #define FRAMELOADER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/FrameLoaderAdditions.h>)
+#import <WebKitAdditions/FrameLoaderAdditions.h>
+#else
+namespace WebCore {
+
+static void verifyUserAgent(const String&)
+{
+}
+
+}
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2911,10 +2923,12 @@ String FrameLoader::userAgent(const URL& url) const
 
     InspectorInstrumentation::applyUserAgentOverride(m_frame, userAgent);
 
-    if (!userAgent.isEmpty())
-        return userAgent;
+    if (userAgent.isEmpty())
+        userAgent = m_client->userAgent(url);
+    
+    verifyUserAgent(userAgent);
 
-    return m_client->userAgent(url);
+    return userAgent;
 }
 
 String FrameLoader::navigatorPlatform() const

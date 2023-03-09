@@ -132,7 +132,7 @@ void EntryPlan::prepare()
             switch (binding.error()) {
             case BindingFailure::OutOfMemory: {
                 Locker locker { m_lock };
-                return fail(makeString("Out of executable memory at import ", String::number(importIndex)));
+                return fail(makeString("Out of executable memory at import "_s, importIndex));
             }
             }
             RELEASE_ASSERT_NOT_REACHED();

@@ -1028,7 +1028,7 @@ bool Options::setAliasedOption(const char* arg, bool verify)
             auto* invertedValueStr = invertBoolOptionValue(equalStr + 1); \
             if (!invertedValueStr)                                      \
                 return false;                                           \
-            unaliasedOption = unaliasedOption + "=" + invertedValueStr; \
+            unaliasedOption = makeString(unaliasedOption, '=', invertedValueStr); \
         }                                                               \
         return setOptionWithoutAlias(unaliasedOption.utf8().data(), verify);    \
     }

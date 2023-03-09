@@ -635,7 +635,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
     auto markSlowPathIfNeeded = [&] (Node* node) {
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(Options::dumpDFGJITSizeStatistics())) {
-            String id = makeString("DFG_slow_", m_graph.opName(node->op()));
+            String id = makeString("DFG_slow_"_s, m_graph.opName(node->op()));
             sizeMarker = vm().jitSizeStatistics->markStart(id, *this);
         }
         return sizeMarker;
@@ -2580,7 +2580,7 @@ void SpeculativeJIT::compileCurrentBlock()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(Options::dumpDFGJITSizeStatistics())) {
-            String id = makeString("DFG_fast_", m_graph.opName(m_currentNode->op()));
+            String id = makeString("DFG_fast_"_s, m_graph.opName(m_currentNode->op()));
             sizeMarker = vm().jitSizeStatistics->markStart(id, *this);
         }
 

@@ -27,6 +27,7 @@
 
 #include "FormattingContext.h"
 #include "FormattingState.h"
+#include "InlineDisplayContent.h"
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
@@ -57,12 +58,12 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    void layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
+    InlineDisplay::Content layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    void lineLayout(InlineItems&, const InlineItemRange&, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
-    void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, LayoutPoint contentBoxTopLeft);
+    InlineDisplay::Content lineLayout(InlineItems&, const InlineItemRange&, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
+    void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, LayoutPoint contentBoxTopLeft, const InlineDisplay::Content&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
@@ -72,7 +73,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const BlockLayoutState&);
+    InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const BlockLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& suspendedFloats, LayoutPoint topleft);
 
     const InlineDamage* m_lineDamage { nullptr };

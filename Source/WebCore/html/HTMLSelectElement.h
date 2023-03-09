@@ -78,8 +78,6 @@ public:
 
     void accessKeySetSelectedIndex(int);
 
-    WEBCORE_EXPORT void setMultiple(bool);
-
     WEBCORE_EXPORT void setSize(unsigned);
 
     // Called by the bindings for the unnamed index-setter.

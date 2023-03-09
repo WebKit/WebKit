@@ -51,9 +51,7 @@
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
-#define ALLOW_FLOATS 1
-#define ALLOW_RTL_FLOATS 1
-#define ALLOW_VERTICAL_FLOATS 1
+#define ALLOW_SHAPE_OUTSIDE 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -349,18 +347,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
     if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
-#if !ALLOW_FLOATS
-            if (renderer.isFloating())
-                return false;
-#endif
-#if !ALLOW_RTL_FLOATS
-            if (renderer.isFloating() && !renderer.parent()->style().isLeftToRightDirection())
-                return false;
-#endif
-#if !ALLOW_VERTICAL_FLOATS
-            if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
-                return false;
-#endif
             // Floats where the block container specifies margin-tirm need IFC implementation (geometry adjustment)
             if (!flow.style().marginTrim().isEmpty())
                 return false;
@@ -372,8 +358,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             }
             return true;
         };
+#if !ALLOW_SHAPE_OUTSIDE
         if (style.shapeOutside())
             SET_REASON_AND_RETURN_IF_NEEDED(FloatIsShapeOutside, reasons, includeReasons)
+#endif
         if (!isSupportedFloatingOrPositioned(renderer))
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         return reasons;
@@ -444,6 +432,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     if (styleReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
 
+#if !ALLOW_SHAPE_OUTSIDE
     if (flow.containsFloats()) {
         for (auto& floatingObject : *flow.floatingObjectSet()) {
             ASSERT(floatingObject);
@@ -453,6 +442,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
                 SET_REASON_AND_RETURN_IF_NEEDED(FloatIsShapeOutside, reasons, includeReasons);
         }
     }
+#endif
     return reasons;
 }
 
