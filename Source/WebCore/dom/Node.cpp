@@ -424,9 +424,6 @@ Node::~Node()
     ASSERT(!m_previous);
     ASSERT(!m_next);
 
-    if (auto* textManipulationController = document().textManipulationControllerIfExists(); UNLIKELY(textManipulationController))
-        textManipulationController->removeNode(*this);
-
     document().decrementReferencingNodeCount();
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY) && (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS))
