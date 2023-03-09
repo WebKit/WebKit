@@ -4958,7 +4958,7 @@ public:
     {
         EMIT_BINARY(
             opcode, TypeKind::I32,
-            BLOCK(Value::fromI64(static_cast<int64_t>(comparator(lhs.asI64(), rhs.asI64())))),
+            BLOCK(Value::fromI32(static_cast<int32_t>(comparator(lhs.asI64(), rhs.asI64())))),
             BLOCK(
                 m_jit.compare64(condition, lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
             ),
