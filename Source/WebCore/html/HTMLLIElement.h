@@ -33,6 +33,7 @@ public:
     static Ref<HTMLLIElement> create(const QualifiedName&, Document&);
 
 private:
+    constexpr static auto CreateHTMLLIElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLLIElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

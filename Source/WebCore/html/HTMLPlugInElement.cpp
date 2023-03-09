@@ -61,10 +61,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInElement);
 using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& document)
-    : HTMLFrameOwnerElement(tagName, document)
+    : HTMLFrameOwnerElement(tagName, document, CreateHTMLPlugInElement)
     , m_swapRendererTimer(*this, &HTMLPlugInElement::swapRendererTimerFired)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLPlugInElement::~HTMLPlugInElement()

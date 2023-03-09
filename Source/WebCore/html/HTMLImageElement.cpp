@@ -74,7 +74,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
 using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLImageElement)
     , FormAssociatedElement(form)
     , ActiveDOMObject(document)
     , m_imageLoader(makeUnique<HTMLImageLoader>(*this))
@@ -82,7 +82,6 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_imageDevicePixelRatio(1.0f)
 {
     ASSERT(hasTagName(imgTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLImageElement> HTMLImageElement::create(Document& document)

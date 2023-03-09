@@ -34,8 +34,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDivElement);
 
 using namespace HTMLNames;
 
-HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document, ConstructionType constructionType)
+    : HTMLElement(tagName, document, constructionType)
 {
     ASSERT(hasTagName(divTag));
 }

@@ -40,8 +40,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameOwnerElement);
 
-HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document& document, ConstructionType constructionType)
+    : HTMLElement(tagName, document, constructionType)
 {
 }
 

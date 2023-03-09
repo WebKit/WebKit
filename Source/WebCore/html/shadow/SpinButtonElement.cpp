@@ -50,14 +50,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpinButtonElement);
 using namespace HTMLNames;
 
 inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner& spinButtonOwner)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, document, CreateSpinButtonElement)
     , m_spinButtonOwner(&spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
     , m_repeatingTimer(*this, &SpinButtonElement::repeatingTimerFired)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)

@@ -39,7 +39,8 @@ public:
     static Ref<MathMLPresentationElement> create(const QualifiedName& tagName, Document&);
 
 protected:
-    MathMLPresentationElement(const QualifiedName& tagName, Document&);
+    constexpr static auto CreateMathMLPresentationElement = CreateMathMLElement;
+    MathMLPresentationElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLPresentationElement);
     void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     static bool isPhrasingContent(const Node&);

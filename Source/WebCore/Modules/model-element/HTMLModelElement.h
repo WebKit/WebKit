@@ -118,6 +118,7 @@ public:
 #endif
 
 private:
+    constexpr static auto CreateHTMLModelElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLModelElement(const QualifiedName&, Document&);
 
     URL selectModelSource() const;

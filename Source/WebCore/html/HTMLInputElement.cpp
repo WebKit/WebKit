@@ -113,7 +113,6 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_inputType(createdByParser ? nullptr : RefPtr { InputType::createText(*this) })
 {
     ASSERT(hasTagName(inputTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)

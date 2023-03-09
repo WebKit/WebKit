@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameSetElement);
 using namespace HTMLNames;
 
 HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLFrameSetElement)
     , m_totalRows(1)
     , m_totalCols(1)
     , m_border(6)
@@ -61,7 +61,6 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document&
     , m_noresize(false)
 {
     ASSERT(hasTagName(framesetTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)

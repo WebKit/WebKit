@@ -41,10 +41,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLLIElement);
 using namespace HTMLNames;
 
 HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLLIElement)
 {
     ASSERT(hasTagName(liTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLLIElement> HTMLLIElement::create(Document& document)

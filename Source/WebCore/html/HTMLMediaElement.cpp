@@ -428,7 +428,7 @@ static bool defaultVolumeLocked()
 }
 
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLMediaElement)
     , ActiveDOMObject(document)
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
@@ -491,8 +491,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     allMediaElements().add(this);
 
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    setHasCustomStyleResolveCallbacks();
 
     InspectorInstrumentation::addEventListenersToNode(*this);
 }
