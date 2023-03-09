@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "FetchResponse.h"
 #include "FrameDestructionObserverInlines.h"
+#include "InternalWritableStream.h"
 #include "JSAbortAlgorithm.h"
 #include "JSAbortSignal.h"
 #include "JSDOMGlobalObjectInlines.h"

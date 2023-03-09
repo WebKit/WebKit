@@ -1153,6 +1153,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineBase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineBase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineDescriptorBase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineDescriptorBase.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineError.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineError.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineErrorInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineErrorInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineErrorReason.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineErrorReason.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUPipelineLayoutDescriptor.cpp

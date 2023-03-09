@@ -107,6 +107,9 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUOrigin3DDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUOutOfMemoryError.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineDescriptorBase.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUPipelineError.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUPipelineErrorInit.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUPipelineErrorReason.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPowerPreference.idl

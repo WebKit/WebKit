@@ -209,6 +209,7 @@ namespace WebCore {
     macro(GPUPipelineLayout) \
     macro(GPUQuerySet) \
     macro(GPUQueue) \
+    macro(GPUPipelineError) \
     macro(GPURenderBundle) \
     macro(GPURenderBundleEncoder) \
     macro(GPURenderPassEncoder) \

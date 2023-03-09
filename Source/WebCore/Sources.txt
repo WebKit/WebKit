@@ -36,6 +36,7 @@ Modules/WebGPU/GPUComputePipeline.cpp
 Modules/WebGPU/GPUDevice.cpp
 Modules/WebGPU/GPUDeviceLostInfo.cpp
 Modules/WebGPU/GPUExternalTexture.cpp
+Modules/WebGPU/GPUPipelineError.cpp
 Modules/WebGPU/GPUPipelineLayout.cpp
 Modules/WebGPU/GPUPresentationContext.cpp
 Modules/WebGPU/GPUQuerySet.cpp
@@ -3452,6 +3453,9 @@ JSGPUOrigin3DDict.cpp
 JSGPUOutOfMemoryError.cpp
 JSGPUPipelineBase.cpp
 JSGPUPipelineDescriptorBase.cpp
+JSGPUPipelineError.cpp
+JSGPUPipelineErrorInit.cpp
+JSGPUPipelineErrorReason.cpp
 JSGPUPipelineLayout.cpp
 JSGPUPipelineLayoutDescriptor.cpp
 JSGPUPowerPreference.cpp

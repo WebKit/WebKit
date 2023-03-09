@@ -188,10 +188,9 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
-    // FIXME: Implement this
-    UNUSED_PARAM(descriptor);
-    instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-        callback(WGPUCreatePipelineAsyncStatus_InternalError, ComputePipeline::createInvalid(strongThis), { });
+    auto pipeline = createComputePipeline(descriptor);
+    instance().scheduleWork([pipeline, callback = WTFMove(callback)]() mutable {
+        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_InternalError, WTFMove(pipeline), { });
     });
 }
 

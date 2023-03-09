@@ -96,8 +96,8 @@ private:
     Ref<PAL::WebGPU::ShaderModule> createShaderModule(const PAL::WebGPU::ShaderModuleDescriptor&) final;
     Ref<PAL::WebGPU::ComputePipeline> createComputePipeline(const PAL::WebGPU::ComputePipelineDescriptor&) final;
     Ref<PAL::WebGPU::RenderPipeline> createRenderPipeline(const PAL::WebGPU::RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<PAL::WebGPU::ComputePipeline>&&)>&&) final;
+    void createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<PAL::WebGPU::RenderPipeline>&&)>&&) final;
 
     Ref<PAL::WebGPU::CommandEncoder> createCommandEncoder(const std::optional<PAL::WebGPU::CommandEncoderDescriptor>&) final;
     Ref<PAL::WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const PAL::WebGPU::RenderBundleEncoderDescriptor&) final;

@@ -69,6 +69,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUOrigin3DDict.h
     Modules/WebGPU/GPUOutOfMemoryError.h
     Modules/WebGPU/GPUPipelineDescriptorBase.h
+    Modules/WebGPU/GPUPipelineError.h
+    Modules/WebGPU/GPUPipelineErrorInit.h
+    Modules/WebGPU/GPUPipelineErrorReason.h
     Modules/WebGPU/GPUPipelineLayout.h
     Modules/WebGPU/GPUPipelineLayoutDescriptor.h
     Modules/WebGPU/GPUPowerPreference.h
