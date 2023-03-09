@@ -1010,6 +1010,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList&& blendingKeyframes)
     computeHasKeyframeComposingAcceleratedProperty();
     computeHasExplicitlyInheritedKeyframeProperty();
     computeHasAcceleratedPropertyOverriddenByCascadeProperty();
+    computeHasReferenceFilter();
 
     checkForMatchingTransformFunctionLists();
 
@@ -1704,6 +1705,9 @@ bool KeyframeEffect::canBeAccelerated() const
         return false;
 
     if (m_hasAcceleratedPropertyOverriddenByCascadeProperty)
+        return false;
+
+    if (m_hasReferenceFilter)
         return false;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -2567,6 +2571,53 @@ void KeyframeEffect::computeHasAcceleratedPropertyOverriddenByCascadeProperty()
 
     auto relevantAcceleratedPropertiesOverriddenByCascade = effectStack->acceleratedPropertiesOverriddenByCascade().intersectionWith(animatedProperties());
     m_hasAcceleratedPropertyOverriddenByCascadeProperty = !relevantAcceleratedPropertiesOverriddenByCascade.isEmpty();
+}
+
+void KeyframeEffect::computeHasReferenceFilter()
+{
+    m_hasReferenceFilter = [&]() {
+        if (m_blendingKeyframes.isEmpty())
+            return false;
+
+        auto animatesFilterProperty = [&]() {
+            if (m_blendingKeyframes.containsProperty(CSSPropertyFilter))
+                return true;
+#if ENABLE(FILTERS_LEVEL_2)
+            if (m_blendingKeyframes.containsProperty(CSSPropertyWebkitBackdropFilter))
+                return true;
+#endif
+            return false;
+        }();
+
+        if (!animatesFilterProperty)
+            return false;
+
+        auto styleContainsFilter = [](const RenderStyle& style) {
+            if (style.filter().hasReferenceFilter())
+                return true;
+#if ENABLE(FILTERS_LEVEL_2)
+            if (style.backdropFilter().hasReferenceFilter())
+                return true;
+#endif
+            return false;
+        };
+
+        if (auto target = targetStyleable()) {
+            if (auto* style = target->lastStyleChangeEventStyle()) {
+                if (m_blendingKeyframes.hasImplicitKeyframes() && styleContainsFilter(*style))
+                    return true;
+            }
+        }
+
+        for (auto& keyframe : m_blendingKeyframes) {
+            if (auto* style = keyframe.style()) {
+                if (styleContainsFilter(*style))
+                    return true;
+            }
+        }
+
+        return false;
+    }();
 }
 
 void KeyframeEffect::effectStackNoLongerPreventsAcceleration()

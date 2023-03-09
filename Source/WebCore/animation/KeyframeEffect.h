@@ -225,6 +225,7 @@ private:
     void computeHasKeyframeComposingAcceleratedProperty();
     void computeHasExplicitlyInheritedKeyframeProperty();
     void computeHasAcceleratedPropertyOverriddenByCascadeProperty();
+    void computeHasReferenceFilter();
     void abilityToBeAcceleratedDidChange();
     void updateAcceleratedAnimationIfNecessary();
 
@@ -285,6 +286,7 @@ private:
     bool m_hasKeyframeComposingAcceleratedProperty { false };
     bool m_hasExplicitlyInheritedKeyframeProperty { false };
     bool m_hasAcceleratedPropertyOverriddenByCascadeProperty { false };
+    bool m_hasReferenceFilter { false };
 };
 
 } // namespace WebCore
