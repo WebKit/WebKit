@@ -1139,6 +1139,8 @@
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		554C418729B14CA5003C9F71 /* WebAssemblyGCObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 554C418529B14CA5003C9F71 /* WebAssemblyGCObjectBase.cpp */; };
+		554C418829B14CA5003C9F71 /* WebAssemblyGCObjectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 554C418629B14CA5003C9F71 /* WebAssemblyGCObjectBase.h */; };
 		55579D9028DD641000153DAE /* WebAssemblyArrayPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 55579D8D28DD640F00153DAE /* WebAssemblyArrayPrototype.h */; };
 		55579D9128DD641000153DAE /* WebAssemblyArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 55579D8E28DD641000153DAE /* WebAssemblyArrayConstructor.h */; };
 		55F5DFB128DA9A2000595620 /* JSWebAssemblyArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 55F5DFAE28DA9A2000595620 /* JSWebAssemblyArray.h */; };
@@ -4194,6 +4196,8 @@
 		53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp; sourceTree = "<group>"; };
 		53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallingConvention.cpp; sourceTree = "<group>"; };
 		53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCallingConvention.h; sourceTree = "<group>"; };
+		554C418529B14CA5003C9F71 /* WebAssemblyGCObjectBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyGCObjectBase.cpp; path = js/WebAssemblyGCObjectBase.cpp; sourceTree = "<group>"; };
+		554C418629B14CA5003C9F71 /* WebAssemblyGCObjectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyGCObjectBase.h; path = js/WebAssemblyGCObjectBase.h; sourceTree = "<group>"; };
 		55579D8D28DD640F00153DAE /* WebAssemblyArrayPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyArrayPrototype.h; path = js/WebAssemblyArrayPrototype.h; sourceTree = "<group>"; };
 		55579D8E28DD641000153DAE /* WebAssemblyArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyArrayConstructor.h; path = js/WebAssemblyArrayConstructor.h; sourceTree = "<group>"; };
 		55579D8F28DD641000153DAE /* WebAssemblyArrayPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyArrayPrototype.cpp; path = js/WebAssemblyArrayPrototype.cpp; sourceTree = "<group>"; };
@@ -9582,6 +9586,8 @@
 				AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */,
 				521322431ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp */,
 				521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */,
+				554C418529B14CA5003C9F71 /* WebAssemblyGCObjectBase.cpp */,
+				554C418629B14CA5003C9F71 /* WebAssemblyGCObjectBase.h */,
 				E3BF3C4E2390D1FC008BC752 /* WebAssemblyGlobalConstructor.cpp */,
 				E3BF3C512390D1FC008BC752 /* WebAssemblyGlobalConstructor.h */,
 				E3BF3C4F2390D1FC008BC752 /* WebAssemblyGlobalPrototype.cpp */,
@@ -11498,6 +11504,7 @@
 				14D01BE926DEEF3800CAE0D0 /* WebAssemblyExceptionPrototype.h in Headers */,
 				AD4937D41DDD27DE0077C807 /* WebAssemblyFunction.h in Headers */,
 				521322461ECBCE8200F65615 /* WebAssemblyFunctionBase.h in Headers */,
+				554C418829B14CA5003C9F71 /* WebAssemblyGCObjectBase.h in Headers */,
 				E3BF3C532390D205008BC752 /* WebAssemblyGlobalConstructor.h in Headers */,
 				E3BF3C522390D202008BC752 /* WebAssemblyGlobalPrototype.h in Headers */,
 				AD2FCBF11DB58DAD00B3E736 /* WebAssemblyInstanceConstructor.h in Headers */,

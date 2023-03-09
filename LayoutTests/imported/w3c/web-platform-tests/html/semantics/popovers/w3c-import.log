@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-all-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-ref.html

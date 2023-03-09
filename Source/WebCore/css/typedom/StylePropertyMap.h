@@ -38,8 +38,6 @@ public:
     ExceptionOr<void> remove(Document&, const AtomString& property);
     virtual void clear() = 0;
 
-    virtual void clearElement() { }
-
 protected:
     virtual void removeProperty(CSSPropertyID) = 0;
     virtual void removeCustomProperty(const AtomString&) = 0;

@@ -83,8 +83,6 @@ TextFieldInputType::TextFieldInputType(Type type, HTMLInputElement& element)
 
 TextFieldInputType::~TextFieldInputType()
 {
-    if (m_innerSpinButton)
-        m_innerSpinButton->removeSpinButtonOwner();
 #if ENABLE(DATALIST_ELEMENT)
     closeSuggestions();
 #endif

@@ -29,15 +29,16 @@
 
 #include "JSObject.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyGCObjectBase.h"
 #include <wtf/Ref.h>
 
 namespace JSC {
 
 class JSWebAssemblyInstance;
 
-class JSWebAssemblyStruct final : public JSNonFinalObject {
+class JSWebAssemblyStruct final : public WebAssemblyGCObjectBase {
 public:
-    using Base = JSNonFinalObject;
+    using Base = WebAssemblyGCObjectBase;
     static constexpr bool needsDestruction = true;
 
     static void destroy(JSCell*);
@@ -55,7 +56,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSWebAssemblyStruct* tryCreate(JSGlobalObject*, Structure*, JSWebAssemblyInstance*, uint32_t);
+    static JSWebAssemblyStruct* tryCreate(JSGlobalObject*, Structure*, JSWebAssemblyInstance*, uint32_t, RefPtr<const Wasm::RTT>);
 
     DECLARE_VISIT_CHILDREN;
 
@@ -70,7 +71,7 @@ public:
     uint8_t* fieldPointer(uint32_t fieldIndex);
 
 protected:
-    JSWebAssemblyStruct(VM&, Structure*, Ref<const Wasm::TypeDefinition>&&);
+    JSWebAssemblyStruct(VM&, Structure*, Ref<const Wasm::TypeDefinition>&&, RefPtr<const Wasm::RTT>);
     void finishCreation(VM&);
 
     // FIXME: It is possible to encode the type information in the structure field of Wasm.Struct and remove this field.

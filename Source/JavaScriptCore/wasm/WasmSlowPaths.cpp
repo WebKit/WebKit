@@ -766,6 +766,22 @@ WASM_SLOW_PATH_DECL(call_builtin)
         Wasm::elemDrop(instance, elementIndex);
         WASM_END();
     }
+    case Wasm::LLIntBuiltin::RefTest: {
+        auto reference = takeGPR().encodedJSValue();
+        bool allowNull = static_cast<bool>(takeGPR().unboxedInt32());
+        int32_t heapType = takeGPR().unboxedInt32();
+        gprStart[0] = static_cast<uint32_t>(Wasm::refCast(instance, reference, allowNull, heapType));
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::RefCast: {
+        auto reference = takeGPR().encodedJSValue();
+        bool allowNull = static_cast<bool>(takeGPR().unboxedInt32());
+        int32_t heapType = takeGPR().unboxedInt32();
+        if (!Wasm::refCast(instance, reference, allowNull, heapType))
+            WASM_THROW(Wasm::ExceptionType::CastFailure);
+        gprStart[0] = reference;
+        WASM_END();
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

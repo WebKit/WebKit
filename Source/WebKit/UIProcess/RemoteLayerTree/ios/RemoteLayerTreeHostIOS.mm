@@ -77,8 +77,10 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 #if HAVE(AVKIT)
         if (properties.playerIdentifier && properties.initialSize && properties.naturalSize) {
-            if (auto videoManager = m_drawingArea->page().videoFullscreenManager())
+            if (auto videoManager = m_drawingArea->page().videoFullscreenManager()) {
+                m_videoLayers.add(properties.layerID, *properties.playerIdentifier);
                 return makeWithView(videoManager->createViewWithID(*properties.playerIdentifier, properties.hostingContextID, *properties.initialSize, *properties.naturalSize, properties.hostingDeviceScaleFactor));
+            }
         }
 #endif
 

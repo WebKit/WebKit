@@ -27,17 +27,17 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSObject.h"
 #include "WasmOps.h"
 #include "WasmTypeDefinition.h"
+#include "WebAssemblyGCObjectBase.h"
 
 namespace JSC {
 
-class JSWebAssemblyArray final : public JSNonFinalObject {
+class JSWebAssemblyArray final : public WebAssemblyGCObjectBase {
     friend class LLIntOffsetsExtractor;
 
 public:
-    using Base = JSNonFinalObject;
+    using Base = WebAssemblyGCObjectBase;
     static constexpr bool needsDestruction = true;
 
     static void destroy(JSCell*);
@@ -56,9 +56,9 @@ public:
     }
 
     template <typename ElementType>
-    static JSWebAssemblyArray* create(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<ElementType>&& payload)
+    static JSWebAssemblyArray* create(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<ElementType>&& payload, RefPtr<const Wasm::RTT> rtt)
     {
-        JSWebAssemblyArray* array = new (NotNull, allocateCell<JSWebAssemblyArray>(vm)) JSWebAssemblyArray(vm, structure, elementType, size, WTFMove(payload));
+        JSWebAssemblyArray* array = new (NotNull, allocateCell<JSWebAssemblyArray>(vm)) JSWebAssemblyArray(vm, structure, elementType, size, WTFMove(payload), rtt);
         array->finishCreation(vm);
         return array;
 
@@ -141,10 +141,10 @@ public:
     }
 
 protected:
-    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint8_t>&&);
-    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint16_t>&&);
-    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint32_t>&&);
-    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint64_t>&&);
+    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint8_t>&&, RefPtr<const Wasm::RTT>);
+    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint16_t>&&, RefPtr<const Wasm::RTT>);
+    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint32_t>&&, RefPtr<const Wasm::RTT>);
+    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint64_t>&&, RefPtr<const Wasm::RTT>);
     ~JSWebAssemblyArray();
 
     void finishCreation(VM&);

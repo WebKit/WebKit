@@ -318,4 +318,12 @@ inline ShadowRoot* Element::shadowRoot() const
     return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
 }
 
+inline void Element::removeShadowRoot()
+{
+    RefPtr shadowRoot = this->shadowRoot();
+    if (LIKELY(!shadowRoot))
+        return;
+    removeShadowRootSlow(*shadowRoot);
+}
+
 } // namespace WebCore

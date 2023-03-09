@@ -34,6 +34,7 @@
 
 #include "DOMTokenList.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>

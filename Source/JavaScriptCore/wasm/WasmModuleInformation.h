@@ -192,6 +192,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     Ref<NameSection> nameSection;
     BranchHints branchHints;
     std::optional<uint32_t> numberOfDataSegments;
+    Vector<RefPtr<const RTT>> rtts;
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;

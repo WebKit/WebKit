@@ -198,6 +198,9 @@ private:
     void emitCheckI64Zero(ExpressionType value, Taken&&);
     template<typename Taken>
     void emitCheckForNullReference(const ExpressionType& ref, Taken&&);
+    void emitBranchForNullReference(const ExpressionType&);
+    Inst makeBranchNotInt32(const ExpressionType&);
+    Inst makeBranchNotCell(const ExpressionType&);
 
     void appendCCallArg(B3::Air::Inst&, const TypedTmp&);
 
@@ -410,6 +413,27 @@ void AirIRGenerator32::emitCheckForNullReference(const ExpressionType& ref, Take
     emitCheck([&] {
         return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::Equal), ref.hi(), tmpForNullTag);
     }, std::forward<Taken>(taken));
+}
+
+void AirIRGenerator32::emitBranchForNullReference(const ExpressionType& ref)
+{
+    auto tmpForNullTag = g32();
+    append(Move, Arg::bigImm(JSValue::NullTag), tmpForNullTag);
+    append(Branch32, Arg::relCond(MacroAssembler::Equal), ref.hi(), tmpForNullTag);
+}
+
+Inst AirIRGenerator32::makeBranchNotInt32(const ExpressionType& value)
+{
+    auto tmpForInt32Tag = g32();
+    append(Move, Arg::bigImm(JSValue::Int32Tag), tmpForInt32Tag);
+    return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), value.hi(), tmpForInt32Tag);
+}
+
+Inst AirIRGenerator32::makeBranchNotCell(const ExpressionType& maybeCell)
+{
+    auto tmpForCellTag = g32();
+    append(Move, Arg::bigImm(JSValue::CellTag), tmpForCellTag);
+    return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), maybeCell.hi(), tmpForCellTag);
 }
 
 B3::Type AirIRGenerator32::toB3ResultType(BlockSignature returnType)

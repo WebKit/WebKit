@@ -201,16 +201,6 @@ table.queue-grid tr.platform.ios-16 img.logo {
     content: url(../Images/IOS16.png);
 }
 
-table.queue-grid tr.platform.ios-simulator-15 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/IOS15Simulator.png);
-}
-
-table.queue-grid tr.platform.ios-15 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/IOS15.png);
-}
-
 table.queue-grid tr.platform.tvos-simulator-16 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: url(../Images/TvOS16Simulator.png);
@@ -221,16 +211,6 @@ table.queue-grid tr.platform.tvos-16 img.logo {
     content: url(../Images/TvOS16.png);
 }
 
-table.queue-grid tr.platform.tvos-simulator-15 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/TvOS15Simulator.png);
-}
-
-table.queue-grid tr.platform.tvos-15 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/TvOS15.png);
-}
-
 table.queue-grid tr.platform.watchos-simulator-9 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: url(../Images/WatchOSSimulator9.png);
@@ -239,20 +219,6 @@ table.queue-grid tr.platform.watchos-simulator-9 img.logo {
 table.queue-grid tr.platform.watchos-9 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: url(../Images/WatchOS9.png);
-}
-
-table.queue-grid tr.platform.watchos-simulator-8 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/WatchOSSimulator8.png);
-}
-
-table.queue-grid tr.platform.watchos-8 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/WatchOS8.png);
-}
-
-table.queue-grid tr.platform.macos-bigsur img.logo {
-    content: url(../Images/BigSur.png);
 }
 
 table.queue-grid tr.platform.macos-monterey img.logo {

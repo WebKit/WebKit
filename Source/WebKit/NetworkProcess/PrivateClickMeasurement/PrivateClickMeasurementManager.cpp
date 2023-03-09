@@ -30,6 +30,7 @@
 #include "NetworkSession.h"
 #include "PrivateClickMeasurementDebugInfo.h"
 #include "PrivateClickMeasurementNetworkLoader.h"
+#include "PrivateClickMeasurementPersistentStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
@@ -749,14 +750,14 @@ void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExp
 PCM::Store& PrivateClickMeasurementManager::store()
 {
     if (!m_store)
-        m_store = PCM::Store::create(m_storageDirectory);
+        m_store = PCM::PersistentStore::create(m_storageDirectory);
     return *m_store;
 }
 
 const PCM::Store& PrivateClickMeasurementManager::store() const
 {
     if (!m_store)
-        m_store = PCM::Store::create(m_storageDirectory);
+        m_store = PCM::PersistentStore::create(m_storageDirectory);
     return *m_store;
 }
 

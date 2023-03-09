@@ -1,0 +1,290 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2020, 2023 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import base64
+import binascii
+import hashlib
+import json
+import logging
+import os
+import subprocess
+import sys
+import tempfile
+
+
+_log = logging.getLogger(__name__)
+LOG_MESSAGE = 25
+
+
+class SftpClient(object):
+
+    def __init__(self, remote_cfg, log_level):
+        self._remote_cfg = remote_cfg
+        self._sftp_quiet = log_level == 'quiet' or log_level == 'minimal'
+
+    def upload(self, local_path_archive_to_transfer):
+
+        def sha256sum(file_path):
+            hash = hashlib.sha256()
+            with open(file_path, 'rb') as f:
+                for chunk in iter(lambda: f.read(4096), b''):
+                    hash.update(chunk)
+            return hash.hexdigest()
+
+        def get_remote_path_value(file_name):
+            return os.path.join(self._remote_cfg.remote_dir, file_name) if self._remote_cfg.remote_dir else file_name
+
+        def human_readable_size(size_in_bytes):
+            size = float(size_in_bytes)
+            for unit in ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB']:
+                if abs(size) < 1024.0 or unit == 'PiB':
+                    break
+                size /= 1024.0
+            str_size = '%.0f' % size if size.is_integer() else '%.2f' % size
+            return f'{str_size} {unit}'
+
+        if not os.path.isfile(local_path_archive_to_transfer):
+            raise ValueError(f'Can not access file to transfer at path: {local_path_archive_to_transfer}')
+
+        with tempfile.NamedTemporaryFile(mode='w+b') as ssh_key_file, tempfile.NamedTemporaryFile(mode='w+') as hash_check_file, \
+             tempfile.NamedTemporaryFile(mode='w+') as last_is_file, tempfile.NamedTemporaryFile(mode='w+') as upload_instructions_file:
+
+            remote_archive_name = self._remote_cfg.remote_file if self._remote_cfg.remote_file else os.path.basename(local_path_archive_to_transfer)
+            remote_archive_path = get_remote_path_value(remote_archive_name)
+
+            # In theory NamedTemporaryFile() is already created 0600. But it don't hurts ensuring this again here.
+            os.chmod(ssh_key_file.name, 0o600)
+            ssh_key_file.write(base64.b64decode(self._remote_cfg.ssh_key))
+            ssh_key_file.flush()
+            archive_hash = sha256sum(local_path_archive_to_transfer)
+            if self._remote_cfg.generate_sha256sum:
+                # Generate and upload also a sha256 hash
+                os.chmod(hash_check_file.name, 0o644)
+                hash_check_file.write(f'{archive_hash} {remote_archive_name}\n')
+                hash_check_file.flush()
+            if self._remote_cfg.update_last_is_file:
+                # A LAST-IS file for convenience
+                os.chmod(last_is_file.name, 0o644)
+                last_is_file.write(f'{remote_archive_name}\n')
+                last_is_file.flush()
+            # We pass the filename to the SFTP command inside double quotes below (to deal with spaces in the filename).
+            # So we have to escape any double quoute that may be in the filename when passing it to the SFTP command.
+            remote_archive_path_scaped_quotes = remote_archive_path.replace('"', '\\"')
+            local_path_archive_to_transfer_scaped_quotes = local_path_archive_to_transfer.replace('"', '\\"')
+            # SFTP upload instructions file
+            upload_instructions_file.write('progress\n')
+            upload_instructions_file.write(f'put "{local_path_archive_to_transfer_scaped_quotes}" "{remote_archive_path_scaped_quotes}"\n')
+            if self._remote_cfg.generate_sha256sum:
+                remote_archive_path_no_ext, _ = os.path.splitext(remote_archive_path)
+                remote_archive_path_hash_scaped_quotes = remote_archive_path_no_ext.replace('"', '\\"') + '.sha256sum'
+                upload_instructions_file.write(f'put "{hash_check_file.name}" "{remote_archive_path_hash_scaped_quotes}"\n')
+            if self._remote_cfg.update_last_is_file:
+                remote_last_is_path = get_remote_path_value('LAST-IS')
+                upload_instructions_file.write(f'put "{last_is_file.name}" "{remote_last_is_path}"\n')
+            upload_instructions_file.write('quit\n')
+            upload_instructions_file.flush()
+            # The idea of this is to ensure scp doesn't ask any question (not even on the first run).
+            # This should be secure enough according to https://www.gremwell.com/ssh-mitm-public-key-authentication
+            sftpCommand = ['sftp',
+                           '-o', 'StrictHostKeyChecking=no',
+                           '-o', 'UserKnownHostsFile=/dev/null',
+                           '-o', 'LogLevel=ERROR',
+                           '-P', f'{self._remote_cfg.server_port}',
+                           '-i', ssh_key_file.name,
+                           '-b', upload_instructions_file.name,
+                           f'{self._remote_cfg.user_name}@{self._remote_cfg.server_address}']
+            _log.debug(f'Executing sftp command: {" ".join(sftpCommand)}')
+            size_in_bytes = os.stat(local_path_archive_to_transfer).st_size
+            size_human_str = human_readable_size(size_in_bytes)
+            _log.info(f'Uploading archive to {self._remote_cfg.server_name} as {remote_archive_path} with a size of {size_human_str} and SHA256 hash {archive_hash}')
+            sftp_out = subprocess.DEVNULL if self._sftp_quiet else sys.stdout
+            if subprocess.call(sftpCommand, stdout=sftp_out, stderr=sftp_out) != 0:
+                raise RuntimeError('The sftp command returned non-zero status')
+
+        remote_upload_str = self._remote_cfg.download_url if self._remote_cfg.download_url else self._remote_cfg.server_name
+        _log.log(LOG_MESSAGE, f'Done: archive sucesfully uploaded to {remote_upload_str}')
+        return 0
+
+
+class RemoteConfig(object):
+
+    def __init__(self, remote_config_args, remote_config_file):
+        self._allowed_config_keys = [ 'server_name', 'server_address', 'server_port', 'remote_dir', 'remote_file', 'download_url', 'user_name', 'ssh_key', 'generate_sha256sum', 'update_last_is_file' ]
+        for key_name in self._allowed_config_keys:
+            setattr(self, key_name, None)
+        if remote_config_file:
+            if not os.path.isfile(remote_config_file):
+                raise ValueError(f'Unable to find a file at path: "{remote_config_file}"')
+            remote_data_dict = json.load(open(remote_config_file))
+            remote_data_dot = argparse.Namespace(**remote_data_dict)
+            self._update_config_from_defined_attrs(remote_data_dot)
+        # Defined values from command-line arguments have precedence
+        self._update_config_from_defined_attrs(remote_config_args)
+        # Expand variables, sanity checks and read ssh key if needed.
+        self._expand_variables()
+        self._check_required_values()
+        self._read_ssh_key_if_needed()
+
+    def _read_ssh_key_if_needed(self):
+        def _is_base64(s):
+            try:
+                return base64.b64encode(base64.b64decode(s)).decode(encoding='utf-8') == s
+            except binascii.Error:
+                return False
+
+        if os.path.isfile(self.ssh_key):
+            _log.debug(f'Reading ssh key from path "{self.ssh_key}" ... ')
+            # Read it and store the value as a base64 string
+            with open(self.ssh_key, 'rb') as f:
+                ssh_key_data = base64.b64encode(f.read())
+            self.ssh_key = ssh_key_data.decode(encoding='utf-8')
+        if not _is_base64(self.ssh_key):
+            raise ValueError('The defined value for ssh_key is not valid base64')
+
+    def _check_required_values(self):
+        for required_key_with_value in ['server_address', 'server_port', 'user_name', 'ssh_key']:
+            key_value = getattr(self, required_key_with_value, None)
+            if not key_value:
+                raise ValueError(f'Need to specify a value for {required_key_with_value}')
+        if not self.server_name:
+            self.server_name = self.server_address
+        if isinstance(self.server_port, str):
+            if not self.server_port.isnumeric():
+                raise ValueError(f'Server port needs to be a number but got value "{self.server_port}"')
+            self.server_port = int(self.server_port)
+
+    def _update_config_from_defined_attrs(self, remote_data_dot):
+        for key_name in self._allowed_config_keys:
+            key_value = getattr(remote_data_dot, key_name, None)
+            if key_value:
+                setattr(self, key_name, key_value)
+
+    def _expand_variables(self):
+        variables_to_expand = self._get_config_dict()
+        # Expanding the value of ssh_key should not be allowed.
+        variables_to_expand.pop('ssh_key', None)
+        for key_name in self._allowed_config_keys:
+            key_value = getattr(self, key_name, None)
+            if key_value and isinstance(key_value, str):
+                if  '{' in key_value and '}' in key_value:
+                    expanded_key_value = key_value.format(**variables_to_expand)
+                    if key_value != expanded_key_value:
+                        _log.debug(f'Expanding "{key_name}" from "{key_value}" to "{expanded_key_value}"')
+                        setattr(self, key_name, expanded_key_value)
+
+    def _get_config_dict(self):
+        config_dict = {}
+        for key_name in self._allowed_config_keys:
+            config_dict[key_name] = getattr(self,key_name)
+        return config_dict
+
+    def get_parsed_config_dot(self):
+        return argparse.Namespace(**self._get_config_dict())
+
+    def _print_config_if_debug_log(self):
+        _log.debug('Remote config values:')
+        config_dict = self._get_config_dict()
+        for key_name in config_dict:
+            key_value = config_dict[key_name]
+            if key_name == 'ssh_key':
+                _log.debug(f'    ssh_key => Base64 encoded string with a length of {len(key_value)}')
+            else:
+                _log.debug(f'    {key_name} => {key_value}')
+
+
+def configure_logging(logger, selected_log_level='info'):
+
+    class LogHandler(logging.StreamHandler):
+        def __init__(self, stream):
+             super().__init__(stream)
+
+        def format(self, record):
+            if record.levelno > LOG_MESSAGE:
+                return '%s: %s' % (record.levelname, record.getMessage())
+            return record.getMessage()
+
+    logging.addLevelName(LOG_MESSAGE, 'MESSAGE')
+    if selected_log_level == 'debug':
+        log_level = logging.DEBUG
+    elif selected_log_level == 'info':
+        log_level = logging.INFO
+    elif selected_log_level == 'quiet':
+        log_level = logging.NOTSET
+    elif selected_log_level == 'minimal':
+        log_level = logging.getLevelName(LOG_MESSAGE)
+
+    handler = LogHandler(sys.stdout)
+    logger.addHandler(handler)
+    logger.setLevel(log_level)
+    return handler
+
+
+# The expected format for --remote-config-file is something like:
+# {
+# "server_name": "webkitgtk.org",
+# "server_address": "webkitgtk.intranet-address.local",
+# "server_port": "23",
+# "user_name": "upload-bot-64",
+# "remote_dir" : "x86_64/nightly/Ubuntu-20.04/MiniBrowser",
+# "remote_file": "release.zip",
+# "download_url": "https://{server_name}/built-products/{remote_dir}/{remote_file}",
+# "generate_sha256sum: true,
+# "update_last_is_file": true,
+# "ssh_key": "can be a path to the ssh key or the output of the priv key in base64 (without new lines). E.g. cat ~/.ssh/id_rsa|base64 -w0"
+# }
+#
+
+def main():
+    parser = argparse.ArgumentParser(add_help=True)
+
+    remote_config_args = parser.add_argument_group(title="Remote config arguments", description='The following arguments can be passed as keys in the json file specified with '
+                                                                                    '"--remote-config-file" or as arguments here. The value from the command line has precedence.')
+    remote_config_args.add_argument('--server-name', help='Pretty identifier for the server (to be used on the logs instead of the real address)')
+    remote_config_args.add_argument('--server-address', help='FQDN or IP address of the server')
+    remote_config_args.add_argument('--server-port', type=int, help='SSH port of the server')
+    remote_config_args.add_argument('--remote-dir',  help='Remote directory were to transfer the archive.')
+    remote_config_args.add_argument('--remote-file', help='Remote filename to use for the tranfered archive.')
+    remote_config_args.add_argument('--download-url', help='An URL to be print after sucessfuly transfering the archive. Variables inside {} on the URL are expanded.')
+    remote_config_args.add_argument('--generate-sha256sum', action='store_true', help='If enabled it will upload a .sha256sum file with the SHA256 of the archive uploaded.')
+    remote_config_args.add_argument('--update-last-is-file', action='store_true', help='If enabled it will create/update a file named "LAST-IS" in the remote directory with the name of the remote archive after sucessfuly transfering it.')
+    remote_config_args.add_argument('--user-name', help='User name to use when connecting to the SSH server.')
+    remote_config_args.add_argument('--ssh-key', help='Path to a private SSH key to use.')
+
+    parser.add_argument('--remote-config-file', help='Path to a json file with the config values for the remote server.')
+    parser.add_argument('--log-level', dest='log_level', choices=['quiet', 'minimal', 'info', 'debug'], default='info')
+    parser.add_argument('archive_to_transfer', help='Local path for the file to be transfered via SFTP to the remote server.')
+    args = parser.parse_args()
+
+    configure_logging(_log, args.log_level)
+
+    remote_config_parser = RemoteConfig(args, args.remote_config_file)
+    remote_config_parser._print_config_if_debug_log()
+    dot_remote_config_values = remote_config_parser.get_parsed_config_dot()
+
+    sftp_client = SftpClient(dot_remote_config_values, args.log_level)
+    return sftp_client.upload(args.archive_to_transfer)
+
+if __name__ == "__main__":
+    sys.exit(main())

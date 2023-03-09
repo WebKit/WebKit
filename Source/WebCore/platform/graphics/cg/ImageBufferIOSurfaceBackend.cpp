@@ -101,6 +101,7 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
+    ASSERT(!m_surface->isVolatile());
 }
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
@@ -217,6 +218,11 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
     if (m_surface->isInUse())
         return false;
 
+    if (m_volatilityState == VolatilityState::Volatile) {
+        ASSERT(m_surface->isVolatile());
+        return true;
+    }
+
     setVolatilityState(VolatilityState::Volatile);
     m_surface->setVolatile(true);
     return true;
@@ -224,8 +230,12 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
 
 SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
-    setVolatilityState(VolatilityState::NonVolatile);
-    return m_surface->setVolatile(false);
+    if (m_volatilityState == VolatilityState::Volatile) {
+        setVolatilityState(VolatilityState::NonVolatile);
+        return m_surface->setVolatile(false);
+    }
+    ASSERT(!m_surface->isVolatile());
+    return SetNonVolatileResult::Valid;
 }
 
 VolatilityState ImageBufferIOSurfaceBackend::volatilityState() const

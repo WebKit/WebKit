@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BytecodeCacheError.h"
 
+#include "JSGlobalObject.h"
 #include <wtf/SafeStrerror.h>
 
 namespace JSC {

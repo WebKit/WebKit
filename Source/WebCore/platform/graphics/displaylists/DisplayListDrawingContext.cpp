@@ -38,6 +38,8 @@ DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransfo
 {
 }
 
+DrawingContext::~DrawingContext() = default;
+
 void DrawingContext::setTracksDisplayListReplay(bool tracksDisplayListReplay)
 {
     m_tracksDisplayListReplay = tracksDisplayListReplay;

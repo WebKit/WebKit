@@ -825,7 +825,8 @@ private:
     void cloneShadowTreeIfPossible(Element& newHost);
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
-    void removeShadowRoot();
+    inline void removeShadowRoot(); // Defined in ElementRareData.h.
+    void removeShadowRootSlow(ShadowRoot&);
 
     enum class ResolveComputedStyleMode { Normal, RenderedOnly };
     const RenderStyle* resolveComputedStyle(ResolveComputedStyleMode = ResolveComputedStyleMode::Normal);

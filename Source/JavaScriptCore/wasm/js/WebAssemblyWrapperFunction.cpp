@@ -39,11 +39,11 @@ const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFuncti
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunction);
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunctionIncludingV128);
 
-WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction)
-    : Base(vm, executable, globalObject, structure, importableFunction)
+WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, executable, globalObject, structure, importableFunction, rtt)
 { }
 
-WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::TypeIndex typeIndex)
+WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
 {
     ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(), "We should never double wrap a wrapper function.");
 
@@ -55,7 +55,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
     else
         executable = vm.getHostFunction(callWebAssemblyWrapperFunction, ImplementationVisibility::Public, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
 
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub });
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub }, rtt);
     result->finishCreation(vm, executable, signature.argumentCount(), name, function, instance);
     return result;
 }

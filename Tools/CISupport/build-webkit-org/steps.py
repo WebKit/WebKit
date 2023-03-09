@@ -413,26 +413,72 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
 
 
+# UploadBuiltProductViaSftp() is still unused. Check HOWTO_config_SFTP_uploads.md about how to enable it.
+class UploadBuiltProductViaSftp(shell.ShellCommand):
+    command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
+               "--remote-config-file", "../../remote-built-product-upload-config.json",
+               "--user-name", WithProperties("%(buildername)s"),
+               "--remote-dir", WithProperties("%(buildername)s"),
+               "--remote-file", WithProperties("%(archive_revision)s.zip"),
+               WithProperties("WebKitBuild/%(configuration)s.zip")]
+    name = "upload-built-product-via-sftp"
+    description = ["uploading built product via sftp"]
+    descriptionDone = ["uploaded built product via sftp"]
+    haltOnFailure = True
+
+
+class UploadMiniBrowserBundleViaSftp(shell.ShellCommand):
+    command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
+               "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json",
+               "--remote-file", WithProperties("MiniBrowser_%(fullPlatform)s_%(archive_revision)s.zip"),
+               WithProperties("WebKitBuild/MiniBrowser_%(fullPlatform)s_%(configuration)s.zip")]
+    name = "upload-minibrowser-bundle-via-sftp"
+    description = ["uploading minibrowser bundle via sftp"]
+    descriptionDone = ["uploaded minibrowser bundle via sftp"]
+    haltOnFailure = False
+
+
+class UploadJSCBundleViaSftp(shell.ShellCommand):
+    command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
+               "--remote-config-file", "../../remote-jsc-bundle-upload-config.json",
+               "--remote-file", WithProperties("%(archive_revision)s.zip"),
+               WithProperties("WebKitBuild/jsc_%(fullPlatform)s_%(configuration)s.zip")]
+    name = "upload-jsc-bundle-via-sftp"
+    description = ["uploading jsc bundle via sftp"]
+    descriptionDone = ["uploaded jsc bundle via sftp"]
+    haltOnFailure = False
+
+
 class GenerateJSCBundle(shell.ShellCommand):
     command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=jsc", "--syslibs=bundle-all", WithProperties("--platform=%(fullPlatform)s"),
-               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s"),
-               "--remote-config-file", "../../remote-jsc-bundle-upload-config.json"]
+               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s")]
     name = "generate-jsc-bundle"
     description = ["generating jsc bundle"]
     descriptionDone = ["generated jsc bundle"]
     haltOnFailure = False
 
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc in (SUCCESS, WARNINGS):
+            self.build.addStepsAfterCurrentStep([UploadJSCBundleViaSftp()])
+        return rc
+
 
 class GenerateMiniBrowserBundle(shell.ShellCommand):
     command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=MiniBrowser", WithProperties("--platform=%(fullPlatform)s"),
-               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s"),
-               "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json"]
+               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s")]
     name = "generate-minibrowser-bundle"
     description = ["generating minibrowser bundle"]
     descriptionDone = ["generated minibrowser bundle"]
     haltOnFailure = False
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc in (SUCCESS, WARNINGS):
+            self.build.addStepsAfterCurrentStep([UploadMiniBrowserBundleViaSftp()])
+        return rc
 
 
 class ExtractBuiltProduct(shell.ShellCommand):

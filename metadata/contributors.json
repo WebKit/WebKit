@@ -2605,7 +2605,8 @@
          "etienne@segonzac.info"
       ],
       "github" : "etiennesegonzac",
-      "name" : "Etienne Segonzac"
+      "name" : "Etienne Segonzac",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -3562,6 +3563,13 @@
       ],
       "name" : "Jason Lawrence",
       "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jlee32@apple.com"
+      ],
+      "github" : "aznair",
+      "name" : "Jason Lee"
    },
    {
       "emails" : [
@@ -7112,7 +7120,7 @@
       "nicks" : [
          "twilco"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [

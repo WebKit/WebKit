@@ -281,6 +281,10 @@
         "i31.new":                   { "category": "gc",         "value": 251, "return": ["i31ref"],                       "parameter": ["i32"],                        "immediate": [], "extendedOp": 32 },
         "i31.get_s":                 { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 33 },
         "i31.get_u":                 { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 34 },
+        "ref.test":                  { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 64 },
+        "ref.cast":                  { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 65 },
+        "ref.test_null":             { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 72 },
+        "ref.cast_null":             { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 73 },
 
         "i32.trunc_sat_f32_s": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 0 },
         "i32.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 1 },

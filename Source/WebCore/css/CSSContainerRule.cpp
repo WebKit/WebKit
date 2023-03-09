@@ -61,18 +61,25 @@ String CSSContainerRule::cssText() const
 String CSSContainerRule::conditionText() const
 {
     StringBuilder builder;
-    MQ::serialize(builder, styleRuleContainer().containerQuery().condition);
+    CQ::serialize(builder, styleRuleContainer().containerQuery());
     return builder.toString();
 }
 
-String CSSContainerRule::nameText() const
+String CSSContainerRule::containerName() const
 {
     StringBuilder builder;
-    
+
     auto name = styleRuleContainer().containerQuery().name;
     if (!name.isEmpty())
         serializeIdentifier(name, builder);
 
+    return builder.toString();
+}
+
+String CSSContainerRule::containerQuery() const
+{
+    StringBuilder builder;
+    MQ::serialize(builder, styleRuleContainer().containerQuery().condition);
     return builder.toString();
 }
 

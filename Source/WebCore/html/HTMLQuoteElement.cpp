@@ -24,6 +24,7 @@
 #include "HTMLQuoteElement.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>
 

@@ -49,6 +49,7 @@
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "StringObject.h"
+#include "TypedArrayInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 

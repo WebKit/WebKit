@@ -52,7 +52,7 @@
 #include "NetworkSessionCreationParameters.h"
 #include "NetworkStorageManager.h"
 #include "PreconnectTask.h"
-#include "PrivateClickMeasurementStore.h"
+#include "PrivateClickMeasurementPersistentStore.h"
 #include "RemoteWorkerType.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
@@ -2232,7 +2232,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime e
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
 #endif
-    PCM::Store::prepareForProcessToSuspend([callbackAggregator] { });
+    PCM::PersistentStore::prepareForProcessToSuspend([callbackAggregator] { });
 
     forEachNetworkSession([&] (auto& session) {
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
@@ -2269,7 +2269,7 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore::resume();
 #endif
-    PCM::Store::processDidResume();
+    PCM::PersistentStore::processDidResume();
 
     forEachNetworkSession([](auto& session) {
 #if ENABLE(SERVICE_WORKER)

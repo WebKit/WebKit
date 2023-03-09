@@ -36,32 +36,32 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyArray::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyArray) };
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint8_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint8_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload8(WTFMove(payload))
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint16_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint16_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload16(WTFMove(payload))
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint32_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint32_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload32(WTFMove(payload))
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint64_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint64_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload64(WTFMove(payload))

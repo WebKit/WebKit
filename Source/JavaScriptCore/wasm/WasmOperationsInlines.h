@@ -54,9 +54,11 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
     const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+    auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
 
     size_t elementSize = fieldType.type.elementSize();
 
+    Structure* arrayStructure = globalObject->webAssemblyArrayStructure();
     JSWebAssemblyArray* array = nullptr;
 
     switch (elementSize) {
@@ -66,7 +68,7 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
         FixedVector<uint8_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint8_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
         break;
     }
     case sizeof(uint16_t): {
@@ -74,7 +76,7 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
         FixedVector<uint16_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint16_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
         break;
     }
     case sizeof(uint32_t): {
@@ -82,14 +84,14 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
         FixedVector<uint32_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint32_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
         break;
     }
     case sizeof(uint64_t): {
         FixedVector<uint64_t> values(size);
         for (unsigned i = 0; i < size; i++)
             values[i] = static_cast<uint64_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values));
+        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
         break;
     }
     default:
@@ -141,8 +143,9 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
     JSGlobalObject* globalObject = instance->globalObject();
     const TypeDefinition& structTypeDefinition = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     const StructType& structType = *structTypeDefinition.as<StructType>();
+    auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
 
-    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex);
+    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT);
     RELEASE_ASSERT(structValue);
     if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
         for (unsigned i = 0; i < structType.fieldCount(); ++i) {
@@ -190,6 +193,59 @@ inline void structSet(Instance* instance, EncodedJSValue encodedStructReference,
 
     const auto fieldType = structPointer->structType()->field(fieldIndex).type.as<Type>();
     return structPointer->set(globalObject, fieldIndex, toJSValue(globalObject, fieldType, argument));
+}
+
+inline bool refCast(Instance* instance, EncodedJSValue encodedReference, bool allowNull, int32_t heapType)
+{
+    JSValue refValue = JSValue::decode(encodedReference);
+    if (refValue.isNull())
+        return allowNull;
+
+    switch (static_cast<Wasm::TypeKind>(heapType)) {
+    case Wasm::TypeKind::Funcref:
+    case Wasm::TypeKind::Externref:
+        // Casts to funcref/externref canot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+        return true;
+    case Wasm::TypeKind::I31ref:
+        return refValue.isInt32();
+    case Wasm::TypeKind::Arrayref:
+        return jsDynamicCast<JSWebAssemblyArray*>(refValue);
+    case Wasm::TypeKind::Structref:
+        return jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+    default: {
+        ASSERT(!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)));
+        Wasm::TypeDefinition& signature = instance->module().moduleInformation().typeSignatures[heapType];
+        auto signatureRTT = instance->module().moduleInformation().rtts[heapType];
+        if (signature.expand().is<Wasm::FunctionSignature>()) {
+            WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
+            // Static type-checking should ensure this jsDynamicCast always succeeds.
+            ASSERT(funcRef);
+            auto funcRTT = funcRef->rtt();
+            if (funcRTT.get() == signatureRTT.get())
+                return true;
+            return funcRTT->isSubRTT(*signatureRTT);
+        }
+        if (signature.expand().is<Wasm::ArrayType>()) {
+            JSWebAssemblyArray* arrayRef = jsDynamicCast<JSWebAssemblyArray*>(refValue);
+            if (!arrayRef)
+                return false;
+            auto arrayRTT = arrayRef->rtt();
+            if (arrayRTT.get() == signatureRTT.get())
+                return true;
+            return arrayRTT->isSubRTT(*signatureRTT);
+        }
+        ASSERT(signature.expand().is<Wasm::StructType>());
+        JSWebAssemblyStruct* structRef = jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+        if (!structRef)
+            return false;
+        auto structRTT = structRef->rtt();
+        if (structRTT.get() == signatureRTT.get())
+            return true;
+        return structRTT->isSubRTT(*signatureRTT);
+    }
+    }
+
+    return false;
 }
 
 inline EncodedJSValue tableGet(Instance* instance, unsigned tableIndex, int32_t signedIndex)

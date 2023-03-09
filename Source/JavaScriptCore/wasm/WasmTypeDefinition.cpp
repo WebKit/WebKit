@@ -524,13 +524,13 @@ bool TypeDefinition::hasRecursiveReference() const
     return hasRecGroupSupertype || TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
 }
 
-RefPtr<RTT> RTT::tryCreateRTT(DisplayCount displaySize)
+RefPtr<RTT> RTT::tryCreateRTT(RTTKind kind, DisplayCount displaySize)
 {
     auto result = tryFastMalloc(allocatedRTTSize(displaySize));
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    return new (NotNull, memory) RTT(displaySize);
+    return new (NotNull, memory) RTT(kind, displaySize);
 }
 
 bool RTT::isSubRTT(const RTT& parent) const
@@ -565,6 +565,10 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
     case LLIntBuiltin::DataDrop:
     case LLIntBuiltin::ElemDrop:
         return *singleton().m_Void_I32;
+    case LLIntBuiltin::RefTest:
+        return *singleton().m_I32_RefI32I32;
+    case LLIntBuiltin::RefCast:
+        return *singleton().m_Ref_RefI32I32;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return *singleton().m_I64_Void;
@@ -846,6 +850,9 @@ TypeInformation::TypeInformation()
     m_Void_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Void_I32I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
+    // FIXME: The Ref type here is only used to compute call information, a heap type of "any" would be better once that's added.
+    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) } },  { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
 }
 
 RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 1>& results, const Vector<Type>& args)
@@ -945,12 +952,20 @@ RefPtr<RTT> TypeInformation::canonicalRTTForType(TypeIndex type)
     const TypeDefinition& signature = TypeInformation::get(type).unroll();
     RefPtr<RTT> protector = nullptr;
 
+    RTTKind kind;
+    if (signature.expand().is<FunctionSignature>())
+        kind = RTTKind::Function;
+    else if (signature.expand().is<ArrayType>())
+        kind = RTTKind::Array;
+    else
+        kind = RTTKind::Struct;
+
     if (signature.is<Subtype>()) {
         auto superRTT = TypeInformation::tryGetCanonicalRTT(signature.as<Subtype>()->superType());
         ASSERT(superRTT.has_value());
         DisplayCount displaySize = superRTT.value()->displaySize() + 1;
 
-        protector = RTT::tryCreateRTT(displaySize);
+        protector = RTT::tryCreateRTT(kind, displaySize);
         RELEASE_ASSERT(protector);
 
         protector->setDisplayEntry(0, superRTT.value());
@@ -960,12 +975,12 @@ RefPtr<RTT> TypeInformation::canonicalRTTForType(TypeIndex type)
         return protector;
     }
 
-    protector = RTT::tryCreateRTT(0);
+    protector = RTT::tryCreateRTT(kind, 0);
     RELEASE_ASSERT(protector);
     return protector;
 }
 
-std::optional<const RTT*> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
+std::optional<RefPtr<const RTT>> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
@@ -973,7 +988,18 @@ std::optional<const RTT*> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
     const auto iterator = info.m_rttMap.find(type);
     if (iterator == info.m_rttMap.end())
         return std::nullopt;
-    return std::optional<const RTT*>(iterator->value.get());
+    return std::optional<RefPtr<const RTT>>(iterator->value.get());
+}
+
+RefPtr<const RTT> TypeInformation::getCanonicalRTT(TypeIndex type)
+{
+    if (Options::useWebAssemblyGC()) {
+        const auto result = TypeInformation::tryGetCanonicalRTT(type);
+        ASSERT(result.has_value());
+        return result.value();
+    }
+
+    return { };
 }
 
 void TypeInformation::tryCleanup()
