@@ -109,10 +109,7 @@ public:
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
     bool hasScrollableMainFrame() const;
     bool hasScrollableOrZoomedMainFrame() const;
-
-    WebCore::OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
-    WebCore::OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
-
+    
     virtual bool propagatesMainFrameScrolls() const { return true; }
 
     virtual void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) { }
@@ -124,6 +121,7 @@ public:
     String scrollingTreeAsText() const;
 
     void resetStateAfterProcessExited();
+    WebCore::ScrollingTreeScrollingNode* rootNode() const;
 
     virtual void displayDidRefresh(WebCore::PlatformDisplayID);
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);

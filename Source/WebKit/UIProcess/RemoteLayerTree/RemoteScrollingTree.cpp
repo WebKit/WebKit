@@ -64,8 +64,6 @@ void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&
 {
     ASSERT(isMainRunLoop());
 
-    ScrollingTree::scrollingTreeNodeDidScroll(node, scrollingLayerPositionAction);
-
     if (!m_scrollingCoordinatorProxy)
         return;
 

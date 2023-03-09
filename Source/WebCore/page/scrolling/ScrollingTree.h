@@ -116,7 +116,7 @@ public:
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
-    WEBCORE_EXPORT virtual void scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync);
+    virtual void scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync) = 0;
     virtual void scrollingTreeNodeWillStartAnimatedScroll(ScrollingTreeScrollingNode&) { }
     virtual void scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode&) { }
     virtual void scrollingTreeNodeWillStartWheelEventScroll(ScrollingTreeScrollingNode&) { }
@@ -223,14 +223,10 @@ public:
 
     virtual void removePendingScrollAnimationForNode(ScrollingNodeID) { }
 
-    WEBCORE_EXPORT FloatPoint mainFrameScrollPosition() const;
-
-    WEBCORE_EXPORT OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
-    WEBCORE_EXPORT OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
-
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
+    FloatPoint mainFrameScrollPosition() const WTF_REQUIRES_LOCK(m_treeStateLock);
     void setMainFrameScrollPosition(FloatPoint);
 
     void setGestureState(std::optional<WheelScrollGestureState>);
@@ -248,7 +244,7 @@ protected:
     HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations();
     WEBCORE_EXPORT void serviceScrollAnimations(MonotonicTime) WTF_REQUIRES_LOCK(m_treeLock);
 
-    mutable Lock m_treeLock; // Protects the scrolling tree.
+    Lock m_treeLock; // Protects the scrolling tree.
 
 private:
     void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&) WTF_REQUIRES_LOCK(m_treeLock);
@@ -292,7 +288,7 @@ private:
         HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations;
     };
     
-    mutable Lock m_treeStateLock;
+    Lock m_treeStateLock;
     TreeState m_treeState WTF_GUARDED_BY_LOCK(m_treeStateLock);
 
     struct SwipeState {

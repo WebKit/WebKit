@@ -283,12 +283,6 @@ void ScrollingTree::traverseScrollingTreeRecursive(ScrollingTreeNode& node, cons
         traverseScrollingTreeRecursive(child.get(), visitorFunction);
 }
 
-void ScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction)
-{
-    if (node.isRootNode())
-        setMainFrameScrollPosition(node.currentScrollPosition());
-}
-
 void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::viewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport);
@@ -526,7 +520,7 @@ void ScrollingTree::clearLatchedNode()
 
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
 {
-    Locker locker { m_treeStateLock };
+    ASSERT(m_treeStateLock.isLocked());
     return m_treeState.mainFrameScrollPosition;
 }
 
@@ -534,18 +528,6 @@ void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
 {
     Locker locker { m_treeStateLock };
     m_treeState.mainFrameScrollPosition = position;
-}
-
-OverscrollBehavior ScrollingTree::mainFrameHorizontalOverscrollBehavior() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->horizontalOverscrollBehavior() : OverscrollBehavior::Auto;
-}
-
-OverscrollBehavior ScrollingTree::mainFrameVerticalOverscrollBehavior() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->verticalOverscrollBehavior() : OverscrollBehavior::Auto;
 }
 
 void ScrollingTree::setGestureState(std::optional<WheelScrollGestureState> gestureState)
