@@ -135,6 +135,35 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
     Util::run(&done);
 }
 
+TEST(SiteIsolation, QueryFramesStateAfterNavigating)
+{
+    HTTPServer server({
+        { "/page1.html"_s, { "<iframe src='subframe1.html'></iframe><iframe src='subframe2.html'></iframe><iframe src='subframe3.html'></iframe>"_s } },
+        { "/page2.html"_s, { "<iframe src='subframe4.html'></iframe>"_s } },
+        { "/subframe1.html"_s, { "SubFrame1"_s } },
+        { "/subframe2.html"_s, { "SubFrame2"_s } },
+        { "/subframe3.html"_s, { "SubFrame3"_s } },
+        { "/subframe4.html"_s, { "SubFrame4"_s } }
+    }, HTTPServer::Protocol::Http);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero]);
+    [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(mainFrame.childFrames.count, 3U);
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
+    done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(mainFrame.childFrames.count, 1U);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
 {
     HTTPServer server({
