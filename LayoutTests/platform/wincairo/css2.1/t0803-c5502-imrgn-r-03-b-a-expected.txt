@@ -4,8 +4,8 @@ layer at (0,0) size 800x142
   RenderBlock {HTML} at (0,0) size 800x142
     RenderBody {BODY} at (8,16) size 784x111
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 150x19
-          text run at (0,0) width 150: "It should say \"HI\" below:"
+        RenderText {#text} at (0,0) size 162x19
+          text run at (0,0) width 162: "It should say \"HI\" below:"
       RenderBlock {DIV} at (15,36) size 165x75 [color=#FFFFFF] [bgcolor=#000080]
         RenderText {#text} at (0,0) size 135x15
           text run at (0,0) width 135: "xx xx xx "

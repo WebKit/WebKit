@@ -4,8 +4,8 @@ layer at (0,0) size 785x686
   RenderBlock {HTML} at (0,0) size 785x686
     RenderBody {BODY} at (8,16) size 769x662
       RenderBlock {P} at (0,0) size 769x20
-        RenderText {#text} at (0,0) size 621x19
-          text run at (0,0) width 621: "Test passes if there are no more than two rectangles on the page and there is no red visible on the page."
+        RenderText {#text} at (0,0) size 646x19
+          text run at (0,0) width 646: "Test passes if there are no more than two rectangles on the page and there is no red visible on the page."
       RenderTable {TABLE} at (0,36) size 314x106
         RenderTableSection {TBODY} at (0,0) size 314x106
           RenderTableRow {TR} at (0,2) size 314x102

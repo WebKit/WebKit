@@ -5,11 +5,11 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DL} at (0,0) size 784x40
         RenderBlock {DT} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 56x19
-            text run at (0,0) width 56: "Line One"
+          RenderText {#text} at (0,0) size 60x19
+            text run at (0,0) width 60: "Line One"
         RenderBlock {DT} at (0,20) size 784x20
-          RenderText {#text} at (0,0) size 30x19
-            text run at (0,0) width 30: "Line "
-          RenderInline {SPAN} at (0,0) size 28x19
-            RenderText {#text} at (30,0) size 28x19
-              text run at (30,0) width 28: "Two"
+          RenderText {#text} at (0,0) size 33x19
+            text run at (0,0) width 33: "Line "
+          RenderInline {SPAN} at (0,0) size 29x19
+            RenderText {#text} at (33,0) size 29x19
+              text run at (33,0) width 29: "Two"

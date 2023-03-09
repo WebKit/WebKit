@@ -4,8 +4,8 @@ layer at (0,0) size 800x434
   RenderBlock {HTML} at (0,0) size 800x434
     RenderBody {BODY} at (8,16) size 784x410
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 431x19
-          text run at (0,0) width 431: "Test overflow clipping of composited elements in various configurations."
+        RenderText {#text} at (0,0) size 458x19
+          text run at (0,0) width 458: "Test overflow clipping of composited elements in various configurations."
       RenderBlock (anonymous) at (0,36) size 784x374
         RenderText {#text} at (182,167) size 4x19
           text run at (182,167) width 4: " "

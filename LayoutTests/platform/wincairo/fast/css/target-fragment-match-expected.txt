@@ -5,5 +5,5 @@ layer at (0,0) size 800x52
     RenderBody {BODY} at (8,16) size 784x20
       RenderBlock {DIV} at (0,0) size 784x20
         RenderBlock {P} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 576x19
-            text run at (0,0) width 576: "I should be highlighted first because of the anchor, and de-highlighted when there is no fragment."
+          RenderText {#text} at (0,0) size 612x19
+            text run at (0,0) width 612: "I should be highlighted first because of the anchor, and de-highlighted when there is no fragment."

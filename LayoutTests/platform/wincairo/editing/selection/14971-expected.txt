@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 724x39
-          text run at (0,0) width 576: "This tests to make sure that a drag-selecting through a -webkit-user-select:ignore region works. "
-          text run at (576,0) width 148: "The selection should end"
-          text run at (0,20) width 259: "somewhere inside the word 'World' below."
+        RenderText {#text} at (0,0) size 757x39
+          text run at (0,0) width 600: "This tests to make sure that a drag-selecting through a -webkit-user-select:ignore region works. "
+          text run at (600,0) width 157: "The selection should end"
+          text run at (0,20) width 268: "somewhere inside the word 'World' below."
       RenderBlock {DIV} at (0,56) size 784x20
-        RenderInline {SPAN} at (0,0) size 32x19
-          RenderText {#text} at (0,0) size 32x19
-            text run at (0,0) width 32: "Hello"
-        RenderText {#text} at (32,0) size 4x19
-          text run at (32,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 35x19
+          RenderText {#text} at (0,0) size 35x19
+            text run at (0,0) width 35: "Hello"
+        RenderText {#text} at (35,0) size 4x19
+          text run at (35,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 39x19
-          RenderText {#text} at (36,0) size 39x19
-            text run at (36,0) width 39: "World"
+          RenderText {#text} at (39,0) size 39x19
+            text run at (39,0) width 39: "World"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body
-selection end:   position 1 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of body
+selection end:   position 2 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of body

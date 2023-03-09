@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H2} at (0,0) size 784x27
-        RenderText {#text} at (0,0) size 218x26
-          text run at (0,0) width 218: "Block Collapse Demo"
+        RenderText {#text} at (0,0) size 219x26
+          text run at (0,0) width 219: "Block Collapse Demo"
       RenderBlock {P} at (0,46) size 784x21
-        RenderText {#text} at (0,0) size 654x19
-          text run at (0,0) width 289: "This table below has three hierarchical sections. "
-          text run at (289,0) width 365: "Collapsing a section should cause those below it to move up."
+        RenderText {#text} at (0,0) size 687x19
+          text run at (0,0) width 304: "This table below has three hierarchical sections. "
+          text run at (304,0) width 383: "Collapsing a section should cause those below it to move up."
       RenderBlock {P} at (0,82) size 784x21
-        RenderText {#text} at (0,0) size 736x19
-          text run at (0,0) width 736: "This works on the latest Windows IE and Mozilla Firefox (Win and Mac) but not on Safari 1.2.3 (v125.9) {or 2.0 (146)}."
+        RenderText {#text} at (0,0) size 763x19
+          text run at (0,0) width 763: "This works on the latest Windows IE and Mozilla Firefox (Win and Mac) but not on Safari 1.2.3 (v125.9) {or 2.0 (146)}."
       RenderBlock {P} at (0,118) size 784x21
-        RenderText {#text} at (0,0) size 716x19
-          text run at (0,0) width 554: "Note that the second section is collapsed when the page opens and expanding it works fine. "
-          text run at (554,0) width 162: "Just the collapse is broken."
+        RenderText {#text} at (0,0) size 747x19
+          text run at (0,0) width 579: "Note that the second section is collapsed when the page opens and expanding it works fine. "
+          text run at (579,0) width 168: "Just the collapse is broken."
       RenderBlock {DIV} at (0,154) size 784x158
         RenderBlock {DIV} at (0,10) size 784x21
           RenderImage {IMG} at (0,0) size 16x16
@@ -24,12 +24,12 @@ layer at (0,0) size 800x600
             text run at (16,1) width 75: " Block One"
         RenderBlock {DIV} at (0,31) size 784x21
           RenderImage {IMG} at (0,0) size 16x16
-          RenderText {#text} at (16,1) size 75x19
-            text run at (16,1) width 75: " Block Two"
+          RenderText {#text} at (16,1) size 77x19
+            text run at (16,1) width 77: " Block Two"
         RenderBlock {DIV} at (0,52) size 784x21
           RenderImage {IMG} at (0,0) size 16x16
-          RenderText {#text} at (16,1) size 87x19
-            text run at (16,1) width 87: " Block Three"
+          RenderText {#text} at (16,1) size 88x19
+            text run at (16,1) width 88: " Block Three"
         RenderBlock {DIV} at (0,73) size 784x74
           RenderTable {TABLE} at (0,0) size 784x74
             RenderTableSection {TBODY} at (0,0) size 784x74
@@ -38,22 +38,22 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (1,1) size 4x19
                     text run at (1,1) width 4: " "
                 RenderTableCell {TD} at (36,2) size 746x22 [r=0 c=1 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 60x19
-                    text run at (1,1) width 60: "This is the"
+                  RenderText {#text} at (1,1) size 65x19
+                    text run at (1,1) width 65: "This is the"
               RenderTableRow {TR} at (0,26) size 784x22
                 RenderTableCell {TD} at (2,26) size 32x22 [r=1 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 4x19
                     text run at (1,1) width 4: " "
                 RenderTableCell {TD} at (36,26) size 746x22 [r=1 c=1 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 66x19
-                    text run at (1,1) width 66: "contents of"
+                  RenderText {#text} at (1,1) size 69x19
+                    text run at (1,1) width 69: "contents of"
               RenderTableRow {TR} at (0,50) size 784x22
                 RenderTableCell {TD} at (2,50) size 32x22 [r=2 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 4x19
                     text run at (1,1) width 4: " "
                 RenderTableCell {TD} at (36,50) size 746x22 [r=2 c=1 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 72x19
-                    text run at (1,1) width 72: "block three."
+                  RenderText {#text} at (1,1) size 74x19
+                    text run at (1,1) width 74: "block three."
 layer at (8,163) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
 layer at (8,318) size 784x2 clip at (0,0) size 0x0

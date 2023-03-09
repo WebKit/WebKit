@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 51x19
-          text run at (0,0) width 51: "Test for "
-        RenderInline {I} at (0,0) size 587x19
-          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-            RenderText {#text} at (51,0) size 305x19
-              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=12886"
-          RenderText {#text} at (356,0) size 282x19
-            text run at (356,0) width 4: " "
-            text run at (360,0) width 278: "Crash with Scriptalicious javascript library"
-        RenderText {#text} at (638,0) size 4x19
-          text run at (638,0) width 4: "."
+        RenderText {#text} at (0,0) size 52x19
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 578x19
+          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
+            RenderText {#text} at (52,0) size 301x19
+              text run at (52,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=12886"
+          RenderText {#text} at (353,0) size 277x19
+            text run at (353,0) width 4: " "
+            text run at (357,0) width 273: "Crash with Scriptalicious javascript library"
+        RenderText {#text} at (630,0) size 4x19
+          text run at (630,0) width 4: "."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 287x19
-          text run at (0,0) width 287: "You should see two purple 100\x{D7}50 rectangles, "
-        RenderInline {EM} at (0,0) size 21x19
-          RenderText {#text} at (287,0) size 21x19
-            text run at (287,0) width 21: "not"
-        RenderText {#text} at (308,0) size 149x19
-          text run at (308,0) width 149: " a checkerboard pattern."
+        RenderText {#text} at (0,0) size 296x19
+          text run at (0,0) width 296: "You should see two purple 100\x{D7}50 rectangles, "
+        RenderInline {EM} at (0,0) size 20x19
+          RenderText {#text} at (296,0) size 20x19
+            text run at (296,0) width 20: "not"
+        RenderText {#text} at (316,0) size 151x19
+          text run at (316,0) width 151: " a checkerboard pattern."
       RenderTable {TABLE} at (0,72) size 100x300
         RenderTableSection {TBODY} at (0,0) size 100x300
           RenderTableRow {TR} at (0,0) size 100x150

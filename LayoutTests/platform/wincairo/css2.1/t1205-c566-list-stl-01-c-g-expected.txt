@@ -9,6 +9,6 @@ layer at (0,0) size 800x127
           RenderImage {IMG} at (15,0) size 15x15
           RenderText {#text} at (30,0) size 4x19
             text run at (30,0) width 4: " "
-          RenderInline {SPAN} at (0,0) size 345x19 [color=#000000]
-            RenderText {#text} at (34,0) size 345x19
-              text run at (34,0) width 345: "\x{21E6} There should be a green square to the left, and no red."
+          RenderInline {SPAN} at (0,0) size 358x19 [color=#000000]
+            RenderText {#text} at (34,0) size 358x19
+              text run at (34,0) width 358: "\x{21E6} There should be a green square to the left, and no red."
