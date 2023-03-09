@@ -568,20 +568,16 @@ void AppendPipeline::resetParserState()
     ASSERT(isMainThread());
     GST_DEBUG_OBJECT(pipeline(), "Handling resetParserState() in AppendPipeline by resetting the pipeline");
 
-    // FIXME: Implement a flush event-based resetParserState() implementation would allow the initialization segment to
-    // survive, in accordance with the spec.
-
     // This function restores the GStreamer pipeline to the same state it was when the AppendPipeline constructor
-    // finished. All previously enqueued data is lost and the demuxer is reset, losing all pads and track data.
+    // finished. All previously enqueued data is lost and the demuxer is flushed, but retains the configuration from the
+    // last received init segment, in accordance to the spec.
 
     // Unlock the streaming thread.
     m_taskQueue.startAborting();
 
-    // Reset the state of all elements in the pipeline.
-    assertedElementSetState(m_pipeline.get(), GST_STATE_READY);
-
-    // Set the pipeline to PLAYING so that it can be used again.
-    assertedElementSetState(m_pipeline.get(), GST_STATE_PLAYING);
+    gst_element_send_event(m_appsrc.get(), gst_event_new_flush_start());
+    gst_element_send_event(m_appsrc.get(), gst_event_new_flush_stop(true));
+    gst_element_seek(m_pipeline.get(), 1.0, GST_FORMAT_BYTES, GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET, 0, GST_SEEK_TYPE_SET, GST_CLOCK_TIME_NONE);
 
     // All processing related to the previous append has been aborted and the pipeline is idle.
     // We can listen again to new requests coming from the streaming thread.
