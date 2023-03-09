@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :getBindGroupLayout_js_object:
+PASS :incompatible_with_explicit:
+PASS :layout:
+
