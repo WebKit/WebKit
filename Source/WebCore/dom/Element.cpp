@@ -2804,21 +2804,19 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         didAddUserAgentShadowRoot(shadowRoot);
 }
 
-void Element::removeShadowRoot()
+void Element::removeShadowRootSlow(ShadowRoot& oldRoot)
 {
-    RefPtr<ShadowRoot> oldRoot = shadowRoot();
-    if (!oldRoot)
-        return;
+    ASSERT(&oldRoot == shadowRoot());
 
-    InspectorInstrumentation::willPopShadowRoot(*this, *oldRoot);
-    document().adjustFocusedNodeOnNodeRemoval(*oldRoot);
+    InspectorInstrumentation::willPopShadowRoot(*this, oldRoot);
+    document().adjustFocusedNodeOnNodeRemoval(oldRoot);
 
-    ASSERT(!oldRoot->renderer());
+    ASSERT(!oldRoot.renderer());
 
     elementRareData()->clearShadowRoot();
 
-    oldRoot->setHost(nullptr);
-    oldRoot->setParentTreeScope(document());
+    oldRoot.setHost(nullptr);
+    oldRoot.setParentTreeScope(document());
 }
 
 static bool canAttachAuthorShadowRoot(const Element& element)
