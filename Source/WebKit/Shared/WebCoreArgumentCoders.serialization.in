@@ -4856,6 +4856,10 @@ struct WebCore::AcceleratedEffectValues {
     WebCore::LengthPoint offsetPosition;
     WebCore::LengthPoint offsetAnchor;
     WebCore::OffsetRotation offsetRotate;
+    WebCore::FilterOperations filter;
+#if ENABLE(FILTERS_LEVEL_2)
+    WebCore::FilterOperations backdropFilter;
+#endif
 }
 
 header: <WebCore/AcceleratedEffect.h>
