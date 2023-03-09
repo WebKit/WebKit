@@ -6208,6 +6208,9 @@ public:
         m_tierUp->outerLoops().append(outerLoops);
         m_outerLoops.append(loopIndex);
 
+        clobber(GPRInfo::argumentGPR0);
+        clobber(GPRInfo::argumentGPR1);
+
         m_jit.move(TrustedImm64(bitwise_cast<uintptr_t>(&m_tierUp->m_counter)), m_scratchGPR);
 
         TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
