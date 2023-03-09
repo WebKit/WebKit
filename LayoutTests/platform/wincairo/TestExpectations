@@ -2619,7 +2619,6 @@ fast/text/isolate-ignore.html [ ImageOnlyFailure ]
 fast/text/multiple-renderers-with-hypen-on-boundary.html [ ImageOnlyFailure ]
 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 fast/text/whitespace/inline-whitespace-wrapping-8.html [ ImageOnlyFailure ]
-webkit.org/b/253547 fast/text/midword-break-before-surrogate-pair.html [ Skip ] # Crash for Debug, Timeout for Release
 
 # Depends on the system fonts
 fast/css/css2-system-fonts.html [ Failure Pass ]
