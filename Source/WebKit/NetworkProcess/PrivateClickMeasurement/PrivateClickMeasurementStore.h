@@ -26,8 +26,6 @@
 #pragma once
 
 #include <WebCore/PrivateClickMeasurement.h>
-#include <wtf/Ref.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
@@ -40,41 +38,24 @@ struct DebugInfo;
 
 class Store : public ThreadSafeRefCounted<Store> {
 public:
-    static Ref<Store> create(const String& databaseDirectory)
-    {
-        return adoptRef(*new Store(databaseDirectory));
-    }
-
-    ~Store();
+    virtual ~Store() = default;
 
     using ApplicationBundleIdentifier = String;
 
-    static void prepareForProcessToSuspend(CompletionHandler<void()>&&);
-    static void processDidResume();
+    virtual void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&) = 0;
+    virtual void attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&, WebCore::PCM::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&) = 0;
 
-    void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
-    void attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&, WebCore::PCM::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&);
+    virtual void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const = 0;
+    virtual void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() = 0;
+    virtual void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) = 0;
 
-    void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const;
-    void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
-    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    virtual void allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<WebCore::PrivateClickMeasurement>&&)>&&) = 0;
+    virtual void clearExpiredPrivateClickMeasurement() = 0;
+    virtual void clearPrivateClickMeasurement(CompletionHandler<void()>&&) = 0;
+    virtual void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&) = 0;
+    virtual void clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PCM::AttributionReportEndpoint) = 0;
 
-    void allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<WebCore::PrivateClickMeasurement>&&)>&&);
-    void clearExpiredPrivateClickMeasurement();
-    void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
-    void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
-    void clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PCM::AttributionReportEndpoint);
-
-    void close(CompletionHandler<void()>&&);
-
-private:
-    Store(const String& databaseDirectory);
-
-    void postTask(Function<void()>&&) const;
-    void postTaskReply(Function<void()>&&) const;
-
-    std::unique_ptr<Database> m_database;
-    Ref<SuspendableWorkQueue> m_queue;
+    virtual void close(CompletionHandler<void()>&&) = 0;
 };
 
 } // namespace PCM
