@@ -36,9 +36,9 @@
 namespace WebCore {
 namespace Layout {
 
-InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineFormattingState& inlineFormattingState, const Vector<InlineDisplay::Box>& displayBoxes)
+InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineItems& inlineItems, const InlineDisplay::Boxes& displayBoxes)
     : m_inlineDamage(inlineDamage)
-    , m_inlineFormattingState(inlineFormattingState)
+    , m_inlineItems(inlineItems)
     , m_displayBoxes(displayBoxes)
 {
 }
@@ -271,11 +271,11 @@ void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox,
     auto damagedLine = std::optional<DamagedLine> { };
     if (damagedInlineTextBox) {
         // Existing text box got modified. Dirty all the way up to the damaged position's line.
-        damagedLine = leadingInlineItemPositionByDamagedBox({ *damagedInlineTextBox, offset.value_or(0) }, m_inlineFormattingState.inlineItems(), m_displayBoxes);
+        damagedLine = leadingInlineItemPositionByDamagedBox({ *damagedInlineTextBox, offset.value_or(0) }, m_inlineItems, m_displayBoxes);
     } else {
         // New text box got appended. Let's dirty the last existing line.
         ASSERT(!offset);
-        damagedLine = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes);
+        damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes);
     }
 
     if (damagedLine) {
@@ -301,7 +301,7 @@ void InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTex
         return;
     }
 
-    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineFormattingState.inlineItems(), m_displayBoxes)) {
+    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItems, m_displayBoxes)) {
         m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
         m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
         return;
@@ -323,7 +323,7 @@ void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
         return;
     }
 
-    if (auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineFormattingState.inlineItems(), m_displayBoxes)) {
+    if (auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes)) {
         m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
         m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
         return;
@@ -340,7 +340,7 @@ void InlineInvalidation::inlineLevelBoxWillBeRemoved(UniqueRef<Box>&& layoutBox)
         return;
     }
 
-    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineFormattingState.inlineItems(), m_displayBoxes)) {
+    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItems, m_displayBoxes)) {
         m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
         m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
         m_inlineDamage.addDetachedBox(WTFMove(layoutBox));
