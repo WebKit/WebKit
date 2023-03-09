@@ -310,6 +310,7 @@ void CachedResource::loadFrom(const CachedResource& resource)
 void CachedResource::setBodyDataFrom(const CachedResource& resource)
 {
     m_data = resource.m_data;
+    m_cryptographicDigests = resource.m_cryptographicDigests;
     mutableResponse() = resource.response();
     mutableResponse().setTainting(m_responseTainting);
     setDecodedSize(resource.decodedSize());
@@ -338,6 +339,7 @@ void CachedResource::updateData(const SharedBuffer&)
 
 void CachedResource::finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics& metrics)
 {
+    clearCachedCryptographicDigests();
     setLoading(false);
     checkNotify(metrics);
 }
@@ -348,8 +350,14 @@ void CachedResource::error(CachedResource::Status status)
     ASSERT(errorOccurred());
     m_data = nullptr;
 
+    clearCachedCryptographicDigests();
     setLoading(false);
     checkNotify({ });
+}
+
+void CachedResource::clearCachedCryptographicDigests()
+{
+    m_cryptographicDigests.fill(std::nullopt);
 }
     
 void CachedResource::cancelLoad()
@@ -1035,6 +1043,17 @@ void CachedResource::previewResponseReceived(const ResourceResponse& response)
 }
 
 #endif
+
+ResourceCryptographicDigest CachedResource::cryptographicDigest(ResourceCryptographicDigest::Algorithm algorithm) const
+{
+    unsigned digestIndex = WTF::fastLog2(static_cast<unsigned>(algorithm));
+    RELEASE_ASSERT(digestIndex < m_cryptographicDigests.size());
+    ASSERT(static_cast<std::underlying_type_t<ResourceCryptographicDigest::Algorithm>>(algorithm) == (1 << digestIndex));
+    auto& existingDigest = m_cryptographicDigests[digestIndex];
+    if (!existingDigest)
+        existingDigest = cryptographicDigestForSharedBuffer(algorithm, resourceBuffer());
+    return *existingDigest;
+}
 
 }
 

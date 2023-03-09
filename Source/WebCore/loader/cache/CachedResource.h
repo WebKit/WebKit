@@ -25,6 +25,7 @@
 #include "CacheValidation.h"
 #include "CachedResourceClient.h"
 #include "FrameLoaderTypes.h"
+#include "ResourceCryptographicDigest.h"
 #include "ResourceError.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderIdentifier.h"
@@ -302,6 +303,8 @@ public:
     virtual void previewResponseReceived(const ResourceResponse&);
 #endif
 
+    ResourceCryptographicDigest cryptographicDigest(ResourceCryptographicDigest::Algorithm) const;
+
 protected:
     // CachedResource constructor that may be used when the CachedResource can already be filled with response data.
     CachedResource(const URL&, Type, PAL::SessionID, const CookieJar*);
@@ -313,6 +316,8 @@ protected:
     virtual void didReplaceSharedBufferContents() { }
 
     virtual void setBodyDataFrom(const CachedResource&);
+
+    void clearCachedCryptographicDigests();
 
 private:
     class Callback;
@@ -418,6 +423,8 @@ private:
     bool m_deleted { false };
     unsigned m_lruIndex { 0 };
 #endif
+
+    mutable std::array<std::optional<ResourceCryptographicDigest>, ResourceCryptographicDigest::algorithmCount> m_cryptographicDigests;
 };
 
 class CachedResource::Callback {
