@@ -527,6 +527,24 @@ TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifier)
     EXPECT_FALSE([fileManager fileExistsAtPath:generalStorageDirectory.get().path]);
 }
 
+TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierErrorWhenInUse)
+{
+    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    auto websiteDataStore = createWebsiteDataStoreAndPrepare(uuid.get(), @"");
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+
+    __block bool done = false;
+    [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
+        done = true;
+        EXPECT_TRUE(!!error);
+        EXPECT_TRUE([[error description] containsString:@"in use"]);
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WKWebsiteDataStore, ListIdentifiers)
 {
     __block auto uuid = [NSUUID UUID];

@@ -282,11 +282,16 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, Com
     if (!identifier)
         return completionHandler("Identifier is invalid"_s);
 
+    if (auto existingDataStore = existingDataStoreForIdentifier(identifier)) {
+        if (existingDataStore->hasActivePages())
+            return completionHandler("Data store is in use"_s);
+    }
+
     websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
         bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
             if (!deleted)
-                return completionHandler("WebsiteDataStore with this identifier does not exist or deletion failed"_s);
+                return completionHandler("Failed to delete files on disk"_s);
 
             completionHandler({ });
         });
