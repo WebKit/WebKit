@@ -152,7 +152,9 @@ WTF_EXPORT_PRIVATE bool markPurgeable(const String&);
 WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path); // Returns file names, not full paths.
 
 WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
+#if !PLATFORM(WIN)
 WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(const char*);
+#endif
 
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 
@@ -198,7 +200,7 @@ WTF_EXPORT_PRIVATE String decodeFromFilename(const String&);
 
 WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
 
-#if USE(CF)
+#if USE(CF) && !PLATFORM(WIN)
 WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 

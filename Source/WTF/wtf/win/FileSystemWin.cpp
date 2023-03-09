@@ -136,22 +136,18 @@ std::optional<WallTime> fileCreationTime(const String& path)
     return WallTime::fromRawSeconds(time);
 }
 
-#if !USE(CF)
-
 CString fileSystemRepresentation(const String& path)
 {
-    auto characters = wcharFrom(StringView(path).upconvertedCharacters());
-    int size = WideCharToMultiByte(CP_ACP, 0, characters, path.length(), 0, 0, 0, 0) - 1;
+    auto characters = StringView(path).upconvertedCharacters();
+    int size = WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), 0, 0, 0, 0);
 
     char* buffer;
     CString string = CString::newUninitialized(size, buffer);
 
-    WideCharToMultiByte(CP_ACP, 0, characters, path.length(), buffer, size, 0, 0);
+    WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), buffer, size, 0, 0);
 
     return string;
 }
-
-#endif // !USE(CF)
 
 static String bundleName()
 {

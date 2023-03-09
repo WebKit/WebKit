@@ -57,7 +57,6 @@ if (USE_CF)
     )
     list(APPEND WTF_SOURCES
         cf/CFURLExtras.cpp
-        cf/FileSystemCF.cpp
         cf/URLCF.cpp
 
         text/cf/AtomStringImplCF.cpp
