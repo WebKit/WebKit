@@ -1166,7 +1166,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, MayOverConstra
         if (lineConstraints.right)
             adjustedRect.setRight(std::max(adjustedRect.left(), std::min<InlineLayoutUnit>(adjustedRect.right(), lineConstraints.right->x)));
 
-        m_lineIsConstrainedByFloat = adjustedRect != m_lineLogicalRect;
+        m_lineIsConstrainedByFloat = m_lineIsConstrainedByFloat || adjustedRect != m_lineLogicalRect;
         m_lineLogicalRect = adjustedRect;
     };
     adjustLineRectIfNeeded();
