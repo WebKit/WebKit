@@ -88,6 +88,8 @@ struct AcceleratedEffectValues {
     {
     }
 
+    WEBCORE_EXPORT AcceleratedEffectValues clone() const;
+
     WEBCORE_EXPORT AcceleratedEffectValues(const AcceleratedEffectValues&);
     AcceleratedEffectValues(const RenderStyle&, const IntRect&);
     AcceleratedEffectValues& operator=(const AcceleratedEffectValues&) = default;

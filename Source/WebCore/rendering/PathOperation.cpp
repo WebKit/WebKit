@@ -45,6 +45,15 @@ Ref<ReferencePathOperation> ReferencePathOperation::create(std::optional<Path>&&
     return adoptRef(*new ReferencePathOperation(WTFMove(path)));
 }
 
+Ref<PathOperation> ReferencePathOperation::clone() const
+{
+    if (auto path = this->path()) {
+        auto pathCopy = *path;
+        return adoptRef(*new ReferencePathOperation(WTFMove(pathCopy)));
+    }
+    return adoptRef(*new ReferencePathOperation(std::nullopt));
+}
+
 ReferencePathOperation::ReferencePathOperation(const String& url, const AtomString& fragment, const RefPtr<SVGElement> element)
     : PathOperation(Reference)
     , m_url(url)
@@ -69,6 +78,13 @@ const SVGElement* ReferencePathOperation::element() const
 Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position)
 {
     return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(containingBlockBoundingRect), WTFMove(position)));
+}
+
+Ref<PathOperation> RayPathOperation::clone() const
+{
+    auto containingBlockBoundingRect = m_containingBlockBoundingRect;
+    auto position = m_position;
+    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining, WTFMove(containingBlockBoundingRect), WTFMove(position)));
 }
 
 bool RayPathOperation::canBlend(const PathOperation& to) const

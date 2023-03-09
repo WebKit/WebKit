@@ -61,6 +61,8 @@ public:
         Inset
     };
 
+    virtual Ref<BasicShape> clone() const = 0;
+
     virtual Type type() const = 0;
 
     virtual const Path& path(const FloatRect&) = 0;
@@ -172,6 +174,8 @@ public:
     static Ref<BasicShapeCircle> create() { return adoptRef(*new BasicShapeCircle); }
     WEBCORE_EXPORT static Ref<BasicShapeCircle> create(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&&);
 
+    Ref<BasicShape> clone() const final;
+
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radius() const { return m_radius; }
@@ -205,6 +209,8 @@ class BasicShapeEllipse final : public BasicShape {
 public:
     static Ref<BasicShapeEllipse> create() { return adoptRef(*new BasicShapeEllipse); }
     WEBCORE_EXPORT static Ref<BasicShapeEllipse> create(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&& radiusX, BasicShapeRadius&& radiusY);
+
+    Ref<BasicShape> clone() const final;
 
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
@@ -243,6 +249,8 @@ public:
     static Ref<BasicShapePolygon> create() { return adoptRef(*new BasicShapePolygon); }
     WEBCORE_EXPORT static Ref<BasicShapePolygon> create(WindRule, Vector<Length>&& values);
 
+    Ref<BasicShape> clone() const final;
+
     const Vector<Length>& values() const { return m_values; }
     const Length& getXAt(unsigned i) const { return m_values[2 * i]; }
     const Length& getYAt(unsigned i) const { return m_values[2 * i + 1]; }
@@ -280,6 +288,8 @@ public:
 
     WEBCORE_EXPORT static Ref<BasicShapePath> create(std::unique_ptr<SVGPathByteStream>&&, float zoom, WindRule);
 
+    Ref<BasicShape> clone() const final;
+
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     WindRule windRule() const override { return m_windRule; }
 
@@ -313,6 +323,8 @@ class BasicShapeInset final : public BasicShape {
 public:
     static Ref<BasicShapeInset> create() { return adoptRef(*new BasicShapeInset); }
     WEBCORE_EXPORT static Ref<BasicShapeInset> create(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius);
+
+    Ref<BasicShape> clone() const final;
 
     const Length& top() const { return m_top; }
     const Length& right() const { return m_right; }

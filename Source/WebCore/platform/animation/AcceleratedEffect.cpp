@@ -42,6 +42,21 @@
 
 namespace WebCore {
 
+AcceleratedEffectKeyframe AcceleratedEffectKeyframe::clone() const
+{
+    RefPtr<TimingFunction> clonedTimingFunction;
+    if (auto* srcTimingFunction = timingFunction.get())
+        clonedTimingFunction = srcTimingFunction->clone();
+
+    return {
+        offset,
+        values.clone(),
+        WTFMove(clonedTimingFunction),
+        compositeOperation,
+        animatedProperties
+    };
+};
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(AcceleratedEffect);
 
 static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableProperty property, const Settings& settings)
@@ -96,7 +111,26 @@ Ref<AcceleratedEffect> AcceleratedEffect::create(Vector<AcceleratedEffectKeyfram
     return adoptRef(*new AcceleratedEffect(WTFMove(keyframes), type, fill, direction, composite, WTFMove(timingFunction), WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, iterationStart, iterations, playbackRate, delay, endDelay, iterationDuration, activeDuration, endTime, startTime, holdTime));
 }
 
-Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter)
+Ref<AcceleratedEffect> AcceleratedEffect::clone() const
+{
+    auto clonedKeyframes = m_keyframes.map([](const auto& keyframe) {
+        return keyframe.clone();
+    });
+
+    RefPtr<TimingFunction> clonedTimingFunction;
+    if (auto* timingFunction = m_timingFunction.get())
+        clonedTimingFunction = timingFunction->clone();
+
+    RefPtr<TimingFunction> clonedDefaultKeyframeTimingFunction;
+    if (auto* defaultKeyframeTimingFunction = m_defaultKeyframeTimingFunction.get())
+        clonedDefaultKeyframeTimingFunction = defaultKeyframeTimingFunction->clone();
+
+    auto clonedAnimatedProperties = m_animatedProperties;
+
+    return AcceleratedEffect::create(WTFMove(clonedKeyframes), m_animationType, m_fill, m_direction, m_compositeOperation, WTFMove(clonedTimingFunction), WTFMove(clonedDefaultKeyframeTimingFunction), WTFMove(clonedAnimatedProperties), m_paused, m_iterationStart, m_iterations, m_playbackRate, m_delay, m_endDelay, m_iterationDuration, m_activeDuration, m_endTime, m_startTime, m_holdTime);
+}
+
+Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter) const
 {
     return adoptRef(*new AcceleratedEffect(*this, propertyFilter));
 }

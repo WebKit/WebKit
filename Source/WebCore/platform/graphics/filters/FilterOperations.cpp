@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+FilterOperations::FilterOperations(Vector<RefPtr<FilterOperation>>&& operations)
+    : m_operations(WTFMove(operations))
+{
+}
+
 bool FilterOperations::operator==(const FilterOperations& other) const
 {
     size_t size = m_operations.size();

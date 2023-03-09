@@ -157,6 +157,14 @@ BasicShapeCircle::BasicShapeCircle(BasicShapeCenterCoordinate&& centerX, BasicSh
 {
 }
 
+Ref<BasicShape> BasicShapeCircle::clone() const
+{
+    auto centerX = m_centerX;
+    auto centerY = m_centerY;
+    auto radius = m_radius;
+    return adoptRef(*new BasicShapeCircle(WTFMove(centerX), WTFMove(centerY), WTFMove(radius)));
+}
+
 bool BasicShapeCircle::operator==(const BasicShape& other) const
 {
     if (type() != other.type())
@@ -232,6 +240,15 @@ BasicShapeEllipse::BasicShapeEllipse(BasicShapeCenterCoordinate&& centerX, Basic
     , m_radiusX(WTFMove(radiusX))
     , m_radiusY(WTFMove(radiusY))
 {
+}
+
+Ref<BasicShape> BasicShapeEllipse::clone() const
+{
+    auto centerX = m_centerX;
+    auto centerY = m_centerY;
+    auto radiusX = m_radiusX;
+    auto radiusY = m_radiusY;
+    return adoptRef(*new BasicShapeEllipse(WTFMove(centerX), WTFMove(centerY), WTFMove(radiusX), WTFMove(radiusY)));
 }
 
 bool BasicShapeEllipse::operator==(const BasicShape& other) const
@@ -319,6 +336,12 @@ BasicShapePolygon::BasicShapePolygon(WindRule windRule, Vector<Length>&& values)
 {
 }
 
+Ref<BasicShape> BasicShapePolygon::clone() const
+{
+    auto values = m_values;
+    return adoptRef(*new BasicShapePolygon(m_windRule, WTFMove(values)));
+}
+
 bool BasicShapePolygon::operator==(const BasicShape& other) const
 {
     if (type() != other.type())
@@ -399,6 +422,14 @@ BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream, 
 {
 }
 
+Ref<BasicShape> BasicShapePath::clone() const
+{
+    std::unique_ptr<SVGPathByteStream> byteStream;
+    if (m_byteStream)
+        byteStream = m_byteStream->copy();
+    return adoptRef(*new BasicShapePath(WTFMove(byteStream), m_zoom, m_windRule));
+}
+
 const Path& BasicShapePath::path(const FloatRect& boundingBox)
 {
     return cachedTransformedByteStreamPath(*m_byteStream, m_zoom, boundingBox.location());
@@ -457,6 +488,19 @@ BasicShapeInset::BasicShapeInset(Length&& right, Length&& top, Length&& bottom, 
     , m_bottomRightRadius(WTFMove(bottomRightRadius))
     , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
 {
+}
+
+Ref<BasicShape> BasicShapeInset::clone() const
+{
+    auto right = m_right;
+    auto top = m_top;
+    auto bottom = m_bottom;
+    auto left = m_left;
+    auto topLeftRadius = m_topLeftRadius;
+    auto topRightRadius = m_topRightRadius;
+    auto bottomRightRadius = m_bottomRightRadius;
+    auto bottomLeftRadius = m_bottomLeftRadius;
+    return adoptRef(*new BasicShapeInset(WTFMove(right), WTFMove(top), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
 }
 
 bool BasicShapeInset::operator==(const BasicShape& other) const
