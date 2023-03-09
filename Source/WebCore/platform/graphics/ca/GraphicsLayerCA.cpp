@@ -1303,18 +1303,19 @@ void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifi
 void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, ContentsLayerPurpose purpose)
 {
 #if HAVE(AVKIT)
-    auto hostingContextID = videoElement.layerHostingContextID();
-    if (hostingContextID != m_layerHostingContextID) {
-        m_contentsLayer = createPlatformVideoLayer(videoElement, this);
-        m_layerHostingContextID = hostingContextID;
+    if (auto hostingContextID = videoElement.layerHostingContextID()) {
+        if (hostingContextID != m_layerHostingContextID) {
+            m_contentsLayer = createPlatformVideoLayer(videoElement, this);
+            m_layerHostingContextID = hostingContextID;
+        }
+        m_contentsLayerPurpose = purpose;
+        m_contentsDisplayDelegate = nullptr;
+        noteSublayersChanged();
+        noteLayerPropertyChanged(ContentsPlatformLayerChanged);
+        return;
     }
-    m_contentsLayerPurpose = purpose;
-    m_contentsDisplayDelegate = nullptr;
-    noteSublayersChanged();
-    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
-#else
-    setContentsToPlatformLayer(videoElement.platformLayer(), purpose);
 #endif
+    setContentsToPlatformLayer(videoElement.platformLayer(), purpose);
 }
 
 void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate, ContentsLayerPurpose purpose)
