@@ -3423,6 +3423,9 @@ static bool isProgramaticallyFocusable(Element& element)
 // https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
 static RefPtr<Element> autoFocusDelegate(ContainerNode& target, FocusTrigger trigger)
 {
+    if (auto* root = target.shadowRoot(); root && !root->delegatesFocus())
+        return nullptr;
+
     for (auto& element : descendantsOfType<Element>(target)) {
         if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
             continue;
@@ -3448,6 +3451,8 @@ static RefPtr<Element> autoFocusDelegate(ContainerNode& target, FocusTrigger tri
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
 RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, FocusTrigger trigger)
 {
+    if (auto* root = target.shadowRoot(); root && !root->delegatesFocus())
+        return nullptr;
     if (auto element = autoFocusDelegate(target, trigger))
         return element;
     for (auto& element : descendantsOfType<Element>(target)) {
@@ -3468,6 +3473,12 @@ RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, Focus
         }
     }
     return nullptr;
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
+RefPtr<Element> Element::findAutofocusDelegate(FocusTrigger trigger)
+{
+    return autoFocusDelegate(*this, trigger);
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate

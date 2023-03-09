@@ -1284,6 +1284,24 @@ static HTMLElement* topmostPopoverAncestor(Element& newPopover)
     return topmostAncestor.get();
 }
 
+// https://html.spec.whatwg.org/#popover-focusing-steps
+static void runPopoverFocusingSteps(HTMLElement& popover)
+{
+    RefPtr control = popover.hasAttribute(autofocusAttr) ? &popover : popover.findAutofocusDelegate();
+
+    if (!control)
+        return;
+
+    control->runFocusingStepsForAutofocus();
+
+    if (!control->document().isSameOriginAsTopDocument())
+        return;
+
+    Ref topDocument = control->document().topDocument();
+    topDocument->clearAutofocusCandidates();
+    topDocument->setAutofocusProcessed();
+}
+
 void HTMLElement::queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState)
 {
     if (auto queuedEventData = popoverData()->queuedToggleEventData())
@@ -1339,13 +1357,13 @@ ExceptionOr<void> HTMLElement::showPopover()
 
     popoverData()->setPreviouslyFocusedElement(nullptr);
 
-    // FIXME: Run popover focusing steps.
-
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
         { CSSSelector::PseudoClassOpen, true },
         { CSSSelector::PseudoClassClosed, false }
     });
     popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
+
+    runPopoverFocusingSteps(*this);
 
     if (shouldRestoreFocus && popoverState() == PopoverState::Auto)
         popoverData()->setPreviouslyFocusedElement(previouslyFocusedElement.get());
