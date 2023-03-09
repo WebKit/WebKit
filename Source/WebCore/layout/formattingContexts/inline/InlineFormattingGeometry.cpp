@@ -261,12 +261,11 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
     return { };
 }
 
-LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft) const
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft, const InlineDisplay::Content& displayContent) const
 {
     ASSERT(outOfFlowBox.style().isOriginalDisplayInlineType());
-    auto& formattingState = formattingContext().formattingState();
-    auto& lines = formattingState.lines();
-    auto& boxes = formattingState.boxes();
+    auto& lines = displayContent.lines;
+    auto& boxes = displayContent.boxes;
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());
@@ -320,14 +319,13 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
     return leftSideToLogicalTopLeft(nextDisplayBox, lines[nextDisplayBox.lineIndex()]);
 }
 
-LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft) const
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft, const InlineDisplay::Content& displayContent) const
 {
     ASSERT(outOfFlowBox.style().isDisplayBlockLevel());
 
-    auto& formattingState = formattingContext().formattingState();
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
-    auto& lines = formattingState.lines();
-    auto& boxes = formattingState.boxes();
+    auto& lines = displayContent.lines;
+    auto& boxes = displayContent.boxes;
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());

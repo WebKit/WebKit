@@ -47,14 +47,6 @@ public:
     void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
     void appendInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
 
-    const InlineDisplay::Lines& lines() const { return m_displayLines; }
-    InlineDisplay::Lines& lines() { return m_displayLines; }
-    void addLine(const InlineDisplay::Line& line) { m_displayLines.append(line); }
-
-    const InlineDisplay::Boxes& boxes() const { return m_displayBoxes; }
-    InlineDisplay::Boxes& boxes() { return m_displayBoxes; }
-    void addBoxes(InlineDisplay::Boxes&& boxes) { m_displayBoxes.appendVector(WTFMove(boxes)); }
-
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
 
@@ -67,6 +59,12 @@ public:
     void addNestedListMarkerOffset(const ElementBox& listMarkerBox, LayoutUnit offset) { m_nestedListMarkerOffset.add(&listMarkerBox, offset); }
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffset.get(&listMarkerBox); }
     void resetNestedListMarkerOffsets() { return m_nestedListMarkerOffset.clear(); }
+
+    // FIXME: Only used by the full LFC codepath.
+    const InlineDisplay::Lines& lines() const { return m_displayLines; }
+    InlineDisplay::Lines& lines() { return m_displayLines; }
+    const InlineDisplay::Boxes& boxes() const { return m_displayBoxes; }
+    InlineDisplay::Boxes& boxes() { return m_displayBoxes; }
 
 private:
     // Cacheable input to line layout.
