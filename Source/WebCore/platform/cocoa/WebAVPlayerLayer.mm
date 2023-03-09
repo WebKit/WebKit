@@ -26,18 +26,11 @@
 #import "config.h"
 #import "WebAVPlayerLayer.h"
 
-#if HAVE(AVKIT)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "GeometryUtilities.h"
-#import "VideoFullscreenChangeObserver.h"
-#import "WebAVPlayerController.h"
-#import <wtf/RunLoop.h>
-
-#if PLATFORM(IOS_FAMILY)
 #import "VideoFullscreenInterfaceAVKit.h"
-#else
-#import "VideoFullscreenInterfaceMac.h"
-#endif
+#import "WebAVPlayerController.h"
 
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -54,7 +47,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     RefPtr<PlatformVideoFullscreenInterface> _fullscreenInterface;
     RetainPtr<WebAVPlayerController> _playerController;
     RetainPtr<CALayer> _videoSublayer;
-    FloatRect _targetVideoFrame;
+    FloatRect _videoSublayerFrame;
     RetainPtr<NSString> _videoGravity;
     RetainPtr<NSString> _previousVideoGravity;
 }
@@ -67,7 +60,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
         self.allowsHitTesting = NO;
         _videoGravity = AVLayerVideoGravityResizeAspect;
         _previousVideoGravity = AVLayerVideoGravityResizeAspect;
-        self.name = @"WebAVPlayerLayer";
     }
     return self;
 }
@@ -132,46 +124,35 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     if ([_videoSublayer superlayer] != self)
         return;
 
+    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
+
     if (self.videoDimensions.height <= 0 || self.videoDimensions.width <= 0)
         return;
 
-    FloatRect sourceVideoFrame = self.videoSublayer.bounds;
-    FloatRect targetVideoFrame = [self calculateTargetVideoFrame];
-
+    FloatRect sourceVideoFrame;
+    FloatRect targetVideoFrame;
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
 
-    if ([AVLayerVideoGravityResizeAspect isEqualToString:_previousVideoGravity.get()])
-        sourceVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, sourceVideoFrame);
+    if ([AVLayerVideoGravityResize isEqualToString:_previousVideoGravity.get()])
+        sourceVideoFrame = self.modelVideoLayerFrame;
+    else if ([AVLayerVideoGravityResizeAspect isEqualToString:_previousVideoGravity.get()])
+        sourceVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.modelVideoLayerFrame);
     else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:_previousVideoGravity.get()])
-        sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, sourceVideoFrame);
+        sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
     else
-        ASSERT([AVLayerVideoGravityResize isEqualToString:_previousVideoGravity.get()]);
+        ASSERT_NOT_REACHED();
 
-    if (sourceVideoFrame.isEmpty()) {
-        // The initial resize will have an empty videoLayerFrame, which makes
-        // the subsequent calculations incorrect. When this happens, just do
-        // the synchronous resize step instead.
-        [self resolveBounds];
-        return;
-    }
+    targetVideoFrame = [self calculateTargetVideoFrame];
 
-    if (sourceVideoFrame == targetVideoFrame && CGAffineTransformIsIdentity(self.affineTransform))
-        return;
-
+    UIView *view = (UIView *)[_videoSublayer delegate];
     CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
-
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [_videoSublayer setAnchorPoint:CGPointMake(0.5, 0.5)];
-    [_videoSublayer setAffineTransform:transform];
-    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
-    [CATransaction commit];
-
-    _targetVideoFrame = targetVideoFrame;
+    [view setTransform:transform];
 
     NSTimeInterval animationDuration = [CATransaction animationDuration];
-    RunLoop::main().dispatch([self, strongSelf = retainPtr(self), animationDuration] {
+    RunLoop::main().dispatch([self, strongSelf = retainPtr(self), targetVideoFrame, animationDuration] {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+
+        _videoSublayerFrame = targetVideoFrame;
         [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
     });
 }
@@ -183,21 +164,20 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     if ([_videoSublayer superlayer] != self)
         return;
 
-    if (CGRectEqualToRect(self.videoSublayer.bounds, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform]))
+    if (CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds]) && CGAffineTransformIsIdentity([(UIView *)[_videoSublayer delegate] transform]))
         return;
 
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
 
+    self.modelVideoLayerFrame = [self bounds];
     if (auto* model = _fullscreenInterface->videoFullscreenModel())
-        model->setVideoLayerFrame(_targetVideoFrame);
+        model->setVideoLayerFrame(_videoSublayerFrame);
 
     _previousVideoGravity = _videoGravity;
 
-    [_videoSublayer setAnchorPoint:CGPointMake(0.5, 0.5)];
-    [_videoSublayer setAffineTransform:CGAffineTransformIdentity];
-    [_videoSublayer setFrame:_targetVideoFrame];
+    [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
 
     [CATransaction commit];
 }
@@ -215,6 +195,9 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
     _previousVideoGravity = _videoGravity;
     _videoGravity = videoGravity;
+
+    if (![_playerController delegate])
+        return;
 
     MediaPlayerEnums::VideoGravity gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
     if (videoGravity == AVLayerVideoGravityResize)
@@ -259,4 +242,5 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 @end
 
-#endif // HAVE(AVKIT)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+

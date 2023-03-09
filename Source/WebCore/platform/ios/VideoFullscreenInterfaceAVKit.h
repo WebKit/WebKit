@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
@@ -240,4 +240,5 @@ private:
 
 }
 
-#endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+

@@ -832,8 +832,6 @@ void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
 {
 #if PLATFORM(COCOA)
-    m_videoLayer = createVideoLayerRemote(const_cast<MediaPlayerPrivateRemote*>(this), m_layerHostingContextID, m_videoFullscreenGravity, expandedIntSize(m_videoInlineSize));
-    m_videoLayerManager->setVideoLayer(m_videoLayer.get(), expandedIntSize(m_videoInlineSize));
     return m_videoLayerManager->videoInlineLayer();
 #else
     return nullptr;
@@ -982,7 +980,6 @@ void MediaPlayerPrivateRemote::setPresentationSize(const IntSize& size)
 void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     connection().send(Messages::RemoteMediaPlayerProxy::SetVideoInlineSizeFenced(size, machSendRight), m_id);
-    m_videoInlineSize = size;
 }
 #endif
 
@@ -1492,16 +1489,6 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
     return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 #endif
-
-LayerHostingContextID MediaPlayerPrivateRemote::hostingContextID() const
-{
-    return m_layerHostingContextID;
-}
-
-void MediaPlayerPrivateRemote::setLayerHostingContextID(LayerHostingContextID inID)
-{
-    m_layerHostingContextID = inID;
-}
 
 } // namespace WebKit
 

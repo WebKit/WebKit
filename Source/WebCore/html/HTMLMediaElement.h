@@ -33,7 +33,6 @@
 #include "CaptionUserPreferences.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElementEnums.h"
-#include "HTMLMediaElementIdentifier.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaElementSession.h"
@@ -61,10 +60,6 @@
 #ifndef NDEBUG
 #include <wtf/StringPrintStream.h>
 #endif
-
-namespace WTF {
-class MachSendRight;
-}
 
 namespace JSC {
 class JSValue;
@@ -160,8 +155,6 @@ public:
     using HTMLElement::weakPtrFactory;
     using HTMLElement::WeakValueType;
     using HTMLElement::WeakPtrImplType;
-
-    HTMLMediaElementIdentifier identifier() const { return m_identifier; }
 
     RefPtr<MediaPlayer> player() const { return m_player; }
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
@@ -636,10 +629,6 @@ public:
 
     bool hasSource() const { return hasCurrentSrc() || srcObject(); }
 
-    WEBCORE_EXPORT LayerHostingContextID layerHostingContextID();
-    WEBCORE_EXPORT WebCore::FloatSize naturalSize();
-    WEBCORE_EXPORT WebCore::FloatSize videoInlineSize() const;
-    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
     void updateMediaState();
 
 protected:
@@ -1027,8 +1016,6 @@ private:
 #endif
 
     bool shouldDisableHDR() const;
-
-    HTMLMediaElementIdentifier m_identifier { HTMLMediaElementIdentifier::generate() };
 
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;

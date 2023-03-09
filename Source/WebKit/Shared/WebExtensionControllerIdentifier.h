@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
@@ -33,3 +35,5 @@ enum WebExtensionControllerIdentifierType { };
 using WebExtensionControllerIdentifier = ObjectIdentifier<WebExtensionControllerIdentifierType>;
 
 }
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -8428,33 +8428,6 @@ bool HTMLMediaElement::shouldOverridePauseDuringRouteChange() const
 #endif
 }
 
-LayerHostingContextID HTMLMediaElement::layerHostingContextID()
-{
-    if (m_player)
-        return m_player->hostingContextID();
-    return { };
-}
-
-FloatSize HTMLMediaElement::naturalSize()
-{
-    if (m_player)
-        return m_player->naturalSize();
-    return { };
-}
-
-FloatSize HTMLMediaElement::videoInlineSize() const
-{
-    if (m_player)
-        return m_player->videoInlineSize();
-    return { };
-}
-
-void HTMLMediaElement::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
-{
-    if (m_player)
-        m_player->setVideoInlineSizeFenced(size, fence);
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 void HTMLMediaElement::scheduleUpdateMediaState()
