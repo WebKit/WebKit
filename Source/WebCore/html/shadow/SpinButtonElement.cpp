@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner& spinButtonOwner)
     : HTMLDivElement(divTag, document, CreateSpinButtonElement)
-    , m_spinButtonOwner(&spinButtonOwner)
+    , m_spinButtonOwner(spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
