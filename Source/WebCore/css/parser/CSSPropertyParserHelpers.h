@@ -230,6 +230,7 @@ RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange&, CSSPropertyID currentShorthand, CSSParserMode);
 RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSide(CSSParserTokenRange&, CSSPropertyID currentShorthand, CSSParserMode);

@@ -721,13 +721,14 @@ enum class TextAlignMode : uint8_t {
     End,
 };
 
+static const size_t TextTransformLineBits = 5;
 enum class TextTransform : uint8_t {
-    Capitalize,
-    Uppercase,
-    Lowercase,
-    FullSizeKana,
-    FullWidth,
-    None
+    None          = 0,
+    Capitalize    = 1 << 0,
+    Uppercase     = 1 << 1,
+    Lowercase     = 1 << 2,
+    FullSizeKana  = 1 << 3,
+    FullWidth     = 1 << 4,
 };
 
 static const size_t TextDecorationLineBits = 4;

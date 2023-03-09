@@ -414,7 +414,7 @@ public:
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
     TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(m_rareInheritedData->textAlignLast); }
     TextGroupAlign textGroupAlign() const { return static_cast<TextGroupAlign>(m_nonInheritedData->rareData->textGroupAlign); }
-    TextTransform textTransform() const { return static_cast<TextTransform>(m_inheritedFlags.textTransform); }
+    OptionSet<TextTransform> textTransform() const { return OptionSet<TextTransform>::fromRaw(m_inheritedFlags.textTransform); }
     OptionSet<TextDecorationLine> textDecorationsInEffect() const { return OptionSet<TextDecorationLine>::fromRaw(m_inheritedFlags.textDecorationLines); }
     OptionSet<TextDecorationLine> textDecorationLine() const { return OptionSet<TextDecorationLine>::fromRaw(m_nonInheritedFlags.textDecorationLine); }
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(m_nonInheritedData->rareData->textDecorationStyle); }
@@ -1094,7 +1094,7 @@ public:
     void setTextAlign(TextAlignMode v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
     void setTextAlignLast(TextAlignLast v) { SET_VAR(m_rareInheritedData, textAlignLast, static_cast<unsigned>(v)); }
     void setTextGroupAlign(TextGroupAlign v) { SET_NESTED_VAR(m_nonInheritedData, rareData, textGroupAlign, static_cast<unsigned>(v)); }
-    void setTextTransform(TextTransform v) { m_inheritedFlags.textTransform = static_cast<unsigned>(v); }
+    void setTextTransform(OptionSet<TextTransform> v) { m_inheritedFlags.textTransform = v.toRaw(); }
     void addToTextDecorationsInEffect(OptionSet<TextDecorationLine> v) { m_inheritedFlags.textDecorationLines |= static_cast<unsigned>(v.toRaw()); }
     void setTextDecorationsInEffect(OptionSet<TextDecorationLine> v) { m_inheritedFlags.textDecorationLines = v.toRaw(); }
     void setTextDecorationLine(OptionSet<TextDecorationLine> v) { m_nonInheritedFlags.textDecorationLine = v.toRaw(); }
@@ -1717,7 +1717,7 @@ public:
     static ListStylePosition initialListStylePosition() { return ListStylePosition::Outside; }
     static const AtomString& initialListStyleStringValue() { return nullAtom(); }
     static ListStyleType initialListStyleType() { return ListStyleType::Disc; }
-    static TextTransform initialTextTransform() { return TextTransform::None; }
+    static OptionSet<TextTransform> initialTextTransform() { return OptionSet<TextTransform> { }; }
     static Visibility initialVisibility() { return Visibility::Visible; }
     static WhiteSpace initialWhiteSpace() { return WhiteSpace::Normal; }
     static float initialHorizontalBorderSpacing() { return 0; }
@@ -2117,7 +2117,7 @@ private:
         unsigned listStylePosition : 1; // ListStylePosition
         unsigned visibility : 2; // Visibility
         unsigned textAlign : 4; // TextAlignMode
-        unsigned textTransform : 3; // TextTransform
+        unsigned textTransform : TextTransformLineBits; // TextTransform
         unsigned textDecorationLines : TextDecorationLineBits;
         unsigned cursor : 6; // CursorType
 #if ENABLE(CURSOR_VISIBILITY)
@@ -2125,7 +2125,7 @@ private:
 #endif
         unsigned direction : 1; // TextDirection
         unsigned whiteSpace : 3; // WhiteSpace
-        // 36 bits
+        // 38 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
 
@@ -2135,16 +2135,16 @@ private:
         unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 47 bits
+        // 49 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 49 bits
+        // 51 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 54 bits
+        // 56 bits
     };
 
     // This constructor is used to implement the replace operation.

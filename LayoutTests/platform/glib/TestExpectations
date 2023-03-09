@@ -3237,6 +3237,9 @@ webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeou
 # Missing support for UIScriptController.paste()
 fast/forms/input-text-max-length-emojis.html [ Failure ]
 
+# Missing text-transform
+webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

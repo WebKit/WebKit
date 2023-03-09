@@ -165,7 +165,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.listStylePosition = static_cast<unsigned>(initialListStylePosition());
     m_inheritedFlags.visibility = static_cast<unsigned>(initialVisibility());
     m_inheritedFlags.textAlign = static_cast<unsigned>(initialTextAlign());
-    m_inheritedFlags.textTransform = static_cast<unsigned>(initialTextTransform());
+    m_inheritedFlags.textTransform = initialTextTransform().toRaw();
     m_inheritedFlags.textDecorationLines = initialTextDecorationLine().toRaw();
     m_inheritedFlags.cursor = static_cast<unsigned>(initialCursor());
 #if ENABLE(CURSOR_VISIBILITY)
