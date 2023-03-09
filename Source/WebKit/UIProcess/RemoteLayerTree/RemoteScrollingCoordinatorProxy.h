@@ -134,14 +134,6 @@ public:
     void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
 
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) { }
-    
-    WebCore::FloatPoint currentMainFrameScrollPosition() const;
-    WebCore::FloatRect computeVisibleContentRect();
-    WebCore::IntPoint scrollOrigin() const;
-    int headerHeight() const;
-    int footerHeight() const;
-    float mainFrameScaleFactor() const;
-    WebCore::FloatSize totalContentsSize() const;
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

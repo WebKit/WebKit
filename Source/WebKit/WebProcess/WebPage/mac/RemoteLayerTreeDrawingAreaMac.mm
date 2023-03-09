@@ -96,6 +96,7 @@ void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::F
 
     scale *= m_webPage.viewScaleFactor();
     
+    // FIXME: Constrain scale and origin
     applyTransientZoomToPage(scale, origin);
 }
 

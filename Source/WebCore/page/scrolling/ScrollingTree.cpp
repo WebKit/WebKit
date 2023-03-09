@@ -527,7 +527,7 @@ void ScrollingTree::clearLatchedNode()
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
 {
     Locker locker { m_treeStateLock };
-    return m_rootNode->currentScrollPosition();
+    return m_treeState.mainFrameScrollPosition;
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
@@ -546,42 +546,6 @@ OverscrollBehavior ScrollingTree::mainFrameVerticalOverscrollBehavior() const
 {
     Locker locker { m_treeLock };
     return m_rootNode ? m_rootNode->verticalOverscrollBehavior() : OverscrollBehavior::Auto;
-}
-
-IntPoint ScrollingTree::mainFrameScrollOrigin() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->scrollOrigin() : IntPoint();
-}
-
-int ScrollingTree::mainFrameHeaderHeight() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->headerHeight() : 0;
-}
-
-int ScrollingTree::mainFrameFooterHeight() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->footerHeight() : 0;
-}
-
-float ScrollingTree::mainFrameScaleFactor() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->frameScaleFactor() : 1;
-}
-
-FloatSize ScrollingTree::totalContentsSize() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->totalContentsSize() : FloatSize();
-}
-
-FloatRect ScrollingTree::layoutViewport() const
-{
-    Locker locker { m_treeLock };
-    return m_rootNode ? m_rootNode->layoutViewport() : FloatRect();
 }
 
 void ScrollingTree::setGestureState(std::optional<WheelScrollGestureState> gestureState)

@@ -38,7 +38,6 @@
 #import <WebCore/FloatPoint.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
-#import <WebCore/ScrollingTreeScrollingNode.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -201,38 +200,20 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
 
 void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
 {
-    auto constrainedOrigin = origin;
+    LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - scale " << scale << " origin " << origin);
 
-    auto visibleContentRect = m_webPageProxy.scrollingCoordinatorProxy()->computeVisibleContentRect();
-    
-    constrainedOrigin = visibleContentRect.location();
-    constrainedOrigin.moveBy(-origin);
-
-    IntSize scaledTotalContentsSize = roundedIntSize(m_webPageProxy.scrollingCoordinatorProxy()->totalContentsSize());
-    scaledTotalContentsSize.scale(scale / m_webPageProxy.scrollingCoordinatorProxy()->mainFrameScaleFactor());
-
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom constrainScrollPositionForOverhang - constrainedOrigin: " << constrainedOrigin << " visibleContentRect: " << visibleContentRect << " scaledTotalContentsSize: " << scaledTotalContentsSize << "scrollOrigin :"<<m_webPageProxy.scrollingCoordinatorProxy()->scrollOrigin() << "headerHeight :" << m_webPageProxy.scrollingCoordinatorProxy()->headerHeight() << " footerHeight : " << m_webPageProxy.scrollingCoordinatorProxy()->footerHeight());
-    
-    // Scaling may have exposed the overhang area, so we need to constrain the final
-    // layer position exactly like scrolling will once it's committed, to ensure that
-    // scrolling doesn't make the view jump.
-    constrainedOrigin = ScrollableArea::constrainScrollPositionForOverhang(roundedIntRect(visibleContentRect), scaledTotalContentsSize, roundedIntPoint(constrainedOrigin), m_webPageProxy.scrollingCoordinatorProxy()->scrollOrigin(), m_webPageProxy.scrollingCoordinatorProxy()->headerHeight(), m_webPageProxy.scrollingCoordinatorProxy()->footerHeight());
-    constrainedOrigin.moveBy(-visibleContentRect.location());
-    constrainedOrigin = -constrainedOrigin;
-    
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - constrainedOrigin: " << constrainedOrigin << " origin: " << origin << " scale: " << scale);
-    
     auto transientZoomScale = std::exchange(m_transientZoomScale, { });
     auto transientZoomOrigin = std::exchange(m_transientZoomOrigin, { });
     
-    if (transientZoomScale == scale && roundedIntPoint(*transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
+    if (transientZoomScale == scale && roundedIntPoint(*transientZoomOrigin) == roundedIntPoint(origin)) {
         // We're already at the right scale and position, so we don't need to animate.
         m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
         m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
         return;
     }
+    // TODO: Need to perform origin constraining here like in TiledCoreAnimationDrawingArea
     TransformationMatrix transform;
-    transform.translate(constrainedOrigin.x(), constrainedOrigin.y());
+    transform.translate(origin.x(), origin.y());
     transform.scale(scale);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -242,16 +223,17 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     NSValue *transformValue = [NSValue valueWithCATransform3D:transform];
     [renderViewAnimationCA setToValue:transformValue];
     
-    [CATransaction setCompletionBlock:[layerForPageScale, this, scale, constrainedOrigin, transform] () {
+    [CATransaction setCompletionBlock:[layerForPageScale, this, scale, origin, transform] () {
         layerForPageScale.transform = transform;
         [layerForPageScale removeAnimationForKey:transientAnimationKey];
         [layerForPageScale removeAnimationForKey:@"transientZoomCommit"];
         m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
-        m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, constrainedOrigin), m_identifier);
+        m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
     }];
 
     [layerForPageScale addAnimation:renderViewAnimationCA.get() forKey:@"transientZoomCommit"];
     [CATransaction commit];
+    if (layerForPageScale && renderViewAnimationCA) { }
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

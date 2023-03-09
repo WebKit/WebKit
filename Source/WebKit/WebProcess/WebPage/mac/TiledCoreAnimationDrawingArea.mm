@@ -731,8 +731,6 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     IntSize scaledTotalContentsSize = frameView.totalContentsSize();
     scaledTotalContentsSize.scale(scale / m_webPage.totalScaleFactor());
 
-    LOG_WITH_STREAM(Scrolling, stream << "TiledCoreAnimationDrawingArea::commitTransientZoom constrainScrollPositionForOverhang - constrainedOrigin: " << constrainedOrigin << " visibleContentRect: " << visibleContentRect << " scaledTotalContentsSize: " << scaledTotalContentsSize << "scrollOrigin :"<<frameView.scrollOrigin() << "headerHeight :" << frameView.headerHeight() << " footerHeight : " << frameView.footerHeight());
-
     // Scaling may have exposed the overhang area, so we need to constrain the final
     // layer position exactly like scrolling will once it's committed, to ensure that
     // scrolling doesn't make the view jump.
