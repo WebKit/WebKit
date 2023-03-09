@@ -125,6 +125,9 @@ public:
     
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
+#if PLATFORM(COCOA)
+    static Ref<WebsiteDataStore> dataStoreForIdentifier(const UUID&);
+#endif
 
     WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
     ~WebsiteDataStore();
