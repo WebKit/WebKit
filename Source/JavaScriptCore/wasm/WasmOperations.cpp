@@ -837,7 +837,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance*
     NativeCallFrameTracer tracer(vm, callFrame);
     JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = instance->globalObject();
-    return JSValue::encode(JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex));
+    auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
+    return JSValue::encode(JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))
@@ -1015,6 +1016,12 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint3
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
     return arraySet(instance, typeIndex, arrayValue, index, value);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmIsSubRTT, bool, (RTT* maybeSubRTT, RTT* targetRTT))
+{
+    ASSERT(maybeSubRTT && targetRTT);
+    return maybeSubRTT->isSubRTT(*targetRTT);
 }
 
 } } // namespace JSC::Wasm

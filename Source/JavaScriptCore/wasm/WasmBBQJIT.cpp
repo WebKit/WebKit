@@ -3491,6 +3491,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t, ExpressionType&) BBQ_STUB
+    PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&) BBQ_STUB
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&) BBQ_STUB
 
     // Basic operators
     PartialResult WARN_UNUSED_RETURN addSelect(Value condition, Value lhs, Value rhs, Value& result)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebAssemblyGCObjectBase.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WebAssemblyFunctionBase.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class WebAssemblyWrapperFunction final : public WebAssemblyFunctionBase {
-public:
-    using Base = WebAssemblyFunctionBase;
+const ClassInfo WebAssemblyGCObjectBase::s_info = { "WebAssemblyGCObjectBase"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyGCObjectBase) };
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
+WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, Structure* structure, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure)
+    , m_rtt(rtt)
+{
+}
 
-    template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.webAssemblyWrapperFunctionSpace<mode>();
-    }
+template<typename Visitor>
+void WebAssemblyGCObjectBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    WebAssemblyGCObjectBase* thisObject = jsCast<WebAssemblyGCObjectBase*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+}
 
-    DECLARE_INFO;
+DEFINE_VISIT_CHILDREN(WebAssemblyGCObjectBase);
 
-    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    JSObject* function() { return m_function.get(); }
-
-private:
-    WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSObject*, JSWebAssemblyInstance*);
-    DECLARE_VISIT_CHILDREN;
-
-    WriteBarrier<JSObject> m_function;
-};
+void WebAssemblyGCObjectBase::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+}
 
 } // namespace JSC
 

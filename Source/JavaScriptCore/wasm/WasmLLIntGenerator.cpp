@@ -324,6 +324,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
 
     // Basic operators
 #define X(name, opcode, short, idx, ...) \
@@ -2048,6 +2050,24 @@ auto LLIntGenerator::addStructSet(ExpressionType structReference, const StructTy
 {
     WasmStructSet::emit(this, structReference, fieldIndex, value);
 
+    return { };
+}
+
+auto LLIntGenerator::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::RefTest, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::RefCast, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
     return { };
 }
 

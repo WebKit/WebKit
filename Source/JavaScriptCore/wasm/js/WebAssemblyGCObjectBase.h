@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,35 +27,29 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WebAssemblyFunctionBase.h"
+#include "JSObject.h"
+#include "WasmTypeDefinition.h"
 
 namespace JSC {
 
-class WebAssemblyWrapperFunction final : public WebAssemblyFunctionBase {
+class WebAssemblyGCObjectBase : public JSNonFinalObject {
 public:
-    using Base = WebAssemblyFunctionBase;
+    using Base = JSNonFinalObject;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
+    DECLARE_EXPORT_INFO;
 
-    template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.webAssemblyWrapperFunctionSpace<mode>();
-    }
+    RefPtr<const Wasm::RTT> rtt() { return m_rtt; }
 
-    DECLARE_INFO;
+    static ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCObjectBase, m_rtt); };
 
-    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::TypeIndex, RefPtr<const Wasm::RTT>);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    JSObject* function() { return m_function.get(); }
-
-private:
-    WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSObject*, JSWebAssemblyInstance*);
+protected:
     DECLARE_VISIT_CHILDREN;
 
-    WriteBarrier<JSObject> m_function;
+    WebAssemblyGCObjectBase(VM&, Structure*, RefPtr<const Wasm::RTT>);
+
+    void finishCreation(VM&);
+
+    RefPtr<const Wasm::RTT> m_rtt;
 };
 
 } // namespace JSC

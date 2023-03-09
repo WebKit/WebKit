@@ -615,6 +615,9 @@ private:
     void emitCheckI64Zero(ExpressionType, Taken&&);
     template<typename Then>
     void emitCheckForNullReference(const ExpressionType& ref, Then&&);
+    void emitBranchForNullReference(const ExpressionType&);
+    Inst makeBranchNotInt32(const ExpressionType&);
+    Inst makeBranchNotCell(const ExpressionType&);
 
     B3::Type toB3ResultType(BlockSignature);
 
@@ -785,6 +788,27 @@ void AirIRGenerator64::emitCheckForNullReference(const TypedTmp& ref, Taken&& ta
     emitCheck([&] {
         return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), ref, tmpForNull);
     }, std::forward<Taken>(taken));
+}
+
+void AirIRGenerator64::emitBranchForNullReference(const TypedTmp& ref)
+{
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    append(Branch64, Arg::relCond(MacroAssembler::Equal), ref, tmpForNull);
+}
+
+Inst AirIRGenerator64::makeBranchNotInt32(const TypedTmp& value)
+{
+    auto tmpForTag = g64();
+    append(Move, Arg::bigImm(JSValue::NumberTag), tmpForTag);
+    return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Below), value, tmpForTag);
+}
+
+Inst AirIRGenerator64::makeBranchNotCell(const ExpressionType& maybeCell)
+{
+    auto tmpForCellMask = g64();
+    append(Move, Arg::bigImm(JSValue::NotCellMask), tmpForCellMask);
+    return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), maybeCell, tmpForCellMask);
 }
 
 B3::Type AirIRGenerator64::toB3ResultType(BlockSignature returnType)

@@ -38,14 +38,14 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyStruct::s_info = { "WebAssembly.Struct"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyStruct) };
 
-JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const Wasm::TypeDefinition>&& type)
-    : Base(vm, structure)
+JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const Wasm::TypeDefinition>&& type, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_type(WTFMove(type))
     , m_payload(structType()->instancePayloadSize(), 0)
 {
 }
 
-JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex)
+JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT> rtt)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -62,7 +62,7 @@ JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject
         return nullptr;
     }
 
-    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, structure, WTFMove(type));
+    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, structure, Ref { type }, rtt);
     structValue->finishCreation(vm);
     return structValue;
 }

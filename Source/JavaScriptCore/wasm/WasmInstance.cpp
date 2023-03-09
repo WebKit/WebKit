@@ -242,7 +242,8 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
                 functionImport,
                 functionIndex,
                 jsInstance,
-                typeIndex);
+                typeIndex,
+                TypeInformation::getCanonicalRTT(typeIndex));
             jsTable->set(dstIndex, wrapperFunction);
             continue;
         }
@@ -263,7 +264,8 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             jsInstance,
             jsEntrypointCallee,
             entrypointLoadLocation,
-            typeIndex);
+            typeIndex,
+            TypeInformation::getCanonicalRTT(typeIndex));
         jsTable->set(dstIndex, function);
     }
 }

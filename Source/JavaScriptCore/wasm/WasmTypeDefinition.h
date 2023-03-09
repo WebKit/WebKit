@@ -48,6 +48,12 @@
 #include "B3Type.h"
 #endif
 
+#if HAVE(36BIT_ADDRESS)
+#define RTT_ALIGNMENT alignas(16)
+#else
+#define RTT_ALIGNMENT
+#endif
+
 namespace JSC {
 
 namespace Wasm {
@@ -637,31 +643,42 @@ private:
 // It contains a display data structure that allows subtyping of references to be checked in constant time.
 //
 // See https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#runtime-types for an explanation of displays.
-class RTT : public ThreadSafeRefCounted<RTT> {
+enum class RTTKind : uint8_t {
+    Function,
+    Array,
+    Struct
+};
+
+class RTT_ALIGNMENT RTT : public ThreadSafeRefCounted<RTT> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     RTT() = delete;
     RTT(const RTT&) = delete;
 
-    explicit RTT(DisplayCount displaySize)
-        : m_displaySize(displaySize)
+    explicit RTT(RTTKind kind, DisplayCount displaySize)
+        : m_kind(kind)
+        , m_displaySize(displaySize)
     {
     }
 
-    static RefPtr<RTT> tryCreateRTT(DisplayCount);
+    static RefPtr<RTT> tryCreateRTT(RTTKind, DisplayCount);
 
     DisplayCount displaySize() const { return m_displaySize; }
     const RTT* displayEntry(DisplayCount i) const { ASSERT(i < displaySize()); return const_cast<RTT*>(this)->payload()[i]; }
-    void setDisplayEntry(DisplayCount i, const RTT* entry) { ASSERT(i < displaySize()); payload()[i] = entry; }
+    void setDisplayEntry(DisplayCount i, RefPtr<const RTT> entry) { ASSERT(i < displaySize()); payload()[i] = entry.get(); }
 
     bool isSubRTT(const RTT& other) const;
     static size_t allocatedRTTSize(Checked<DisplayCount> count) { return sizeof(RTT) + count * sizeof(TypeIndex); }
+
+    static ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
+    static ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
 
 private:
     // Payload starts past end of this object.
     const RTT** payload() { return static_cast<const RTT**>(static_cast<void*>(this + 1)); }
 
+    RTTKind m_kind;
     DisplayCount m_displaySize;
 };
 
@@ -857,7 +874,8 @@ public:
     static void registerCanonicalRTTForType(TypeIndex);
     static RefPtr<RTT> canonicalRTTForType(TypeIndex);
     // This will only return valid results for types in the type signature list and that have a registered canonical RTT.
-    static std::optional<const RTT*> tryGetCanonicalRTT(TypeIndex);
+    static std::optional<RefPtr<const RTT>> tryGetCanonicalRTT(TypeIndex);
+    static RefPtr<const RTT> getCanonicalRTT(TypeIndex);
 
     static const TypeDefinition& get(TypeIndex);
     static TypeIndex get(const TypeDefinition&);
@@ -876,6 +894,8 @@ private:
     RefPtr<TypeDefinition> m_Void_I32I32I32I32;
     RefPtr<TypeDefinition> m_Void_I32I32I32I32I32;
     RefPtr<TypeDefinition> m_I32_I32;
+    RefPtr<TypeDefinition> m_I32_RefI32I32;
+    RefPtr<TypeDefinition> m_Ref_RefI32I32;
     Lock m_lock;
 };
 

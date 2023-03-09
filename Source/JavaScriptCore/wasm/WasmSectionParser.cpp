@@ -48,6 +48,7 @@ auto SectionParser::parseType() -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
     WASM_PARSER_FAIL_IF(count > maxTypes, "Type section's count is too big ", count, " maximum ", maxTypes);
     WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
+    WASM_PARSER_FAIL_IF(!m_info->rtts.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " canonical RTT entries");
 
     for (uint32_t i = 0; i < count; ++i) {
         int8_t typeKind;
@@ -113,11 +114,13 @@ auto SectionParser::parseType() -> PartialResult
                     RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
                     RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
                     TypeInformation::registerCanonicalRTTForType(projection->index());
+                    m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
                     if (signature->is<Subtype>())
                         WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll(), *group), "structural type is not a subtype of the specified supertype");
                     m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
                 } else {
                     TypeInformation::registerCanonicalRTTForType(signature->index());
+                    m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(signature->index()));
                     if (signature->is<Subtype>())
                         WASM_PARSER_FAIL_IF(!checkStructuralSubtype(signature->expand(), TypeInformation::get(signature->as<Subtype>()->superType())), "structural type is not a subtype of the specified supertype");
                     m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
@@ -918,10 +921,12 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
     // store projections for each recursion group index in the type section.
     if (typeCount > 1) {
         WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryReserveCapacity(m_info->typeSignatures.capacity() + typeCount - 1), "can't allocate enough memory for recursion group's ", typeCount, " type indices");
+        WASM_PARSER_FAIL_IF(!m_info->rtts.tryReserveCapacity(m_info->rtts.capacity() + typeCount - 1), "can't allocate enough memory for recursion group's ", typeCount, " RTTs");
         for (uint32_t i = 0; i < typeCount; ++i) {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), i);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's ", i, "th projection");
             TypeInformation::registerCanonicalRTTForType(projection->index());
+            m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
         }
         // Checking subtyping requirements has to be deferred until we construct projections in case recursive references show up in the type.
@@ -933,11 +938,13 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
     } else {
         if (!firstSignature->hasRecursiveReference()) {
             TypeInformation::registerCanonicalRTTForType(firstSignature->index());
+            m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(firstSignature->index()));
             m_info->typeSignatures.uncheckedAppend(firstSignature.releaseNonNull());
         } else {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), 0);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's 0th projection");
             TypeInformation::registerCanonicalRTTForType(projection->index());
+            m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
             if (firstSignature->is<Subtype>())
                 WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll(), *recursionGroup), "structural type is not a subtype of the specified supertype");
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());

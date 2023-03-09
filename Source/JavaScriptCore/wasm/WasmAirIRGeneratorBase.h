@@ -318,6 +318,8 @@ struct AirIRGeneratorBase {
         B3::ValueRep rep;
     };
 
+    enum class CastKind { Cast, Test };
+
     ////////////////////////////////////////////////////////////////////////////////
     // Get concrete instance
 
@@ -413,6 +415,8 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
 
     // Basic operators
     //
@@ -860,6 +864,13 @@ protected:
     void emitAtomicStoreOp(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
     ExpressionType emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
     ExpressionType emitAtomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, uint32_t offset);
+
+    void emitRefTestOrCast(CastKind, ExpressionType, bool, int32_t, ExpressionType&);
+    template <typename Branch, typename Generator>
+    void emitCheckOrBranchForCast(CastKind, const Branch&, const Generator&, BasicBlock*);
+    void emitLoadRTTFromFuncref(ExpressionType, ExpressionType&);
+    void emitLoadRTTFromObject(ExpressionType, ExpressionType&);
+    Inst makeBranchNotRTTKind(ExpressionType, RTTKind);
 
     void unifyValuesWithBlock(const Stack& resultStack, const ResultList& stack);
 
@@ -2646,6 +2657,185 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructSet(ExpressionType st
     return { };
 }
 
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+{
+    emitRefTestOrCast(CastKind::Cast, reference, allowNull, heapType, result);
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+{
+    emitRefTestOrCast(CastKind::Test, reference, allowNull, heapType, result);
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind castKind, ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result)
+{
+    if (castKind == CastKind::Cast)
+        result = reference;
+    else
+        result = self().g32();
+
+    BasicBlock* continuation = m_code.addBlock();
+    BasicBlock* trueBlock = nullptr;
+    BasicBlock* falseBlock = nullptr;
+    if (castKind == CastKind::Test) {
+        trueBlock = m_code.addBlock();
+        falseBlock = m_code.addBlock();
+    }
+
+    auto castFailure = [this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::CastFailure);
+    };
+
+    // Ensure reference nullness agrees with heap type.
+    {
+        BasicBlock* nullCase = m_code.addBlock();
+        BasicBlock* nonNullCase = m_code.addBlock();
+
+        self().emitBranchForNullReference(reference);
+        m_currentBlock->setSuccessors(nullCase, nonNullCase);
+
+        m_currentBlock = nullCase;
+
+        if (!allowNull) {
+            if (castKind == CastKind::Cast) {
+                auto* patchpoint = addPatchpoint(B3::Void);
+                patchpoint->setGenerator(castFailure);
+                patchpoint->effects.terminal = true;
+                emitPatchpoint(patchpoint, ExpressionType());
+            } else {
+                append(Jump);
+                m_currentBlock->setSuccessors(falseBlock);
+            }
+        } else {
+            append(Jump);
+            if (castKind == CastKind::Cast)
+                m_currentBlock->setSuccessors(continuation);
+            else
+                m_currentBlock->setSuccessors(trueBlock);
+        }
+
+        m_currentBlock = nonNullCase;
+    }
+
+    switch (static_cast<TypeKind>(heapType)) {
+    case Wasm::TypeKind::Funcref:
+    case Wasm::TypeKind::Externref:
+        // Casts to funcref/externref cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+        break;
+    case Wasm::TypeKind::I31ref:
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return self().makeBranchNotInt32(reference);
+        }, castFailure, falseBlock);
+        break;
+    case Wasm::TypeKind::Arrayref:
+    case Wasm::TypeKind::Structref: {
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return self().makeBranchNotCell(reference);
+        }, castFailure, falseBlock);
+        auto tmpForRTT = self().gPtr();
+        emitLoadRTTFromObject(reference, tmpForRTT);
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return makeBranchNotRTTKind(tmpForRTT, static_cast<TypeKind>(heapType) == Wasm::TypeKind::Arrayref ? RTTKind::Array : RTTKind::Struct);
+        }, castFailure, falseBlock);
+        break;
+    }
+    default: {
+        ASSERT(!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)));
+        Wasm::TypeDefinition& signature = m_info.typeSignatures[heapType];
+        BasicBlock* slowPath = m_code.addBlock();
+
+        auto tmpForRTT = self().gPtr();
+        if (signature.expand().is<Wasm::FunctionSignature>())
+            emitLoadRTTFromFuncref(reference, tmpForRTT);
+        else {
+            // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
+            emitCheckOrBranchForCast(castKind, [&]() {
+                return self().makeBranchNotCell(reference);
+            }, castFailure, falseBlock);
+            emitLoadRTTFromObject(reference, tmpForRTT);
+            emitCheckOrBranchForCast(castKind, [&]() {
+                return makeBranchNotRTTKind(tmpForRTT, signature.expand().is<Wasm::ArrayType>() ? RTTKind::Array : RTTKind::Struct);
+            }, castFailure, falseBlock);
+        }
+
+        auto tmpForTargetRTT = self().gPtr();
+        append(Move, Arg::immPtr(m_info.rtts[heapType].get()), tmpForTargetRTT);
+        append(Branch32, Arg::relCond(MacroAssembler::Equal), tmpForRTT, tmpForTargetRTT);
+        if (castKind == CastKind::Cast)
+            m_currentBlock->setSuccessors(continuation, slowPath);
+        else
+            m_currentBlock->setSuccessors(trueBlock, slowPath);
+
+        m_currentBlock = slowPath;
+        auto tmpForCall = self().g32();
+        // FIXME: It may be worthwhile to JIT inline this in the future.
+        emitCCall(&operationWasmIsSubRTT, tmpForCall, tmpForRTT, tmpForTargetRTT);
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), tmpForCall, tmpForCall);
+        }, castFailure, falseBlock);
+    }
+    }
+
+    append(Jump);
+    if (castKind == CastKind::Test) {
+        m_currentBlock->setSuccessors(trueBlock);
+        m_currentBlock = trueBlock;
+        append(Move, Arg::imm(1), result);
+        append(Jump);
+        m_currentBlock->setSuccessors(continuation);
+
+        m_currentBlock = falseBlock;
+        append(Move, Arg::imm(0), result);
+        append(Jump);
+    }
+
+    m_currentBlock->setSuccessors(continuation);
+    m_currentBlock = continuation;
+}
+
+template <typename Derived, typename ExpressionType>
+template <typename Branch, typename Generator>
+void AirIRGeneratorBase<Derived, ExpressionType>::emitCheckOrBranchForCast(CastKind kind, const Branch& makeBranch, const Generator& generator, BasicBlock* falseBlock)
+{
+    if (kind == CastKind::Cast)
+        emitCheck(makeBranch, generator);
+    else {
+        ASSERT(falseBlock);
+        BasicBlock* success = m_code.addBlock();
+        m_currentBlock->appendInst(makeBranch());
+        m_currentBlock->setSuccessors(falseBlock, success);
+        m_currentBlock = success;
+    }
+}
+
+template <typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::emitLoadRTTFromFuncref(ExpressionType funcref, ExpressionType& result)
+{
+    auto* patch = addPatchpoint(B3::Int64);
+    patch->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        jit.loadCompactPtr(CCallHelpers::Address(params[1].gpr(), WebAssemblyFunctionBase::offsetOfRTT()), params[0].gpr());
+    });
+    self().emitPatchpoint(patch, result, funcref);
+}
+
+template <typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::emitLoadRTTFromObject(ExpressionType cell, ExpressionType& result)
+{
+    self().emitLoad(cell, WebAssemblyGCObjectBase::offsetOfRTT(), result);
+}
+
+template <typename Derived, typename ExpressionType>
+Inst AirIRGeneratorBase<Derived, ExpressionType>::makeBranchNotRTTKind(ExpressionType rtt, RTTKind targetKind)
+{
+    auto tmpForRTTKind = self().g32();
+    append(Load8, Arg::addr(rtt, RTT::offsetOfKind()), tmpForRTTKind);
+    return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), tmpForRTTKind, Arg::imm(static_cast<uint8_t>(targetKind)));
+}
 
 template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> PartialResult
