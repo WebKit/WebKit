@@ -791,9 +791,7 @@ inline void compilerFenceForCrash()
 
 // This is useful if you are going to stuff data into registers before crashing, like the
 // crashWithInfo functions below.
-#if COMPILER(MSVC) || !VA_OPT_SUPPORTED
-// FIXME: Re-check whether MSVC 2020 supports __VA_OPT__ and remove the special
-//        casing once older versions of the compiler are no longer supported.
+#if !VA_OPT_SUPPORTED
 #define CRASH_WITH_INFO(...) do { \
         WTF::isIntegralOrPointerType(__VA_ARGS__); \
         compilerFenceForCrash(); \
