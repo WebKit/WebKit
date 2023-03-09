@@ -64,6 +64,64 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
 #endif
 }
 
+AcceleratedEffectValues AcceleratedEffectValues::clone() const
+{
+    auto clonedTransformOrigin = transformOrigin;
+
+    TransformOperations clonedTransform { transform.operations().map([](const auto& operation) {
+        return RefPtr { operation->clone() };
+    }) };
+
+    RefPtr<TransformOperation> clonedTranslate;
+    if (auto* srcTranslate = translate.get())
+        clonedTranslate = srcTranslate->clone();
+
+    RefPtr<TransformOperation> clonedScale;
+    if (auto* srcScale = scale.get())
+        clonedScale = srcScale->clone();
+
+    RefPtr<TransformOperation> clonedRotate;
+    if (auto* srcRotate = rotate.get())
+        clonedRotate = srcRotate->clone();
+
+    RefPtr<PathOperation> clonedOffsetPath;
+    if (auto* srcOffsetPath = offsetPath.get())
+        clonedOffsetPath = srcOffsetPath->clone();
+
+    auto clonedOffsetDistance = offsetDistance;
+    auto clonedOffsetPosition = offsetPosition;
+    auto clonedOffsetAnchor = offsetAnchor;
+    auto clonedOffsetRotate = offsetRotate;
+
+    FilterOperations clonedFilter { filter.operations().map([](const auto& operation) {
+        return RefPtr { operation->clone() };
+    }) };
+
+#if ENABLE(FILTERS_LEVEL_2)
+    FilterOperations clonedBackdropFilter { backdropFilter.operations().map([](const auto& operation) {
+        return RefPtr { operation->clone() };
+    }) };
+#endif
+
+    return {
+        opacity,
+        WTFMove(clonedTransformOrigin),
+        WTFMove(clonedTransform),
+        WTFMove(clonedTranslate),
+        WTFMove(clonedScale),
+        WTFMove(clonedRotate),
+        WTFMove(clonedOffsetPath),
+        WTFMove(clonedOffsetDistance),
+        WTFMove(clonedOffsetPosition),
+        WTFMove(clonedOffsetAnchor),
+        WTFMove(clonedOffsetRotate),
+        WTFMove(clonedFilter),
+#if ENABLE(FILTERS_LEVEL_2)
+        WTFMove(clonedBackdropFilter)
+#endif
+    };
+}
+
 static LengthPoint nonCalculatedLengthPoint(LengthPoint lengthPoint, const IntSize& borderBoxSize)
 {
     if (!lengthPoint.x().isCalculated() && !lengthPoint.y().isCalculated())

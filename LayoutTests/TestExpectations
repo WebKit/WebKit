@@ -2764,7 +2764,6 @@ imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullw
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-009.html [ ImageOnlyFailure ]
 
-webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-009.html [ ImageOnlyFailure ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-writing-modes/full-width-003.html [ ImageOnlyFailure ]
 

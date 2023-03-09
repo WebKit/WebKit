@@ -89,6 +89,7 @@ public:
     static LengthPoint convertPosition(BuilderState&, const CSSValue&);
     static LengthPoint convertPositionOrAuto(BuilderState&, const CSSValue&);
     static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
+    static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumberOrAuto(BuilderState&, const CSSValue&);
     static short convertWebkitHyphenateLimitLines(BuilderState&, const CSSValue&);
@@ -457,6 +458,16 @@ inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecorationLine
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
             result.add(fromCSSValue<TextDecorationLine>(currentValue));
+    }
+    return result;
+}
+
+inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderState&, const CSSValue& value)
+{
+    auto result = RenderStyle::initialTextTransform();
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            result.add(fromCSSValue<TextTransform>(currentValue));
     }
     return result;
 }

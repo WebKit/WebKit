@@ -67,6 +67,8 @@ struct AcceleratedEffectKeyframe {
     RefPtr<TimingFunction> timingFunction;
     std::optional<CompositeOperation> compositeOperation;
     OptionSet<AcceleratedEffectProperty> animatedProperties;
+
+    AcceleratedEffectKeyframe clone() const;
 };
 
 class AcceleratedEffect : public RefCounted<AcceleratedEffect> {
@@ -77,7 +79,8 @@ public:
 
     virtual ~AcceleratedEffect() = default;
 
-    WEBCORE_EXPORT Ref<AcceleratedEffect> copyWithProperties(OptionSet<AcceleratedEffectProperty>&);
+    WEBCORE_EXPORT Ref<AcceleratedEffect> clone() const;
+    WEBCORE_EXPORT Ref<AcceleratedEffect> copyWithProperties(OptionSet<AcceleratedEffectProperty>&) const;
 
     // Encoding and decoding support
     const Vector<AcceleratedEffectKeyframe>& keyframes() const { return m_keyframes; }

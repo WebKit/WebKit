@@ -6001,14 +6001,17 @@
                 "none"
             ],
             "codegen-properties": {
+                "converter": "TextTransform",
+                "parser-function": "consumeTextTransform",
+                "parser-grammar-unused": "none | [[capitalize | uppercase | lowercase ] || full-width || full-size-kana]",
+                "parser-grammar-unused-reason": "Needs support for '||' groups.",
                 "aliases": [
                     "-epub-text-transform"
-                ],
-                "parser-grammar": "<<values>>"
+                ]
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-transform"
+                "category": "css3-text",
+                "url": "https://w3c.github.io/csswg-drafts/css-text/#text-transform-property"
             }
         },
         "text-underline": {

@@ -5556,6 +5556,64 @@ RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
     return CSSValueList::createSpaceSeparated(pageSize.releaseNonNull(), orientation.releaseNonNull());
 }
 
+RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange& range)
+{
+    if (consumeIdentRaw<CSSValueNone>(range))
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    bool fullSizeKana = false;
+    bool fullWidth = false;
+    bool uppercase = false;
+    bool capitalize = false;
+    bool lowercase = false;
+
+    do {
+        auto ident = consumeIdentRaw(range);
+        if (!ident)
+            return nullptr;
+
+        if (ident == CSSValueFullSizeKana && !fullSizeKana) {
+            fullSizeKana = true;
+            continue;
+        }
+        if (ident == CSSValueFullWidth && !fullWidth) {
+            fullWidth = true;
+            continue;
+        }
+        bool alreadySet = uppercase || capitalize || lowercase;
+        if (ident == CSSValueUppercase && !alreadySet) {
+            uppercase = true;
+            continue;
+        }
+        if (ident == CSSValueCapitalize && !alreadySet) {
+            capitalize = true;
+            continue;
+        }
+        if (ident == CSSValueLowercase && !alreadySet) {
+            lowercase = true;
+            continue;
+        }
+        return nullptr;
+    } while (!range.atEnd());
+
+    // Construct the result list in canonical order
+    CSSValueListBuilder list;
+    if (capitalize)
+        list.append(CSSPrimitiveValue::create(CSSValueCapitalize));
+    else if (uppercase)
+        list.append(CSSPrimitiveValue::create(CSSValueUppercase));
+    else if (lowercase)
+        list.append(CSSPrimitiveValue::create(CSSValueLowercase));
+
+    if (fullWidth)
+        list.append(CSSPrimitiveValue::create(CSSValueFullWidth));
+
+    if (fullSizeKana)
+        list.append(CSSPrimitiveValue::create(CSSValueFullSizeKana));
+
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserMode mode)
 {
     // [ <length> | <percentage> ] && hanging? && each-line?
@@ -5582,7 +5640,6 @@ RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserMode mod
     if (!lengthOrPercentage)
         return nullptr;
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     if (!hanging && !eachLine)
         return CSSValueList::createSpaceSeparated(lengthOrPercentage.releaseNonNull());
     if (hanging && !eachLine)

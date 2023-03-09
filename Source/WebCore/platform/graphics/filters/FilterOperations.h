@@ -37,6 +37,9 @@ struct BlendingContext;
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    explicit FilterOperations() { };
+    explicit FilterOperations(Vector<RefPtr<FilterOperation>>&&);
+
     WEBCORE_EXPORT bool operator==(const FilterOperations&) const;
     bool operator!=(const FilterOperations& other) const { return !(*this == other); }
 

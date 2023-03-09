@@ -1817,6 +1817,27 @@ static Ref<CSSValue> touchActionFlagsToCSSValue(OptionSet<TouchAction> touchActi
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
+static Ref<CSSValue> renderTextTransformFlagsToCSSValue(OptionSet<TextTransform> textTransform)
+{
+    CSSValueListBuilder list;
+    if (textTransform.contains(TextTransform::Capitalize))
+        list.append(CSSPrimitiveValue::create(CSSValueCapitalize));
+    else if (textTransform.contains(TextTransform::Uppercase))
+        list.append(CSSPrimitiveValue::create(CSSValueUppercase));
+    else if (textTransform.contains(TextTransform::Lowercase))
+        list.append(CSSPrimitiveValue::create(CSSValueLowercase));
+
+    if (textTransform.contains(TextTransform::FullWidth))
+        list.append(CSSPrimitiveValue::create(CSSValueFullWidth));
+
+    if (textTransform.contains(TextTransform::FullSizeKana))
+        list.append(CSSPrimitiveValue::create(CSSValueFullSizeKana));
+
+    if (list.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 static Ref<CSSValue> renderTextDecorationLineFlagsToCSSValue(OptionSet<TextDecorationLine> textDecorationLine)
 {
     // Blink value is ignored.
@@ -3458,7 +3479,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWebkitTextStrokeWidth:
         return zoomAdjustedPixelValue(style.textStrokeWidth(), style);
     case CSSPropertyTextTransform:
-        return createConvertingToCSSValueID(style.textTransform());
+        return renderTextTransformFlagsToCSSValue(style.textTransform());
     case CSSPropertyTextWrap:
         return createConvertingToCSSValueID(style.textWrap());
     case CSSPropertyTop:

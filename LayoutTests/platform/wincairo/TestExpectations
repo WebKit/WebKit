@@ -2611,6 +2611,8 @@ fast/picture/viewport-resize.html [ Pass Failure ]
 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure Pass ]
 http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure Pass ]
 
+webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
+
 fast/text/backslash-to-yen-sign.html [ Pass Failure ]
 
 css2.1/20110323/overflow-applies-to-009.htm [ ImageOnlyFailure ]
