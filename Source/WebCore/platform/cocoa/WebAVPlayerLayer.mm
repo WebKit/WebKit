@@ -151,7 +151,6 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
         // The initial resize will have an empty videoLayerFrame, which makes
         // the subsequent calculations incorrect. When this happens, just do
         // the synchronous resize step instead.
-        _targetVideoFrame = targetVideoFrame;
         [self resolveBounds];
         return;
     }
