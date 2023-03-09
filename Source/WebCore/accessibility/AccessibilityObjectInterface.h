@@ -806,6 +806,13 @@ enum class AXRelationType : uint8_t {
 };
 using AXRelations = HashMap<AXRelationType, Vector<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
 
+enum class SpinButtonType : bool {
+    // The spin button is standalone. It has no separate controls, and should receive and perform actions itself.
+    Standalone,
+    // The spin button has separate increment and decrement controls.
+    Composite
+};
+
 // Use this struct to store the isIgnored data that depends on the parents, so that in addChildren()
 // we avoid going up the parent chain for each element while traversing the tree with useful information already.
 struct AccessibilityIsIgnoredFromParentData {
@@ -922,6 +929,7 @@ public:
 
     // Native spin buttons.
     bool isSpinButton() const { return roleValue() == AccessibilityRole::SpinButton; }
+    SpinButtonType spinButtonType();
     virtual AXCoreObject* incrementButton() = 0;
     virtual AXCoreObject* decrementButton() = 0;
 
@@ -1440,6 +1448,12 @@ inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objec
     return objects.map([] (const auto& object) {
         return object ? object->objectID() : AXID();
     });
+}
+
+inline SpinButtonType AXCoreObject::spinButtonType()
+{
+    ASSERT_WITH_MESSAGE(isSpinButton(), "spinButtonType() should only be called on spinbuttons.");
+    return incrementButton() || decrementButton() ? SpinButtonType::Composite : SpinButtonType::Standalone;
 }
 
 inline String AXCoreObject::currentValue() const

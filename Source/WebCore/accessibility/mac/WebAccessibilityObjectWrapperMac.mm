@@ -742,16 +742,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Menu elements allow Press and Cancel.
     static NeverDestroyed<RetainPtr<NSArray>> menuElementActions = [actionElementActions.get() arrayByAddingObject:NSAccessibilityCancelAction];
 
-    // Slider elements allow Increment/Decrement.
-    static NeverDestroyed<RetainPtr<NSArray>> sliderActions = [defaultElementActions.get() arrayByAddingObjectsFromArray:@[NSAccessibilityIncrementAction, NSAccessibilityDecrementAction]];
+    static NeverDestroyed<RetainPtr<NSArray>> incrementorActions = [defaultElementActions.get() arrayByAddingObjectsFromArray:@[NSAccessibilityIncrementAction, NSAccessibilityDecrementAction]];
 
     NSArray *actions;
     if (backingObject->supportsPressAction())
         actions = actionElementActions.get().get();
     else if (backingObject->isMenuRelated())
         actions = menuElementActions.get().get();
-    else if (backingObject->isSlider())
-        actions = sliderActions.get().get();
+    else if (backingObject->isSlider() || (backingObject->isSpinButton() && backingObject->spinButtonType() == SpinButtonType::Standalone)) {
+        // Non-standalone spinbuttons should not advertise the increment and decrement actions because they have separate increment and decrement controls.
+        actions = incrementorActions.get().get();
+    }
     else if (backingObject->isAttachment())
         actions = [[self attachmentView] accessibilityActionNames];
     else
@@ -913,13 +914,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityEditableAncestorAttribute,
         NSAccessibilityHighestEditableAncestorAttribute,
     ];
-    static NeverDestroyed incrementorAttrs = [] {
+    static NeverDestroyed spinButtonCommonAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
-        [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
-        [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
         [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
+        return tempArray;
+    }();
+    static NeverDestroyed compositeSpinButtonAttributes = [] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:spinButtonCommonAttributes.get().get()]);
+        [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
+        [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
         return tempArray;
     }();
     static NeverDestroyed anchorAttrs = [] {
@@ -1218,8 +1223,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = tabListAttrs.get().get();
     else if (backingObject->isScrollView())
         objectAttributes = scrollViewAttrs.get().get();
-    else if (backingObject->isSpinButton())
-        objectAttributes = incrementorAttrs.get().get();
+    else if (backingObject->isSpinButton()) {
+        if (backingObject->spinButtonType() == SpinButtonType::Composite)
+            objectAttributes = compositeSpinButtonAttributes.get().get();
+        else
+            objectAttributes = spinButtonCommonAttributes.get().get();
+    }
     else if (backingObject->isMenu())
         objectAttributes = menuAttrs.get().get();
     else if (backingObject->isMenuBar())

@@ -807,6 +807,10 @@ accessibility/page-reload-deadlock.html [ Skip ]
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
 accessibility/progress-indeterminate-value.html [ Skip ]
 
+# This test is only applicable to WK2 because it renders date inputs using three separate
+# role="spinbutton" elements (month, day, year). WK1 renders date inputs using a contenteditable div.
+accessibility/mac/date-input-increment-decrement.html [ Skip ]
+
 accessibility/display-contents-dynamically-added-children.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.
