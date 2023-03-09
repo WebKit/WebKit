@@ -57,8 +57,8 @@ static CFDictionaryRef makeContextOptions(const CGDisplayListImageBufferBackend:
 
 class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
 public:
-    GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters)
-        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, makeContextOptions(parameters))).autorelease())
+    GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters, WebCore::RenderingMode renderingMode)
+        : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, makeContextOptions(parameters))).autorelease(), GraphicsContextCG::Unknown, renderingMode)
     {
 #if !HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
         m_immutableBaseTransform.scale(1, -1);
@@ -109,11 +109,12 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     if (parameters.logicalSize.isEmpty())
         return nullptr;
 
-    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, creationContext));
+    return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, creationContext, WebCore::RenderingMode::Unaccelerated));
 }
 
-CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
+CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext, WebCore::RenderingMode renderingMode)
     : ImageBufferCGBackend { parameters }
+    , m_renderingMode(renderingMode)
 {
     if (creationContext.useCGDisplayListImageCache == UseCGDisplayListImageCache::Yes)
         m_resourceCache = bridge_id_cast(adoptCF(WKCGCommandsCacheCreate(nullptr)));
@@ -155,7 +156,7 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context()
 {
     if (!m_context)
-        m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters);
+        m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters, m_renderingMode);
     return *m_context;
 }
 
@@ -189,6 +190,23 @@ RefPtr<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(con
 void CGDisplayListImageBufferBackend::putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)
 {
     ASSERT_NOT_REACHED();
+}
+
+#pragma mark - CGDisplayListAcceleratedImageBufferBackend
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListAcceleratedImageBufferBackend);
+
+std::unique_ptr<CGDisplayListAcceleratedImageBufferBackend> CGDisplayListAcceleratedImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
+{
+    if (parameters.logicalSize.isEmpty())
+        return nullptr;
+
+    return std::unique_ptr<CGDisplayListAcceleratedImageBufferBackend>(new CGDisplayListAcceleratedImageBufferBackend(parameters, creationContext, WebCore::RenderingMode::Accelerated));
+}
+
+CGDisplayListAcceleratedImageBufferBackend::CGDisplayListAcceleratedImageBufferBackend(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext, WebCore::RenderingMode renderingMode)
+    : CGDisplayListImageBufferBackend(parameters, creationContext, renderingMode)
+{
 }
 
 }
