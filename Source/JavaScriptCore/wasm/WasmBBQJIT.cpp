@@ -3498,10 +3498,23 @@ public:
     PartialResult WARN_UNUSED_RETURN addSelect(Value condition, Value lhs, Value rhs, Value& result)
     {
         if (condition.isConst()) {
-            result = condition.asI32() ? lhs : rhs;
+            Value src = condition.asI32() ? lhs : rhs;
+            Location srcLocation;
+            if (src.isConst())
+                result = src;
+            else {
+                result = topValue(lhs.type());
+                srcLocation = loadIfNecessary(src);
+            }
+
             LOG_INSTRUCTION("Select", condition, lhs, rhs, RESULT(result));
             consume(condition);
-            consume(condition.asI32() ? rhs : lhs); // Kill whichever one we didn't choose.
+            consume(lhs);
+            consume(rhs);
+            if (!result.isConst()) {
+                Location resultLocation = allocate(result);
+                emitMove(lhs.type(), srcLocation, resultLocation);
+            }
         } else {
             Location conditionLocation = loadIfNecessary(condition);
             Location lhsLocation = Location::none(), rhsLocation = Location::none();
@@ -3538,16 +3551,17 @@ public:
                 conditionLocation = Location::fromGPR(m_scratchGPR);
             }
 
-            if (lhs.isTemp())
-                lhs = Value::pinned(lhs.type(), lhsLocation);
-            if (rhs.isTemp())
-                rhs = Value::pinned(rhs.type(), rhsLocation);
-
             // Kind of gross isel, but it should handle all use/def aliasing cases correctly.
-            emitMove(lhs, resultLocation);
+            if (lhs.isConst())
+                emitMoveConst(lhs, resultLocation);
+            else
+                emitMove(lhs.type(), lhsLocation, resultLocation);
             Jump ifZero = m_jit.branchTest32(inverted ? ResultCondition::Zero : ResultCondition::NonZero, conditionLocation.asGPR(), conditionLocation.asGPR());
             consume(condition);
-            emitMove(rhs, resultLocation);
+            if (rhs.isConst())
+                emitMoveConst(rhs, resultLocation);
+            else
+                emitMove(rhs.type(), rhsLocation, resultLocation);
             ifZero.link(&m_jit);
 
             LOG_DEDENT();
@@ -8362,29 +8376,24 @@ private:
         }
     }
 
-    void emitStore(Value src, Location dst)
+    void emitStore(TypeKind type, Location src, Location dst)
     {
-        if (src.isConst())
-            return emitStoreConst(src, dst);
-
-        LOG_INSTRUCTION("Store", src, RESULT(dst));
-
         ASSERT(dst.isMemory());
-        Location srcLocation = locationOf(src);
-        ASSERT(srcLocation.isRegister());
-        switch (src.type()) {
+        ASSERT(src.isRegister());
+
+        switch (type) {
         case TypeKind::I32:
         case TypeKind::I31ref:
-            m_jit.store32(srcLocation.asGPR(), dst.asAddress());
+            m_jit.store32(src.asGPR(), dst.asAddress());
             break;
         case TypeKind::I64:
-            m_jit.store64(srcLocation.asGPR(), dst.asAddress());
+            m_jit.store64(src.asGPR(), dst.asAddress());
             break;
         case TypeKind::F32:
-            m_jit.storeFloat(srcLocation.asFPR(), dst.asAddress());
+            m_jit.storeFloat(src.asFPR(), dst.asAddress());
             break;
         case TypeKind::F64:
-            m_jit.storeDouble(srcLocation.asFPR(), dst.asAddress());
+            m_jit.storeDouble(src.asFPR(), dst.asAddress());
             break;
         case TypeKind::Externref:
         case TypeKind::Ref:
@@ -8392,37 +8401,44 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
-            m_jit.store64(srcLocation.asGPR(), dst.asAddress());
+            m_jit.store64(src.asGPR(), dst.asAddress());
             break;
         case TypeKind::V128:
-            m_jit.storeVector(srcLocation.asFPR(), dst.asAddress());
+            m_jit.storeVector(src.asFPR(), dst.asAddress());
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented type kind store.");
         }
     }
 
-    void emitMoveMemory(Value src, Location dst)
+    void emitStore(Value src, Location dst)
+    {
+        if (src.isConst())
+            return emitStoreConst(src, dst);
+
+        LOG_INSTRUCTION("Store", src, RESULT(dst));
+        emitStore(src.type(), locationOf(src), dst);
+    }
+
+    void emitMoveMemory(TypeKind type, Location src, Location dst)
     {
         ASSERT(dst.isMemory());
-        Location srcLocation = locationOf(src);
-        ASSERT(srcLocation.isMemory());
+        ASSERT(src.isMemory());
 
-        if (srcLocation == dst)
+        if (src == dst)
             return;
-        LOG_INSTRUCTION("Move", src, RESULT(dst));
 
-        switch (src.type()) {
+        switch (type) {
         case TypeKind::I32:
         case TypeKind::I31ref:
         case TypeKind::F32:
-            m_jit.transfer32(srcLocation.asAddress(), dst.asAddress());
+            m_jit.transfer32(src.asAddress(), dst.asAddress());
             break;
         case TypeKind::I64:
-            m_jit.transfer64(srcLocation.asAddress(), dst.asAddress());
+            m_jit.transfer64(src.asAddress(), dst.asAddress());
             break;
         case TypeKind::F64:
-            m_jit.loadDouble(srcLocation.asAddress(), m_scratchFPR);
+            m_jit.loadDouble(src.asAddress(), m_scratchFPR);
             m_jit.storeDouble(m_scratchFPR, dst.asAddress());
             break;
         case TypeKind::Externref:
@@ -8431,14 +8447,10 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Structref:
         case TypeKind::Arrayref:
-            m_jit.transfer64(srcLocation.asAddress(), dst.asAddress());
+            m_jit.transfer64(src.asAddress(), dst.asAddress());
             break;
         case TypeKind::V128: {
-            // We do two scalar load/store pairs instead of one vector load/store in order to avoid
-            // clobbering m_scratchFPR or reserving an FPR for data scratch. This should probably be
-            // a very uncommon operation and if it's ever the bottleneck let's just assume OMG will
-            // handle it.
-            Address srcAddress = srcLocation.asAddress();
+            Address srcAddress = src.asAddress();
             Address dstAddress = dst.asAddress();
             m_jit.loadVector(srcAddress, m_scratchFPR);
             m_jit.storeVector(m_scratchFPR, dstAddress);
@@ -8449,19 +8461,21 @@ private:
         }
     }
 
-    void emitMoveRegister(Value src, Location dst)
+    void emitMoveMemory(Value src, Location dst)
+    {
+        LOG_INSTRUCTION("Move", src, RESULT(dst));
+        emitMoveMemory(src.type(), locationOf(src), dst);
+    }
+
+    void emitMoveRegister(TypeKind type, Location src, Location dst)
     {
         ASSERT(dst.isRegister());
-        Location srcLocation = locationOf(src);
+        ASSERT(src.isRegister());
 
-        if (srcLocation == dst)
+        if (src == dst)
             return;
 
-        if (!isScratch(srcLocation) && !isScratch(dst))
-            LOG_INSTRUCTION("Move", src, RESULT(dst));
-
-        ASSERT(srcLocation.isRegister());
-        switch (src.type()) {
+        switch (type) {
         case TypeKind::I32:
         case TypeKind::I31ref:
         case TypeKind::I64:
@@ -8471,42 +8485,46 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
-            m_jit.move(srcLocation.asGPR(), dst.asGPR());
+            m_jit.move(src.asGPR(), dst.asGPR());
             break;
         case TypeKind::F32:
         case TypeKind::F64:
-            m_jit.moveDouble(srcLocation.asFPR(), dst.asFPR());
+            m_jit.moveDouble(src.asFPR(), dst.asFPR());
             break;
         case TypeKind::V128:
-            m_jit.moveVector(srcLocation.asFPR(), dst.asFPR());
+            m_jit.moveVector(src.asFPR(), dst.asFPR());
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented type kind move.");
         }
     }
 
-    void emitLoad(Value src, Location dst)
+    void emitMoveRegister(Value src, Location dst)
+    {
+        if (!isScratch(locationOf(src)) && !isScratch(dst))
+            LOG_INSTRUCTION("Move", src, RESULT(dst));
+
+        emitMoveRegister(src.type(), locationOf(src), dst);
+    }
+
+    void emitLoad(TypeKind type, Location src, Location dst)
     {
         ASSERT(dst.isRegister());
-        Location srcLocation = locationOf(src);
-        ASSERT(srcLocation.isMemory());
+        ASSERT(src.isMemory());
 
-        if (!isScratch(dst))
-            LOG_INSTRUCTION("Load", src, RESULT(dst));
-
-        switch (src.type()) {
+        switch (type) {
         case TypeKind::I32:
         case TypeKind::I31ref:
-            m_jit.load32(srcLocation.asAddress(), dst.asGPR());
+            m_jit.load32(src.asAddress(), dst.asGPR());
             break;
         case TypeKind::I64:
-            m_jit.load64(srcLocation.asAddress(), dst.asGPR());
+            m_jit.load64(src.asAddress(), dst.asGPR());
             break;
         case TypeKind::F32:
-            m_jit.loadFloat(srcLocation.asAddress(), dst.asFPR());
+            m_jit.loadFloat(src.asAddress(), dst.asFPR());
             break;
         case TypeKind::F64:
-            m_jit.loadDouble(srcLocation.asAddress(), dst.asFPR());
+            m_jit.loadDouble(src.asAddress(), dst.asFPR());
             break;
         case TypeKind::Ref:
         case TypeKind::RefNull:
@@ -8514,13 +8532,36 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
-            m_jit.load64(srcLocation.asAddress(), dst.asGPR());
+            m_jit.load64(src.asAddress(), dst.asGPR());
             break;
         case TypeKind::V128:
-            m_jit.loadVector(srcLocation.asAddress(), dst.asFPR());
+            m_jit.loadVector(src.asAddress(), dst.asFPR());
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented type kind load.");
+        }
+    }
+
+    void emitLoad(Value src, Location dst)
+    {
+        if (!isScratch(dst))
+            LOG_INSTRUCTION("Load", src, RESULT(dst));
+
+        emitLoad(src.type(), locationOf(src), dst);
+    }
+
+    void emitMove(TypeKind type, Location src, Location dst)
+    {
+        if (src.isRegister()) {
+            if (dst.isMemory())
+                emitStore(type, src, dst);
+            else
+                emitMoveRegister(type, src, dst);
+        } else {
+            if (dst.isMemory())
+                emitMoveMemory(type, src, dst);
+            else
+                emitLoad(type, src, dst);
         }
     }
 
@@ -8533,17 +8574,7 @@ private:
                 emitMoveConst(src, dst);
         } else {
             Location srcLocation = locationOf(src);
-            if (srcLocation.isRegister()) {
-                if (dst.isMemory())
-                    emitStore(src, dst);
-                else
-                    emitMoveRegister(src, dst);
-            } else {
-                if (dst.isMemory())
-                    emitMoveMemory(src, dst);
-                else
-                    emitLoad(src, dst);
-            }
+            emitMove(src.type(), srcLocation, dst);
         }
     }
 
