@@ -1215,7 +1215,7 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilityState expectedState)
 {
     if (!element.hasAttributeWithoutSynchronization(HTMLNames::popoverAttr))
-        return Exception { InvalidStateError, "Element does not have the popover attribute"_s };
+        return Exception { NotSupportedError, "Element does not have the popover attribute"_s };
 
     if (!element.isConnected())
         return Exception { InvalidStateError, "Element is not connected"_s };
