@@ -129,9 +129,6 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 
 HTMLInputElement::~HTMLInputElement()
 {
-    if (needsSuspensionCallback())
-        document().unregisterForDocumentSuspensionCallbacks(*this);
-
     // Need to remove form association while this is still an HTMLInputElement
     // so that virtual functions are called correctly.
     setForm(nullptr);
