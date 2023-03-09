@@ -237,7 +237,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
             auto nextUserPerceivedCharacterIndex = [&] (auto index) -> size_t {
                 if (text.is8Bit())
                     return index + 1;
-                U16_FWD_1(text, index, length);
+                U16_FWD_1(text, index, startPosition + length);
                 return index;
             };
 
