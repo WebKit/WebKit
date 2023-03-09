@@ -65,6 +65,7 @@
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 #include "LibWebRTCCodecs.h"
@@ -91,6 +92,12 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 #if USE(LIBWEBRTC)
     LibWebRTCCodecs::setCallbacks(m_page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), m_page->settings().webRTCRemoteVideoFrameEnabled());
     LibWebRTCCodecs::setWebRTCMediaPipelineAdditionalLoggingEnabled(m_page->settings().webRTCMediaPipelineAdditionalLoggingEnabled());
+#endif    
+#if PLATFORM(MAC)
+    // In order to be able to block launchd on macOS, we need to eagerly open up a connection to CARenderServer here.
+    // This is because PDF rendering on macOS requires access to CARenderServer, unless we're in Lockdown mode.
+    if (!WebProcess::singleton().isLockdownModeEnabled())
+        CARenderServerGetServerPort(nullptr);
 #endif
 }
 
