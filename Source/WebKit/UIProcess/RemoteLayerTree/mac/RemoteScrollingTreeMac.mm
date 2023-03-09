@@ -57,8 +57,9 @@ RemoteScrollingTreeMac::~RemoteScrollingTreeMac() = default;
 
 void RemoteScrollingTreeMac::handleWheelEventPhase(ScrollingNodeID nodeID, PlatformWheelEventPhase phase)
 {
-    RefPtr targetNode = nodeForID(nodeID);
-    dynamicDowncast<ScrollingTreeScrollingNode>(*targetNode)->handleWheelEventPhase(phase);
+    auto* targetNode = nodeForID(nodeID);
+    if (auto* node = dynamicDowncast<ScrollingTreeScrollingNode>(targetNode))
+        node->handleWheelEventPhase(phase);
 }
 
 void RemoteScrollingTreeMac::displayDidRefresh(PlatformDisplayID)
