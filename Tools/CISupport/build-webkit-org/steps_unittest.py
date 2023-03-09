@@ -1057,9 +1057,9 @@ class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(SetPermissions())
-        self.setProperty('result_directory', 'public_html/results/Apple-BigSur-Release-WK2-Tests/r277034 (2346)')
+        self.setProperty('result_directory', 'public_html/results/Apple-Monterey-Release-WK2-Tests/r277034 (2346)')
         self.expectLocalCommands(
-            ExpectMasterShellCommand(command=['chmod', 'a+rx', 'public_html/results/Apple-BigSur-Release-WK2-Tests/r277034 (2346)'])
+            ExpectMasterShellCommand(command=['chmod', 'a+rx', 'public_html/results/Apple-Monterey-Release-WK2-Tests/r277034 (2346)'])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Ran')
