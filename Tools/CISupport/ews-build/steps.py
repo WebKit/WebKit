@@ -1824,7 +1824,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             yield self._addToLog('stdio', 'Sending email notification to {}.\nPlease contact an admin to fix the issue.\n'.format(change_author))
             send_email_to_patch_author(change_author, email_subject, email_text, self.getProperty('github.head.sha', ''))
         except Exception as e:
-            print('Error in sending email for github failure: {}'.format(e))
+            yield self._addToLog('stdio', f'Error in sending email for github failure: {e}')
         return defer.returnValue(None)
 
 
@@ -2895,7 +2895,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             yield self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
             send_email_to_patch_author(change_author, email_subject, email_text, patch_id or self.getProperty('github.head.sha', ''))
         except Exception as e:
-            print('Error in sending email for new build failure: {}'.format(e))
+            yield self._addToLog('stdio', f'Error in sending email for new build failure: {e}')
 
     def send_email_for_preexisting_build_failure(self):
         try:
