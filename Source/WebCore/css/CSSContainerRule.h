@@ -37,7 +37,8 @@ public:
 
     String cssText() const final;
     String conditionText() const final;
-    String nameText() const;
+    String containerName() const;
+    String containerQuery() const;
 
 private:
     const StyleRuleContainer& styleRuleContainer() const;
