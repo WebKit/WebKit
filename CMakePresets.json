@@ -1,0 +1,77 @@
+{
+    "version": 2,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "gtk",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "GTK"
+                }
+            }
+        },
+        {
+            "name": "gtk-release",
+            "displayName": "GTK Release",
+            "inherits": "gtk",
+            "binaryDir": "WebKitBuild/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Release"
+                }
+            }
+        },
+        {
+            "name": "gtk-debug",
+            "displayName": "GTK Debug",
+            "inherits": "gtk",
+            "binaryDir": "WebKitBuild/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Debug"
+                }
+            }
+        },
+        {
+            "name": "gtk-dev",
+            "displayName": "GTK Development",
+            "inherits": "gtk-release",
+            "cacheVariables": {
+                "DEVELOPER_MODE": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "ON"
+                }
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gtk-release",
+            "displayName": "GTK Release",
+            "configurePreset": "gtk-release"
+        },
+        {
+            "name": "gtk-debug",
+            "displayName": "GTK Debug",
+            "configurePreset": "gtk-debug"
+        },
+        {
+            "name": "gtk-dev",
+            "displayName": "GTK Development",
+            "configurePreset": "gtk-dev"
+        }
+    ]
+}
