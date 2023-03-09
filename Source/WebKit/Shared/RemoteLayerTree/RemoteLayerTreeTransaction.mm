@@ -1008,6 +1008,9 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
         if (layerProperties.changedProperties & LayerChange::UserInteractionEnabledChanged)
             ts.dumpProperty("userInteractionEnabled", layerProperties.userInteractionEnabled);
 
+        if (layerProperties.changedProperties & LayerChange::EventRegionChanged)
+            ts.dumpProperty("eventRegion", layerProperties.eventRegion);
+
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & LayerChange::SeparatedChanged)
             ts.dumpProperty("isSeparated", layerProperties.isSeparated);

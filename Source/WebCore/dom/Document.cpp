@@ -4784,9 +4784,12 @@ void Document::invalidateEventListenerRegions()
     // We don't track style validity for Document and full rebuild is too big of a hammer.
     // Instead just mutate the style directly and trigger a minimal style update.
     auto& rootStyle = renderView()->mutableStyle();
-    Style::Adjuster::adjustEventListenerRegionTypesForRootStyle(rootStyle, *this);
+    auto changed = Style::Adjuster::adjustEventListenerRegionTypesForRootStyle(rootStyle, *this);
 
-    documentElement()->invalidateStyleInternal();
+    if (changed)
+        scheduleFullStyleRebuild();
+    else
+        documentElement()->invalidateStyleInternal();
 }
 
 void Document::invalidateRenderingDependentRegions()

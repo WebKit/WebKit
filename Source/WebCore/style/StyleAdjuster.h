@@ -52,7 +52,7 @@ public:
     void adjustAnimatedStyle(RenderStyle&, OptionSet<AnimationImpact>) const;
 
     static void adjustSVGElementStyle(RenderStyle&, const SVGElement&);
-    static void adjustEventListenerRegionTypesForRootStyle(RenderStyle&, const Document&);
+    static bool adjustEventListenerRegionTypesForRootStyle(RenderStyle&, const Document&);
     static void propagateToDocumentElementAndInitialContainingBlock(Update&, const Document&);
     static std::unique_ptr<RenderStyle> restoreUsedDocumentElementStyleToComputed(const RenderStyle&);
 
