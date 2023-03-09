@@ -253,7 +253,6 @@ private:
     String roleDescription() const override { return stringAttributeValue(AXPropertyName::RoleDescription); }
     String subrolePlatformString() const override { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }
     String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
-    bool supportsPressAction() const override;
     LayoutRect elementRect() const override;
     IntPoint clickPoint() override;
     void accessibilityText(Vector<AccessibilityText>& texts) const override;
@@ -480,6 +479,7 @@ private:
 
     bool supportsHasPopup() const override;
     bool supportsPressed() const override;
+    bool supportsPressAction() const final { return boolAttributeValue(AXPropertyName::SupportsPressAction); }
     bool supportsChecked() const override;
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
