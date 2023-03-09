@@ -36,6 +36,7 @@ set(WPE_DOM_SOURCES_FOR_INTROSPECTION
 
 list(APPEND WPE_FAKE_API_HEADERS
     ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
+    ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-extension.h
 )
 
 add_custom_command(
@@ -43,4 +44,15 @@ add_custom_command(
     DEPENDS ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM
     COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
     VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-extension.h
+    DEPENDS ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-process-extension.h
+    COMMAND ${CMAKE_COMMAND} -E copy ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-process-extension.h ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-extension.h
+    VERBATIM
+)
+
+install(FILES ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-extension.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wpe-webkit-${WPE_API_VERSION}/wpe
 )
