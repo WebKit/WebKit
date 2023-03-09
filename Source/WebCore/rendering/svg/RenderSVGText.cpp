@@ -628,4 +628,32 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
     ASSERT(m_objectBoundingBox == frameRect());
 }
 
+void RenderSVGText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    auto needsTransformUpdate = [&]() {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (document().settings().layerBasedSVGEngineEnabled())
+            return false;
+#endif
+        if (diff != StyleDifference::Layout)
+            return false;
+
+        auto& newStyle = style();
+        if (!oldStyle)
+            return newStyle.affectsTransform();
+
+        return (oldStyle->affectsTransform() != newStyle.affectsTransform()
+            || oldStyle->transform() != newStyle.transform()
+            || oldStyle->translate() != newStyle.translate()
+            || oldStyle->scale() != newStyle.scale()
+            || oldStyle->rotate() != newStyle.rotate()
+            || oldStyle->offsetPath() != newStyle.offsetPath());
+    };
+
+    if (needsTransformUpdate())
+        setNeedsTransformUpdate();
+
+    RenderSVGBlock::styleDidChange(diff, oldStyle);
+}
+
 }

@@ -96,6 +96,8 @@ private:
 
     void willBeDestroyed() override;
 
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+
     // FIXME: [LBSE] Begin code only needed for legacy SVG engine.
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
