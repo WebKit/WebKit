@@ -30,6 +30,8 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestWKWebView.h"
 #import "UserMediaCaptureUIDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -1273,6 +1275,8 @@ TEST(WebKit2, DoNotUnmuteWhenTakingAThumbnail)
 #if WK_HAVE_C_SPI
 TEST(WebKit2, WebRTCAndRemoteCommands)
 {
+    [TestProtocol registerWithScheme:@"https"];
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     configuration.get().processPool = (WKProcessPool *)context.get();
@@ -1297,7 +1301,10 @@ TEST(WebKit2, WebRTCAndRemoteCommands)
     microphoneCaptureStateChange = false;
 
     done = false;
-    [webView loadTestPageNamed:@"webrtc-remote"];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/webrtc-remote.html"]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    TestWebKitAPI::Util::run(&done);
 
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
