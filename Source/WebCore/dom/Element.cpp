@@ -369,11 +369,11 @@ void Element::setNonce(const AtomString& newValue)
     ensureElementRareData().setNonce(newValue);
 }
 
-void Element::hideNonce()
+void Element::hideNonceSlow()
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#nonce-attributes
-    if (!isConnected())
-        return;
+    ASSERT(isConnected());
+    ASSERT(hasAttributeWithoutSynchronization(nonceAttr));
 
     const auto& csp = document().contentSecurityPolicy();
     if (!csp->isHeaderDelivered())
@@ -381,10 +381,7 @@ void Element::hideNonce()
 
     // Retain previous IDL nonce.
     AtomString currentNonce = nonce();
-
-    if (!getAttribute(nonceAttr).isEmpty())
-        setAttribute(nonceAttr, emptyAtom());
-
+    setAttribute(nonceAttr, emptyAtom());
     setNonce(currentNonce);
 }
 

@@ -397,7 +397,7 @@ public:
     // Used by the HTMLElement and SVGElement IDLs.
     WEBCORE_EXPORT const AtomString& nonce() const;
     WEBCORE_EXPORT void setNonce(const AtomString&);
-    void hideNonce();
+    inline void hideNonce(); // Defined in ElementInlines.h.
 
     ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
 
@@ -758,6 +758,7 @@ protected:
 
 private:
     Frame* documentFrameWithNonNullView() const;
+    void hideNonceSlow();
 
     bool isTextNode() const;
 
