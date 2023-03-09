@@ -193,10 +193,10 @@ static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsC
     return RenderingMode::Unaccelerated;
 }
 
-GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source)
+GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source, std::optional<RenderingMode> knownRenderingMode)
     : GraphicsContext(GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
     , m_cgContext(cgContext)
-    , m_renderingMode(renderingModeForCGContext(cgContext, source))
+    , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
 {
     if (!cgContext)

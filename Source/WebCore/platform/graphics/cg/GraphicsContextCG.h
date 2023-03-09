@@ -38,7 +38,7 @@ public:
         Unknown,
         CGContextFromCALayer
     };
-    GraphicsContextCG(CGContextRef, CGContextSource = CGContextSource::Unknown);
+    GraphicsContextCG(CGContextRef, CGContextSource = CGContextSource::Unknown, std::optional<RenderingMode> knownRenderingMode = std::nullopt);
 
     ~GraphicsContextCG();
 
