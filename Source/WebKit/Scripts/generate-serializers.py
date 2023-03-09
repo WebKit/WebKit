@@ -24,6 +24,7 @@
 
 import re
 import sys
+import os
 
 # Supported type attributes:
 #
@@ -716,7 +717,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
     return '\n'.join(result)
 
 
-def parse_serialized_types(file, file_name):
+def parse_serialized_types(file):
     serialized_types = []
     serialized_enums = []
     typedefs = []
@@ -865,7 +866,6 @@ def parse_serialized_types(file, file_name):
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
     return [serialized_types, serialized_enums, headers, typedefs]
 
-
 def main(argv):
     serialized_types = []
     serialized_enums = []
@@ -873,8 +873,9 @@ def main(argv):
     headers = []
     file_extension = argv[1]
     for i in range(3, len(argv)):
-        with open(argv[2] + argv[i]) as file:
-            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file, argv[i])
+        path = os.path.join(os.getcwd(), argv[i]) if i == (len(argv) - 1) else argv[2] + argv[i]
+        with open(path) as file:
+            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:

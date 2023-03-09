@@ -510,6 +510,15 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
 endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
+add_custom_command(
+    OUTPUT
+       ${WebKit_DERIVED_SOURCES_DIR}/HTTPHeaderNames.serialization.in
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/create-http-header-serialization-interface.py
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/create-http-header-serialization-interface.py ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/HTTPHeaderNames.in
+    WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
+    VERBATIM
+)
+
 set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/GPUProcessSessionParameters.serialization.in
 
@@ -677,7 +686,8 @@ add_custom_command(
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
         ${WebKit_SERIALIZATION_IN_FILES}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py cpp ${WEBKIT_DIR}/ ${WebKit_SERIALIZATION_IN_FILES}
+        ${WebKit_DERIVED_SOURCES_DIR}/HTTPHeaderNames.serialization.in
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py cpp ${WEBKIT_DIR}/ ${WebKit_SERIALIZATION_IN_FILES} HTTPHeaderNames.serialization.in
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )

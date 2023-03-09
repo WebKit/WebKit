@@ -455,6 +455,10 @@ all : $(WEB_PREFERENCES_FILES)
 $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES)
 	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WEB_PREFERENCES)
 
+all : HTTPHeaderNames.serialization.in
+HTTPHeaderNames.serialization.in : $(WebCorePrivateHeaders)/HTTPHeaderNames.in $(WebKit2)/Scripts/create-http-header-serialization-interface.py
+	$(PYTHON) $(WebKit2)/Scripts/create-http-header-serialization-interface.py $(WebCorePrivateHeaders)/HTTPHeaderNames.in
+
 SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/GPUProcessSessionParameters.serialization.in \
 	GPUProcess/graphics/InlinePathData.serialization.in \
@@ -609,8 +613,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 
 all : GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm
 
-GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
-	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES)
+GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) HTTPHeaderNames.serialization.in $(WebKit2)/DerivedSources.make
+	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES) HTTPHeaderNames.serialization.in
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts

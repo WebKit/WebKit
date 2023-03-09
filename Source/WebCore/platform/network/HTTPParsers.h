@@ -39,7 +39,7 @@ namespace WebCore {
 typedef HashSet<String, ASCIICaseInsensitiveHash> HTTPHeaderSet;
 
 class ResourceResponse;
-enum class HTTPHeaderName;
+enum class HTTPHeaderName : uint16_t;
 
 enum class XSSProtectionDisposition {
     Invalid,
