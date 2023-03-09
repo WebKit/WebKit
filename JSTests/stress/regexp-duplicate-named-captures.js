@@ -124,14 +124,11 @@ function testRegExp(re, str, exp, groups)
 {
     testNumber++;
 
-    if (groups)
-        exp.groups = groups;
-
     let actual = re.exec(str);
     let result = compareArray(exp, actual);;
 
-    if (exp.groups) {
-        if (!compareGroups(exp.groups, actual.groups))
+    if (exp) {
+        if (groups && !compareGroups(groups, actual.groups))
             result = false;
     }
 
@@ -186,4 +183,12 @@ testRegExpSyntaxError("(?<A>123)(?:(?<A>456)|(?<A>789))", "", "SyntaxError: Inva
 
 // Test 21
 testRegExpSyntaxError("(?<=\\k<a>a)x", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
+testRegExp(/(?<b>.).\k<b>/u, "bab", ["bab", "b"]);
+testRegExp(/(?<b>.).\k<b>/u, "baa", null, null);
+testRegExp(/(?<a>\k<a>\w)../u, "bab", ["bab", "b"], { a: "b" });
+testRegExp(/(?:(?<x>a)|(?<y>a)(?<x>b))(?:(?<z>c)|(?<z>d))/, "abc", ["abc", undefined, "a", "b", "c", undefined], { x: "b", y: "a", z: "c" });
 
+// Test 26
+testRegExp(/(?<=(?:\1|b)(aa))./, "aaaax", ["x", "aa"]);
+testRegExp(/(?<=(?:\2|b)(?<=\1(a))(aa))./, "aaaax", ["x", "a", "aa"]);
+testRegExp(/(?<=((?:\3|b))(?<=\2(a))(aa))./, "aaaax", ["x", "aa", "a", "aa"]);

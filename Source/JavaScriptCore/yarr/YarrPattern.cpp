@@ -947,41 +947,40 @@ public:
         m_pattern.m_disjunctions.append(WTFMove(body));
     }
 
-    unsigned namedCaptureGroupIdForName(const String groupName, unsigned subpatternId)
+    void addCaptureGroupForName(const String groupName, unsigned subpatternId)
     {
         ASSERT(subpatternId);
-        unsigned namedCaptureGroupId;
 
-        auto addResult = m_pattern.m_namedGroupToParenIndeces.add(groupName, Vector<unsigned>());
+        m_pattern.m_hasNamedCaptureGroups = true;
+
+        auto addResult = m_pattern.m_namedGroupToParenIndices.add(groupName, Vector<unsigned>());
         auto& thisGroupNameSubpatternIds = addResult.iterator->value;
         if (addResult.isNewEntry) {
-            namedCaptureGroupId = ++m_pattern.m_numNamedSubpatterns;
-
             while (m_pattern.m_captureGroupNames.size() < subpatternId)
                 m_pattern.m_captureGroupNames.append(String());
             m_pattern.m_captureGroupNames.append(groupName);
 
-            thisGroupNameSubpatternIds.append(namedCaptureGroupId);
-        } else
-            namedCaptureGroupId = thisGroupNameSubpatternIds[0];
+            thisGroupNameSubpatternIds.append(subpatternId);
+        } else if (thisGroupNameSubpatternIds.size() == 2) {
+            // This named group is now a duplicate.
+            thisGroupNameSubpatternIds[0] = ++m_pattern.m_numDuplicateNamedCaptureGroups;
+        }
 
         thisGroupNameSubpatternIds.append(subpatternId);
-
-        return namedCaptureGroupId;
     }
 
     void tryConvertingForwardReferencesToBackreferences()
     {
         //  There are forward references that could actually be lookbehind back references.
         for (unsigned i = 0; i < m_forwardReferencesInLookbehind.size(); ++i) {
-            auto unresolvedForwardReference = m_forwardReferencesInLookbehind[i];
+            UnresolvedForwardReference& unresolvedForwardReference = m_forwardReferencesInLookbehind[i];
             auto term = unresolvedForwardReference.term();
             if (unresolvedForwardReference.hasNamedGroup()) {
-                auto namedGroupIndecesIter = m_pattern.m_namedGroupToParenIndeces.find(unresolvedForwardReference.namedGroup());
-                if (namedGroupIndecesIter == m_pattern.m_namedGroupToParenIndeces.end())
+                auto namedGroupIndicesIter = m_pattern.m_namedGroupToParenIndices.find(unresolvedForwardReference.namedGroup());
+                if (namedGroupIndicesIter == m_pattern.m_namedGroupToParenIndices.end())
                     continue;
 
-                unsigned namedGroupSubpatternId = namedGroupIndecesIter->value.last();
+                unsigned namedGroupSubpatternId = namedGroupIndicesIter->value.last();
                 if (namedGroupSubpatternId == term->backReferenceSubpatternId) {
                     term->backReferenceSubpatternId = 0;
                     continue;
@@ -1223,7 +1222,7 @@ public:
         if (capture) {
             m_pattern.m_numSubpatterns++;
             if (optGroupName) {
-                namedCaptureGroupIdForName(optGroupName.value(), subpatternId);
+                addCaptureGroupForName(optGroupName.value(), subpatternId);
             }
         } else
             ASSERT(!optGroupName);
@@ -1331,11 +1330,39 @@ public:
 
     void atomNamedBackReference(const String& subpatternName)
     {
-        ASSERT(m_pattern.m_namedGroupToParenIndeces.find(subpatternName) != m_pattern.m_namedGroupToParenIndeces.end());
-        auto namedGroupIndeces = m_pattern.m_namedGroupToParenIndeces.get(subpatternName);
+        ASSERT(m_pattern.m_namedGroupToParenIndices.find(subpatternName) != m_pattern.m_namedGroupToParenIndices.end());
+        auto parenIndices = m_pattern.m_namedGroupToParenIndices.get(subpatternName);
+
+        if (parenIndices.size() == 2) {
+            // If this isn't a duplicate group, we need to go through the same analysis as a non-named backreferece to determine if
+            // this backreference appears in the capture itself. A duplicate could be satisfied by a prior capture and therefore doesn't
+            // need this analysis.
+            unsigned subpatternId = parenIndices.last();
+
+            PatternAlternative* currentAlternative = m_alternative;
+            ASSERT(currentAlternative);
+
+            while ((currentAlternative = currentAlternative->m_parent->m_parent)) {
+                PatternTerm& term = currentAlternative->lastTerm();
+                ASSERT((term.type == PatternTerm::Type::ParenthesesSubpattern) || (term.type == PatternTerm::Type::ParentheticalAssertion));
+
+                if ((term.type == PatternTerm::Type::ParenthesesSubpattern) && term.capture() && (subpatternId == term.parentheses.subpatternId)) {
+                    m_alternative->m_terms.append(PatternTerm::ForwardReference());
+                    return;
+                }
+
+                if (parenthesisMatchDirection() == Backward
+                    && term.type == PatternTerm::Type::ParentheticalAssertion
+                    && term.matchDirection() == Backward
+                    && subpatternId >= term.parentheses.subpatternId) {
+                    m_alternative->m_terms.append(PatternTerm::ForwardReference());
+                    return;
+                }
+            }
+        }
 
         if (parenthesisMatchDirection() == Forward) {
-            m_alternative->m_terms.append(PatternTerm(namedGroupIndeces.last()));
+            m_alternative->m_terms.append(PatternTerm(parenIndices.last()));
             PatternTerm& lastTerm = m_alternative->lastTerm();
             lastTerm.m_matchDirection = parenthesisMatchDirection();
             m_pattern.m_containsBackreferences = true;
@@ -1484,9 +1511,6 @@ public:
             // Top level alternative, record captured ranges to clear out from prior alternatives.
             m_alternative->m_lastSubpatternId = m_pattern.m_numSubpatterns;
         }
-
-        if (!m_forwardReferencesInLookbehind.isEmpty() && parenthesisMatchDirection() == Backward)
-            tryConvertingForwardReferencesToBackreferences();
 
         m_alternative = m_alternative->m_parent->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
     }
@@ -1803,36 +1827,31 @@ public:
         }
     }
 
-    void setupDuplicateNamedCaptures()
+    void setupNamedCaptures()
     {
-        if (!m_pattern.m_numNamedSubpatterns)
+        if (!m_pattern.m_hasNamedCaptureGroups)
             return;
 
         // Finish padding out m_captureGroupNames vector.
         while (m_pattern.m_captureGroupNames.size() <= m_pattern.m_numSubpatterns)
             m_pattern.m_captureGroupNames.append(String());
 
-        m_pattern.m_numDuplicateNamedCaptureGroups = 0;
-
-        for (auto& namedGroupIndecies : m_pattern.m_namedGroupToParenIndeces.values()) {
-            if (namedGroupIndecies.size() > 2)
-                m_pattern.m_numDuplicateNamedCaptureGroups++;
-            else {
-                // Since this named group is only used in one place, make that subpatternId
-                // as the only value in the vector.
-                ASSERT(namedGroupIndecies.size() == 2);
-                auto onlyIndex = namedGroupIndecies.takeLast();
-                namedGroupIndecies[0] = onlyIndex;
+        for (auto& namedGroupIndicies : m_pattern.m_namedGroupToParenIndices.values()) {
+            if (namedGroupIndicies.size() == 2) {
+                // Since this named group is only used in one place, i.e. not a duplicate name,
+                // make that subpatternId as the only value in the vector.
+                ASSERT(namedGroupIndicies[0] == namedGroupIndicies[1]);
+                namedGroupIndicies.takeLast();
             }
         }
 
         if (m_pattern.m_numDuplicateNamedCaptureGroups) {
             m_pattern.m_duplicateNamedGroupForSubpatternId.fill(0, m_pattern.m_numSubpatterns + 1);
-            for (auto& namedGroupIndecies : m_pattern.m_namedGroupToParenIndeces.values()) {
-                if (namedGroupIndecies.size() > 2) {
-                    auto duplicateNamedGroupId = namedGroupIndecies[0];
-                    for (unsigned i = 1; i < namedGroupIndecies.size(); ++i) {
-                        auto subpatternId = namedGroupIndecies[i];
+            for (auto& namedGroupIndicies : m_pattern.m_namedGroupToParenIndices.values()) {
+                if (namedGroupIndicies.size() > 2) {
+                    auto duplicateNamedGroupId = namedGroupIndicies[0];
+                    for (unsigned i = 1; i < namedGroupIndicies.size(); ++i) {
+                        auto subpatternId = namedGroupIndicies[i];
                         ASSERT(!m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId]);
                         m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId] = duplicateNamedGroupId;
                     }
@@ -1996,7 +2015,7 @@ ErrorCode YarrPattern::compile(StringView patternString)
             return error;
     }
 
-    constructor.setupDuplicateNamedCaptures();
+    constructor.setupNamedCaptures();
 
     if (UNLIKELY(Options::dumpCompiledRegExpPatterns()))
         dumpPattern(patternString);
@@ -2010,6 +2029,7 @@ YarrPattern::YarrPattern(StringView pattern, OptionSet<Flags> flags, ErrorCode& 
     , m_containsLookbehinds(false)
     , m_containsUnsignedLengthPattern(false)
     , m_hasCopiedParenSubexpressions(false)
+    , m_hasNamedCaptureGroups(false)
     , m_saveInitialStartValue(false)
     , m_flags(flags)
 {
