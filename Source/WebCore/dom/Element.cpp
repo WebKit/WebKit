@@ -262,14 +262,6 @@ Element::~Element()
 
     if (hasSyntheticAttrChildNodes())
         detachAllAttrNodesFromElement();
-
-    if (hasRareData()) {
-        if (auto* map = elementRareData()->attributeStyleMap())
-            map->clearElement();
-    }
-
-    if (hasLangAttrKnownToMatchDocumentElement())
-        document().removeElementWithLangAttrMatchingDocumentElement(*this);
 }
 
 inline ElementRareData& Element::ensureElementRareData()

@@ -39,7 +39,7 @@ Ref<InlineStylePropertyMap> InlineStylePropertyMap::create(StyledElement& elemen
 }
 
 InlineStylePropertyMap::InlineStylePropertyMap(StyledElement& element)
-    : m_element(&element)
+    : m_element(element)
 {
 }
 
@@ -135,11 +135,6 @@ void InlineStylePropertyMap::clear()
 {
     if (m_element)
         m_element->removeAllInlineStyleProperties();
-}
-
-void InlineStylePropertyMap::clearElement()
-{
-    m_element = nullptr;
 }
 
 } // namespace WebCore
