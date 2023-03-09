@@ -4958,7 +4958,7 @@ public:
     {
         EMIT_BINARY(
             opcode, TypeKind::I32,
-            BLOCK(Value::fromI64(static_cast<int64_t>(comparator(lhs.asI64(), rhs.asI64())))),
+            BLOCK(Value::fromI32(static_cast<int32_t>(comparator(lhs.asI64(), rhs.asI64())))),
             BLOCK(
                 m_jit.compare64(condition, lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
             ),
@@ -6207,6 +6207,9 @@ public:
         unsigned outerLoops = m_outerLoops.isEmpty() ? UINT32_MAX : m_outerLoops.last();
         m_tierUp->outerLoops().append(outerLoops);
         m_outerLoops.append(loopIndex);
+
+        clobber(GPRInfo::argumentGPR0);
+        clobber(GPRInfo::argumentGPR1);
 
         m_jit.move(TrustedImm64(bitwise_cast<uintptr_t>(&m_tierUp->m_counter)), m_scratchGPR);
 

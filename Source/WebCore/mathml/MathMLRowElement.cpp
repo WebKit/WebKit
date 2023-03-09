@@ -41,8 +41,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLRowElement);
 
 using namespace MathMLNames;
 
-MathMLRowElement::MathMLRowElement(const QualifiedName& tagName, Document& document)
-    : MathMLPresentationElement(tagName, document)
+MathMLRowElement::MathMLRowElement(const QualifiedName& tagName, Document& document, ConstructionType constructionType)
+    : MathMLPresentationElement(tagName, document, constructionType)
 {
 }
 

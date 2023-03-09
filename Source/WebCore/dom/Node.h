@@ -636,7 +636,7 @@ protected:
     constexpr static auto CreateText = CreateCharacterData | NodeFlag::IsText;
     constexpr static auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
     constexpr static auto CreateElement = CreateContainer | NodeFlag::IsElement;
-    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected;
+    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
     constexpr static auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
     constexpr static auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
     constexpr static auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
@@ -701,8 +701,6 @@ protected:
     NodeRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
     NodeRareData& ensureRareData();
     void clearRareData();
-
-    void setHasCustomStyleResolveCallbacks() { setNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
 
     void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
 

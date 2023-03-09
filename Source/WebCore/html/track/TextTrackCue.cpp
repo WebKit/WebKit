@@ -85,10 +85,9 @@ Ref<TextTrackCueBox> TextTrackCueBox::create(Document& document, TextTrackCue& c
 }
 
 TextTrackCueBox::TextTrackCueBox(Document& document, TextTrackCue& cue)
-    : HTMLElement(HTMLNames::divTag, document)
+    : HTMLElement(HTMLNames::divTag, document, CreateTextTrackCueBox)
     , m_cue(cue)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 void TextTrackCueBox::initialize()

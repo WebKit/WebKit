@@ -55,7 +55,6 @@ enum class AXPropertyName : uint16_t {
     ARIALandmarkRoleDescription,
     ARIATreeItemContent,
     ARIATreeRows,
-    ARIARoleAttribute,
     AttributedText,
     AXColumnCount,
     AXColumnIndex,

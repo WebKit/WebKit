@@ -113,7 +113,6 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_inputType(createdByParser ? nullptr : RefPtr { InputType::createText(*this) })
 {
     ASSERT(hasTagName(inputTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
@@ -130,9 +129,6 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 
 HTMLInputElement::~HTMLInputElement()
 {
-    if (needsSuspensionCallback())
-        document().unregisterForDocumentSuspensionCallbacks(*this);
-
     // Need to remove form association while this is still an HTMLInputElement
     // so that virtual functions are called correctly.
     setForm(nullptr);

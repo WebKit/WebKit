@@ -49,9 +49,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
 using namespace HTMLNames;
 
 HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Document& document)
-    : HTMLFrameOwnerElement(tagName, document)
+    : HTMLFrameOwnerElement(tagName, document, CreateHTMLFrameElementBase)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 bool HTMLFrameElementBase::canLoadScriptURL(const URL& scriptURL) const

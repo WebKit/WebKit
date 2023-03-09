@@ -71,7 +71,6 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
     : HTMLMediaElement(tagName, document, createdByParser)
 {
     ASSERT(hasTagName(videoTag));
-    setHasCustomStyleResolveCallbacks();
     m_defaultPosterURL = AtomString { document.settings().defaultVideoPosterURL() };
 }
 

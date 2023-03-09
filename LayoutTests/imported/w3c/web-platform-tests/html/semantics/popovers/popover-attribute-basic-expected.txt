@@ -15,194 +15,194 @@ PASS The element <dialog popover="manual">Dialog with popover=manual</dialog> sh
 PASS The element <div popover="true">Invalid popover value - defaults to popover=manual</div> should behave as a popover.
 PASS The element <div popover="popover">Invalid popover value - defaults to popover=manual</div> should behave as a popover.
 PASS The element <div popover="invalid">Invalid popover value - defaults to popover=manual</div> should behave as a popover.
-FAIL The element <div>Not a popover</div> should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
-FAIL The element <dialog open="">Dialog without popover attribute</dialog> should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS The element <div>Not a popover</div> should *not* behave as a popover.
+PASS The element <dialog open="">Dialog without popover attribute</dialog> should *not* behave as a popover.
 PASS A <a popover> element should behave as a popover.
-FAIL A <a> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <a> element should *not* behave as a popover.
 PASS A <abbr popover> element should behave as a popover.
-FAIL A <abbr> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <abbr> element should *not* behave as a popover.
 PASS A <address popover> element should behave as a popover.
-FAIL A <address> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <address> element should *not* behave as a popover.
 FAIL A <area popover> element should behave as a popover. assert_equals: After showPopover(), a popover should be visible: Expected this element to be visible expected true but got false
 FAIL A <area> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
 PASS A <article popover> element should behave as a popover.
-FAIL A <article> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <article> element should *not* behave as a popover.
 PASS A <aside popover> element should behave as a popover.
-FAIL A <aside> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <aside> element should *not* behave as a popover.
 PASS A <b popover> element should behave as a popover.
-FAIL A <b> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <b> element should *not* behave as a popover.
 PASS A <bdi popover> element should behave as a popover.
-FAIL A <bdi> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <bdi> element should *not* behave as a popover.
 PASS A <bdo popover> element should behave as a popover.
-FAIL A <bdo> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <bdo> element should *not* behave as a popover.
 PASS A <blockquote popover> element should behave as a popover.
-FAIL A <blockquote> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <blockquote> element should *not* behave as a popover.
 PASS A <body popover> element should behave as a popover.
-FAIL A <body> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <body> element should *not* behave as a popover.
 PASS A <button popover> element should behave as a popover.
-FAIL A <button> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <button> element should *not* behave as a popover.
 PASS A <canvas popover> element should behave as a popover.
-FAIL A <canvas> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <canvas> element should *not* behave as a popover.
 PASS A <caption popover> element should behave as a popover.
-FAIL A <caption> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <caption> element should *not* behave as a popover.
 PASS A <cite popover> element should behave as a popover.
-FAIL A <cite> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <cite> element should *not* behave as a popover.
 PASS A <code popover> element should behave as a popover.
-FAIL A <code> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <code> element should *not* behave as a popover.
 PASS A <col popover> element should behave as a popover.
-FAIL A <col> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <col> element should *not* behave as a popover.
 PASS A <colgroup popover> element should behave as a popover.
-FAIL A <colgroup> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <colgroup> element should *not* behave as a popover.
 PASS A <data popover> element should behave as a popover.
-FAIL A <data> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <data> element should *not* behave as a popover.
 PASS A <dd popover> element should behave as a popover.
-FAIL A <dd> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <dd> element should *not* behave as a popover.
 PASS A <del popover> element should behave as a popover.
-FAIL A <del> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <del> element should *not* behave as a popover.
 PASS A <details popover> element should behave as a popover.
-FAIL A <details> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <details> element should *not* behave as a popover.
 PASS A <dfn popover> element should behave as a popover.
-FAIL A <dfn> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <dfn> element should *not* behave as a popover.
 PASS A <div popover> element should behave as a popover.
-FAIL A <div> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <div> element should *not* behave as a popover.
 PASS A <dl popover> element should behave as a popover.
-FAIL A <dl> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <dl> element should *not* behave as a popover.
 PASS A <dt popover> element should behave as a popover.
-FAIL A <dt> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <dt> element should *not* behave as a popover.
 PASS A <em popover> element should behave as a popover.
-FAIL A <em> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <em> element should *not* behave as a popover.
 PASS A <fieldset popover> element should behave as a popover.
-FAIL A <fieldset> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <fieldset> element should *not* behave as a popover.
 PASS A <figcaption popover> element should behave as a popover.
-FAIL A <figcaption> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <figcaption> element should *not* behave as a popover.
 PASS A <figure popover> element should behave as a popover.
-FAIL A <figure> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <figure> element should *not* behave as a popover.
 PASS A <footer popover> element should behave as a popover.
-FAIL A <footer> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <footer> element should *not* behave as a popover.
 PASS A <form popover> element should behave as a popover.
-FAIL A <form> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <form> element should *not* behave as a popover.
 PASS A <h1 popover> element should behave as a popover.
-FAIL A <h1> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <h1> element should *not* behave as a popover.
 PASS A <h2 popover> element should behave as a popover.
-FAIL A <h2> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <h2> element should *not* behave as a popover.
 PASS A <h3 popover> element should behave as a popover.
-FAIL A <h3> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <h3> element should *not* behave as a popover.
 PASS A <h4 popover> element should behave as a popover.
-FAIL A <h4> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <h4> element should *not* behave as a popover.
 PASS A <h5 popover> element should behave as a popover.
-FAIL A <h5> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <h5> element should *not* behave as a popover.
 PASS A <h6 popover> element should behave as a popover.
-FAIL A <h6> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <h6> element should *not* behave as a popover.
 PASS A <header popover> element should behave as a popover.
-FAIL A <header> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <header> element should *not* behave as a popover.
 PASS A <hr popover> element should behave as a popover.
-FAIL A <hr> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <hr> element should *not* behave as a popover.
 PASS A <html popover> element should behave as a popover.
-FAIL A <html> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <html> element should *not* behave as a popover.
 PASS A <i popover> element should behave as a popover.
-FAIL A <i> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <i> element should *not* behave as a popover.
 PASS A <iframe popover> element should behave as a popover.
-FAIL A <iframe> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <iframe> element should *not* behave as a popover.
 PASS A <img popover> element should behave as a popover.
-FAIL A <img> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <img> element should *not* behave as a popover.
 PASS A <input popover> element should behave as a popover.
-FAIL A <input> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <input> element should *not* behave as a popover.
 PASS A <ins popover> element should behave as a popover.
-FAIL A <ins> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <ins> element should *not* behave as a popover.
 PASS A <kbd popover> element should behave as a popover.
-FAIL A <kbd> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <kbd> element should *not* behave as a popover.
 PASS A <label popover> element should behave as a popover.
-FAIL A <label> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <label> element should *not* behave as a popover.
 PASS A <legend popover> element should behave as a popover.
-FAIL A <legend> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <legend> element should *not* behave as a popover.
 PASS A <li popover> element should behave as a popover.
-FAIL A <li> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <li> element should *not* behave as a popover.
 PASS A <main popover> element should behave as a popover.
-FAIL A <main> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <main> element should *not* behave as a popover.
 PASS A <map popover> element should behave as a popover.
-FAIL A <map> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <map> element should *not* behave as a popover.
 PASS A <mark popover> element should behave as a popover.
-FAIL A <mark> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <mark> element should *not* behave as a popover.
 PASS A <menu popover> element should behave as a popover.
-FAIL A <menu> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <menu> element should *not* behave as a popover.
 PASS A <meter popover> element should behave as a popover.
-FAIL A <meter> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <meter> element should *not* behave as a popover.
 PASS A <nav popover> element should behave as a popover.
-FAIL A <nav> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <nav> element should *not* behave as a popover.
 PASS A <object popover> element should behave as a popover.
-FAIL A <object> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <object> element should *not* behave as a popover.
 PASS A <ol popover> element should behave as a popover.
-FAIL A <ol> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <ol> element should *not* behave as a popover.
 FAIL A <optgroup popover> element should behave as a popover. assert_equals: After showPopover(), a popover should be visible: Expected this element to be visible expected true but got false
 FAIL A <optgroup> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
 FAIL A <option popover> element should behave as a popover. assert_equals: After showPopover(), a popover should be visible: Expected this element to be visible expected true but got false
 FAIL A <option> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
 PASS A <output popover> element should behave as a popover.
-FAIL A <output> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <output> element should *not* behave as a popover.
 PASS A <p popover> element should behave as a popover.
-FAIL A <p> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <p> element should *not* behave as a popover.
 PASS A <pre popover> element should behave as a popover.
-FAIL A <pre> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <pre> element should *not* behave as a popover.
 PASS A <progress popover> element should behave as a popover.
-FAIL A <progress> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <progress> element should *not* behave as a popover.
 PASS A <q popover> element should behave as a popover.
-FAIL A <q> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <q> element should *not* behave as a popover.
 PASS A <rt popover> element should behave as a popover.
-FAIL A <rt> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <rt> element should *not* behave as a popover.
 PASS A <ruby popover> element should behave as a popover.
-FAIL A <ruby> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <ruby> element should *not* behave as a popover.
 PASS A <s popover> element should behave as a popover.
-FAIL A <s> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <s> element should *not* behave as a popover.
 PASS A <samp popover> element should behave as a popover.
-FAIL A <samp> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <samp> element should *not* behave as a popover.
 PASS A <section popover> element should behave as a popover.
-FAIL A <section> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <section> element should *not* behave as a popover.
 PASS A <select popover> element should behave as a popover.
-FAIL A <select> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <select> element should *not* behave as a popover.
 PASS A <small popover> element should behave as a popover.
-FAIL A <small> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <small> element should *not* behave as a popover.
 PASS A <source popover> element should behave as a popover.
-FAIL A <source> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <source> element should *not* behave as a popover.
 PASS A <span popover> element should behave as a popover.
-FAIL A <span> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <span> element should *not* behave as a popover.
 PASS A <strong popover> element should behave as a popover.
-FAIL A <strong> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <strong> element should *not* behave as a popover.
 PASS A <sub popover> element should behave as a popover.
-FAIL A <sub> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <sub> element should *not* behave as a popover.
 PASS A <sup popover> element should behave as a popover.
-FAIL A <sup> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <sup> element should *not* behave as a popover.
 PASS A <summary popover> element should behave as a popover.
-FAIL A <summary> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <summary> element should *not* behave as a popover.
 PASS A <table popover> element should behave as a popover.
-FAIL A <table> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <table> element should *not* behave as a popover.
 PASS A <tbody popover> element should behave as a popover.
-FAIL A <tbody> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <tbody> element should *not* behave as a popover.
 PASS A <td popover> element should behave as a popover.
-FAIL A <td> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <td> element should *not* behave as a popover.
 PASS A <textarea popover> element should behave as a popover.
-FAIL A <textarea> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <textarea> element should *not* behave as a popover.
 PASS A <tfoot popover> element should behave as a popover.
-FAIL A <tfoot> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <tfoot> element should *not* behave as a popover.
 PASS A <th popover> element should behave as a popover.
-FAIL A <th> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <th> element should *not* behave as a popover.
 PASS A <thead popover> element should behave as a popover.
-FAIL A <thead> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <thead> element should *not* behave as a popover.
 PASS A <time popover> element should behave as a popover.
-FAIL A <time> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <time> element should *not* behave as a popover.
 PASS A <tr popover> element should behave as a popover.
-FAIL A <tr> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <tr> element should *not* behave as a popover.
 PASS A <track popover> element should behave as a popover.
-FAIL A <track> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <track> element should *not* behave as a popover.
 PASS A <u popover> element should behave as a popover.
-FAIL A <u> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <u> element should *not* behave as a popover.
 PASS A <ul popover> element should behave as a popover.
-FAIL A <ul> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <ul> element should *not* behave as a popover.
 PASS A <var popover> element should behave as a popover.
-FAIL A <var> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <var> element should *not* behave as a popover.
 PASS A <video popover> element should behave as a popover.
-FAIL A <video> element should *not* behave as a popover. assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS A <video> element should *not* behave as a popover.
 PASS IDL attribute reflection
-FAIL Popover attribute value should be case insensitive assert_throws_dom: Calling togglePopover on a non-popover should throw NotSupported function "() => nonPopover.togglePopover()" did not throw
+PASS Popover attribute value should be case insensitive
 PASS Changing attribute values for popover should work
 FAIL Changing attribute values should close open popovers assert_false: expected false got true
 PASS Removing a visible popover=auto element from the document should close the popover

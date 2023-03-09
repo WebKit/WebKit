@@ -281,7 +281,7 @@ if (!window.InspectorFrontendHost) {
 
         showContextMenu(event, items)
         {
-            this._contextMenu = WI.SoftContextMenu(items);
+            this._contextMenu = new WI.SoftContextMenu(items);
             this._contextMenu.show(event);
         }
 

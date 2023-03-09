@@ -53,6 +53,7 @@ public:
     WindowProxy* namedItem(const AtomString&);
 
 private:
+    constexpr static auto CreateHTMLFrameSetElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLFrameSetElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

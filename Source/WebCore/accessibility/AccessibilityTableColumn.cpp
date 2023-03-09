@@ -83,10 +83,10 @@ AXCoreObject* AccessibilityTableColumn::columnHeader()
 
     if (parentTable.isAriaTable()) {
         for (const auto& cell : children()) {
-            if (cell->ariaRoleAttribute() == AccessibilityRole::ColumnHeader)
+            if (cell->roleValue() == AccessibilityRole::ColumnHeader)
                 return cell.get();
         }
-        
+
         return nullptr;
     }
 

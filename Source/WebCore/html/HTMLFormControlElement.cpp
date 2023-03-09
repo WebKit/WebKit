@@ -59,13 +59,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLFormControlElement)
     , ValidatedFormListedElement(form)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLFormControlElement::~HTMLFormControlElement()

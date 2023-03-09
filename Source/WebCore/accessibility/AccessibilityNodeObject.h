@@ -161,7 +161,7 @@ protected:
         Yes
     };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
-    AccessibilityRole ariaRoleAttribute() const override;
+    AccessibilityRole ariaRoleAttribute() const override { return m_ariaRole; }
     virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 

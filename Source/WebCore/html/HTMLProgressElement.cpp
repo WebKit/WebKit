@@ -41,12 +41,11 @@ const double HTMLProgressElement::IndeterminatePosition = -1;
 const double HTMLProgressElement::InvalidPosition = -2;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLProgressElement)
     , m_value(0)
     , m_isDeterminate(false)
 {
     ASSERT(hasTagName(progressTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLProgressElement::~HTMLProgressElement() = default;

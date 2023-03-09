@@ -246,6 +246,20 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const 
     return nullptr;
 }
 
+#if PLATFORM(COCOA)
+Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const UUID& uuid)
+{
+    InitializeWebKit2();
+    for (auto* dataStore : allDataStores().values()) {
+        if (dataStore && dataStore->configuration().identifier() == uuid)
+            return Ref { *dataStore };
+    }
+
+    auto configuration = WebsiteDataStoreConfiguration::create(uuid);
+    return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
+}
+#endif
+
 void WebsiteDataStore::registerWithSessionIDMap()
 {
     auto result = allDataStores().add(m_sessionID, this);

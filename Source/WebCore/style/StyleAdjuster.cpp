@@ -219,13 +219,15 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
     return sharedTouchActions;
 }
 
-void Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
+bool Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
 {
     auto regionTypes = computeEventListenerRegionTypes(document, rootStyle, document, { });
     if (auto* window = document.domWindow())
         regionTypes.add(computeEventListenerRegionTypes(document, rootStyle, *window, { }));
 
+    bool changed = regionTypes != rootStyle.eventListenerRegionTypes();
     rootStyle.setEventListenerRegionTypes(regionTypes);
+    return changed;
 }
 
 OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Document& document, const RenderStyle& style, const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)

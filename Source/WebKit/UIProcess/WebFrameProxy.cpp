@@ -440,9 +440,14 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
         void addChildFrameData(size_t index, FrameTreeNodeData&& data) { m_childFrameData[index] = WTFMove(data); }
         ~FrameInfoCallbackAggregator()
         {
+            // FIXME: We currently have to drop child frames that are currently not subframes of this frame
+            // (e.g. they are in the back/forward cache). They really should not be part of m_childFrames.
+            auto nonEmptyChildFrameData = WTF::compactMap(WTFMove(m_childFrameData), [](auto&& data) {
+                return data;
+            });
             m_completionHandler(FrameTreeNodeData {
                 WTFMove(m_currentFrameData),
-                WTFMove(m_childFrameData)
+                WTFMove(nonEmptyChildFrameData)
             });
         }
     private:
@@ -451,7 +456,7 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
             , m_childFrameData(childCount, { }) { }
         CompletionHandler<void(FrameTreeNodeData&&)> m_completionHandler;
         FrameInfoData m_currentFrameData;
-        Vector<FrameTreeNodeData> m_childFrameData;
+        Vector<std::optional<FrameTreeNodeData>> m_childFrameData;
     };
 
     auto aggregator = FrameInfoCallbackAggregator::create(WTFMove(completionHandler), m_childFrames.size());
@@ -459,9 +464,16 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& 
         aggregator->setCurrentFrameData(WTFMove(info));
     });
 
+    bool isSiteIsolationEnabled = page() && page()->preferences().siteIsolationEnabled();
     size_t index = 0;
     for (auto& childFrame : m_childFrames) {
-        childFrame->getFrameInfo([aggregator, index = index++] (FrameTreeNodeData&& data) {
+        childFrame->getFrameInfo([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (FrameTreeNodeData&& data) {
+            // FIXME: m_childFrames currently contains iframes that are in the back/forward cache, not currently
+            // connected to this parent frame. They should really not be part of m_childFrames anymore.
+            // FIXME: With site isolation enabled, remote frames currently don't have a parentFrameID so we temporarily
+            // ignore this check.
+            if (data.info.parentFrameID != frameID && !isSiteIsolationEnabled)
+                return;
             aggregator->addChildFrameData(index, WTFMove(data));
         });
     }

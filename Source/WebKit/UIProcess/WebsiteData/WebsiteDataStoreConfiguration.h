@@ -48,6 +48,7 @@ public:
     WebsiteDataStoreConfiguration(IsPersistent, ShouldInitializePaths = ShouldInitializePaths::Yes);
 
 #if PLATFORM(COCOA)
+    static Ref<WebsiteDataStoreConfiguration> create(const UUID& identifier) { return adoptRef(*new WebsiteDataStoreConfiguration(identifier)); }
     WebsiteDataStoreConfiguration(const UUID&);
 #endif
 

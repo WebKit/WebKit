@@ -37,9 +37,4 @@ show_class_hierarchy = true
 [source-location]
 base_url = "https://github.com/WebKit/WebKit/tree/main"
 
-[extra]
-content_files = [
-    "migrating-to-webkitgtk-6.0.md"
-]
-
 urlmap_file = "gtk@GTK_API_VERSION@-urlmap.js"

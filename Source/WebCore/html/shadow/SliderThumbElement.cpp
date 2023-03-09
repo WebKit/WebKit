@@ -186,9 +186,8 @@ Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 }
 
 SliderThumbElement::SliderThumbElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, document, CreateSliderThumbElement)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 void SliderThumbElement::setPositionFromValue()
@@ -582,9 +581,8 @@ Ref<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren(Docume
 // --------------------------------
 
 inline SliderContainerElement::SliderContainerElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, document, CreateSliderContainerElement)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<SliderContainerElement> SliderContainerElement::create(Document& document)

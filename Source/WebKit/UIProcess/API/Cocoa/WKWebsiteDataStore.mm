@@ -350,6 +350,29 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+- (NSUUID *)identifier
+{
+    return [self _identifier];
+}
+
++ (WKWebsiteDataStore *)dataStoreForIdentifier:(NSUUID *)identifier
+{
+    if (!identifier)
+        return nil;
+
+    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(UUID(identifier)));
+}
+
++ (void)removeDataStoreForIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError *))completionHandler
+{
+    [self _removeDataStoreWithIdentifier:identifier completionHandler:completionHandler];
+}
+
++ (void)fetchAllDataStoreIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler
+{
+    [self _fetchAllIdentifiers:completionHandler];
+}
+
 #if HAVE(NW_PROXY_CONFIG)
 - (void)setProxyConfiguration:(nw_proxy_config_t)proxyConfig
 {
@@ -423,7 +446,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 + (void)_removeDataStoreWithIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError* error))completionHandler
 {
     if (!identifier)
-        [NSException raise:NSInvalidArgumentException format:@"Identifier cannot be nil"];
+        return completionHandler([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:@"Identifier is nil" }]);
 
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
     WebKit::WebsiteDataStore::removeDataStoreWithIdentifier(UUID(identifier), [completionHandlerCopy](const String& errorString) {

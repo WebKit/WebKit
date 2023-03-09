@@ -746,17 +746,10 @@ Node* AccessibilityRenderObject::node() const
 String AccessibilityRenderObject::stringValue() const
 {
     if (!m_renderer)
-        return String();
+        return { };
 
-    if (isSecureField())
-        return secureFieldValue();
-
-    if (isARIAStaticText()) {
-        String staticText = text();
-        if (!staticText.length())
-            staticText = textUnderElement();
-        return staticText;
-    }
+    if (isStaticText() || isTextControl() || isSecureField())
+        return text();
 
     if (is<RenderText>(m_renderer.get()))
         return textUnderElement();
@@ -787,9 +780,6 @@ String AccessibilityRenderObject::stringValue() const
 
     if (isWebArea())
         return { };
-
-    if (isTextControl())
-        return text();
 
 #if PLATFORM(IOS_FAMILY)
     if (isInputTypePopupButton())
@@ -1273,7 +1263,7 @@ static bool webAreaIsPresentational(RenderObject* renderer)
     
     return false;
 }
-    
+
 bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 {
 #ifndef NDEBUG
@@ -1282,7 +1272,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 
     if (!m_renderer)
         return true;
-    
+
     // Check first if any of the common reasons cause this element to be ignored.
     // Then process other use cases that need to be applied to all the various roles
     // that AccessibilityRenderObjects take on.
@@ -1291,17 +1281,17 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return false;
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
-    
+
     // If this element is within a parent that cannot have children, it should not be exposed.
     if (isDescendantOfBarrenParent())
         return true;    
-    
+
     if (roleValue() == AccessibilityRole::Ignored)
         return true;
-    
+
     if (roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole())
         return true;
-    
+
     // WebAreas should be ignored if their iframe container is marked as presentational.
     if (webAreaIsPresentational(renderer()))
         return true;
@@ -1319,7 +1309,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (widget() && widget()->accessibilityObject())
         return false;
 #endif
-    
+
     // ignore popup menu items because AppKit does
     if (m_renderer && ancestorsOfType<RenderMenuList>(*m_renderer).first())
         return true;
@@ -1339,8 +1329,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         if (!m_renderer)
             return true;
 
-        if (parent && (parent->isMenuItem() || parent->ariaRoleAttribute() == AccessibilityRole::MenuButton))
+        if (parent && (parent->isMenuItem() || parent->isMenuButton()))
             return true;
+
         auto& renderText = downcast<RenderText>(*m_renderer);
         if (!renderText.hasRenderedText())
             return true;
@@ -1566,13 +1557,6 @@ int AccessibilityRenderObject::layoutCount() const
     if (!m_renderer || !is<RenderView>(*m_renderer))
         return 0;
     return downcast<RenderView>(*m_renderer).frameView().layoutContext().layoutCount();
-}
-
-String AccessibilityRenderObject::text() const
-{
-    if (isSecureField())
-        return secureFieldValue();
-    return AccessibilityNodeObject::text();
 }
 
 unsigned AccessibilityRenderObject::textLength() const
@@ -2665,10 +2649,7 @@ bool AccessibilityRenderObject::supportsExpandedTextValue() const
 
 bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
 {
-    if (m_ariaRole == AccessibilityRole::Document
-        && hasContentEditableAttributeSet())
-        return true;
-    return false;
+    return m_ariaRole == AccessibilityRole::Document && hasContentEditableAttributeSet();
 }
 
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
@@ -3206,20 +3187,21 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
             rowsIteration(thisTable.rows());
     }
 }
-    
+
 void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)
 {
     bool isMulti = isMultiSelectable();
 
     for (const auto& child : children()) {
+        auto* axChild = dynamicDowncast<AccessibilityObject>(child.get());
         // Every child should have aria-role option, and if so, check for selected attribute/state.
-        if (child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption) {
-            auto* childAxObject = dynamicDowncast<AccessibilityObject>(child.get());
-            if (childAxObject->isSelected() || childAxObject->isActiveDescendantOfFocusedContainer()) {
-                result.append(childAxObject);
-                if (!isMulti)
-                    return;
-            }
+        if (!axChild || axChild->ariaRoleAttribute() != AccessibilityRole::ListBoxOption)
+            continue;
+
+        if (axChild->isSelected() || axChild->isActiveDescendantOfFocusedContainer()) {
+            result.append(axChild);
+            if (!isMulti)
+                return;
         }
     }
 }

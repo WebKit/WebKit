@@ -140,10 +140,10 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
 AXCoreObject* AccessibilityARIAGridRow::headerObject()
 {
     for (const auto& child : children()) {
-        if (child->ariaRoleAttribute() == AccessibilityRole::RowHeader)
+        if (child->roleValue() == AccessibilityRole::RowHeader)
             return child.get();
     }
-    
+
     return nullptr;
 }
 

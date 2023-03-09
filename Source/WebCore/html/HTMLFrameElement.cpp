@@ -42,7 +42,6 @@ inline HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document
     : HTMLFrameElementBase(tagName, document)
 {
     ASSERT(hasTagName(frameTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)

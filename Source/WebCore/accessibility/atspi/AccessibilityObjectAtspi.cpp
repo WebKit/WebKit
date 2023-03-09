@@ -875,7 +875,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     if (!m_coreObject)
         return map;
 
-    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     String tagName = m_coreObject->tagName();
     if (!tagName.isEmpty())
@@ -982,7 +982,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         // to be obtainable in the same fashion as an ARIA landmark, fall back on the computedRoleString.
         // We also want to do this for the style-format-group element types so that the type of format
         // group it is doesn't get lost to a generic platform role.
-        if (m_coreObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (m_coreObject->isLandmark() || m_coreObject->isStyleFormatGroup()))
+        if (liveObject && liveObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (m_coreObject->isLandmark() || m_coreObject->isStyleFormatGroup()))
             map.set("xml-roles"_s, computedRoleString);
     }
 
@@ -1203,11 +1203,11 @@ std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
     if (m_coreObject->isSecureField())
         return Atspi::Role::PasswordText;
 
-    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     switch (m_coreObject->roleValue()) {
     case AccessibilityRole::Form:
-        if (m_coreObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
+        if (liveObject && liveObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
             return Atspi::Role::Landmark;
         break;
     case AccessibilityRole::ListMarker: {
