@@ -36,6 +36,7 @@
 #include "AudioContext.h"
 #include "AudioFileReader.h"
 #include "AudioUtilities.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>

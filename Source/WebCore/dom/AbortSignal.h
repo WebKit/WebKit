@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class AbortAlgorithm;
+class JSDOMGlobalObject;
 class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 

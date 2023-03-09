@@ -31,6 +31,7 @@
 #include "Blob.h"
 #include "EventNames.h"
 #include "JSMessageEvent.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/IsoMallocInlines.h>
 

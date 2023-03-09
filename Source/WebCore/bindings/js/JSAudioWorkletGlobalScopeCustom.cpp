@@ -28,6 +28,7 @@
 
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletProcessor.h"
+#include "JSValueInWrappedObjectInlines.h"
 
 #if ENABLE(WEB_AUDIO)
 

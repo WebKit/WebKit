@@ -33,6 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
 #include "Page.h"

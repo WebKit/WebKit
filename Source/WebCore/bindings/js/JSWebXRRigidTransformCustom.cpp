@@ -29,6 +29,7 @@
 #include "JSWebXRRigidTransform.h"
 
 #include "JSDOMConvertBufferSource.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "WebXRRigidTransform.h"
 
 namespace WebCore {

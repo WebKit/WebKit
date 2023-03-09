@@ -27,7 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
-#include "JSValueInWrappedObject.h"
+#include "JSValueInWrappedObjectInlines.h"
 
 namespace WebCore {
 

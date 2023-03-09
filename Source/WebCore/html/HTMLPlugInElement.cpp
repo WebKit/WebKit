@@ -33,6 +33,7 @@
 #include "FrameTree.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
