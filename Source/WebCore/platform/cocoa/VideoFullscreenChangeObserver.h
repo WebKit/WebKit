@@ -36,7 +36,6 @@ public:
     virtual void requestUpdateInlineRect() = 0;
     virtual void requestVideoContentLayer() = 0;
     virtual void returnVideoContentLayer() = 0;
-    virtual void returnVideoView() = 0;
     virtual void didSetupFullscreen() = 0;
     virtual void didEnterFullscreen(const FloatSize&) = 0;
     virtual void failedToEnterFullscreen() = 0;

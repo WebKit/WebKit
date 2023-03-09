@@ -1427,7 +1427,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
     [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
     [m_playerLayerView setBackgroundColor:clearUIColor()];
 
-    if (!m_currentMode.hasPictureInPicture() && !m_changingStandbyOnly) {
+    if (!m_currentMode.hasPictureInPicture()) {
         [m_playerLayerView setVideoView:m_videoView.get()];
         [m_playerLayerView addSubview:m_videoView.get()];
     }
@@ -1469,7 +1469,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
     [[m_playerViewController view] setNeedsLayout];
     [[m_playerViewController view] layoutIfNeeded];
 
-    if (m_targetStandby && !m_currentMode.hasVideo() && !m_returningToStandby) {
+    if (m_targetStandby && !m_currentMode.hasVideo()) {
         [m_window setHidden:YES];
         [[m_playerViewController view] setHidden:YES];
     }
@@ -1653,10 +1653,6 @@ void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError
 void VideoFullscreenInterfaceAVKit::returnToStandby()
 {
     m_returningToStandby = false;
-
-    if (m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->returnVideoView();
-
     [m_window setHidden:YES];
     [[m_playerViewController view] setHidden:YES];
 
