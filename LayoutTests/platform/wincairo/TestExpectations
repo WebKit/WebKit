@@ -1614,6 +1614,7 @@ imported/w3c/web-platform-tests/xhr [ Skip ]
 inspector [ Skip ]
 inspector/cpu-profiler/ [ Pass ]
 inspector/memory/ [ Pass ]
+ipc [ Skip ]
 js/dom/deep-recursion-test.html [ Failure ]
 mathml [ Skip ]
 media [ Skip ]
@@ -2599,7 +2600,7 @@ editing/style/unbold-in-bold.html [ Failure ]
 
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
 
-fast/html/body-color-legacy-parsing-3.html [ Pass Failure ]
+fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
 
 http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Pass Failure ]
@@ -2619,3 +2620,13 @@ fast/text/multiple-renderers-with-hypen-on-boundary.html [ ImageOnlyFailure ]
 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 fast/text/whitespace/inline-whitespace-wrapping-8.html [ ImageOnlyFailure ]
 webkit.org/b/253547 fast/text/midword-break-before-surrogate-pair.html [ Skip ] # Crash for Debug, Timeout for Release
+
+# Depends on the system fonts
+fast/css/css2-system-fonts.html [ Failure Pass ]
+
+# Failing on WinCairo Debug tester
+fast/text/atsui-multiple-renderers.html [ Failure Pass ]
+fast/text/international/thai-baht-space.html [ Failure Pass ]
+fast/text/international/thai-line-breaks.html [ Failure Pass ]
+
+js/weakref-finalizationregistry.html [ Timeout Pass ]
