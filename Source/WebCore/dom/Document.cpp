@@ -8955,7 +8955,7 @@ HTMLDialogElement* Document::activeModalDialog() const
 HTMLElement* Document::topmostAutoPopover() const
 {
     for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate->popoverState() == PopoverState::Auto)
+        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate && candidate->popoverState() == PopoverState::Auto)
             return candidate;
     }
 
