@@ -1,0 +1,71 @@
+/*
+ * Copyright (C) 2012 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2,1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#if PLATFORM(GTK) && USE(GTK4)
+#ifdef __WEBKIT_H__
+#error "Headers <webkit/webkit.h> and <webkit/webkit-web-process-extension.h> cannot be included together."
+#endif
+#elif PLATFORM(GTK)
+#ifdef __WEBKIT_2_H__
+#error "Headers <webkit2/webkit2.h> and <webkit2/webkit-web-extension.h> cannot be included together."
+#endif
+#elif PLATFORM(WPE) && ENABLE(2022_GLIB_API)
+#ifdef __WEBKIT_H__
+#error "Headers <wpe/webkit.h> and <wpe/webkit-web-process-extension.h> cannot be included together."
+#endif
+#elif PLATFORM(WPE)
+#ifdef __WEBKIT_H__
+#error "Headers <wpe/webkit.h> and <wpe/webkit-web-extension.h> cannot be included together."
+#endif
+#endif
+
+#ifndef __WEBKIT_WEB_PROCESS_EXTENSION_H__
+#define __WEBKIT_WEB_PROCESS_EXTENSION_H__
+
+#define __WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__
+
+#if !ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitConsoleMessage.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenuActions.h>
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenuItem.h>
+#include <@API_INCLUDE_PREFIX@/WebKitFrame.h>
+#include <@API_INCLUDE_PREFIX@/WebKitScriptWorld.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURIRequest.h>
+#include <@API_INCLUDE_PREFIX@/WebKitURIResponse.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserMessage.h>
+#include <@API_INCLUDE_PREFIX@/WebKitVersion.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebEditor.h>
+#if !ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitWebExtension.h>
+#endif
+#include <@API_INCLUDE_PREFIX@/WebKitWebFormManager.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebHitTestResult.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebPage.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebProcessEnumTypes.h>
+#if ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitWebProcessExtension.h>
+#else
+#include <@API_INCLUDE_PREFIX@/WebKitWebExtensionAutocleanups.h>
+#endif
+
+#undef __WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__
+
+#endif
