@@ -69,7 +69,11 @@ void StyledElement::synchronizeStyleAttributeInternalImpl()
         setSynchronizedLazyAttribute(styleAttr, inlineStyle->asTextAtom());
 }
 
-StyledElement::~StyledElement() = default;
+StyledElement::~StyledElement()
+{
+    if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
+        cssomWrapper->clearParentElement();
+}
 
 CSSStyleDeclaration& StyledElement::cssomStyle()
 {
