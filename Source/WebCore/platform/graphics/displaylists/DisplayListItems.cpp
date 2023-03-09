@@ -450,8 +450,6 @@ void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 {
     context.applyDeviceScaleFactor(m_scaleFactor);
 }
-
-#if !LOG_DISABLED
 TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1073,7 +1071,6 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         break;
     }
 }
-#endif
 
 } // namespace DisplayList
 } // namespace WebCore

@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT bool isEmpty() const;
     WEBCORE_EXPORT size_t sizeInBytes() const;
 
-    String asText(OptionSet<AsTextFlag>) const;
+    WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
 
     const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
@@ -127,7 +127,7 @@ void DisplayList::append(Args&&... args)
     itemBuffer().append<T>(std::forward<Args>(args)...);
 }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList&);
 
 } // DisplayList
 

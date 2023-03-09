@@ -1460,7 +1460,6 @@ using DisplayListItem = std::variant
 size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem&);
 ItemType displayListItemType(const DisplayListItem&);
 
-#if !LOG_DISABLED
 WEBCORE_EXPORT void dumpItem(TextStream&, const Translate&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const Rotate&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const Scale&, OptionSet<AsTextFlag>);
@@ -1539,8 +1538,6 @@ inline TextStream& operator<<(TextStream& ts, const ItemHandle& itemHandle)
 }
 
 TextStream& operator<<(TextStream&, ItemType);
-
-#endif
 
 } // namespace DisplayList
 } // namespace WebCore

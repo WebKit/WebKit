@@ -61,6 +61,12 @@ Recorder::~Recorder()
     ASSERT(m_stateStack.size() == 1); // If this fires, it indicates mismatched save/restore.
 }
 
+void Recorder::commitRecording()
+{
+    // Fixup the possible pending state.
+    appendStateChangeItemIfNecessary();
+}
+
 void Recorder::appendStateChangeItem(const GraphicsContextState& state)
 {
     ASSERT(state.changes());
@@ -265,6 +271,7 @@ void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, 
 
 void Recorder::save()
 {
+    appendStateChangeItemIfNecessary();
     GraphicsContext::save();
     recordSave();
     m_stateStack.append(m_stateStack.last());
@@ -272,6 +279,7 @@ void Recorder::save()
 
 void Recorder::restore()
 {
+    appendStateChangeItemIfNecessary();
     GraphicsContext::restore();
 
     if (!m_stateStack.size())
