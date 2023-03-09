@@ -1722,6 +1722,8 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjConstructorFunction_classMethod2);
 #if ENABLE(Condition1)
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjConstructorFunction_overloadedMethod1);
 #endif
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_instanceAndStaticMethodWithTheSameIdentifier);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjConstructorFunction_instanceAndStaticMethodWithTheSameIdentifier);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_classMethodWithClamp);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_classMethodWithClampOnOptional);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_classMethodWithEnforceRange);
@@ -2109,6 +2111,7 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
 #else
     { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
+    { "instanceAndStaticMethodWithTheSameIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjConstructorFunction_instanceAndStaticMethodWithTheSameIdentifier, 0 } },
     { "testStaticPromiseFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjConstructorFunction_testStaticPromiseFunction, 0 } },
     { "testStaticCustomPromiseFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjConstructorFunction_testStaticCustomPromiseFunction, 0 } },
 };
@@ -2459,6 +2462,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "overloadWithNullableUnion"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_overloadWithNullableUnion, 1 } },
     { "overloadWithOptionalUnion"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_overloadWithOptionalUnion, 0 } },
     { "overloadWithNullableNonDistinguishingParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_overloadWithNullableNonDistinguishingParameter, 2 } },
+    { "instanceAndStaticMethodWithTheSameIdentifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_instanceAndStaticMethodWithTheSameIdentifier, 0 } },
     { "classMethodWithClamp"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_classMethodWithClamp, 2 } },
     { "classMethodWithClampOnOptional"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_classMethodWithClampOnOptional, 0 } },
     { "classMethodWithEnforceRange"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_classMethodWithEnforceRange, 2 } },
@@ -8337,6 +8341,35 @@ JSC_DEFINE_HOST_FUNCTION(jsTestObjConstructorFunction_overloadedMethod1, (JSGlob
 }
 
 #endif
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_instanceAndStaticMethodWithTheSameIdentifierBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.instanceAndStaticMethodWithTheSameIdentifier(); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_instanceAndStaticMethodWithTheSameIdentifier, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_instanceAndStaticMethodWithTheSameIdentifierBody>(*lexicalGlobalObject, *callFrame, "instanceAndStaticMethodWithTheSameIdentifier");
+}
+
+static inline JSC::EncodedJSValue jsTestObjConstructorFunction_instanceAndStaticMethodWithTheSameIdentifierBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return TestObj::instanceAndStaticMethodWithTheSameIdentifier2(); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjConstructorFunction_instanceAndStaticMethodWithTheSameIdentifier, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::callStatic<jsTestObjConstructorFunction_instanceAndStaticMethodWithTheSameIdentifierBody>(*lexicalGlobalObject, *callFrame, "instanceAndStaticMethodWithTheSameIdentifier");
+}
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_classMethodWithClampBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
 {
