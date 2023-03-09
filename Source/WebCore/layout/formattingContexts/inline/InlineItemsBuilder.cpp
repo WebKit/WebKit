@@ -26,11 +26,13 @@
 #include "config.h"
 #include "InlineItemsBuilder.h"
 
+#include "FontCascade.h"
 #include "InlineSoftLineBreakItem.h"
 #include "StyleResolver.h"
 #include "TextUtil.h"
 #include <wtf/Scope.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 namespace Layout {

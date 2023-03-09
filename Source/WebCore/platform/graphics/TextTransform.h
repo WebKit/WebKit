@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 // https://w3c.github.io/csswg-drafts/css-text/#full-width

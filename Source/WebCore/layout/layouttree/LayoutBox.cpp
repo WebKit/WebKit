@@ -33,6 +33,7 @@
 #include "LayoutPhase.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
+#include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

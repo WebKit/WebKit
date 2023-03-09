@@ -54,6 +54,7 @@
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "MouseEvent.h"
+#include "Page.h"
 #include "ParsedContentType.h"
 #include "RenderStyle.h"
 #include "RequestPriority.h"

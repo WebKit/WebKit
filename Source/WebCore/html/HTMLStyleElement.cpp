@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include "StyleScope.h"

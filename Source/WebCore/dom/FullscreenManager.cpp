@@ -41,6 +41,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
 #include "Settings.h"

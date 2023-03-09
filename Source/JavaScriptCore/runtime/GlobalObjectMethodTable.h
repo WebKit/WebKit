@@ -36,6 +36,7 @@ class JSString;
 class JSValue;
 class Microtask;
 class RuntimeFlags;
+class SourceOrigin;
 
 enum class ScriptExecutionStatus;
 

@@ -30,6 +30,7 @@
 
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRequest.h"
+#include "ContentSecurityPolicy.h"
 #include "FetchRequest.h"
 #include "JSBackgroundFetchRegistration.h"
 #include "SWClientConnection.h"

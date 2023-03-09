@@ -28,8 +28,12 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchInformation.h"
+#include "BackgroundFetchRecordInformation.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "RetrieveRecordsOptions.h"
+#include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
 
 namespace WebCore {

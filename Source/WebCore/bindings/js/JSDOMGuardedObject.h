@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class JSDOMGlobalObject;
+
 class WEBCORE_EXPORT DOMGuardedObject : public RefCounted<DOMGuardedObject>, public ActiveDOMCallback {
 public:
     ~DOMGuardedObject();

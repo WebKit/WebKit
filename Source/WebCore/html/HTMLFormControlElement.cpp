@@ -34,6 +34,7 @@
 #include "FormAssociatedElement.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLButtonElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"

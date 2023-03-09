@@ -27,6 +27,7 @@
 #include "RemoteFrame.h"
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "RemoteDOMWindow.h"
 #include "RemoteFrameClient.h"

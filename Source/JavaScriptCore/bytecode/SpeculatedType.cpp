@@ -39,7 +39,7 @@
 #include "JSCellInlines.h"
 #include "JSDataView.h"
 #include "JSFunction.h"
-#include "JSGenericTypedArrayView.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "JSMap.h"
 #include "JSPromise.h"
 #include "JSSet.h"

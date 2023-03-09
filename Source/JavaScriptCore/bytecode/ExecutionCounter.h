@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Options.h"
+#include <wtf/Nonmovable.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

@@ -194,7 +194,9 @@ private:
     private:
         KeyframeEffect* m_effect;
         bool m_couldOriginallyPreventAcceleration;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
         bool m_couldOriginallyBeAccelerated;
+#endif
     };
 
     void updateEffectStackMembership();

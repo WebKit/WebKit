@@ -31,6 +31,7 @@
 namespace WebCore {
 namespace Layout {
 
+class Box;
 class InlineInvalidation;
 
 class InlineDamage {
