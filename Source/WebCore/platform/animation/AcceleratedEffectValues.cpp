@@ -55,12 +55,14 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
     offsetAnchor = src.offsetAnchor;
     offsetRotate = src.offsetRotate;
 
-    for (auto& srcFilterOperation : src.filter.operations())
-        filter.operations().append(srcFilterOperation.copyRef());
+    filter.setOperations(src.filter.operations().map([](const auto& operation) {
+        return operation.copyRef();
+    }));
 
 #if ENABLE(FILTERS_LEVEL_2)
-    for (auto& srcBackdropFilterOperation : src.backdropFilter.operations())
-        backdropFilter.operations().append(srcBackdropFilterOperation.copyRef());
+    backdropFilter.setOperations(src.backdropFilter.operations().map([](const auto& operation) {
+        return operation.copyRef();
+    }));
 #endif
 }
 
@@ -166,12 +168,14 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
     }
 
-    for (auto srcFilterOperation : style.filter().operations())
-        filter.operations().append(srcFilterOperation.copyRef());
+    filter.setOperations(style.filter().operations().map([](const auto& operation) {
+        return operation.copyRef();
+    }));
 
 #if ENABLE(FILTERS_LEVEL_2)
-    for (auto srcBackdropFilterOperation : style.backdropFilter().operations())
-        backdropFilter.operations().append(srcBackdropFilterOperation.copyRef());
+    backdropFilter.setOperations(style.backdropFilter().operations().map([](const auto& operation) {
+        return operation.copyRef();
+    }));
 #endif
 }
 

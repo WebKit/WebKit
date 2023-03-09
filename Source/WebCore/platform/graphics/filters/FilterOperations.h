@@ -47,6 +47,7 @@ public:
 
     Vector<RefPtr<FilterOperation>>& operations() { return m_operations; }
     const Vector<RefPtr<FilterOperation>>& operations() const { return m_operations; }
+    void setOperations(Vector<RefPtr<FilterOperation>>&& operations) { m_operations = WTFMove(operations); }
 
     bool isEmpty() const { return m_operations.isEmpty(); }
     size_t size() const { return m_operations.size(); }
