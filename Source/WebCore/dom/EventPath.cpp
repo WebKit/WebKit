@@ -269,6 +269,11 @@ EventPath::EventPath(const Vector<EventTarget*>& targets)
     });
 }
 
+EventPath::EventPath(EventTarget& target)
+{
+    m_path = { EventContext { EventContext::Type::Normal, nullptr, &target, &target, 0 } };
+}
+
 static Node* moveOutOfAllShadowRoots(Node& startingNode)
 {
     Node* node = &startingNode;

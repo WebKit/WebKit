@@ -1,0 +1,17 @@
+This tests that event.composedPath is not empty for focus/blur events on window.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.type is "focus"
+PASS event.target is iframe.contentWindow
+PASS event.composedPath().length is 1
+PASS event.composedPath()[0] is iframe.contentWindow
+PASS event.type is "blur"
+PASS event.target is iframe.contentWindow
+PASS event.composedPath().length is 1
+PASS event.composedPath()[0] is iframe.contentWindow
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

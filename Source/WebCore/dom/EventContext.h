@@ -115,7 +115,6 @@ inline EventContext::EventContext(Type type, Node* node, RefPtr<EventTarget>&& c
 inline EventContext::EventContext(Type type, Node* node, EventTarget* currentTarget, EventTarget* origin, int closedShadowDepth)
     : EventContext(type, node, RefPtr { currentTarget }, origin, closedShadowDepth)
 {
-    ASSERT(!is<Node>(currentTarget));
 }
 
 // This variant avoids calling EventTarget::ref() which is a virtual function call.
