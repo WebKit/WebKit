@@ -124,15 +124,15 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(RenderObject* listI
     return false;
 #endif
 }
-    
+
 AccessibilityRole AccessibilityList::determineAccessibilityRole()
 {
     m_ariaRole = determineAriaRoleAttribute();
-    
+
     // Directory is mapped to list for now, but does not adhere to the same heuristics.
     if (ariaRoleAttribute() == AccessibilityRole::Directory)
         return AccessibilityRole::List;
-    
+
     // Heuristic to determine if this list is being used for layout or for content.
     //   1. If it's a named list, like ol or aria=list, then it's a list.
     //      1a. Unless the list has no children, then it's not a list.
@@ -140,12 +140,12 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     //   3. If it does not display list markers and has only one child, it's not a list.
     //   4. If it does not have any listitem children, it's not a list.
     //   5. Otherwise it's a list (for now).
-    
-    AccessibilityRole role = AccessibilityRole::List;
-    
+
+    auto role = AccessibilityRole::List;
+
     // Temporarily set role so that we can query children (otherwise canHaveChildren returns false).
     m_role = role;
-    
+
     unsigned listItemCount = 0;
     bool hasVisibleMarkers = false;
 
@@ -155,13 +155,14 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
         return AccessibilityRole::DescriptionList;
 
     for (const auto& child : children) {
-        if (child->ariaRoleAttribute() == AccessibilityRole::ListItem)
+        auto* axChild = dynamicDowncast<AccessibilityObject>(child.get());
+        if (axChild && axChild->ariaRoleAttribute() == AccessibilityRole::ListItem)
             listItemCount++;
         else if (child->roleValue() == AccessibilityRole::ListItem) {
             RenderObject* listItem = child->renderer();
             if (!listItem)
                 continue;
-            
+
             // Rendered list items always count.
             if (listItem->isListItem()) {
                 if (!hasVisibleMarkers && (listItem->style().listStyleType() != ListStyleType::None || listItem->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(listItem)))

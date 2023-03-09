@@ -1124,7 +1124,6 @@ public:
     virtual AXCoreObject* correspondingControlForLabelElement() const = 0;
     virtual AXCoreObject* scrollBar(AccessibilityOrientation) = 0;
 
-    virtual AccessibilityRole ariaRoleAttribute() const = 0;
     virtual bool inheritsPresentationalRole() const = 0;
 
     using AXValue = std::variant<bool, unsigned, float, String, AccessibilityButtonState, AXCoreObject*>;

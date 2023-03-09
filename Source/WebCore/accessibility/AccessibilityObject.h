@@ -375,7 +375,7 @@ public:
     AccessibilityObject* correspondingControlForLabelElement() const override { return nullptr; }
     AccessibilityObject* scrollBar(AccessibilityOrientation) override { return nullptr; }
 
-    AccessibilityRole ariaRoleAttribute() const override { return AccessibilityRole::Unknown; }
+    virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }
     virtual bool isPresentationalChildOfAriaRole() const { return false; }
     virtual bool ariaRoleHasPresentationalChildren() const { return false; }
     bool inheritsPresentationalRole() const override { return false; }

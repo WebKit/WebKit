@@ -243,7 +243,6 @@ private:
     AccessibilityChildrenVector linkedObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
     AXCoreObject* titleUIElement() const override { return objectAttributeValue(AXPropertyName::TitleUIElement); }
     AXCoreObject* scrollBar(AccessibilityOrientation) override;
-    AccessibilityRole ariaRoleAttribute() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::ARIARoleAttribute)); }
     const String placeholderValue() const override { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const override { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
     bool supportsExpandedTextValue() const override { return boolAttributeValue(AXPropertyName::SupportsExpandedTextValue); }

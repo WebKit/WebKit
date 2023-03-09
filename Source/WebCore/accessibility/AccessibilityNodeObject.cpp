@@ -577,15 +577,11 @@ bool AccessibilityNodeObject::isNativeTextControl() const
     if (!node)
         return false;
 
-    if (is<HTMLTextAreaElement>(*node))
+    if (is<HTMLTextAreaElement>(node))
         return true;
 
-    if (is<HTMLInputElement>(*node)) {
-        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
-        return input.isText() || input.isNumberField();
-    }
-
-    return false;
+    auto* input = dynamicDowncast<HTMLInputElement>(node);
+    return input && (input->isText() || input->isNumberField());
 }
 
 bool AccessibilityNodeObject::isSearchField() const
@@ -2192,7 +2188,12 @@ String AccessibilityNodeObject::title() const
 
 String AccessibilityNodeObject::text() const
 {
-    // If this is a user defined static text, use the accessible name computation.                                      
+    if (isSecureField())
+        return secureFieldValue();
+
+    // Static text can be either an element with role="text", aka ARIA static text, or inline rendered text.
+    // In the former case, prefer any alt text that may have been specified.
+    // If no alt text is present, fallback to the inline static text case where textUnderElement is used.
     if (isARIAStaticText()) {
         Vector<AccessibilityText> textOrder;
         alternativeText(textOrder);
@@ -2200,18 +2201,16 @@ String AccessibilityNodeObject::text() const
             return textOrder[0].text;
     }
 
+    if (roleValue() == AccessibilityRole::StaticText)
+        return textUnderElement();
+
     if (!isTextControl())
-        return String();
+        return { };
 
-    auto node = this->node();
-    if (!is<Element>(node))
-        return String();
-
-    auto& element = downcast<Element>(*node);
+    RefPtr element = dynamicDowncast<Element>(this->node());
     if (isNativeTextControl() && is<HTMLTextFormControlElement>(element))
-        return downcast<HTMLTextFormControlElement>(element).value();
-
-    return element.innerText();
+        return downcast<HTMLTextFormControlElement>(element.get())->value();
+    return element ? element->innerText() : String();
 }
 
 String AccessibilityNodeObject::stringValue() const
@@ -2583,11 +2582,6 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
         return role;
 
     return AccessibilityRole::Unknown;
-}
-
-AccessibilityRole AccessibilityNodeObject::ariaRoleAttribute() const
-{
-    return m_ariaRole;
 }
 
 AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(AccessibilityRole role) const
