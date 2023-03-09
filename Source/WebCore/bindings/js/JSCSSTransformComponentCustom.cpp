@@ -35,6 +35,7 @@
 #include "JSCSSSkewY.h"
 #include "JSCSSTranslate.h"
 #include "JSDOMWrapperCache.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 using namespace JSC;

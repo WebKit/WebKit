@@ -34,6 +34,7 @@
 #include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "ChromeClient.h"
+#include "ContextMenuClient.h"
 #include "CookieJar.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"

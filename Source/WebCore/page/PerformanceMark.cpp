@@ -35,6 +35,7 @@
 #include "PerformanceUserTiming.h"
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 

@@ -24,6 +24,7 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"

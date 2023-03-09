@@ -29,6 +29,7 @@
 #include "JSDOMWrapperCache.h"
 #include "JSRange.h"
 #include "JSStaticRange.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 

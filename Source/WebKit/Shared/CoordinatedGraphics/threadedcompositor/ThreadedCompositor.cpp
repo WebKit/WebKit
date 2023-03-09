@@ -34,6 +34,10 @@
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
 #elif USE(OPENGL_ES)

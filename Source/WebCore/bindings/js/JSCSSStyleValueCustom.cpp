@@ -41,6 +41,7 @@
 #include "JSCSSUnitValue.h"
 #include "JSCSSUnparsedValue.h"
 #include "JSDOMWrapperCache.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 using namespace JSC;

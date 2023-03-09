@@ -33,6 +33,7 @@
 #include "GetterSetterAccessCase.h"
 #include "ICStatusUtils.h"
 #include "PolymorphicAccess.h"
+#include "ProxyObjectAccessCase.h"
 #include "StructureInlines.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
