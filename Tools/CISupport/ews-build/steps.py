@@ -320,17 +320,19 @@ class GitHubMixin(object):
             return 1
         return 0
 
+    @defer.inlineCallbacks
     def should_send_email_for_pr(self, pr_number, repository_url=None):
         pr_json = self.get_pr_json(pr_number, repository_url=repository_url)
         if not pr_json:
-            return True
+            return defer.returnValue(True)
 
-        if 1 == self._is_hash_outdated(pr_json):
+        is_hash_outdated = yield self._is_hash_outdated(pr_json)
+        if 1 == is_hash_outdated:
             self._addToLog('stdio', 'Skipping email since hash {} on PR #{} is outdated\n'.format(
                 self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number,
             ))
-            return False
-        return True
+            return defer.returnValue(False)
+        return defer.returnValue(True)
 
     def add_label(self, pr_number, label, repository_url=None):
         api_url = GitHub.api_url(repository_url)
@@ -2012,18 +2014,20 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
             yield self._addToLog('stdio', 'Skipping this step on non-production instance.\n')
-        elif self._is_hash_outdated(pr_json) != 0:
-            pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
-            yield self._addToLog('stdio', f'Skipping this step as hash {pr_sha} is outdated.\n')
         else:
-            repository_url = self.getProperty('repository', '')
-            rc = SUCCESS
-            did_remove_labels = yield self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
-            if any((
-                not did_remove_labels,
-                not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
-            )):
-                rc = FAILURE
+            is_hash_outdated = yield self._is_hash_outdated(pr_json)
+            if is_hash_outdated != 0:
+                pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
+                yield self._addToLog('stdio', f'Skipping this step as hash {pr_sha} is outdated.\n')
+            else:
+                repository_url = self.getProperty('repository', '')
+                rc = SUCCESS
+                did_remove_labels = yield self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
+                if any((
+                    not did_remove_labels,
+                    not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
+                )):
+                    rc = FAILURE
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
         defer.returnValue(rc)
@@ -2829,6 +2833,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 filtered_logs.append(line)
         return '\n'.join(filtered_logs[-max_num_lines:])
 
+    @defer.inlineCallbacks
     def send_email_for_new_build_failure(self):
         try:
             patch_id = self.getProperty('patch_id', '')
@@ -2837,10 +2842,12 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
 
             if patch_id and not self.should_send_email_for_patch(patch_id):
                 return
-            if pr_number and not self.should_send_email_for_pr(pr_number, self.getProperty('repository')):
-                return
+            if pr_number:
+                should_send_email = yield self.should_send_email_for_pr(pr_number, self.getProperty('repository'))
+                if not should_send_email:
+                    return
             if not patch_id and not (pr_number and sha):
-                self._addToLog('stderr', 'Unrecognized change type')
+                yield self._addToLog('stderr', 'Unrecognized change type')
                 return
 
             change_string = None
@@ -2853,10 +2860,10 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
                     print(error)
-                    self._addToLog('stdio', error)
+                    yield self._addToLog('stdio', error)
 
             if not change_author:
-                self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                yield self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
                 return
 
             builder_name = self.getProperty('buildername', '')
@@ -2885,7 +2892,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += '\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscribe from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
+            yield self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
             send_email_to_patch_author(change_author, email_subject, email_text, patch_id or self.getProperty('github.head.sha', ''))
         except Exception as e:
             print('Error in sending email for new build failure: {}'.format(e))
@@ -3800,6 +3807,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
+    @defer.inlineCallbacks
     def send_email_for_new_test_failures(self, test_names, exceed_failure_limit=False):
         try:
             patch_id = self.getProperty('patch_id', '')
@@ -3808,10 +3816,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
 
             if patch_id and not self.should_send_email_for_patch(patch_id):
                 return
-            if pr_number and not self.should_send_email_for_pr(pr_number, self.getProperty('repository')):
-                return
+            if pr_number:
+                should_send_email = yield self.should_send_email_for_pr(pr_number, self.getProperty('repository'))
+                if not should_send_email:
+                    return
             if not patch_id and not (pr_number and sha):
-                self._addToLog('stderr', 'Unrecognized change type')
+                yield self._addToLog('stderr', 'Unrecognized change type')
                 return
 
             change_string = None
@@ -3824,10 +3834,10 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
                     print(error)
-                    self._addToLog('stdio', error)
+                    yield self._addToLog('stdio', error)
 
             if not change_author:
-                self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                yield self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
                 return
 
             builder_name = self.getProperty('buildername', '')
@@ -3858,7 +3868,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 email_text += '\n\nAditionally the failure limit has been exceeded, so the test suite has been terminated early. It is likely that there would be more failures than the ones listed below.'
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
             email_text += '\n\nTo unsubscribe from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
+            yield self._addToLog('stdio', 'Sending email notification to {}'.format(change_author))
             send_email_to_patch_author(change_author, email_subject, email_text, patch_id or self.getProperty('github.head.sha', ''))
         except Exception as e:
             print('Error in sending email for new layout test failures: {}'.format(e))
