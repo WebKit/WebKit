@@ -845,100 +845,7 @@ class BundleCreator(object):
             self._dlopenwrap_make('clean')
 
 
-class BundleUploader(object):
 
-    def __init__(self, bundle_file_path, remote_config_file, bundle_type, platform, configuration, compression_type, revision, log_level):
-        self._bundle_file_path = bundle_file_path
-        self._remote_config_file = remote_config_file
-        self._configuration = configuration
-        self._revision = revision
-        self._bundle_type = bundle_type
-        self._platform = platform
-        self._compression_type = compression_type
-        self._sftp_quiet = log_level == 'quiet' or log_level == 'minimal'
-        if not os.path.isfile(self._remote_config_file):
-            raise ValueError('Can not find remote config file for upload at path %s' % self._remote_config_file)
-
-    def _sha256sum(self, file):
-        hash = hashlib.sha256()
-        with open(file, 'rb') as f:
-            for chunk in iter(lambda: f.read(4096), b''):
-                hash.update(chunk)
-        return hash.hexdigest()
-
-    def _get_osidversion(self):
-        with open('/etc/os-release', 'r') as osrelease_handle:
-            for line in osrelease_handle.readlines():
-                if line.startswith('ID='):
-                    os_id = line.split('=')[1].strip().strip('"')
-                if line.startswith('VERSION_ID='):
-                    version_id = line.split('=')[1].strip().strip('"')
-        assert(os_id)
-        assert(version_id)
-        osidversion = os_id + '-' + version_id
-        assert(' ' not in osidversion)
-        assert(len(osidversion) > 3)
-        return osidversion
-
-    # The expected format for --remote-config-file is something like:
-    # {
-    # "servername": "webkitgtk.org",
-    # "serveraddress": "webkitgtk.intranet-address.local",
-    # "serverport": "23",
-    # "username": "upload-bot-64",
-    # "baseurl": "https://webkitgtk.org/built-products",
-    # "remotepath" : "x86_64/nightly/%(bundletype)s/%(distro_id_ver)s/%(bundletype)s_%(platform)s_%(configuration)s_r%(version)s.%(compression_type)s",
-    # "sshkey": "output of the priv key in base64. E.g. cat ~/.ssh/id_rsa|base64 -w0"
-    # }
-    def upload(self):
-        remote_data = json.load(open(self._remote_config_file))
-        remote_file_bundle_path = remote_data['remotepath'] % { 'bundletype' : self._bundle_type,
-                                                                'configuration' : self._configuration,
-                                                                'compression_type' : self._compression_type,
-                                                                'distro_id_ver' : self._get_osidversion().capitalize(),
-                                                                'platform' : self._platform,
-                                                                'version' : self._revision }
-        with tempfile.NamedTemporaryFile(mode='w+b') as sshkeyfile, tempfile.NamedTemporaryFile(mode='w+') as hashcheckfile, \
-             tempfile.NamedTemporaryFile(mode='w+') as lastisfile, tempfile.NamedTemporaryFile(mode='w+') as uploadinstructionsfile:
-
-            # In theory NamedTemporaryFile() is already created 0600. But it don't hurts ensuring this again here.
-            os.chmod(sshkeyfile.name, 0o600)
-            sshkeyfile.write(base64.b64decode(remote_data['sshkey']))
-            sshkeyfile.flush()
-            # Generate and upload also a sha256 hash
-            hashforbundle = self._sha256sum(self._bundle_file_path)
-            os.chmod(hashcheckfile.name, 0o644)
-            hashcheckfile.write('%s %s\n' % (hashforbundle, os.path.basename(remote_file_bundle_path)))
-            hashcheckfile.flush()
-            # A LAST-IS file for convenience
-            os.chmod(lastisfile.name, 0o644)
-            lastisfile.write('%s\n' % os.path.basename(remote_file_bundle_path))
-            lastisfile.flush()
-            # SFTP upload instructions file
-            uploadinstructionsfile.write('progress\n')
-            uploadinstructionsfile.write('put %s %s\n' % (self._bundle_file_path, remote_file_bundle_path))
-            remote_file_bundle_path_no_ext, _ = os.path.splitext(remote_file_bundle_path)
-            uploadinstructionsfile.write('put %s %s\n' % (hashcheckfile.name, remote_file_bundle_path_no_ext + '.sha256sum'))
-            uploadinstructionsfile.write('put %s %s\n' % (lastisfile.name, os.path.join(os.path.dirname(remote_file_bundle_path), 'LAST-IS')))
-            uploadinstructionsfile.write('quit\n')
-            uploadinstructionsfile.flush()
-            # The idea of this is to ensure scp doesn't ask any question (not even on the first run).
-            # This should be secure enough according to https://www.gremwell.com/ssh-mitm-public-key-authentication
-            sftpCommand = ['sftp',
-                           '-o', 'StrictHostKeyChecking=no',
-                           '-o', 'UserKnownHostsFile=/dev/null',
-                           '-o', 'LogLevel=ERROR',
-                           '-P', remote_data['serverport'],
-                           '-i', sshkeyfile.name,
-                           '-b', uploadinstructionsfile.name,
-                           '%s@%s' % (remote_data['username'], remote_data['serveraddress'])]
-            _log.info('Uploading bundle to %s as %s with sha256 hash %s' % (remote_data['servername'], remote_file_bundle_path, hashforbundle))
-            sftp_out = subprocess.DEVNULL if self._sftp_quiet else sys.stdout
-            if subprocess.call(sftpCommand, stdout=sftp_out, stderr=sftp_out) != 0:
-                raise RuntimeError('The sftp command returned non-zero status')
-
-        _log.log(LOG_MESSAGE, 'Done: archive sucesfully uploaded to %s/%s' % (remote_data['baseurl'], remote_file_bundle_path))
-        return 0
 
 
 def configure_logging(selected_log_level='info'):
@@ -990,8 +897,6 @@ def main():
     parser.add_argument('--log-level', dest='log_level', choices=['quiet', 'minimal', 'info', 'debug'], default='info')
     parser.add_argument('--revision', action='store', dest='webkit_version')
     parser.add_argument('--builder-name', action='store', dest='builder_name')
-    parser.add_argument('--remote-config-file', action='store', dest='remote_config_file',
-                        help='Optional configuration file with the configuration needed to upload the generated the bundle to a remote server via sftp/ssh.')
     options = parser.parse_args()
 
     flatpakutils.run_in_sandbox_if_available([sys.argv[0], '--flatpak-' + options.platform] + sys.argv[1:])
@@ -1002,11 +907,6 @@ def main():
     bundle_creator = BundleCreator(options.configuration, options.platform, options.bundle_binary, options.syslibs, options.ldd,
                                    not options.no_strip, options.compression, options.destination, options.webkit_version, options.builder_name)
     bundle_file_path = bundle_creator.create()
-
-    if options.remote_config_file is not None:
-        bundle_uploader = BundleUploader(bundle_file_path, options.remote_config_file, options.bundle_binary, options.platform,
-                                         options.configuration, options.compression, options.webkit_version, options.log_level)
-        return bundle_uploader.upload()
     return 0
 
 

@@ -27,6 +27,7 @@ import shutil
 import tempfile
 
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
+from buildbot.test.fake.fakebuild import FakeBuild
 from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
 from buildbot.test.util.misc import TestReactorMixin
 from buildbot.test.util.steps import BuildStepMixin
@@ -1345,4 +1346,116 @@ class TestInstallBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Installed Built Product (failure)')
+        return self.runStep()
+
+
+class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        def fakeaddStepsAfterCurrentStep(self, step_factories):
+            self.addedStepsAfterCurrentStep = step_factories
+
+        FakeBuild.addedStepsAfterCurrentStep = []
+        FakeBuild.addStepsAfterCurrentStep = fakeaddStepsAfterCurrentStep
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def setUpPropertiesForTest(self):
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'GTK-Linux-64-bit-Release-Build')
+        self.setProperty('archive_revision', '261281@main')
+
+    def test_success_generate_minibrowser_bundle(self):
+        self.setupStep(GenerateMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=MiniBrowser', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='generated minibrowser bundle')
+        rc = self.runStep()
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_generate_minibrowser_bundle(self):
+        self.setupStep(GenerateMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=MiniBrowser', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='generated minibrowser bundle (failure)')
+        rc = self.runStep()
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_success_generate_jsc_bundle(self):
+        self.setupStep(GenerateJSCBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=jsc', '--syslibs=bundle-all', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='generated jsc bundle')
+        rc = self.runStep()
+        self.assertTrue(UploadJSCBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_generate_jsc_bundle(self):
+        self.setupStep(GenerateJSCBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=jsc', '--syslibs=bundle-all', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='generated jsc bundle (failure)')
+        rc = self.runStep()
+        self.assertTrue(UploadJSCBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_parameters_upload_minibrowser_bundle_sftp(self):
+        self.setupStep(UploadMiniBrowserBundleViaSftp())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-minibrowser-bundle-upload-config.json', '--remote-file', 'MiniBrowser_gtk_261281@main.zip', 'WebKitBuild/MiniBrowser_gtk_release.zip'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='uploaded minibrowser bundle via sftp')
+        return self.runStep()
+
+    def test_parameters_upload_jsc_bundle_sftp(self):
+        self.setupStep(UploadJSCBundleViaSftp())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-jsc-bundle-upload-config.json', '--remote-file', '261281@main.zip', 'WebKitBuild/jsc_gtk_release.zip'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='uploaded jsc bundle via sftp')
         return self.runStep()
