@@ -307,6 +307,11 @@ private:
             }
         }
 
+        bool operator!=(Location other) const
+        {
+            return !(*this == other);
+        }
+
         Kind kind() const
         {
             return Kind(m_kind);
