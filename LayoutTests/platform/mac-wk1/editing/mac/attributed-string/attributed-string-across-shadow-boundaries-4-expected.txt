@@ -24,7 +24,12 @@ Alignment 4
     TighteningForTruncation: YES
     HeaderLevel: 0 LineBreakStrategy 0 PresentationIntents (
 ) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''
-[hello world Web]
+[hello ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[world Web]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
     NSStrokeColor: #000000 (sRGB)
