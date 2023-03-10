@@ -450,7 +450,9 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSPropertyID propertyID)
 
 static CSSPrimitiveValue* valueFromPool(Span<LazyNeverDestroyed<CSSPrimitiveValue>> pool, double value)
 {
-    unsigned poolIndex = value;
+    // Casting to a signed integer first since casting a negative floating point value to an unsigned
+    // integer is undefined behavior.
+    unsigned poolIndex = static_cast<unsigned>(static_cast<int>(value));
     double roundTripValue = poolIndex;
     if (!memcmp(&value, &roundTripValue, sizeof(double)) && poolIndex < pool.size())
         return &pool[poolIndex].get();
