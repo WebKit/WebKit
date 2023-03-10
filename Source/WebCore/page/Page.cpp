@@ -4182,8 +4182,10 @@ URL Page::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitiza
 
 String Page::sanitizeLookalikeCharacters(const String& urlString, LookalikeCharacterSanitizationTrigger trigger) const
 {
-    if (auto url = URL { urlString }; url.isValid())
-        return sanitizeLookalikeCharacters(WTFMove(url), trigger).string();
+    if (auto url = URL { urlString }; url.isValid()) {
+        if (auto sanitizedURL = sanitizeLookalikeCharacters(WTFMove(url), trigger); sanitizedURL != url)
+            return sanitizedURL.string();
+    }
     return urlString;
 }
 
