@@ -1065,9 +1065,8 @@ void CanvasRenderingContext2DBase::postProcessPixelBuffer() const
     IntRect dirtyRect { static_cast<int>(m_dirtyRect.x()), static_cast<int>(m_dirtyRect.y()), static_cast<int>(m_dirtyRect.width()) + 1, static_cast<int>(m_dirtyRect.height()) + 1 };
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_settings.colorSpace) };
     auto pixelBuffer = buffer->getPixelBuffer(format, dirtyRect);
-    if (!is<ByteArrayPixelBuffer>(*pixelBuffer))
+    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return;
-
 
     if (canvasBase().postProcessPixelBuffer(*pixelBuffer, false, suppliedColors())) {
         IntSize destOffset { 0, 0 };

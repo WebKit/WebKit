@@ -1,0 +1,11 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
+    ctx.fillRect(0, 0, (2 ** 28), 1);
+    ctx.drawImage(canvas, 0, 0);
+</script>
+<body>
+    <p>This test passes if it does not crash</p>
+</body>
