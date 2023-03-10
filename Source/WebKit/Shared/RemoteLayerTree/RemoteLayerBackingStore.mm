@@ -124,7 +124,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
         auto* sharing = backend->toBackendSharing();
         if (is<ImageBufferBackendHandleSharing>(sharing))
-            return downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
+            return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
 
         return std::nullopt;
     };
@@ -140,7 +140,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     } else if (m_frontBuffer.imageBuffer)
         handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
 
-    encoder << handle;
+    encoder << WTFMove(handle);
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> displayListHandle;

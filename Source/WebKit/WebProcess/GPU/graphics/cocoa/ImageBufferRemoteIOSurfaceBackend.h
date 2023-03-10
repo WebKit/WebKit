@@ -56,6 +56,7 @@ public:
 
     WebCore::GraphicsContext& context() final;
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
+    ImageBufferBackendHandle takeBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) final;
 
 private:
     WebCore::IntSize backendSize() const final;

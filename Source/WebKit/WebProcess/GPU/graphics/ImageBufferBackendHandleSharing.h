@@ -33,6 +33,7 @@ namespace WebKit {
 class ImageBufferBackendHandleSharing : public WebCore::ImageBufferBackendSharing {
 public:
     virtual ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const = 0;
+    virtual ImageBufferBackendHandle takeBackendHandle(SharedMemory::Protection protection = SharedMemory::Protection::ReadWrite) { return createBackendHandle(protection); }
     virtual RefPtr<ShareableBitmap> bitmap() const { return nullptr; }
 
     virtual void setBackendHandle(ImageBufferBackendHandle&&) { }
