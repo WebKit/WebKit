@@ -85,7 +85,7 @@ public:
     RemoteAudioSourceProviderManager& audioSourceProviderManager();
 #endif
 
-    void updateMediaConfiguration();
+    void updateMediaConfiguration(bool forceUpdate);
 
 #if ENABLE(VP9)
     void enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder);

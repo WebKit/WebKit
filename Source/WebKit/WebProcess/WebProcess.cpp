@@ -2170,12 +2170,12 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 
 #if PLATFORM(COCOA)
     if (useGPUProcessForMedia) {
-        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this] () {
-            ensureGPUProcessConnection().updateMediaConfiguration();
+        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this] (bool forceUpdate) {
+            ensureGPUProcessConnection().updateMediaConfiguration(forceUpdate);
         });
 #if ENABLE(VP9)
-        VP9TestingOverrides::singleton().setConfigurationChangedCallback([this] () {
-            ensureGPUProcessConnection().updateMediaConfiguration();
+        VP9TestingOverrides::singleton().setConfigurationChangedCallback([this] (bool forceUpdate) {
+            ensureGPUProcessConnection().updateMediaConfiguration(forceUpdate);
         });
 #endif
     } else {

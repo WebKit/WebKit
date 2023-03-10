@@ -716,14 +716,11 @@ Internals::Internals(Document& document)
 #endif
 
 #if PLATFORM(COCOA)
-    SystemBatteryStatusTestingOverrides::singleton().setHasAC(std::nullopt);
-    SystemBatteryStatusTestingOverrides::singleton().setHasBattery(std::nullopt);
+    SystemBatteryStatusTestingOverrides::singleton().resetOverridesToDefaultValues();
 #endif
 
 #if ENABLE(VP9) && PLATFORM(COCOA)
-    VP9TestingOverrides::singleton().setHardwareDecoderDisabled(std::nullopt);
-    VP9TestingOverrides::singleton().setVP9DecoderDisabled(std::nullopt);
-    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(std::nullopt);
+    VP9TestingOverrides::singleton().resetOverridesToDefaultValues();
 #endif
 }
 

@@ -48,12 +48,13 @@ public:
     void setHasBattery(std::optional<bool>&&);
     std::optional<bool> hasBattery() { return  m_hasBattery; }
 
-    void setConfigurationChangedCallback(std::function<void()>&&);
+    void setConfigurationChangedCallback(std::function<void(bool)>&&);
+    void resetOverridesToDefaultValues();
 
 private:
     std::optional<bool> m_hasBattery;
     std::optional<bool> m_hasAC;
-    Function<void()> m_configurationChangedCallback;
+    Function<void(bool)> m_configurationChangedCallback;
 };
 
 }
