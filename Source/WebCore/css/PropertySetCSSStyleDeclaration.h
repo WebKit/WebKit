@@ -28,6 +28,7 @@
 #include "CSSParserContext.h"
 #include "CSSStyleDeclaration.h"
 #include "DeprecatedCSSOMValue.h"
+#include "StyledElement.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -48,8 +49,6 @@ public:
     explicit PropertySetCSSStyleDeclaration(MutableStyleProperties& propertySet)
         : m_propertySet(&propertySet)
     { }
-
-    virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
 
     StyleSheetContents* contextStyleSheet() const;
 
@@ -128,20 +127,19 @@ class InlineCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
 public:
     InlineCSSStyleDeclaration(MutableStyleProperties& propertySet, StyledElement& parentElement)
         : PropertySetCSSStyleDeclaration(propertySet)
-        , m_parentElement(&parentElement)
+        , m_parentElement(parentElement)
     {
     }
 
 private:
     CSSStyleSheet* parentStyleSheet() const final;
-    StyledElement* parentElement() const final { return m_parentElement; }
-    void clearParentElement() final { m_parentElement = nullptr; }
+    StyledElement* parentElement() const final { return m_parentElement.get(); }
 
     bool willMutate() final WARN_UNUSED_RETURN;
     void didMutate(MutationType) final;
     CSSParserContext cssParserContext() const final;
 
-    StyledElement* m_parentElement;
+    WeakPtr<StyledElement, WeakPtrImplWithEventTargetData> m_parentElement;
 };
 
 } // namespace WebCore
