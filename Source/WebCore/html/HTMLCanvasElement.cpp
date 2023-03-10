@@ -653,7 +653,7 @@ static bool imageDrawingRequiresGuardAgainstUseByPendingLayerTransaction(Graphic
 }
 #endif
 
-void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
+void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, CompositeOperator op)
 {
     if (m_context)
         m_context->clearAccumulatedDirtyRect();
@@ -672,7 +672,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
                 if (ImageBuffer* imageBuffer = buffer()) {
-                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
+                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), op);
 #if PLATFORM(COCOA)
                     m_mustGuardAgainstUseByPendingLayerTransaction |= imageDrawingRequiresGuardAgainstUseByPendingLayerTransaction(context, *imageBuffer);
 #endif

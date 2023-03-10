@@ -784,6 +784,8 @@ public:
     }
 
     bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
+
+    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
     
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
@@ -1144,6 +1146,8 @@ private:
     
     bool computeHasVisibleContent() const;
 
+    void setShouldPaintUsingCompositeCopy(bool copy) { m_shouldPaintUsingCompositeCopy = copy; }
+
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
     bool has3DTransformedAncestor() const { return m_has3DTransformedAncestor; }
 
@@ -1245,6 +1249,7 @@ private:
     bool m_has3DTransformedAncestor : 1;
 
     bool m_insideSVGForeignObject : 1;
+    bool m_shouldPaintUsingCompositeCopy : 1;
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason

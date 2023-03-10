@@ -485,7 +485,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         context.clipPath(clipPath);
     }
 
-    if (!m_parameters.isOpaque)
+    if (!m_parameters.isOpaque && !m_layer->owner()->platformCALayerShouldPaintUsingCompositeCopy())
         context.clearRect(layerBounds);
 
 #ifndef NDEBUG
