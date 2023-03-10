@@ -75,10 +75,14 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 {
     if (_context) {
         JSValueUnprotect([_context JSGlobalContextRef], m_value);
+#if !__has_feature(objc_arc)
         [_context release];
+#endif
         _context = nil;
     }
+#if !__has_feature(objc_arc)
     [super dealloc];
+#endif
 }
 
 - (NSString *)description
@@ -1110,7 +1114,9 @@ JSValueRef valueInternalValue(JSValue * value)
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context
 {
     if (!value || !context) {
+#if !__has_feature(objc_arc)
         [self release];
+#endif
         return nil;
     }
 
@@ -1118,7 +1124,11 @@ JSValueRef valueInternalValue(JSValue * value)
     if (!self)
         return nil;
 
+#if !__has_feature(objc_arc)
     _context = [context retain];
+#else
+    _context = context;
+#endif
     m_value = value;
     JSValueProtect([_context JSGlobalContextRef], m_value);
     return self;

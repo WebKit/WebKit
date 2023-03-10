@@ -90,7 +90,7 @@ class CallbackArgumentDouble final : public CallbackArgument {
 class CallbackArgumentJSValue final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
-        JSValue *value = [JSValue valueWithJSValueRef:argument inContext:context];
+        __unsafe_unretained JSValue *value = [JSValue valueWithJSValueRef:argument inContext:context];
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -98,7 +98,7 @@ class CallbackArgumentJSValue final : public CallbackArgument {
 class CallbackArgumentId final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
-        id value = valueToObject(context, argument);
+        __unsafe_unretained id value = valueToObject(context, argument);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -116,7 +116,7 @@ private:
         ASSERT(exception && !*exception);
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
 
-        id object = tryUnwrapObjcObject(contextRef, argument);
+        __unsafe_unretained id object = tryUnwrapObjcObject(contextRef, argument);
         if (object && [object isKindOfClass:m_class.get()]) {
             [invocation setArgument:&object atIndex:argumentNumber];
             return;
@@ -138,7 +138,7 @@ class CallbackArgumentNSNumber final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToNumber([context JSGlobalContextRef], argument, exception);
+        __unsafe_unretained id value = valueToNumber([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -149,7 +149,7 @@ class CallbackArgumentNSString final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToString([context JSGlobalContextRef], argument, exception);
+        __unsafe_unretained id value = valueToString([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -160,7 +160,7 @@ class CallbackArgumentNSDate final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToDate([context JSGlobalContextRef], argument, exception);
+        __unsafe_unretained id value = valueToDate([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -171,7 +171,7 @@ class CallbackArgumentNSArray final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToArray([context JSGlobalContextRef], argument, exception);
+        __unsafe_unretained id value = valueToArray([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -182,7 +182,7 @@ class CallbackArgumentNSDictionary final : public CallbackArgument {
     void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
-        id value = valueToDictionary([context JSGlobalContextRef], argument, exception);
+        __unsafe_unretained id value = valueToDictionary([context JSGlobalContextRef], argument, exception);
         if (*exception)
             return;
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -299,7 +299,7 @@ class CallbackResultVoid final : public CallbackResult {
 class CallbackResultId final : public CallbackResult {
     JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) final
     {
-        id value;
+        __unsafe_unretained id value;
         [invocation getReturnValue:&value];
         return objectToValue(context, value);
     }
@@ -333,7 +333,7 @@ public:
     }
     
 private:
-    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) final
+    JSValueRef get(NSInvocation *invocation, __unsafe_unretained JSContext *context, JSValueRef*) final
     {
         [invocation getReturnValue:m_buffer];
 
@@ -341,7 +341,7 @@ private:
         [m_conversionInvocation setArgument:&context atIndex:3];
         [m_conversionInvocation invokeWithTarget:[JSValue class]];
 
-        JSValue *value;
+        __unsafe_unretained JSValue *value;
         [m_conversionInvocation getReturnValue:&value];
         return valueInternalValue(value);
     }
@@ -641,7 +641,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
     if (m_type == CallbackInitMethod) {
         id objcResult = tryUnwrapObjcObject(contextRef, result);
         if (objcResult)
-            [objcResult autorelease];
+            CFAutorelease(CFBridgingRetain(objcResult));
     }
 
     return result;
@@ -727,13 +727,13 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protoco
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
-    if (!isInstanceMethod) {
-        [invocation setTarget:cls];
-        // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
-        // FIXME: What releases it?
-        CFRetain((__bridge CFTypeRef)cls);
-    }
-    return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
+    if (isInstanceMethod)
+        return objCCallbackFunctionForInvocation(context, invocation, CallbackInstanceMethod, cls, _protocol_getMethodTypeEncoding(protocol, sel, YES, YES));
+
+    // We need to copy the target Class because m_invocation doesn't retain it by default (and we don't want it to).
+    [invocation setTarget:[cls copy]];
+
+    return objCCallbackFunctionForInvocation(context, invocation, CallbackClassMethod, nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, NO));
 }
 
 JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)

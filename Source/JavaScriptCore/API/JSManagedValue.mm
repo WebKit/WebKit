@@ -119,7 +119,9 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     }
 
     [self disconnectValue];
+#if !__has_feature(objc_arc)
     [super dealloc];
+#endif
 }
 
 - (void)didAddOwner:(id)owner

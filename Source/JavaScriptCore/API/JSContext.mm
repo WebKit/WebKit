@@ -61,14 +61,6 @@
     return m_context;
 }
 
-- (void)ensureWrapperMap
-{
-    if (!toJS([self JSGlobalContextRef])->wrapperMap()) {
-        // The map will be retained by the GlobalObject in initialization.
-        [[[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]] release];
-    }
-}
-
 - (instancetype)init
 {
     return [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).get()];
@@ -81,13 +73,12 @@
         return nil;
 
     m_virtualMachine = virtualMachine;
-    m_context = JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0);
+    m_context = JSGlobalContextRetain(JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0));
 
     self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
         context.exception = exceptionValue;
     };
 
-    [self ensureWrapperMap];
     [m_virtualMachine addContext:self forGlobalContextRef:m_context];
 
     return self;
@@ -97,8 +88,10 @@
 {
     m_exception.clear();
     JSGlobalContextRelease(m_context);
+#if !__has_feature(objc_arc)
     [_exceptionHandler release];
     [super dealloc];
+#endif
 }
 
 - (JSValue *)evaluateScript:(NSString *)script
@@ -351,7 +344,6 @@
     m_virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->vm())];
     ASSERT(m_virtualMachine);
     m_context = JSGlobalContextRetain(context);
-    [self ensureWrapperMap];
 
     self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
         context.exception = exceptionValue;
@@ -382,7 +374,9 @@
 - (void)beginCallbackWithData:(CallbackData *)callbackData calleeValue:(JSValueRef)calleeValue thisValue:(JSValueRef)thisValue argumentCount:(size_t)argumentCount arguments:(const JSValueRef *)arguments
 {
     Thread& thread = Thread::current();
+#if !__has_feature(objc_arc)
     [self retain];
+#endif
     CallbackData *prevStack = (CallbackData *)thread.m_apiData;
     *callbackData = CallbackData { prevStack, self, self.exception, calleeValue, thisValue, argumentCount, arguments, nil };
     thread.m_apiData = callbackData;
@@ -394,7 +388,9 @@
     Thread& thread = Thread::current();
     self.exception = callbackData->preservedException.get();
     thread.m_apiData = callbackData->next;
+#if !__has_feature(objc_arc)
     [self release];
+#endif
 }
 
 - (JSValue *)wrapperForObjCObject:(id)object

@@ -125,7 +125,9 @@ static NSMapTable *wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 - (void)dealloc
 {
     JSContextGroupRelease(m_group);
+#if !__has_feature(objc_arc)
     [super dealloc];
+#endif
 }
 
 static id getInternalObjcObject(id object)

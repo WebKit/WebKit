@@ -421,7 +421,9 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 - (void)dealloc
 {
     JSClassRelease(m_classRef.get());
+#if !__has_feature(objc_arc)
     [super dealloc];
+#endif
 }
 
 static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, const char* className, Class cls)
@@ -512,9 +514,9 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         putNonEnumerable(context, constructor, @"prototype", prototype);
 
         Protocol *exportProtocol = getJSExportProtocol();
-        forEachProtocolImplementingProtocol(m_class, exportProtocol, ^(Protocol *protocol, bool&){
-            copyPrototypeProperties(context, m_class, protocol, prototype);
-            copyMethodsToObject(context, m_class, protocol, NO, constructor);
+        forEachProtocolImplementingProtocol(self->m_class, exportProtocol, ^(Protocol *protocol, bool &) {
+            copyPrototypeProperties(context, self->m_class, protocol, prototype);
+            copyMethodsToObject(context, self->m_class, protocol, NO, constructor);
         });
 
         // Set [Prototype].

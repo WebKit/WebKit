@@ -52,7 +52,7 @@ void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
     if (!wrapperObject->wrappedObject())
         return;
 
-    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject->wrappedObject())));
+    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS((__bridge id)((wrapperObject->wrappedObject()))));
     JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
 }
 
@@ -122,7 +122,7 @@ void JSAPIWrapperObject::finishCreation(VM& vm)
 void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
 {
     ASSERT(!m_wrappedObject);
-    m_wrappedObject = [static_cast<id>(wrappedObject) retain];
+    m_wrappedObject = const_cast<void *>(CFRetain(wrappedObject));
 }
 
 template<typename Visitor>
