@@ -203,9 +203,7 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSProperty
 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSUnitType unit, bool important)
 {
-    auto cssValue = CSSPrimitiveValue::create(value, unit);
-    auto& style = ensureMutableInlineStyle();
-    style.setProperty(propertyID, WTFMove(cssValue), important);
+    ensureMutableInlineStyle().setProperty(propertyID, CSSPrimitiveValue::create(value, unit), important);
     inlineStyleChanged();
     return true;
 }
