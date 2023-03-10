@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
 
 import getpass
 import os
+import re
 import requests
 import sys
 import time
@@ -36,6 +37,8 @@ from webkitscmpy import log, local, remote
 class Setup(Command):
     name = 'setup'
     help = 'Configure local settings for the current repository'
+
+    REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+)(@|://)(?P<host>[^:/]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
 
     @classmethod
     def github(cls, args, repository, additional_setup=None, remote=None, team=None, **kwargs):
@@ -199,6 +202,60 @@ class Setup(Command):
         return None
 
     @classmethod
+    def _security_levels(cls, repository):
+        proc = run(
+            [local.Git.executable(), 'config', '--get-regexp', 'webkitscmpy.remotes'],
+            capture_output=True, cwd=repository.root_path,
+            encoding='utf-8',
+        )
+        if proc.returncode:
+            return {}
+
+        levels_by_name = {}
+        remotes_by_name = {}
+        for line in proc.stdout.splitlines():
+            key, value = line.split(' ', 1)
+            parts = key.split('.')
+            if len(parts) != 4:
+                continue
+            if parts[3] == 'url':
+                remotes_by_name[parts[2]] = value
+            elif parts[3] == 'security-level':
+                levels_by_name[parts[2]] = int(value)
+
+        result = {}
+        for name, rmt in remotes_by_name.items():
+            match = cls.REMOTE_RE.match(rmt)
+            if match:
+                result['{}:{}'.format(match.group('host'), match.group('path'))] = levels_by_name.get(name, None)
+
+        proc = run(
+            [local.Git.executable(), 'config', '--get-regexp', 'remote.+url'],
+            capture_output=True, cwd=repository.root_path,
+            encoding='utf-8',
+        )
+        if proc.returncode:
+            return result
+        for line in proc.stdout.splitlines():
+            _, value = line.split(' ', 1)
+            match = cls.REMOTE_RE.match(value)
+            if not match:
+                continue
+            key = '{}:{}'.format(match.group('host'), match.group('path'))
+            if key in result:
+                continue
+            repo = 'https://{}/{}'.format(match.group('host'), match.group('path'))
+            if not remote.GitHub.is_webserver(repo):
+                continue
+            parent = ((remote.GitHub(repo).request() or {}).get('parent') or {}).get('full_name')
+            if not parent:
+                continue
+            parent_key = '{}:{}'.format(match.group('host'), parent)
+            if parent_key in result:
+                result[key] = result[parent_key]
+        return result
+
+    @classmethod
     def git(cls, args, repository, additional_setup=None, hooks=None, **kwargs):
         local_config = repository.config()
         global_config = local.Git.config()
@@ -329,7 +386,18 @@ class Setup(Command):
                 sys.stderr.write("Failed to set '{}' as the default history management approach\n".format(pr_history))
                 result += 1
 
+        # Only configure GitHub if the URL is a GitHub URL
+        rmt = repository.remote()
+        available_remotes = []
+        if isinstance(rmt, remote.GitHub):
+            forking = True
+            username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
+        else:
+            forking = False
+            username = getpass.getuser()
+
         if hooks:
+            security_levels = cls._security_levels(repository)
             for hook in os.listdir(hooks):
                 source_path = os.path.join(hooks, hook)
                 if not os.path.isfile(source_path):
@@ -341,6 +409,8 @@ class Setup(Command):
                         location=source_path,
                         python=os.path.basename(sys.executable),
                         prefer_radar=bool(radar.Tracker.radarclient()),
+                        default_pre_push_mode='DEFAULT_MODE',
+                        security_levels=security_levels,
                     )
 
                 target = os.path.join(repository.common_directory, 'hooks', hook)
@@ -415,16 +485,6 @@ class Setup(Command):
         # Any additional setup passed to main
         if additional_setup:
             result += additional_setup(args, repository)
-
-        # Only configure GitHub if the URL is a GitHub URL
-        rmt = repository.remote()
-        available_remotes = []
-        if isinstance(rmt, remote.GitHub):
-            forking = True
-            username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
-        else:
-            forking = False
-            username = getpass.getuser()
 
         # Check and configure alternate remotes
         project_remotes = {}

@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -222,3 +222,18 @@ Fetching 'fork'
 ''')
             finally:
                 sys.path.remove(os.path.dirname(pcm))
+
+    def test_security_levels(self):
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, remote='git@example.org:project/project') as git, mocks.local.Svn():
+            with open(os.path.join(self.path, '.git', 'config'), 'a') as f:
+                f.write('[webkitscmpy "remotes.origin"]\n')
+                f.write('    url = ggit@example.org:project/project\n')
+                f.write('    security-level = 0\n')
+                f.write('[webkitscmpy "remotes.security"]\n')
+                f.write('    url = git@example.org:project/project-security\n')
+                f.write('    security-level = 1\n')
+
+            self.assertDictEqual({
+                'example.org:project/project': 0,
+                'example.org:project/project-security': 1,
+            }, program.Setup._security_levels(local.Git(self.path)))

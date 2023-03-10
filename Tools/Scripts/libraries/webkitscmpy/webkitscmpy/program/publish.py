@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import os
 import re
 import sys
 
@@ -225,6 +226,10 @@ class Publish(Command):
             sys.stderr.write("Publication canceled\n")
             return 1
 
+        push_env = os.environ.copy()
+        push_env['VERBOSITY'] = str(args.verbose)
+        push_env['PUSH_HOOK_MODE'] = 'publish'
+
         return_code = 0
         print('Pushing branches to {}...'.format(args.remote))
         command = [repository.executable(), 'push', '--atomic', args.remote] + [
@@ -235,6 +240,7 @@ class Publish(Command):
             command,
             cwd=repository.root_path,
             encoding='utf-8',
+            env=push_env,
         ).returncode:
             sys.stderr.write('Failed to push branches to {}\n'.format(args.remote))
             return_code += 1
@@ -247,6 +253,7 @@ class Publish(Command):
                 command,
                 cwd=repository.root_path,
                 encoding='utf-8',
+                env=push_env,
             ).returncode:
                 sys.stderr.write('Failed to push tags to {}\n'.format(args.remote))
                 return_code += 1
