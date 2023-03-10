@@ -104,8 +104,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
 #endif
     void EnsureExtensionEnabled(String extension)
     void MarkContextChanged()
-    void SynthesizeGLError(uint32_t error)
-    void GetError() -> (uint32_t returnValue) Synchronous
+    void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
     void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
 #if ENABLE(VIDEO) && PLATFORM(COCOA)

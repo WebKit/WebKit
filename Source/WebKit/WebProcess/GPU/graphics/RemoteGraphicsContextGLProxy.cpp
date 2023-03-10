@@ -296,26 +296,16 @@ RefPtr<Image> RemoteGraphicsContextGLProxy::videoFrameToImage(WebCore::VideoFram
 }
 #endif
 
-void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
+GCGLErrorCodeSet RemoteGraphicsContextGLProxy::getErrors()
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::SynthesizeGLError(error));
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetErrors());
         if (!sendResult)
             markContextLost();
-        return;
+        auto [returnValue] = sendResult.takeReplyOr(GCGLErrorCodeSet { });
+        return returnValue;
     }
-}
-
-GCGLenum RemoteGraphicsContextGLProxy::getError()
-{
-    if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetError());
-        if (!sendResult)
-            markContextLost();
-        auto [returnValue] = sendResult.takeReplyOr(0);
-        return static_cast<GCGLenum>(returnValue);
-    }
-    return NO_ERROR;
+    return { };
 }
 
 void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTesting event)

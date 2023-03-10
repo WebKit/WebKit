@@ -30,19 +30,6 @@
 
 namespace WebKit {
 
-bool RemoteGraphicsContextGLProxy::moveErrorsToSyntheticErrorList()
-{
-    if (isContextLost())
-        return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::MoveErrorsToSyntheticErrorList());
-    if (!sendResult) {
-        markContextLost();
-        return { };
-    }
-    auto& [returnValue] = sendResult.reply();
-    return returnValue;
-}
-
 void RemoteGraphicsContextGLProxy::activeTexture(GCGLenum texture)
 {
     if (isContextLost())

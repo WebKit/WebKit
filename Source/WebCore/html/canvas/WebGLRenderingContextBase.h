@@ -600,7 +600,7 @@ protected:
             : mode(mode)
         {
         }
-        ListHashSet<GCGLint> errors; // Losing context and WEBGL_lose_context generates errors here.
+        GCGLErrorCodeSet errors; // Losing context and WEBGL_lose_context generates errors here.
         LostContextMode mode { LostContextMode::RealLostContext };
         bool restoreRequested { false };
     };
@@ -610,7 +610,7 @@ protected:
     Lock m_objectGraphLock;
 
     SuspendableTimer m_restoreTimer;
-
+    GCGLErrorCodeSet m_errors;
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
     HashSet<WebGLContextObject*> m_contextObjects;
@@ -1131,6 +1131,11 @@ protected:
 #endif
 
     bool validateTypeAndArrayBufferType(const char* functionName, ArrayBufferViewFunctionType, GCGLenum type, ArrayBufferView* pixels);
+
+    // Fetches all errors from the underlying context and updates local list of errors
+    // based on that.
+    // Returns true if underlying context had errors.
+    bool updateErrors();
 
 private:
     void scheduleTaskToDispatchContextLostEvent();

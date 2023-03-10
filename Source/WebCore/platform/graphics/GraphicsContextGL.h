@@ -1133,6 +1133,26 @@ public:
 #endif
     }
 
+    static constexpr GCGLErrorCode enumToErrorCode(GCGLenum error)
+    {
+        switch (error) {
+        case INVALID_ENUM:
+            return GCGLErrorCode::InvalidEnum;
+        case INVALID_VALUE:
+            return GCGLErrorCode::InvalidValue;
+        case INVALID_OPERATION:
+            return GCGLErrorCode::InvalidOperation;
+        case OUT_OF_MEMORY:
+            return GCGLErrorCode::OutOfMemory;
+        case INVALID_FRAMEBUFFER_OPERATION:
+            return GCGLErrorCode::InvalidFramebufferOperation;
+        case CONTEXT_LOST_WEBGL:
+            return GCGLErrorCode::ContextLost;
+        }
+        ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+        return GCGLErrorCode::InvalidOperation;
+    }
+
     class Client {
     public:
         WEBCORE_EXPORT Client();
@@ -1224,7 +1244,7 @@ public:
     virtual GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) = 0;
     virtual void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) = 0;
 
-    virtual GCGLenum getError() = 0;
+    virtual GCGLErrorCodeSet getErrors() = 0;
 
     // getFramebufferAttachmentParameter
     virtual GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
@@ -1531,20 +1551,6 @@ public:
     WEBCORE_EXPORT virtual void setDrawingBufferColorSpace(const DestinationColorSpace&);
 
     virtual bool isGLES2Compliant() const = 0;
-
-    // Synthesizes an OpenGL error which will be returned from a
-    // later call to getError. This is used to emulate OpenGL ES
-    // 2.0 behavior on the desktop and to enforce additional error
-    // checking mandated by WebGL.
-    //
-    // Per the behavior of glGetError, this stores at most one
-    // instance of any given error, and returns them from calls to
-    // getError in the order they were added.
-    virtual void synthesizeGLError(GCGLenum error) = 0;
-
-    // Read real OpenGL errors, and move them to the synthetic
-    // error list. Return true if at least one error is moved.
-    virtual bool moveErrorsToSyntheticErrorList() = 0;
 
     virtual void prepareForDisplay() = 0;
 

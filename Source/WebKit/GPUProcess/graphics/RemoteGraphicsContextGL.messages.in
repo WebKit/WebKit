@@ -40,8 +40,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
 #endif
     void EnsureExtensionEnabled(String extension)
     void MarkContextChanged()
-    void SynthesizeGLError(uint32_t error)
-    void GetError() -> (uint32_t returnValue) Synchronous
+    void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
     void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
@@ -63,7 +62,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
 
-    void MoveErrorsToSyntheticErrorList() -> (bool returnValue) Synchronous
     void ActiveTexture(uint32_t texture)
     void AttachShader(uint32_t program, uint32_t shader)
     void BindAttribLocation(uint32_t arg0, uint32_t index, String name)
