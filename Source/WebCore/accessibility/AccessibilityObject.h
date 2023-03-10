@@ -195,8 +195,8 @@ public:
     bool isGroup() const override { return false; }
     bool isImageMapLink() const override { return false; }
     bool isMenuList() const override { return false; }
-    bool isMenuListPopup() const override { return false; }
-    bool isMenuListOption() const override { return false; }
+    virtual bool isMenuListPopup() const { return false; }
+    virtual bool isMenuListOption() const { return false; }
     virtual bool isNativeSpinButton() const { return false; }
     AXCoreObject* incrementButton() override { return nullptr; }
     AXCoreObject* decrementButton() override { return nullptr; }
@@ -212,7 +212,7 @@ public:
     bool isLandmark() const override;
     bool isRangeControl() const;
     bool isMeter() const;
-    bool isStyleFormatGroup() const override;
+    bool isStyleFormatGroup() const;
     bool isFigureElement() const;
     bool isKeyboardFocusable() const override;
     bool isOutput() const;
@@ -259,12 +259,10 @@ public:
     String datetimeAttributeValue() const override;
 
     bool canSetFocusAttribute() const override { return false; }
-    bool canSetTextRangeAttributes() const override { return false; }
     bool canSetValueAttribute() const override { return false; }
     bool canSetNumericValue() const override { return false; }
     bool canSetSelectedAttribute() const override { return false; }
     bool canSetSelectedChildren() const override { return false; }
-    bool canSetExpandedAttribute() const override { return false; }
 
     Element* element() const override;
     Node* node() const override { return nullptr; }
@@ -524,7 +522,6 @@ public:
     void selectedChildren(AccessibilityChildrenVector&) override { }
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     void visibleChildren(AccessibilityChildrenVector&) override { }
-    void tabChildren(AccessibilityChildrenVector&) override { }
     virtual bool shouldFocusActiveDescendant() const { return false; }
     AccessibilityObject* activeDescendant() const override { return nullptr; }
 
@@ -616,8 +613,7 @@ public:
 
     // ARIA live-region features.
     bool supportsLiveRegion(bool excludeIfOff = true) const override;
-    bool isInsideLiveRegion(bool excludeIfOff = true) const override;
-    AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const;
+    AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }
     const String liveRegionStatus() const override { return String(); }
     const String liveRegionRelevant() const override { return nullAtom(); }
     bool liveRegionAtomic() const override { return false; }

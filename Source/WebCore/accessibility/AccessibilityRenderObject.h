@@ -71,9 +71,6 @@ public:
     bool hasSameStyle(const AXCoreObject&) const override;
     bool hasUnderline() const override;
 
-    bool canSetTextRangeAttributes() const override;
-    bool canSetExpandedAttribute() const override;
-
     void setAccessibleName(const AtomString&) override;
 
     // Provides common logic used by all elements when determining isIgnored.
@@ -140,7 +137,6 @@ public:
     bool canHaveSelectedChildren() const override;
     void selectedChildren(AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector&) override;
-    void tabChildren(AccessibilityChildrenVector&) override;
     bool shouldFocusActiveDescendant() const override;
     AccessibilityObject* activeDescendant() const override;
 

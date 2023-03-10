@@ -1047,9 +1047,6 @@ AXCoreObject* AccessibilityNodeObject::selectedTabItem()
 
     // FIXME: Is this valid? ARIA tab items support aria-selected; not aria-checked.
     // Find the child tab item that is selected (ie. the intValue == 1).
-    AXCoreObject::AccessibilityChildrenVector tabs;
-    tabChildren(tabs);
-
     for (const auto& child : children()) {
         if (child->isTabItem() && (child->isChecked() || child->isSelected()))
             return child.get();

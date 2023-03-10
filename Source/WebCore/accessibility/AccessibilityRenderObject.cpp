@@ -2818,19 +2818,6 @@ bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
     }
 }
 
-bool AccessibilityRenderObject::canSetExpandedAttribute() const
-{
-    if (roleValue() == AccessibilityRole::Details)
-        return true;
-
-    return supportsExpanded();
-}
-
-bool AccessibilityRenderObject::canSetTextRangeAttributes() const
-{
-    return isTextControl();
-}
-
 void AccessibilityRenderObject::addImageMapChildren()
 {
     RenderBoxModelObject* cssBox = renderBoxModelObject();
@@ -3269,17 +3256,6 @@ void AccessibilityRenderObject::visibleChildren(AccessibilityChildrenVector& res
     return ariaListboxVisibleChildren(result);
 }
  
-void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
-{
-    if (roleValue() != AccessibilityRole::TabList)
-        return;
-
-    for (const auto& child : children()) {
-        if (child->isTabItem())
-            result.append(child);
-    }
-}
-
 void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
 {
     // Setting the accessible name can store the value in the DOM
