@@ -7065,8 +7065,27 @@ String Document::displayStringModifiedByEncoding(const String& string) const
 
 void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)
 {
+    // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
+    // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,
+    // unbalanced events per the definition of the pageshow event:
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#reactivate-a-document
+    if (m_lastPageStatus == PageStatus::Shown)
+        return;
+    m_lastPageStatus = PageStatus::Shown;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36334 Pageshow event needs to fire asynchronously.
-    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted), this);
+    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted == PageshowEventPersisted), this);
+}
+
+void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
+{
+    // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
+    // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,
+    // unbalanced events per the definition of the pageshow event:
+    // https://html.spec.whatwg.org/multipage/document-lifecycle.html#unload-a-document
+    if (m_lastPageStatus == PageStatus::Hidden)
+        return;
+    m_lastPageStatus = PageStatus::Hidden;
+    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pagehideEvent, persisted == PageshowEventPersisted), this);
 }
 
 void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)

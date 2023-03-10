@@ -467,9 +467,6 @@ private:
     String m_status;
     String m_defaultStatus;
 
-    enum class PageStatus { None, Shown, Hidden };
-    PageStatus m_lastPageStatus { PageStatus::None };
-
 #if PLATFORM(IOS_FAMILY)
     unsigned m_scrollEventListenerCount { 0 };
 #endif

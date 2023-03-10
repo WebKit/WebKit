@@ -3492,7 +3492,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
         if (m_pageDismissalEventBeingDispatched == PageDismissalType::None) {
             if (unloadEventPolicy == UnloadEventPolicy::UnloadAndPageHide) {
                 m_pageDismissalEventBeingDispatched = PageDismissalType::PageHide;
-                m_frame.document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame.document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache), m_frame.document());
+                m_frame.document()->dispatchPagehideEvent(m_frame.document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache ? PageshowEventPersisted : PageshowEventNotPersisted);
             }
 
             // This takes care of firing the visibilitychange event and making sure the document is reported as hidden.

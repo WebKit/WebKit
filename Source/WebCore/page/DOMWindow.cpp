@@ -304,7 +304,8 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
         if (!set.contains(window.ptr()))
             continue;
 
-        window->dispatchEvent(PageTransitionEvent::create(eventNames.pagehideEvent, false), window->document());
+        if (RefPtr document = window->document())
+            document->dispatchPagehideEvent(PageshowEventNotPersisted);
         window->dispatchEvent(Event::create(eventNames.unloadEvent, Event::CanBubble::No, Event::IsCancelable::No), window->document());
 
         window->enableSuddenTermination();
@@ -2354,24 +2355,6 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     // Fixing this could allow us to remove the special case in DocumentEventQueue::dispatchEvent.
 
     Ref protectedThis { *this };
-
-    // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
-    // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,
-    // unbalanced events per the definition of the pageshow event:
-    // <http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-pageshow>.
-    // FIXME: This code should go at call sites where pageshowEvent and pagehideEvents are
-    // generated, not here inside the event dispatching process.
-    if (event.eventInterface() == PageTransitionEventInterfaceType) {
-        if (event.type() == eventNames().pageshowEvent) {
-            if (m_lastPageStatus == PageStatus::Shown)
-                return; // Event was previously dispatched; do not fire a duplicate event.
-            m_lastPageStatus = PageStatus::Shown;
-        } else if (event.type() == eventNames().pagehideEvent) {
-            if (m_lastPageStatus == PageStatus::Hidden)
-                return; // Event was previously dispatched; do not fire a duplicate event.
-            m_lastPageStatus = PageStatus::Hidden;
-        }
-    }
 
     if (target)
         event.setTarget(target);
