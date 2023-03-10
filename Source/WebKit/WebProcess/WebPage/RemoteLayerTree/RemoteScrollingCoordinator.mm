@@ -109,11 +109,11 @@ void RemoteScrollingCoordinator::buildTransaction(RemoteScrollingCoordinatorTran
 }
 
 // Notification from the UI process that we scrolled.
-void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, bool syncLayerPosition, CompletionHandler<void()>&& completionHandler)
+void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool syncLayerPosition, CompletionHandler<void()>&& completionHandler)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinator::scrollingTreeNodeDidScroll " << nodeID << " to " << scrollPosition);
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinator::scrollingTreeNodeDidScroll " << nodeID << " to " << scrollPosition << " layoutViewportOrigin " << layoutViewportOrigin);
 
-    auto scrollUpdate = ScrollUpdate { nodeID, scrollPosition, { }, ScrollUpdateType::PositionUpdate, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set };
+    auto scrollUpdate = ScrollUpdate { nodeID, scrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set };
     applyScrollUpdate(WTFMove(scrollUpdate));
 
     completionHandler();
