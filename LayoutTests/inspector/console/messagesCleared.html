@@ -52,14 +52,18 @@ function test()
     suite.addTestCase({
         name: "ClearViaPageReload",
         description: "Reloading the page should trigger Console.messagesCleared.",
-        test(resolve, reject) {
-            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared)
-            .then((event) => {
-                InspectorTest.expectThat(event, "Cleared event should fire.");
-            })
-            .then(resolve, reject);
+        async test() {
+            let sessionStartedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.SessionStarted) // , {timestamp, wasReloaded}
+            let consoleClearedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
 
             InspectorTest.reloadPage();
+
+            let sessionStartedEventData = (await sessionStartedEvent).data;
+            InspectorTest.log("Received `WI.ConsoleManager.Event.SessionStarted` event.");
+            InspectorTest.expectTrue(sessionStartedEventData.wasReloaded, "Expected `WI.ConsoleManager.Event.SessionStarted` to be a reload-based session start.");
+
+            await consoleClearedEvent;
+            InspectorTest.log("Received `WI.ConsoleManager.Event.Cleared` event.");
         }
     });
 

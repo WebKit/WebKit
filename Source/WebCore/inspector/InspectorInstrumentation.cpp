@@ -752,11 +752,13 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
     ASSERT(loader->frame() == &frame);
 
     if (frame.isMainFrame()) {
-        if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
-            consoleAgent->reset();
-
         if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
             networkAgent->mainFrameNavigated(*loader);
+
+        // The Web Inspector frontend relies on `networkAgent->mainFrameNavigated` being called first to establish the
+        // type of navigation that has occured.
+        if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
+            consoleAgent->mainFrameNavigated();
 
         if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
             cssAgent->reset();

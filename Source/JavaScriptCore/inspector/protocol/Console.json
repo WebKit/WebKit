@@ -35,6 +35,12 @@
             "description": "Level of logging."
         },
         {
+            "id": "ClearReason",
+            "type": "string",
+            "enum": ["console-api", "main-frame-navigation"],
+            "description": "The reason the console is being cleared."
+        },
+        {
             "id": "Channel",
             "description": "Logging channel.",
             "type": "object",
@@ -133,7 +139,10 @@
         },
         {
             "name": "messagesCleared",
-            "description": "Issued when console is cleared. This happens either upon <code>clearMessages</code> command or after page navigation."
+            "description": "Issued when console is cleared. This happens either upon <code>clearMessages</code> command or after page navigation.",
+            "parameters": [
+                { "name": "reason", "$ref": "ClearReason", "description": "The reason the console is being cleared." }
+            ]
         },
         {
             "name": "heapSnapshot",

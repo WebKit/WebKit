@@ -70,7 +70,9 @@ public:
 
     bool enabled() const { return m_enabled; }
     bool developerExtrasEnabled() const;
-    void reset();
+
+    // InspectorInstrumentation
+    void mainFrameNavigated();
 
     void addMessageToConsole(std::unique_ptr<ConsoleMessage>);
 
@@ -83,6 +85,7 @@ public:
 
 protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
+    void clearMessages(Protocol::Console::ClearReason);
 
     InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<ConsoleFrontendDispatcher> m_frontendDispatcher;
