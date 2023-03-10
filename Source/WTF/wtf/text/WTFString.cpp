@@ -41,29 +41,25 @@ using namespace Unicode;
 
 // Construct a string with UTF-16 data.
 String::String(const UChar* characters, unsigned length)
+    : m_impl(characters ? RefPtr { StringImpl::create(characters, length) } : nullptr)
 {
-    if (characters)
-        m_impl = StringImpl::create(characters, length);
 }
 
 // Construct a string with latin1 data.
 String::String(const LChar* characters, unsigned length)
+    : m_impl(characters ? RefPtr { StringImpl::create(characters, length) } : nullptr)
 {
-    if (characters)
-        m_impl = StringImpl::create(characters, length);
 }
 
 String::String(const char* characters, unsigned length)
+    : m_impl(characters ? RefPtr { StringImpl::create(reinterpret_cast<const LChar*>(characters), length) } : nullptr)
 {
-    if (characters)
-        m_impl = StringImpl::create(reinterpret_cast<const LChar*>(characters), length);
 }
 
 // Construct a string with Latin-1 data, from a null-terminated source.
 String::String(const char* nullTerminatedString)
+    : m_impl(nullTerminatedString ? RefPtr { StringImpl::createFromCString(nullTerminatedString) } : nullptr)
 {
-    if (nullTerminatedString)
-        m_impl = StringImpl::createFromCString(nullTerminatedString);
 }
 
 int codePointCompare(const String& a, const String& b)
