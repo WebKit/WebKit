@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -108,6 +110,8 @@ static inline bool rendererCanHaveResources(RenderObject& renderer)
 
 void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
+    ASSERT(renderer.element()->isSVGElement());
+    
     if (!renderer.parent())
         return;
 
@@ -165,9 +169,6 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     }
 
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
-
-    if (renderer.element() && !renderer.element()->isSVGElement())
-        renderer.element()->invalidateStyle();
 }
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
