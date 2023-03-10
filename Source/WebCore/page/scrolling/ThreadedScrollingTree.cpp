@@ -173,6 +173,15 @@ void ThreadedScrollingTree::didCommitTreeOnScrollingThread()
 
         downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
     }
+
+    auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });
+    for (const auto& [key, value] : nodesWithPendingKeyboardScrollAnimations) {
+        RefPtr targetNode = nodeForID(key);
+        if (!is<ScrollingTreeScrollingNode>(targetNode))
+            continue;
+
+        downcast<ScrollingTreeScrollingNode>(*targetNode).handleKeyboardScrollRequest(value);
+    }
 }
 
 bool ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
@@ -182,6 +191,12 @@ bool ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID node
         return true;
     }
     return false;
+}
+
+bool ThreadedScrollingTree::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID nodeID, const RequestedKeyboardScrollData& request)
+{
+    m_nodesWithPendingKeyboardScrollAnimations.set(nodeID, request);
+    return true;
 }
 
 void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>& synchronousScrollingNodes)

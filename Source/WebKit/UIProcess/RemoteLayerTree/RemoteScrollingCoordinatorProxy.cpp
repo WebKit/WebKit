@@ -245,6 +245,11 @@ bool RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingN
     return false;
 }
 
+bool RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID scrolledNodeID, const RequestedKeyboardScrollData&)
+{
+    return false;
+}
+
 String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
 {
     if (m_scrollingTree)

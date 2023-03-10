@@ -348,6 +348,7 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
         return;
 
     scrollingTree->displayDidRefresh(displayID);
+    scrollingTree->applyLayerPositions();
 }
 
 void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplayID)

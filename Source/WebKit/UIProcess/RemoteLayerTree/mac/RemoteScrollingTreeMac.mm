@@ -123,6 +123,15 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
 
         downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
     }
+
+    auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });
+    for (const auto& [key, value] : nodesWithPendingKeyboardScrollAnimations) {
+        RefPtr targetNode = nodeForID(key);
+        if (!is<ScrollingTreeScrollingNode>(targetNode))
+            continue;
+
+        downcast<ScrollingTreeScrollingNode>(*targetNode).handleKeyboardScrollRequest(value);
+    }
 }
 
 void RemoteScrollingTreeMac::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
@@ -184,6 +193,13 @@ bool RemoteScrollingTreeMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID nod
         return true;
     }
     return false;
+}
+
+bool RemoteScrollingTreeMac::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID nodeID, const RequestedKeyboardScrollData& request)
+{
+    ASSERT(m_treeLock.isLocked());
+    m_nodesWithPendingKeyboardScrollAnimations.set(nodeID, request);
+    return true;
 }
 
 void RemoteScrollingTreeMac::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
