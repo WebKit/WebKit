@@ -429,13 +429,13 @@ class Setup(Command):
         # Check and configure alternate remotes
         project_remotes = {}
         for config_arg, url in repository.config().items():
-            if not config_arg.startswith('webkitscmpy.remotes'):
+            if not config_arg.startswith('webkitscmpy.remotes') or not config_arg.endswith('url'):
                 continue
 
             for match in [repository.SSH_REMOTE.match(url), repository.HTTP_REMOTE.match(url)]:
                 if not match:
                     continue
-                project_remotes[config_arg.split('.')[-1]] = [
+                project_remotes[config_arg.split('.')[-2]] = [
                     'https://{}/{}.git'.format(match.group('host'), match.group('path')),
                     'http://{}/{}.git'.format(match.group('host'), match.group('path')),
                     'git@{}:{}.git'.format(match.group('host'), match.group('path')),

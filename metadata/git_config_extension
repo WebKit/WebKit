@@ -5,10 +5,15 @@
         history = disabled
         update-fork = true
         auto-check = true
-[webkitscmpy "remotes"]
-        origin = git@github.com:WebKit/WebKit.git
-        security = git@github.com:WebKit/WebKit-security.git
-        apple = git@github.com:apple/WebKit.git
+[webkitscmpy "remotes.origin"]
+        url = git@github.com:WebKit/WebKit.git
+        security-level = 0
+[webkitscmpy "remotes.security"]
+        url = git@github.com:WebKit/WebKit-security.git
+        security-level = 1
+[webkitscmpy "remotes.apple"]
+        url = git@github.com:apple/WebKit.git
+        security-level = 2
 [webkitscmpy "access"]
         apple = apple/teams/WebKit
         security = WebKit/teams/security

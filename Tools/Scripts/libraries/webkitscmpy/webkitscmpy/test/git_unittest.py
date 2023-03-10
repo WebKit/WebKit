@@ -529,9 +529,12 @@ CommitDate: {time_c}
             project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
             os.mkdir(os.path.dirname(project_config))
             with open(project_config, 'w') as f:
-                f.write('[webkitscmpy "remotes"]\n')
-                f.write('    origin = git@github.example.com:WebKit/WebKit.git\n')
-                f.write('    security = git@github.example.com:WebKit/WebKit-security.git\n')
+                f.write('[webkitscmpy "remotes.origin"]\n')
+                f.write('    url = git@github.example.com:WebKit/WebKit.git\n')
+                f.write('    security-level = 0\n')
+                f.write('[webkitscmpy "remotes.security"]\n')
+                f.write('    url = git@github.example.com:WebKit/WebKit-security.git\n')
+                f.write('    security-level = 1\n')
 
             self.assertEqual(local.Git(self.path).source_remotes(), ['origin'])
 
@@ -545,9 +548,12 @@ CommitDate: {time_c}
             project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
             os.mkdir(os.path.dirname(project_config))
             with open(project_config, 'w') as f:
-                f.write('[webkitscmpy "remotes"]\n')
-                f.write('    origin = git@github.example.com:WebKit/WebKit.git\n')
-                f.write('    security = git@github.example.com:WebKit/WebKit-security.git\n')
+                f.write('[webkitscmpy "remotes.origin"]\n')
+                f.write('    url = git@github.example.com:WebKit/WebKit.git\n')
+                f.write('    security-level = 0\n')
+                f.write('[webkitscmpy "remotes.security"]\n')
+                f.write('    url = git@github.example.com:WebKit/WebKit-security.git\n')
+                f.write('    security-level = 1\n')
 
             self.assertEqual(local.Git(self.path).source_remotes(), ['origin', 'security'])
             self.assertEqual(
