@@ -58,6 +58,7 @@
 
 #ifdef __cplusplus
 #include <algorithm> // needed for exception_defines.h
+#include <functional>
 #endif
 
 #ifdef __OBJC__
