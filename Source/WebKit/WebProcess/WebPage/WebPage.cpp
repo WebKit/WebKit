@@ -965,9 +965,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (experimentalSandboxWithProbability) {
         // Set sandbox state variable with probability of 1/8.
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
+        WTFLogAlways("Enabled experimental sandbox with probability");
     }
 #if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
-    if (!(experimentalSandbox || experimentalSandboxWithProbability))
+    if (!shouldBlockIOKit || !(experimentalSandbox || experimentalSandboxWithProbability))
         SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
 #endif
 #endif // USE(APPLE_INTERNAL_SDK)
