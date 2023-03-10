@@ -191,6 +191,11 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
             weakThis->assertionWasInvalidated();
     });
 
+    if (m_assertion->type() == ProcessAssertionType::Suspended)
+        m_removeAllAssertionsTimer.startOneShot(removeAllAssertionsTimeout);
+    else
+        m_removeAllAssertionsTimer.stop();
+
     m_process.didChangeThrottleState(newState);
 }
     
@@ -207,7 +212,6 @@ void ProcessThrottler::updateThrottleStateIfNeeded()
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
             m_process.sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? ProcessThrottlerClient::ResumeReason::ForegroundActivity : ProcessThrottlerClient::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
-            m_removeAllAssertionsTimer.stop();
         }
     } else {
         // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
@@ -215,7 +219,6 @@ void ProcessThrottler::updateThrottleStateIfNeeded()
         // in the background for too long.
         if (m_state != ProcessThrottleState::Suspended) {
             m_prepareToSuspendTimeoutTimer.startOneShot(processSuspensionTimeout);
-            m_removeAllAssertionsTimer.startOneShot(removeAllAssertionsTimeout);
             sendPrepareToSuspendIPC(IsSuspensionImminent::No);
             return;
         }
