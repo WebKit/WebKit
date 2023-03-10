@@ -50,6 +50,8 @@
     { "name": "ews107", "platform": "mac-monterey" },
     { "name": "ews108", "platform": "*" },
     { "name": "ews109", "platform": "ios-16" },
+    { "name": "ews110", "platform": "ios-simulator-16" },
+    { "name": "ews111", "platform": "ios-simulator-16" },
     { "name": "ews112", "platform": "mac-monterey" },
     { "name": "ews113", "platform": "mac-monterey" },
     { "name": "ews114", "platform": "*" },
@@ -115,6 +117,22 @@
     { "name": "ews183", "platform": "*" },
     { "name": "ews184", "platform": "ios-simulator-16" },
     { "name": "ews185", "platform": "ios-simulator-16" },
+    { "name": "ews186", "platform": "ios-simulator-16" },
+    { "name": "ews200", "platform": "ios-simulator-16" },
+    { "name": "ews201", "platform": "ios-simulator-16" },
+    { "name": "ews202", "platform": "mac-monterey" },
+    { "name": "ews203", "platform": "mac-monterey" },
+    { "name": "ews204", "platform": "mac-monterey" },
+    { "name": "ews205", "platform": "mac-monterey" },
+    { "name": "ews206", "platform": "mac-monterey" },
+    { "name": "ews207", "platform": "mac-monterey" },
+    { "name": "ews208", "platform": "mac-monterey" },
+    { "name": "ews210", "platform": "mac-monterey" },
+    { "name": "ews211", "platform": "mac-monterey" },
+    { "name": "ews212", "platform": "mac-monterey" },
+    { "name": "ews213", "platform": "mac-monterey" },
+    { "name": "ews214", "platform": "mac-monterey" },
+    { "name": "ews215", "platform": "mac-monterey" },
     { "name": "webkit-cq-01", "platform": "mac-monterey" },
     { "name": "webkit-cq-02", "platform": "mac-monterey" },
     { "name": "webkit-cq-03", "platform": "mac-monterey" },
@@ -164,7 +182,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-16",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["ios-16-sim-build-ews"],
-      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
+      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185", "ews186", "ews200", "ews201"]
     },
     {
       "name": "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
@@ -185,21 +203,21 @@
       "factory": "macOSBuildFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["api-tests-mac-ews", "macos-monterey-release-wk1-tests-ews", "macos-monterey-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
-      "workernames": ["ews102", "ews118", "ews119", "ews120", "ews161", "ews162"]
+      "workernames": ["ews101", "ews102", "ews103", "ews105","ews118", "ews119", "ews120", "ews161", "ews162", "ews202"]
     },
     {
       "name": "macOS-Monterey-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
       "factory": "macOSWK1Factory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-monterey-release-build-ews"],
-      "workernames": ["ews101", "ews103", "ews105", "ews116", "ews112", "ews117"]
+      "workernames": ["ews116", "ews112", "ews117", "ews205", "ews206", "ews207", "ews208", "ews210" ]
     },
     {
       "name": "macOS-Monterey-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
       "factory": "macOSWK2Factory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-monterey-release-build-ews"],
-      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews169"]
+      "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews169", "ews211", "ews212", "ews213", "ews214", "ews215"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
@@ -318,13 +336,13 @@
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-16-sim-build-ews"],
-      "workernames": ["ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183"]
+      "workernames": ["ews110", "ews111", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183"]
     },
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["macos-monterey-release-build-ews"],
-      "workernames": ["ews100", "ews129", "ews150", "ews153", "ews155"]
+      "workernames": ["ews100", "ews129", "ews150", "ews153", "ews155", "ews203", "ews204"]
     },
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
