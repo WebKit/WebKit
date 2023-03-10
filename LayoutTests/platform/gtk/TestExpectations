@@ -102,8 +102,6 @@ http/tests/cookies/same-site [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
-fast/text/zero-width-characters-complex-script.html [ Pass ]
-
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1125,13 +1123,6 @@ webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dashed.h
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
 
-# These are expected mismatches, so they should fail, and the bug is they sometimes pass.
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure Pass ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xhtml [ ImageOnlyFailure ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
-webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure ]
-
 webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
@@ -1941,8 +1932,6 @@ webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
-
-webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
 imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Slow ]

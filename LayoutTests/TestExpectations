@@ -5099,9 +5099,6 @@ imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/ [ 
 imported/w3c/web-platform-tests/FileAPI/file/File-constructor.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.worker.html [ DumpJSConsoleLogInStdErr ]
 
-# It passes in legacy line layout by sheer luck. Fails with FF and Chrome too (it expects "random" code points to be computed to zero width).
-fast/text/zero-width-characters-complex-script.html [ Failure ]
-
 webkit.org/b/230237 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-inline-image.html [ Failure ]
 
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-012.html [ ImageOnlyFailure ]

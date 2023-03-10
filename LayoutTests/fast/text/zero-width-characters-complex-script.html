@@ -22,12 +22,6 @@ function testChar(a, b, ch)
 function testWithZeroWidthSpace(a, b) {
     var failedCount = 0;
 
-    for (var i = 1; i < 32; ++i)
-        if (i != 9 && i != 10 && i != 13)
-            failedCount += testChar(a, b, i);
-
-    for (var i = 0x7F; i < 0xA0; ++i)
-        failedCount += testChar(a, b, i);
     failedCount += testChar(a, b, 0xAD);
 
     // ZWJ (U+200C) and ZWNJ (U+200D) are excluded because they
