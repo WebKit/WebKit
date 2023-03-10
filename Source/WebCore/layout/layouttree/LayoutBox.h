@@ -179,7 +179,7 @@ public:
     void setIsFirstChildForIntegration(bool value) { m_isFirstChildForIntegration = value; }
 
     const Shape* shape() const;
-    void setShape(std::unique_ptr<Shape>);
+    void setShape(RefPtr<const Shape>);
 
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
@@ -204,7 +204,7 @@ private:
         CellSpan tableCellSpan;
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
-        std::unique_ptr<Shape> shape;
+        RefPtr<const Shape> shape;
     };
 
     bool hasRareData() const { return m_hasRareData; }

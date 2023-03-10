@@ -408,10 +408,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
         layoutBox.setBaselineForIntegration(roundToInt(baseline));
     }
 
-    if (ShapeOutsideInfo::isEnabledFor(replacedOrInlineBlock)) {
-        auto shape = makeShapeForShapeOutside(replacedOrInlineBlock);
-        layoutBox.setShape(WTFMove(shape));
-    }
+    if (auto* shapeOutsideInfo = replacedOrInlineBlock.shapeOutsideInfo())
+        layoutBox.setShape(&shapeOutsideInfo->computedShape());
 }
 
 void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)
@@ -822,7 +820,11 @@ void LineLayout::prepareFloatingState()
         boxGeometry.setPadding({ });
         boxGeometry.setHorizontalMargin({ });
         boxGeometry.setVerticalMargin({ });
-        floatingState.append({ logicalPosition(), boxGeometry });
+
+        auto shapeOutsideInfo = floatingObject->renderer().shapeOutsideInfo();
+        auto* shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
+
+        floatingState.append({ logicalPosition(), boxGeometry, shape });
     }
 }
 

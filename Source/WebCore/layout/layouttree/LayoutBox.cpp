@@ -450,7 +450,7 @@ const Shape* Box::shape() const
     return rareData().shape.get();
 }
 
-void Box::setShape(std::unique_ptr<Shape> shape)
+void Box::setShape(RefPtr<const Shape> shape)
 {
     ensureRareData().shape = WTFMove(shape);
 }

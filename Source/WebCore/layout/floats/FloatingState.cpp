@@ -29,6 +29,7 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
+#include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -40,14 +41,18 @@ FloatingState::FloatItem::FloatItem(const Box& layoutBox, Position position, Box
     : m_layoutBox(layoutBox)
     , m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
+    , m_shape(layoutBox.shape())
 {
 }
 
-FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGeometry)
+FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGeometry, const Shape* shape)
     : m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
+    , m_shape(shape)
 {
 }
+
+FloatingState::FloatItem::~FloatItem() = default;
 
 FloatingState::FloatingState(LayoutState& layoutState, const ElementBox& blockFormattingContextRoot)
     : m_layoutState(layoutState)

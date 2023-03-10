@@ -119,7 +119,7 @@ static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const Layo
     return LayoutRect(marginBoxOrigin, marginRectSize);
 }
 
-std::unique_ptr<Shape> makeShapeForShapeOutside(const RenderBox& renderer)
+Ref<const Shape> makeShapeForShapeOutside(const RenderBox& renderer)
 {
     auto& style = renderer.style();
     auto& containingBlock = *renderer.containingBlock();
@@ -163,7 +163,7 @@ std::unique_ptr<Shape> makeShapeForShapeOutside(const RenderBox& renderer)
     }
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return Shape::createBoxShape(RoundedRect { { } }, writingMode, 0);
 }
 
 static inline bool checkShapeImageOrigin(Document& document, const StyleImage& styleImage)

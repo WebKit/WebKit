@@ -54,8 +54,10 @@ public:
     public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        FloatItem(Position, BoxGeometry absoluteBoxGeometry);
+        FloatItem(Position, BoxGeometry absoluteBoxGeometry, const Shape*);
         FloatItem(const Box&, Position, BoxGeometry absoluteBoxGeometry);
+
+        ~FloatItem();
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isRightPositioned() const { return m_position == Position::Right; }
@@ -66,7 +68,7 @@ public:
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
         PositionInContextRoot bottom() const { return { rectWithMargin().bottom() }; }
 
-        const Shape* shape() const { return m_layoutBox ? m_layoutBox->shape() : nullptr; }
+        const Shape* shape() const { return m_shape.get(); }
 
 #if ASSERT_ENABLED
         const Box* floatBox() const { return m_layoutBox.get(); }
@@ -75,6 +77,7 @@ public:
         CheckedPtr<const Box> m_layoutBox;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
+        RefPtr<const Shape> m_shape;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }
