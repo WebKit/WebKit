@@ -39,7 +39,7 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/BifurcatedGraphicsContext.h>
+#import <WebCore/BifurcatedGraphicsContextCG.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/ImageBuffer.h>
@@ -434,7 +434,7 @@ void RemoteLayerBackingStore::paintContents()
     if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         auto& displayListContext = m_displayListBuffer->context();
 
-        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
+        BifurcatedGraphicsContextCG context(m_frontBuffer.imageBuffer->context(), displayListContext);
         drawInContext(context, [&] {
 #if HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
             displayListContext.scale(FloatSize(1, -1));

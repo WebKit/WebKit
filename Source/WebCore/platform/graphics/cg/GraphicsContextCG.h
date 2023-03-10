@@ -29,10 +29,11 @@
 
 #include "ColorSpaceCG.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextDrawWithCGContext.h"
 
 namespace WebCore {
 
-class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext {
+class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext, public GraphicsContextDrawWithCGContext {
 public:
     enum CGContextSource {
         Unknown,
@@ -128,6 +129,10 @@ public:
     virtual bool canUseShadowBlur() const;
 
     virtual FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) const;
+
+    // GraphicsContextDrawWithCGContext
+    GraphicsContextDrawWithCGContext* asDrawWithCGContext() final;
+    void drawWithCGContext(const Function<void(CGContextRef)>&, StateOptions) final;
 
 protected:
     virtual void setCGShadow(RenderingMode, const FloatSize& offset, float blur, const Color&, bool shadowsIgnoreTransforms);

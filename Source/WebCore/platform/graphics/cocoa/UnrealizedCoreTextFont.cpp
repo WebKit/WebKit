@@ -26,13 +26,12 @@
 #include "config.h"
 #include "UnrealizedCoreTextFont.h"
 
-#include "FontCacheCoreText.h"
 #include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontInterrogation.h"
 #include "FontMetricsNormalization.h"
-
 #include <optional>
+#include <pal/spi/cf/CoreTextSPI.h>
 
 namespace WebCore {
 

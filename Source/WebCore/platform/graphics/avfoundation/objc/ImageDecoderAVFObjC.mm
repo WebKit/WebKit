@@ -49,6 +49,7 @@
 #import <AVFoundation/AVTime.h>
 #import <VideoToolbox/VTUtilities.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>

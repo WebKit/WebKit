@@ -30,6 +30,7 @@
 
 #import "ContentType.h"
 #import "SourceBufferParserWebM.h"
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/SortedArrayMap.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>

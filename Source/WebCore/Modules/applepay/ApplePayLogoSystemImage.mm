@@ -31,6 +31,7 @@
 #import "FloatRect.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
+#import "GraphicsContextDrawWithCGContext.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
@@ -98,17 +99,21 @@ void ApplePayLogoSystemImage::draw(GraphicsContext& context, const FloatRect& de
     auto page = applePayLogoForStyle(m_applePayLogoStyle);
     if (!page)
         return;
+    if (auto* drawWith = context.asDrawWithCGContext()) {
+        drawWith->drawWithCGContext([&page, &destinationRect] (CGContextRef cgContext) {
+            CGSize pdfSize = CGPDFPageGetBoxRect(page.get(), kCGPDFMediaBox).size;
 
-    CGSize pdfSize = CGPDFPageGetBoxRect(page.get(), kCGPDFMediaBox).size;
+            auto largestRect = largestRectWithAspectRatioInsideRect(pdfSize.width / pdfSize.height, destinationRect);
+            CGContextTranslateCTM(cgContext, largestRect.x(), largestRect.y());
+            auto scale = largestRect.width() / pdfSize.width;
+            CGContextScaleCTM(cgContext, scale, scale);
 
-    auto largestRect = largestRectWithAspectRatioInsideRect(pdfSize.width / pdfSize.height, destinationRect);
-    context.translate(largestRect.x(), largestRect.y());
-    context.scale(largestRect.width() / pdfSize.width);
+            CGContextTranslateCTM(cgContext, 0, pdfSize.height);
+            CGContextScaleCTM(cgContext, 1, -1);
 
-    context.translate(0, pdfSize.height);
-    context.scale(FloatSize(1, -1));
-
-    CGContextDrawPDFPage(context.platformContext(), page.get());
+            CGContextDrawPDFPage(cgContext, page.get());
+        });
+    }
 }
 
 } // namespace WebCore

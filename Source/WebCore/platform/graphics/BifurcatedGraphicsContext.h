@@ -142,7 +142,7 @@ public:
 
     void didUpdateState(GraphicsContextState&) final;
 
-private:
+protected:
     void verifyStateSynchronization();
 
     bool m_hasLoggedAboutDesynchronizedState { false };
