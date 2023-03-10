@@ -46,6 +46,7 @@ private:
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;
+    bool usesEphemeralDataStore() const final;
     bool runningInDaemon() const final { return false; }
 
     WeakPtr<NetworkSession> m_networkSession;

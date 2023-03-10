@@ -491,9 +491,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
 
     RefPtr<Frame> frame = document().frame();
     auto* page = document().page();
-    if (!frame || !page || page->sessionID().isEphemeral()
-        || !document().settings().privateClickMeasurementEnabled()
-        || !UserGestureIndicator::processingUserGesture())
+    if (!frame || !page || !document().settings().privateClickMeasurementEnabled() || !UserGestureIndicator::processingUserGesture())
         return std::nullopt;
 
     if (auto pcm = parsePrivateClickMeasurementForSKAdNetwork(hrefURL))
@@ -551,7 +549,15 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
 #else
     String bundleID;
 #endif
-    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(WTFMove(mainDocumentRegistrableDomain)), AttributionDestinationSite(destinationURL), bundleID, WallTime::now(), PCM::AttributionEphemeral::No };
+
+    PrivateClickMeasurement privateClickMeasurement {
+        SourceID(attributionSourceID.value()),
+        SourceSite(WTFMove(mainDocumentRegistrableDomain)),
+        AttributionDestinationSite(destinationURL),
+        bundleID,
+        WallTime::now(),
+        page->sessionID().isEphemeral() ? PCM::AttributionEphemeral::Yes : PCM::AttributionEphemeral::No
+    };
 
     if (auto ephemeralNonce = attributionSourceNonceForPCM())
         privateClickMeasurement.setEphemeralSourceNonce(WTFMove(*ephemeralNonce));

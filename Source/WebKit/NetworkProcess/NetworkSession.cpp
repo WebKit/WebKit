@@ -98,7 +98,7 @@ NetworkStorageSession* NetworkSession::networkStorageSession() const
 
 static UniqueRef<PCM::ManagerInterface> managerOrProxy(NetworkSession& networkSession, NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
-    if (!parameters.pcmMachServiceName.isEmpty())
+    if (!parameters.pcmMachServiceName.isEmpty() && !networkSession.sessionID().isEphemeral())
         return makeUniqueRef<PCM::ManagerProxy>(parameters.pcmMachServiceName, networkSession);
     return makeUniqueRef<PrivateClickMeasurementManager>(makeUniqueRef<PCM::ClientImpl>(networkSession, networkProcess), parameters.resourceLoadStatisticsParameters.directory);
 }
@@ -402,11 +402,20 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
         appBundleID = WebCore::applicationBundleIdentifier();
 #endif
 
+    if (!m_ephemeralMeasurement && m_sessionID.isEphemeral())
+        return;
+
     if (m_ephemeralMeasurement) {
         auto ephemeralMeasurement = *std::exchange(m_ephemeralMeasurement, std::nullopt);
 
         auto redirectDomain = RegistrableDomain(redirectRequest.url());
         auto firstPartyForCookies = redirectRequest.firstPartyForCookies();
+
+        bool hasAgedOut = WallTime::now() - ephemeralMeasurement.timeOfAdClick() > WebCore::PrivateClickMeasurement::maxAge();
+        if (hasAgedOut) {
+            networkProcess().broadcastConsoleMessage(m_sessionID, JSC::MessageSource::PrivateClickMeasurement, JSC::MessageLevel::Info, "[Private Click Measurement] Aging out ephemeral click measurement."_s);
+            return;
+        }
 
         // Ephemeral measurement can only have one pending click.
         if (ephemeralMeasurement.isNeitherSameSiteNorCrossSiteTriggeringEvent(redirectDomain, firstPartyForCookies, attributionTriggerData))

@@ -45,16 +45,17 @@ void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const S
 
 bool ClientImpl::featureEnabled() const
 {
-    return m_networkSession
-        && m_networkProcess->privateClickMeasurementEnabled()
-        && !m_networkSession->sessionID().isEphemeral();
+    return m_networkSession && m_networkProcess->privateClickMeasurementEnabled();
 }
 
 bool ClientImpl::debugModeEnabled() const
 {
-    return m_networkSession
-        && m_networkSession->privateClickMeasurementDebugModeEnabled()
-        && !m_networkSession->sessionID().isEphemeral();
+    return m_networkSession && m_networkSession->privateClickMeasurementDebugModeEnabled();
+}
+
+bool ClientImpl::usesEphemeralDataStore() const
+{
+    return m_networkSession && m_networkSession->sessionID().isEphemeral();
 }
 
 } // namespace WebKit::PCM

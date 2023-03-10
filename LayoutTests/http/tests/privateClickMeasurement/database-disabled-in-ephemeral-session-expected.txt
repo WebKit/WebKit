@@ -1,4 +1,4 @@
-Tests that stored attributions cannot be converted in an ephemeral session.
+Tests that attributions are not persisted in an ephemeral session.
 
 
 

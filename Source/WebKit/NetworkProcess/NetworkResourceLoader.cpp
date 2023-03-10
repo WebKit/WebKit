@@ -1168,14 +1168,12 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
 #endif
 
     std::optional<WebCore::PCM::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
-    if (!sessionID().isEphemeral()) {
-        if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
-            privateClickMeasurementAttributionTriggerData = result.value();
-            if (privateClickMeasurementAttributionTriggerData)
-                privateClickMeasurementAttributionTriggerData->destinationSite = WebCore::RegistrableDomain { request.firstPartyForCookies() };
-        } else if (!result.error().isEmpty())
-            addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Error, result.error());
-    }
+    if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
+        privateClickMeasurementAttributionTriggerData = result.value();
+        if (privateClickMeasurementAttributionTriggerData)
+            privateClickMeasurementAttributionTriggerData->destinationSite = WebCore::RegistrableDomain { request.firstPartyForCookies() };
+    } else if (!result.error().isEmpty())
+        addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Error, result.error());
 
     if (isFromServiceWorker == IsFromServiceWorker::No) {
         auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, redirectRequest, redirectResponse);
