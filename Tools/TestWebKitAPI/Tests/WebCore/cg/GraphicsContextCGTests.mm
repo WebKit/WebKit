@@ -188,6 +188,25 @@ TEST(GraphicsContextTests, LargeLayerRenderingModeIsExpected)
     }
 }
 
+TEST(GraphicsContextTests, DrawWithCGContextIsSupportedAndWorks)
+{
+    auto srgb = DestinationColorSpace::SRGB();
+    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, 3, 3, 8, 4 * 3, srgb.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+    ASSERT_NE(cgContext, nullptr);
+    GraphicsContextCG context(cgContext.get());
+    auto ctm = context.getCTM();
+    auto clipBounds = context.clipBounds();
+    auto* drawWith = context.asDrawWithCGContext();
+    ASSERT_NE(drawWith, nullptr);
+    drawWith->drawWithCGContext([](CGContextRef cgContext) {
+        // Simulate common bug: custom draw leaves state mutated.
+        CGContextClipToRect(cgContext, FloatRect { 1, 2, 3, 4 });
+        CGContextTranslateCTM(cgContext, 55, 767);
+    });
+    EXPECT_EQ(ctm, context.getCTM());
+    EXPECT_EQ(clipBounds, context.clipBounds());
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)

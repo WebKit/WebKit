@@ -281,6 +281,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm
     platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
 
+    platform/graphics/cg/BifurcatedGraphicsContextCG.cpp
     platform/graphics/cg/CGSubimageCacheWithTimer.cpp
     platform/graphics/cg/ColorCG.cpp
     platform/graphics/cg/ColorSpaceCG.cpp
@@ -291,6 +292,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/GradientRendererCG.cpp
     platform/graphics/cg/GraphicsContextGLCG.cpp
     platform/graphics/cg/GraphicsContextCG.cpp
+    platform/graphics/cg/GraphicsContextDrawWithCGContext.cpp
     platform/graphics/cg/IOSurfacePool.cpp
     platform/graphics/cg/ImageBufferCGBackend.cpp
     platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
@@ -360,7 +362,7 @@ list(APPEND WebCore_SOURCES
 
     platform/mac/CursorMac.mm
     platform/mac/KeyEventMac.mm
-    platform/mac/LocalCurrentGraphicsContextMac.mm
+    platform/mac/LocalCurrentGraphicsContext.mm
     platform/mac/LoggingMac.mm
     platform/mac/MediaRemoteSoftLink.mm
     platform/mac/NSScrollerImpDetails.mm

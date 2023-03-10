@@ -64,6 +64,10 @@ namespace DisplayList {
 class DrawNativeImage;
 }
 
+#if USE(CG)
+class GraphicsContextDrawWithCGContext;
+#endif
+
 class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
     friend class BifurcatedGraphicsContext;
@@ -366,6 +370,11 @@ public:
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
+#endif
+
+#if USE(CG)
+    // Returns the DrawWithCGContext companion interface if exists for the instance.
+    virtual GraphicsContextDrawWithCGContext* asDrawWithCGContext() { return nullptr; }
 #endif
 
 private:

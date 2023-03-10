@@ -30,6 +30,7 @@
 
 #import "FloatRect.h"
 #import "GraphicsContext.h"
+#import "GraphicsContextDrawWithCGContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
@@ -41,13 +42,15 @@ ScrollbarTrackCornerSystemImageMac::ScrollbarTrackCornerSystemImageMac()
 {
 }
 
-void ScrollbarTrackCornerSystemImageMac::drawControl(GraphicsContext& graphicsContext, const FloatRect& rect) const
+void ScrollbarTrackCornerSystemImageMac::drawControl(GraphicsContext& context, const FloatRect& rect) const
 {
-    LocalCurrentGraphicsContext localContext(graphicsContext);
-
-    auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
-        (__bridge NSString *)kCUIIsFlippedKey: (__bridge NSNumber *)kCFBooleanTrue };
-    [[NSAppearance currentDrawingAppearance] _drawInRect:rect context:localContext.cgContext() options:cornerDrawingOptions];
+    if (auto* drawWith = context.asDrawWithCGContext()) {
+        drawWith->drawWithCGContext([&](CGContextRef cgContext) {
+            auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
+                (__bridge NSString *)kCUIIsFlippedKey: (__bridge NSNumber *)kCFBooleanTrue };
+            [[NSAppearance currentDrawingAppearance] _drawInRect:rect context:cgContext options:cornerDrawingOptions];
+        }, GraphicsContextDrawWithCGContext::StateOptions::SaveAndSetGlobalToolkitContext);
+    }
 }
 
 } // namespace WebCore

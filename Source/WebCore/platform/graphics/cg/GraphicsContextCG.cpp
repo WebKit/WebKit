@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -300,7 +300,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         FloatSize size = FloatSize(CGImageGetWidth(image), CGImageGetHeight(image));
         return options.orientation().usesWidthAsHeight() ? size.transposedSize() : size;
     };
-    
+
     auto context = platformContext();
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
@@ -375,7 +375,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         if (options.orientation().usesWidthAsHeight())
             adjustedDestRect = adjustedDestRect.transposedRect();
     }
-    
+
     // Flip the coords.
     CGContextTranslateCTM(context, 0, adjustedDestRect.height());
     CGContextScaleCTM(context, 1, -1);
@@ -434,10 +434,10 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
-    
+
     // Compute the scaled tile size.
     float scaledTileHeight = tileRect.height() * narrowPrecisionToFloat(patternTransform.d());
-    
+
     // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
     // the origin).
     float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
@@ -474,7 +474,7 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
             tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
             tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
             kCGPatternTilingConstantSpacing, true, &patternCallbacks));
-        
+
         if (!pattern)
             return;
 
@@ -875,7 +875,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
     }
 
     CGContextFillRect(context, rect);
-    
+
     if (drawOwnShadow)
         stateSaver.restore();
 
@@ -952,7 +952,7 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
 
     if (drawOwnShadow)
         stateSaver.restore();
-    
+
     setFillRule(oldFillRule);
     setFillColor(oldFillColor);
 }
@@ -1031,7 +1031,7 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
     CGContextRef context = platformContext();
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
-    
+
     m_state.didBeginTransparencyLayer();
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
@@ -1438,7 +1438,7 @@ void GraphicsContextCG::drawLinesForText(const FloatPoint& point, float thicknes
         return;
 
     bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
-    
+
     Vector<CGRect, 4> dashBounds;
     ASSERT(!(widths.size() % 2));
     dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
@@ -1569,6 +1569,18 @@ void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoi
 bool GraphicsContextCG::canUseShadowBlur() const
 {
     return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms();
+}
+
+GraphicsContextDrawWithCGContext* GraphicsContextCG::asDrawWithCGContext()
+{
+    return this;
+}
+
+void GraphicsContextCG::drawWithCGContext(const Function<void(CGContextRef)>& draw, StateOptions stateOptions)
+{
+    if (!hasPlatformContext())
+        return;
+    GraphicsContextDrawWithCGContext::drawWithCGContext(platformContext(), draw, stateOptions);
 }
 
 }

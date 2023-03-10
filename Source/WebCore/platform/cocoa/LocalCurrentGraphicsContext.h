@@ -20,6 +20,7 @@
 #pragma once
 
 #include "GraphicsContext.h"
+#include <optional>
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(COCOA)
@@ -36,14 +37,19 @@ class LocalCurrentGraphicsContext {
     WTF_MAKE_NONCOPYABLE(LocalCurrentGraphicsContext);
 public:
     WEBCORE_EXPORT LocalCurrentGraphicsContext(GraphicsContext&, bool isFlipped = true);
+    WEBCORE_EXPORT LocalCurrentGraphicsContext(CGContextRef, bool isFlipped = true);
     WEBCORE_EXPORT ~LocalCurrentGraphicsContext();
-    CGContextRef cgContext() { return m_savedGraphicsContext.platformContext(); }
 private:
-    GraphicsContext& m_savedGraphicsContext;
+    void applyState(bool isFlipped);
+    void restoreState();
+
+    RetainPtr<CGContextRef> m_cgContext;
 #if USE(APPKIT)
-    RetainPtr<NSGraphicsContext> m_savedNSGraphicsContext;
+    std::optional<RetainPtr<NSGraphicsContext>> m_savedNSContext;
 #endif
-    bool m_didSetGraphicsContext { false };
+#if PLATFORM(IOS_FAMILY)
+    bool m_didSetGlobalContext { false };
+#endif
 };
 
 class ContextContainer {
