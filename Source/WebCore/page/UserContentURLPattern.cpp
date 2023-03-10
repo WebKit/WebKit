@@ -151,7 +151,7 @@ UserContentURLPattern::Error UserContentURLPattern::parse(StringView pattern)
 
 String UserContentURLPattern::originalHost() const
 {
-    if (m_matchSubdomains && m_host.isEmpty())
+    if (matchAllHosts())
         return "*"_s;
 
     if (m_matchSubdomains)
