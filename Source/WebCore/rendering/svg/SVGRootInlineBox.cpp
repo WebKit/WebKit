@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2011 Torch Mobile (Beijing) CO. Ltd. All rights reserved.
@@ -260,21 +261,11 @@ static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAtt
     SVGCharacterDataMap::iterator itLast = lastAttributes->characterDataMap().find(lastPosition + 1);
     bool firstPresent = itFirst != firstAttributes->characterDataMap().end();
     bool lastPresent = itLast != lastAttributes->characterDataMap().end();
-    if (!firstPresent && !lastPresent)
+    // We only want to perform the swap if both inline boxes are absolutely positioned.
+    if (!firstPresent || !lastPresent)
         return;
 
-    if (firstPresent && lastPresent) {
-        std::swap(itFirst->value, itLast->value);
-        return;
-    }
-
-    if (firstPresent && !lastPresent) {
-        lastAttributes->characterDataMap().set(lastPosition + 1, itFirst->value);
-        return;
-    }
-
-    // !firstPresent && lastPresent
-    firstAttributes->characterDataMap().set(firstPosition + 1, itLast->value);
+    std::swap(itFirst->value, itLast->value);
 }
 
 static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes*>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,
