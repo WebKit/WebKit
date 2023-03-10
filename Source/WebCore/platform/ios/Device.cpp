@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include <mutex>
-#include <pal/spi/ios/MobileGestaltSPI.h>
+#include <pal/spi/cocoa/MobileGestaltSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>

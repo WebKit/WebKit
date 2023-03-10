@@ -105,7 +105,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/spi/cocoa/MobileGestaltSPI.h>
 #endif
 
 #if PLATFORM(COCOA)

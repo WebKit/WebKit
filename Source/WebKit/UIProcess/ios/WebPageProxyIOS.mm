@@ -71,7 +71,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/spi/cocoa/MobileGestaltSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/TextStream.h>
 

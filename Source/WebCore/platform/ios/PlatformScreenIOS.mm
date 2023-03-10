@@ -41,7 +41,7 @@
 #import "Widget.h"
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/spi/cocoa/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 
 namespace WebCore {
