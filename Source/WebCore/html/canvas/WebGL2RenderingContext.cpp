@@ -790,9 +790,9 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
     if (!validateForbiddenInternalFormats("getInternalformatParameter", internalformat))
         return nullptr;
 
-    m_context->moveErrorsToSyntheticErrorList();
+    updateErrors();
     GCGLint numValues = m_context->getInternalformati(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS);
-    if (m_context->moveErrorsToSyntheticErrorList() || numValues < 0)
+    if (updateErrors() || numValues < 0)
         return nullptr;
 
     // Integer formats do not support multisampling, so numValues == 0 may occur.
@@ -800,7 +800,7 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
     Vector<GCGLint> params(numValues);
     if (numValues > 0) {
         m_context->getInternalformativ(target, internalformat, pname, params);
-        if (m_context->moveErrorsToSyntheticErrorList())
+        if (updateErrors())
             return nullptr;
     }
 

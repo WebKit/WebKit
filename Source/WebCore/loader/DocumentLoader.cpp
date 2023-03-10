@@ -2165,11 +2165,6 @@ void DocumentLoader::unregisterReservedServiceWorkerClient()
 #endif
 }
 
-static bool isSandboxingAllowingServiceWorkerFetchHandling(SandboxFlags flags)
-{
-    return !(flags & SandboxOrigin) && !(flags & SandboxScripts);
-}
-
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
     ResourceLoaderOptions mainResourceLoadOptions(
@@ -2187,6 +2182,10 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         CachingPolicy::AllowCaching);
 
 #if ENABLE(SERVICE_WORKER)
+    auto isSandboxingAllowingServiceWorkerFetchHandling = [](SandboxFlags flags) {
+        return !(flags & SandboxOrigin) && !(flags & SandboxScripts);
+    };
+
     if (!m_canUseServiceWorkers || !isSandboxingAllowingServiceWorkerFetchHandling(frameLoader()->effectiveSandboxFlags()))
         mainResourceLoadOptions.serviceWorkersMode = ServiceWorkersMode::None;
     else {

@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
 
 import contextlib
 import io
+import logging
 import sys
 
 if not sys.platform.startswith('win'):
@@ -137,6 +138,17 @@ class Terminal(object):
                 del cls._atty_overrides[key]
             else:
                 cls._atty_overrides[key] = previous
+
+    @classmethod
+    @contextlib.contextmanager
+    def disable_keyboard_interrupt_stacktracktrace(cls, logging_level=logging.INFO):
+        try:
+            yield
+        except KeyboardInterrupt:
+            if logging.root.level <= logging_level:
+                raise
+            sys.stderr.write('\nUser interrupted program\n')
+            sys.exit(1)
 
     @classmethod
     def open_url(cls, url, prompt=None, alert_after=RING_INTERVAL):

@@ -74,6 +74,11 @@ ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::createBackendHandle(
     return std::get<MachSendRight>(m_handle).copySendRight();
 }
 
+ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::takeBackendHandle(SharedMemory::Protection)
+{
+    return std::exchange(m_handle, { });
+}
+
 void ImageBufferRemoteIOSurfaceBackend::setBackendHandle(ImageBufferBackendHandle&& handle)
 {
     m_handle = WTFMove(handle);

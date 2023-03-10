@@ -255,7 +255,6 @@
 #include "StyleSheetList.h"
 #include "StyleTreeResolver.h"
 #include "SubresourceLoader.h"
-#include "TemplateContentDocumentFragment.h"
 #include "TextAutoSizing.h"
 #include "TextEvent.h"
 #include "TextManipulationController.h"
@@ -1196,11 +1195,6 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
         if (source.isShadowRoot()) {
             // ShadowRoot cannot disconnect itself from the host node.
             return Exception { HierarchyRequestError };
-        }
-        if (is<TemplateContentDocumentFragment>(source)) {
-            // TemplateContentDocumentFragment::host is never null until its destruction.
-            ASSERT(downcast<TemplateContentDocumentFragment>(source).host());
-            return Ref<Node> { source };
         }
         if (is<HTMLFrameOwnerElement>(source)) {
             auto& frameOwnerElement = downcast<HTMLFrameOwnerElement>(source);

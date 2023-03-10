@@ -191,16 +191,10 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
 }
 #endif
 
-void RemoteGraphicsContextGL::synthesizeGLError(uint32_t error)
+void RemoteGraphicsContextGL::getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->synthesizeGLError(static_cast<GCGLenum>(error));
-}
-
-void RemoteGraphicsContextGL::getError(CompletionHandler<void(uint32_t)>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    completionHandler(static_cast<uint32_t>(m_context->getError()));
+    completionHandler(m_context->getErrors());
 }
 
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
@@ -335,9 +329,9 @@ void RemoteGraphicsContextGL::readnPixels2(int32_t x, int32_t y, int32_t width, 
         if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
             success = m_context->readnPixelsWithStatus(x, y, width, height, format, type, GCGLSpan<void> { buffer->data(), buffer->size() });
         else
-            m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+            m_context->addError(GCGLErrorCode::InvalidOperation);
     } else
-        m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+        m_context->addError(GCGLErrorCode::InvalidOperation);
     completionHandler(success);
 }
 

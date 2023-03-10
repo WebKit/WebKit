@@ -94,7 +94,10 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
 
     canvasElement().setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
-    canvasElement().paint(context, replacedContentRect);
+    CompositeOperator op = CompositeOperator::SourceOver;
+    if (paintInfo.enclosingSelfPaintingLayer() && paintInfo.enclosingSelfPaintingLayer()->shouldPaintUsingCompositeCopy())
+        op = CompositeOperator::Copy;
+    canvasElement().paint(context, replacedContentRect, op);
     canvasElement().setIsSnapshotting(false);
 }
 

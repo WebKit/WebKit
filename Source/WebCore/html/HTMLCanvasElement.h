@@ -31,6 +31,7 @@
 #include "CanvasBase.h"
 #include "Document.h"
 #include "FloatRect.h"
+#include "GraphicsTypes.h"
 #include "HTMLElement.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -107,7 +108,7 @@ public:
     // Used for rendering
     void didDraw(const std::optional<FloatRect>&) final;
 
-    void paint(GraphicsContext&, const LayoutRect&);
+    void paint(GraphicsContext&, const LayoutRect&, CompositeOperator);
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> toVideoFrame();

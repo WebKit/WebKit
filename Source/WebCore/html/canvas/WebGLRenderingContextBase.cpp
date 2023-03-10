@@ -495,6 +495,46 @@ static void removeActiveContext(WebGLRenderingContextBase& context)
     ASSERT_UNUSED(didContain, didContain);
 }
 
+static constexpr ASCIILiteral errorCodeToString(GCGLErrorCode error)
+{
+    switch (error) {
+    case GCGLErrorCode::InvalidEnum:
+        return "INVALID_ENUM"_s;
+    case GCGLErrorCode::InvalidValue:
+        return "INVALID_VALUE"_s;
+    case GCGLErrorCode::InvalidOperation:
+        return "INVALID_OPERATION"_s;
+    case GCGLErrorCode::OutOfMemory:
+        return "OUT_OF_MEMORY"_s;
+    case GCGLErrorCode::InvalidFramebufferOperation:
+        return "INVALID_FRAMEBUFFER_OPERATION"_s;
+    case GCGLErrorCode::ContextLost:
+        return "CONTEXT_LOST_WEBGL"_s;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return "INVALID_OPERATION"_s;
+}
+
+static constexpr GCGLenum errorCodeToGLenum(GCGLErrorCode error)
+{
+    switch (error) {
+    case GCGLErrorCode::InvalidEnum:
+        return GraphicsContextGL::INVALID_ENUM;
+    case GCGLErrorCode::InvalidValue:
+        return GraphicsContextGL::INVALID_VALUE;
+    case GCGLErrorCode::InvalidOperation:
+        return GraphicsContextGL::INVALID_OPERATION;
+    case GCGLErrorCode::OutOfMemory:
+        return GraphicsContextGL::OUT_OF_MEMORY;
+    case GCGLErrorCode::InvalidFramebufferOperation:
+        return GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION;
+    case GCGLErrorCode::ContextLost:
+        return GraphicsContextGL::CONTEXT_LOST_WEBGL;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return GraphicsContextGL::INVALID_OPERATION;
+}
+
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
@@ -674,6 +714,7 @@ void WebGLRenderingContextBase::registerWithWebGLStateTracker()
 void WebGLRenderingContextBase::initializeNewContext()
 {
     ASSERT(!isContextLost());
+    m_errors = { };
     m_needsUpdate = true;
     m_markedCanvasDirty = false;
     m_activeTextureUnit = 0;
@@ -2192,15 +2233,32 @@ std::optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttri
     return attributes;
 }
 
+bool WebGLRenderingContextBase::updateErrors()
+{
+    auto newErrors = m_context->getErrors();
+    if (!newErrors)
+        return false;
+    m_errors.add(newErrors);
+    return true;
+}
+
 GCGLenum WebGLRenderingContextBase::getError()
 {
     if (isContextLost()) {
         auto& errors = m_contextLostState->errors;
-        if (!errors.isEmpty())
-            return errors.takeFirst();
-        return GraphicsContextGL::NO_ERROR;
+        if (!errors)
+            return GraphicsContextGL::NO_ERROR;
+        auto first = errors.begin();
+        errors.remove(*first);
+        return errorCodeToGLenum(*first);
     }
-    return m_context->getError();
+    if (!m_errors)
+        updateErrors();
+    if (!m_errors)
+        return GraphicsContextGL::NO_ERROR;
+    auto first = m_errors.begin();
+    m_errors.remove(*first);
+    return errorCodeToGLenum(*first);
 }
 
 WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
@@ -4855,19 +4913,12 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
         printToConsole(MessageLevel::Error, "WebGL: context lost."_s);
 
     m_contextLostState = ContextLostState { mode };
-    m_contextLostState->errors.add(GraphicsContextGL::CONTEXT_LOST_WEBGL);
+    m_contextLostState->errors.add(GCGLErrorCode::ContextLost);
 
     detachAndRemoveAllObjects();
     loseExtensions(mode);
 
-    // There is no direct way to clear errors from a GL implementation and
-    // looping until getError() becomes NO_ERROR might cause an infinite loop if
-    // the driver or context implementation had a bug. So, loop a reasonably
-    // large number of times to clear any existing errors.
-    for (int i = 0; i < 100; ++i) {
-        if (m_context->getError() == GraphicsContextGL::NO_ERROR)
-            break;
-    }
+    m_context->getErrors();
 
     // Always defer the dispatch of the context lost event, to implement
     // the spec behavior of queueing a task.
@@ -5628,43 +5679,20 @@ void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(size_t idx)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 
-namespace {
-
-    String GetErrorString(GCGLenum error)
-    {
-        switch (error) {
-        case GraphicsContextGL::INVALID_ENUM:
-            return "INVALID_ENUM"_s;
-        case GraphicsContextGL::INVALID_VALUE:
-            return "INVALID_VALUE"_s;
-        case GraphicsContextGL::INVALID_OPERATION:
-            return "INVALID_OPERATION"_s;
-        case GraphicsContextGL::OUT_OF_MEMORY:
-            return "OUT_OF_MEMORY"_s;
-        case GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION:
-            return "INVALID_FRAMEBUFFER_OPERATION"_s;
-        case GraphicsContextGL::CONTEXT_LOST_WEBGL:
-            return "CONTEXT_LOST_WEBGL"_s;
-        default:
-            return makeString("WebGL ERROR(", hex(error, 4, Lowercase), ')');
-        }
-    }
-
-} // namespace anonymous
-
 void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, const char* functionName, const char* description)
 {
+    auto errorCode = GraphicsContextGL::enumToErrorCode(error);
     if (shouldPrintToConsole())
-        printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
-    if (m_context)
-        m_context->synthesizeGLError(error);
+        printToConsole(MessageLevel::Error, makeString("WebGL: ", errorCodeToString(errorCode), ": ", functionName, ": ", description));
+    m_errors.add(errorCode);
 }
 
 void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, const char* functionName, const char* description)
 {
+    auto errorCode = GraphicsContextGL::enumToErrorCode(error);
     if (shouldPrintToConsole())
-        printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
-    m_contextLostState->errors.add(error);
+        printToConsole(MessageLevel::Error, makeString("WebGL: ", errorCodeToString(errorCode), ": ", functionName, ": ", description));
+    m_contextLostState->errors.add(errorCode);
 }
 
 void WebGLRenderingContextBase::enableOrDisable(GCGLenum capability, bool enable)

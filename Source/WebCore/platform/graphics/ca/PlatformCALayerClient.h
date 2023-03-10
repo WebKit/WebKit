@@ -73,6 +73,8 @@ public:
 
     virtual bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const { return false; }
 
+    virtual bool platformCALayerShouldPaintUsingCompositeCopy() const { return false; }
+
 protected:
     virtual ~PlatformCALayerClient() = default;
 };

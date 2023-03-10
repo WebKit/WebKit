@@ -1830,3 +1830,7 @@ webkit.org/b/253153 [ BigSur+ ] media/media-source/media-source-webm.html [ Pass
 
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 [ Monterey+ ] http/wpt/loading/early-hints [ Pass ]
+
+webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
+webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
+webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]

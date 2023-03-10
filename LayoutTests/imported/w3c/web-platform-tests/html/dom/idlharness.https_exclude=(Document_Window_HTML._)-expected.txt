@@ -1285,9 +1285,9 @@ PASS Worklet interface: existence and properties of interface object
 PASS Worklet interface object length
 PASS Worklet interface object name
 PASS Worklet interface: existence and properties of interface prototype object
-FAIL Worklet interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Worklet.prototype does not have own property "constructor" expected property "constructor" missing
+PASS Worklet interface: existence and properties of interface prototype object's "constructor" property
 PASS Worklet interface: existence and properties of interface prototype object's @@unscopables property
-FAIL Worklet interface: operation addModule(USVString, optional WorkletOptions) assert_own_property: interface prototype object missing non-static operation expected property "addModule" missing
+PASS Worklet interface: operation addModule(USVString, optional WorkletOptions)
 PASS Storage interface: existence and properties of interface object
 PASS Storage interface object length
 PASS Storage interface object name

@@ -82,8 +82,7 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
-    void synthesizeGLError(GCGLenum error) final;
-    GCGLenum getError() final;
+    GCGLErrorCodeSet getErrors() final;
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(WebCore::MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
     bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject /* texture */, GCGLenum /* target */, GCGLint /* level */, GCGLenum /* internalFormat */, GCGLenum /* format */, GCGLenum /* type */, bool /* premultiplyAlpha */, bool /* flipY */) final;
@@ -102,7 +101,6 @@ public:
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) final;
 
     // Functions with a generated implementation. This list is used by generate-gpup-webgl script.
-    bool moveErrorsToSyntheticErrorList() final;
     void activeTexture(GCGLenum texture) final;
     void attachShader(PlatformGLObject program, PlatformGLObject shader) final;
     void bindAttribLocation(PlatformGLObject arg0, GCGLuint index, const String& name) final;

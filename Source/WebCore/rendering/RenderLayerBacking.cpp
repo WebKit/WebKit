@@ -1118,6 +1118,13 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 
+    bool shouldPaintUsingCompositeCopy = unscaledBitmap && is<RenderHTMLCanvas>(renderer());
+    if (shouldPaintUsingCompositeCopy != m_owningLayer.shouldPaintUsingCompositeCopy()) {
+        m_owningLayer.setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+        m_graphicsLayer->setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+        layerConfigChanged = true;
+    }
+
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
 #if PLATFORM(IOS_FAMILY)

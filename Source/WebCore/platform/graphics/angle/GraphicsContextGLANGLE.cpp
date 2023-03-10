@@ -495,16 +495,13 @@ bool GraphicsContextGLANGLE::readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei wid
         GL_BindFramebuffer(framebufferTarget, m_fbo);
         GL_Flush();
     }
-    moveErrorsToSyntheticErrorList();
+    updateErrors();
     GL_ReadnPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, data);
-    GLenum error = GL_GetError();
     if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
         GL_BindFramebuffer(framebufferTarget, m_multisampleFBO);
 
-    if (error) {
-        // ANGLE detected a failure during the ReadnPixelsRobustANGLE operation. Surface this in the
-        // synthetic error list, and skip the alpha channel fixup below.
-        synthesizeGLError(error);
+    if (updateErrors()) {
+        // ANGLE detected a failure during the ReadnPixelsRobustANGLE operation. Skip the alpha channel fixup below.
         return false;
     }
 
@@ -621,7 +618,7 @@ void GraphicsContextGLANGLE::reshape(int width, int height)
         return;
 
     // FIXME: these may call makeContextCurrent again, we need to do this before changing the size.
-    moveErrorsToSyntheticErrorList();
+    updateErrors();
     validateAttributes();
 
     markContextChanged();
@@ -843,7 +840,7 @@ void GraphicsContextGLANGLE::getBufferSubData(GCGLenum target, GCGLintptr offset
         return;
     memcpy(data.data(), ptr, data.size());
     if (!GL_UnmapBuffer(target))
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+        addError(GCGLErrorCode::InvalidOperation);
 }
 
 void GraphicsContextGLANGLE::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)
@@ -1196,7 +1193,7 @@ void GraphicsContextGLANGLE::generateMipmap(GCGLenum target)
 bool GraphicsContextGLANGLE::getActiveAttribImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!program) {
-        synthesizeGLError(INVALID_VALUE);
+        addError(GCGLErrorCode::InvalidValue);
         return false;
     }
     if (!makeContextCurrent())
@@ -1226,7 +1223,7 @@ bool GraphicsContextGLANGLE::getActiveAttrib(PlatformGLObject program, GCGLuint 
 bool GraphicsContextGLANGLE::getActiveUniformImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!program) {
-        synthesizeGLError(INVALID_VALUE);
+        addError(GCGLErrorCode::InvalidValue);
         return false;
     }
 
@@ -1257,7 +1254,7 @@ bool GraphicsContextGLANGLE::getActiveUniform(PlatformGLObject program, GCGLuint
 void GraphicsContextGLANGLE::getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders)
 {
     if (!program) {
-        synthesizeGLError(INVALID_VALUE);
+        addError(GCGLErrorCode::InvalidValue);
         return;
     }
     if (!makeContextCurrent())
@@ -1282,7 +1279,7 @@ int GraphicsContextGLANGLE::getAttribLocationDirect(PlatformGLObject program, co
     return getAttribLocation(program, name);
 }
 
-bool GraphicsContextGLANGLE::moveErrorsToSyntheticErrorList()
+bool GraphicsContextGLANGLE::updateErrors()
 {
     if (!makeContextCurrent())
         return false;
@@ -1296,27 +1293,20 @@ bool GraphicsContextGLANGLE::moveErrorsToSyntheticErrorList()
         GCGLenum error = GL_GetError();
         if (error == NO_ERROR)
             break;
-        m_syntheticErrors.add(error);
+        addError(enumToErrorCode(error));
         movedAnError = true;
     }
 
     return movedAnError;
 }
 
-GCGLenum GraphicsContextGLANGLE::getError()
+GCGLErrorCodeSet GraphicsContextGLANGLE::getErrors()
 {
-    if (!m_syntheticErrors.isEmpty()) {
-        // Need to move the current errors to the synthetic error list in case
-        // that error is already there, since the expected behavior of both
-        // glGetError and getError is to only report each error code once.
-        moveErrorsToSyntheticErrorList();
-        return m_syntheticErrors.takeFirst();
-    }
-
     if (!makeContextCurrent())
-        return GL_INVALID_OPERATION;
+        return GCGLErrorCode::InvalidOperation;
 
-    return GL_GetError();
+    updateErrors();
+    return std::exchange(m_errors, { });
 }
 
 String GraphicsContextGLANGLE::getString(GCGLenum name)
@@ -2181,15 +2171,6 @@ void GraphicsContextGLANGLE::deleteTexture(PlatformGLObject texture)
     invalidateKnownTextureContent(texture);
 }
 
-void GraphicsContextGLANGLE::synthesizeGLError(GCGLenum error)
-{
-    // Need to move the current errors to the synthetic error list to
-    // preserve the order of errors, so a caller to getError will get
-    // any errors from GL_Error before the error we are synthesizing.
-    moveErrorsToSyntheticErrorList();
-    m_syntheticErrors.add(error);
-}
-
 void GraphicsContextGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     if (!makeContextCurrent())
@@ -2243,7 +2224,7 @@ String GraphicsContextGLANGLE::getActiveUniformBlockName(PlatformGLObject progra
     GLint maxLength = 0;
     GL_GetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &maxLength);
     if (maxLength <= 0) {
-        synthesizeGLError(INVALID_VALUE);
+        addError(GCGLErrorCode::InvalidValue);
         return String();
     }
     Vector<GLchar> buffer(maxLength);
@@ -3264,6 +3245,11 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResultsForPainting()
     if (getInternalFramebufferSize().isEmpty())
         return nullptr;
     return readCompositedResults();
+}
+
+void GraphicsContextGLANGLE::addError(GCGLErrorCode errorCode)
+{
+    m_errors.add(errorCode);
 }
 
 void GraphicsContextGLANGLE::invalidateKnownTextureContent(GCGLuint)

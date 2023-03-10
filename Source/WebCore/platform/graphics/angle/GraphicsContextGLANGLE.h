@@ -123,7 +123,7 @@ public:
     GCGLint getAttribLocation(PlatformGLObject, const String& name) final;
     void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) final;
     GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) final;
-    GCGLenum getError() final;
+    GCGLErrorCodeSet getErrors() final;
     void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
     GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
     void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) final;
@@ -349,8 +349,6 @@ public:
     void deleteRenderbuffer(PlatformGLObject) final;
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
-    void synthesizeGLError(GCGLenum error) final;
-    bool moveErrorsToSyntheticErrorList() final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
     RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
@@ -360,8 +358,12 @@ public:
     RefPtr<PixelBuffer> readCompositedResultsForPainting();
     // Returns true on success.
     bool readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data);
+
+    void addError(GCGLErrorCode);
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
+
+    bool updateErrors();
 
     // Called once by all the public entry points that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
@@ -430,8 +432,7 @@ protected:
     GCGLuint m_preserveDrawingBufferFBO { 0 };
     // Queried at display startup.
     GCGLint m_drawingBufferTextureTarget { -1 };
-    // Errors raised by synthesizeGLError().
-    ListHashSet<GCGLenum> m_syntheticErrors;
+    GCGLErrorCodeSet m_errors;
     bool m_isForWebGL2 { false };
     unsigned m_statusCheckCount { 0 };
     bool m_failNextStatusCheck { false };

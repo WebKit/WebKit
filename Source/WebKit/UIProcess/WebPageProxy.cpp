@@ -8902,8 +8902,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
-    if (!preferences().experimentalSandboxEnabled())
-        parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
+    parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #endif
     return parameters;
 }

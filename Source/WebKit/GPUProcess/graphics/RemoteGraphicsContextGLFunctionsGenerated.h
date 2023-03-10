@@ -25,13 +25,6 @@
 // This file should be included in the private section of the
 // RemoteGraphicsContextGL implementations.
 #pragma once
-    void moveErrorsToSyntheticErrorList(CompletionHandler<void(bool)>&& completionHandler)
-    {
-        bool returnValue = { };
-        assertIsCurrent(workQueue());
-        returnValue = m_context->moveErrorsToSyntheticErrorList();
-        completionHandler(returnValue);
-    }
     void activeTexture(uint32_t texture)
     {
         assertIsCurrent(workQueue());

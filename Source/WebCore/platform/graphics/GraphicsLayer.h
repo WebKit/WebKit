@@ -670,6 +670,9 @@ public:
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
 
+    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
+    void setShouldPaintUsingCompositeCopy(bool copy) { m_shouldPaintUsingCompositeCopy = copy; }
+
     const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
     void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
@@ -782,6 +785,7 @@ protected:
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
+    bool m_shouldPaintUsingCompositeCopy : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool m_isSeparated : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
