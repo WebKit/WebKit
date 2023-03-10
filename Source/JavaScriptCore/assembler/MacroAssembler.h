@@ -1612,7 +1612,7 @@ public:
 
 #endif // USE(JSVALUE64)
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(RISCV64)
     void moveFloat(Imm32 imm, FPRegisterID dest)
     {
         move(imm, scratchRegister());

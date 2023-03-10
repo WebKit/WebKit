@@ -1523,7 +1523,8 @@ def riscv64GenerateWASMPlaceholders(list)
         if node.is_a? Instruction
             case node.opcode
             when "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq",
-                 "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
+                 "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq",
+                 "loadv", "storev"
                 newList << Instruction.new(node.codeOrigin, "rv_ebreak", [], "WebAssembly placeholder for opcode #{node.opcode}")
             else
                 newList << node
