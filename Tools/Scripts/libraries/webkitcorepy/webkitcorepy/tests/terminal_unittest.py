@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import sys
 import unittest
 
@@ -111,3 +112,14 @@ class TerminalTests(unittest.TestCase):
 
         self.assertEqual(caught.exception.code, 1)
         self.assertEqual(captured.stderr.getvalue(), '\nUser interrupted program\n')
+
+    def test_interrupt_decorator(self):
+        with OutputCapture() as captured, self.assertRaises(SystemExit) as caught:
+            with Terminal.disable_keyboard_interrupt_stacktracktrace(logging.root.level - 1):
+                raise KeyboardInterrupt
+        self.assertEqual(caught.exception.code, 1)
+        self.assertEqual(captured.stderr.getvalue(), '\nUser interrupted program\n')
+
+        with self.assertRaises(KeyboardInterrupt):
+            with Terminal.disable_keyboard_interrupt_stacktracktrace(logging.root.level):
+                raise KeyboardInterrupt
