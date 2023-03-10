@@ -1,3 +1,0 @@
-
-PASS Make sure cross origin server timing is not exposed on iframes
-
