@@ -59,8 +59,7 @@ using namespace HTMLNames;
 ValidatedFormListedElement::ValidatedFormListedElement(HTMLFormElement* form)
     : FormListedElement { form }
 {
-    if (supportsReadOnly())
-        ASSERT(readOnlyBarsFromConstraintValidation());
+    ASSERT(!supportsReadOnly() || readOnlyBarsFromConstraintValidation());
 }
 
 ValidatedFormListedElement::~ValidatedFormListedElement() = default;
