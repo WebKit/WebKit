@@ -698,7 +698,7 @@ public:
     IntersectionObserverData* intersectionObserverDataIfExists();
 
     ResizeObserverData& ensureResizeObserverData();
-    ResizeObserverData* resizeObserverData();
+    ResizeObserverData* resizeObserverDataIfExists();
 
     std::optional<LayoutUnit> lastRememberedLogicalWidth() const;
     std::optional<LayoutUnit> lastRememberedLogicalHeight() const;
@@ -817,8 +817,10 @@ private:
     LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
 
     void disconnectFromIntersectionObservers();
+    void disconnectFromIntersectionObserversSlow(IntersectionObserverData&);
 
     void disconnectFromResizeObservers();
+    void disconnectFromResizeObserversSlow(ResizeObserverData&);
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
@@ -895,6 +897,22 @@ inline void Element::clearAfterPseudoElement()
 {
     if (hasRareData())
         clearAfterPseudoElementSlow();
+}
+
+inline void Element::disconnectFromIntersectionObservers()
+{
+    auto* observerData = intersectionObserverDataIfExists();
+    if (LIKELY(!observerData))
+        return;
+    disconnectFromIntersectionObserversSlow(*observerData);
+}
+
+inline void Element::disconnectFromResizeObservers()
+{
+    auto* observerData = resizeObserverDataIfExists();
+    if (LIKELY(!observerData))
+        return;
+    disconnectFromResizeObserversSlow(*observerData);
 }
 
 void invalidateForSiblingCombinators(Element* sibling);
