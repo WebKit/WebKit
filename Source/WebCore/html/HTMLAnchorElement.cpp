@@ -86,10 +86,7 @@ Ref<HTMLAnchorElement> HTMLAnchorElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLAnchorElement(tagName, document));
 }
 
-HTMLAnchorElement::~HTMLAnchorElement()
-{
-    clearRootEditableElementForSelectionOnMouseDown();
-}
+HTMLAnchorElement::~HTMLAnchorElement() = default;
 
 bool HTMLAnchorElement::supportsFocus() const
 {
