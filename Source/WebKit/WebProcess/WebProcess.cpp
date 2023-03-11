@@ -1550,10 +1550,7 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
         platformMediaSessionManager->processWillSuspend();
 #endif
 
-#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
-    if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
-        m_nonVisibleProcessMemoryCleanupTimer.startOneShot(nonVisibleProcessMemoryCleanupDelay);
-#else
+#if !PLATFORM(MAC)
     if (!m_suppressMemoryPressureHandler) {
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
         for (auto& page : m_pageMap.values())
