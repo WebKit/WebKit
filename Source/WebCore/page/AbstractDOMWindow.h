@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Base64Utilities.h"
 #include "EventTarget.h"
 #include "GlobalWindowIdentifier.h"
 #include <wtf/HashMap.h>

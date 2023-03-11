@@ -29,6 +29,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Gamepad.h"
 #include "GamepadManager.h"
 #include "GamepadProvider.h"
