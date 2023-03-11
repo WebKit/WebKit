@@ -81,6 +81,9 @@ bool screenSupportsExtendedColor(Widget*)
 
 bool screenSupportsHighDynamicRange(Widget*)
 {
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenSupportsHighDynamicRange;
+
 #if USE(MEDIATOOLBOX)
     if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
         return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo(nullptr);
@@ -206,7 +209,7 @@ ScreenProperties collectScreenProperties()
         screenData.screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
         screenData.screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
         screenData.screenHasInvertedColors = WebCore::screenHasInvertedColors();
-        screenData.screenSupportsHighDynamicRange = false; // FIXME: Some iOS devices do have HDR displays.
+        screenData.screenSupportsHighDynamicRange = WebCore::screenSupportsHighDynamicRange(nullptr);
         screenData.scaleFactor = WebCore::screenPPIFactor();
 
         screenProperties.screenDataMap.set(++displayID, WTFMove(screenData));
