@@ -21,7 +21,7 @@ function test()
 
                 InspectorTest.log(`Override preference ${preferenceName} to ${preferenceValue}`);
                 WI.cssManager.overrideUserPreference(preferenceName, preferenceValue);
-                await WI.cssManager.awaitEvent(WI.CSSManager.Event.OverridenUserPreferencesDidChange);
+                await WI.cssManager.awaitEvent(WI.CSSManager.Event.OverriddenUserPreferencesDidChange);
                 await domNodeStyles.refreshIfNeeded();
 
                 let cssProperty = domNodeStyles.computedStyle.enabledProperties.find((cssProperty) => cssProperty.name === propertyName);
@@ -30,7 +30,7 @@ function test()
 
                 InspectorTest.log(`Clear override for ${preferenceName}`);
                 WI.cssManager.overrideUserPreference(preferenceName);
-                await WI.cssManager.awaitEvent(WI.CSSManager.Event.OverridenUserPreferencesDidChange);
+                await WI.cssManager.awaitEvent(WI.CSSManager.Event.OverriddenUserPreferencesDidChange);
             },
         });
     }
@@ -55,7 +55,7 @@ function test()
 
     addTestCase({
         name: "PrefersColorScheme.Dark",
-        description: "Check that matched styles respect color scheme overriden to dark.",
+        description: "Check that matched styles respect color scheme overridden to dark.",
         preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersColorScheme,
         preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Dark,
         propertyName: "--test-prefers-color-scheme",

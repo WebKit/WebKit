@@ -171,6 +171,47 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
         return contentElement;
     }
 
+    // Private
+
+    _createSelectElement({contentElement, id, label, preferenceName, preferenceValues, defaultValue})
+    {
+        if (!preferenceName || !preferenceValues.length)
+            return;
+
+        let labelElement = contentElement.appendChild(document.createElement("label"));
+        labelElement.textContent = label;
+        labelElement.setAttribute("for", id);
+
+        let selectElement = contentElement.appendChild(document.createElement("select"));
+        selectElement.setAttribute("name", preferenceName);
+        selectElement.setAttribute("id", id);
+
+        let systemValue = WI.cssManager.defaultUserPreferences.get(preferenceName);
+
+        for (let value of [defaultValue, ...preferenceValues]) {
+            let optionElement = selectElement.appendChild(document.createElement("option"));
+            optionElement.value = value;
+            optionElement.textContent = this._userPreferenceValueLabel(value, systemValue);
+
+            let selectedValue = WI.cssManager.overriddenUserPreferences.get(preferenceName) || defaultValue;
+            if (value === selectedValue)
+                optionElement.setAttribute("selected", true);
+
+            if (value === defaultValue) {
+                optionElement.after(document.createElement("hr"));
+                this._defaultValueOptionElementsMap.set(preferenceName, optionElement);
+            }
+        }
+
+        selectElement.addEventListener("change", (event) => {
+            let value = event.target.value;
+            if (value !== defaultValue)
+                WI.cssManager.overrideUserPreference(preferenceName, value);
+            else
+                WI.cssManager.overrideUserPreference(preferenceName); // Pass no value to remove the override and restore the system default.
+        });
+    }
+
     _userPreferenceValueLabel(preferenceValue, systemValue)
     {
         switch (preferenceValue) {

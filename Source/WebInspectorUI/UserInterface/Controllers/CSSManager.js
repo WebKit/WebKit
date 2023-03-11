@@ -47,7 +47,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._nodeStylesMap = {};
         this._modifiedStyles = new Map;
         this._defaultUserPreferences = new Map;
-        this._overridenUserPreferences = new Map;
+        this._overriddenUserPreferences = new Map;
         this._propertyNameCompletions = null;
     }
 
@@ -290,11 +290,11 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     get propertyNameCompletions() { return this._propertyNameCompletions; }
 
-    get overridenUserPreferences() { return this._overridenUserPreferences; }
+    get overriddenUserPreferences() { return this._overriddenUserPreferences; }
 
     get defaultUserPreferences() { return this._defaultUserPreferences; }
 
-    get overridenUserPreferences() { return this._overridenUserPreferences; }
+    get overriddenUserPreferences() { return this._overriddenUserPreferences; }
 
     get preferredColorFormat()
     {
@@ -400,13 +400,13 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
 
         if (value)
-            this._overridenUserPreferences.set(preference, value);
+            this._overriddenUserPreferences.set(preference, value);
         else
-            this._overridenUserPreferences.delete(preference);
+            this._overriddenUserPreferences.delete(preference);
 
         Promise.allSettled(promises).then(() => {
             this.mediaQueryResultChanged();
-            this.dispatchEventToListeners(WI.CSSManager.Event.OverridenUserPreferencesDidChange);
+            this.dispatchEventToListeners(WI.CSSManager.Event.OverriddenUserPreferencesDidChange);
         })
     }
 
@@ -844,7 +844,7 @@ WI.CSSManager.Event = {
     StyleSheetRemoved: "css-manager-style-sheet-removed",
     ModifiedStylesChanged: "css-manager-modified-styles-changed",
     DefaultUserPreferencesDidChange: "css-manager-default-user-preferences-did-change",
-    OverridenUserPreferencesDidChange: "css-manager-overriden-user-preferences-did-change",
+    OverriddenUserPreferencesDidChange: "css-manager-overriden-user-preferences-did-change",
 };
 
 WI.CSSManager.UserPreferenceDefaultValue = "System";
