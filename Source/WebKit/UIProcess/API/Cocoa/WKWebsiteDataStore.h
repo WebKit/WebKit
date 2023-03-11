@@ -90,8 +90,8 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 
 /*! @abstract Get a persistent data store.
  @param identifier An identifier that is used to uniquely identify the data store.
- @discussion If a data store with this identifier does not exist yet, it will be created. Returns nil if identifier
- is invalid.
+ @discussion If a data store with this identifier does not exist yet, it will be created. Throws exception if identifier
+ is 0.
 */
 + (WKWebsiteDataStore *)dataStoreForIdentifier:(NSUUID *)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

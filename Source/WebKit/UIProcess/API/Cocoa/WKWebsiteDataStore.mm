@@ -358,9 +358,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 + (WKWebsiteDataStore *)dataStoreForIdentifier:(NSUUID *)identifier
 {
     if (!identifier)
-        return nil;
+        [NSException raise:NSInvalidArgumentException format:@"Identifier is nil"];
 
-    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(UUID(identifier)));
+    auto uuid = UUID(identifier);
+    if (!uuid.isValid())
+        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", uuid.toString().utf8().data()];
+
+    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(uuid));
 }
 
 + (void)removeDataStoreForIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError *))completionHandler

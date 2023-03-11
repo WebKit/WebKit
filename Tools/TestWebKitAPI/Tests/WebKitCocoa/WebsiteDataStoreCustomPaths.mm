@@ -1483,6 +1483,21 @@ TEST(WKWebsiteDataStoreConfiguration, InitWithInvalidIdentifier)
     EXPECT_TRUE(hasException);
 }
 
+TEST(WKWebsiteDataStoreConfiguration, InitWithEmptyIdentifier)
+{
+    bool hasException = false;
+    @try {
+        auto data = [NSMutableData dataWithLength:16];
+        unsigned char* dataBytes = (unsigned char*) [data mutableBytes];
+        auto emptyUUID = [[NSUUID alloc] initWithUUIDBytes:dataBytes];
+        auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:emptyUUID]);
+    } @catch (NSException *exception) {
+        EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+        hasException = true;
+    }
+    EXPECT_TRUE(hasException);
+}
+
 TEST(WKWebsiteDataStoreConfiguration, SetPathOnConfigurationWithIdentifier)
 {
     bool hasException = false;

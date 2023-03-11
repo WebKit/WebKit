@@ -249,6 +249,8 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const 
 #if PLATFORM(COCOA)
 Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const UUID& uuid)
 {
+    RELEASE_ASSERT(uuid.isValid());
+
     InitializeWebKit2();
     for (auto* dataStore : allDataStores().values()) {
         if (dataStore && dataStore->configuration().identifier() == uuid)
