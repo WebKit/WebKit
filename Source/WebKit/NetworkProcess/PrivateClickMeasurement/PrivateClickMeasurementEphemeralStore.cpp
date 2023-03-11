@@ -27,6 +27,7 @@
 #include "PrivateClickMeasurementEphemeralStore.h"
 
 #include "PrivateClickMeasurementDebugInfo.h"
+#include "PrivateClickMeasurementManagerInterface.h"
 #include <WebCore/PrivateClickMeasurement.h>
 
 namespace WebKit::PCM {
