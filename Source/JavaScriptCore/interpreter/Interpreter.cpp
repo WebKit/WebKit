@@ -1041,7 +1041,7 @@ JSValue Interpreter::executeBoundCall(VM& vm, JSBoundFunction* function, const A
     if (UNLIKELY(combinedArgs.hasOverflowed()))
         return throwStackOverflowError(function->globalObject(), scope);
 
-    JSObject* targetFunction = function->targetFunction();
+    JSObject* targetFunction = function->flattenedTargetFunction();
     JSValue boundThis = function->boundThis();
     auto callData = JSC::getCallData(targetFunction);
     ASSERT(callData.type != CallData::Type::None);
@@ -1130,7 +1130,7 @@ JSValue Interpreter::executeCall(JSObject* function, const CallData& callData, J
     if (!boundFunction->boundArgs()) {
         // This is the simplest path, just replacing |this|. We do not need to go to executeBoundCall.
         // Let's just replace and get unwrapped functions again.
-        JSObject* targetFunction = boundFunction->targetFunction();
+        JSObject* targetFunction = boundFunction->flattenedTargetFunction();
         JSValue boundThis = boundFunction->boundThis();
         auto targetFunctionCallData = JSC::getCallData(targetFunction);
         ASSERT(targetFunctionCallData.type != CallData::Type::None);

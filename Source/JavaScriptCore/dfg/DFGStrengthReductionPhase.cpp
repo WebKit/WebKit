@@ -1319,7 +1319,7 @@ private:
             // This also wipes bound-function thunk call which is suboptimal compared to directly calling a wrapped function here.
             if (executable->intrinsic() == BoundFunctionCallIntrinsic && function && (m_node->op() == Call || m_node->op() == TailCall || m_node->op() == TailCallInlinedCaller)) {
                 JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(function);
-                if (JSFunction* targetFunction = jsDynamicCast<JSFunction*>(boundFunction->targetFunction())) {
+                if (JSFunction* targetFunction = jsDynamicCast<JSFunction*>(boundFunction->flattenedTargetFunction())) {
                     auto* targetExecutable = targetFunction->executable();
                     JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
                     if (((boundArgs ? boundArgs->length() : 0) + m_node->numChildren()) <= Options::maximumDirectCallStackSize()) {
