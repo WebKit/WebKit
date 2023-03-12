@@ -180,7 +180,10 @@ public:
         WebCore::FloatPoint3D anchorPoint { 0.5, 0.5, 0 };
         WebCore::FloatRect bounds;
         WebCore::FloatRect contentsRect { 0, 0, 1, 1 };
+        // Used in the WebContent process.
         std::unique_ptr<RemoteLayerBackingStore> backingStore;
+        // Used in the UI process.
+        std::unique_ptr<RemoteLayerBackingStoreProperties> backingStoreProperties;
         std::unique_ptr<WebCore::FilterOperations> filters;
         WebCore::Path shapePath;
         Markable<WebCore::GraphicsLayer::PlatformLayerID> maskLayerID;

@@ -540,13 +540,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(hasFrontBuffer))
             return false;
         if (hasFrontBuffer) {
-            auto backingStore = makeUnique<RemoteLayerBackingStore>(nullptr);
+            auto backingStore = makeUnique<RemoteLayerBackingStoreProperties>();
             if (!decoder.decode(*backingStore))
                 return false;
             
-            result.backingStore = WTFMove(backingStore);
+            result.backingStoreProperties = WTFMove(backingStore);
         } else
-            result.backingStore = nullptr;
+            result.backingStoreProperties = nullptr;
     }
 
     if (result.changedProperties & LayerChange::BackingStoreAttachmentChanged) {

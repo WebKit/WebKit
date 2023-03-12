@@ -79,9 +79,6 @@ public:
         IncludeDisplayList includeDisplayList { IncludeDisplayList::No };
         UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
 #endif
-        
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Parameters&);
 
         bool operator==(const Parameters& other) const
         {
@@ -125,11 +122,7 @@ public:
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 
-    enum class LayerContentsType { IOSurface, CAMachPort };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
-
     void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStore&);
 
     void enumerateRectsBeingDrawn(WebCore::GraphicsContext&, void (^)(WebCore::FloatRect));
 
@@ -163,8 +156,6 @@ public:
 
     void clearBackingStore();
 
-    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
-
 private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
@@ -194,20 +185,16 @@ private:
 
     WebCore::Region m_dirtyRegion;
 
-    // Used in the WebContent Process.
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
 
-    // Used in the UI Process.
-    std::optional<ImageBufferBackendHandle> m_bufferHandle;
     // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmapHandle
     // can be encoded multiple times. http://webkit.org/b/234169
     std::optional<MachSendRight> m_contentsBufferHandle;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
-    std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
 #endif
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_frontBufferFlushers;
@@ -215,6 +202,30 @@ private:
     WebCore::RepaintRectList m_paintingRects;
 
     MonotonicTime m_lastDisplayTime;
+};
+
+// The subset of RemoteLayerBackingStore that gets serialized into the UI
+// process, and gets applied to the CALayer.
+class RemoteLayerBackingStoreProperties {
+    WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreProperties);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    RemoteLayerBackingStoreProperties() = default;
+
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
+
+    enum class LayerContentsType { IOSurface, CAMachPort };
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
+
+    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
+private:
+    std::optional<ImageBufferBackendHandle> m_bufferHandle;
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
+#endif
+
+    bool m_isOpaque;
 };
 
 } // namespace WebKit

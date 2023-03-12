@@ -129,7 +129,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
         return std::nullopt;
     };
 
-    encoder << m_parameters;
+    encoder << m_parameters.isOpaque;
 
     // FIXME: For simplicity this should be moved to the end of display() once the buffer handles can be created once
     // and stored in m_bufferHandle. http://webkit.org/b/234169
@@ -151,9 +151,9 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool RemoteLayerBackingStore::decode(IPC::Decoder& decoder, RemoteLayerBackingStore& result)
+bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLayerBackingStoreProperties& result)
 {
-    if (!decoder.decode(result.m_parameters))
+    if (!decoder.decode(result.m_isOpaque))
         return false;
 
     if (!decoder.decode(result.m_bufferHandle))
@@ -559,7 +559,7 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context,
     }
 }
 
-RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&& backendHandle, LayerContentsType contentsType)
+RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&& backendHandle, LayerContentsType contentsType)
 {
     RetainPtr<id> contents;
     WTF::switchOn(backendHandle,
@@ -569,12 +569,12 @@ RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(Imag
         },
         [&] (MachSendRight& machSendRight) {
             switch (contentsType) {
-            case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
+            case RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface: {
                 auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
                 contents = surface ? surface->asLayerContents() : nil;
                 break;
             }
-            case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
+            case RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort:
                 contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
                 break;
             }
@@ -589,9 +589,9 @@ RetainPtr<id> RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(Imag
     return contents;
 }
 
-void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
+void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
 {
-    layer.contentsOpaque = m_parameters.isOpaque;
+    layer.contentsOpaque = m_isOpaque;
 
     RetainPtr<id> contents;
     // m_bufferHandle can be unset here if IPC with the GPU process timed out.
@@ -695,48 +695,6 @@ RefPtr<ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType bufferType
 void RemoteLayerBackingStore::Buffer::discard()
 {
     imageBuffer = nullptr;
-}
-
-void RemoteLayerBackingStore::Parameters::encode(IPC::Encoder& encoder) const
-{
-    encoder << type;
-    encoder << size;
-    encoder << scale;
-    encoder << deepColor;
-    encoder << isOpaque;
-
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    encoder << includeDisplayList;
-    encoder << useCGDisplayListImageCache;
-#endif
-}
-
-bool RemoteLayerBackingStore::Parameters::decode(IPC::Decoder& decoder, RemoteLayerBackingStore::Parameters& result)
-{
-    if (!decoder.decode(result.type))
-        return false;
-
-    if (!decoder.decode(result.size))
-        return false;
-
-    if (!decoder.decode(result.scale))
-        return false;
-
-    if (!decoder.decode(result.deepColor))
-        return false;
-
-    if (!decoder.decode(result.isOpaque))
-        return false;
-
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    if (!decoder.decode(result.includeDisplayList))
-        return false;
-
-    if (!decoder.decode(result.useCGDisplayListImageCache))
-        return false;
-#endif
-
-    return true;
 }
 
 } // namespace WebKit
