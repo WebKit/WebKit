@@ -51,7 +51,7 @@ Ref<RemoteFrame> RemoteFrame::createSubframeWithContentsInAnotherProcess(Page& p
 }
 
 RemoteFrame::RemoteFrame(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, AbstractFrame* parent, Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier)
-    : AbstractFrame(page, frameID, ownerElement, parent)
+    : AbstractFrame(page, frameID, FrameType::Remote, ownerElement, parent)
     , m_window(RemoteDOMWindow::create(*this, GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }))
     , m_client(WTFMove(client))
     , m_layerHostingContextIdentifier(layerHostingContextIdentifier)
