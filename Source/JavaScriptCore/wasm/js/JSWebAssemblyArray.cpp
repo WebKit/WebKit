@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "TypeError.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
 
@@ -97,11 +98,6 @@ void JSWebAssemblyArray::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    // FIXME: When the JS API is further defined, the precise semantics of how
-    // the array should be exposed to JS may changed. For now, we seal it to
-    // ensure that nobody can accidentally depend on being able to extend arrays.
-    seal(vm);
 }
 
 void JSWebAssemblyArray::destroy(JSCell* cell)

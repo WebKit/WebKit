@@ -87,67 +87,29 @@ function testArrayDeclaration() {
 }
 
 function testArrayJS() {
-  // JS API behavior not specified yet, import/export error for now.
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array i64))
-          (func (export "f") (result (ref null 0))
-            (ref.null 0))
-        )
-      `);
-      m.exports.f();
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
+  // Wasm-allocated arrays can flow to JS and back.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i64))
+        (func (export "f") (result (ref null 0))
+          (ref.null 0))
+      )
+    `);
+    assert.eq(m.exports.f(), null);
+  }
 
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array externref))
-          (func (export "f") (param (ref null 0)))
-        )
-      `);
-      m.exports.f(null);
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
+  {
+    let m = instantiate(`
+      (module
+        (type (array i64))
+        (func (export "f") (param (ref null 0)))
+      )
+    `);
+    m.exports.f(null);
+  }
 
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array f32))
-          (import "m" "f" (func (param (ref null 0))))
-          (func (export "g") (call 0 (ref.null 0)))
-        )
-      `, { m: { f: (x) => { return; } } });
-      m.exports.g();
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
-
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array i32))
-          (import "m" "f" (func (result (ref null 0))))
-          (func (export "g") (call 0) drop)
-        )
-      `, { m: { f: (x) => { return null; } } });
-      m.exports.g();
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
-
-  // JS API behavior not specified yet, setting global errors for now.
+  // JS API behavior not implemented yet, setting global errors for now.
   assert.throws(
     () => {
       let m = instantiate(`

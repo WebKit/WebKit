@@ -103,11 +103,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     callLinkInfo = OptimizingCallLinkInfo(CodeOrigin(), CallLinkInfo::UseDataIC::No);
     callLinkInfo.setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
 
-    // GC support is experimental and currently will throw a runtime error when struct
-    // and array type indices are exported via a function signature to JS.
-    if (Options::useWebAssemblyGC() && (wasmCallInfo.argumentsIncludeGCTypeIndex || wasmCallInfo.resultsIncludeGCTypeIndex))
-        return handleBadImportTypeUse(jit, importIndex, Wasm::ExceptionType::InvalidGCTypeUse);
-
     // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
     // If parameters or results contain v128, throw a TypeError.
     // Note: the above error is thrown each time the [[Call]] method is invoked.
