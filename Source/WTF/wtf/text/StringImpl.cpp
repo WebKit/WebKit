@@ -129,26 +129,25 @@ StringImpl::~StringImpl()
             symbolRegistry->remove(*symbol.asRegisteredSymbolImpl());
     }
 
-    BufferOwnership ownership = bufferOwnership();
-
-    if (ownership == BufferInternal)
-        return;
-    if (ownership == BufferOwned) {
+    switch (bufferOwnership()) {
+    case BufferInternal:
+        break;
+    case BufferOwned:
         // We use m_data8, but since it is a union with m_data16 this works either way.
         ASSERT(m_data8);
         StringImplMalloc::free(const_cast<LChar*>(m_data8));
-        return;
-    }
-    if (ownership == BufferExternal) {
+        break;
+    case BufferExternal: {
         auto* external = static_cast<ExternalStringImpl*>(this);
         external->freeExternalBuffer(const_cast<LChar*>(m_data8), sizeInBytes());
         external->m_free.~ExternalStringImplFreeFunction();
-        return;
+        break;
     }
-
-    ASSERT(ownership == BufferSubstring);
-    ASSERT(substringBuffer());
-    substringBuffer()->deref();
+    case BufferSubstring:
+        ASSERT(substringBuffer());
+        substringBuffer()->deref();
+        break;
+    }
 }
 
 void StringImpl::destroy(StringImpl* stringImpl)
