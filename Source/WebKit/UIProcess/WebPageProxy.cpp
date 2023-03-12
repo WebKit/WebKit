@@ -3622,6 +3622,8 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             return;
         }
 
+        PageClientProtector pageClientProtector(pageClient());
+
         bool shouldProcessSwap = processForNavigation.ptr() != sourceProcess.ptr();
         if (shouldProcessSwap) {
             policyAction = PolicyAction::StopAllLoads;
