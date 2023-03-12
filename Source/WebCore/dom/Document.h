@@ -871,7 +871,7 @@ public:
 
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Element*);
-    Element* cssTarget() const;
+    inline Element* cssTarget() const; // Defined in ElementInlines.h.
 
     WEBCORE_EXPORT void scheduleFullStyleRebuild();
     void scheduleStyleRecalc();
@@ -1236,7 +1236,7 @@ public:
 
     void removeAllEventListeners() final;
 
-    WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
+    const SVGDocumentExtensions* svgExtensions() { return m_svgExtensions.get(); }
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
 
     void initSecurityContext();

@@ -5040,11 +5040,6 @@ void Document::setCSSTarget(Element* newTarget)
     m_cssTarget = newTarget;
 }
 
-Element* Document::cssTarget() const
-{
-    return m_cssTarget.get();
-}
-
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]++;
@@ -6303,11 +6298,6 @@ ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceUR
     if (!shouldIgnoreNamespaceChecks && !hasValidNamespaceForAttributes(parsedName))
         return Exception { NamespaceError };
     return Attr::create(*this, parsedName, emptyAtom());
-}
-
-const SVGDocumentExtensions* Document::svgExtensions()
-{
-    return m_svgExtensions.get();
 }
 
 SVGDocumentExtensions& Document::accessSVGExtensions()
