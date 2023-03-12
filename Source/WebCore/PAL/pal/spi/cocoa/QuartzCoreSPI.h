@@ -240,6 +240,8 @@ CAMachPortRef CAMachPortCreate(mach_port_t);
 mach_port_t CAMachPortGetPort(CAMachPortRef);
 CFTypeID CAMachPortGetTypeID(void);
 
+typedef struct _CAIOSurface *CAIOSurfaceRef;
+
 void CABackingStoreCollectBlocking(void);
 
 typedef struct _CARenderCGContext CARenderCGContext;

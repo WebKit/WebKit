@@ -39,7 +39,7 @@ public:
     
     static void applyHierarchyUpdates(RemoteLayerTreeNode&, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
     static void applyProperties(RemoteLayerTreeNode&, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&, RemoteLayerBackingStoreProperties::LayerContentsType);
-    static void applyPropertiesToLayer(CALayer *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, RemoteLayerBackingStoreProperties::LayerContentsType);
+    static void applyPropertiesToLayer(CALayer *, RemoteLayerTreeNode*, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, RemoteLayerBackingStoreProperties::LayerContentsType);
 
 private:
     static void updateMask(RemoteLayerTreeNode&, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);

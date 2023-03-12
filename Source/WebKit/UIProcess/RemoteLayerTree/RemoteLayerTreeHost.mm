@@ -41,6 +41,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -76,6 +77,8 @@ RemoteLayerBackingStoreProperties::LayerContentsType RemoteLayerTreeHost::layerC
     if (m_drawingArea->page().windowKind() == WindowKind::InProcessSnapshotting)
         return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
 
+    if (PAL::canLoad_QuartzCore_CAIOSurfaceCreate())
+        return RemoteLayerBackingStoreProperties::LayerContentsType::CachedIOSurface;
 #if HAVE(MACH_PORT_CALAYER_CONTENTS)
     return RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort;
 #else

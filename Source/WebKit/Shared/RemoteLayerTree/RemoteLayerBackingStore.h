@@ -45,6 +45,7 @@ namespace WebKit {
 
 class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
+class RemoteLayerTreeNode;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
@@ -170,6 +171,7 @@ private:
         }
 
         void discard();
+        void encode(IPC::Encoder&) const;
     };
 
     bool setBufferVolatile(Buffer&);
@@ -214,12 +216,19 @@ public:
 
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
 
-    enum class LayerContentsType { IOSurface, CAMachPort };
+    enum class LayerContentsType { IOSurface, CAMachPort, CachedIOSurface };
     void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
+
+    void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
 
     static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
 private:
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
+    RetainPtr<id> m_contentsBuffer;
+
+    std::optional<WebCore::RenderingResourceIdentifier> m_frontBufferIdentifier;
+    std::optional<WebCore::RenderingResourceIdentifier> m_backBufferIdentifier;
+    std::optional<WebCore::RenderingResourceIdentifier> m_secondaryBackBufferIdentifier;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
