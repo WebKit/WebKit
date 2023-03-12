@@ -250,6 +250,16 @@ void RemoteScrollingTreeMac::removeWheelEventTestCompletionDeferralForReason(Scr
     });
 }
 
+void RemoteScrollingTreeMac::lockLayersForHitTesting()
+{
+    m_layerHitTestMutex.lock();
+}
+
+void RemoteScrollingTreeMac::unlockLayersForHitTesting()
+{
+    m_layerHitTestMutex.unlock();
+}
+
 static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
 {
     auto* layerTreeNode = RemoteLayerTreeNode::forCALayer(layer);
@@ -309,6 +319,8 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     if (!rootScrollingNode)
         return nullptr;
 
+    ASSERT(m_layerHitTestMutex.isLocked());
+
     RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
 
     auto rootContentsLayerPosition = FrameView::positionForRootContentLayer(rootScrollingNode->currentScrollPosition(), rootScrollingNode->scrollOrigin(), rootScrollingNode->topContentInset(), rootScrollingNode->headerHeight());
@@ -350,6 +362,8 @@ OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTy
     auto* rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return { };
+
+    ASSERT(m_layerHitTestMutex.isLocked());
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
 

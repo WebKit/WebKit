@@ -75,6 +75,23 @@ protected:
     WeakPtr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
 };
 
+class RemoteLayerTreeHitTestLocker {
+public:
+    RemoteLayerTreeHitTestLocker(RemoteScrollingTree& scrollingTree)
+        : m_scrollingTree(scrollingTree)
+    {
+        m_scrollingTree->lockLayersForHitTesting();
+    }
+    
+    ~RemoteLayerTreeHitTestLocker()
+    {
+        m_scrollingTree->unlockLayersForHitTesting();
+    }
+
+private:
+    Ref<RemoteScrollingTree> m_scrollingTree;
+};
+
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(WebKit::RemoteScrollingTree, isRemoteScrollingTree());

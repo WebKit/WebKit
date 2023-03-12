@@ -70,13 +70,18 @@ private:
 
     void hasNodeWithAnimatedScrollChanged(bool) override;
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
-    
+
+    void lockLayersForHitTesting() final WTF_ACQUIRES_LOCK(m_layerHitTestMutex);
+    void unlockLayersForHitTesting() final WTF_RELEASES_LOCK(m_layerHitTestMutex);
+
     void startPendingScrollAnimations() WTF_REQUIRES_LOCK(m_treeLock);
 
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
 
     HashMap<WebCore::ScrollingNodeID, WebCore::RequestedScrollData> m_nodesWithPendingScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
     HashMap<WebCore::ScrollingNodeID, WebCore::RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
+
+    mutable Lock m_layerHitTestMutex;
 };
 
 } // namespace WebKit

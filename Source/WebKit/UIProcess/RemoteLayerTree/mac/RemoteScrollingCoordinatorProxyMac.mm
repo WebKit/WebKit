@@ -184,6 +184,16 @@ void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID
 #endif
 }
 
+void RemoteScrollingCoordinatorProxyMac::willCommitLayerAndScrollingTrees()
+{
+    scrollingTree()->lockLayersForHitTesting();
+}
+
+void RemoteScrollingCoordinatorProxyMac::didCommitLayerAndScrollingTrees()
+{
+    scrollingTree()->unlockLayersForHitTesting();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)

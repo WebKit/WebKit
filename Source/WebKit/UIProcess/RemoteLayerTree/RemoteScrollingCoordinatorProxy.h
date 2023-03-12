@@ -121,6 +121,9 @@ public:
     virtual void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) { }
     virtual void hasNodeWithAnimatedScrollChanged(bool) { }
     virtual void setRootNodeIsInUserScroll(bool) { }
+    
+    virtual void willCommitLayerAndScrollingTrees() { }
+    virtual void didCommitLayerAndScrollingTrees() { }
 
     String scrollingTreeAsText() const;
 
