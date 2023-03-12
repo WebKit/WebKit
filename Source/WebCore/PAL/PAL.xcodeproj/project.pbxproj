@@ -14,6 +14,7 @@
 		079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D1D9626950DD700883577 /* SystemStatusSoftLink.mm */; };
 		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
 		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
+		0D02BE3429B6D107005852BF /* WebGPUInternalError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D02BE3329B6D106005852BF /* WebGPUInternalError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C19E644273F3E5D004B17B0 /* WebGPUImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E642273F3E5D004B17B0 /* WebGPUImpl.cpp */; };
@@ -647,6 +648,7 @@
 		0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephonyUtilitiesSPI.h; sourceTree = "<group>"; };
 		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
 		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
+		0D02BE3329B6D106005852BF /* WebGPUInternalError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUInternalError.h; sourceTree = "<group>"; };
 		1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gunzip.cpp; sourceTree = "<group>"; };
 		1C022EFD22CFE8E1006DF01B /* Gunzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gunzip.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1536,6 +1538,7 @@
 				1CC5E44727374947006F6FF4 /* WebGPUImageDataLayout.h */,
 				1CC5E45F27374948006F6FF4 /* WebGPUIndexFormat.h */,
 				1CC5E48627374949006F6FF4 /* WebGPUIntegralTypes.h */,
+				0D02BE3329B6D106005852BF /* WebGPUInternalError.h */,
 				1CC5E45027374947006F6FF4 /* WebGPULoadOp.h */,
 				1CC5E44327374946006F6FF4 /* WebGPUMapMode.h */,
 				1CC5E45727374947006F6FF4 /* WebGPUMultisampleState.h */,
@@ -2044,6 +2047,7 @@
 				DD20DD3427BC90D60093D175 /* WebGPUImpl.h in Headers */,
 				DD20DD7B27BC90D70093D175 /* WebGPUIndexFormat.h in Headers */,
 				DD20DD7C27BC90D70093D175 /* WebGPUIntegralTypes.h in Headers */,
+				0D02BE3429B6D107005852BF /* WebGPUInternalError.h in Headers */,
 				DD20DD7D27BC90D70093D175 /* WebGPULoadOp.h in Headers */,
 				DD20DD7E27BC90D70093D175 /* WebGPUMapMode.h in Headers */,
 				DD20DD7F27BC90D70093D175 /* WebGPUMultisampleState.h in Headers */,

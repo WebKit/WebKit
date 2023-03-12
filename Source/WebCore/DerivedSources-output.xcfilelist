@@ -1131,6 +1131,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUImageDataLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUImageDataLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUIndexFormat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUIndexFormat.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUInternalError.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUInternalError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPULoadOp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPULoadOp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUMapMode.cpp

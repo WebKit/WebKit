@@ -30,5 +30,6 @@
 ]
 enum GPUErrorFilter {
     "out-of-memory",
-    "validation"
+    "validation",
+    "internal"
 };

@@ -121,6 +121,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUImageCopyTextureTagged.idl \
     $(WebCore)/Modules/WebGPU/GPUImageDataLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUIndexFormat.idl \
+    $(WebCore)/Modules/WebGPU/GPUInternalError.idl \
     $(WebCore)/Modules/WebGPU/GPULoadOp.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUMipmapFilterMode.idl \

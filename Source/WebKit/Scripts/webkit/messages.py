@@ -872,6 +872,7 @@ def headers_for_type(type):
         'WebKit::WebGPU::ImageCopyTexture': ['"WebGPUImageCopyTexture.h"'],
         'WebKit::WebGPU::ImageCopyTextureTagged': ['"WebGPUImageCopyTextureTagged.h"'],
         'WebKit::WebGPU::ImageDataLayout': ['"WebGPUImageDataLayout.h"'],
+        'WebKit::WebGPU::InternalError': ['"WebGPUInternalError.h"'],
         'WebKit::WebGPU::MultisampleState': ['"WebGPUMultisampleState.h"'],
         'WebKit::WebGPU::ObjectDescriptorBase': ['"WebGPUObjectDescriptorBase.h"'],
         'WebKit::WebGPU::Origin2D': ['"WebGPUOrigin2D.h"'],

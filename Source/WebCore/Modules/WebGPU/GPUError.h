@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GPUInternalError.h"
 #include "GPUOutOfMemoryError.h"
 #include "GPUValidationError.h"
 #include <variant>
@@ -32,6 +33,6 @@
 
 namespace WebCore {
 
-using GPUError = std::variant<RefPtr<GPUOutOfMemoryError>, RefPtr<GPUValidationError>>;
+using GPUError = std::variant<RefPtr<GPUOutOfMemoryError>, RefPtr<GPUValidationError>, RefPtr<GPUInternalError>>;
 
 }

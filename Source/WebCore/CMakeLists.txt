@@ -1665,6 +1665,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUImageCopyTextureTagged.idl
     Modules/WebGPU/GPUImageDataLayout.idl
     Modules/WebGPU/GPUIndexFormat.idl
+    Modules/WebGPU/GPUInternalError.idl
     Modules/WebGPU/GPULoadOp.idl
     Modules/WebGPU/GPUMapMode.idl
     Modules/WebGPU/GPUMipmapFilterMode.idl

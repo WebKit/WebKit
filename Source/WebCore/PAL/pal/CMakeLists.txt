@@ -99,6 +99,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUImageCopyTextureTagged.h
     graphics/WebGPU/WebGPUImageDataLayout.h
     graphics/WebGPU/WebGPUIndexFormat.h
+    graphics/WebGPU/WebGPUInternalError.h
     graphics/WebGPU/WebGPUIntegralTypes.h
     graphics/WebGPU/WebGPULoadOp.h
     graphics/WebGPU/WebGPUMapMode.h

@@ -59,6 +59,7 @@
 #include "GPUTextureDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
+#include "JSGPUInternalError.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUPipelineError.h"
 #include "JSGPURenderPipeline.h"
@@ -241,6 +242,9 @@ void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
             promise.resolve(error);
         }, [&] (Ref<PAL::WebGPU::ValidationError>&& validationError) {
             GPUError error = RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
+            promise.resolve(error);
+        }, [&] (Ref<PAL::WebGPU::InternalError>&& internalError) {
+            GPUError error = RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
             promise.resolve(error);
         });
     });

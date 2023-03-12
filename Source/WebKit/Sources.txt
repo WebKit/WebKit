@@ -338,6 +338,7 @@ Shared/WebGPU/WebGPUImageCopyExternalImage.cpp
 Shared/WebGPU/WebGPUImageCopyTexture.cpp
 Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp
 Shared/WebGPU/WebGPUImageDataLayout.cpp
+Shared/WebGPU/WebGPUInternalError.cpp
 Shared/WebGPU/WebGPUMultisampleState.cpp
 Shared/WebGPU/WebGPUObjectDescriptorBase.cpp
 Shared/WebGPU/WebGPUOrigin2D.cpp
