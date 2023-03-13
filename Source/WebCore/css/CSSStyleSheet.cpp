@@ -112,6 +112,8 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* 
     : m_contents(WTFMove(contents))
     , m_ownerRule(ownerRule)
 {
+    m_contents->transformStyleRuleToNesting();
+
     if (auto* parent = parentStyleSheet())
         m_styleScope = parent->styleScope();
 
@@ -126,6 +128,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode
     , m_ownerNode(ownerNode)
     , m_startPosition(startPosition)
 {
+    m_contents->transformStyleRuleToNesting();
     ASSERT(isAcceptableCSSStyleSheetParent(&ownerNode));
     m_contents->registerClient(this);
 }
@@ -138,6 +141,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& docum
     , m_isOriginClean(true)
     , m_constructorDocument(document)
 {
+    m_contents->transformStyleRuleToNesting();
     m_contents->registerClient(this);
 
     WTF::switchOn(WTFMove(options.media), [this](RefPtr<MediaList>&& mediaList) {
@@ -257,6 +261,7 @@ CSSImportRule* CSSStyleSheet::ownerRule() const
 
 void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
 {
+    m_contents->transformStyleRuleToNesting();
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (!m_childRuleCSSOMWrappers[i])
             continue;
@@ -296,8 +301,10 @@ CSSRule* CSSStyleSheet::item(unsigned index)
         m_childRuleCSSOMWrappers.grow(ruleCount);
 
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
-    if (!cssRule)
+    if (!cssRule) {       
+        m_contents->transformStyleRuleToNesting();
         cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(*this);
+    }
     return cssRule.get();
 }
 
@@ -332,6 +339,7 @@ ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsign
         return Exception { SyntaxError, "Cannot inserted an @import rule in a constructed CSSStyleSheet object"_s };
 
     RuleMutationScope mutationScope(this, RuleInsertion, dynamicDowncast<StyleRuleKeyframes>(*rule));
+    m_contents->transformStyleRuleToNesting();
 
     bool success = m_contents.get().wrapperInsertRule(rule.releaseNonNull(), index);
     if (!success)

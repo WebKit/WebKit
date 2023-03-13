@@ -1052,6 +1052,7 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
     {
         CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
         m_pageStyleSheet->contents().parseString(text);
+        m_pageStyleSheet->contents().transformStyleRuleToNesting();
         m_pageStyleSheet->clearChildRuleCSSOMWrappers();
         fireStyleSheetChanged();
     }

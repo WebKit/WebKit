@@ -155,8 +155,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
 {
     // FIXME: const_cast is required here because a wrapper for a style rule can be used to *modify* the style rule's selector; use of const in the style system is thus inaccurate.
     auto wrapper = const_cast<StyleRuleBase&>(*this).visitDerived(WTF::makeVisitor(
-        [&](StyleRule& rule) -> Ref<CSSRule> {
-            return CSSStyleRule::create(rule, parentSheet);
+        [&](StyleRule&) -> Ref<CSSRule> {
+            ASSERT_NOT_REACHED();
+            //return CSSStyleRule::create(rule, parentSheet);
         },
         [&](StyleRuleWithNesting& rule) -> Ref<CSSRule> {
             return CSSStyleRule::create(rule, parentSheet);
@@ -317,9 +318,20 @@ Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& pr
     return adoptRef(* new StyleRuleWithNesting(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors), WTFMove(nestedRules)));
 }
 
+Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(StyleRule&& styleRule)
+{ 
+    return adoptRef(* new StyleRuleWithNesting(WTFMove(styleRule)));
+}
+
 StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
     : StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors))
     , m_nestedRules(WTFMove(nestedRules))
+{ 
+    setType(StyleRuleType::StyleWithNesting);
+}
+
+StyleRuleWithNesting::StyleRuleWithNesting(StyleRule&& styleRule)
+    : StyleRule(WTFMove(styleRule))
 { 
     setType(StyleRuleType::StyleWithNesting);
 }
@@ -423,6 +435,11 @@ StyleRuleGroup::StyleRuleGroup(const StyleRuleGroup& other)
 }
 
 const Vector<RefPtr<StyleRuleBase>>& StyleRuleGroup::childRules() const
+{
+    return m_childRules;
+}
+
+Vector<RefPtr<StyleRuleBase>>& StyleRuleGroup::childRules()
 {
     return m_childRules;
 }

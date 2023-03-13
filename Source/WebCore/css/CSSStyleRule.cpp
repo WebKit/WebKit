@@ -44,10 +44,16 @@ static SelectorTextCache& selectorTextCache()
 
 CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CSSStyleSheet* parent)
     : CSSRule(parent)
-    , m_styleRule(styleRule)
+    , m_styleRule(StyleRuleWithNesting::create(WTFMove(styleRule)))
     , m_styleMap(DeclaredStylePropertyMap::create(*this))
     , m_childRuleCSSOMWrappers(0)
 {
+    /*
+    volatile int x = 9;
+    if (x)
+        //ASSERT_NOT_REACHED();
+    //return;
+    */
 }
 
 CSSStyleRule::CSSStyleRule(StyleRuleWithNesting& styleRule, CSSStyleSheet* parent)
@@ -130,7 +136,9 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 {
     if (m_styleRule->isStyleRuleWithNesting())
-        return downcast<StyleRuleWithNesting>(m_styleRule.get()).nestedRules();
+        return m_styleRule->nestedRules();
+
+        //return downcast<StyleRuleWithNesting>(m_styleRule.get()).nestedRules();
 
     return { };
 }
@@ -164,7 +172,13 @@ String CSSStyleRule::cssText() const
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    m_styleRule = downcast<StyleRule>(rule);
+    m_styleRule = downcast<StyleRuleWithNesting>(rule);
+    /*
+    if (rule.isStyleRuleWithNesting())
+    else
+        m_styleRule = downcast<StyleRule>(rule);
+    */
+
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
 }

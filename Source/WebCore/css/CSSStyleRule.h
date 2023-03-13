@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT CSSStyleDeclaration& style();
 
     // FIXME: Not CSSOM. Remove.
-    StyleRule& styleRule() const { return m_styleRule.get(); }
+    StyleRuleWithNesting& styleRule() const { return m_styleRule.get(); }
 
     CSSRuleList& cssRules() const;
     unsigned length() const;
@@ -66,7 +66,7 @@ private:
     String generateSelectorText() const;
     Vector<Ref<StyleRuleBase>> nestedRules() const;
 
-    Ref<StyleRule> m_styleRule;
+    Ref<StyleRuleWithNesting> m_styleRule;
     Ref<DeclaredStylePropertyMap> m_styleMap;
     RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 

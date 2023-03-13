@@ -467,6 +467,31 @@ Document* StyleSheetContents::singleOwnerDocument() const
     return ownerNode ? &ownerNode->document() : nullptr;
 }
 
+void StyleSheetContents::transformStyleRuleToNesting()
+{
+    // FIXME: In C++23, use deducing this.
+    std::function<void(Vector<RefPtr<StyleRuleBase>>&)> transformRules;
+
+    for (auto& importRule : m_importRules) {
+        if (auto* importedStyleSheet = importRule->styleSheet())
+            importedStyleSheet->transformStyleRuleToNesting();
+    }
+
+    transformRules = [&](Vector<RefPtr<StyleRuleBase>>& rules) {
+        for (size_t i = 0; i < rules.size(); i++) {
+            auto rule = rules[i];
+            if (rule->type() == StyleRuleType::Style)
+                rules[i] = StyleRuleWithNesting::create(WTFMove(downcast<StyleRule>(*rule)));
+
+            if (rule->isGroupRule())
+                transformRules(downcast<StyleRuleGroup>(*rule).childRules());
+        }
+    };
+
+    transformRules(m_childRules);   
+    ALWAYS_LOG_WITH_STREAM(stream << "finish transform");
+}
+
 static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, const Function<bool(const StyleRuleBase&)>& handler)
 {
     for (auto& rule : rules) {

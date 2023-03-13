@@ -158,6 +158,7 @@ class StyleRuleWithNesting final : public StyleRule {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 public:
     static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    static Ref<StyleRuleWithNesting> create(StyleRule&&);
 
     const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
     const CSSSelectorList& resolvedSelectorList() const { return m_resolvedSelectorList; }
@@ -166,6 +167,7 @@ public:
 
 private:
     StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    StyleRuleWithNesting(StyleRule&&);
 
     Vector<Ref<StyleRuleBase>> m_nestedRules;
     mutable CSSSelectorList m_resolvedSelectorList;
@@ -276,6 +278,7 @@ private:
 class StyleRuleGroup : public StyleRuleBase {
 public:
     const Vector<RefPtr<StyleRuleBase>>& childRules() const;
+    Vector<RefPtr<StyleRuleBase>>& childRules();
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
