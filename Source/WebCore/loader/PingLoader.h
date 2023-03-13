@@ -40,8 +40,8 @@
 namespace WebCore {
 
 class FormData;
-class LocalFrame;
 class HTTPHeaderMap;
+class LocalFrame;
 class ResourceRequest;
 
 enum class ContentSecurityPolicyImposition : uint8_t;

@@ -52,10 +52,10 @@ class Decoder;
 namespace WebCore {
 class DestinationColorSpace;
 class DisplayRefreshMonitor;
-class LocalFrame;
 class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
+class LocalFrame;
 struct ViewportAttributes;
 enum class DelegatedScrollingMode : uint8_t;
 }

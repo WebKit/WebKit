@@ -32,10 +32,10 @@
 namespace WebCore {
 
 class Document;
-class LocalFrame;
 class FrameView;
 class LayoutScope;
 class LayoutSize;
+class LocalFrame;
 class RenderBlockFlow;
 class RenderBox;
 class RenderObject;

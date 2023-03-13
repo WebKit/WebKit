@@ -45,9 +45,9 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class DocumentLoader;
-class LocalFrame;
 class InspectorClient;
 class InspectorOverlay;
+class LocalFrame;
 class Page;
 class RenderObject;
 class FragmentedSharedBuffer;

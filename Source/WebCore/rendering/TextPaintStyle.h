@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class GraphicsContext;
+class LocalFrame;
 class RenderText;
 class RenderStyle;
 class ShadowData;

@@ -29,9 +29,9 @@
 namespace WebCore {
 
 class Element;
-class LocalFrame;
 class HTMLAreaElement;
 class IntRect;
+class LocalFrame;
 class RenderObject;
 
 inline long long maxDistance()

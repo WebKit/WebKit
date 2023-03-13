@@ -42,9 +42,9 @@
 namespace WebCore {
 
 class CharacterData;
-class LocalFrame;
 class GraphicsContext;
 class HTMLFormElement;
+class LocalFrame;
 class MutableStyleProperties;
 class RenderBlock;
 class RenderObject;

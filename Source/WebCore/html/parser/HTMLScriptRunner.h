@@ -34,8 +34,8 @@
 namespace WebCore {
 
 class Document;
-class LocalFrame;
 class HTMLScriptRunnerHost;
+class LocalFrame;
 class ScriptSourceCode;
 class WeakPtrImplWithEventTargetData;
 

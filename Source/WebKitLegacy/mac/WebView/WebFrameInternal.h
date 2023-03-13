@@ -53,7 +53,6 @@ namespace WebCore {
     class DocumentLoader;
     class Element;
     class LocalFrame;
-    class LocalFrame;
     class HistoryItem;
     class HTMLElement;
     class HTMLFrameOwnerElement;

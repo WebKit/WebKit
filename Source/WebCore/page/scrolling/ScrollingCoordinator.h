@@ -46,16 +46,17 @@ namespace WebCore {
 
 class AbsolutePositionConstraints;
 class Document;
-class LocalFrame;
 class FrameView;
 class GraphicsLayer;
-struct KeyboardScroll;
+class LocalFrame;
 class Page;
 class Region;
 class RenderObject;
 class RenderLayer;
 class ScrollableArea;
 class ViewportConstraints;
+
+struct KeyboardScroll;
 
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;

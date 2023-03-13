@@ -35,12 +35,12 @@
 namespace WebCore {
 
 class Document;
-class LocalFrame;
 class FrameLoaderClient;
 class HTMLFrameOwnerElement;
 class HTMLMediaElement;
 class HTMLPlugInImageElement;
 class IntSize;
+class LocalFrame;
 class Widget;
 
 // This is a slight misnomer. It handles the higher level logic of loading both subframes and plugins.

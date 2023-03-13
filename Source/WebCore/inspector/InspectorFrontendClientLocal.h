@@ -41,10 +41,10 @@ namespace WebCore {
 
 class Color;
 class FloatRect;
-class LocalFrame;
 class InspectorController;
 class InspectorBackendDispatchTask;
 class InspectorFrontendHost;
+class LocalFrame;
 class Page;
 
 class InspectorFrontendClientLocal : public InspectorFrontendClient {

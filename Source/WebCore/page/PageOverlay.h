@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class GraphicsContext;
 class GraphicsLayer;
+class LocalFrame;
 class Page;
 class PageOverlayController;
 class PlatformMouseEvent;

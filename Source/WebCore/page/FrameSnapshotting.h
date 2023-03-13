@@ -39,9 +39,9 @@
 namespace WebCore {
 
 class FloatRect;
-class LocalFrame;
 class IntRect;
 class ImageBuffer;
+class LocalFrame;
 class Node;
 
 enum class SnapshotFlags : uint8_t {

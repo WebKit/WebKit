@@ -55,10 +55,10 @@ class RootObject;
 namespace WebCore {
 
 class CachedScriptFetcher;
-class LocalFrame;
 class HTMLDocument;
 class HTMLPlugInElement;
 class LoadableModuleScript;
+class LocalFrame;
 class ModuleFetchParameters;
 class ScriptSourceCode;
 class SecurityOrigin;

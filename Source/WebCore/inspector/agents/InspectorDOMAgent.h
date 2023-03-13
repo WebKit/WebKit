@@ -63,12 +63,12 @@ class Element;
 class Event;
 class Exception;
 class FloatQuad;
-class LocalFrame;
 class InspectorHistory;
 #if ENABLE(VIDEO)
 class HTMLMediaElement;
 #endif
 class HitTestResult;
+class LocalFrame;
 class Node;
 class Page;
 class PseudoElement;

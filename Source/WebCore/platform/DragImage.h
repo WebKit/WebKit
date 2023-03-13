@@ -51,9 +51,9 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
 
 class Element;
-class LocalFrame;
 class Image;
 class IntRect;
+class LocalFrame;
 class Node;
 
 #if PLATFORM(IOS_FAMILY)

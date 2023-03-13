@@ -56,10 +56,10 @@
 namespace WebCore {
 class Element;
 class Event;
-class LocalFrame;
 class HTMLMediaElement;
 class HTMLVideoElement;
 class KeyboardEvent;
+class LocalFrame;
 class Page;
 class RenderBox;
 class TextIndicator;

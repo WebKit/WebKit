@@ -35,8 +35,8 @@ namespace WebCore {
     
 class DataTransfer;
 class Element;
-class LocalFrame;
 class Image;
+class LocalFrame;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct PromisedAttachmentInfo;

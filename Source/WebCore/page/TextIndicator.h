@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class GraphicsContext;
+class LocalFrame;
 
 struct SimpleRange;
 

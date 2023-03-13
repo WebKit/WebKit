@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class Element;
+class LocalFrame;
 class RenderBox;
 class RenderScrollbarPart;
 class RenderStyle;

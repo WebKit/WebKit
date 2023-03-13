@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class IntRect;
+class LocalFrame;
 
 GDIObject<HBITMAP> imageFromRect(const LocalFrame*, IntRect&);
 WEBCORE_EXPORT GDIObject<HBITMAP> imageFromSelection(LocalFrame*, bool forceBlackText);

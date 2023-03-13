@@ -40,12 +40,12 @@ class Document;
 class DragClient;
 class DragData;
 class Element;
-class LocalFrame;
 class FrameSelection;
 class HTMLImageElement;
 class HTMLInputElement;
 class HitTestResult;
 class IntRect;
+class LocalFrame;
 class Page;
 class PlatformMouseEvent;
 

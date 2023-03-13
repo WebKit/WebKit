@@ -54,10 +54,10 @@ class Array;
 namespace WebCore {
 class AbstractFrame;
 class CertificateInfo;
-class LocalFrame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
+class LocalFrame;
 class RemoteFrame;
 }
 

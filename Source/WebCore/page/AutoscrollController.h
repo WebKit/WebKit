@@ -32,8 +32,8 @@
 namespace WebCore {
 
 class EventHandler;
-class LocalFrame;
 class FrameView;
+class LocalFrame;
 class Node;
 class PlatformMouseEvent;
 class RenderBox;

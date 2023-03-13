@@ -29,10 +29,10 @@
 namespace WebCore {
 
 class Element;
-class LocalFrame;
 class HTMLImageElement;
 class HTMLMediaElement;
 class Image;
+class LocalFrame;
 class Node;
 class Scrollbar;
 

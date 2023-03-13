@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class HistoryItem;
+class LocalFrame;
 class SerializedScriptValue;
 
 enum class ShouldTreatAsContinuingLoad : uint8_t;

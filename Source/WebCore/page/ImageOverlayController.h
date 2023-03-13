@@ -39,11 +39,11 @@ namespace WebCore {
 
 class Document;
 class Element;
-class LocalFrame;
 class GraphicsContext;
 class HTMLElement;
 class IntRect;
 class FloatQuad;
+class LocalFrame;
 class Page;
 class RenderElement;
 class WeakPtrImplWithEventTargetData;

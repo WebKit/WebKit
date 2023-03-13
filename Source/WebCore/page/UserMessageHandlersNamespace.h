@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
+class DOMWrapperWorld;
 class LocalFrame;
 class UserMessageHandler;
-class DOMWrapperWorld;
 
 class UserMessageHandlersNamespace : public RefCounted<UserMessageHandlersNamespace>, public FrameDestructionObserver, public UserContentProviderInvalidationClient {
 public:

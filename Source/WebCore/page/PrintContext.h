@@ -31,11 +31,11 @@ namespace WebCore {
 
 class Document;
 class Element;
-class LocalFrame;
 class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class IntRect;
+class LocalFrame;
 class Node;
 
 class PrintContext : public FrameDestructionObserver {

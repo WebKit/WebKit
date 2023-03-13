@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class FrameView;
+class LocalFrame;
 class Page;
 
 namespace Layout {

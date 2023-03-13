@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-class LocalFrame;
-class JSDOMWindow;
 class DOMWrapperWorld;
+class JSDOMWindow;
+class LocalFrame;
 
 class ScriptCachedFrameData {
     WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;

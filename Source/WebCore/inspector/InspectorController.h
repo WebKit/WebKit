@@ -48,7 +48,6 @@ class InspectorAgent;
 namespace WebCore {
 
 class DOMWrapperWorld;
-class LocalFrame;
 class GraphicsContext;
 class InspectorClient;
 class InspectorDOMAgent;
@@ -56,6 +55,7 @@ class InspectorFrontendClient;
 class InspectorInstrumentation;
 class InspectorPageAgent;
 class InstrumentingAgents;
+class LocalFrame;
 class Node;
 class Page;
 class PageDebugger;

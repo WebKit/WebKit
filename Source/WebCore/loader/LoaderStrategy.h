@@ -38,9 +38,9 @@ namespace WebCore {
 
 class CachedResource;
 class ContentSecurityPolicy;
-class LocalFrame;
 class FrameLoader;
 class HTTPHeaderMap;
+class LocalFrame;
 class NetscapePlugInStreamLoader;
 class NetscapePlugInStreamLoaderClient;
 struct NetworkTransactionInformation;

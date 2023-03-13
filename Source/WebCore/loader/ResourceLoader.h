@@ -52,9 +52,9 @@ namespace WebCore {
 class AuthenticationChallenge;
 class CachedResource;
 class DocumentLoader;
-class LocalFrame;
 class FrameLoader;
 class LegacyPreviewLoader;
+class LocalFrame;
 class NetworkLoadMetrics;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);

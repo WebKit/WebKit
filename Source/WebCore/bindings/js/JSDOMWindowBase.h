@@ -41,11 +41,11 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
-class LocalFrame;
 class FetchResponse;
 class JSDOMWindow;
 class JSDOMWindowBasePrivate;
 class JSWindowProxy;
+class LocalFrame;
 
 class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
 public:

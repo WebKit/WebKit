@@ -36,8 +36,8 @@ class FrontendChannel;
 namespace WebCore {
 
 class FloatRect;
-class LocalFrame;
 class InspectorController;
+class LocalFrame;
 class Page;
 
 class InspectorClient {

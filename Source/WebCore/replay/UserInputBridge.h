@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class FrameLoadRequest;
+class LocalFrame;
 class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;

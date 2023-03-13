@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-class LocalFrame;
 class FrameLoaderClient;
+class LocalFrame;
 class SecurityOrigin;
 
 class MixedContentChecker {
