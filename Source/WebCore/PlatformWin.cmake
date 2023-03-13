@@ -91,6 +91,7 @@ list(APPEND WebCore_SOURCES
     platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
 
+    platform/text/Hyphenation.cpp
     platform/text/win/LocaleWin.cpp
 
     platform/win/BString.cpp
@@ -177,34 +178,6 @@ file(COPY ${ModernMediaControlsImageFiles}
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/media-controls
 )
-
-if (USE_CF)
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/loader/archive/cf"
-        "${WEBCORE_DIR}/platform/cf"
-    )
-
-    list(APPEND WebCore_SOURCES
-        editing/SmartReplaceCF.cpp
-
-        loader/archive/cf/LegacyWebArchive.cpp
-
-        platform/cf/SharedBufferCF.cpp
-
-        platform/text/cf/HyphenationCF.cpp
-    )
-
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        loader/archive/cf/LegacyWebArchive.h
-    )
-
-    list(APPEND WebCore_LIBRARIES Apple::CoreFoundation)
-    list(APPEND WebCoreTestSupport_LIBRARIES Apple::CoreFoundation)
-else ()
-    list(APPEND WebCore_SOURCES
-        platform/text/Hyphenation.cpp
-    )
-endif ()
 
 if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
     # Define a INTERFACE library for MediaFoundation and link it
