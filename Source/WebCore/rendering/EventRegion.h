@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "IntRectHash.h"
 #include "InteractionRegion.h"
 #include "Node.h"
 #include "Region.h"
@@ -70,7 +71,9 @@ private:
     Vector<IntRect> m_clipStack;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    HashMap<ElementIdentifier, InteractionRegion> m_interactionRegionsByElement;
+    Vector<InteractionRegion> m_interactionRegions;
+    HashSet<IntRect> m_interactionRects;
+    HashSet<IntRect> m_occlusionRects;
 #endif
 };
 

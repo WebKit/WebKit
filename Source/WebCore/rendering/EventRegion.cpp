@@ -121,18 +121,28 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObject& renderer)
 {
-    if (renderer.page().shouldBuildInteractionRegions()) {
-        if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
-            auto addResult = m_interactionRegionsByElement.add(interactionRegion->elementIdentifier, *interactionRegion);
-            if (!addResult.isNewEntry)
-                addResult.iterator->value.regionInLayerCoordinates.unite(interactionRegion->regionInLayerCoordinates);
+    if (!renderer.page().shouldBuildInteractionRegions())
+        return;
+
+    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
+        auto bounds = interactionRegion->regionInLayerCoordinates.bounds();
+        if (interactionRegion->type == InteractionRegion::Type::Occlusion) {
+            if (m_occlusionRects.contains(bounds))
+                return;
+            m_occlusionRects.add(bounds);
+        } else {
+            if (m_interactionRects.contains(bounds))
+                return;
+            m_interactionRects.add(bounds);
         }
+
+        m_interactionRegions.append(*interactionRegion);
     }
 }
 
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
-    m_eventRegion.uniteInteractionRegions(copyToVector(m_interactionRegionsByElement.values()));
+    m_eventRegion.uniteInteractionRegions(m_interactionRegions);
 }
 
 #endif
@@ -442,14 +452,7 @@ void EventRegion::dump(TextStream& ts) const
     
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (!m_interactionRegions.isEmpty()) {
-        auto sortedInteractionRegions = copyToVector(m_interactionRegions);
-        std::sort(sortedInteractionRegions.begin(), sortedInteractionRegions.end(),
-            [&] (const auto& a, const auto& b) -> bool {
-                return a.regionInLayerCoordinates.bounds().y() == b.regionInLayerCoordinates.bounds().y()
-                    ? a.regionInLayerCoordinates.bounds().x() < b.regionInLayerCoordinates.bounds().x()
-                    : a.regionInLayerCoordinates.bounds().y() < b.regionInLayerCoordinates.bounds().y();
-        });
-        ts.dumpProperty("interaction regions", sortedInteractionRegions);
+        ts.dumpProperty("interaction regions", m_interactionRegions);
         ts << "\n";
     }
 #endif
