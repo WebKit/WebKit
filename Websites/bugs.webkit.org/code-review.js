@@ -531,7 +531,7 @@ var CODE_REVIEW_UNITTEST;
         requestee = ' (' + requestee + ')';
       }
       var control = findControlForFlag(this)
-      control.attr('selectedIndex', $(this).attr('selectedIndex'));
+      control[0].selectedIndex = $(this)[0].selectedIndex;
       control.parent().prepend(requestee);
     });
   }
@@ -2071,7 +2071,7 @@ var CODE_REVIEW_UNITTEST;
       var control = findControlForFlag(this);
       if (!control.length)
         return;
-      $(this).attr('selectedIndex', control.attr('selectedIndex'));
+      $(this)[0].selectedIndex = control[0].selectedIndex;
     });
   }
 
