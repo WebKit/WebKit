@@ -67,6 +67,9 @@ from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
+# Prevent unit-tests from talking to live bugzilla server
+BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
+
 def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.logs = logs
     step.results = results
