@@ -231,7 +231,11 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
             auto components = metadata.split('/');
             if (components.contains("Hardware"_s)
 #if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
-                || (g_str_has_prefix(GST_OBJECT_NAME(factory), "brcm"))
+                || g_str_has_prefix(GST_OBJECT_NAME(factory), "brcm")
+#elif PLATFORM(REALTEK)
+                || g_str_has_prefix(GST_OBJECT_NAME(factory), "omx")
+#elif USE(WESTEROS_SINK)
+                || g_str_has_prefix(GST_OBJECT_NAME(factory), "westeros")
 #endif
                 ) {
                 isUsingHardware = true;
