@@ -1073,7 +1073,10 @@ FloatSize LocalFrame::screenSize() const
         if (!window)
             return std::nullopt;
 
-        return { { window->innerWidth(), window->innerHeight() } };
+        IntSize size { window->innerWidth(), window->innerHeight() };
+        if (auto* page = this->page())
+            size.scale(page->pageScaleFactor());
+        return size;
     }();
 
     if (sizeForHeadlessMode)
