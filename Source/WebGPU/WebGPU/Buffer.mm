@@ -58,23 +58,25 @@ static bool validateCreateBuffer(const Device& device, const WGPUBufferDescripto
     if (!validateDescriptor(device, descriptor))
         return false;
 
-    if (!descriptor.usage)
+    auto usage = descriptor.usage;
+    if (!usage)
         return false;
 
-    // FIXME: "descriptor.usage is a subset of this.[[allowed buffer usages]]."
-
-    if ((descriptor.usage & WGPUBufferUsage_MapRead)
-        && (descriptor.usage & ~WGPUBufferUsage_CopyDst & ~WGPUBufferUsage_MapRead))
+    constexpr auto allUsages = (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc | WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index | WGPUBufferUsage_Vertex | WGPUBufferUsage_Uniform | WGPUBufferUsage_Storage | WGPUBufferUsage_Indirect | WGPUBufferUsage_QueryResolve);
+    if (!(usage & allUsages))
         return false;
 
-    if ((descriptor.usage & WGPUBufferUsage_MapWrite)
-        && (descriptor.usage & ~WGPUBufferUsage_CopySrc & ~WGPUBufferUsage_MapWrite))
+    if ((usage & WGPUBufferUsage_MapRead) && (usage & ~WGPUBufferUsage_CopyDst & ~WGPUBufferUsage_MapRead))
+        return false;
+
+    if ((usage & WGPUBufferUsage_MapWrite) && (usage & ~WGPUBufferUsage_CopySrc & ~WGPUBufferUsage_MapWrite))
         return false;
 
     if (descriptor.mappedAtCreation && (descriptor.size % 4))
         return false;
 
-    // FIXME: Make sure descriptor.size is less than maxBufferSize
+    if (descriptor.size > device.limits().maxBufferSize)
+        return false;
 
     return true;
 }
@@ -109,15 +111,21 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createbuffer
 
-    if (!validateCreateBuffer(*this, descriptor))
+    if (!validateCreateBuffer(*this, descriptor)) {
+        generateAValidationError("Validation failure."_s);
+
         return Buffer::createInvalid(*this);
+    }
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
     MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
     auto buffer = safeCreateBuffer(static_cast<NSUInteger>(descriptor.size), storageMode);
-    if (!buffer)
+    if (!buffer) {
+        generateAnOutOfMemoryError("Allocation failure."_s);
+
         return Buffer::createInvalid(*this);
+    }
 
     buffer.label = fromAPI(descriptor.label);
 
@@ -165,6 +173,9 @@ const void* Buffer::getConstMappedRange(size_t offset, size_t size)
 
 bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
 {
+    if (m_state == State::Destroyed)
+        return false;
+
     if (m_state != State::Mapped && m_state != State::MappedAtCreation)
         return false;
 
@@ -198,19 +209,22 @@ static size_t computeRangeSize(uint64_t size, size_t offset)
 void* Buffer::getMappedRange(size_t offset, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
+    if (!isValid()) {
+        m_emptyBuffer.resize(size);
+        return &m_emptyBuffer[0];
+    }
 
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
         rangeSize = computeRangeSize(m_size, offset);
 
-    if (!validateGetMappedRange(offset, rangeSize)) {
-        // FIXME: "throw an OperationError and stop."
+    if (!validateGetMappedRange(offset, rangeSize))
         return nullptr;
-    }
 
     m_mappedRanges.add({ offset, offset + rangeSize });
     m_mappedRanges.compact();
 
+    ASSERT(m_buffer.contents);
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 
@@ -218,8 +232,6 @@ bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t range
 {
     if (!isValid())
         return false;
-
-    // FIXME: The spec says "TODO: check destroyed state?"
 
     if (offset % 8)
         return false;
@@ -231,7 +243,7 @@ bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t range
     if (end.hasOverflowed() || end.value() > m_size)
         return false;
 
-    if (m_state != State::Unmapped)
+    if (m_state != State::Unmapped && m_state != State::MappedAtCreation)
         return false;
 
     auto readWriteModeFlags = mode & (WGPUMapMode_Read | WGPUMapMode_Write);
@@ -312,10 +324,8 @@ void Buffer::unmap()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-unmap
 
-    if (!validateUnmap()) {
-        m_device->generateAValidationError("Validation failure."_s);
+    if (!validateUnmap())
         return;
-    }
 
     // FIXME: "If this.[[state]] is mapping pending: Reject [[mapping]] with an AbortError."
 
@@ -335,6 +345,11 @@ void Buffer::unmap()
 void Buffer::setLabel(String&& label)
 {
     m_buffer.label = label;
+}
+
+uint64_t Buffer::size() const
+{
+    return m_emptyBuffer.size() ?: m_size;
 }
 
 } // namespace WebGPU

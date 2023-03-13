@@ -3396,6 +3396,7 @@ JSGPUBufferBinding.cpp
 JSGPUBufferBindingLayout.cpp
 JSGPUBufferBindingType.cpp
 JSGPUBufferDescriptor.cpp
+JSGPUBufferMapState.cpp
 JSGPUBufferUsage.cpp
 JSGPUCanvasCompositingAlphaMode.cpp
 JSGPUCanvasConfiguration.cpp

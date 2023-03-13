@@ -2464,3 +2464,6 @@ fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
 fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Skip ]
+
+# webgpu is being brought up in the GPU process, radar://106507574 tracks fixing WK1
+http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Skip ]

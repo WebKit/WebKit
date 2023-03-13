@@ -80,7 +80,7 @@ public:
     };
 
     id<MTLBuffer> buffer() const { return m_buffer; }
-    uint64_t size() const { return m_size; }
+    uint64_t size() const;
     WGPUBufferUsageFlags usage() const { return m_usage; }
     State state() const { return m_state; }
 
@@ -106,6 +106,7 @@ private:
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
+    Vector<uint8_t> m_emptyBuffer;
 
     const Ref<Device> m_device;
 };

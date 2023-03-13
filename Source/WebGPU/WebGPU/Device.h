@@ -105,6 +105,7 @@ public:
     id<MTLDevice> device() const { return m_device; }
 
     void generateAValidationError(String&& message);
+    void generateAnOutOfMemoryError(String&& message);
 
     Instance& instance() const { return m_adapter->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }

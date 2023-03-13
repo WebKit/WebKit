@@ -513,6 +513,9 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         return;
     }
 
+    if (!copySize.width && !copySize.height && !copySize.depthOrArrayLayers)
+        return;
+
     ensureBlitCommandEncoder();
 
     NSUInteger sourceBytesPerRow = source.layout.bytesPerRow;

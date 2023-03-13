@@ -48,7 +48,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, CompletionHandler<void()>&&) = 0;
+    virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, CompletionHandler<void(bool)>&&) = 0;
     struct MappedRange {
         void* source { nullptr };
         size_t byteLength { 0 };
