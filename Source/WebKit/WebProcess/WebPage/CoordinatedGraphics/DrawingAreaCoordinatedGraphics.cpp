@@ -36,9 +36,9 @@
 #include "WebPageCreationParameters.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Region.h>

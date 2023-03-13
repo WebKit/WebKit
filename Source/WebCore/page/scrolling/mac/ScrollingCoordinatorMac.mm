@@ -29,8 +29,8 @@
 
 #import "ScrollingCoordinatorMac.h"
 
-#import "Frame.h"
 #import "FrameView.h"
+#import "LocalFrame.h"
 #import "Logging.h"
 #import "Page.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"

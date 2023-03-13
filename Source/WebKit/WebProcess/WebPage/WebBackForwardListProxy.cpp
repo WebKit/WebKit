@@ -35,9 +35,9 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/BackForwardCache.h>
-#include <WebCore/Frame.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/LocalFrame.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>

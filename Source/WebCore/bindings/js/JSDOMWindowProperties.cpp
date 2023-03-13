@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSDOMWindowProperties.h"
 
-#include "Frame.h"
 #include "HTMLDocument.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
@@ -34,6 +33,7 @@
 #include "JSDOMWindowBase.h"
 #include "JSElement.h"
 #include "JSHTMLCollection.h"
+#include "LocalFrame.h"
 #include "WebCoreJSClientData.h"
 
 namespace WebCore {

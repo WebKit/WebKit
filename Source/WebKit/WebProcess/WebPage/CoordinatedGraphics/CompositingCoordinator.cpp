@@ -31,10 +31,10 @@
 
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NicosiaBackingStoreTextureMapperImpl.h>
 #include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
 #include <WebCore/NicosiaImageBackingStore.h>

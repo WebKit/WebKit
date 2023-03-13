@@ -32,7 +32,7 @@
 #include "FrameLoadRequest.h"
 
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

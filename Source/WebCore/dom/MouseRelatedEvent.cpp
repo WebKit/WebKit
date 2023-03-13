@@ -25,9 +25,9 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "LayoutPoint.h"
+#include "LocalFrame.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include <wtf/IsoMallocInlines.h>

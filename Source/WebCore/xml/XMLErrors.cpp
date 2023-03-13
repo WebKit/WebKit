@@ -30,7 +30,6 @@
 #include "XMLErrors.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLHeadElement.h"
@@ -39,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLParagraphElement.h"
 #include "HTMLStyleElement.h"
+#include "LocalFrame.h"
 #include "SVGNames.h"
 #include "Text.h"
 

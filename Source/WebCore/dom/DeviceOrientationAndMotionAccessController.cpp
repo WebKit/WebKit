@@ -33,7 +33,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
 

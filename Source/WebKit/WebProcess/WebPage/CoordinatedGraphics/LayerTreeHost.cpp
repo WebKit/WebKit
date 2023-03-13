@@ -37,8 +37,8 @@
 #include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/Chrome.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>

@@ -62,7 +62,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageOverlayController.h>

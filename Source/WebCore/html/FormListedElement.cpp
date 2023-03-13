@@ -29,12 +29,12 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "FormController.h"
-#include "Frame.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "IdTargetObserver.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 

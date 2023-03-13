@@ -24,11 +24,11 @@
 
 #include "AffineTransform.h"
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLParserIdioms.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
 #include "Path.h"
 #include "RenderImage.h"
 #include "RenderView.h"

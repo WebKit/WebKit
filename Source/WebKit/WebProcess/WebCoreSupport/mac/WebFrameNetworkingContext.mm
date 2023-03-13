@@ -30,9 +30,9 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import "WebsiteDataStoreParameters.h"
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>

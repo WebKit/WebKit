@@ -28,7 +28,7 @@
 #include "DOMWindowProperty.h"
 
 #include "DOMWindow.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 

@@ -29,8 +29,8 @@
 
 #include "ContentSecurityPolicyDirectiveNames.h"
 #include "Document.h"
-#include "Frame.h"
 #include "HTTPParsers.h"
+#include "LocalFrame.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
 #include <wtf/text/StringParsingBuffer.h>

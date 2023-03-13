@@ -27,9 +27,9 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/JSNode.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
 #include <WebCore/ScriptController.h>
 #include <glib/gi18n-lib.h>

@@ -35,7 +35,6 @@
 
 #include "DOMWindow.h"
 #include "Event.h"
-#include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCPUProfilerAgent.h"
@@ -46,6 +45,7 @@
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
 #include "JSExecState.h"
+#include "LocalFrame.h"
 #include "PageDebugger.h"
 #include "PageHeapAgent.h"
 #include "RenderView.h"

@@ -27,8 +27,8 @@
 
 #include "Chrome.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameView.h"
+#include "LocalFrame.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
 #include "Quirks.h"

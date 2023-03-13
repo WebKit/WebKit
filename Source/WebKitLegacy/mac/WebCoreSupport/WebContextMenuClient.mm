@@ -45,10 +45,10 @@
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageBuffer.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBox.h>

@@ -29,8 +29,8 @@
 #import <WebCore/ChromeClient.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Font.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PopupMenuClient.h>
 #import <pal/spi/mac/NSCellSPI.h>

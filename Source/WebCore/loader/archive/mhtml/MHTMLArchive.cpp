@@ -35,8 +35,8 @@
 #include "MHTMLArchive.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "LegacySchemeRegistry.h"
+#include "LocalFrame.h"
 #include "MHTMLParser.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"

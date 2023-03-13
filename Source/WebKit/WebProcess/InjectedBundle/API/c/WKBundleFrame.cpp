@@ -40,9 +40,9 @@
 #include "WebPage.h"
 #include <WebCore/Document.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/ReportingScope.h>
 

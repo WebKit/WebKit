@@ -30,7 +30,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 
 namespace WebCore {

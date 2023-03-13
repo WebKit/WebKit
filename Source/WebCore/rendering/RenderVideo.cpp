@@ -29,11 +29,11 @@
 #include "RenderVideo.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
+#include "LocalFrame.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerEnums.h"
 #include "Page.h"

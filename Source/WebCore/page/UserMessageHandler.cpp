@@ -28,8 +28,8 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValue.h>
 

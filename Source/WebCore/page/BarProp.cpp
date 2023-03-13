@@ -30,7 +30,7 @@
 #include "BarProp.h"
 
 #include "Chrome.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 

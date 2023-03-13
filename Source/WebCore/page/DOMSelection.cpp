@@ -32,8 +32,8 @@
 
 #include "Document.h"
 #include "Editing.h"
-#include "Frame.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "Range.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

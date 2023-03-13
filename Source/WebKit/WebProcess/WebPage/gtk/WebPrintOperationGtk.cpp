@@ -32,11 +32,11 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DocumentLoader.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>

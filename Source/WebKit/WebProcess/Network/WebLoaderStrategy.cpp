@@ -57,11 +57,11 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FetchOptions.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/InspectorInstrumentationWebKit.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/PlatformStrategies.h>

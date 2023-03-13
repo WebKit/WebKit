@@ -33,7 +33,7 @@
 #import <WebCore/DOMWindow.h>
 #import <WebCore/Document.h>
 #import "ExceptionHandlers.h"
-#import <WebCore/Frame.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/WindowProxy.h>

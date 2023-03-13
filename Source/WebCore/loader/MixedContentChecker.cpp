@@ -32,10 +32,10 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>

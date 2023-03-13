@@ -28,8 +28,8 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "Geolocation.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 
 namespace WebCore {

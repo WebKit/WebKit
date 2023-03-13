@@ -28,7 +28,7 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "PlatformKeyboardEvent.h"
 #include "WindowsKeyboardCodes.h"
 #include <wtf/IsoMallocInlines.h>

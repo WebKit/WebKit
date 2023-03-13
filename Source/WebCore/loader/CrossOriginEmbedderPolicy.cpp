@@ -28,10 +28,10 @@
 
 #include "COEPInheritenceViolationReportBody.h"
 #include "CORPViolationReportBody.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
 #include "JSFetchRequestDestination.h"
+#include "LocalFrame.h"
 #include "PingLoader.h"
 #include "RFC8941.h"
 #include "Report.h"

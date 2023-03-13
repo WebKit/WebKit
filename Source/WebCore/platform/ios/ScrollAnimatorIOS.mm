@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "Frame.h"
+#import "LocalFrame.h"
 #import "RenderLayer.h"
 #import "ScrollableArea.h"
 #import "ScrollingEffectsController.h"

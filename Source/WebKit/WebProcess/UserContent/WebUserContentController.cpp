@@ -38,9 +38,9 @@
 #include "WebUserContentControllerMessages.h"
 #include "WebUserContentControllerProxyMessages.h"
 #include <WebCore/DOMWrapperWorld.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/UserStyleSheet.h>

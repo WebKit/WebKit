@@ -188,7 +188,6 @@
 #include <WebCore/FormState.h>
 #include <WebCore/FragmentDirectiveParser.h>
 #include <WebCore/FragmentDirectiveRangeFinder.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
@@ -216,6 +215,7 @@
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MemoryCache.h>

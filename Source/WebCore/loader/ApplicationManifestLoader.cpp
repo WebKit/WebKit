@@ -33,8 +33,8 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 

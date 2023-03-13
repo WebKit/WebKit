@@ -58,7 +58,6 @@
 #include <WebCore/CommonVM.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
@@ -69,6 +68,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/JSNotification.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PrintContext.h>

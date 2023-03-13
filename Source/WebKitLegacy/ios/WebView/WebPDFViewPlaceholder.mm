@@ -35,10 +35,10 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FormState.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebKitLegacy/WebDataSourcePrivate.h>
 #import <WebKitLegacy/WebFramePrivate.h>

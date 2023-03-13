@@ -25,11 +25,11 @@
 #include "RenderSVGResourceClipper.h"
 
 #include "ElementChildIteratorInlines.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGText.h"

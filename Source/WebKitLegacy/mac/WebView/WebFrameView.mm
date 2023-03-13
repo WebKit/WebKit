@@ -55,9 +55,9 @@
 #import <WebCore/BackForwardController.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>

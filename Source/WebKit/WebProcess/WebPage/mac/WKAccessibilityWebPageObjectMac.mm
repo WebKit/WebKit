@@ -38,8 +38,8 @@
 #import "WKString.h"
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformScreen.h>

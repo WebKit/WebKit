@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PageOverlay.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PageOverlayController.h"

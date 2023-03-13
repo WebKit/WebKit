@@ -29,9 +29,9 @@
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "LocalFrame.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {

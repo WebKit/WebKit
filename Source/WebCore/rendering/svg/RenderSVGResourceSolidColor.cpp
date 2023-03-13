@@ -20,9 +20,9 @@
 #include "config.h"
 #include "RenderSVGResourceSolidColor.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "LocalFrame.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "RenderView.h"

@@ -32,7 +32,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "Settings.h"
 #include "markup.h"

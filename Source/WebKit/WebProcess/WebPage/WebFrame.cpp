@@ -63,7 +63,6 @@
 #include <WebCore/ElementChildIteratorInlines.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
@@ -77,6 +76,7 @@
 #include <WebCore/JSElement.h>
 #include <WebCore/JSFile.h>
 #include <WebCore/JSRange.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RemoteDOMWindow.h>

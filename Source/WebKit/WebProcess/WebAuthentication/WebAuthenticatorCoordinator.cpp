@@ -37,7 +37,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorResponseData.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/Quirks.h>

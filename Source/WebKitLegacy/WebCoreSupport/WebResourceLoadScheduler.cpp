@@ -29,8 +29,8 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FetchOptions.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkStateNotifier.h>
 #include <WebCore/PlatformStrategies.h>

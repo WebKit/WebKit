@@ -27,7 +27,7 @@
 #include "UserTypingGestureIndicator.h"
 
 #include "Element.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

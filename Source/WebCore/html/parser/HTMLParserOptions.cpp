@@ -27,9 +27,9 @@
 #include "HTMLParserOptions.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SubframeLoader.h"

@@ -22,9 +22,9 @@
 #include "WindowProxy.h"
 
 #include "CommonVM.h"
-#include "Frame.h"
 #include "GCController.h"
 #include "JSWindowProxy.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"

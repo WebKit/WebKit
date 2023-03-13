@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ImageQualityController.h"
 
-#include "Frame.h"
 #include "GraphicsContext.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderView.h"

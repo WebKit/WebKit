@@ -41,7 +41,6 @@
 #import <WebCore/DragImage.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCascade.h>
-#import <WebCore/Frame.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLLinkElement.h>
 #import <WebCore/HTMLNames.h>
@@ -50,6 +49,7 @@
 #import <WebCore/Image.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/NodeFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>

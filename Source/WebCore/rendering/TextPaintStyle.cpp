@@ -28,8 +28,8 @@
 
 #include "ColorLuminance.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderStyle.h"

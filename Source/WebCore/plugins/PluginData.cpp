@@ -25,7 +25,7 @@
 #include "PluginData.h"
 
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PluginInfoProvider.h"

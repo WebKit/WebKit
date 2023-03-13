@@ -29,8 +29,8 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "Touch.h"
 #include "TouchList.h"
 #include "WindowProxy.h"

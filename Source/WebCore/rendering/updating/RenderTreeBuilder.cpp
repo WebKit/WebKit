@@ -28,10 +28,10 @@
 
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalFrame.h"
 #include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"

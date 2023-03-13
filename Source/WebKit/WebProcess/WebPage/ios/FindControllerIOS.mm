@@ -35,10 +35,10 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageOverlay.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PathUtilities.h>

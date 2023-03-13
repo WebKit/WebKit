@@ -31,8 +31,8 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "SWClientConnection.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/CrossThreadCopier.h>

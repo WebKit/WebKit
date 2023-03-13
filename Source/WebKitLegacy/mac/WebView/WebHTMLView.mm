@@ -99,7 +99,6 @@
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameView.h>
@@ -110,6 +109,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>

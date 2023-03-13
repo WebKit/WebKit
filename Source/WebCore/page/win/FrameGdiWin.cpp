@@ -27,10 +27,10 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextWin.h"
+#include "LocalFrame.h"
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {

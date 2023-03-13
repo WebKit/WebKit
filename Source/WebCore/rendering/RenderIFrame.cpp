@@ -26,10 +26,10 @@
 #include "config.h"
 #include "RenderIFrame.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "LocalFrame.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>

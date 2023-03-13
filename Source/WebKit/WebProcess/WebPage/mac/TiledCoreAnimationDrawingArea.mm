@@ -46,10 +46,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
 #import <WebCore/DestinationColorSpace.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/RenderView.h>

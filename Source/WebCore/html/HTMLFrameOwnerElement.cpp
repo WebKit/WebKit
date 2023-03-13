@@ -23,8 +23,8 @@
 #include "HTMLFrameOwnerElement.h"
 
 #include "DOMWindow.h"
-#include "Frame.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include "RenderWidget.h"

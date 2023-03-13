@@ -29,8 +29,8 @@
 
 #import "Utilities.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageConfiguration.h>
 #import <WebCore/Document.h>

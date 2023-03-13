@@ -26,10 +26,9 @@
 #include "config.h"
 #include "NavigatorWebDriver.h"
 
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
-
 
 namespace WebCore {
 using namespace JSC;

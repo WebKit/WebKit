@@ -26,8 +26,8 @@
 #include "config.h"
 #include "RenderScrollbar.h"
 
-#include "Frame.h"
 #include "FrameView.h"
+#include "LocalFrame.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderWidget.h"

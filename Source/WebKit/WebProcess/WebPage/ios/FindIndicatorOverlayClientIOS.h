@@ -26,8 +26,8 @@
 #ifndef FindIndicatorOverlayClientIOS_h
 #define FindIndicatorOverlayClientIOS_h
 
-#import <WebCore/Frame.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PageOverlay.h>
 #import <WebCore/TextIndicator.h>
 

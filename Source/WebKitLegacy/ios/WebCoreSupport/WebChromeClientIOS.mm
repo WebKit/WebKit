@@ -48,11 +48,11 @@
 #import <WebCore/DisabledAdaptations.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/Frame.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Node.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RenderBox.h>

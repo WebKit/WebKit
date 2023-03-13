@@ -31,7 +31,7 @@
 #include "DOMWindow.h"
 #include "DOMWindowProperty.h"
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "Supplementable.h"
 #include "WorkerCacheStorageConnection.h"

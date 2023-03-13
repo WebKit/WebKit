@@ -34,8 +34,8 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
 #import <WebCore/Geolocation.h>
+#import <WebCore/LocalFrame.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/NakedRef.h>

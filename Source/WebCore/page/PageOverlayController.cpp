@@ -28,10 +28,10 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageOverlay.h"
 #include "ScrollingCoordinator.h"

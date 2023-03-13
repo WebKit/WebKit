@@ -27,8 +27,8 @@
 #include "SimpleRange.h"
 
 #include "CharacterData.h"
-#include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
+#include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "ShadowRoot.h"
 

@@ -29,9 +29,9 @@
 
 #include "Document.h"
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLDocumentParser.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"

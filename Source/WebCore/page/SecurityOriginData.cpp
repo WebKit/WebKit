@@ -27,8 +27,8 @@
 #include "SecurityOriginData.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "LegacySchemeRegistry.h"
+#include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>

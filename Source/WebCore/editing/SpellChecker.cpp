@@ -32,7 +32,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PositionIterator.h"
 #include "Range.h"

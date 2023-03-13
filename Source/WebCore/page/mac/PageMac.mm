@@ -30,10 +30,10 @@
 #import "Page.h"
 
 #import "DocumentLoader.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameTree.h"
 #import "LayoutTreeBuilder.h"
+#import "LocalFrame.h"
 #import "Logging.h"
 #import "RenderObject.h"
 #import "SVGDocument.h"

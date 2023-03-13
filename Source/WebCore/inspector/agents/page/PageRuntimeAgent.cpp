@@ -34,11 +34,11 @@
 
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "ScriptController.h"

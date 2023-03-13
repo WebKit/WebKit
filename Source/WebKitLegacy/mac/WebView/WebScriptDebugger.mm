@@ -38,8 +38,8 @@
 #import <JavaScriptCore/SourceProvider.h>
 #import <JavaScriptCore/StrongInlines.h>
 #import <WebCore/DOMWindow.h>
-#import <WebCore/Frame.h>
 #import <WebCore/JSDOMWindow.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ScriptController.h>
 #import <wtf/URL.h>
 

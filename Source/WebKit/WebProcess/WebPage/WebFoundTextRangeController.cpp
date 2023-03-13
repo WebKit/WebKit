@@ -32,12 +32,12 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageOverlay.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PathUtilities.h>

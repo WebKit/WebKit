@@ -29,9 +29,9 @@
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
-#include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLInterchange.h"
+#include "LocalFrame.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 

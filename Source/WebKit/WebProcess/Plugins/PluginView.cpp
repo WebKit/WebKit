@@ -48,7 +48,6 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -57,6 +56,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HostWindow.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>

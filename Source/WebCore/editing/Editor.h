@@ -32,8 +32,8 @@
 #include "EditingStyle.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
-#include "Frame.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "PasteboardWriterData.h"
 #include <wtf/RobinHoodHashSet.h>
 #include "ScrollView.h"

@@ -36,11 +36,11 @@
 #include <WebCore/AddEventListenerOptions.h>
 #include <WebCore/Color.h>
 #include <WebCore/EventNames.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>

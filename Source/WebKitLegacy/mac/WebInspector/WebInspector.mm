@@ -33,8 +33,8 @@
 #import "WebInspectorFrontend.h"
 
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 
 NSString *WebInspectorDidStartSearchingForNode = @"WebInspectorDidStartSearchingForNode";

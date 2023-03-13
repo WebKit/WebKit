@@ -61,13 +61,13 @@
 #import <WebCore/Editor.h>
 #import <WebCore/Event.h>
 #import <WebCore/FloatQuad.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>

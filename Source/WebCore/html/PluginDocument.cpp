@@ -26,7 +26,6 @@
 #include "PluginDocument.h"
 
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -34,6 +33,7 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "LocalFrame.h"
 #include "PluginViewBase.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"

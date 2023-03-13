@@ -65,7 +65,6 @@
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/FullscreenManager.h>
 #import <WebCore/GraphicsLayer.h>
@@ -77,6 +76,7 @@
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ModalContainerTypes.h>
 #import <WebCore/NavigationAction.h>
 #import <WebCore/NotImplemented.h>

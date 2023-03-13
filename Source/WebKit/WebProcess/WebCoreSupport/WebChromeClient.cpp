@@ -78,7 +78,6 @@
 #include <WebCore/ElementInlines.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
@@ -88,6 +87,7 @@
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/Icon.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>

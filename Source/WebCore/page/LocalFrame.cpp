@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 
 #include "ApplyStyleCommand.h"
 #include "BackForwardCache.h"

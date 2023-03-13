@@ -28,7 +28,6 @@
 #include "WebCoreTestSupport.h"
 
 #include "DeprecatedGlobalSettings.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InternalSettings.h"
 #include "Internals.h"
@@ -36,6 +35,7 @@
 #include "JSInternals.h"
 #include "JSServiceWorkerInternals.h"
 #include "JSWorkerGlobalScope.h"
+#include "LocalFrame.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "MockGamepadProvider.h"

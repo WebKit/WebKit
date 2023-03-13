@@ -42,8 +42,8 @@
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>

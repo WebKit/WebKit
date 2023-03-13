@@ -28,11 +28,11 @@
 
 #include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 

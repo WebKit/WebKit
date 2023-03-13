@@ -29,9 +29,9 @@
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/WindowsKeyboardCodes.h>

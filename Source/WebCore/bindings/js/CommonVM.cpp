@@ -27,7 +27,7 @@
 #include "CommonVM.h"
 
 #include "DOMWindow.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>

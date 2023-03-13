@@ -37,9 +37,9 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebProcess.h"
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>

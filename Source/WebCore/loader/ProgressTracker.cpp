@@ -27,11 +27,11 @@
 #include "ProgressTracker.h"
 
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"

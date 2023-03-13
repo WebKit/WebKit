@@ -1834,7 +1834,6 @@ page/DragController.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
 page/FocusController.cpp
-page/Frame.cpp
 page/FrameDestructionObserver.cpp
 page/FrameSnapshotting.cpp
 page/FrameTree.cpp
@@ -1846,6 +1845,7 @@ page/ImageOverlayController.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
+page/LocalFrame.cpp
 page/Location.cpp
 page/LoggedInStatus.cpp
 page/MemoryRelease.cpp

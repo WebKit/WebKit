@@ -24,9 +24,9 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Document.h>
 #include <WebCore/ElementInlines.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/SharedBuffer.h>

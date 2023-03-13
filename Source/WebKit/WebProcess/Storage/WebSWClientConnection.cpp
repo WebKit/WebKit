@@ -48,8 +48,8 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedScriptValue.h>

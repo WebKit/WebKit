@@ -31,8 +31,8 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "NavigationScheduler.h"
 #include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>

@@ -113,13 +113,13 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/MediaEngineConfigurationFactory.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>

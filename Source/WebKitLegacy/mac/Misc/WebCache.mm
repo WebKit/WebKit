@@ -48,7 +48,7 @@
 #import "WebFrameInternal.h"
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/CachedImage.h>
-#import <WebCore/Frame.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreThreadRun.h>
 #endif
 

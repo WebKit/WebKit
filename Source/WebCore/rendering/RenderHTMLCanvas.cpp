@@ -28,12 +28,12 @@
 
 #include "CanvasRenderingContext.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
 #include "ImageQualityController.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"

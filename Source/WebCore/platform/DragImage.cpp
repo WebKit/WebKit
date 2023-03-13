@@ -26,10 +26,10 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
+#include "LocalFrame.h"
 #include "NotImplemented.h"
 #include "Position.h"
 #include "RenderElement.h"

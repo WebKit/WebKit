@@ -25,10 +25,10 @@
 #include "HTMLFrameElement.h"
 
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
 #include "RenderFrame.h"
 #include <wtf/IsoMallocInlines.h>
 

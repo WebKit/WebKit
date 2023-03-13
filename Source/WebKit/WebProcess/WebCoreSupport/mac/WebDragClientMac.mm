@@ -38,12 +38,12 @@
 #import <WebCore/DragController.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ElementInlines.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserver.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PagePasteboardContext.h>

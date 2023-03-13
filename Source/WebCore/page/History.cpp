@@ -28,11 +28,11 @@
 
 #include "BackForwardController.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
 #include "Page.h"

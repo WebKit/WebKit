@@ -36,11 +36,11 @@
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/FontCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
 #import <WebCore/GlyphPage.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/JSDOMWindow.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PageConsoleClient.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderTreeAsText.h>

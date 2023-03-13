@@ -20,7 +20,6 @@
 #include "config.h"
 #include "JSDocument.h"
 
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSCSSStyleSheet.h"
 #include "JSDOMConvert.h"
@@ -28,6 +27,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSXMLDocument.h"
+#include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/HeapAnalyzer.h>

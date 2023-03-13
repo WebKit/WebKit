@@ -23,8 +23,8 @@
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>
-#include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PagePasteboardContext.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformKeyboardEvent.h>

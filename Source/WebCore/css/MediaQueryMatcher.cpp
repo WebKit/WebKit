@@ -22,8 +22,8 @@
 
 #include "Document.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameView.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryList.h"

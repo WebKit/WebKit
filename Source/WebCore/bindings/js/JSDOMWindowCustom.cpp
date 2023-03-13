@@ -23,7 +23,6 @@
 
 #include "DOMWindowWebDatabase.h"
 #include "DeprecatedGlobalSettings.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameOwnerElement.h"
@@ -45,6 +44,7 @@
 #include "JSRemoteDOMWindow.h"
 #include "JSWindowProxy.h"
 #include "JSWorker.h"
+#include "LocalFrame.h"
 #include "Location.h"
 #include "ScheduledAction.h"
 #include "Settings.h"

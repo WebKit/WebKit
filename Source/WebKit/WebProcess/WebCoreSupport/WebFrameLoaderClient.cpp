@@ -70,13 +70,13 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>

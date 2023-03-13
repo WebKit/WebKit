@@ -58,9 +58,9 @@
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
-#import <WebCore/Frame.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>

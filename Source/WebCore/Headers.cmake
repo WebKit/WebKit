@@ -1277,7 +1277,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/EventHandler.h
     page/FocusController.h
     page/FocusDirection.h
-    page/Frame.h
     page/FrameDestructionObserver.h
     page/FrameDestructionObserverInlines.h
     page/FrameFlattening.h
@@ -1291,6 +1290,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
     page/LayoutMilestone.h
+    page/LocalFrame.h
     page/LookalikeCharactersSanitizationData.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h

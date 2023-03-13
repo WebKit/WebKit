@@ -33,7 +33,6 @@
 #include "WebImage.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
@@ -46,6 +45,7 @@
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/JSNode.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
 #include <WebCore/Page.h>
 #include <WebCore/Position.h>

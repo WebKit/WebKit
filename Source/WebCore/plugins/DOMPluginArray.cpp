@@ -21,7 +21,7 @@
 #include "DOMPluginArray.h"
 
 #include "DOMPlugin.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomString.h>

@@ -58,7 +58,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/DOMWrapperWorld.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/PageBlock.h>

@@ -34,8 +34,8 @@
 
 #include "CommonVM.h"
 #include "Document.h"
-#include "Frame.h"
 #include "GCController.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"

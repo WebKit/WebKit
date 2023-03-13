@@ -29,12 +29,12 @@
 
 #include "CommonVM.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptController.h"

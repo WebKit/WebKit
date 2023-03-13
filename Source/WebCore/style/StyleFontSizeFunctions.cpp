@@ -32,8 +32,8 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "FontMetrics.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "RenderStyle.h"
 #include "Settings.h"
 

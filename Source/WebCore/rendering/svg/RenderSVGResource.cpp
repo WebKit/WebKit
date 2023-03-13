@@ -24,10 +24,10 @@
 #include "config.h"
 #include "RenderSVGResource.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
+#include "LocalFrame.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"

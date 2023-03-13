@@ -29,8 +29,8 @@
 
 #include "ResourceUsageOverlay.h"
 
-#include "Frame.h"
 #include "FrameView.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"

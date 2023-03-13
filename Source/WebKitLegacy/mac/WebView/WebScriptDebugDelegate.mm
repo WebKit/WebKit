@@ -38,7 +38,7 @@
 #import <JavaScriptCore/JSFunction.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSLock.h>
-#import <WebCore/Frame.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/runtime_root.h>

@@ -27,7 +27,7 @@
 #include "LoadableModuleScript.h"
 
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"

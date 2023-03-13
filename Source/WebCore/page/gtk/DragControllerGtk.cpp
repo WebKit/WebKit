@@ -31,8 +31,8 @@
 #include "DragData.h"
 #include "Editor.h"
 #include "Element.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "Pasteboard.h"
 #include "markup.h"
 

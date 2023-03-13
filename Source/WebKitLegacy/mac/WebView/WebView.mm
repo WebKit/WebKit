@@ -161,7 +161,6 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
@@ -184,6 +183,7 @@
 #import <WebCore/JSNotification.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacySchemeRegistry.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>

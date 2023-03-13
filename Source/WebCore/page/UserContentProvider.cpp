@@ -30,9 +30,9 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "Page.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)

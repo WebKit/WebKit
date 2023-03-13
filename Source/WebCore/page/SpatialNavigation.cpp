@@ -29,7 +29,6 @@
 #include "config.h"
 #include "SpatialNavigation.h"
 
-#include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
@@ -37,6 +36,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLSelectElement.h"
 #include "IntRect.h"
+#include "LocalFrame.h"
 #include "Node.h"
 #include "Page.h"
 #include "RenderInline.h"

@@ -29,9 +29,9 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>

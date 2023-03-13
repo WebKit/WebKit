@@ -29,7 +29,7 @@
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
 #include <WebCore/DOMWindow.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>

@@ -41,13 +41,13 @@
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/Range.h>

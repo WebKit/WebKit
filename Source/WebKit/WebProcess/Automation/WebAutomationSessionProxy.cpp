@@ -51,7 +51,6 @@
 #include <WebCore/ElementAncestorIteratorInlines.h>
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFrameElement.h>
@@ -61,6 +60,7 @@
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/JSElement.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/RenderElement.h>
 #include <wtf/UUID.h>
 

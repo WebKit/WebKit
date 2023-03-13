@@ -23,7 +23,7 @@
  */
 
 #import "config.h"
-#import "Frame.h"
+#import "LocalFrame.h"
 
 #if PLATFORM(IOS_FAMILY)
 

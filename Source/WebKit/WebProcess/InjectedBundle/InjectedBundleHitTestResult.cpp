@@ -33,12 +33,12 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/LocalFrame.h>
 #include <wtf/URL.h>
 
 namespace WebKit {

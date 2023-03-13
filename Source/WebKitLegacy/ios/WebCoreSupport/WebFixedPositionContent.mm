@@ -30,8 +30,8 @@
 
 #import "WebViewInternal.h"
 #import <WebCore/ChromeClient.h>
-#import <WebCore/Frame.h>
 #import <WebCore/IntSize.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ScrollingConstraints.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>

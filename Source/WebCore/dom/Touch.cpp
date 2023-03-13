@@ -30,8 +30,8 @@
 #include "Touch.h"
 
 #include "DOMWindow.h"
-#include "Frame.h"
 #include "FrameView.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 

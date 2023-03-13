@@ -26,8 +26,8 @@
 #include "config.h"
 #include "EditingRange.h"
 
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisibleUnits.h>
 

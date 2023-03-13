@@ -65,7 +65,6 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameView.h>
@@ -77,6 +76,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NodeRenderStyle.h>

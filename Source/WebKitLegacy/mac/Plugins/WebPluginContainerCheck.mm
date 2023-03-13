@@ -38,9 +38,9 @@
 #import <Foundation/NSURL.h>
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/Assertions.h>
 #import <wtf/ObjCRuntimeExtras.h>

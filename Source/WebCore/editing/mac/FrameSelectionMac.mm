@@ -30,7 +30,7 @@
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "DocumentInlines.h"
-#import "Frame.h"
+#import "LocalFrame.h"
 #import "RenderView.h"
 
 namespace WebCore {

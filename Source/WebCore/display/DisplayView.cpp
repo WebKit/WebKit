@@ -29,9 +29,9 @@
 #include "DeprecatedGlobalSettings.h"
 #include "DisplayTree.h"
 #include "DisplayTreeBuilder.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "LayoutElementBox.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 

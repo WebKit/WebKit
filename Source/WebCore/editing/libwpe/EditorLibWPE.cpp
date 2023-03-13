@@ -29,8 +29,8 @@
 #if USE(LIBWPE)
 
 #include "DocumentFragment.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "Settings.h"

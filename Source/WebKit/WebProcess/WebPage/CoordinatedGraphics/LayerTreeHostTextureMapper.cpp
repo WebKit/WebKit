@@ -33,10 +33,10 @@
 #include "WebPage.h"
 #include <GLES2/gl2.h>
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayerTextureMapper.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TemporaryOpenGLSetting.h>

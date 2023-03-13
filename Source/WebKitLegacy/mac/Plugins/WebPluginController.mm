@@ -50,11 +50,11 @@
 #import <JavaScriptCore/JSLock.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/DocumentLoader.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/UserGestureIndicator.h>

@@ -38,10 +38,10 @@
 #import "_WKFrameHandleInternal.h"
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/CertificateInfo.h>
-#import <WebCore/Frame.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/LinkIconCollector.h>
 #import <WebCore/LinkIconType.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 

@@ -37,8 +37,8 @@
 #import "WebProcess.h"
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/Frame.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/NotImplemented.h>
 #import <wtf/cocoa/NSURLExtras.h>
 

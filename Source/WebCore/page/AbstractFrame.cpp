@@ -27,8 +27,8 @@
 #include "AbstractFrame.h"
 
 #include "DocumentInlines.h"
-#include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "WindowProxy.h"
 

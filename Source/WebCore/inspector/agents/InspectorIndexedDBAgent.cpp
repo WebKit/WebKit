@@ -40,7 +40,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "Frame.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBCursorWithValue.h"
@@ -57,6 +56,7 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowCustom.h"
+#include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>

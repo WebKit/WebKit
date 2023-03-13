@@ -29,8 +29,8 @@
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
 #include "DOMWrapperWorld.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "UserContentController.h"
 #include "UserMessageHandler.h"

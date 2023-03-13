@@ -31,8 +31,8 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameView.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 
