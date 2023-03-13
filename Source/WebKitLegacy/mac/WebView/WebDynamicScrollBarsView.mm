@@ -538,7 +538,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     NSEventPhase momentumPhase = [event momentumPhase];
     BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseStationary;
 
-    if (fabsf(deltaY) > fabsf(deltaX)) {
+    if (std::abs(deltaY) > std::abs(deltaX)) {
         if (![self allowsVerticalScrolling]) {
             [[self nextResponder] scrollWheel:event];
             return;

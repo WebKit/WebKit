@@ -259,7 +259,7 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
                 // one pixel shorter...
                 // FIXME: If origMarginsTotal is in the range (0, 1) then we won't do the 50/50 split. Is this right?
                 else if (origMarginsTotal == 0.0f 
-                    || (abs(static_cast<int>(origMarginsTotal)) == 1)) {
+                    || (std::abs(static_cast<int>(origMarginsTotal)) == 1)) {
                     prop = 0.5f;  // Then split it 50:50.
                 }
                 else {

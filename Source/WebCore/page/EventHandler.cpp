@@ -4276,7 +4276,7 @@ bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocat
     IntPoint location = view->windowToContents(flooredIntPoint(viewportLocation));
     IntSize delta = location - m_mouseDownContentsPosition;
     
-    return abs(delta.width()) >= pointsThreshold || abs(delta.height()) >= pointsThreshold;
+    return std::abs(delta.width()) >= pointsThreshold || std::abs(delta.height()) >= pointsThreshold;
 }
 
 bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent, TextEventInputType inputType)

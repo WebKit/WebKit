@@ -1278,7 +1278,7 @@ String temporalDateToString(PlainDate plainDate)
     if (year < 0 || year > 9999) {
         prefix = year < 0 ? "-"_s : "+"_s;
         yearDigits = 6;
-        year = abs(year);
+        year = std::abs(year);
     }
 
     return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, plainDate.month()), '-', pad('0', 2, plainDate.day()));

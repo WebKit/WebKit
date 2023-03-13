@@ -1646,7 +1646,7 @@ inline StyleContentAlignmentData BuilderConverter::convertContentAlignmentData(B
 
 inline GlyphOrientation BuilderConverter::convertGlyphOrientation(BuilderState&, const CSSValue& value)
 {
-    float angle = fabsf(fmodf(downcast<CSSPrimitiveValue>(value).floatValue(), 360.0f));
+    float angle = std::abs(fmodf(downcast<CSSPrimitiveValue>(value).floatValue(), 360.0f));
     if (angle <= 45.0f || angle > 315.0f)
         return GlyphOrientation::Degrees0;
     if (angle > 45.0f && angle <= 135.0f)

@@ -105,7 +105,7 @@ Value* ConstFloatValue::floatToDoubleConstant(Procedure& proc) const
 
 Value* ConstFloatValue::absConstant(Procedure& proc) const
 {
-    return proc.add<ConstFloatValue>(origin(), static_cast<float>(fabs(m_value)));
+    return proc.add<ConstFloatValue>(origin(), static_cast<float>(std::abs(m_value)));
 }
 
 Value* ConstFloatValue::ceilConstant(Procedure& proc) const

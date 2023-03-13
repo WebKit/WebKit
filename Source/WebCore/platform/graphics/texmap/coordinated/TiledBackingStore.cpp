@@ -106,7 +106,7 @@ double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coor
     IntPoint viewCenter = viewport.location() + IntSize(viewport.width() / 2, viewport.height() / 2);
     Tile::Coordinate centerCoordinate = tileCoordinateForPoint(viewCenter);
 
-    return std::max(abs(centerCoordinate.y() - tileCoordinate.y()), abs(centerCoordinate.x() - tileCoordinate.x()));
+    return std::max(std::abs(centerCoordinate.y() - tileCoordinate.y()), std::abs(centerCoordinate.x() - tileCoordinate.x()));
 }
 
 // Returns a ratio between 0.0f and 1.0f of the surface covered by rendered tiles.

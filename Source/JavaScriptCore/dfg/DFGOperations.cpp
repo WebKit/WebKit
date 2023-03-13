@@ -671,7 +671,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithAbs, double, (JSGlobalObject* globalObjec
     JSValue op1 = JSValue::decode(encodedOp1);
     double a = op1.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, PNaN);
-    return fabs(a);
+    return std::abs(a);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationArithClz32, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))

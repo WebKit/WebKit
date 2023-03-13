@@ -650,12 +650,12 @@ FloatSize LocalFrame::resizePageRectsKeepingRatio(const FloatSize& originalSize,
         return FloatSize();
 
     if (contentRenderer()->style().isHorizontalWritingMode()) {
-        ASSERT(fabs(originalSize.width()) > std::numeric_limits<float>::epsilon());
+        ASSERT(std::abs(originalSize.width()) > std::numeric_limits<float>::epsilon());
         float ratio = originalSize.height() / originalSize.width();
         resultSize.setWidth(floorf(expectedSize.width()));
         resultSize.setHeight(floorf(resultSize.width() * ratio));
     } else {
-        ASSERT(fabs(originalSize.height()) > std::numeric_limits<float>::epsilon());
+        ASSERT(std::abs(originalSize.height()) > std::numeric_limits<float>::epsilon());
         float ratio = originalSize.width() / originalSize.height();
         resultSize.setHeight(floorf(expectedSize.height()));
         resultSize.setWidth(floorf(resultSize.height() * ratio));

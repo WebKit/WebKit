@@ -217,7 +217,7 @@ bool ViewGestureController::SwipeProgressTracker::shouldCancel()
     bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
     double relativeVelocity = m_velocity * (swipingLeft ? 1 : -1);
 
-    if (abs(m_progress) > swipeCancelArea)
+    if (std::abs(m_progress) > swipeCancelArea)
         return (relativeVelocity * m_distance < -swipeCancelVelocityThreshold);
 
     return (relativeVelocity * m_distance < swipeCancelVelocityThreshold);

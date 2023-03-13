@@ -333,7 +333,7 @@ using namespace WebCore;
     static const CGFloat FlipMargin = 30;
     bool didFlipStartEnd = false;
     bool canFlipStartEnd = allowFlipping && 
-        (fabs(basePoint.x - extentPoint.x) > FlipMargin || fabs(basePoint.y - extentPoint.y) > FlipMargin);
+        (std::abs(basePoint.x - extentPoint.x) > FlipMargin || std::abs(basePoint.y - extentPoint.y) > FlipMargin);
 
     VisiblePosition base;
     if (baseIsStart) {                

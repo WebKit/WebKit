@@ -419,9 +419,9 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
         // If we've reached or exceeded the maximum velocity, stop applying any force.
         // However, we won't let the spring snap, we'll just keep going at the same
         // velocity until the user raises their finger or we hit an edge.
-        if (fabs(_velocity.width()) >= fabs(_currentScroll->maximumVelocity.width()))
+        if (std::abs(_velocity.width()) >= std::abs(_currentScroll->maximumVelocity.width()))
             force.setWidth(0);
-        if (fabs(_velocity.height()) >= fabs(_currentScroll->maximumVelocity.height()))
+        if (std::abs(_velocity.height()) >= std::abs(_currentScroll->maximumVelocity.height()))
             force.setHeight(0);
     }
 

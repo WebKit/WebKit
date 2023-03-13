@@ -666,7 +666,7 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
 {
     double x = numericWindowProperty(frame, "pageXOffset");
     double y = numericWindowProperty(frame, "pageYOffset");
-    if (fabs(x) <= 0.00000001 && fabs(y) <= 0.00000001)
+    if (std::abs(x) <= 0.00000001 && std::abs(y) <= 0.00000001)
         return;
     if (shouldIncludeFrameName)
         stringBuilder.append("frame '", adoptWK(WKBundleFrameCopyName(frame)).get(), "' ");

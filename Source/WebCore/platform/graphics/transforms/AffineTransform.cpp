@@ -345,7 +345,7 @@ void AffineTransform::blend(const AffineTransform& from, double progress, Compos
     srA.angle = fmod(srA.angle, 2 * piDouble);
     srB.angle = fmod(srB.angle, 2 * piDouble);
 
-    if (fabs(srA.angle - srB.angle) > piDouble) {
+    if (std::abs(srA.angle - srB.angle) > piDouble) {
         if (srA.angle > srB.angle)
             srA.angle -= piDouble * 2;
         else

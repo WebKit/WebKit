@@ -859,7 +859,7 @@ void drawPattern(GraphicsContextCairo& platformContext, cairo_surface_t* surface
 void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, OrientationSizing orientationSizing)
 {
     // Avoid invalid cairo matrix with small values.
-    if (std::fabs(destRect.width()) < 0.5f || std::fabs(destRect.height()) < 0.5f)
+    if (std::abs(destRect.width()) < 0.5f || std::abs(destRect.height()) < 0.5f)
         return;
 
     FloatRect srcRect = originalSrcRect;
@@ -867,11 +867,11 @@ void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface
     // We need to account for negative source dimensions by flipping the rectangle.
     if (originalSrcRect.width() < 0) {
         srcRect.setX(originalSrcRect.x() + originalSrcRect.width());
-        srcRect.setWidth(std::fabs(originalSrcRect.width()));
+        srcRect.setWidth(std::abs(originalSrcRect.width()));
     }
     if (originalSrcRect.height() < 0) {
         srcRect.setY(originalSrcRect.y() + originalSrcRect.height());
-        srcRect.setHeight(std::fabs(originalSrcRect.height()));
+        srcRect.setHeight(std::abs(originalSrcRect.height()));
     }
 
     RefPtr<cairo_surface_t> patternSurface = surface;
@@ -918,11 +918,11 @@ void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface
     float scaleX = 1;
     float scaleY = 1;
     if (didUseWidthAsHeight) {
-        scaleX = std::fabs(srcRect.width() / destRect.height());
-        scaleY = std::fabs(srcRect.height() / destRect.width());
+        scaleX = std::abs(srcRect.width() / destRect.height());
+        scaleY = std::abs(srcRect.height() / destRect.width());
     } else {
-        scaleX = std::fabs(srcRect.width() / destRect.width());
-        scaleY = std::fabs(srcRect.height() / destRect.height());
+        scaleX = std::abs(srcRect.width() / destRect.width());
+        scaleY = std::abs(srcRect.height() / destRect.height());
     }
     cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, leftPadding, topPadding };
     cairo_pattern_set_matrix(pattern.get(), &matrix);

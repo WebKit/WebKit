@@ -83,7 +83,7 @@ void ScrollingEffectsController::stopAllTimers()
 
 static ScrollEventAxis dominantAxisFavoringVertical(FloatSize delta)
 {
-    if (fabsf(delta.height()) >= fabsf(delta.width()))
+    if (std::abs(delta.height()) >= std::abs(delta.width()))
         return ScrollEventAxis::Vertical;
 
     return ScrollEventAxis::Horizontal;
@@ -248,9 +248,9 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
     if (isVerticallyStretched) {
         if (!isHorizontallyStretched && affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
             // Stretching only in the vertical.
-            if (delta.height() && (fabsf(delta.width() / delta.height()) < rubberbandDirectionLockStretchRatio))
+            if (delta.height() && (std::abs(delta.width() / delta.height()) < rubberbandDirectionLockStretchRatio))
                 delta.setWidth(0);
-            else if (fabsf(delta.width()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+            else if (std::abs(delta.width()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                 m_unappliedOverscrollDelta.expand(delta.width(), 0);
                 delta.setWidth(0);
             } else
@@ -263,9 +263,9 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
     if (isHorizontallyStretched) {
         // Stretching only in the horizontal.
         if (affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
-            if (delta.width() && (fabsf(delta.height() / delta.width()) < rubberbandDirectionLockStretchRatio))
+            if (delta.width() && (std::abs(delta.height() / delta.width()) < rubberbandDirectionLockStretchRatio))
                 delta.setHeight(0);
-            else if (fabsf(delta.height()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+            else if (std::abs(delta.height()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                 m_unappliedOverscrollDelta.expand(0, delta.height());
                 delta.setHeight(0);
             } else
@@ -277,8 +277,8 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
 
     // Not stretching at all yet.
     if (affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
-        if (fabsf(delta.height()) >= fabsf(delta.width())) {
-            if (fabsf(delta.width()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+        if (std::abs(delta.height()) >= std::abs(delta.width())) {
+            if (std::abs(delta.width()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                 m_unappliedOverscrollDelta.expand(delta.width(), 0);
                 delta.setWidth(0);
             } else
@@ -458,7 +458,7 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
     auto initialVelocity = m_momentumVelocity;
 
     // Just like normal scrolling, prefer vertical rubberbanding
-    if (fabsf(initialVelocity.height()) >= fabsf(initialVelocity.width()))
+    if (std::abs(initialVelocity.height()) >= std::abs(initialVelocity.width()))
         initialVelocity.setWidth(0);
 
     // Don't rubber-band horizontally if it's not possible to scroll horizontally

@@ -323,8 +323,8 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
 
             // Clamp the radius to no more than half the length of either adjacent edge,
             // because we want a smooth curve and don't want unequal radii.
-            float clampedRadius = std::min(radius, fabsf(fromEdgeVec.x() ? fromEdgeVec.x() : fromEdgeVec.y()) / 2);
-            clampedRadius = std::min(clampedRadius, fabsf(toEdgeVec.x() ? toEdgeVec.x() : toEdgeVec.y()) / 2);
+            float clampedRadius = std::min(radius, std::abs(fromEdgeVec.x() ? fromEdgeVec.x() : fromEdgeVec.y()) / 2);
+            clampedRadius = std::min(clampedRadius, std::abs(toEdgeVec.x() ? toEdgeVec.x() : toEdgeVec.y()) / 2);
 
             FloatPoint fromEdgeNorm = fromEdgeVec;
             fromEdgeNorm.normalize();

@@ -439,8 +439,8 @@ static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
 
 static inline bool pointsEqualInDevicePixels(CGPoint a, CGPoint b, float deviceScaleFactor)
 {
-    return fabs(a.x * deviceScaleFactor - b.x * deviceScaleFactor) < std::numeric_limits<float>::epsilon()
-        && fabs(a.y * deviceScaleFactor - b.y * deviceScaleFactor) < std::numeric_limits<float>::epsilon();
+    return std::abs(a.x * deviceScaleFactor - b.x * deviceScaleFactor) < std::numeric_limits<float>::epsilon()
+        && std::abs(a.y * deviceScaleFactor - b.y * deviceScaleFactor) < std::numeric_limits<float>::epsilon();
 }
 
 static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSize contentSize)
@@ -1238,7 +1238,7 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
         const double minimumZoomDuration = 0.1;
         const double zoomDurationFactor = 0.3;
 
-        duration = std::min(fabs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
+        duration = std::min(std::abs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
     }
 
     if (scale != zoomScale)
@@ -1659,7 +1659,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     double currentScale = contentZoomScale(self);
     double targetScale = [self _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
 
-    if (fabs(targetScale - currentScale) < maximumScaleFactorDeltaForPanScroll) {
+    if (std::abs(targetScale - currentScale) < maximumScaleFactorDeltaForPanScroll) {
         if ([self _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance])
             return true;
     } else if (targetScale != currentScale) {

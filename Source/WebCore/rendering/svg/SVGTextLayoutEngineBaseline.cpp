@@ -182,7 +182,7 @@ float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVertica
 
 static inline bool glyphOrientationIsMultiplyOf180Degrees(float orientationAngle)
 {
-    return !fabsf(fmodf(orientationAngle, 180));
+    return !(fmodf(orientationAngle, 180));
 }
 
 float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVerticalText, SVGTextMetrics& metrics, float angle, float& xOrientationShift, float& yOrientationShift) const

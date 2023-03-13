@@ -54,11 +54,11 @@ double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientat
 
     // Angle between the source orientation vector and the source-listener vector
     double angle = rad2deg(acos(dotProduct));
-    double absAngle = fabs(angle);
+    double absAngle = std::abs(angle);
 
     // Divide by 2.0 here since API is entire angle (not half-angle)
-    double absInnerAngle = fabs(m_innerAngle) / 2.0;
-    double absOuterAngle = fabs(m_outerAngle) / 2.0;
+    double absInnerAngle = std::abs(m_innerAngle) / 2.0;
+    double absOuterAngle = std::abs(m_outerAngle) / 2.0;
     double gain = 1.0;
 
     if (absAngle <= absInnerAngle) {

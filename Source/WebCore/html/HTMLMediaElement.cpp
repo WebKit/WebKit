@@ -4412,7 +4412,7 @@ void HTMLMediaElement::endScanning()
 
 double HTMLMediaElement::nextScanRate()
 {
-    double rate = std::min(ScanMaximumRate, fabs(playbackRate() * 2));
+    double rate = std::min(ScanMaximumRate, std::abs(playbackRate() * 2));
     if (m_scanDirection == Backward)
         rate *= -1;
 #if PLATFORM(IOS_FAMILY)

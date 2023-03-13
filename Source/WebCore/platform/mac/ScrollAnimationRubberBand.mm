@@ -46,7 +46,7 @@ static inline float roundTowardZero(float num)
 static inline float roundToDevicePixelTowardZero(float num)
 {
     float roundedNum = roundf(num);
-    if (fabs(num - roundedNum) < 0.125)
+    if (std::abs(num - roundedNum) < 0.125)
         num = roundedNum;
 
     return roundTowardZero(num);

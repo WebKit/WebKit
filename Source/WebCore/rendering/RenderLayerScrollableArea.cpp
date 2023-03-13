@@ -1830,9 +1830,9 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
 
     IntSize delta = lastKnownMousePosition - sourcePoint;
 
-    if (abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
+    if (std::abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
         delta.setWidth(0);
-    if (abs(delta.height()) <= ScrollView::noPanScrollRadius)
+    if (std::abs(delta.height()) <= ScrollView::noPanScrollRadius)
         delta.setHeight(0);
 
     scrollByRecursively(adjustedScrollDelta(delta));

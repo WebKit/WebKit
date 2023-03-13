@@ -650,8 +650,8 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
             float adjacent1BigThird = ceilToDevicePixel(adjacentWidth1 / 3, deviceScaleFactor);
             float adjacent2BigThird = ceilToDevicePixel(adjacentWidth2 / 3, deviceScaleFactor);
 
-            float offset1 = floorToDevicePixel(fabs(adjacentWidth1) * 2 / 3, deviceScaleFactor);
-            float offset2 = floorToDevicePixel(fabs(adjacentWidth2) * 2 / 3, deviceScaleFactor);
+            float offset1 = floorToDevicePixel(std::abs(adjacentWidth1) * 2 / 3, deviceScaleFactor);
+            float offset2 = floorToDevicePixel(std::abs(adjacentWidth2) * 2 / 3, deviceScaleFactor);
 
             float mitreOffset1 = adjacentWidth1 < 0 ? offset1 : 0;
             float mitreOffset2 = adjacentWidth1 > 0 ? offset1 : 0;
@@ -722,7 +722,7 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
             offset2 = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
 
         if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth1 > 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth1 < 0))
-            offset3 = floorToDevicePixel(fabs(adjacentWidth1) / 2, deviceScaleFactor);
+            offset3 = floorToDevicePixel(std::abs(adjacentWidth1) / 2, deviceScaleFactor);
 
         if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth2 > 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth2 < 0))
             offset4 = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);

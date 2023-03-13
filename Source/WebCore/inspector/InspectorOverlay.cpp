@@ -2086,9 +2086,9 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
             auto childCrossAxisTrailingEdge = correctedCrossAxisTrailingEdge(childRect);
 
             // Build bounds for space between the current item and the cross-axis space.
-            if (std::fabs(childCrossAxisLeadingEdge - currentLineCrossAxisLeadingEdge) > 1)
+            if (std::abs(childCrossAxisLeadingEdge - currentLineCrossAxisLeadingEdge) > 1)
                 populateHighlightForGapOrSpace(childMainAxisLeadingEdge, childMainAxisTrailingEdge, currentLineCrossAxisLeadingEdge, childCrossAxisLeadingEdge, flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace);
-            if (std::fabs(childCrossAxisTrailingEdge - currentLineCrossAxisTrailingEdge) > 1)
+            if (std::abs(childCrossAxisTrailingEdge - currentLineCrossAxisTrailingEdge) > 1)
                 populateHighlightForGapOrSpace(childMainAxisLeadingEdge, childMainAxisTrailingEdge, currentLineCrossAxisTrailingEdge, childCrossAxisTrailingEdge, flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace);
 
             // Build bounds for gaps and space between the current item and previous item (or container edge).

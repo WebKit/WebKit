@@ -536,7 +536,7 @@ void PopupMenuWin::incrementWheelDelta(int delta)
 void PopupMenuWin::reduceWheelDelta(int delta)
 {
     ASSERT(delta >= 0);
-    ASSERT(delta <= abs(m_wheelDelta));
+    ASSERT(delta <= std::abs(m_wheelDelta));
 
     if (m_wheelDelta > 0)
         m_wheelDelta -= delta;
@@ -1052,14 +1052,14 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                 break;
 
             int i = 0;
-            for (incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); abs(wheelDelta()) >= WHEEL_DELTA; reduceWheelDelta(WHEEL_DELTA)) {
+            for (incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); std::abs(wheelDelta()) >= WHEEL_DELTA; reduceWheelDelta(WHEEL_DELTA)) {
                 if (wheelDelta() > 0)
                     ++i;
                 else
                     --i;
             }
 
-            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, abs(i));
+            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, std::abs(i));
             break;
         }
 

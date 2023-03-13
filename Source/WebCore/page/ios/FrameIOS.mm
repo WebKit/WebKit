@@ -355,7 +355,7 @@ Node* LocalFrame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLoc
         for (unsigned n = 0; n < std::size(testOffsets); n += 2) {
             IntSize testOffset(testOffsets[n] * searchRadius, testOffsets[n + 1] * searchRadius);
             IntPoint testPoint = testCenter + testOffset;
-            int testRadius = std::max(abs(testOffset.width()), abs(testOffset.height()));
+            int testRadius = std::max(std::abs(testOffset.width()), std::abs(testOffset.height()));
             if (testRadius > currentTestRadius) {
                 // Bail out with the best match within a radius
                 currentTestRadius = testRadius;

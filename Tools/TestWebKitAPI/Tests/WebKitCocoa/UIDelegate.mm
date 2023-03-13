@@ -703,8 +703,8 @@ static bool drawFooterCalled;
 - (void)_webView:(WKWebView *)webView drawHeaderInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url
 {
     EXPECT_EQ(rect.origin.x, 72);
-    EXPECT_TRUE(fabs(rect.origin.y - 698.858398) < .00001);
-    EXPECT_TRUE(fabs(rect.size.height - 3.141590) < .00001);
+    EXPECT_TRUE(std::abs(rect.origin.y - 698.858398) < .00001);
+    EXPECT_TRUE(std::abs(rect.size.height - 3.141590) < .00001);
     EXPECT_EQ(rect.size.width, 468.000000);
     EXPECT_STREQ(title.UTF8String, "test_title");
     EXPECT_STREQ(url.absoluteString.UTF8String, "http://example.com/");
@@ -715,7 +715,7 @@ static bool drawFooterCalled;
 {
     EXPECT_EQ(rect.origin.x, 72);
     EXPECT_EQ(rect.origin.y, 90);
-    EXPECT_TRUE(fabs(rect.size.height - 2.718280) < .00001);
+    EXPECT_TRUE(std::abs(rect.size.height - 2.718280) < .00001);
     EXPECT_EQ(rect.size.width, 468.000000);
     EXPECT_STREQ(url.absoluteString.UTF8String, "http://example.com/");
     drawFooterCalled = true;

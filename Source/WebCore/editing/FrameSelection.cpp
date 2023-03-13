@@ -2672,7 +2672,7 @@ UChar FrameSelection::characterInRelationToCaretSelection(int amount) const
 {
     auto position = m_selection.visibleStart();
     if (amount < 0) {
-        int count = abs(amount);
+        int count = std::abs(amount);
         for (int i = 0; i < count; i++)
             position = position.previous();
         return position.characterBefore();
@@ -2857,7 +2857,7 @@ std::optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlte
     FrameSelection frameSelection;
     frameSelection.setSelection(m_selection);
     SelectionDirection direction = amount > 0 ? SelectionDirection::Forward : SelectionDirection::Backward;
-    for (int i = 0; i < abs(amount); i++)
+    for (int i = 0; i < std::abs(amount); i++)
         frameSelection.modify(alteration, direction, TextGranularity::CharacterGranularity);
     return frameSelection.selection().toNormalizedRange();
 }

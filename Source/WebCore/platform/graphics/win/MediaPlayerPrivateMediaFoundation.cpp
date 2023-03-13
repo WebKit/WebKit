@@ -2444,7 +2444,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::processSample(IMFSamp
 
             // Since sleeping is using the system clock, we need to convert the sleep time
             // from presentation time to system time.
-            nextSleepTime = (LONG)(nextSleepTime / fabsf(m_playbackRate));
+            nextSleepTime = (LONG)(nextSleepTime / std::abs(m_playbackRate));
 
             presentNow = false;
         }

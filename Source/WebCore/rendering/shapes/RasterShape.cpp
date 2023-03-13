@@ -68,7 +68,7 @@ void MarginIntervalGenerator::set(int y, const IntShapeInterval& interval)
 
 IntShapeInterval MarginIntervalGenerator::intervalAt(int y) const
 {
-    unsigned xInterceptsIndex = abs(y - m_y);
+    unsigned xInterceptsIndex = std::abs(y - m_y);
     int dx = (xInterceptsIndex >= m_xIntercepts.size()) ? 0 : m_xIntercepts[xInterceptsIndex];
     return IntShapeInterval(m_x1 - dx, m_x2 + dx);
 }

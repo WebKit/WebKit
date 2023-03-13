@@ -355,10 +355,10 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
         do {
             TestWebKitAPI::Util::runFor(0.1_s);
             currentTime = [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].currentTime"] doubleValue];
-            if (fabs(currentTime - initialTime) > 0.01)
+            if (std::abs(currentTime - initialTime) > 0.01)
                 break;
         } while (timeout++ < 100);
-        return fabs(currentTime - initialTime) > 0.01;
+        return std::abs(currentTime - initialTime) > 0.01;
     };
     EXPECT_TRUE(ensureIsPlaying());
 

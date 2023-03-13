@@ -595,7 +595,7 @@ MediaTime abs(const MediaTime& rhs)
     if (rhs.isNegativeInfinite() || rhs.isPositiveInfinite())
         return MediaTime::positiveInfiniteTime();
     if (rhs.hasDoubleValue())
-        return MediaTime::createWithDouble(fabs(rhs.m_timeValueAsDouble));
+        return MediaTime::createWithDouble(std::abs(rhs.m_timeValueAsDouble));
 
     MediaTime val = rhs;
     val.m_timeValue = std::abs(rhs.m_timeValue);

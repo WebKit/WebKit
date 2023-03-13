@@ -542,7 +542,7 @@ void DFABytecodeCompiler::compile()
         uint32_t destination = m_nodeStartOffsets[linkRecord.destinationNodeIndex];
         RELEASE_ASSERT(destination < static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
         int32_t distance = destination - linkRecord.instructionLocation;
-        ASSERT(abs(distance) <= abs(linkRecord.longestPossibleJump));
+        ASSERT(std::abs(distance) <= std::abs(linkRecord.longestPossibleJump));
         
         switch (linkRecord.jumpSize) {
         case DFABytecodeJumpSize::Int8:

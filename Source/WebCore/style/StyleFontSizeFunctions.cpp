@@ -47,7 +47,7 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
     // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
     // rendering. This is also compatible with other browsers that have minimum
     // font size settings (e.g. Firefox).
-    if (fabsf(specifiedSize) < std::numeric_limits<float>::epsilon())
+    if (std::abs(specifiedSize) < std::numeric_limits<float>::epsilon())
         return 0.0f;
 
     // We support two types of minimum font size. The first is a hard override that applies to

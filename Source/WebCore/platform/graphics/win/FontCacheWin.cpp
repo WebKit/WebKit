@@ -480,11 +480,11 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
         return 1;
     }
 
-    unsigned chosenWeightDeltaMagnitude = abs(matchData->m_chosen.lfWeight - matchData->m_desiredWeight);
-    unsigned candidateWeightDeltaMagnitude = abs(candidate->lfWeight - matchData->m_desiredWeight);
+    unsigned chosenWeightDeltaMagnitude = std::abs(matchData->m_chosen.lfWeight - matchData->m_desiredWeight);
+    unsigned candidateWeightDeltaMagnitude = std::abs(candidate->lfWeight - matchData->m_desiredWeight);
 
     // If both are the same distance from the desired weight, prefer the candidate if it is further from regular.
-    if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude && abs(candidate->lfWeight - FW_NORMAL) > abs(matchData->m_chosen.lfWeight - FW_NORMAL)) {
+    if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude && std::abs(candidate->lfWeight - FW_NORMAL) > std::abs(matchData->m_chosen.lfWeight - FW_NORMAL)) {
         matchData->m_chosen = *candidate;
         return 1;
     }

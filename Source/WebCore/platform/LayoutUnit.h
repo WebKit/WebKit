@@ -240,7 +240,7 @@ private:
     }
     static bool isInBounds(double value)
     {
-        return ::fabs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
+        return ::abs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
     }
 
     inline void setValue(int value)

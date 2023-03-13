@@ -53,7 +53,7 @@ static bool areEssentiallyEqual(LayoutUnit a, LayoutUnit b)
         return true;
     // 1/4th CSS pixel.
     constexpr float epsilon = kFixedPointDenominator / 4;
-    return abs(a.rawValue() - b.rawValue()) <= epsilon;
+    return std::abs(a.rawValue() - b.rawValue()) <= epsilon;
 }
 
 static bool areEssentiallyEqual(float a, InlineLayoutUnit b)

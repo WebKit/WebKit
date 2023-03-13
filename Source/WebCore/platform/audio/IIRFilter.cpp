@@ -151,7 +151,7 @@ void IIRFilter::getFrequencyResponse(unsigned length, const float* frequency, fl
             auto numerator = evaluatePolynomial(m_feedforward.data(), zRecip, m_feedforward.size() - 1);
             auto denominator = evaluatePolynomial(m_feedback.data(), zRecip, m_feedback.size() - 1);
             auto response = numerator / denominator;
-            magResponse[k] = static_cast<float>(abs(response));
+            magResponse[k] = static_cast<float>(std::abs(response));
             phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
         }
     }

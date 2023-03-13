@@ -897,7 +897,7 @@ Path AccessibilityRenderObject::elementPath() const
         bool needsPath = false;
         IntRect unionRect = rects[0];
         for (size_t i = 1; i < rects.size(); ++i) {
-            needsPath = abs(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
+            needsPath = std::abs(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
                 && (rightToLeftText ? rects[i].x() - unionRect.x() > xTolerance
                     : unionRect.x() - rects[i].x() > xTolerance); // And this rect is to right/left of all previous rects.
 

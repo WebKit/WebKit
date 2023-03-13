@@ -1966,7 +1966,7 @@ void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& 
         return;
     SelectionDirection direction = offset < 0 ? SelectionDirection::Backward : SelectionDirection::Forward;
     VisiblePosition position = startPosition;
-    for (int i = 0; i < abs(offset); ++i) {
+    for (int i = 0; i < std::abs(offset); ++i) {
         position = positionOfNextBoundaryOfGranularity(position, TextGranularity::CharacterGranularity, direction);
         if (position.isNull())
             break;
@@ -2754,9 +2754,9 @@ static void focusedElementPositionInformation(WebPage& page, Element& focusedEle
     else if (position > endPosition)
         position = endPosition;
     IntRect caretRect = view->contentsToRootView(position.absoluteCaretBounds());
-    float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - request.point.x());
-    float deltaYFromTheTop = abs(caretRect.y() - request.point.y());
-    float deltaYFromTheBottom = abs(caretRect.y() + caretRect.height() - request.point.y());
+    float deltaX = std::abs(caretRect.x() + (caretRect.width() / 2) - request.point.x());
+    float deltaYFromTheTop = std::abs(caretRect.y() - request.point.y());
+    float deltaYFromTheBottom = std::abs(caretRect.y() + caretRect.height() - request.point.y());
 
     info.isNearMarkedText = !(deltaX > kHitAreaWidth || deltaYFromTheTop > kHitAreaHeight || deltaYFromTheBottom > kHitAreaHeight);
 }
@@ -4151,7 +4151,7 @@ std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateI
     float currentScale = m_page->pageScaleFactor();
 
     double scaleNoiseThreshold = 0.005;
-    if (!m_isInStableState && fabs(scaleFromUIProcess - currentScale) < scaleNoiseThreshold) {
+    if (!m_isInStableState && std::abs(scaleFromUIProcess - currentScale) < scaleNoiseThreshold) {
         // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
         // visual noise. We filter those useless updates.
         scaleFromUIProcess = currentScale;

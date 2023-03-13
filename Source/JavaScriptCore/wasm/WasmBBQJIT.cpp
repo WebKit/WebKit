@@ -5547,7 +5547,7 @@ public:
                     m_jit.and32(TrustedImm32(static_cast<int32_t>(0x80000000u)), wasmScratchGPR, wasmScratchGPR);
                     m_jit.move32ToFloat(wasmScratchGPR, wasmScratchFPR);
 
-                    emitMoveConst(Value::fromF32(std::fabs(lhs.asF32())), resultLocation);
+                    emitMoveConst(Value::fromF32(std::abs(lhs.asF32())), resultLocation);
                     m_jit.orFloat(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
                 } else {
                     bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
@@ -5611,7 +5611,7 @@ public:
                     m_jit.move64ToDouble(wasmScratchGPR, wasmScratchFPR);
 
                     // Moving this constant clobbers wasmScratchGPR, but not wasmScratchFPR
-                    emitMoveConst(Value::fromF64(std::fabs(lhs.asF64())), resultLocation);
+                    emitMoveConst(Value::fromF64(std::abs(lhs.asF64())), resultLocation);
                     m_jit.orDouble(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
                 } else {
                     bool signBit = bitwise_cast<uint64_t>(rhs.asF64()) & 0x8000000000000000ull;

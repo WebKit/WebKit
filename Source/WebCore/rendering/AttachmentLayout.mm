@@ -123,7 +123,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
             // look right, so make them the same exact size.
             if (i) {
                 float previousBackgroundRectWidth = lines[i-1].backgroundRect.width();
-                if (fabs(line.backgroundRect.width() - previousBackgroundRectWidth) < attachmentTitleBackgroundRadius * 4) {
+                if (std::abs(line.backgroundRect.width() - previousBackgroundRectWidth) < attachmentTitleBackgroundRadius * 4) {
                     float newBackgroundRectWidth = std::max(previousBackgroundRectWidth, line.backgroundRect.width());
                     line.backgroundRect.inflateX((newBackgroundRectWidth - line.backgroundRect.width()) / 2);
                     lines[i-1].backgroundRect.inflateX((newBackgroundRectWidth - previousBackgroundRectWidth) / 2);
