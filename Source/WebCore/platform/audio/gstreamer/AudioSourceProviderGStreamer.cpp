@@ -105,7 +105,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
     m_pipeline = gst_element_factory_make("pipeline", pipelineName.utf8().data());
     GST_DEBUG_OBJECT(m_pipeline.get(), "MediaStream WebAudio provider created");
 
-    m_streamPrivate = MediaStreamPrivate::create(source.logger(), { source });
+    m_streamPrivate = MediaStreamPrivate::create(Logger::create(this), { source });
 
     m_audioSinkBin = gst_parse_bin_from_description("tee name=audioTee", true, nullptr);
 
