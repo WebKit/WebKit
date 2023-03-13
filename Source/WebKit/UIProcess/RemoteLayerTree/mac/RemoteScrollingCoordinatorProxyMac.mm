@@ -96,6 +96,18 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
 #endif
 }
 
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
+{
+    m_uiState.addNodeWithActiveUserScroll(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
+{
+    m_uiState.removeNodeWithActiveUserScroll(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
 void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     using PlatformLayerID = GraphicsLayer::PlatformLayerID;

@@ -1773,7 +1773,6 @@ webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-c
 [ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
 [ BigSur+ ] fast/mediastream/mediastreamtrack-video-clone.html [ Pass Failure ]
 [ BigSur+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-[ BigSur+ ] fast/scrolling/mac/keyboard-scrolling-with-mouse-scroll.html [ Pass Failure ]
 [ BigSur+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 [ Bigsur+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]

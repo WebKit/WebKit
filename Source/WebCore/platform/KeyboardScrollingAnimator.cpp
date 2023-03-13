@@ -202,6 +202,12 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (!scroll)
         return false;
 
+    if (m_scrollableArea.isUserScrollInProgress()) {
+        m_scrollTriggeringKeyIsPressed = false;
+        m_scrollableArea.endKeyboardScroll(true);
+        return true;
+    }
+
     if (m_scrollTriggeringKeyIsPressed)
         return false;
 

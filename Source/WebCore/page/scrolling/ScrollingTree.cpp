@@ -635,10 +635,13 @@ void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool 
 {
     ASSERT(nodeID);
     Locker locker { m_treeStateLock };
-    if (isScrolling)
+    if (isScrolling) {
         m_treeState.nodesWithActiveUserScrolls.add(nodeID);
-    else
+        scrollingTreeNodeWillStartScroll(nodeID);
+    } else {
         m_treeState.nodesWithActiveUserScrolls.remove(nodeID);
+        scrollingTreeNodeDidEndScroll(nodeID);
+    }
 }
 
 void ScrollingTree::clearNodesWithUserScrollInProgress()
