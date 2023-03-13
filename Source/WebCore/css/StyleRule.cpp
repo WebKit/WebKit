@@ -68,11 +68,6 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSGroupingRule& parentRule) cons
     return createCSSOMWrapper(nullptr, &parentRule);
 }
 
-Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleRule& parentRule) const
-{
-    return createCSSOMWrapper(nullptr, &parentRule);
-}
-
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper() const
 {
     return createCSSOMWrapper(nullptr, nullptr);
@@ -133,9 +128,10 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
     });
 }
 
-void StyleRuleBase::operator delete(StyleRuleBase* rule, std::destroying_delete_t)
+void StyleRuleBase::operator delete(StyleRuleBase* base, std::destroying_delete_t)
 {
-    rule->visitDerived([](auto& rule) {
+    ASSERT(base);
+    base->visitDerived([](auto& rule) {
         std::destroy_at(&rule);
         std::decay_t<decltype(rule)>::freeAfterDestruction(&rule);
     });
@@ -155,8 +151,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
 {
     // FIXME: const_cast is required here because a wrapper for a style rule can be used to *modify* the style rule's selector; use of const in the style system is thus inaccurate.
     auto wrapper = const_cast<StyleRuleBase&>(*this).visitDerived(WTF::makeVisitor(
-        [&](StyleRule& rule) -> Ref<CSSRule> {
-            return CSSStyleRule::create(rule, parentSheet);
+        [&](StyleRule&) -> Ref<CSSRule> {
+            // CSSOM should never use a StyleRule but a StyleRuleWithNesting
+            RELEASE_ASSERT_NOT_REACHED();
         },
         [&](StyleRuleWithNesting& rule) -> Ref<CSSRule> {
             return CSSStyleRule::create(rule, parentSheet);
@@ -219,7 +216,7 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
 
 unsigned StyleRule::averageSizeInBytes()
 {
-    return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes() + sizeof(Vector<Ref<StyleRuleBase>>);
+    return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes();
 }
 
 StyleRule::StyleRule(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
@@ -312,23 +309,43 @@ Ref<StyleRuleWithNesting> StyleRuleWithNesting::copy() const
 
 StyleRuleWithNesting::StyleRuleWithNesting(const StyleRuleWithNesting& other)
     : StyleRule(other)
-    , m_nestedRules(other.m_nestedRules.map( [](auto& rule) { return rule->copy(); }))
+    , m_ruleGroup(other.m_ruleGroup)
     , m_originalSelectorList(other.m_originalSelectorList)
 {
 
 }
 
-Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
+Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<RefPtr<StyleRuleBase>>&& nestedRules)
 { 
     return adoptRef(* new StyleRuleWithNesting(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors), WTFMove(nestedRules)));
 }
 
-StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
+Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(StyleRule&& styleRule)
+{ 
+    return adoptRef(* new StyleRuleWithNesting(WTFMove(styleRule)));
+}
+
+StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<RefPtr<StyleRuleBase>>&& nestedRules)
     : StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors))
-    , m_nestedRules(WTFMove(nestedRules))
+    , m_ruleGroup(WTFMove(nestedRules))
     , m_originalSelectorList(selectorList())
 { 
     setType(StyleRuleType::StyleWithNesting);
+}
+
+StyleRuleWithNesting::StyleRuleWithNesting(StyleRule&& styleRule)
+    : StyleRule(WTFMove(styleRule))
+    , m_ruleGroup()
+    , m_originalSelectorList(selectorList())
+{ 
+    setType(StyleRuleType::StyleWithNesting);
+}
+
+
+void StyleRuleWithNesting::wrapperAdoptSelectorList(CSSSelectorList&& selectorList)
+{
+    m_originalSelectorList = CSSSelectorList { selectorList };
+    StyleRule::wrapperAdoptSelectorList(WTFMove(selectorList));
 }
 
 StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
@@ -446,6 +463,8 @@ StyleRuleGroup* StyleRuleGroup::fromStyleRuleBase(StyleRuleBase& rule)
 {
     ASSERT(rule.isGroupRule());
     switch (rule.type()) {
+    case StyleRuleType::StyleWithNesting:
+        return &downcast<StyleRuleWithNesting>(rule).ruleGroup();
     case StyleRuleType::Media:
         return &downcast<StyleRuleMedia>(rule).ruleGroup();
     case StyleRuleType::Supports:

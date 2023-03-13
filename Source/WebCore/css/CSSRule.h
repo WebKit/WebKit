@@ -55,6 +55,7 @@ protected:
 
     bool hasCachedSelectorText() const { return m_hasCachedSelectorText; }
     void setHasCachedSelectorText(bool hasCachedSelectorText) const { m_hasCachedSelectorText = hasCachedSelectorText; }
+    bool hasStyleRuleAscendant() const;
 
     const CSSParserContext& parserContext() const;
 

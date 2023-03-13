@@ -117,6 +117,7 @@ public:
 
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
+    void transformStyleRuleToNesting();
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
     enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };

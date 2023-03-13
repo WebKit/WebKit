@@ -45,7 +45,6 @@ class StyleRule;
 
 struct CSSParserContext;
 
-
 class CSSSelectorParser {
 public:
     CSSSelectorParser(const CSSParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);

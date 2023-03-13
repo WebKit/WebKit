@@ -166,7 +166,7 @@ bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, co
     return declaration->addParsedProperties(results);
 }
 
-RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRulesType allowedRules)
+RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRulesType allowedRules, CSSParserEnum::IsNestedContext isNestedContext)
 {
     CSSParserImpl parser(context, string, styleSheet);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
@@ -174,6 +174,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSPa
     if (range.atEnd())
         return nullptr; // Parse error, empty rule
     RefPtr<StyleRuleBase> rule;
+    if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
+        parser.m_isNestedContext = true;
     if (range.peek().type() == AtKeywordToken)
         rule = parser.consumeAtRule(range, allowedRules);
     else
@@ -1095,8 +1097,10 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
         // We save memory by creating a simple StyleRule instead of a heavier StyleWithNestingSupportRule when we don't need the CSS Nesting features.
         if (nestedRules.isEmpty() && !selectorList->hasExplicitNestingParent() && !isNestedContext())
             styleRule = StyleRule::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
-        else
-            styleRule = StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList), WTFMove(nestedRules));
+        else {
+            auto childRules = nestedRules.map([](auto ref){ return RefPtr(ref.ptr());});
+            styleRule = StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList), WTFMove(childRules));
+        }
     });
     
     return styleRule;

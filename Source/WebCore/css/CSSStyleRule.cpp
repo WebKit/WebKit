@@ -28,7 +28,7 @@
 #include "DeclaredStylePropertyMap.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "RuleSet.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -42,19 +42,10 @@ static SelectorTextCache& selectorTextCache()
     return cache;
 }
 
-CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
-    , m_styleRule(styleRule)
-    , m_styleMap(DeclaredStylePropertyMap::create(*this))
-    , m_childRuleCSSOMWrappers(0)
-{
-}
-
 CSSStyleRule::CSSStyleRule(StyleRuleWithNesting& styleRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+    : CSSGroupingRule(styleRule, parent)
     , m_styleRule(styleRule)
     , m_styleMap(DeclaredStylePropertyMap::create(*this))
-    , m_childRuleCSSOMWrappers(styleRule.nestedRules().size())
 {
 }
 
@@ -81,12 +72,11 @@ StylePropertyMap& CSSStyleRule::styleMap()
     return m_styleMap.get();
 }
 
+StyleRule& CSSStyleRule::styleRule() const { return m_styleRule.get(); }
+
 String CSSStyleRule::generateSelectorText() const
 {
-    if (m_styleRule->isStyleRuleWithNesting())
-        return downcast<StyleRuleWithNesting>(m_styleRule.get()).originalSelectorList().selectorsText();
-
-    return m_styleRule->selectorList().selectorsText();
+    return m_styleRule->originalSelectorList().selectorsText();
 }
 
 String CSSStyleRule::selectorText() const
@@ -110,20 +100,19 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     if (!parentStyleSheet())
         return;
 
+    ALWAYS_LOG_WITH_STREAM(stream << "parse " << selectorText);
     CSSParser p(parserContext());
     auto* sheet = parentStyleSheet();
-    auto selectorList = p.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr);
+    auto isNestedContext = hasStyleRuleAscendant() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No;
+    auto selectorList = p.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr, isNestedContext);
     if (!selectorList)
-        return;
-
-    // FIXME: We don't support setting nesting parent selector by CSSOM
-    if (selectorList->hasExplicitNestingParent())
         return;
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     if (selectorList->componentCount() > Style::RuleData::maximumSelectorComponentCount)
         return;
 
+    ALWAYS_LOG_WITH_STREAM(stream << "add " << selectorText);
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
@@ -134,12 +123,9 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     }
 }
 
-Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
+Vector<RefPtr<StyleRuleBase>> CSSStyleRule::nestedRules() const
 {
-    if (m_styleRule->isStyleRuleWithNesting())
-        return downcast<StyleRuleWithNesting>(m_styleRule.get()).nestedRules();
-
-    return { };
+    return m_styleRule->childRules();
 }
 
 String CSSStyleRule::cssText() const
@@ -148,63 +134,44 @@ String CSSStyleRule::cssText() const
     builder.append(selectorText());
     builder.append(" {");
 
-    auto declarations = m_styleRule->properties().asText();
+    auto declsString = m_styleRule->properties().asText();
+    StringBuilder decls;
+    StringBuilder rules;
 
-    if (nestedRules().isEmpty()) {
-        if (!declarations.isEmpty())
-            builder.append(' ', declarations, " }");
-        else
-            builder.append(" }");
+    decls.append(declsString);
+    cssTextForDeclsAndRules(decls, rules);
 
+    if (decls.isEmpty() && rules.isEmpty()) {
+        builder.append(" }");
         return builder.toString();
     }
 
-    builder.append("\n  ", declarations);
-    for (const auto& nestedRule : nestedRules()) {
-        auto wrapped = nestedRule->createCSSOMWrapper();
-        auto text = wrapped->cssText();
-        builder.append(text, "\n}");
+    if (rules.isEmpty()) {
+        builder.append(' ');
+        builder.append(decls);
+        builder.append(" }");
+        return builder.toString();
     }
 
+    if (decls.isEmpty()) {
+        builder.append(rules);
+        builder.append("\n}");
+        return builder.toString();
+    }
+
+    builder.append("\n  ");
+    builder.append(decls);
+    builder.append(rules);
+    builder.append("\n}");
     return builder.toString();
 }
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    if (m_styleRule->isStyleRuleWithNesting())
-        m_styleRule = downcast<StyleRuleWithNesting>(rule);
-    else
-        m_styleRule = downcast<StyleRule>(rule);
-
+    ASSERT(rule.isStyleRuleWithNesting());
+    m_styleRule = downcast<StyleRuleWithNesting>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
-}
-
-unsigned CSSStyleRule::length() const
-{
-    return nestedRules().size();
-}
-
-CSSRule* CSSStyleRule::item(unsigned index) const
-{
-    if (index >= length())
-        return nullptr;
-
-    ASSERT(m_childRuleCSSOMWrappers.size() == nestedRules().size());
-
-    auto& rule = m_childRuleCSSOMWrappers[index];
-    if (!rule)
-        rule = nestedRules()[index]->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
-
-    return rule.get();
-}
-
-CSSRuleList& CSSStyleRule::cssRules() const
-{
-    if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = makeUnique<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this));
-
-    return *m_ruleListCSSOMWrapper;
 }
 
 } // namespace WebCore

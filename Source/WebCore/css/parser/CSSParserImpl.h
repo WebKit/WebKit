@@ -94,7 +94,7 @@ public:
     static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties*, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
-    static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType);
+    static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
     static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&);
     static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
 
@@ -181,10 +181,11 @@ private:
     }
     bool isNestedContext()
     {
-        return m_styleRuleNestingDepth && context().cssNestingEnabled;
+        return (m_isNestedContext || m_styleRuleNestingDepth) && context().cssNestingEnabled;
     }
 
     unsigned m_styleRuleNestingDepth { 0 };
+    bool m_isNestedContext { false };
     Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;
 

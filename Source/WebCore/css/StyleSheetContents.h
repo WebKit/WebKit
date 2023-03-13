@@ -90,6 +90,7 @@ public:
     bool traverseRules(const Function<bool(const StyleRuleBase&)>& handler) const;
     bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
+    void transformStyleRuleToNesting() ;
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }

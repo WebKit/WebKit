@@ -71,13 +71,12 @@ public:
     bool isLayerRule() const { return type() == StyleRuleType::LayerBlock || type() == StyleRuleType::LayerStatement; }
     bool isContainerRule() const { return type() == StyleRuleType::Container; }
     bool isPropertyRule() const { return type() == StyleRuleType::Property; }
-    bool isGroupRule() const { return isMediaRule() || isSupportsRule() || type() == StyleRuleType::LayerBlock || isContainerRule(); }
+    bool isGroupRule() const { return isMediaRule() || isSupportsRule() || type() == StyleRuleType::LayerBlock || isContainerRule() || isStyleRuleWithNesting(); }
 
     Ref<StyleRuleBase> copy() const;
 
     Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet& parentSheet) const;
     Ref<CSSRule> createCSSOMWrapper(CSSGroupingRule& parentRule) const;
-    Ref<CSSRule> createCSSOMWrapper(CSSStyleRule& parentRule) const;
 
     // This is only needed to support getMatchedCSSRules.
     Ref<CSSRule> createCSSOMWrapper() const;
@@ -174,18 +173,22 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 class StyleRuleWithNesting final : public StyleRule {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 public:
-    static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleWithNesting> create(StyleRule&&);
     Ref<StyleRuleWithNesting> copy() const;
 
-    const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
+    StyleRuleGroup& ruleGroup() { return m_ruleGroup; }
+    const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_ruleGroup.childRules(); }
     const CSSSelectorList& originalSelectorList() const { return m_originalSelectorList; }
+    void wrapperAdoptSelectorList(CSSSelectorList&&);
     StyleRuleWithNesting(const StyleRuleWithNesting&);
     ~StyleRuleWithNesting();
 
 private:
-    StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleWithNesting(StyleRule&&);
 
-    Vector<Ref<StyleRuleBase>> m_nestedRules;
+    StyleRuleGroup m_ruleGroup;
     CSSSelectorList m_originalSelectorList;
 };
 

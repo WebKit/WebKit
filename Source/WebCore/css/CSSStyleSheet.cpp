@@ -176,6 +176,12 @@ Node* CSSStyleSheet::ownerNode() const
     return m_ownerNode.get();
 }
 
+void CSSStyleSheet::transformStyleRuleToNesting()
+{
+    RuleMutationScope(this);
+    m_contents->transformStyleRuleToNesting();
+}
+
 CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRules()
 {
     // If we are the only client it is safe to mutate.
@@ -302,8 +308,11 @@ CSSRule* CSSStyleSheet::item(unsigned index)
         m_childRuleCSSOMWrappers.grow(ruleCount);
 
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
-    if (!cssRule)
+    if (!cssRule) {
+        RuleMutationScope mutationScope(this);
+        m_contents->transformStyleRuleToNesting();
         cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(*this);
+    }
     return cssRule.get();
 }
 
@@ -342,6 +351,8 @@ ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsign
     bool success = m_contents.get().wrapperInsertRule(rule.releaseNonNull(), index);
     if (!success)
         return Exception { HierarchyRequestError };
+
+    // FIXME: why do we insert an empty rule?
     if (!m_childRuleCSSOMWrappers.isEmpty())
         m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
 
