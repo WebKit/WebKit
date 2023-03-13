@@ -803,8 +803,6 @@ public:
     void transitionTo(VM&, Structure*);
 
     bool hasCustomProperties() { return structure()->didTransition(); }
-    bool hasGetterSetterProperties() { return structure()->hasGetterSetterProperties(); }
-    bool hasCustomGetterSetterProperties() { return structure()->hasCustomGetterSetterProperties(); }
 
     bool hasNonReifiedStaticProperties()
     {
