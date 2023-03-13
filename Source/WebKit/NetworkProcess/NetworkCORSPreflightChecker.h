@@ -60,6 +60,7 @@ public:
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
         bool allowPrivacyProxy { true };
         OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+        bool includeFetchMetadata { false };
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 

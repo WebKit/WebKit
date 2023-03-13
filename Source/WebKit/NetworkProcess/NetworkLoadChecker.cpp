@@ -427,7 +427,8 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_webPageProxyID,
         m_storedCredentialsPolicy,
         m_allowPrivacyProxy,
-        m_networkConnectionIntegrityPolicy
+        m_networkConnectionIntegrityPolicy,
+        request.hasHTTPHeaderField(HTTPHeaderName::SecFetchSite)
     };
     m_corsPreflightChecker = makeUnique<NetworkCORSPreflightChecker>(m_networkProcess.get(), m_networkResourceLoader.get(), WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
         LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success=%d forRedirect=%d", error.isNull(), isRedirected);

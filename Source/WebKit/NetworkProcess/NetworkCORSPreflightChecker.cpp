@@ -67,7 +67,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     CORS_CHECKER_RELEASE_LOG("startPreflight");
 
     NetworkLoadParameters loadParameters;
-    loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
+    loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer, m_parameters.includeFetchMetadata);
     loadParameters.networkConnectionIntegrityPolicy = m_parameters.networkConnectionIntegrityPolicy;
     if (!m_parameters.userAgent.isNull())
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
