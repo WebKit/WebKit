@@ -57,6 +57,7 @@
 #include "MediaQueryParser.h"
 #include "NodeRenderStyle.h"
 #include "PlatformStrategies.h"
+#include "RenderElement.h"
 #include "ResourceError.h"
 #include "Settings.h"
 #include "SizesAttributeParser.h"
