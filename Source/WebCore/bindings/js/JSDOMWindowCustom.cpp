@@ -198,6 +198,16 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
 
     auto* thisObject = jsCast<JSDOMWindow*>(object);
 
+    // Construct3 assumes that the presence of OffscreenCanvas implies
+    // that WebGL will always be available, which isn't true yet.
+    // Disable OffscreenCanvas when the Construct3 library is present
+    // rdar://106341361
+    if (UNLIKELY(propertyName == builtinNames(lexicalGlobalObject->vm()).OffscreenCanvasPublicName()) && lexicalGlobalObject->needsSiteSpecificQuirks()) {
+        auto c3SupportedProperty = JSC::Identifier::fromString(lexicalGlobalObject->vm(), "C3_IsSupported"_s);
+        if (object->hasProperty(lexicalGlobalObject, c3SupportedProperty))
+            return false;
+    }
+
     // Hand off all cross-domain access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage))
