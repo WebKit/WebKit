@@ -1492,7 +1492,56 @@ static EncodedJSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSAr
     scope.release();
     result->putDirectIndex(globalObject, firstArraySize, second);
     return JSValue::encode(result);
+}
 
+static EncodedJSValue concatAppendArrayLike(JSGlobalObject* globalObject, VM& vm, JSArray* first, JSObject* second)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(!isJSArray(second));
+    ASSERT(isArray(globalObject, second));
+    ASSERT(!shouldUseSlowPut(first->indexingType()));
+    Butterfly* firstButterfly = first->butterfly();
+    unsigned firstArraySize = firstButterfly->publicLength();
+
+    // https://tc39.es/ecma262/multipage/abstract-operations.html#sec-lengthofarraylike
+    uint64_t secondLength = second->get(globalObject, vm.propertyNames->length).toLength(globalObject);
+
+    CheckedUint32 checkedResultSize = firstArraySize;
+    checkedResultSize += secondLength;
+    if (UNLIKELY(checkedResultSize.hasOverflowed())) {
+        throwOutOfMemoryError(globalObject, scope);
+        return encodedJSValue();
+    }
+
+    unsigned resultSize = checkedResultSize;
+    IndexingType type = secondLength ? first->mergeIndexingTypeForCopying(indexingTypeForValue(second->get(globalObject, 0u)) | IsArray) : first->indexingType();
+
+    if (type == NonArray)
+        type = first->indexingType();
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(type);
+    JSArray* result = JSArray::tryCreate(vm, resultStructure, resultSize);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return encodedJSValue();
+    }
+
+    bool success = result->appendMemcpy(globalObject, vm, 0, first);
+    EXCEPTION_ASSERT(!scope.exception() || !success);
+    if (!success) {
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+        bool success = moveElements(globalObject, vm, result, 0, first, firstArraySize);
+        EXCEPTION_ASSERT(!scope.exception() == success);
+        if (UNLIKELY(!success))
+            return encodedJSValue();
+    }
+
+    scope.release();
+    for (uint64_t i = 0; i < secondLength; ++i)
+        result->putDirectIndex(globalObject, firstArraySize + i, second->get(globalObject, i));
+    return JSValue::encode(result);
 }
 
 template<typename T>
@@ -1540,69 +1589,73 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
         return JSValue::encode(jsNull());
 
     JSValue second = callFrame->uncheckedArgument(1);
-    if (!isJSArray(second))
+    if (!isArray(globalObject, second))
         RELEASE_AND_RETURN(scope, concatAppendOne(globalObject, vm, firstArray, second));
 
-    JSArray* secondArray = jsCast<JSArray*>(second);
-    
-    Butterfly* firstButterfly = firstArray->butterfly();
-    Butterfly* secondButterfly = secondArray->butterfly();
+    if (LIKELY(isJSArray(second))) {
+        JSArray* secondArray = jsCast<JSArray*>(second);
 
-    unsigned firstArraySize = firstButterfly->publicLength();
-    unsigned secondArraySize = secondButterfly->publicLength();
+        Butterfly* firstButterfly = firstArray->butterfly();
+        Butterfly* secondButterfly = secondArray->butterfly();
 
-    CheckedUint32 checkedResultSize = firstArraySize;
-    checkedResultSize += secondArraySize;
+        unsigned firstArraySize = firstButterfly->publicLength();
+        unsigned secondArraySize = secondButterfly->publicLength();
 
-    if (UNLIKELY(checkedResultSize.hasOverflowed())) {
-        throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
-    }
+        CheckedUint32 checkedResultSize = firstArraySize;
+        checkedResultSize += secondArraySize;
 
-    unsigned resultSize = checkedResultSize;
-    IndexingType firstType = firstArray->indexingType();
-    IndexingType secondType = secondArray->indexingType();
-    IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType);
-    if (type == NonArray || !firstArray->canFastCopy(secondArray) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
-        JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-        bool success = moveElements(globalObject, vm, result, 0, firstArray, firstArraySize);
-        EXCEPTION_ASSERT(!scope.exception() == success);
-        if (UNLIKELY(!success))
+        if (UNLIKELY(checkedResultSize.hasOverflowed())) {
+            throwOutOfMemoryError(globalObject, scope);
             return encodedJSValue();
-        success = moveElements(globalObject, vm, result, firstArraySize, secondArray, secondArraySize);
-        EXCEPTION_ASSERT(!scope.exception() == success);
-        if (UNLIKELY(!success))
-            return encodedJSValue();
+        }
 
+        unsigned resultSize = checkedResultSize;
+        IndexingType firstType = firstArray->indexingType();
+        IndexingType secondType = secondArray->indexingType();
+        IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType);
+        if (type == NonArray || !firstArray->canFastCopy(secondArray) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
+            JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+            bool success = moveElements(globalObject, vm, result, 0, firstArray, firstArraySize);
+            EXCEPTION_ASSERT(!scope.exception() == success);
+            if (UNLIKELY(!success))
+                return encodedJSValue();
+            success = moveElements(globalObject, vm, result, firstArraySize, secondArray, secondArraySize);
+            EXCEPTION_ASSERT(!scope.exception() == success);
+            if (UNLIKELY(!success))
+                return encodedJSValue();
+
+            return JSValue::encode(result);
+        }
+
+        Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(type);
+        if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+            return JSValue::encode(jsNull());
+
+        ASSERT(!globalObject->isHavingABadTime());
+        ObjectInitializationScope initializationScope(vm);
+        JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
+        if (UNLIKELY(!result)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return encodedJSValue();
+        }
+
+        if (type == ArrayWithDouble) {
+            double* buffer = result->butterfly()->contiguousDouble().data();
+            copyElements(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
+            copyElements(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
+        } else if (type != ArrayWithUndecided) {
+            WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
+            copyElements(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+            copyElements(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
+        }
+
+        ASSERT(result->butterfly()->publicLength() == resultSize);
         return JSValue::encode(result);
     }
-
-    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(type);
-    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
-        return JSValue::encode(jsNull());
-
-    ASSERT(!globalObject->isHavingABadTime());
-    ObjectInitializationScope initializationScope(vm);
-    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
-    if (UNLIKELY(!result)) {
-        throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
-    }
-
-    if (type == ArrayWithDouble) {
-        double* buffer = result->butterfly()->contiguousDouble().data();
-        copyElements(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
-        copyElements(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
-    } else if (type != ArrayWithUndecided) {
-        WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
-        copyElements(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
-        copyElements(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
-    }
-
-    ASSERT(result->butterfly()->publicLength() == resultSize);
-    return JSValue::encode(result);
+    // Slow path for arrays that are not of JSArrays type.
+    return concatAppendArrayLike(globalObject, vm, firstArray, jsCast<JSObject*>(second));
 }
 
 JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy, (JSGlobalObject* globalObject, CallFrame* callFrame))
