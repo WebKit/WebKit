@@ -90,8 +90,6 @@ Range::~Range()
 {
     ASSERT(!m_isAssociatedWithSelection);
 
-    m_ownerDocument->detachRange(*this);
-
 #ifndef NDEBUG
     rangeCounter.decrement();
 #endif

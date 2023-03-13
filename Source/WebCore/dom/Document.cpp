@@ -713,7 +713,7 @@ Document::~Document()
 
     ASSERT(!renderView());
     ASSERT(m_backForwardCacheState != InBackForwardCache);
-    ASSERT(m_ranges.isEmpty());
+    ASSERT(m_ranges.isEmptyIgnoringNullReferences());
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
     ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
@@ -5121,8 +5121,8 @@ void Document::moveNodeIteratorsToNewDocumentSlowCase(Node& node, Document& newD
 
 void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 {
-    for (auto* range : m_ranges)
-        range->nodeChildrenChanged(container);
+    for (auto& range : m_ranges)
+        range.nodeChildrenChanged(container);
 }
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
@@ -5132,8 +5132,8 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
     adjustFocusedNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
     adjustFocusNavigationNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
 
-    for (auto* range : m_ranges)
-        range->nodeChildrenWillBeRemoved(container);
+    for (auto& range : m_ranges)
+        range.nodeChildrenWillBeRemoved(container);
 
     for (auto* it : m_nodeIterators) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
@@ -5164,8 +5164,8 @@ void Document::nodeWillBeRemoved(Node& node)
     for (auto* it : m_nodeIterators)
         it->nodeWillBeRemoved(node);
 
-    for (auto* range : m_ranges)
-        range->nodeWillBeRemoved(node);
+    for (auto& range : m_ranges)
+        range.nodeWillBeRemoved(node);
 
     if (RefPtr frame = this->frame()) {
         frame->eventHandler().nodeWillBeRemoved(node);
@@ -5179,15 +5179,17 @@ void Document::nodeWillBeRemoved(Node& node)
 
 void Document::parentlessNodeMovedToNewDocument(Node& node)
 {
-    Vector<Range*, 5> rangesAffected;
+    Vector<WeakPtr<Range>, 5> rangesAffected;
 
-    for (auto* range : m_ranges) {
-        if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
+    for (auto& range : m_ranges) {
+        if (range.parentlessNodeMovedToNewDocumentAffectsRange(node))
             rangesAffected.append(range);
     }
 
-    for (auto* range : rangesAffected)
-        range->updateRangeForParentlessNodeMovedToNewDocument(node);
+    for (auto& range : rangesAffected) {
+        if (range)
+            range->updateRangeForParentlessNodeMovedToNewDocument(node);
+    }
 }
 
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
@@ -5209,9 +5211,9 @@ void Document::adjustFocusNavigationNodeOnNodeRemoval(Node& node, NodeRemoval no
 
 void Document::textInserted(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmpty()) {
-        for (auto* range : m_ranges)
-            range->textInserted(text, offset, length);
+    if (!m_ranges.isEmptyIgnoringNullReferences()) {
+        for (auto& range : m_ranges)
+            range.textInserted(text, offset, length);
     }
 
     // Update the markers for spelling and grammar checking.
@@ -5225,9 +5227,9 @@ void Document::textInserted(Node& text, unsigned offset, unsigned length)
 
 void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmpty()) {
-        for (auto* range : m_ranges)
-            range->textRemoved(text, offset, length);
+    if (!m_ranges.isEmptyIgnoringNullReferences()) {
+        for (auto& range : m_ranges)
+            range.textRemoved(text, offset, length);
     }
 
     // Update the markers for spelling and grammar checking.
@@ -5237,10 +5239,10 @@ void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 
 void Document::textNodesMerged(Text& oldNode, unsigned offset)
 {
-    if (!m_ranges.isEmpty()) {
+    if (!m_ranges.isEmptyIgnoringNullReferences()) {
         NodeWithIndex oldNodeWithIndex(&oldNode);
-        for (auto* range : m_ranges)
-            range->textNodesMerged(oldNodeWithIndex, offset);
+        for (auto& range : m_ranges)
+            range.textNodesMerged(oldNodeWithIndex, offset);
     }
 
     // FIXME: This should update markers for spelling and grammar checking.
@@ -5248,8 +5250,8 @@ void Document::textNodesMerged(Text& oldNode, unsigned offset)
 
 void Document::textNodeSplit(Text& oldNode)
 {
-    for (auto* range : m_ranges)
-        range->textNodeSplit(oldNode);
+    for (auto& range : m_ranges)
+        range.textNodeSplit(oldNode);
 
     // FIXME: This should update markers for spelling and grammar checking.
 }
@@ -6746,15 +6748,15 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
 
 void Document::attachRange(Range& range)
 {
-    ASSERT(!m_ranges.contains(&range));
-    m_ranges.add(&range);
+    ASSERT(!m_ranges.contains(range));
+    m_ranges.add(range);
 }
 
 void Document::detachRange(Range& range)
 {
     // We don't ASSERT m_ranges.contains(&range) to allow us to call this
     // unconditionally to fix: https://bugs.webkit.org/show_bug.cgi?id=26044
-    m_ranges.remove(&range);
+    m_ranges.remove(range);
 }
 
 std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)

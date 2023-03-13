@@ -1958,7 +1958,7 @@ private:
     mutable String m_uniqueIdentifier;
 
     HashSet<NodeIterator*> m_nodeIterators;
-    HashSet<Range*> m_ranges;
+    WeakHashSet<Range> m_ranges;
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
