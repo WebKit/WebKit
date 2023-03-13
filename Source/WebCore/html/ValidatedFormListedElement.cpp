@@ -46,6 +46,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLParserIdioms.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ValidationMessage.h"
 #include <wtf/Ref.h>
