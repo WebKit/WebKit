@@ -3919,11 +3919,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
 
     if (event.type() == eventNames().keydownEvent) {
         m_frame.editor().handleKeyboardEvent(event);
-#if PLATFORM(COCOA)
-        if (event.defaultHandled() && !(event.keyIdentifier() == "PageDown"_s || event.keyIdentifier() == "PageUp"_s))
-#else
         if (event.defaultHandled())
-#endif
             return;
 
         if (event.key() == "Escape"_s) {
@@ -4350,7 +4346,7 @@ bool EventHandler::defaultKeyboardScrollEventHandler(KeyboardEvent& event, Scrol
 
 void EventHandler::defaultPageUpDownEventHandler(KeyboardEvent& event)
 {
-#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN_CAIRO) || PLATFORM(COCOA)
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
     ASSERT(event.type() == eventNames().keydownEvent);
 
     if (event.ctrlKey() || event.metaKey() || event.altKey() || event.altGraphKey() || event.shiftKey())

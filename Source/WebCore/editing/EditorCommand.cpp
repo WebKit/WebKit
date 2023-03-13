@@ -1012,7 +1012,27 @@ static bool executeRemoveFormat(Frame& frame, Event*, EditorCommandSource, const
     return true;
 }
 
-static bool executeScrollLineUp(Frame& frame, Event*, EditorCommandSource, const String&)
+static bool executeScrollPageBackward(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
+{
+    if (frame.eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
+        auto isKeyRepeat = event && event->isKeyboardEvent() && downcast<KeyboardEvent>(*event).repeat();
+        return frame.eventHandler().keyboardScrollRecursively(ScrollDirection::ScrollUp, ScrollGranularity::Page, nullptr, isKeyRepeat);
+    }
+
+    return frame.eventHandler().logicalScrollRecursively(ScrollBlockDirectionBackward, ScrollGranularity::Page);
+}
+
+static bool executeScrollPageForward(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
+{
+    if (frame.eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
+        auto isKeyRepeat = event && event->isKeyboardEvent() && downcast<KeyboardEvent>(*event).repeat();
+        return frame.eventHandler().keyboardScrollRecursively(ScrollDirection::ScrollDown, ScrollGranularity::Page, nullptr, isKeyRepeat);
+    }
+
+    return frame.eventHandler().logicalScrollRecursively(ScrollBlockDirectionForward, ScrollGranularity::Page);
+}
+
+static bool executeScrollLineUp(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
     return frame.eventHandler().scrollRecursively(ScrollUp, ScrollGranularity::Line);
 }
@@ -1755,6 +1775,8 @@ static const CommandMap& createCommandMap()
         { "Print"_s, { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo"_s, { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat"_s, { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollPageBackward"_s, { executeScrollPageBackward, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollPageForward"_s, { executeScrollPageForward, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollLineUp"_s, { executeScrollLineUp, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollLineDown"_s, { executeScrollLineDown, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollToBeginningOfDocument"_s, { executeScrollToBeginningOfDocument, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
