@@ -77,7 +77,7 @@ static String createWithFormatAndArguments(const char* format, va_list args)
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
 
-#if USE(CF) && !OS(WINDOWS)
+#if USE(CF)
     if (strstr(format, "%@")) {
         auto cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
         auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
@@ -138,7 +138,7 @@ static void logToStderr(const char* buffer)
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
 {
-#if USE(CF) && !OS(WINDOWS)
+#if USE(CF)
     if (strstr(format, "%@")) {
         auto cfFormat = adoptCF(CFStringCreateWithCString(nullptr, format, kCFStringEncodingUTF8));
 

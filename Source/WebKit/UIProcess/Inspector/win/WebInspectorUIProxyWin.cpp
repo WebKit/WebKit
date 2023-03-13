@@ -48,10 +48,6 @@
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebKit/WKPage.h>
 
-#if USE(CF)
-#include <wtf/cf/CFURLExtras.h>
-#endif
-
 namespace WebKit {
 
 static const LPCWSTR WebInspectorUIProxyPointerProp = L"WebInspectorUIProxyPointer";

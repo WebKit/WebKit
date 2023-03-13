@@ -246,12 +246,7 @@ bool ApplicationCacheHost::maybeLoadFallbackForError(ResourceLoader* resourceLoa
 
 URL ApplicationCacheHost::createFileURL(const String& path)
 {
-#if USE(CF) && PLATFORM(WIN)
-    // FIXME: Is this correct? Seems improbable that the passed-in paths would be in the Windows path style.
-    return adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false)).get();
-#else
     return URL::fileURLWithFileSystemPath(path);
-#endif
 }
 
 static inline RefPtr<SharedBuffer> bufferFromResource(ApplicationCacheResource& resource)
