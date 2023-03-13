@@ -41,7 +41,7 @@ class ContainerNode;
 class Document;
 class DocumentFragment;
 class Element;
-class Frame;
+class LocalFrame;
 class HTMLElement;
 class Node;
 class Page;

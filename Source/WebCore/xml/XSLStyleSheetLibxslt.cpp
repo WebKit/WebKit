@@ -136,7 +136,7 @@ bool XSLStyleSheet::parseString(const String& string)
     clearXSLStylesheetDocument();
 
     PageConsoleClient* console = nullptr;
-    Frame* frame = ownerDocument()->frame();
+    auto* frame = ownerDocument()->frame();
     if (frame && frame->page())
         console = &frame->page()->console();
 

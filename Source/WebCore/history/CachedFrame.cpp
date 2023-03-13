@@ -57,7 +57,7 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
 
-CachedFrameBase::CachedFrameBase(Frame& frame)
+CachedFrameBase::CachedFrameBase(LocalFrame& frame)
     : m_document(frame.document())
     , m_documentLoader(frame.loader().documentLoader())
     , m_view(frame.view())
@@ -140,7 +140,7 @@ void CachedFrameBase::restore()
     frame->view()->didRestoreFromBackForwardCache();
 }
 
-CachedFrame::CachedFrame(Frame& frame)
+CachedFrame::CachedFrame(LocalFrame& frame)
     : CachedFrameBase(frame)
 {
 #ifndef NDEBUG
@@ -267,7 +267,7 @@ void CachedFrame::destroy()
     if (m_cachedFramePlatformData)
         m_cachedFramePlatformData->clear();
 
-    Frame::clearTimers(m_view.get(), m_document.get());
+    LocalFrame::clearTimers(m_view.get(), m_document.get());
 
     // FIXME: Why do we need to call removeAllEventListeners here? When the document is in back/forward cache, this method won't work
     // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).

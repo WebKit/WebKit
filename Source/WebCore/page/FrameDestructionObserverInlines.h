@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-inline Frame* FrameDestructionObserver::frame() const
+inline LocalFrame* FrameDestructionObserver::frame() const
 {
     return m_frame.get();
 }

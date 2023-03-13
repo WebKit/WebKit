@@ -48,7 +48,7 @@ FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requeste
 {
 }
 
-FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resourceRequest, const SubstituteData& substituteData)
+FrameLoadRequest::FrameLoadRequest(LocalFrame& frame, const ResourceRequest& resourceRequest, const SubstituteData& substituteData)
     : m_requester { *frame.document() }
     , m_requesterSecurityOrigin { frame.document()->securityOrigin() }
     , m_resourceRequest { resourceRequest }

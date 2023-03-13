@@ -83,7 +83,7 @@ class ExtendableEvent;
 class FetchRequest;
 class FetchResponse;
 class File;
-class Frame;
+class LocalFrame;
 class GCObservation;
 class HTMLAnchorElement;
 class HTMLAttachmentElement;
@@ -1376,7 +1376,7 @@ public:
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
-    Frame* frame() const;
+    LocalFrame* frame() const;
 
     void updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue);
 

@@ -177,7 +177,7 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    Frame* frame = thisObject->wrapped().frame();
+    LocalFrame* frame = thisObject->wrapped().frame();
     if (!frame)
         return false;
 
@@ -230,7 +230,7 @@ bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* o
 RuntimeFlags JSDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    Frame* frame = thisObject->wrapped().frame();
+    LocalFrame* frame = thisObject->wrapped().frame();
     if (!frame)
         return RuntimeFlags();
     return frame->settings().javaScriptRuntimeFlags();
@@ -318,7 +318,7 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, DOMWindow& domWindow)
     return toJS(lexicalGlobalObject, frame->windowProxy());
 }
 
-JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
+JSDOMWindow* toJSDOMWindow(LocalFrame& frame, DOMWrapperWorld& world)
 {
     return frame.script().globalObject(world);
 }

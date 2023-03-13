@@ -78,7 +78,7 @@ JSC::VM& commonVMSlow()
     return vm;
 }
 
-Frame* lexicalFrameFromCommonVM()
+LocalFrame* lexicalFrameFromCommonVM()
 {
     JSC::VM& vm = commonVM();
     if (auto* topCallFrame = vm.topCallFrame) {

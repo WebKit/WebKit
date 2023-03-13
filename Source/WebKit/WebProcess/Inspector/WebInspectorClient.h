@@ -55,7 +55,7 @@ private:
 
     Inspector::FrontendChannel* openLocalFrontend(WebCore::InspectorController*) override;
     void bringFrontendToFront() override;
-    void didResizeMainFrame(WebCore::Frame*) override;
+    void didResizeMainFrame(WebCore::LocalFrame*) override;
 
     void highlight() override;
     void hideHighlight() override;

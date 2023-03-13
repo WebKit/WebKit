@@ -250,7 +250,7 @@ Element* FocusNavigationScope::owner() const
     ASSERT(m_treeScopeRootNode);
     if (is<ShadowRoot>(*m_treeScopeRootNode))
         return downcast<ShadowRoot>(*m_treeScopeRootNode).host();
-    if (Frame* frame = m_treeScopeRootNode->document().frame())
+    if (LocalFrame* frame = m_treeScopeRootNode->document().frame())
         return frame->ownerElement();
     return nullptr;
 }
@@ -346,7 +346,7 @@ FocusController::FocusController(Page& page, OptionSet<ActivityState::Flag> acti
 {
 }
 
-void FocusController::setFocusedFrame(Frame* frame)
+void FocusController::setFocusedFrame(LocalFrame* frame)
 {
     ASSERT(!frame || frame->page() == &m_page);
     if (m_focusedFrame == frame || m_isChangingFocusedFrame)
@@ -354,8 +354,8 @@ void FocusController::setFocusedFrame(Frame* frame)
 
     m_isChangingFocusedFrame = true;
 
-    RefPtr<Frame> oldFrame = m_focusedFrame;
-    RefPtr<Frame> newFrame = frame;
+    RefPtr oldFrame { m_focusedFrame };
+    RefPtr newFrame { frame };
 
     m_focusedFrame = newFrame;
 
@@ -392,9 +392,9 @@ void FocusController::setFocusedFrame(Frame* frame)
     m_isChangingFocusedFrame = false;
 }
 
-Frame& FocusController::focusedOrMainFrame() const
+LocalFrame& FocusController::focusedOrMainFrame() const
 {
-    if (Frame* frame = focusedFrame())
+    if (LocalFrame* frame = focusedFrame())
         return *frame;
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     ASSERT(localMainFrame);
@@ -490,7 +490,7 @@ bool FocusController::relinquishFocusToChrome(FocusDirection direction)
 
 bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, KeyboardEvent* event, bool initialFocus)
 {
-    Frame& frame = focusedOrMainFrame();
+    LocalFrame& frame = focusedOrMainFrame();
     Document* document = frame.document();
 
     Node* currentNode = document->focusNavigationStartingNode(direction);
@@ -791,7 +791,7 @@ static bool relinquishesEditingFocus(Element& element)
     return frame->editor().shouldEndEditing(makeRangeSelectingNodeContents(*root));
 }
 
-static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFrame, Node* newFocusedNode)
+static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newFocusedFrame, Node* newFocusedNode)
 {
     if (!oldFocusedFrame || !newFocusedFrame)
         return;
@@ -856,11 +856,11 @@ static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, Ref
     return true;
 }
 
-bool FocusController::setFocusedElement(Element* element, Frame& newFocusedFrame, const FocusOptions& options)
+bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocusedFrame, const FocusOptions& options)
 {
-    Ref<Frame> protectedNewFocusedFrame = newFocusedFrame;
-    RefPtr<Frame> oldFocusedFrame = focusedFrame();
-    RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
+    Ref protectedNewFocusedFrame { newFocusedFrame };
+    RefPtr oldFocusedFrame { focusedFrame() };
+    RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
     Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     if (oldFocusedElement == element) {

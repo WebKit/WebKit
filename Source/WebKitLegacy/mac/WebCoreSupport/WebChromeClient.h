@@ -62,9 +62,9 @@ private:
     void takeFocus(WebCore::FocusDirection) override;
 
     void focusedElementChanged(WebCore::Element*) override;
-    void focusedFrameChanged(WebCore::Frame*) final;
+    void focusedFrameChanged(WebCore::LocalFrame*) final;
 
-    WebCore::Page* createWindow(WebCore::Frame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    WebCore::Page* createWindow(WebCore::LocalFrame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
 
     bool canRunModal() const final;
@@ -87,13 +87,13 @@ private:
     void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceURL) final;
 
     bool canRunBeforeUnloadConfirmPanel() final;
-    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame&) final;
+    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::LocalFrame&) final;
 
     void closeWindow() final;
 
-    void runJavaScriptAlert(WebCore::Frame&, const String&) override;
-    bool runJavaScriptConfirm(WebCore::Frame&, const String&) override;
-    bool runJavaScriptPrompt(WebCore::Frame&, const String& message, const String& defaultValue, String& result) override;
+    void runJavaScriptAlert(WebCore::LocalFrame&, const String&) override;
+    bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) override;
+    bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) override;
 
     void invalidateRootView(const WebCore::IntRect&) final;
     void invalidateContentsAndRootView(const WebCore::IntRect&) final;
@@ -109,7 +109,7 @@ private:
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
     PlatformPageClient platformPageClient() const final;
-    void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;
+    void contentsSizeChanged(WebCore::LocalFrame&, const WebCore::IntSize&) const final;
     void intrinsicContentsSizeChanged(const WebCore::IntSize&) const final { }
 
     void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final;
@@ -121,12 +121,12 @@ private:
 
     void setToolTip(const String&);
 
-    void print(WebCore::Frame&, const WebCore::StringWithDirection&) final;
-    void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final;
+    void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
+    void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final;
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
     void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t totalSpaceNeeded) final;
 
-    void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) override;
+    void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) override;
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) override;
 
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
@@ -181,7 +181,7 @@ private:
 
     bool shouldPaintEntireContents() const final;
 
-    void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
+    void attachRootGraphicsLayer(WebCore::LocalFrame&, WebCore::GraphicsLayer*) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     void triggerRenderingUpdate() final;

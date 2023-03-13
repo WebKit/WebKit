@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame* parentFrame) 
+static inline bool canReferToParentFrameEncoding(const LocalFrame* frame, const LocalFrame* parentFrame) 
 {
     if (is<XMLDocument>(frame->document()))
         return false;
@@ -312,7 +312,7 @@ void DocumentWriter::end()
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it can be deleted by checkCompleted(), 
     // so we'll add a protective refcount
-    Ref<Frame> protect(*m_frame);
+    Ref protectedFrame { *m_frame };
 
     if (!m_parser)
         return;
@@ -330,7 +330,7 @@ void DocumentWriter::setEncoding(const String& name, IsEncodingUserChosen isUser
     m_encodingWasChosenByUser = isUserChosen == IsEncodingUserChosen::Yes;
 }
 
-void DocumentWriter::setFrame(Frame& frame)
+void DocumentWriter::setFrame(LocalFrame& frame)
 {
     m_frame = frame;
 }

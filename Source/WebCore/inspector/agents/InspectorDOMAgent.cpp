@@ -2808,7 +2808,7 @@ void InspectorDOMAgent::didChangeCustomElementState(Element& element)
     m_frontendDispatcher->customElementStateChanged(elementId, customElementState(element));
 }
 
-void InspectorDOMAgent::frameDocumentUpdated(Frame& frame)
+void InspectorDOMAgent::frameDocumentUpdated(LocalFrame& frame)
 {
     Document* document = frame.document();
     if (!document)

@@ -112,7 +112,7 @@ void WebPage::collapseSelectionInFrame(FrameIdentifier frameID)
     frame->coreFrame()->selection().setBase(selection.extent(), selection.affinity());
 }
 
-void WebPage::showEmojiPicker(Frame& frame)
+void WebPage::showEmojiPicker(LocalFrame& frame)
 {
     CompletionHandler<void(String)> completionHandler = [frame = Ref { frame }](String result) {
         if (!result.isEmpty())

@@ -47,7 +47,7 @@ void WebContextMenuClient::downloadURL(const URL&)
 
 #if !PLATFORM(COCOA)
 
-void WebContextMenuClient::searchWithGoogle(const WebCore::Frame* frame)
+void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame* frame)
 {
     auto page = frame->page();
     if (!page)
@@ -64,7 +64,7 @@ void WebContextMenuClient::searchWithGoogle(const WebCore::Frame* frame)
     localMainFrame->loader().changeLocation(searchURL, { }, nullptr, WebCore::ReferrerPolicy::EmptyString, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
-void WebContextMenuClient::lookUpInDictionary(WebCore::Frame*)
+void WebContextMenuClient::lookUpInDictionary(WebCore::LocalFrame*)
 {
     notImplemented();
 }

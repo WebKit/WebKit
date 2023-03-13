@@ -146,7 +146,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
     }
 }
 
-PluginDocument::PluginDocument(Frame& frame, const URL& url)
+PluginDocument::PluginDocument(LocalFrame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::Plugin })
 {
     setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);

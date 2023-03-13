@@ -78,7 +78,7 @@ class AXTextMarkerRange;
 class AccessibilityScrollView;
 class Document;
 class Element;
-class Frame;
+class LocalFrame;
 class FrameView;
 class Node;
 class Page;

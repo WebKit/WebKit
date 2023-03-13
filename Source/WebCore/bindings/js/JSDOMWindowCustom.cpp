@@ -157,8 +157,8 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     // the Moz way.
     // FIXME: Add support to named attributes on RemoteFrames.
     auto* frame = window.frame();
-    if (frame && is<Frame>(*frame)) {
-        if (auto* scopedChild = dynamicDowncast<LocalFrame>(downcast<Frame>(*frame).tree().scopedChild(propertyNameToAtomString(propertyName)))) {
+    if (frame && is<LocalFrame>(*frame)) {
+        if (auto* scopedChild = dynamicDowncast<LocalFrame>(downcast<LocalFrame>(*frame).tree().scopedChild(propertyNameToAtomString(propertyName)))) {
             slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }
@@ -465,7 +465,7 @@ public:
 private:
     JSGlobalObject& m_globalObject;
     CallFrame& m_callFrame;
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
 };
 
 inline void DialogHandler::dialogCreated(DOMWindow& dialog)
@@ -668,7 +668,7 @@ void JSDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
     createDataProperty(&lexicalGlobalObject, builtinNames(lexicalGlobalObject.vm()).openDatabasePublicName(), value, shouldThrow);
 }
 
-JSDOMWindow& mainWorldGlobalObject(Frame& frame)
+JSDOMWindow& mainWorldGlobalObject(LocalFrame& frame)
 {
     // FIXME: What guarantees the result of jsWindowProxy() is non-null?
     // FIXME: What guarantees the result of window() is non-null?

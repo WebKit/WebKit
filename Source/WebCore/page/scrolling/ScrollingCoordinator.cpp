@@ -104,7 +104,7 @@ ScrollingNodeID ScrollingCoordinator::scrollableContainerNodeID(const RenderObje
     return 0;
 }
 
-EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const Frame& frame) const
+EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const LocalFrame& frame) const
 {
     auto* renderView = frame.contentRenderer();
     if (!renderView || renderView->renderTreeBeingDestroyed())

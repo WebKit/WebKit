@@ -34,7 +34,7 @@ namespace WebCore {
 class MediaDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(MediaDocument);
 public:
-    static Ref<MediaDocument> create(Frame* frame, const Settings& settings, const URL& url)
+    static Ref<MediaDocument> create(LocalFrame* frame, const Settings& settings, const URL& url)
     {
         auto document = adoptRef(*new MediaDocument(frame, settings, url));
         document->addToContextsMap();
@@ -46,7 +46,7 @@ public:
     String outgoingReferrer() const { return m_outgoingReferrer; }
 
 private:
-    MediaDocument(Frame*, const Settings&, const URL&);
+    MediaDocument(LocalFrame*, const Settings&, const URL&);
 
     Ref<DocumentParser> createParser() override;
 

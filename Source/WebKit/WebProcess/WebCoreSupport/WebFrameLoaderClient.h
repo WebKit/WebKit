@@ -131,7 +131,7 @@ private:
     void dispatchDidReachVisuallyNonEmptyState() final;
     void dispatchDidLayout() final;
 
-    WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) final;
+    WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) final;
     void dispatchShow() final;
     
     void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebCore::PolicyCheckIdentifier, const String&, WebCore::FramePolicyFunction&&) final;
@@ -222,7 +222,7 @@ private:
     bool canCachePage() const final;
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
-    RefPtr<WebCore::Frame> createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::LocalFrame> createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
 
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) final;
     void redirectDataToPlugin(WebCore::Widget&) final;

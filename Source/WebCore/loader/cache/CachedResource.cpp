@@ -164,7 +164,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         failBeforeStarting();
         return;
     }
-    Frame& frame = *cachedResourceLoader.frame();
+    LocalFrame& frame = *cachedResourceLoader.frame();
 
     // Prevent new loads if we are in the BackForwardCache or being added to the BackForwardCache.
     // We query the top document because new frames may be created in pagehide event handlers

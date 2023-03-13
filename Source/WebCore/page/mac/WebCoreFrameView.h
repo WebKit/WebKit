@@ -32,7 +32,7 @@
 #endif
 
 namespace WebCore {
-class Frame;
+class LocalFrame;
 }
 
 @protocol WebCoreFrameScrollView
@@ -45,5 +45,5 @@ class Frame;
 @end
 
 @protocol WebCoreFrameView
-- (NakedPtr<WebCore::Frame>)_web_frame;
+- (NakedPtr<WebCore::LocalFrame>)_web_frame;
 @end

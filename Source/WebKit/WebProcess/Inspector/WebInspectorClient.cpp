@@ -101,7 +101,7 @@ void WebInspectorClient::bringFrontendToFront()
         m_page->inspector()->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(Frame*)
+void WebInspectorClient::didResizeMainFrame(LocalFrame*)
 {
     if (m_page->inspector())
         m_page->inspector()->updateDockingAvailability();

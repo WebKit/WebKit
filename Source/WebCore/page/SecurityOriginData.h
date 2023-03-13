@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class SecurityOrigin;
 
 enum OpaqueOriginIdentifierType { };
@@ -64,7 +64,7 @@ public:
     SecurityOriginData(WTF::HashTableDeletedValueType)
         : m_data { Tuple { WTF::HashTableDeletedValue, { }, { } } } { }
     
-    WEBCORE_EXPORT static SecurityOriginData fromFrame(Frame*);
+    WEBCORE_EXPORT static SecurityOriginData fromFrame(LocalFrame*);
     WEBCORE_EXPORT static SecurityOriginData fromURL(const URL&);
     WEBCORE_EXPORT static SecurityOriginData fromURLWithoutStrictOpaqueness(const URL&);
 

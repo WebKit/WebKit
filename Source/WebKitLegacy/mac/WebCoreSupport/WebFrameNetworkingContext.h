@@ -29,7 +29,7 @@
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static Ref<WebFrameNetworkingContext> create(WebCore::Frame* frame)
+    static Ref<WebFrameNetworkingContext> create(WebCore::LocalFrame* frame)
     {
         return adoptRef(*new WebFrameNetworkingContext(frame));
     }
@@ -39,7 +39,7 @@ public:
 
 private:
 
-    WebFrameNetworkingContext(WebCore::Frame* frame)
+    WebFrameNetworkingContext(WebCore::LocalFrame* frame)
         : WebCore::FrameNetworkingContext(frame)
     {
     }

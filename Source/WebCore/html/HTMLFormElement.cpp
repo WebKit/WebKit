@@ -283,7 +283,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     if (!isConnected())
         return;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     if (m_isSubmittingOrPreparingForSubmission || !frame)
         return;
 
@@ -411,8 +411,8 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
     if (m_isConstructingEntryList)
         return;
 
-    RefPtr<FrameView> view = document().view();
-    RefPtr<Frame> frame = document().frame();
+    RefPtr view { document().view() };
+    RefPtr frame { document().frame() };
     if (!view || !frame)
         return;
 
@@ -479,7 +479,7 @@ void HTMLFormElement::reset()
     if (m_isInResetFunction)
         return;
 
-    RefPtr<Frame> protectedFrame = document().frame();
+    RefPtr protectedFrame { document().frame() };
     if (!protectedFrame)
         return;
 
@@ -508,7 +508,7 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
         m_attributes.parseAction(value);
         
         if (!m_attributes.action().isEmpty()) {
-            if (RefPtr<Frame> f = document().frame()) {
+            if (RefPtr f = document().frame()) {
                 if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
                     MixedContentChecker::checkFormForMixedContent(*topFrame, topFrame->document()->securityOrigin(), document().completeURL(m_attributes.action()));
             }

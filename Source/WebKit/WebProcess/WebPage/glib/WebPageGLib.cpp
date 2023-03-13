@@ -108,7 +108,7 @@ void WebPage::sendMessageToWebProcessExtension(UserMessage&& message)
     sendMessageToWebProcessExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
+void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     if (!result.hasPostLayoutAndVisualData() || !frame.view() || frame.view()->needsLayout())
         return;

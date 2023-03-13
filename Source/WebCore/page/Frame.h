@@ -113,12 +113,11 @@ enum OverflowScrollAction { DoNotPerformOverflowScroll, PerformOverflowScroll };
 using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNode, IntRect* nodeBounds)>;
 #endif
 
-// FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
-class Frame final : public AbstractFrame {
+class LocalFrame final : public AbstractFrame {
 public:
-    WEBCORE_EXPORT static Ref<Frame> createMainFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier);
-    WEBCORE_EXPORT static Ref<Frame> createSubframe(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
-    WEBCORE_EXPORT static Ref<Frame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, AbstractFrame& parent);
+    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
+    WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, AbstractFrame& parent);
 
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
@@ -131,7 +130,7 @@ public:
         bool useFixedLayout = false, ScrollbarMode = ScrollbarMode::Auto, bool horizontalLock = false,
         ScrollbarMode = ScrollbarMode::Auto, bool verticalLock = false);
 
-    WEBCORE_EXPORT ~Frame();
+    WEBCORE_EXPORT ~LocalFrame();
 
     WEBCORE_EXPORT DOMWindow* window() const;
 
@@ -170,8 +169,8 @@ public:
 
     String debugDescription() const;
 
-    WEBCORE_EXPORT static Frame* fromJSContext(JSContextRef);
-    WEBCORE_EXPORT static Frame* contentFrameFromWindowOrFrameElement(JSContextRef, JSValueRef);
+    WEBCORE_EXPORT static LocalFrame* fromJSContext(JSContextRef);
+    WEBCORE_EXPORT static LocalFrame* contentFrameFromWindowOrFrameElement(JSContextRef, JSValueRef);
 
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
@@ -183,7 +182,7 @@ public:
 
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
-    WEBCORE_EXPORT static Frame* frameForWidget(const Widget&);
+    WEBCORE_EXPORT static LocalFrame* frameForWidget(const Widget&);
 
     WEBCORE_EXPORT void setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot);
     bool shouldUsePrintingLayout() const;
@@ -294,7 +293,7 @@ public:
 private:
     friend class NavigationDisabler;
 
-    Frame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame* parent);
+    LocalFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame* parent);
 
     void dropChildren();
 
@@ -349,30 +348,30 @@ private:
     UniqueRef<EventHandler> m_eventHandler;
 };
 
-using LocalFrame = Frame;
+using LocalFrame = LocalFrame;
 
 // FIXME: Remove after WebKitAdditions transitions to this change.
 #define WEBCORE_HAS_LOCAL_FRAME 1
 
-inline NavigationScheduler& Frame::navigationScheduler() const
+inline NavigationScheduler& LocalFrame::navigationScheduler() const
 {
     return m_navigationScheduler.get();
 }
 
-inline FrameView* Frame::view() const
+inline FrameView* LocalFrame::view() const
 {
     return m_view.get();
 }
 
-inline Document* Frame::document() const
+inline Document* LocalFrame::document() const
 {
     return m_doc.get();
 }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const Frame&);
+WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrame&);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Frame)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalFrame)
 static bool isType(const WebCore::AbstractFrame& frame) { return frame.frameType() == WebCore::AbstractFrame::FrameType::Local; }
 SPECIALIZE_TYPE_TRAITS_END()

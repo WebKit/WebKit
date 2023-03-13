@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CachedRawResource;
 class DocumentLoader;
-class Frame;
+class LocalFrame;
 
 class IconLoader final : private CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(IconLoader); WTF_MAKE_FAST_ALLOCATED;

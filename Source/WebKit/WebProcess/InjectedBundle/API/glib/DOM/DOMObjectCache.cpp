@@ -71,7 +71,7 @@ struct DOMObjectCacheData {
 };
 
 class DOMObjectCacheFrameObserver;
-typedef HashMap<WebCore::Frame*, std::unique_ptr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
+typedef HashMap<WebCore::LocalFrame*, std::unique_ptr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
 
 static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
 {
@@ -82,7 +82,7 @@ static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
 class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DOMObjectCacheFrameObserver(WebCore::Frame& frame)
+    DOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
         : FrameDestructionObserver(&frame)
     {
     }
@@ -171,7 +171,7 @@ private:
     void frameDestroyed() override
     {
         clear();
-        WebCore::Frame* frame = m_frame.get();
+        auto* frame = m_frame.get();
         FrameDestructionObserver::frameDestroyed();
         domObjectCacheFrameObservers().remove(frame);
     }
@@ -186,7 +186,7 @@ private:
     std::unique_ptr<DOMWindowObserver> m_domWindowObserver;
 };
 
-static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCore::Frame& frame)
+static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
 {
     DOMObjectCacheFrameObserverMap::AddResult result = domObjectCacheFrameObservers().add(&frame, nullptr);
     if (result.isNewEntry)
@@ -228,7 +228,7 @@ void DOMObjectCache::put(WebCore::Node* objectHandle, void* wrapper)
         return;
 
     result.iterator->value = makeUnique<DOMObjectCacheData>(G_OBJECT(wrapper));
-    if (WebCore::Frame* frame = objectHandle->document().frame())
+    if (auto* frame = objectHandle->document().frame())
         getOrCreateDOMObjectCacheFrameObserver(*frame).addObjectCacheData(*result.iterator->value);
 }
 

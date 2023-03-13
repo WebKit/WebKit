@@ -402,7 +402,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     if (!hasChildNodes())
         return nullptr;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame)
         return nullptr;
 

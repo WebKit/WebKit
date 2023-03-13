@@ -2465,20 +2465,21 @@ void Node::defaultEventHandler(Event& event)
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.keydownEvent || eventType == eventNames.keypressEvent || eventType == eventNames.keyupEvent) {
         if (is<KeyboardEvent>(event)) {
-            if (Frame* frame = document().frame())
+            if (auto* frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));
         }
     } else if (eventType == eventNames.clickEvent) {
         dispatchDOMActivateEvent(event);
 #if ENABLE(CONTEXT_MENUS)
     } else if (eventType == eventNames.contextmenuEvent) {
-        if (Frame* frame = document().frame())
-            if (Page* page = frame->page())
+        if (auto* frame = document().frame()) {
+            if (auto* page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
+        }
 #endif
     } else if (eventType == eventNames.textInputEvent) {
         if (is<TextEvent>(event)) {
-            if (Frame* frame = document().frame())
+            if (auto* frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(downcast<TextEvent>(event));
         }
 #if ENABLE(PAN_SCROLLING)
@@ -2492,7 +2493,7 @@ void Node::defaultEventHandler(Event& event)
                 renderer = renderer->parent();
 
             if (renderer) {
-                if (Frame* frame = document().frame())
+                if (auto* frame = document().frame())
                     frame->eventHandler().startPanScrolling(downcast<RenderBox>(*renderer));
             }
         }
@@ -2508,7 +2509,7 @@ void Node::defaultEventHandler(Event& event)
             startNode = startNode->parentOrShadowHostNode();
         
         if (startNode && startNode->renderer()) {
-            if (Frame* frame = document().frame())
+            if (LocalFrame* frame = document().frame())
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
@@ -2529,7 +2530,7 @@ void Node::defaultEventHandler(Event& event)
             renderer = renderer->parent();
 
         if (renderer && renderer->node()) {
-            if (Frame* frame = document().frame())
+            if (auto* frame = document().frame())
                 frame->eventHandler().defaultTouchEventHandler(*renderer->node(), downcast<TouchEvent>(event));
         }
 #endif

@@ -674,7 +674,7 @@ void InspectorNetworkAgent::didFailLoading(ResourceLoaderIdentifier identifier, 
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
 
     if (loader && m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource) {
-        Frame* frame = loader->frame();
+        LocalFrame* frame = loader->frame();
         if (frame && frame->loader().documentLoader() && frame->document()) {
             m_resourcesData->addResourceSharedBuffer(requestId,
                 frame->loader().documentLoader()->mainResourceData(),

@@ -95,12 +95,12 @@ void WebContextMenuClient::searchWithSpotlight()
     [m_webView _searchWithSpotlightFromMenu:nil];
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame*)
+void WebContextMenuClient::searchWithGoogle(const LocalFrame*)
 {
     [m_webView _searchWithGoogleFromMenu:nil];
 }
 
-void WebContextMenuClient::lookUpInDictionary(Frame* frame)
+void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
     WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
     if(![htmlView isKindOfClass:[WebHTMLView class]])
@@ -268,7 +268,7 @@ void WebContextMenuClient::showContextMenu()
     Page* page = [m_webView page];
     if (!page)
         return;
-    Frame* frame = page->contextMenuController().hitTestResult().innerNodeFrame();
+    LocalFrame* frame = page->contextMenuController().hitTestResult().innerNodeFrame();
     if (!frame)
         return;
     FrameView* frameView = frame->view();

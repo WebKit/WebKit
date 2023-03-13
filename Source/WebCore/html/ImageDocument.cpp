@@ -205,7 +205,7 @@ void ImageDocumentParser::finish()
     document().finishedParsing();
 }
 
-ImageDocument::ImageDocument(Frame& frame, const URL& url)
+ImageDocument::ImageDocument(LocalFrame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::Image })
     , m_imageElement(nullptr)
     , m_imageSizeIsKnown(false)

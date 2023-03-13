@@ -131,7 +131,7 @@ bool PDFDocumentEventListener::operator==(const EventListener& other) const
 
 /* PDFDocument */
 
-PDFDocument::PDFDocument(Frame& frame, const URL& url)
+PDFDocument::PDFDocument(LocalFrame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::PDF })
 {
 }

@@ -73,7 +73,7 @@ WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
 
 WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
 {
-    WebCore::Frame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    WebCore::LocalFrame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return kWKFrameLoadStateFinished;
 
@@ -147,7 +147,7 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 
 void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
 {
-    WebCore::Frame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    WebCore::LocalFrame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
     if (coreFrame)
         coreFrame->loader().setOpener(0);
 }
@@ -260,7 +260,7 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
 
 bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 {
-    WebCore::Frame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    WebCore::LocalFrame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return true;
 
@@ -274,7 +274,7 @@ WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame
 
 WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 {
-    WebCore::Frame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    WebCore::LocalFrame* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return 0;
 

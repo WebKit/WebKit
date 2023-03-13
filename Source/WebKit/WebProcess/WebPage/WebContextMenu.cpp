@@ -52,7 +52,7 @@ WebContextMenu::~WebContextMenu()
 void WebContextMenu::show()
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
-    Frame* frame = controller.hitTestResult().innerNodeFrame();
+    auto* frame = controller.hitTestResult().innerNodeFrame();
     if (!frame)
         return;
     FrameView* view = frame->view();

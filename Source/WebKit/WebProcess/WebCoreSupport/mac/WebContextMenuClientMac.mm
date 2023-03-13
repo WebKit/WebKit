@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebContextMenuClient::lookUpInDictionary(Frame* frame)
+void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
     m_page->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
@@ -63,7 +63,7 @@ void WebContextMenuClient::stopSpeaking()
     m_page->stopSpeaking();
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
 {
     String searchString = frame->editor().selectedText().stripWhiteSpace();
     m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));

@@ -198,7 +198,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     if (!localMainFrame)
         return page; 
 
-    Frame& frame = *localMainFrame;
+    LocalFrame& frame = *localMainFrame;
     frame.setView(FrameView::create(frame, IntSize { 800, 600 }));
     frame.init();
 

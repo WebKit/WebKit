@@ -167,7 +167,7 @@ static const char* interpretKeyEvent(const KeyboardEvent& event)
     return mapKey ? keyPressCommandsMap.get().get(mapKey) : nullptr;
 }
 
-static void handleKeyPress(Frame& frame, KeyboardEvent& event, const PlatformKeyboardEvent& platformEvent)
+static void handleKeyPress(LocalFrame& frame, KeyboardEvent& event, const PlatformKeyboardEvent& platformEvent)
 {
     auto commandName = String::fromLatin1(interpretKeyEvent(event));
 
@@ -189,7 +189,7 @@ static void handleKeyPress(Frame& frame, KeyboardEvent& event, const PlatformKey
         event.setDefaultHandled();
 }
 
-static void handleKeyDown(Frame& frame, KeyboardEvent& event, const PlatformKeyboardEvent&)
+static void handleKeyDown(LocalFrame& frame, KeyboardEvent& event, const PlatformKeyboardEvent&)
 {
     auto commandName = String::fromLatin1(interpretKeyEvent(event));
     if (commandName.isEmpty())

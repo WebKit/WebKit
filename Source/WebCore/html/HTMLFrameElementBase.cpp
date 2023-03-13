@@ -90,7 +90,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (m_frameURL.isEmpty())
         m_frameURL = AtomString { aboutBlankURL().string() };
 
-    RefPtr<Frame> parentFrame = document().frame();
+    RefPtr parentFrame { document().frame() };
     if (!parentFrame)
         return;
 

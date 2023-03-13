@@ -48,7 +48,7 @@ void PluginInfoProvider::refresh(bool reloadPages)
 {
     refreshPlugins();
 
-    Vector<Ref<Frame>> framesNeedingReload;
+    Vector<Ref<LocalFrame>> framesNeedingReload;
 
     for (auto& page : m_pages) {
         page.clearPluginData();

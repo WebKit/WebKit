@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Node;
 
 struct SimpleRange;
@@ -44,9 +44,9 @@ public:
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(FragmentedSharedBuffer&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&);
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<Ref<LegacyWebArchive>>&& subframeArchives);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(Frame&)>&& frameFilter = { });
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Frame&);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(Frame*);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(LocalFrame&)>&& frameFilter = { });
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(LocalFrame&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(LocalFrame*);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const SimpleRange&);
 
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
@@ -61,7 +61,7 @@ private:
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static RefPtr<LegacyWebArchive> create(const String& markupString, Frame&, const Vector<Node*>& nodes, Function<bool(Frame&)>&& frameFilter);
+    static RefPtr<LegacyWebArchive> create(const String& markupString, LocalFrame&, const Vector<Node*>& nodes, Function<bool(LocalFrame&)>&& frameFilter);
     static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);

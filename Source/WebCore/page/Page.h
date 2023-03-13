@@ -393,8 +393,8 @@ public:
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
-    void progressEstimateChanged(Frame&) const;
-    void progressFinished(Frame&) const;
+    void progressEstimateChanged(LocalFrame&) const;
+    void progressFinished(LocalFrame&) const;
     BackForwardController& backForward() const { return *m_backForwardController; }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
@@ -952,8 +952,8 @@ public:
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
-    static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
-    void forEachFrame(const Function<void(Frame&)>&);
+    static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
+    void forEachFrame(const Function<void(LocalFrame&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
     const HashSet<String>& maskedURLSchemes() const { return m_maskedURLSchemes; }

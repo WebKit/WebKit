@@ -237,7 +237,7 @@ void Page::updateValidationBubbleStateIfNeeded()
 
 static void networkStateChanged(bool isOnLine)
 {
-    Vector<Ref<Frame>> frames;
+    Vector<Ref<LocalFrame>> frames;
 
     // Get all the frames of all the pages in all the page groups
     for (auto* page : allPages()) {
@@ -428,7 +428,7 @@ Page::~Page()
 
     m_inspectorController->inspectedPageDestroyed();
 
-    forEachFrame([] (Frame& frame) {
+    forEachFrame([] (LocalFrame& frame) {
         frame.willDetachPage();
         frame.detachFromPage();
     });
@@ -642,7 +642,7 @@ std::optional<AXTreeData> Page::accessibilityTreeData() const
     return std::nullopt;
 }
 
-void Page::progressEstimateChanged(Frame& frameWithProgressUpdate) const
+void Page::progressEstimateChanged(LocalFrame& frameWithProgressUpdate) const
 {
     if (auto* document = frameWithProgressUpdate.document()) {
         if (auto* axObjectCache = document->existingAXObjectCache())
@@ -650,7 +650,7 @@ void Page::progressEstimateChanged(Frame& frameWithProgressUpdate) const
     }
 }
 
-void Page::progressFinished(Frame& frameWithCompletedProgress) const
+void Page::progressFinished(LocalFrame& frameWithCompletedProgress) const
 {
     if (auto* document = frameWithCompletedProgress.document()) {
         if (auto* axObjectCache = document->existingAXObjectCache())
@@ -826,9 +826,9 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
     CheckedRef focusController { *m_focusController };
     RefPtr<AbstractFrame> frame = &focusController->focusedOrMainFrame();
-    RefPtr<Frame> startFrame = dynamicDowncast<LocalFrame>(frame.get());
+    RefPtr startFrame = dynamicDowncast<LocalFrame>(frame.get());
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap, didWrap);
             continue;
@@ -872,10 +872,10 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 {
     MatchingRanges result;
 
-    RefPtr<AbstractFrame> frame = &mainFrame();
-    RefPtr<Frame> frameWithSelection;
+    RefPtr frame { &mainFrame() };
+    RefPtr<LocalFrame> frameWithSelection;
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), true, CanWrap::No);
             continue;
@@ -928,10 +928,10 @@ std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::
         return std::nullopt;
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
-    RefPtr<AbstractFrame> frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
-    RefPtr<Frame> startFrame = dynamicDowncast<LocalFrame>(frame.get());
+    RefPtr frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
+    RefPtr startFrame = dynamicDowncast<LocalFrame>(frame.get());
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap);
             continue;
@@ -958,9 +958,9 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
 
     unsigned matchCount = 0;
 
-    RefPtr<AbstractFrame> frame = &mainFrame();
+    RefPtr frame = &mainFrame();
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), true, CanWrap::No);
             continue;
@@ -1009,7 +1009,7 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
         rangeList.insert(insertionIndex, range);
     }
 
-    HashMap<RefPtr<Frame>, unsigned> frameToTraversalIndexMap;
+    HashMap<RefPtr<LocalFrame>, unsigned> frameToTraversalIndexMap;
     unsigned currentFrameTraversalIndex = 0;
     for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
@@ -3055,7 +3055,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         && ratioOfViewThatIsUnpainted < gMaximumUnpaintedAreaRatio) {
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
-        if (Frame* frame = dynamicDowncast<LocalFrame>(mainFrame()))
+        if (LocalFrame* frame = dynamicDowncast<LocalFrame>(mainFrame()))
             frame->loader().didReachLayoutMilestone(DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }
@@ -3259,7 +3259,7 @@ void Page::notifyToInjectUserScripts()
 {
     m_hasBeenNotifiedToInjectUserScripts = true;
 
-    forEachFrame([] (Frame& frame) {
+    forEachFrame([] (LocalFrame& frame) {
         frame.injectUserScriptsAwaitingNotification();
     });
 }
@@ -3683,7 +3683,7 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
     return *m_renderingUpdateScheduler;
 }
 
-void Page::forEachDocumentFromMainFrame(const Frame& mainFrame, const Function<void(Document&)>& functor)
+void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Function<void(Document&)>& functor)
 {
     Vector<Ref<Document>> documents;
     for (const AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
@@ -3716,9 +3716,9 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #endif
 }
 
-void Page::forEachFrame(const Function<void(Frame&)>& functor)
+void Page::forEachFrame(const Function<void(LocalFrame&)>& functor)
 {
-    Vector<Ref<Frame>> frames;
+    Vector<Ref<LocalFrame>> frames;
     for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
@@ -3785,9 +3785,9 @@ ScrollLatchingController* Page::scrollLatchingControllerIfExists()
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 enum class DispatchedOnDocumentEventLoop : bool { No, Yes };
-static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
+static void dispatchPrintEvent(LocalFrame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
 {
-    Vector<Ref<Frame>> frames;
+    Vector<Ref<LocalFrame>> frames;
     for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)

@@ -466,7 +466,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         MonotonicTime::now(), nullptr, 1, { }, { }, 0, 0, { }, 0, 0, nullptr, 0, 0, MouseEvent::IsSimulated::Yes);
 
     // Call to the frame loader because this is where our security checks are made.
-    Frame* frame = core([_dataSource webFrame]);
+    auto* frame = core([_dataSource webFrame]);
     FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, InitiatedByMainFrame::Unknown };
 frameLoadRequest.setReferrerPolicy(ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.ptr(), nullptr);

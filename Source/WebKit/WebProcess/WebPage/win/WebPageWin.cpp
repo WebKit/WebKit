@@ -64,7 +64,7 @@ void WebPage::platformDetach()
 {
 }
 
-void WebPage::getPlatformEditorState(Frame&, EditorState&) const
+void WebPage::getPlatformEditorState(LocalFrame&, EditorState&) const
 {
 }
 

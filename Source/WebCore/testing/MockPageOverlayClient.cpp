@@ -112,7 +112,7 @@ bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouse
     return false;
 }
 
-void MockPageOverlayClient::didScrollFrame(PageOverlay&, Frame&)
+void MockPageOverlayClient::didScrollFrame(PageOverlay&, LocalFrame&)
 {
 }
 

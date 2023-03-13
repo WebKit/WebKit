@@ -36,7 +36,7 @@ class PDFDocumentEventListener;
 class PDFDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(PDFDocument);
 public:
-    static Ref<PDFDocument> create(Frame& frame, const URL& url)
+    static Ref<PDFDocument> create(LocalFrame& frame, const URL& url)
     {
         auto document = adoptRef(*new PDFDocument(frame, url));
         document->addToContextsMap();
@@ -54,7 +54,7 @@ public:
     void setContentScriptLoaded(bool loaded) { m_isContentScriptLoaded = loaded; }
 
 private:
-    PDFDocument(Frame&, const URL&);
+    PDFDocument(LocalFrame&, const URL&);
 
     Ref<DocumentParser> createParser() override;
 

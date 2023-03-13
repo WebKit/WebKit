@@ -227,7 +227,7 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame])
+    if (auto* coreFrame = [_webView _mainCoreFrame])
         coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionUpdated);
 
     if (_contentPreventsDefault)
@@ -241,7 +241,7 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame]) {
+    if (auto* coreFrame = [_webView _mainCoreFrame]) {
         WebCore::ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
         if (lastStage == WebCore::ImmediateActionStage::ActionUpdated)
             coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCancelledAfterUpdate);
@@ -260,7 +260,7 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame])
+    if (auto* coreFrame = [_webView _mainCoreFrame])
         coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCompleted);
 
     [_webView _setTextIndicatorAnimationProgress:1];
@@ -379,7 +379,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!node)
         return { };
 
-    WebCore::Frame* frame = node->document().frame();
+    auto* frame = node->document().frame();
     if (!frame)
         return { };
 
@@ -505,7 +505,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
 #pragma mark Text action
 
-+ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::LocalFrame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
 {
     auto& editor = frame->editor();
     editor.setIsGettingDictionaryPopupInfo(true);

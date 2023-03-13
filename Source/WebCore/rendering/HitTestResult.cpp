@@ -175,7 +175,7 @@ void HitTestResult::setScrollbar(Scrollbar* s)
     m_scrollbar = s;
 }
 
-Frame* HitTestResult::innerNodeFrame() const
+LocalFrame* HitTestResult::innerNodeFrame() const
 {
     if (m_innerNonSharedNode)
         return m_innerNonSharedNode->document().frame();
@@ -184,12 +184,12 @@ Frame* HitTestResult::innerNodeFrame() const
     return 0;
 }
 
-Frame* HitTestResult::targetFrame() const
+LocalFrame* HitTestResult::targetFrame() const
 {
     if (!m_innerURLElement)
         return nullptr;
 
-    Frame* frame = m_innerURLElement->document().frame();
+    LocalFrame* frame = m_innerURLElement->document().frame();
     if (!frame)
         return nullptr;
 
@@ -201,7 +201,7 @@ bool HitTestResult::isSelected() const
     if (!m_innerNonSharedNode)
         return false;
 
-    Frame* frame = m_innerNonSharedNode->document().frame();
+    LocalFrame* frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return false;
 
@@ -213,7 +213,7 @@ String HitTestResult::selectedText() const
     if (!m_innerNonSharedNode)
         return emptyString();
 
-    Frame* frame = m_innerNonSharedNode->document().frame();
+    LocalFrame* frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return emptyString();
 
@@ -611,7 +611,7 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (!is<Element>(*node) || !downcast<Element>(*node).isTextField())
         return false;
 
-    Frame* frame = node->document().frame();
+    LocalFrame* frame = node->document().frame();
     if (!frame)
         return false;
 
@@ -754,7 +754,7 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!marker)
         return Vector<String>();
 
-    Frame* frame = innerNonSharedNode()->document().frame();
+    LocalFrame* frame = innerNonSharedNode()->document().frame();
     if (!frame)
         return Vector<String>();
 

@@ -85,7 +85,7 @@ static void firePageShowEvent(Page& page)
     if (!localMainFrame)
         return;
 
-    Vector<Ref<Frame>> childFrames;
+    Vector<Ref<LocalFrame>> childFrames;
     for (auto* child = localMainFrame->tree().traverseNextInPostOrder(CanWrap::Yes); child; child = child->tree().traverseNextInPostOrder(CanWrap::No)) {
         auto* localChild = downcast<LocalFrame>(child);
         if (!localChild)

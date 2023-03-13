@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-class Frame;
 class Document;
 class DocumentFragment;
+class LocalFrame;
 
 class XSLTProcessor : public RefCounted<XSLTProcessor> {
 public:
@@ -44,7 +44,7 @@ public:
 
     void setXSLStyleSheet(RefPtr<XSLStyleSheet>&& styleSheet) { m_stylesheet = WTFMove(styleSheet); }
     bool transformToString(Node& source, String& resultMIMEType, String& resultString, String& resultEncoding);
-    Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
+    Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, LocalFrame*);
     
     // DOM methods
     void importStylesheet(Ref<Node>&& style)

@@ -378,7 +378,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     return true;
 }
     
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -531,7 +531,7 @@ void EventHandler::mouseMoved(WebEvent *event)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static bool frameHasPlatformWidget(const Frame& frame)
+static bool frameHasPlatformWidget(const LocalFrame& frame)
 {
     if (FrameView* frameView = frame.view()) {
         if (frameView->platformWidget())
@@ -551,7 +551,7 @@ void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platform
     mouseMoved(platformMouseEvent);
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -562,7 +562,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -572,7 +572,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -601,7 +601,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     
 void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
 {
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     m_targetAutoscrollPositionInUnscrolledRootViewCoordinates = protectedFrame->view()->contentsToRootView(roundedIntPoint(positionInWindow)) - toIntSize(protectedFrame->view()->documentScrollPositionRelativeToViewOrigin());
 
@@ -677,7 +677,7 @@ static IntPoint adjustAutoscrollDestinationForInsetEdges(IntPoint autoscrollPoin
     
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     if (!m_frame.view())
         return { };
@@ -708,7 +708,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 
 bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint&)
 {
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     auto* document = m_frame.document();
     if (!document)

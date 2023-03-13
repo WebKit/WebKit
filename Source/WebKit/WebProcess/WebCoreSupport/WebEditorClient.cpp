@@ -210,7 +210,7 @@ void WebEditorClient::respondToChangedContents()
     m_page->didChangeContents();
 }
 
-void WebEditorClient::respondToChangedSelection(Frame* frame)
+void WebEditorClient::respondToChangedSelection(LocalFrame* frame)
 {
     static NeverDestroyed<String> WebViewDidChangeSelectionNotification(MAKE_STATIC_STRING_IMPL("WebViewDidChangeSelectionNotification"));
     m_page->injectedBundleEditorClient().didChangeSelection(*m_page, WebViewDidChangeSelectionNotification.get().impl());
@@ -239,7 +239,7 @@ void WebEditorClient::didUpdateComposition()
     m_page->didUpdateComposition();
 }
 
-void WebEditorClient::discardedComposition(Frame*)
+void WebEditorClient::discardedComposition(LocalFrame*)
 {
     m_page->discardedComposition();
 }
@@ -298,12 +298,12 @@ void WebEditorClient::clearUndoRedoOperations()
     m_page->send(Messages::WebPageProxy::ClearAllEditCommands());
 }
 
-bool WebEditorClient::canCopyCut(Frame*, bool defaultValue) const
+bool WebEditorClient::canCopyCut(LocalFrame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool WebEditorClient::canPaste(Frame*, bool defaultValue) const
+bool WebEditorClient::canPaste(LocalFrame*, bool defaultValue) const
 {
     return defaultValue;
 }

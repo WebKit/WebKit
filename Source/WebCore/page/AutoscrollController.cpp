@@ -47,7 +47,7 @@ static const Seconds autoscrollDelay { 200_ms };
 static const Seconds autoscrollInterval { 50_ms };
 
 #if ENABLE(PAN_SCROLLING)
-static Frame* getMainFrame(Frame* frame)
+static LocalFrame* getMainFrame(LocalFrame* frame)
 {
     Page* page = frame->page();
     return page && dynamicDowncast<LocalFrame>(page->mainFrame()) ? dynamicDowncast<LocalFrame>(page->mainFrame()) : 0;
@@ -248,7 +248,7 @@ void AutoscrollController::autoscrollTimerFired()
         return;
     }
 
-    Frame& frame = m_autoscrollRenderer->frame();
+    LocalFrame& frame = m_autoscrollRenderer->frame();
     switch (m_autoscrollType) {
     case AutoscrollForDragAndDrop:
         if (WallTime::now() - m_dragAndDropAutoscrollStartTime > autoscrollDelay)
@@ -271,7 +271,7 @@ void AutoscrollController::autoscrollTimerFired()
     case AutoscrollForPanCanStop:
     case AutoscrollForPan:
         // we verify that the main frame hasn't received the order to stop the panScroll
-        if (Frame* mainFrame = getMainFrame(&frame)) {
+        if (auto* mainFrame = getMainFrame(&frame)) {
             if (!mainFrame->eventHandler().panScrollInProgress()) {
                 stopAutoscrollTimer();
                 return;

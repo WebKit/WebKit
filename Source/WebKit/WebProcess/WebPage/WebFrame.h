@@ -54,7 +54,7 @@ class Array;
 namespace WebCore {
 class AbstractFrame;
 class CertificateInfo;
-class Frame;
+class LocalFrame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
@@ -87,7 +87,7 @@ public:
     WebPage* page() const;
 
     static WebFrame* fromCoreFrame(const WebCore::AbstractFrame&);
-    WebCore::Frame* coreFrame() const;
+    WebCore::LocalFrame* coreFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
 
     FrameInfoData info() const;

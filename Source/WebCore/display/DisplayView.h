@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class FrameView;
 class Page;
 
@@ -58,7 +58,7 @@ public:
 
     Page* page() const;
     FrameView& frameView() const { return m_frameView; }
-    Frame& frame() const;
+    LocalFrame& frame() const;
 
     // FIXME: Temporary.
     void setNeedsDisplay();

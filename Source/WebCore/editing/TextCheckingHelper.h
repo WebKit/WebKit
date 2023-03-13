@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class EditorClient;
-class Frame;
+class LocalFrame;
 class Position;
 class TextCheckerClient;
 class VisibleSelection;
@@ -114,7 +114,7 @@ private:
 
 void checkTextOfParagraph(TextCheckerClient&, StringView, OptionSet<TextCheckingType>, Vector<TextCheckingResult>&, const VisibleSelection& currentSelection);
 
-bool unifiedTextCheckerEnabled(const Frame*);
+bool unifiedTextCheckerEnabled(const LocalFrame*);
 bool platformDrivenTextCheckerEnabled();
 
 } // namespace WebCore

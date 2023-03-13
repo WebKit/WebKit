@@ -458,7 +458,7 @@ static bool acceptsEditingFocus(const Element& element)
     return frame->editor().shouldBeginEditing(makeRangeSelectingNodeContents(*root));
 }
 
-static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame* targetFrame)
+static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, LocalFrame* targetFrame)
 {
     // targetFrame can be 0 when we're trying to navigate a top-level frame
     // that has a 0 opener.
@@ -489,7 +489,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
     return false;
 }
 
-static void printNavigationErrorMessage(Frame& frame, const URL& activeURL, const char* reason)
+static void printNavigationErrorMessage(LocalFrame& frame, const URL& activeURL, const char* reason)
 {
     String message = "Unsafe JavaScript attempt to initiate navigation for frame with URL '" + frame.document()->url().string() + "' from frame with URL '" + activeURL.string() + "'. " + reason + "\n";
 
@@ -560,7 +560,7 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
-static inline int currentOrientation(Frame* frame)
+static inline int currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
     if (frame)
@@ -571,7 +571,7 @@ static inline int currentOrientation(Frame* frame)
     return 0;
 }
 
-static Ref<CachedResourceLoader> createCachedResourceLoader(Frame* frame)
+static Ref<CachedResourceLoader> createCachedResourceLoader(LocalFrame* frame)
 {
     if (frame) {
         if (auto loader = frame->loader().activeDocumentLoader())
@@ -580,7 +580,7 @@ static Ref<CachedResourceLoader> createCachedResourceLoader(Frame* frame)
     return CachedResourceLoader::create(nullptr);
 }
 
-Document::Document(Frame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags, ScriptExecutionContextIdentifier identifier)
+Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags, ScriptExecutionContextIdentifier identifier)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , ScriptExecutionContext(identifier)
@@ -682,7 +682,7 @@ Ref<Document> Document::create(Document& contextDocument)
     return document;
 }
 
-Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
+Ref<Document> Document::createNonRenderedPlaceholder(LocalFrame& frame, const URL& url)
 {
     auto document = adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
     document->addToContextsMap();
@@ -3318,7 +3318,7 @@ void Document::implicitClose()
     //  -When any new HTMLLinkElement is inserted into the document
     // But those add a dynamic component to the favicon that has UI 
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
-    RefPtr<Frame> f = frame();
+    RefPtr f = frame();
     if (f) {
 #if ENABLE(XSLT)
         // Apply XSL transforms before load events so that event handlers can access the transformed DOM tree.
@@ -3763,7 +3763,7 @@ void Document::setRTCNetworkManager(Ref<RTCNetworkManager>&& rtcNetworkManager)
 }
 #endif
 
-bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
+bool Document::canNavigate(LocalFrame* targetFrame, const URL& destinationURL)
 {
     if (!m_frame)
         return false;
@@ -3786,7 +3786,7 @@ bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
     return true;
 }
 
-bool Document::canNavigateInternal(Frame& targetFrame)
+bool Document::canNavigateInternal(LocalFrame& targetFrame)
 {
     ASSERT(m_frame);
 
@@ -3882,7 +3882,7 @@ void Document::willLoadFrameElement(const URL& frameURL)
 }
 
 // Prevent cross-site top-level redirects from third-party iframes unless the user has ever interacted with the frame.
-bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL)
+bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL)
 {
     if (!settings().thirdPartyIframeRedirectBlockingEnabled())
         return false;
@@ -5140,7 +5140,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
             it->nodeWillBeRemoved(*n);
     }
 
-    if (RefPtr<Frame> frame = this->frame()) {
+    if (RefPtr frame = this->frame()) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling()) {
             frame->eventHandler().nodeWillBeRemoved(*n);
             frame->selection().nodeWillBeRemoved(*n);
@@ -5167,7 +5167,7 @@ void Document::nodeWillBeRemoved(Node& node)
     for (auto* range : m_ranges)
         range->nodeWillBeRemoved(node);
 
-    if (RefPtr<Frame> frame = this->frame()) {
+    if (RefPtr frame = this->frame()) {
         frame->eventHandler().nodeWillBeRemoved(node);
         frame->selection().nodeWillBeRemoved(node);
         frame->page()->dragCaretController().nodeWillBeRemoved(node);
@@ -6420,7 +6420,7 @@ void Document::finishedParsing()
             eventTiming->domContentLoadedEventEnd = now;
     }
 
-    if (RefPtr<Frame> frame = this->frame()) {
+    if (RefPtr frame = this->frame()) {
 #if ENABLE(XSLT)
         applyPendingXSLTransformsNowIfScheduled();
 #endif
@@ -7276,7 +7276,7 @@ void Document::wheelEventHandlersChanged(Node* node)
         element->invalidateStyle();
     }
 
-    m_frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
+    m_frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::EventHandlerChange);
 #else
     UNUSED_PARAM(node);
 #endif
@@ -8043,7 +8043,7 @@ bool Document::hasFocus() const
     Page* page = this->page();
     if (!page || !page->focusController().isActive() || !page->focusController().isFocused())
         return false;
-    if (Frame* focusedFrame = page->focusController().focusedFrame()) {
+    if (LocalFrame* focusedFrame = page->focusController().focusedFrame()) {
         if (focusedFrame->tree().isDescendantOf(frame()))
             return true;
     }

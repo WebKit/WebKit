@@ -73,7 +73,7 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
     return textColor.lightened();
 }
 
-TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
+TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     TextPaintStyle paintStyle;
 

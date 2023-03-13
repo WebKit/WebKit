@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class ContentSecurityPolicy;
-class Frame;
+class LocalFrame;
 class ResourceResponse;
 class ScriptExecutionContext;
 class SecurityOrigin;

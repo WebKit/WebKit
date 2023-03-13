@@ -1013,9 +1013,9 @@ static Vector<Function<void ()>>& postResolutionCallbackQueue()
     return vector;
 }
 
-static Vector<RefPtr<Frame>>& memoryCacheClientCallsResumeQueue()
+static Vector<RefPtr<LocalFrame>>& memoryCacheClientCallsResumeQueue()
 {
-    static NeverDestroyed<Vector<RefPtr<Frame>>> vector;
+    static NeverDestroyed<Vector<RefPtr<LocalFrame>>> vector;
     return vector;
 }
 

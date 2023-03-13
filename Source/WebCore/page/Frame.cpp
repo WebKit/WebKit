@@ -133,23 +133,23 @@ static const Seconds scrollFrequency { 1000_s / 60. };
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 
-static inline float parentPageZoomFactor(Frame* frame)
+static inline float parentPageZoomFactor(LocalFrame* frame)
 {
-    Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
+    LocalFrame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->pageZoomFactor();
 }
 
-static inline float parentTextZoomFactor(Frame* frame)
+static inline float parentTextZoomFactor(LocalFrame* frame)
 {
-    Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
+    LocalFrame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
     if (!parent)
         return 1;
     return parent->textZoomFactor();
 }
 
-Frame::Frame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, AbstractFrame* parent)
+LocalFrame::LocalFrame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, AbstractFrame* parent)
     : AbstractFrame(page, identifier, FrameType::Local, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
@@ -172,31 +172,31 @@ Frame::Frame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, Frame
 #endif
 
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
-    if (Frame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
+    if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 }
 
-void Frame::init()
+void LocalFrame::init()
 {
     m_loader->init();
 }
 
-Ref<Frame> Frame::createMainFrame(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
+Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
 {
-    return adoptRef(*new Frame(page, WTFMove(client), identifier, nullptr, nullptr));
+    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, nullptr));
 }
 
-Ref<Frame> Frame::createSubframe(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
+Ref<LocalFrame> LocalFrame::createSubframe(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
 {
-    return adoptRef(*new Frame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame()));
+    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame()));
 }
 
-Ref<Frame> Frame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, AbstractFrame& parent)
+Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, AbstractFrame& parent)
 {
-    return adoptRef(*new Frame(page, WTFMove(client), identifier, nullptr, &parent));
+    return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, &parent));
 }
 
-Frame::~Frame()
+LocalFrame::~LocalFrame()
 {
     setView(nullptr);
     navigationScheduler().cancel();
@@ -223,17 +223,17 @@ Frame::~Frame()
         localMainFrame->selfOnlyDeref();
 }
 
-void Frame::addDestructionObserver(FrameDestructionObserver& observer)
+void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
 {
     m_destructionObservers.add(&observer);
 }
 
-void Frame::removeDestructionObserver(FrameDestructionObserver& observer)
+void LocalFrame::removeDestructionObserver(FrameDestructionObserver& observer)
 {
     m_destructionObservers.remove(&observer);
 }
 
-void Frame::setView(RefPtr<FrameView>&& view)
+void LocalFrame::setView(RefPtr<FrameView>&& view)
 {
     // We the custom scroll bars as early as possible to prevent m_doc->detach()
     // from messing with the view such that its scroll bars won't be torn down.
@@ -262,7 +262,7 @@ void Frame::setView(RefPtr<FrameView>&& view)
     loader().resetMultipleFormSubmissionProtection();
 }
 
-void Frame::setDocument(RefPtr<Document>&& newDocument)
+void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 {
     ASSERT(!newDocument || newDocument->frame() == this);
 
@@ -316,17 +316,17 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = false;
 }
 
-void Frame::frameDetached()
+void LocalFrame::frameDetached()
 {
     m_loader->frameDetached();
 }
 
-bool Frame::preventsParentFromBeingComplete() const
+bool LocalFrame::preventsParentFromBeingComplete() const
 {
     return !m_loader->isComplete() && (!ownerElement() || !ownerElement()->isLazyLoadObserverActive());
 }
 
-void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
+void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!page() || !m_doc || !m_doc->renderView())
         return;
@@ -362,14 +362,14 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
-void Frame::orientationChanged()
+void LocalFrame::orientationChanged()
 {
     Page::forEachDocumentFromMainFrame(*this, [newOrientation = orientation()] (Document& document) {
         document.orientationChanged(newOrientation);
     });
 }
 
-int Frame::orientation() const
+int LocalFrame::orientation() const
 {
     if (auto* page = this->page())
         return page->chrome().client().deviceOrientation();
@@ -404,7 +404,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     return JSC::Yarr::RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);
 }
 
-String Frame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
+String LocalFrame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
 {
     HTMLTableCellElement* aboveCell = cell->cellAbove();
     if (aboveCell) {
@@ -432,7 +432,7 @@ String Frame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regEx
 }
 
 // FIXME: This should take an Element&.
-String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
+String LocalFrame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
     ASSERT(element);
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
@@ -532,7 +532,7 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     return String();
 }
     
-String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* element)
+String LocalFrame::matchLabelsAgainstElement(const Vector<String>& labels, Element* element)
 {
     // Match against the name element, then against the id element if no match is found for the name element.
     // See 7538330 for one popular site that benefits from the id element check.
@@ -547,18 +547,18 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
 
 #if PLATFORM(IOS_FAMILY)
 
-void Frame::setSelectionChangeCallbacksDisabled(bool selectionChangeCallbacksDisabled)
+void LocalFrame::setSelectionChangeCallbacksDisabled(bool selectionChangeCallbacksDisabled)
 {
     m_selectionChangeCallbacksDisabled = selectionChangeCallbacksDisabled;
 }
 
-bool Frame::selectionChangeCallbacksDisabled() const
+bool LocalFrame::selectionChangeCallbacksDisabled() const
 {
     return m_selectionChangeCallbacksDisabled;
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-bool Frame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategory)
+bool LocalFrame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategory)
 {
     if (settings().javaScriptCanAccessClipboard() && settings().domPasteAllowed())
         return true;
@@ -602,7 +602,7 @@ bool Frame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategory)
     return false;
 }
 
-void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
+void LocalFrame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {
     if (!view() || !document())
         return;
@@ -635,7 +635,7 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     }
 }
 
-bool Frame::shouldUsePrintingLayout() const
+bool LocalFrame::shouldUsePrintingLayout() const
 {
     // Only top frame being printed should be fit to page size.
     // Subframes should be constrained by parents only.
@@ -643,7 +643,7 @@ bool Frame::shouldUsePrintingLayout() const
     return m_doc->printing() && (!parent || !parent->m_doc->printing());
 }
 
-FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize)
+FloatSize LocalFrame::resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize)
 {
     FloatSize resultSize;
     if (!contentRenderer())
@@ -663,7 +663,7 @@ FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, cons
     return resultSize;
 }
 
-void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
+void LocalFrame::injectUserScripts(UserScriptInjectionTime injectionTime)
 {
     if (!page())
         return;
@@ -682,7 +682,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     });
 }
 
-void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
+void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     if (loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
@@ -707,28 +707,28 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
     m_script->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), URL(script.url())), world);
 }
 
-void Frame::addUserScriptAwaitingNotification(DOMWrapperWorld& world, const UserScript& script)
+void LocalFrame::addUserScriptAwaitingNotification(DOMWrapperWorld& world, const UserScript& script)
 {
     m_userScriptsAwaitingNotification.append({ world, makeUniqueRef<UserScript>(script) });
 }
 
-void Frame::injectUserScriptsAwaitingNotification()
+void LocalFrame::injectUserScriptsAwaitingNotification()
 {
     for (const auto& [world, script] : std::exchange(m_userScriptsAwaitingNotification, { }))
         injectUserScriptImmediately(world, script.get());
 }
 
-std::optional<PageIdentifier> Frame::pageID() const
+std::optional<PageIdentifier> LocalFrame::pageID() const
 {
     return loader().pageID();
 }
 
-RenderView* Frame::contentRenderer() const
+RenderView* LocalFrame::contentRenderer() const
 {
     return document() ? document()->renderView() : nullptr;
 }
 
-RenderWidget* Frame::ownerRenderer() const
+RenderWidget* LocalFrame::ownerRenderer() const
 {
     RefPtr ownerElement = this->ownerElement();
     if (!ownerElement)
@@ -743,7 +743,7 @@ RenderWidget* Frame::ownerRenderer() const
     return downcast<RenderWidget>(object);
 }
 
-Frame* Frame::frameForWidget(const Widget& widget)
+LocalFrame* LocalFrame::frameForWidget(const Widget& widget)
 {
     if (auto* renderer = RenderWidget::find(widget))
         return renderer->frameOwnerElement().document().frame();
@@ -753,7 +753,7 @@ Frame* Frame::frameForWidget(const Widget& widget)
     return dynamicDowncast<LocalFrame>(downcast<FrameView>(widget).frame());
 }
 
-void Frame::clearTimers(FrameView *view, Document *document)
+void LocalFrame::clearTimers(FrameView *view, Document *document)
 {
     if (!view)
         return;
@@ -764,14 +764,14 @@ void Frame::clearTimers(FrameView *view, Document *document)
         localFrame->eventHandler().stopAutoscrollTimer();
 }
 
-void Frame::clearTimers()
+void LocalFrame::clearTimers()
 {
     clearTimers(m_view.get(), document());
 }
 
-void Frame::willDetachPage()
+void LocalFrame::willDetachPage()
 {
-    if (Frame* parent = dynamicDowncast<LocalFrame>(tree().parent()))
+    if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()))
         parent->loader().checkLoadComplete();
 
     for (auto& observer : m_destructionObservers)
@@ -804,12 +804,12 @@ void Frame::willDetachPage()
     ASSERT(!document() || !document()->renderView());
 }
 
-String Frame::displayStringModifiedByEncoding(const String& str) const
+String LocalFrame::displayStringModifiedByEncoding(const String& str) const
 {
     return document() ? document()->displayStringModifiedByEncoding(str) : str;
 }
 
-VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint) const
+VisiblePosition LocalFrame::visiblePositionForPoint(const IntPoint& framePoint) const
 {
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     HitTestResult result = eventHandler().hitTestResultAtPoint(framePoint, hitType);
@@ -825,7 +825,7 @@ VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint) const
     return visiblePos;
 }
 
-Document* Frame::documentAtPoint(const IntPoint& point)
+Document* LocalFrame::documentAtPoint(const IntPoint& point)
 {
     if (!view())
         return nullptr;
@@ -840,7 +840,7 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
-std::optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
+std::optional<SimpleRange> LocalFrame::rangeForPoint(const IntPoint& framePoint)
 {
     auto position = visiblePositionForPoint(framePoint);
 
@@ -861,7 +861,7 @@ std::optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
     return std::nullopt;
 }
 
-void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& backgroundColor,
+void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Color>& backgroundColor,
     const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
@@ -904,39 +904,39 @@ void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& 
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarMode::AlwaysOff);
 }
 
-DOMWindow* Frame::window() const
+DOMWindow* LocalFrame::window() const
 {
     return document() ? document()->domWindow() : nullptr;
 }
 
-AbstractDOMWindow* Frame::virtualWindow() const
+AbstractDOMWindow* LocalFrame::virtualWindow() const
 {
     return window();
 }
 
-AbstractFrameView* Frame::virtualView() const
+AbstractFrameView* LocalFrame::virtualView() const
 {
     return m_view.get();
 }
 
-String Frame::trackedRepaintRectsAsText() const
+String LocalFrame::trackedRepaintRectsAsText() const
 {
     if (!m_view)
         return String();
     return m_view->trackedRepaintRectsAsText();
 }
 
-void Frame::setPageZoomFactor(float factor)
+void LocalFrame::setPageZoomFactor(float factor)
 {
     setPageAndTextZoomFactors(factor, m_textZoomFactor);
 }
 
-void Frame::setTextZoomFactor(float factor)
+void LocalFrame::setTextZoomFactor(float factor)
 {
     setPageAndTextZoomFactors(m_pageZoomFactor, factor);
 }
 
-void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor)
+void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor)
 {
     if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
         return;
@@ -984,7 +984,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     }
 }
 
-float Frame::frameScaleFactor() const
+float LocalFrame::frameScaleFactor() const
 {
     Page* page = this->page();
 
@@ -998,7 +998,7 @@ float Frame::frameScaleFactor() const
     return page->pageScaleFactor();
 }
 
-void Frame::suspendActiveDOMObjectsAndAnimations()
+void LocalFrame::suspendActiveDOMObjectsAndAnimations()
 {
     bool wasSuspended = activeDOMObjectsAndAnimationsSuspended();
 
@@ -1013,7 +1013,7 @@ void Frame::suspendActiveDOMObjectsAndAnimations()
         m_doc->suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
 }
 
-void Frame::resumeActiveDOMObjectsAndAnimations()
+void LocalFrame::resumeActiveDOMObjectsAndAnimations()
 {
     if (!activeDOMObjectsAndAnimationsSuspended())
         return;
@@ -1037,7 +1037,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
         m_view->layoutContext().scheduleLayout();
 }
 
-void Frame::deviceOrPageScaleFactorChanged()
+void LocalFrame::deviceOrPageScaleFactorChanged()
 {
     for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
@@ -1048,14 +1048,14 @@ void Frame::deviceOrPageScaleFactorChanged()
         root->compositor().deviceOrPageScaleFactorChanged();
 }
 
-void Frame::dropChildren()
+void LocalFrame::dropChildren()
 {
     ASSERT(isMainFrame());
     while (auto* child = tree().firstChild())
         tree().removeChild(*child);
 }
 
-FloatSize Frame::screenSize() const
+FloatSize LocalFrame::screenSize() const
 {
     if (!m_overrideScreenSize.isEmpty())
         return m_overrideScreenSize;
@@ -1082,7 +1082,7 @@ FloatSize Frame::screenSize() const
     return screenRect(view()).size();
 }
 
-void Frame::setOverrideScreenSize(FloatSize&& screenSize)
+void LocalFrame::setOverrideScreenSize(FloatSize&& screenSize)
 {
     if (m_overrideScreenSize == screenSize)
         return;
@@ -1092,7 +1092,7 @@ void Frame::setOverrideScreenSize(FloatSize&& screenSize)
         document->updateViewportArguments();
 }
 
-void Frame::selfOnlyRef()
+void LocalFrame::selfOnlyRef()
 {
     ASSERT(isMainFrame());
     if (m_selfOnlyRefCount++)
@@ -1101,7 +1101,7 @@ void Frame::selfOnlyRef()
     ref();
 }
 
-void Frame::selfOnlyDeref()
+void LocalFrame::selfOnlyDeref()
 {
     ASSERT(isMainFrame());
     ASSERT(m_selfOnlyRefCount);
@@ -1114,7 +1114,7 @@ void Frame::selfOnlyDeref()
     deref();
 }
 
-String Frame::debugDescription() const
+String LocalFrame::debugDescription() const
 {
     StringBuilder builder;
 
@@ -1128,24 +1128,24 @@ String Frame::debugDescription() const
     return builder.toString();
 }
 
-TextStream& operator<<(TextStream& ts, const Frame& frame)
+TextStream& operator<<(TextStream& ts, const LocalFrame& frame)
 {
     ts << frame.debugDescription();
     return ts;
 }
 
-bool Frame::arePluginsEnabled()
+bool LocalFrame::arePluginsEnabled()
 {
     return settings().arePluginsEnabled();
 }
 
-void Frame::resetScript()
+void LocalFrame::resetScript()
 {
     resetWindowProxy();
     m_script = makeUniqueRef<ScriptController>(*this);
 }
 
-Frame* Frame::fromJSContext(JSContextRef context)
+LocalFrame* LocalFrame::fromJSContext(JSContextRef context)
 {
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
     if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj))
@@ -1157,7 +1157,7 @@ Frame* Frame::fromJSContext(JSContextRef context)
     return nullptr;
 }
 
-Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValueRef valueRef)
+LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValueRef valueRef)
 {
     ASSERT(context);
     ASSERT(valueRef);
@@ -1177,7 +1177,7 @@ Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValue
 
 #if ENABLE(DATA_DETECTION)
 
-DataDetectionResultsStorage& Frame::dataDetectionResults()
+DataDetectionResultsStorage& LocalFrame::dataDetectionResults()
 {
     if (!m_dataDetectionResults)
         m_dataDetectionResults = makeUnique<DataDetectionResultsStorage>();

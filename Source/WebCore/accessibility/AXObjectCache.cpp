@@ -853,7 +853,7 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 }
 #endif
 
-AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
+AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame* frame)
 {
     if (!gAccessibilityEnabled)
         return nullptr;
@@ -1802,7 +1802,7 @@ bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* 
 #endif
 }
 
-void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent loadingEvent)
+void AXObjectCache::frameLoadingEventNotification(LocalFrame* frame, AXLoadingEvent loadingEvent)
 {
     if (!frame)
         return;

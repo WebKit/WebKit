@@ -59,7 +59,7 @@ ContactsManager::ContactsManager(Navigator& navigator)
 ContactsManager::~ContactsManager() = default;
 
 
-Frame* ContactsManager::frame() const
+LocalFrame* ContactsManager::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }

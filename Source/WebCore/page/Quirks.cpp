@@ -1172,8 +1172,8 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             auto proxy = proxyOrException.releaseReturnValue();
 
             auto* abstractFrame = proxy->frame();
-            if (abstractFrame && is<Frame>(*abstractFrame)) {
-                auto& frame = downcast<Frame>(*abstractFrame);
+            if (abstractFrame && is<LocalFrame>(*abstractFrame)) {
+                auto& frame = downcast<LocalFrame>(*abstractFrame);
                 auto world = ScriptController::createWorld("kinjaComQuirkWorld"_s, ScriptController::WorldType::User);
                 frame.addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
                 return Quirks::StorageAccessResult::ShouldCancelEvent;
@@ -1208,8 +1208,8 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
                         return;
                     auto proxy = proxyOrException.releaseReturnValue();
                     auto* abstractFrame = proxy->frame();
-                    if (is<Frame>(abstractFrame)) {
-                        auto* frame = downcast<Frame>(abstractFrame);
+                    if (is<LocalFrame>(abstractFrame)) {
+                        auto* frame = downcast<LocalFrame>(abstractFrame);
                         auto world = ScriptController::createWorld("bbcRadioPlayerWorld"_s, ScriptController::WorldType::User);
                         frame->addUserScriptAwaitingNotification(world.get(), BBCUserScript);
                         return;

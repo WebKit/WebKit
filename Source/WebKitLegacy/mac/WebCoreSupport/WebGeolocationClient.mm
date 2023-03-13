@@ -121,7 +121,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    Frame *frame = geolocation.frame();
+    auto* frame = geolocation.frame();
 
     if (!frame) {
         geolocation.setIsAllowed(false, { });
@@ -225,7 +225,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    Frame* frame = m_geolocation->frame();
+    auto* frame = m_geolocation->frame();
     if (!frame)
         return;
     auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()]);

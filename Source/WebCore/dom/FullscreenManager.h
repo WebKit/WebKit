@@ -49,7 +49,7 @@ public:
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
     Page* page() const { return m_document.page(); }
-    Frame* frame() const { return m_document.frame(); }
+    LocalFrame* frame() const { return m_document.frame(); }
     Element* documentElement() const { return m_document.documentElement(); }
     bool isSimpleFullscreenDocument() const;
     Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }

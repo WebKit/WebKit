@@ -249,7 +249,7 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
     if (!localMainFrame)
         return 0;
     
-    WebCore::Frame& core = *localMainFrame;
+    auto& core = *localMainFrame;
     if (!core.document())
         return 0;
     
@@ -308,7 +308,7 @@ bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
     if (!localMainFrame)
         return false;
 
-    WebCore::Frame& core = *localMainFrame;
+    auto& core = *localMainFrame;
     if (!core.document())
         return false;
 

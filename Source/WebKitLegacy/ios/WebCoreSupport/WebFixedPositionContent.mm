@@ -167,8 +167,8 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 - (void)didFinishScrollingOrZooming
 {
     WebThreadRun(^{
-        if (Frame* frame = [_private->m_webView _mainCoreFrame])
-            frame->viewportOffsetChanged(Frame::CompletedScrollOffset);
+        if (auto* frame = [_private->m_webView _mainCoreFrame])
+            frame->viewportOffsetChanged(LocalFrame::CompletedScrollOffset);
     });
 }
 

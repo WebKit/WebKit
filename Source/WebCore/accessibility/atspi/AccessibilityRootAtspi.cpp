@@ -209,7 +209,7 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     if (!localMainFrame)
         return nullptr;
 
-    Frame& frame = *localMainFrame;
+    auto& frame = *localMainFrame;
     if (!frame.document())
         return nullptr;
 

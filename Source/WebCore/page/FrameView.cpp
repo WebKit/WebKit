@@ -191,7 +191,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
     return Pagination::BottomToTopPaginated;
 }
 
-FrameView::FrameView(Frame& frame)
+FrameView::FrameView(LocalFrame& frame)
     : m_frame(frame)
     , m_layoutContext(*this)
     , m_updateEmbeddedObjectsTimer(*this, &FrameView::updateEmbeddedObjectsTimerFired)
@@ -223,7 +223,7 @@ FrameView::FrameView(Frame& frame)
 
 }
 
-Ref<FrameView> FrameView::create(Frame& frame)
+Ref<FrameView> FrameView::create(LocalFrame& frame)
 {
     Ref<FrameView> view = adoptRef(*new FrameView(frame));
     if (frame.page() && frame.page()->isVisible())
@@ -231,7 +231,7 @@ Ref<FrameView> FrameView::create(Frame& frame)
     return view;
 }
 
-Ref<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize)
+Ref<FrameView> FrameView::create(LocalFrame& frame, const IntSize& initialSize)
 {
     Ref<FrameView> view = adoptRef(*new FrameView(frame));
     view->Widget::setFrameRect(IntRect(view->location(), initialSize));
@@ -967,7 +967,7 @@ void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
     renderView()->compositor().updateScrollSnapPropertiesWithFrameView(*this);
 }
 
-bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)
+bool FrameView::flushCompositingStateForThisFrame(const LocalFrame& rootFrameForFlush)
 {
     if (m_frame->settings().layoutFormattingContextEnabled()) {
         if (auto* view = existingDisplayView())
@@ -1349,7 +1349,7 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
         cache->postNotification(layoutRoot.get(), AXObjectCache::AXLayoutComplete);
 #endif
 
-    m_frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::Layout);
+    m_frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::Layout);
     document->invalidateRenderingDependentRegions();
 
     updateCanBlitOnScrollRecursively();
@@ -5561,7 +5561,7 @@ void FrameView::resetTrackedRepaints()
 String FrameView::trackedRepaintRectsAsText() const
 {
     auto& frame = this->m_frame.get();
-    Ref<Frame> protector(frame);
+    Ref protectedFrame { frame };
 
     if (auto* document = frame.document())
         document->updateLayout();

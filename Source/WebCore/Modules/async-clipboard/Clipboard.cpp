@@ -50,7 +50,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Clipboard);
 
-static bool shouldProceedWithClipboardWrite(const Frame& frame)
+static bool shouldProceedWithClipboardWrite(const LocalFrame& frame)
 {
     auto& settings = frame.settings();
     if (settings.javaScriptCanAccessClipboard() || frame.editor().isCopyingFromMenuOrKeyBinding())
@@ -293,7 +293,7 @@ void Clipboard::didResolveOrReject(Clipboard::ItemWriter& writer)
         m_activeItemWriter = nullptr;
 }
 
-Frame* Clipboard::frame() const
+LocalFrame* Clipboard::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }

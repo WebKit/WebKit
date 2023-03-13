@@ -35,13 +35,13 @@
 namespace WebCore {
 
 class Document;
-class Frame;
+class LocalFrame;
 class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
     WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, ResourceRequest&&, const AtomString& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
-    WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, const SubstituteData& = SubstituteData());
+    WEBCORE_EXPORT FrameLoadRequest(LocalFrame&, const ResourceRequest&, const SubstituteData& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
 

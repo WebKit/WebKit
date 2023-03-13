@@ -144,7 +144,7 @@ void DocumentMarkerController::invalidateRectsForMarkersInNode(Node& node)
 
 static void updateMainFrameLayoutIfNeeded(Document& document)
 {
-    Frame* frame = document.frame();
+    LocalFrame* frame = document.frame();
     if (!frame)
         return;
 
@@ -187,7 +187,7 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
         return result;
     ASSERT(!m_markers.isEmpty());
 
-    RefPtr<Frame> frame = m_document.frame();
+    RefPtr frame = m_document.frame();
     if (!frame)
         return result;
     FrameView* frameView = frame->view();

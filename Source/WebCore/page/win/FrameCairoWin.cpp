@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&)
+GDIObject<HBITMAP> imageFromRect(const LocalFrame*, IntRect&)
 {
     notImplemented();
     return GDIObject<HBITMAP>();

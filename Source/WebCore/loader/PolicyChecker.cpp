@@ -84,7 +84,7 @@ static bool shouldExecuteJavaScriptURLSynchronously(const URL& url)
     return url == "javascript:''"_s || url == "javascript:\"\""_s;
 }
 
-FrameLoader::PolicyChecker::PolicyChecker(Frame& frame)
+FrameLoader::PolicyChecker::PolicyChecker(LocalFrame& frame)
     : m_frame(frame)
     , m_delegateIsDecidingNavigationPolicy(false)
     , m_delegateIsHandlingUnimplementablePolicy(false)
@@ -179,7 +179,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
 
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilterUnblockHandler.canHandleRequest(request)) {
-        RefPtr<Frame> frame { &m_frame };
+        Ref frame { m_frame };
         m_contentFilterUnblockHandler.requestUnblockAsync([frame](bool unblocked) {
             if (unblocked)
                 frame->loader().reload();

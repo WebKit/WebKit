@@ -65,17 +65,17 @@ void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
     m_page.didReceiveMobileDocType(isMobileDoctype);
 }
 
-void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame&, bool)
+void WebChromeClient::setNeedsScrollNotifications(WebCore::LocalFrame&, bool)
 {
     notImplemented();
 }
 
-void WebChromeClient::didFinishContentChangeObserving(WebCore::Frame&, WKContentChange observedContentChange)
+void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame&, WKContentChange observedContentChange)
 {
     m_page.didFinishContentChangeObserving(observedContentChange);
 }
 
-void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)
+void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&)
 {
     m_page.didScrollSelection();
 }

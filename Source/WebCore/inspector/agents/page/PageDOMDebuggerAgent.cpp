@@ -146,7 +146,7 @@ void PageDOMDebuggerAgent::mainFrameNavigated()
         m_pauseOnAllAnimationFramesBreakpoint->resetHitCount();
 }
 
-void PageDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
+void PageDOMDebuggerAgent::frameDocumentUpdated(LocalFrame& frame)
 {
     if (!frame.isMainFrame())
         return;

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class Document;
-class Frame;
+class LocalFrame;
 class HTMLScriptRunnerHost;
 class ScriptSourceCode;
 class WeakPtrImplWithEventTargetData;
@@ -59,7 +59,7 @@ public:
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
 private:
-    Frame* frame() const;
+    LocalFrame* frame() const;
 
     void executePendingScriptAndDispatchEvent(PendingScript&);
     void executeParsingBlockingScripts();

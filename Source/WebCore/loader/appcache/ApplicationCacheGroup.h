@@ -41,7 +41,7 @@ class ApplicationCacheResource;
 class ApplicationCacheStorage;
 class Document;
 class DocumentLoader;
-class Frame;
+class LocalFrame;
 class SecurityOrigin;
 
 enum ApplicationCacheUpdateOption {
@@ -61,8 +61,8 @@ public:
     static ApplicationCache* cacheForMainRequest(const ResourceRequest&, DocumentLoader*);
     static ApplicationCache* fallbackCacheForMainRequest(const ResourceRequest&, DocumentLoader*);
     
-    static void selectCache(Frame&, const URL& manifestURL);
-    static void selectCacheWithoutManifestURL(Frame&);
+    static void selectCache(LocalFrame&, const URL& manifestURL);
+    static void selectCacheWithoutManifestURL(LocalFrame&);
 
     ApplicationCacheStorage& storage() { return m_storage; }
     const URL& manifestURL() const { return m_manifestURL; }
@@ -74,14 +74,14 @@ public:
     unsigned storageID() const { return m_storageID; }
     void clearStorageID();
     
-    void update(Frame&, ApplicationCacheUpdateOption); // FIXME: Frame should not be needed when updating without browsing context.
+    void update(LocalFrame&, ApplicationCacheUpdateOption); // FIXME: Frame should not be needed when updating without browsing context.
     void cacheDestroyed(ApplicationCache&);
     
-    void abort(Frame&);
+    void abort(LocalFrame&);
 
     bool cacheIsComplete(ApplicationCache& cache) { return m_caches.contains(&cache); }
 
-    void stopLoadingInFrame(Frame&);
+    void stopLoadingInFrame(LocalFrame&);
 
     ApplicationCache* newestCache() const { return m_newestCache.get(); }
     void setNewestCache(Ref<ApplicationCache>&&);
@@ -159,7 +159,7 @@ private:
 
     // Frame used for fetching resources when updating.
     // FIXME: An update started by a particular frame should not stop if it is destroyed, but there are other frames associated with the same cache group.
-    WeakPtr<Frame> m_frame;
+    WeakPtr<LocalFrame> m_frame;
   
     // An obsolete cache group is never stored, but the opposite is not true - storing may fail for multiple reasons, such as exceeding disk quota.
     unsigned m_storageID { 0 };

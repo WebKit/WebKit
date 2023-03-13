@@ -43,7 +43,7 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
 {
     DragImageRef result = nil;
     if (m_dragImageElement) {
-        if (Frame* frame = m_dragImageElement->document().frame()) {
+        if (auto* frame = m_dragImageElement->document().frame()) {
             IntRect imageRect;
             IntRect elementRect;
             result = createDragImageForImage(*frame, *m_dragImageElement, imageRect, elementRect);

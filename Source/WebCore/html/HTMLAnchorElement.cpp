@@ -486,7 +486,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     using SourceSite = PCM::SourceSite;
     using AttributionDestinationSite = PCM::AttributionDestinationSite;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     auto* page = document().page();
     if (!frame || !page || !document().settings().privateClickMeasurementEnabled() || !UserGestureIndicator::processingUserGesture())
         return std::nullopt;
@@ -566,7 +566,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 {
     event.setDefaultHandled();
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     if (!frame)
         return;
 

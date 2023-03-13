@@ -83,7 +83,7 @@ void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
     m_initiatorMap.remove(&resource);
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorType, Frame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorType, LocalFrame* frame)
 {
     ASSERT(resource.get());
 

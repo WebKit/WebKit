@@ -45,7 +45,7 @@ HTMLParserOptions::HTMLParserOptions()
 
 HTMLParserOptions::HTMLParserOptions(Document& document)
 {
-    RefPtr<Frame> frame = document.frame();
+    RefPtr frame { document.frame() };
     if (document.settings().htmlParserScriptingFlagPolicy() == HTMLParserScriptingFlagPolicy::Enabled)
         scriptingFlag = true;
     else

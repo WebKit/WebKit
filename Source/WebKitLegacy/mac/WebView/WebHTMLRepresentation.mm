@@ -180,7 +180,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
         [webFrame _commitData:data];
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
-    Frame* coreFrame = core(webFrame);
+    LocalFrame* coreFrame = core(webFrame);
     if (coreFrame->document()->isMediaDocument() && coreFrame->loader().documentLoader())
         coreFrame->loader().documentLoader()->cancelMainResourceLoad(coreFrame->loader().client().pluginWillHandleLoadError(coreFrame->loader().documentLoader()->response()));
 
@@ -234,7 +234,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
         return adoptNS([[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding]).autorelease();
     }
 
-    Frame* coreFrame = core([_private->dataSource webFrame]);
+    LocalFrame* coreFrame = core([_private->dataSource webFrame]);
     if (!coreFrame)
         return nil;
     Document* document = coreFrame->document();
@@ -410,7 +410,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
 }
 
 // FIXME: This should take an Element&.
-static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
+static NSString* searchForLabelsBeforeElement(LocalFrame* frame, NSArray* labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
     ASSERT(element);
     RegularExpression* regExp = regExpForLabels(labels);

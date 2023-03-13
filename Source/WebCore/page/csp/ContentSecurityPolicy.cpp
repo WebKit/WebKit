@@ -538,7 +538,7 @@ bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole s
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForUnsafeEval);
 }
 
-bool ContentSecurityPolicy::allowFrameAncestors(const Frame& frame, const URL& url, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowFrameAncestors(const LocalFrame& frame, const URL& url, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy)
         return true;

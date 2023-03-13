@@ -132,7 +132,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 {
     auto frame = create(page);
     ASSERT(page.corePage());
-    auto coreFrame = Frame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
+    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
@@ -203,7 +203,7 @@ WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
     return nullptr;
 }
 
-WebCore::Frame* WebFrame::coreFrame() const
+WebCore::LocalFrame* WebFrame::coreFrame() const
 {
     return dynamicDowncast<LocalFrame>(m_coreFrame.get());
 }
@@ -855,13 +855,13 @@ void WebFrame::stopLoading()
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
-    auto* coreFrame = Frame::fromJSContext(context);
+    auto* coreFrame = LocalFrame::fromJSContext(context);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
 WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
 {
-    auto* coreFrame = Frame::contentFrameFromWindowOrFrameElement(context, value);
+    auto* coreFrame = LocalFrame::contentFrameFromWindowOrFrameElement(context, value);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
@@ -996,7 +996,7 @@ void WebFrame::documentLoaderDetached(uint64_t navigationID)
 #if PLATFORM(COCOA)
 RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
 {
-    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](Frame& frame) -> bool {
+    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](auto& frame) -> bool {
         if (!callback)
             return true;
 

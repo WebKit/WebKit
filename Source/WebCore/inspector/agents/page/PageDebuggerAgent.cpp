@@ -158,7 +158,7 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& e
     return injectedScript;
 }
 
-void PageDebuggerAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
+void PageDebuggerAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
     if (!frame.isMainFrame() || &world != &mainThreadNormalWorld())
         return;

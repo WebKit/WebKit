@@ -273,7 +273,7 @@ private:
     // WebCore::UserMessageHandlerDescriptor
     void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value, WTF::Function<void(SerializedScriptValue*, const String&)>&& completionHandler) override
     {
-        WebCore::Frame* frame = handler.frame();
+        auto* frame = handler.frame();
         if (!frame)
             return;
     

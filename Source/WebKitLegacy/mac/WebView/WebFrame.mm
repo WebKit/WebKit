@@ -256,12 +256,12 @@ Vector<Vector<String>> vectorForDictationPhrasesArray(NSArray *dictationPhrases)
 
 @implementation WebFrame (WebInternal)
 
-WebCore::Frame* core(WebFrame *frame)
+WebCore::LocalFrame* core(WebFrame *frame)
 {
     return frame ? frame->_private->coreFrame : 0;
 }
 
-WebFrame *kit(WebCore::Frame* frame)
+WebFrame *kit(WebCore::LocalFrame* frame)
 {
     if (!frame)
         return nil;
@@ -297,12 +297,12 @@ WebView *getWebView(WebFrame *webFrame)
     return kit(coreFrame->page());
 }
 
-+ (Ref<WebCore::Frame>)_createFrameWithPage:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView ownerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement
++ (Ref<WebCore::LocalFrame>)_createFrameWithPage:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView ownerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement
 {
     WebView *webView = kit(&page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
-    auto coreFrame = WebCore::Frame::createSubframe(page, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
+    auto coreFrame = WebCore::LocalFrame::createSubframe(page, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setName(name);
@@ -331,7 +331,7 @@ WebView *getWebView(WebFrame *webFrame)
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
 }
 
-+ (Ref<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
++ (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
 {
     return [self _createFrameWithPage:page frameName:name frameView:frameView ownerElement:ownerElement];
 }
@@ -1251,7 +1251,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)setNeedsLayout
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (frame->view())
         frame->view()->setNeedsLayoutAfterViewConfigurationChange();
 }
@@ -1266,20 +1266,20 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMNode *)deepestNodeAtViewportLocation:(CGPoint)aViewportLocation
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     return kit(frame->deepestNodeAtLocation(WebCore::FloatPoint(aViewportLocation)));
 }
 
 - (DOMNode *)scrollableNodeAtViewportLocation:(CGPoint)aViewportLocation
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     WebCore::Node *node = frame->nodeRespondingToScrollWheelEvents(WebCore::FloatPoint(aViewportLocation));
     return kit(node);
 }
 
 - (DOMNode *)approximateNodeAtViewportLocation:(CGPoint *)aViewportLocation
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     WebCore::FloatPoint viewportLocation(*aViewportLocation);
     WebCore::FloatPoint adjustedLocation;
     WebCore::Node *node = frame->approximateNodeAtViewportLocationLegacy(viewportLocation, adjustedLocation);
@@ -1289,7 +1289,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (CGRect)renderRectForPoint:(CGPoint)point isReplaced:(BOOL *)isReplaced fontSize:(float *)fontSize
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     bool replaced = false;
     CGRect rect = frame->renderRectForPoint(point, &replaced, fontSize);
     *isReplaced = replaced;
@@ -1298,20 +1298,20 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)_setProhibitsScrolling:(BOOL)flag
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->view()->setProhibitsScrolling(flag);
 }
 
 - (void)revealSelectionAtExtent:(BOOL)revealExtent
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     WebCore::RevealExtentOption revealExtentOption = revealExtent ? WebCore::RevealExtent : WebCore::DoNotRevealExtent;
     frame->selection().revealSelection(WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, revealExtentOption);
 }
 
 - (void)resetSelection
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->selection().setSelection(frame->selection().selection());
 }
 
@@ -1343,19 +1343,19 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)updateLayout
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->updateLayout();
 }
 
 - (void)setIsActive:(BOOL)flag
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->page()->focusController().setActive(flag);
 }
 
 - (void)setSelectionChangeCallbacksDisabled:(BOOL)flag
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->setSelectionChangeCallbacksDisabled(flag);
 }
 
@@ -1372,7 +1372,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (void)setCaretColor:(CGColorRef)color
 {
     WebCore::Color qColor = color ? WebCore::Color(WebCore::roundAndClampToSRGBALossy(color)) : WebCore::Color::black;
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->selection().setCaretColor(qColor);
 }
 
@@ -1396,13 +1396,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (NSView *)documentView
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     return [[kit(frame) frameView] documentView];
 }
 
 - (int)layoutCount
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->view())
         return 0;
     return frame->view()->layoutContext().layoutCount();
@@ -1410,7 +1410,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)isTelephoneNumberParsingAllowed
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->document())
         return false;
     return frame->document()->isTelephoneNumberParsingAllowed();
@@ -1418,7 +1418,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)isTelephoneNumberParsingEnabled
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->document())
         return false;
     return frame->document()->isTelephoneNumberParsingEnabled();
@@ -1456,13 +1456,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (NSSelectionAffinity)selectionAffinity
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     return (NSSelectionAffinity)(frame->selection().selection().affinity());
 }
 
 - (void)expandSelectionToElementContainingCaretSelection
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     frame->selection().expandSelectionToElementContainingCaretSelection();
 }
 
@@ -1550,7 +1550,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)selectionAtSentenceStart
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     
     if (frame->selection().selection().isNone())
         return NO;
@@ -1562,7 +1562,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)selectionAtWordStart
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     
     if (frame->selection().selection().isNone())
         return NO;
@@ -1598,7 +1598,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMRange *)markedTextDOMRange
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame)
         return nil;
 
@@ -1607,7 +1607,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)setMarkedText:(NSString *)text selectedRange:(NSRange)newSelRange
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame)
         return;
     
@@ -1619,7 +1619,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)setMarkedText:(NSString *)text forCandidates:(BOOL)forCandidates
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame)
         return;
         
@@ -1629,7 +1629,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)confirmMarkedText:(NSString *)text
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->editor().client())
         return;
     
@@ -1646,7 +1646,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!element)
         return;
         
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->document())
         return;
         
@@ -1757,7 +1757,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)recursiveSetUpdateAppearanceEnabled:(BOOL)enabled
 {
-    WebCore::Frame *frame = core(self);
+    WebCore::LocalFrame *frame = core(self);
     if (frame)
         frame->recursiveSetUpdateAppearanceEnabled(enabled);
 }

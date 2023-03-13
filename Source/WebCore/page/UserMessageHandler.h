@@ -37,7 +37,7 @@ class DeferredPromise;
 
 class UserMessageHandler : public RefCounted<UserMessageHandler>, public FrameDestructionObserver {
 public:
-    static Ref<UserMessageHandler> create(Frame& frame, UserMessageHandlerDescriptor& descriptor)
+    static Ref<UserMessageHandler> create(LocalFrame& frame, UserMessageHandlerDescriptor& descriptor)
     {
         return adoptRef(*new UserMessageHandler(frame, descriptor));
     }
@@ -49,7 +49,7 @@ public:
     void invalidateDescriptor() { m_descriptor = nullptr; }
 
 private:
-    UserMessageHandler(Frame&, UserMessageHandlerDescriptor&);
+    UserMessageHandler(LocalFrame&, UserMessageHandlerDescriptor&);
     
     RefPtr<UserMessageHandlerDescriptor> m_descriptor;
 };

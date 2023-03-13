@@ -62,7 +62,7 @@ void Editor::platformPasteFont()
 }
 
 template <typename PlatformDragData>
-static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, Frame& frame)
+static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, LocalFrame& frame)
 {
     if (containsFilenames(&platformDragData)) {
         if (auto fragment = fragmentFromFilenames(frame.document(), &platformDragData))

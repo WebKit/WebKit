@@ -52,7 +52,7 @@ DOMWindowExtension::~DOMWindowExtension()
         m_window->unregisterObserver(*this);
 }
 
-Frame* DOMWindowExtension::frame() const
+LocalFrame* DOMWindowExtension::frame() const
 {
     return m_window ? m_window->frame() : nullptr;
 }
@@ -109,7 +109,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInFrame()
     Ref<DOMWindowExtension> protectedThis(*this);
 
     if (!m_wasDetached) {
-        Frame* frame = this->frame();
+        LocalFrame* frame = this->frame();
         ASSERT(frame);
         frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     }
@@ -131,7 +131,7 @@ void DOMWindowExtension::willDetachGlobalObjectFromFrame()
     // while there is still work to do.
     Ref<DOMWindowExtension> protectedThis(*this);
 
-    Frame* frame = this->frame();
+    LocalFrame* frame = this->frame();
     ASSERT(frame);
     frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
 

@@ -2775,7 +2775,7 @@ static RenderObject* rendererForView(NSView* view)
         return nullptr;
     
     NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
-    Frame* frame = [frameView _web_frame];
+    auto frame = [frameView _web_frame];
     if (!frame)
         return nullptr;
     

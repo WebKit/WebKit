@@ -1268,7 +1268,7 @@ RefPtr<Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObjectForSt
         return nullptr;
 
     Document* document = styleSheet->ownerDocument();
-    Frame* frame = document ? document->frame() : nullptr;
+    LocalFrame* frame = document ? document->frame() : nullptr;
     return Protocol::CSS::CSSStyleSheetHeader::create()
         .setStyleSheetId(id())
         .setOrigin(m_origin)

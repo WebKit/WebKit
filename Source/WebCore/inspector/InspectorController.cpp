@@ -225,7 +225,7 @@ unsigned InspectorController::inspectionLevel() const
     return m_inspectorFrontendClient ? m_inspectorFrontendClient->inspectionLevel() : 0;
 }
 
-void InspectorController::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
+void InspectorController::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
     if (&world != &mainThreadNormalWorld())
         return;
@@ -529,12 +529,12 @@ JSC::VM& InspectorController::vm()
     return commonVM();
 }
 
-void InspectorController::willComposite(Frame& frame)
+void InspectorController::willComposite(LocalFrame& frame)
 {
     InspectorInstrumentation::willComposite(frame);
 }
 
-void InspectorController::didComposite(Frame& frame)
+void InspectorController::didComposite(LocalFrame& frame)
 {
     InspectorInstrumentation::didComposite(frame);
 }

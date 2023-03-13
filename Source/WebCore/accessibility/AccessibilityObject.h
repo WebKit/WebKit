@@ -467,8 +467,8 @@ public:
     Page* page() const override;
     Document* document() const override;
     FrameView* documentFrameView() const override;
-    Frame* frame() const;
-    Frame* mainFrame() const;
+    LocalFrame* frame() const;
+    LocalFrame* mainFrame() const;
     Document* topDocument() const;
     ScrollView* scrollView() const override { return nullptr; }
     String language() const override;

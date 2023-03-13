@@ -109,7 +109,7 @@ void ProgressTracker::reset()
     m_progressHeartbeatTimer.stop();
 }
 
-void ProgressTracker::progressStarted(Frame& frame)
+void ProgressTracker::progressStarted(LocalFrame& frame)
 {
     LOG(Progress, "Progress started (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
 
@@ -140,13 +140,13 @@ void ProgressTracker::progressStarted(Frame& frame)
     InspectorInstrumentation::frameStartedLoading(frame);
 }
 
-void ProgressTracker::progressEstimateChanged(Frame& frame)
+void ProgressTracker::progressEstimateChanged(LocalFrame& frame)
 {
     m_client->progressEstimateChanged(frame);
     m_page.progressEstimateChanged(frame);
 }
 
-void ProgressTracker::progressCompleted(Frame& frame)
+void ProgressTracker::progressCompleted(LocalFrame& frame)
 {
     LOG(Progress, "Progress completed (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
     PROGRESS_TRACKER_RELEASE_LOG("progressCompleted: frame %p, value %f, tracked frames %d, originating frame %p, isMainLoad %d", &frame, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad);
@@ -221,7 +221,7 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
     if (!item)
         return;
 
-    RefPtr<Frame> frame = m_originatingProgressFrame;
+    RefPtr frame { m_originatingProgressFrame };
 
     m_client->willChangeEstimatedProgress();
 

@@ -47,7 +47,7 @@ UserInputBridge::UserInputBridge(Page& page)
 }
 
 #if ENABLE(CONTEXT_MENU_EVENT)
-bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, Frame& frame, InputSource)
+bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, LocalFrame& frame, InputSource)
 {
     return frame.eventHandler().sendContextMenuEvent(mouseEvent);
 }
@@ -142,7 +142,7 @@ void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
     Ref(*localMainFrame)->loader().load(WTFMove(request));
 }
 
-void UserInputBridge::reloadFrame(Frame& frame, OptionSet<ReloadOption> options, InputSource)
+void UserInputBridge::reloadFrame(LocalFrame& frame, OptionSet<ReloadOption> options, InputSource)
 {
 #if ENABLE(WEB_AUTHN)
     m_page.authenticatorCoordinator().resetUserGestureRequirement();
@@ -150,7 +150,7 @@ void UserInputBridge::reloadFrame(Frame& frame, OptionSet<ReloadOption> options,
     frame.loader().reload(options);
 }
 
-void UserInputBridge::stopLoadingFrame(Frame& frame, InputSource)
+void UserInputBridge::stopLoadingFrame(LocalFrame& frame, InputSource)
 {
     frame.loader().stopForUserCancel();
 }

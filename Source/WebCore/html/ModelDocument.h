@@ -34,7 +34,7 @@ namespace WebCore {
 class ModelDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(ModelDocument);
 public:
-    static Ref<ModelDocument> create(Frame* frame, const Settings& settings, const URL& url)
+    static Ref<ModelDocument> create(LocalFrame* frame, const Settings& settings, const URL& url)
     {
         auto document = adoptRef(*new ModelDocument(frame, settings, url));
         document->addToContextsMap();
@@ -46,7 +46,7 @@ public:
     String outgoingReferrer() const { return m_outgoingReferrer; }
 
 private:
-    ModelDocument(Frame*, const Settings&, const URL&);
+    ModelDocument(LocalFrame*, const Settings&, const URL&);
 
     Ref<DocumentParser> createParser() override;
 

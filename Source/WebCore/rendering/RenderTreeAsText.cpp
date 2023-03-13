@@ -880,7 +880,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
     if (!renderer.isRenderView())
         return;
 
-    Frame* frame = renderer.document().frame();
+    LocalFrame* frame = renderer.document().frame();
     if (!frame)
         return;
 
@@ -933,7 +933,7 @@ static void updateLayoutIgnoringPendingStylesheetsIncludingSubframes(Document& d
     }
 }
 
-String externalRepresentation(Frame* frame, OptionSet<RenderAsTextFlag> behavior)
+String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> behavior)
 {
     ASSERT(frame);
     ASSERT(frame->document());

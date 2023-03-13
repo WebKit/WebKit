@@ -814,7 +814,7 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
     if (!frame)
         return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
 
-    Ref<Frame> protectedFrame(*frame);
+    Ref protectedFrame(*frame);
 
     JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
     if (!frameGlobalObject)

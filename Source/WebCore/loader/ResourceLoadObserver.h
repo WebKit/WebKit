@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class Document;
-class Frame;
+class LocalFrame;
 class ResourceRequest;
 class ResourceResponse;
 
@@ -51,7 +51,7 @@ public:
     
     virtual ~ResourceLoadObserver() { }
 
-    virtual void logSubresourceLoading(const Frame*, const ResourceRequest& /* newRequest */, const ResourceResponse& /* redirectResponse */, FetchDestinationIsScriptLike) { }
+    virtual void logSubresourceLoading(const LocalFrame*, const ResourceRequest& /* newRequest */, const ResourceResponse& /* redirectResponse */, FetchDestinationIsScriptLike) { }
     virtual void logWebSocketLoading(const URL& /* targetURL */, const URL& /* mainFrameURL */) { }
     virtual void logUserInteractionWithReducedTimeResolution(const Document&) { }
     virtual void logFontLoad(const Document&, const String& /* familyName */, bool /* loadStatus */) { }

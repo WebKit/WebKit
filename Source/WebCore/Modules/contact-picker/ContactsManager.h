@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class DeferredPromise;
-class Frame;
+class LocalFrame;
 class Navigator;
 
 enum class ContactProperty : uint8_t;
@@ -46,7 +46,7 @@ public:
     static Ref<ContactsManager> create(Navigator&);
     ~ContactsManager();
 
-    Frame* frame() const;
+    LocalFrame* frame() const;
     Navigator* navigator();
 
     void getProperties(Ref<DeferredPromise>&&);

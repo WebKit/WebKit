@@ -205,7 +205,7 @@ bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
     return !!m_activeDataDetectorHighlight;
 }
 
-void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* elementUnderMouse)
+void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Element* elementUnderMouse)
 {
     if (m_activeDataDetectorHighlight)
         return;

@@ -387,7 +387,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
         DebugPageOverlays::didLayout(renderer.frame());
     }
 
-    Frame& frame = renderer.frame();
+    LocalFrame& frame = renderer.frame();
     auto* repaintContainer = renderer.containerForRepaint().renderer;
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();

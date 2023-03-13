@@ -56,7 +56,7 @@ class ContainerNode;
 class Element;
 class EventRegionContext;
 class FloatSize;
-class Frame;
+class LocalFrame;
 class GraphicsContext;
 class HTMLFrameOwnerElement;
 class Page;
@@ -95,8 +95,8 @@ public:
     friend class Internals;
     friend class FrameViewLayoutContext;
 
-    WEBCORE_EXPORT static Ref<FrameView> create(Frame&);
-    static Ref<FrameView> create(Frame&, const IntSize& initialSize);
+    WEBCORE_EXPORT static Ref<FrameView> create(LocalFrame&);
+    static Ref<FrameView> create(LocalFrame&, const IntSize& initialSize);
 
     virtual ~FrameView();
 
@@ -736,7 +736,7 @@ public:
     OverscrollBehavior verticalOverscrollBehavior() const final;
 
 private:
-    explicit FrameView(Frame&);
+    explicit FrameView(LocalFrame&);
 
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
@@ -771,7 +771,7 @@ private:
 
     ScrollingCoordinator* scrollingCoordinator() const;
     bool shouldUpdateCompositingLayersAfterScrolling() const;
-    bool flushCompositingStateForThisFrame(const Frame& rootFrameForFlush);
+    bool flushCompositingStateForThisFrame(const LocalFrame& rootFrameForFlush);
 
     bool shouldDeferScrollUpdateAfterContentSizeChange() final;
 
@@ -922,7 +922,7 @@ private:
     void scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
     LayoutRect getPossiblyFixedRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
 
-    const Ref<Frame> m_frame;
+    const Ref<LocalFrame> m_frame;
     FrameViewLayoutContext m_layoutContext;
 
     std::unique_ptr<Display::View> m_displayView;

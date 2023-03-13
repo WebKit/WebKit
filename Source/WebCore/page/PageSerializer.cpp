@@ -176,7 +176,7 @@ void PageSerializer::serialize(Page& page)
         serializeFrame(localMainFrame);
 }
 
-void PageSerializer::serializeFrame(Frame* frame)
+void PageSerializer::serializeFrame(LocalFrame* frame)
 {
     Document* document = frame->document();
     URL url = document->url();
@@ -321,7 +321,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
     }
 }
 
-URL PageSerializer::urlForBlankFrame(Frame* frame)
+URL PageSerializer::urlForBlankFrame(LocalFrame* frame)
 {
     auto iterator = m_blankFrameURLs.find(frame);
     if (iterator != m_blankFrameURLs.end())

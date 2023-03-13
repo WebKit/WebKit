@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class Element;
-class Frame;
+class LocalFrame;
 class Node;
 
 class PageDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
@@ -49,7 +49,7 @@ public:
 
     // InspectorInstrumentation
     void mainFrameNavigated();
-    void frameDocumentUpdated(Frame&);
+    void frameDocumentUpdated(LocalFrame&);
     void willInsertDOMNode(Node& parent);
     void willRemoveDOMNode(Node&);
     void didRemoveDOMNode(Node&);

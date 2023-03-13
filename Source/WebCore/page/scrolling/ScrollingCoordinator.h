@@ -46,7 +46,7 @@ namespace WebCore {
 
 class AbsolutePositionConstraints;
 class Document;
-class Frame;
+class LocalFrame;
 class FrameView;
 class GraphicsLayer;
 struct KeyboardScroll;
@@ -226,7 +226,7 @@ private:
     void updateSynchronousScrollingReasons(FrameView&);
     void updateSynchronousScrollingReasonsForAllFrames();
 
-    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const Frame&) const;
+    EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
 
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };

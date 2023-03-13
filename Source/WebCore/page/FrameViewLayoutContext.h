@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class Document;
-class Frame;
+class LocalFrame;
 class FrameView;
 class LayoutScope;
 class LayoutSize;
@@ -156,7 +156,7 @@ private:
     void enablePaintOffsetCache() { ASSERT(m_paintOffsetCacheDisableCount > 0); m_paintOffsetCacheDisableCount--; }
     void layoutUsingFormattingContext();
 
-    Frame& frame() const;
+    LocalFrame& frame() const;
     FrameView& view() const;
     RenderView* renderView() const;
     Document* document() const;

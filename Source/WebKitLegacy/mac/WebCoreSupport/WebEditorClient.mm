@@ -343,7 +343,7 @@ void WebEditorClient::respondToChangedContents()
 #endif
 }
 
-void WebEditorClient::respondToChangedSelection(Frame* frame)
+void WebEditorClient::respondToChangedSelection(LocalFrame* frame)
 {
     if (frame->editor().isGettingDictionaryPopupInfo())
         return;
@@ -370,7 +370,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 #endif
 }
 
-void WebEditorClient::discardedComposition(Frame*)
+void WebEditorClient::discardedComposition(LocalFrame*)
 {
     // The effects of this function are currently achieved via -[WebHTMLView _updateSelectionForInputManager].
 }
@@ -591,7 +591,7 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
     if (m_lastEditorStateWasContentEditable == EditorStateIsContentEditable::Unset)
         return;
 
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    LocalFrame* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -634,12 +634,12 @@ void WebEditorClient::clearUndoRedoOperations()
     }    
 }
 
-bool WebEditorClient::canCopyCut(Frame*, bool defaultValue) const
+bool WebEditorClient::canCopyCut(LocalFrame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool WebEditorClient::canPaste(Frame*, bool defaultValue) const
+bool WebEditorClient::canPaste(LocalFrame*, bool defaultValue) const
 {
     return defaultValue;
 }
@@ -1127,7 +1127,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
         return;
 
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1154,7 +1154,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
 
 void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult acceptedCandidate)
 {
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 

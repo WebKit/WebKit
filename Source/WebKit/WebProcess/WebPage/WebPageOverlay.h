@@ -99,7 +99,7 @@ private:
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
-    void didScrollFrame(WebCore::PageOverlay&, WebCore::Frame&) override;
+    void didScrollFrame(WebCore::PageOverlay&, WebCore::LocalFrame&) override;
 
     bool copyAccessibilityAttributeStringValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) override;
     bool copyAccessibilityAttributeBoolValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) override;

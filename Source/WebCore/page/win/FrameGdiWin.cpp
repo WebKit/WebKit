@@ -37,7 +37,7 @@ namespace WebCore {
 
 extern HDC g_screenDC;
 
-GDIObject<HBITMAP> imageFromRect(Frame* frame, IntRect& ir)
+GDIObject<HBITMAP> imageFromRect(LocalFrame* frame, IntRect& ir)
 {
     int w;
     int h;

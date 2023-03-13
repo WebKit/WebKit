@@ -120,7 +120,7 @@ ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const Resou
     return group->newestCache();
 }
 
-void ApplicationCacheGroup::selectCache(Frame& frame, const URL& passedManifestURL)
+void ApplicationCacheGroup::selectCache(LocalFrame& frame, const URL& passedManifestURL)
 {
     ASSERT(frame.document());
     ASSERT(frame.page());
@@ -200,7 +200,7 @@ void ApplicationCacheGroup::selectCache(Frame& frame, const URL& passedManifestU
     group.update(frame, ApplicationCacheUpdateWithBrowsingContext);
 }
 
-void ApplicationCacheGroup::selectCacheWithoutManifestURL(Frame& frame)
+void ApplicationCacheGroup::selectCacheWithoutManifestURL(LocalFrame& frame)
 {
     if (!frame.settings().offlineWebApplicationCacheEnabled())
         return;
@@ -366,7 +366,7 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache& cache)
     }
 }
 
-void ApplicationCacheGroup::stopLoadingInFrame(Frame& frame)
+void ApplicationCacheGroup::stopLoadingInFrame(LocalFrame& frame)
 {
     if (&frame != m_frame)
         return;
@@ -392,7 +392,7 @@ void ApplicationCacheGroup::makeObsolete()
     ASSERT(!m_storageID);
 }
 
-void ApplicationCacheGroup::update(Frame& frame, ApplicationCacheUpdateOption updateOption)
+void ApplicationCacheGroup::update(LocalFrame& frame, ApplicationCacheUpdateOption updateOption)
 {
     ASSERT(frame.loader().documentLoader());
     auto& documentLoader = *frame.loader().documentLoader();
@@ -478,7 +478,7 @@ ResourceRequest ApplicationCacheGroup::createRequest(URL&& url, ApplicationCache
     return request;
 }
 
-void ApplicationCacheGroup::abort(Frame& frame)
+void ApplicationCacheGroup::abort(LocalFrame& frame)
 {
     if (m_updateStatus == Idle)
         return;

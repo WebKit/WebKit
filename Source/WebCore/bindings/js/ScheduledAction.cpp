@@ -131,7 +131,7 @@ void ScheduledAction::execute(Document& document)
     if (!window)
         return;
 
-    RefPtr<Frame> frame = window->wrapped().frame();
+    RefPtr frame = window->wrapped().frame();
     if (!frame || !frame->script().canExecuteScripts(AboutToExecuteScript))
         return;
 

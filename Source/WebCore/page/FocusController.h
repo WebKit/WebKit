@@ -39,7 +39,7 @@ class ContainerNode;
 class Document;
 class Element;
 class FocusNavigationScope;
-class Frame;
+class LocalFrame;
 class IntRect;
 class KeyboardEvent;
 class Node;
@@ -53,14 +53,14 @@ class FocusController : public CanMakeCheckedPtr {
 public:
     explicit FocusController(Page&, OptionSet<ActivityState::Flag>);
 
-    WEBCORE_EXPORT void setFocusedFrame(Frame*);
-    Frame* focusedFrame() const { return m_focusedFrame.get(); }
-    WEBCORE_EXPORT Frame& focusedOrMainFrame() const;
+    WEBCORE_EXPORT void setFocusedFrame(LocalFrame*);
+    LocalFrame* focusedFrame() const { return m_focusedFrame.get(); }
+    WEBCORE_EXPORT LocalFrame& focusedOrMainFrame() const;
 
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, const FocusOptions& = { });
+    WEBCORE_EXPORT bool setFocusedElement(Element*, LocalFrame&, const FocusOptions& = { });
 
     void setActivityState(OptionSet<ActivityState::Flag>);
 
@@ -119,7 +119,7 @@ private:
     void focusRepaintTimerFired();
 
     Page& m_page;
-    RefPtr<Frame> m_focusedFrame;
+    RefPtr<LocalFrame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState::Flag> m_activityState;
 

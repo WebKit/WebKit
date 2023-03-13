@@ -37,7 +37,7 @@ namespace WebCore {
 
 class Document;
 class DocumentParser;
-class Frame;
+class LocalFrame;
 class SharedBuffer;
 class TextResourceDecoder;
 
@@ -54,7 +54,7 @@ public:
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 
-    void setFrame(Frame&);
+    void setFrame(LocalFrame&);
 
     enum class IsEncodingUserChosen : bool { No, Yes };
     WEBCORE_EXPORT void setEncoding(const String& encoding, IsEncodingUserChosen);
@@ -72,7 +72,7 @@ private:
     Ref<Document> createDocument(const URL&, ScriptExecutionContextIdentifier);
     void clear();
 
-    WeakPtr<Frame> m_frame;
+    WeakPtr<LocalFrame> m_frame;
 
     String m_mimeType;
 

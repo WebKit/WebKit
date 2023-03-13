@@ -1528,7 +1528,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     INFO_LOG(LOGIDENTIFIER, initialURL, contentType, keySystem);
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame) {
         mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
@@ -2352,7 +2352,7 @@ bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIf
         return false;
     }
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame || !document().securityOrigin().canDisplay(url)) {
         if (actionIfInvalid == Complain) {
             FrameLoader::reportLocalLoadFailed(frame.get(), url.stringCenterEllipsizedToLength());
@@ -4165,7 +4165,7 @@ void HTMLMediaElement::setLoop(bool loop)
 
 bool HTMLMediaElement::controls() const
 {
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
 
     // always show controls when scripting is disabled
     if (frame && !frame->script().canExecuteScripts(NotAboutToExecuteScript))
@@ -7538,7 +7538,7 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 
 String HTMLMediaElement::mediaPlayerReferrer() const
 {
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame)
         return String();
 
@@ -7547,7 +7547,7 @@ String HTMLMediaElement::mediaPlayerReferrer() const
 
 String HTMLMediaElement::mediaPlayerUserAgent() const
 {
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame)
         return String();
 
@@ -7696,7 +7696,7 @@ const String& HTMLMediaElement::mediaPlayerMediaCacheDirectory() const
 
 String HTMLMediaElement::sourceApplicationIdentifier() const
 {
-    if (RefPtr<Frame> frame = document().frame()) {
+    if (RefPtr frame = document().frame()) {
         if (NetworkingContext* networkingContext = frame->loader().networkingContext())
             return networkingContext->sourceApplicationIdentifier();
     }

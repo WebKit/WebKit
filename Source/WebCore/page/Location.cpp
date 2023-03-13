@@ -227,7 +227,7 @@ ExceptionOr<void> Location::replace(DOMWindow& activeWindow, DOMWindow& firstWin
     ASSERT(frame->document());
     ASSERT(frame->document()->domWindow());
 
-    Frame* firstFrame = firstWindow.frame();
+    LocalFrame* firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
         return { };
 
@@ -276,7 +276,7 @@ ExceptionOr<void> Location::setLocation(DOMWindow& incumbentWindow, DOMWindow& f
     auto* frame = this->frame();
     ASSERT(frame);
 
-    Frame* firstFrame = firstWindow.frame();
+    LocalFrame* firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
         return { };
 

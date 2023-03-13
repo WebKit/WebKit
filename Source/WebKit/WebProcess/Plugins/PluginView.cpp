@@ -128,7 +128,7 @@ void PluginView::Stream::start()
 {
     ASSERT(!m_loader);
 
-    Frame* frame = m_pluginView->frame();
+    auto* frame = m_pluginView->frame();
     ASSERT(frame);
 
     WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*frame, *this, ResourceRequest {m_request}, [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
@@ -231,7 +231,7 @@ PluginView::~PluginView()
     m_plugin->destroy();
 }
 
-Frame* PluginView::frame() const
+LocalFrame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
 }
@@ -359,7 +359,7 @@ void PluginView::initializePlugin()
     m_plugin->visibilityDidChange(isVisible());
 #endif
 
-    if (Frame* frame = this->frame()) {
+    if (auto* frame = this->frame()) {
         if (FrameView* frameView = frame->view())
             frameView->setNeedsLayoutAfterViewConfigurationChange();
         if (frame->isMainFrame() && m_plugin->isFullFramePlugin())
@@ -660,7 +660,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
 
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
 
     // Get the window clip rect for the plugin element (in window coordinates).
     IntRect windowClipRect = frame->view()->windowClipRectForFrameOwner(m_pluginElement.ptr(), true);

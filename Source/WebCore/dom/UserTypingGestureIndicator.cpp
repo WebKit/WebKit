@@ -49,7 +49,7 @@ Node* UserTypingGestureIndicator::focusedElementAtGestureStart()
     return focusedNode().get();
 }
 
-UserTypingGestureIndicator::UserTypingGestureIndicator(Frame& frame)
+UserTypingGestureIndicator::UserTypingGestureIndicator(LocalFrame& frame)
     : m_previousProcessingUserTypingGesture(s_processingUserTypingGesture)
     , m_previousFocusedNode(focusedNode())
 {

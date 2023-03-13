@@ -126,7 +126,7 @@ void WebInspectorClient::bringFrontendToFront()
     m_frontendClient->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(Frame*)
+void WebInspectorClient::didResizeMainFrame(LocalFrame*)
 {
     if (m_frontendClient)
         m_frontendClient->attachAvailabilityChanged(canAttach());

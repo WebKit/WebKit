@@ -753,7 +753,7 @@ Navigator* Geolocation::navigator()
     return m_navigator.get();
 }
 
-Frame* Geolocation::frame() const
+LocalFrame* Geolocation::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }

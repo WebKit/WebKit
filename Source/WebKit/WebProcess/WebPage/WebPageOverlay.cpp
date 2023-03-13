@@ -104,7 +104,7 @@ bool WebPageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
     return m_client->mouseEvent(*this, event);
 }
 
-void WebPageOverlay::didScrollFrame(PageOverlay&, Frame& frame)
+void WebPageOverlay::didScrollFrame(PageOverlay&, LocalFrame& frame)
 {
     m_client->didScrollFrame(*this, WebFrame::fromCoreFrame(frame));
 }

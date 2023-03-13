@@ -476,7 +476,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     
     auto isParentProcessAFullWebBrowser = false;
 #if PLATFORM(IOS_FAMILY)
-    if (Frame* frame = document().frame())
+    if (auto* frame = document().frame())
         isParentProcessAFullWebBrowser = frame->loader().client().isParentProcessAFullWebBrowser();
 #elif PLATFORM(MAC)
     isParentProcessAFullWebBrowser = MacApplication::isSafari();
@@ -544,7 +544,7 @@ bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 {
     auto event = KeyboardEvent::create(platformEvent, document().windowProxy());
 
-    if (Frame* frame = document().frame()) {
+    if (LocalFrame* frame = document().frame()) {
         if (frame->eventHandler().accessibilityPreventsEventPropagation(event))
             event->stopPropagation();
     }
@@ -1271,7 +1271,7 @@ static double localZoomForRenderer(const RenderElement& renderer)
     return zoomFactor;
 }
 
-static int adjustContentsScrollPositionOrSizeForZoom(int value, const Frame& frame)
+static int adjustContentsScrollPositionOrSizeForZoom(int value, const LocalFrame& frame)
 {
     double zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
     if (zoomFactor == 1)
@@ -1496,7 +1496,7 @@ int Element::clientHeight()
     return 0;
 }
 
-ALWAYS_INLINE Frame* Element::documentFrameWithNonNullView() const
+ALWAYS_INLINE LocalFrame* Element::documentFrameWithNonNullView() const
 {
     auto* frame = document().frame();
     return frame && frame->view() ? frame : nullptr;
@@ -3567,7 +3567,7 @@ void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMod
 {
     if (isRootEditableElement()) {
         // Keep frame alive in this method, since setSelection() may release the last reference to |frame|.
-        RefPtr<Frame> frame = document().frame();
+        RefPtr frame { document().frame() };
         if (!frame)
             return;
         
@@ -3646,7 +3646,7 @@ bool Element::dispatchMouseForceWillBegin()
     if (!document().hasListenerType(Document::FORCEWILLBEGIN_LISTENER))
         return false;
 
-    Frame* frame = document().frame();
+    auto* frame = document().frame();
     if (!frame)
         return false;
 

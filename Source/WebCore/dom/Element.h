@@ -62,7 +62,7 @@ class ElementData;
 class ElementRareData;
 class FormAssociatedCustomElement;
 class FormListedElement;
-class Frame;
+class LocalFrame;
 class HTMLDocument;
 class IntSize;
 class JSCustomElementInterface;
@@ -758,7 +758,7 @@ protected:
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:
-    Frame* documentFrameWithNonNullView() const;
+    LocalFrame* documentFrameWithNonNullView() const;
     void hideNonceSlow();
 
     bool isTextNode() const;

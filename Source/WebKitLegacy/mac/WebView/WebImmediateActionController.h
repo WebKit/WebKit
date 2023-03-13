@@ -37,7 +37,7 @@
 @class WebView;
 
 namespace WebCore {
-class Frame;
+class LocalFrame;
 class Range;
 struct DictionaryPopupInfo;
 };
@@ -64,7 +64,7 @@ struct DictionaryPopupInfo;
 
 - (NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 
-+ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition;
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::LocalFrame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition;
 
 @end
 

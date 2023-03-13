@@ -314,7 +314,7 @@ void ApplicationCacheHost::notifyDOMApplicationCache(const AtomString& eventType
     dispatchDOMEvent(eventType, total, done);
 }
 
-void ApplicationCacheHost::stopLoadingInFrame(Frame& frame)
+void ApplicationCacheHost::stopLoadingInFrame(LocalFrame& frame)
 {
     ASSERT(!m_applicationCache || !m_candidateApplicationCacheGroup || m_applicationCache->group() == m_candidateApplicationCacheGroup);
 

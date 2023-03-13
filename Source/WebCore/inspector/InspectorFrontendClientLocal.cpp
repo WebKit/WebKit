@@ -277,7 +277,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
     if (!localMainFrame)
         return;
-    Frame& mainFrame = *localMainFrame;
+    LocalFrame& mainFrame = *localMainFrame;
 
     UserGestureIndicator indicator { ProcessingUserGesture, mainFrame.document() };
 
@@ -400,7 +400,7 @@ void InspectorFrontendClientLocal::showResources()
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
 }
 
-void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
+void InspectorFrontendClientLocal::showMainResourceForFrame(LocalFrame* frame)
 {
     String frameId = m_inspectedPageController->ensurePageAgent().frameId(frame);
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameId) });

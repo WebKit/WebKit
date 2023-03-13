@@ -91,7 +91,7 @@ private:
     explicit DOMSelection(DOMWindow&);
 
     // FIXME: Change DOMWindowProperty::frame to return RefPtr and then delete this.
-    RefPtr<Frame> frame() const;
+    RefPtr<LocalFrame> frame() const;
     std::optional<SimpleRange> range() const;
 
     Position anchorPosition() const;

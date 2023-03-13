@@ -488,7 +488,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         if (!localMainFrame)
             return EncodedDataStatus::Unknown;
 
-        Frame& frame = *localMainFrame;
+        LocalFrame& frame = *localMainFrame;
         frame.setView(FrameView::create(frame));
         frame.init();
         FrameLoader& loader = frame.loader();

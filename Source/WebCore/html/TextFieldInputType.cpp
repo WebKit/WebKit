@@ -785,7 +785,7 @@ bool TextFieldInputType::shouldDrawCapsLockIndicator() const
     if (element()->hasAutoFillStrongPasswordButton())
         return false;
 
-    RefPtr<Frame> frame = element()->document().frame();
+    RefPtr frame { element()->document().frame() };
     if (!frame)
         return false;
 

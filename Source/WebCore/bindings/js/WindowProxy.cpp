@@ -126,8 +126,8 @@ JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperW
 
     JSLockHolder lock(world.vm());
     auto& windowProxy = createJSWindowProxy(world);
-    if (is<Frame>(*m_frame))
-        downcast<Frame>(*m_frame).script().initScriptForWindowProxy(windowProxy);
+    if (is<LocalFrame>(*m_frame))
+        downcast<LocalFrame>(*m_frame).script().initScriptForWindowProxy(windowProxy);
     return windowProxy;
 }
 
@@ -174,8 +174,8 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
 
         ScriptController* scriptController = nullptr;
         Page* page = nullptr;
-        if (is<Frame>(*m_frame)) {
-            auto& frame = downcast<Frame>(*m_frame);
+        if (is<LocalFrame>(*m_frame)) {
+            auto& frame = downcast<LocalFrame>(*m_frame);
             scriptController = &frame.script();
             page = frame.page();
         }

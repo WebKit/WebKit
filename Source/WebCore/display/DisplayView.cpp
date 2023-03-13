@@ -50,7 +50,7 @@ View::~View()
 {
 }
 
-Frame& View::frame() const
+LocalFrame& View::frame() const
 {
     return downcast<LocalFrame>(m_frameView.frame());
 }

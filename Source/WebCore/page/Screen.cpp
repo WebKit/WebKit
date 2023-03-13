@@ -54,7 +54,7 @@ Screen::Screen(DOMWindow& window)
 
 Screen::~Screen() = default;
 
-static bool isLoadingInHeadlessMode(const Frame& frame)
+static bool isLoadingInHeadlessMode(const LocalFrame& frame)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
     if (!localFrame)

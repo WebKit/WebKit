@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static RefPtr<Node> selectionShadowAncestor(Frame& frame)
+static RefPtr<Node> selectionShadowAncestor(LocalFrame& frame)
 {
     ASSERT(!frame.settings().liveRangeSelectionEnabled());
     auto* node = frame.selection().selection().base().anchorNode();
@@ -61,7 +61,7 @@ Ref<DOMSelection> DOMSelection::create(DOMWindow& window)
     return adoptRef(*new DOMSelection(window));
 }
 
-RefPtr<Frame> DOMSelection::frame() const
+RefPtr<LocalFrame> DOMSelection::frame() const
 {
     return DOMWindowProperty::frame();
 }

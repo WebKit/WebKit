@@ -63,7 +63,7 @@ class Element;
 class Event;
 class Exception;
 class FloatQuad;
-class Frame;
+class LocalFrame;
 class InspectorHistory;
 #if ENABLE(VIDEO)
 class HTMLMediaElement;
@@ -185,7 +185,7 @@ public:
     void didChangeCustomElementState(Element&);
     bool handleTouchEvent(Node&);
     void didCommitLoad(Document*);
-    void frameDocumentUpdated(Frame&);
+    void frameDocumentUpdated(LocalFrame&);
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
     void didAddEventListener(EventTarget&);

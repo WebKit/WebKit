@@ -3991,7 +3991,7 @@ IGNORE_WARNINGS_END
     ASSERT(WebThreadIsLocked());
 
     if (auto* coreFrame = [self _mainCoreFrame])
-        coreFrame->viewportOffsetChanged(WebCore::Frame::IncrementalScrollOffset);
+        coreFrame->viewportOffsetChanged(WebCore::LocalFrame::IncrementalScrollOffset);
 }
 
 - (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)domNode isUserScroll:(BOOL)userScroll
@@ -8771,7 +8771,7 @@ FORWARD(toggleUnderline)
 }
 #endif
 
-- (WebCore::Frame*)_mainCoreFrame
+- (WebCore::LocalFrame*)_mainCoreFrame
 {
     return (_private && _private->page) ? dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame()) : 0;
 }

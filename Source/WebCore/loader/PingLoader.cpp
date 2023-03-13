@@ -65,7 +65,7 @@ namespace WebCore {
 #if ENABLE(CONTENT_EXTENSIONS)
 
 // Returns true if we should block the load.
-static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& request, OptionSet<ContentExtensions::ResourceType> resourceType)
+static bool processContentRuleListsForLoad(const LocalFrame& frame, ResourceRequest& request, OptionSet<ContentExtensions::ResourceType> resourceType)
 {
     auto* documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
@@ -81,7 +81,7 @@ static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& 
 
 #endif
 
-void PingLoader::loadImage(Frame& frame, const URL& url)
+void PingLoader::loadImage(LocalFrame& frame, const URL& url)
 {
     ASSERT(frame.document());
     auto& document = *frame.document();
@@ -117,7 +117,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
-void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinationURL)
+void PingLoader::sendPing(LocalFrame& frame, const URL& pingURL, const URL& destinationURL)
 {
     ASSERT(frame.document());
 
@@ -156,7 +156,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::Yes, ContentSecurityPolicyImposition::DoPolicyCheck, ReferrerPolicy::NoReferrer);
 }
 
-void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<FormData>&& report, ViolationReportType reportType)
+void PingLoader::sendViolationReport(LocalFrame& frame, const URL& reportURL, Ref<FormData>&& report, ViolationReportType reportType)
 {
     ASSERT(frame.document());
 
@@ -208,7 +208,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::No, ContentSecurityPolicyImposition::SkipPolicyCheck, ReferrerPolicy::EmptyString, reportType);
 }
 
-void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects shouldFollowRedirects, ContentSecurityPolicyImposition policyCheck, ReferrerPolicy referrerPolicy, std::optional<ViolationReportType> violationReportType)
+void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects shouldFollowRedirects, ContentSecurityPolicyImposition policyCheck, ReferrerPolicy referrerPolicy, std::optional<ViolationReportType> violationReportType)
 {
     auto identifier = ResourceLoaderIdentifier::generate();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().

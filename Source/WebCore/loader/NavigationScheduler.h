@@ -39,7 +39,7 @@ namespace WebCore {
 
 class Document;
 class FormSubmission;
-class Frame;
+class LocalFrame;
 class ScheduledNavigation;
 class SecurityOrigin;
 
@@ -48,7 +48,7 @@ enum class NewLoadInProgress : bool { No, Yes };
 class NavigationScheduler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NavigationScheduler(Frame&);
+    explicit NavigationScheduler(LocalFrame&);
     ~NavigationScheduler();
 
     bool redirectScheduledDuringLoad();
@@ -75,9 +75,9 @@ private:
     void timerFired();
     void schedule(std::unique_ptr<ScheduledNavigation>);
 
-    static LockBackForwardList mustLockBackForwardList(Frame& targetFrame);
+    static LockBackForwardList mustLockBackForwardList(LocalFrame& targetFrame);
 
-    Frame& m_frame;
+    LocalFrame& m_frame;
     Timer m_timer;
     std::unique_ptr<ScheduledNavigation> m_redirect;
 };

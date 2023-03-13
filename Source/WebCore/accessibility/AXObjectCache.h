@@ -145,7 +145,7 @@ public:
     // Returns the root object for the entire document.
     WEBCORE_EXPORT AXCoreObject* rootObject();
     // Returns the root object for a specific frame.
-    WEBCORE_EXPORT AccessibilityObject* rootObjectForFrame(Frame*);
+    WEBCORE_EXPORT AccessibilityObject* rootObjectForFrame(LocalFrame*);
     
     // For AX objects with elements that back them.
     AccessibilityObject* getOrCreate(RenderObject*);
@@ -391,7 +391,7 @@ public:
         AXLoadingFinished
     };
 
-    void frameLoadingEventNotification(Frame*, AXLoadingEvent);
+    void frameLoadingEventNotification(LocalFrame*, AXLoadingEvent);
 
     void prepareForDocumentDestruction(const Document&);
 
@@ -653,7 +653,7 @@ inline AccessibilityObject* AXObjectCache::create(AccessibilityRole) { return nu
 inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
 inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
-inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page*) { return nullptr; }
 inline void AXObjectCache::enableAccessibility() { }
 inline void AXObjectCache::disableAccessibility() { }
@@ -686,7 +686,7 @@ inline void AXObjectCache::detachWrapper(AXCoreObject*, AccessibilityDetachmentT
 #endif
 inline void AXObjectCache::focusCurrentModal() { }
 inline void AXObjectCache::performCacheUpdateTimerFired() { }
-inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }
+inline void AXObjectCache::frameLoadingEventNotification(LocalFrame*, AXLoadingEvent) { }
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
 inline void AXObjectCache::handleActiveDescendantChanged(Element&) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }

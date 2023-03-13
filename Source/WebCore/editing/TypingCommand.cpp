@@ -498,7 +498,7 @@ bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextG
 
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
 {
-    RefPtr<Frame> protector(document().frame());
+    RefPtr protectedFrame { document().frame() };
 
     updatePreservesTypingStyle(commandTypeForAddedTyping);
 
@@ -634,7 +634,7 @@ bool TypingCommand::makeEditableRootEmpty()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
-    RefPtr<Frame> protector(document().frame());
+    RefPtr protectedFrame { document().frame() };
 
     document().editor().updateMarkersForWordsAffectedByEditing(false);
 
@@ -755,7 +755,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
-    RefPtr<Frame> protector(document().frame());
+    RefPtr protectedFrame { document().frame() };
 
     document().editor().updateMarkersForWordsAffectedByEditing(false);
 

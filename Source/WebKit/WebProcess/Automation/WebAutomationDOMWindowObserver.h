@@ -29,7 +29,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-class Frame;
+class LocalFrame;
 }
 
 namespace WebKit {

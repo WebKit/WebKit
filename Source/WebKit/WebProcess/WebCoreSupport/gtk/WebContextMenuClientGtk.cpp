@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void WebContextMenuClient::insertEmoji(WebCore::Frame& frame)
+void WebContextMenuClient::insertEmoji(WebCore::LocalFrame& frame)
 {
     m_page->showEmojiPicker(frame);
 }

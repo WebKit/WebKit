@@ -71,7 +71,7 @@ static bool canLoadJavaScriptURL(HTMLFrameOwnerElement& ownerElement, const URL&
     return true;
 }
 
-FrameLoader::SubframeLoader::SubframeLoader(Frame& frame)
+FrameLoader::SubframeLoader::SubframeLoader(LocalFrame& frame)
     : m_frame(frame)
 {
 }
@@ -232,7 +232,7 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     return loadOrRedirectSubframe(ownerElement, completedURL, frameName, LockHistory::Yes, LockBackForwardList::Yes);
 }
 
-Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestURL, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
+LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestURL, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
     auto& initiatingDocument = ownerElement.document();
 
@@ -259,7 +259,7 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
     return dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
 }
 
-RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const String& referrer)
+RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const String& referrer)
 {
     Ref protectedFrame { m_frame };
     Ref document = ownerElement.document();

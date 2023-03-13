@@ -29,7 +29,7 @@ enum class CanWrap : bool { No, Yes };
 enum class DidWrap : bool { No, Yes };
 
 class AbstractFrame;
-class Frame;
+class LocalFrame;
 class TreeScope;
 
 class FrameTree {

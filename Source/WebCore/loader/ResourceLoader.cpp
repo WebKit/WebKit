@@ -78,7 +78,7 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 
-ResourceLoader::ResourceLoader(Frame& frame, ResourceLoaderOptions options)
+ResourceLoader::ResourceLoader(LocalFrame& frame, ResourceLoaderOptions options)
     : m_frame { &frame }
     , m_documentLoader { frame.loader().activeDocumentLoader() }
     , m_defersLoading { options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading() }
@@ -484,7 +484,7 @@ void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
 }
 
-static void logResourceResponseSource(Frame* frame, ResourceResponse::Source source)
+static void logResourceResponseSource(LocalFrame* frame, ResourceResponse::Source source)
 {
     if (!frame || !frame->page())
         return;

@@ -51,7 +51,7 @@ GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage
 
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
-    Frame* frame = geolocation.frame();
+    auto* frame = geolocation.frame();
 
     ASSERT_WITH_MESSAGE(frame, "It is not well understood in which cases the Geolocation is alive after its frame goes away. If you hit this assertion, please add a test covering this case.");
     if (!frame) {

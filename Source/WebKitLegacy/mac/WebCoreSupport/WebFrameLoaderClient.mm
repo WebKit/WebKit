@@ -170,7 +170,7 @@ NSString *WebPluginAttributesKey = @"WebPluginAttributes";
 NSString *WebPluginContainerKey = @"WebPluginContainer";
 
 @interface WebFramePolicyListener : NSObject <WebPolicyDecisionListener, WebFormSubmissionListener> {
-    RefPtr<WebCore::Frame> _frame;
+    RefPtr<WebCore::LocalFrame> _frame;
     WebCore::PolicyCheckIdentifier _identifier;
     WebCore::FramePolicyFunction _policyFunction;
 #if HAVE(APP_LINKS)
@@ -179,9 +179,9 @@ NSString *WebPluginContainerKey = @"WebPluginContainer";
     WebCore::PolicyAction _defaultPolicy;
 }
 
-- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy;
+- (id)initWithFrame:(NakedPtr<WebCore::LocalFrame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy;
 #if HAVE(APP_LINKS)
-- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)url;
+- (id)initWithFrame:(NakedPtr<WebCore::LocalFrame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)url;
 #endif
 
 - (void)invalidate;
@@ -821,7 +821,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     }
 }
 
-WebCore::Frame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy)
+WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy)
 {
     WebView *currentWebView = getWebView(m_webFrame.get());
     auto features = adoptNS([[NSDictionary alloc] init]);
@@ -849,7 +849,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const WebCore::Resour
 }
 
 
-static BOOL shouldTryAppLink(WebView *webView, const WebCore::NavigationAction& action, WebCore::Frame* targetFrame)
+static BOOL shouldTryAppLink(WebView *webView, const WebCore::NavigationAction& action, WebCore::LocalFrame* targetFrame)
 {
 #if HAVE(APP_LINKS)
     BOOL mainFrameNavigation = !targetFrame || targetFrame->isMainFrame();
@@ -1575,7 +1575,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement& ownerElement)
+RefPtr<WebCore::LocalFrame> WebFrameLoaderClient::createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement& ownerElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -2143,7 +2143,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
 #endif
 }
 
-- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy
+- (id)initWithFrame:(NakedPtr<WebCore::LocalFrame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy
 {
     self = [self init];
     if (!self)
@@ -2158,7 +2158,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
 }
 
 #if HAVE(APP_LINKS)
-- (id)initWithFrame:(NakedPtr<WebCore::Frame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)appLinkURL
+- (id)initWithFrame:(NakedPtr<WebCore::LocalFrame>)frame identifier:(WebCore::PolicyCheckIdentifier)identifier policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy appLinkURL:(NSURL *)appLinkURL
 {
     self = [self initWithFrame:frame identifier:identifier policyFunction:WTFMove(policyFunction) defaultPolicy:defaultPolicy];
     if (!self)

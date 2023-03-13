@@ -211,7 +211,7 @@ bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
     return m_client.mouseEvent(*this, mouseEvent);
 }
 
-void PageOverlay::didScrollFrame(Frame& frame)
+void PageOverlay::didScrollFrame(LocalFrame& frame)
 {
     m_client.didScrollFrame(*this, frame);
 }

@@ -99,7 +99,7 @@ static NSURL *resourceURL = [[NSBundle mainBundle] URLForResource:@"test" withEx
 using namespace WebCore;
 
 @interface WebView (WebViewInternalForTesting)
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 
 namespace TestWebKitAPI {
@@ -107,7 +107,7 @@ namespace TestWebKitAPI {
 class WebCoreNSURLSessionTest : public testing::Test {
 public:
     RetainPtr<WebView> view;
-    Frame* frame { nullptr };
+    LocalFrame* frame { nullptr };
     RetainPtr<TestNSURLSessionDataDelegate> delegate;
     RefPtr<MediaResourceLoader> loader;
     RefPtr<HTMLMediaElement> mediaElement;

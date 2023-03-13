@@ -151,7 +151,7 @@ public:
     void suspendForBackForwardCache();
     void resumeFromBackForwardCache();
 
-    WEBCORE_EXPORT Frame* frame() const final;
+    WEBCORE_EXPORT LocalFrame* frame() const final;
 
     RefPtr<MediaQueryList> matchMedia(const String&);
 
@@ -163,8 +163,8 @@ public:
     static FloatRect adjustWindowRect(Page&, const FloatRect& pendingChanges);
 
     bool allowPopUp(); // Call on first window, not target window.
-    static bool allowPopUp(Frame& firstFrame);
-    static bool canShowModalDialog(const Frame&);
+    static bool allowPopUp(LocalFrame& firstFrame);
+    static bool canShowModalDialog(const LocalFrame&);
     WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
 
     Screen& screen();
@@ -426,7 +426,7 @@ private:
 
     bool allowedToChangeWindowGeometry() const;
 
-    static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
+    static ExceptionOr<RefPtr<LocalFrame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, DOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, const Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
 #if ENABLE(DEVICE_ORIENTATION)

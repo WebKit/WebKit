@@ -58,7 +58,7 @@ URL SecurityOriginData::toURL() const
     return URL { toString() };
 }
 
-SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
+SecurityOriginData SecurityOriginData::fromFrame(LocalFrame* frame)
 {
     if (!frame)
         return SecurityOriginData { };

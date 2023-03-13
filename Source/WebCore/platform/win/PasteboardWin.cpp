@@ -475,7 +475,7 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 }
 #endif
 
-void Pasteboard::writeRangeToDataObject(const SimpleRange& selectedRange, Frame& frame)
+void Pasteboard::writeRangeToDataObject(const SimpleRange& selectedRange, LocalFrame& frame)
 {
     if (!m_writableDataObject)
         return;
@@ -502,7 +502,7 @@ void Pasteboard::writeRangeToDataObject(const SimpleRange& selectedRange, Frame&
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
-void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
+void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartCopyOrDelete, LocalFrame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
 {
     clear();
 
@@ -849,7 +849,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std:
     }
 }
 
-RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, const SimpleRange& context, bool allowPlainText, bool& chosePlainText)
+RefPtr<DocumentFragment> Pasteboard::documentFragment(LocalFrame& frame, const SimpleRange& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
     
