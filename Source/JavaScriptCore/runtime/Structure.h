@@ -614,22 +614,15 @@ public:
     
     Vector<PropertyTableEntry> getPropertiesConcurrently();
     
-    void setHasGetterSetterPropertiesWithProtoCheck(bool is__proto__)
+    void setHasAnyKindOfGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {
-        setHasGetterSetterProperties(true);
+        setHasAnyKindOfGetterSetterProperties(true);
         if (!is__proto__)
             setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
     }
     
     void setContainsReadOnlyProperties() { setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true); }
     
-    void setHasCustomGetterSetterPropertiesWithProtoCheck(bool is__proto__)
-    {
-        setHasCustomGetterSetterProperties(true);
-        if (!is__proto__)
-            setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
-    }
-
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*, StructureChain*);
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     uintptr_t cachedPropertyNameEnumeratorAndFlag() const;
@@ -810,7 +803,7 @@ public:
 
     DEFINE_BITFIELD(DictionaryKind, dictionaryKind, DictionaryKind, 2, 0);
     DEFINE_BITFIELD(bool, isPinnedPropertyTable, IsPinnedPropertyTable, 1, 2);
-    DEFINE_BITFIELD(bool, hasGetterSetterProperties, HasGetterSetterProperties, 1, 3);
+    DEFINE_BITFIELD(bool, hasAnyKindOfGetterSetterProperties, HasAnyKindOfGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
     DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 8, 6);
@@ -819,7 +812,6 @@ public:
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
     DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 23);
-    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 24);
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);

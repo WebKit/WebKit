@@ -196,6 +196,8 @@ WGPUErrorFilter ConvertToBackingContext::convertToBacking(ErrorFilter errorFilte
         return WGPUErrorFilter_OutOfMemory;
     case ErrorFilter::Validation:
         return WGPUErrorFilter_Validation;
+    case ErrorFilter::Internal:
+        return WGPUErrorFilter_Internal;
     }
 }
 

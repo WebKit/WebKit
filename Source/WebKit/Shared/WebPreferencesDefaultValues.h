@@ -104,4 +104,8 @@ bool defaultShouldEnableScreenOrientationAPI();
 bool defaultUseSCContentSharingPicker();
 #endif
 
+#if USE(LIBWEBRTC)
+bool defaultPeerConnectionEnabledAvailable();
+#endif
+
 } // namespace WebKit

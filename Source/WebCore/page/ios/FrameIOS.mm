@@ -646,8 +646,8 @@ void Frame::dispatchPageHideEventBeforePause()
     if (!isMainFrame())
         return;
 
-    Page::forEachDocumentFromMainFrame(*this, [pagehideEvent = eventNames().pagehideEvent, mainDocument = document()](Document& document) {
-        document.domWindow()->dispatchEvent(PageTransitionEvent::create(pagehideEvent, true), mainDocument);
+    Page::forEachDocumentFromMainFrame(*this, [](Document& document) {
+        document.dispatchPagehideEvent(PageshowEventPersisted);
     });
 }
 
@@ -657,8 +657,8 @@ void Frame::dispatchPageShowEventBeforeResume()
     if (!isMainFrame())
         return;
 
-    Page::forEachDocumentFromMainFrame(*this, [pageshowEvent = eventNames().pageshowEvent, mainDocument = document()](Document& document) {
-        document.domWindow()->dispatchEvent(PageTransitionEvent::create(pageshowEvent, true), mainDocument);
+    Page::forEachDocumentFromMainFrame(*this, [](Document& document) {
+        document.dispatchPageshowEvent(PageshowEventPersisted);
     });
 }
 

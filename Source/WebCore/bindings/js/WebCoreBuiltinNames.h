@@ -204,6 +204,7 @@ namespace WebCore {
     macro(GPUDevice) \
     macro(GPUDeviceLostInfo) \
     macro(GPUExternalTexture) \
+    macro(GPUInternalError) \
     macro(GPUMapMode) \
     macro(GPUOutOfMemoryError) \
     macro(GPUPipelineLayout) \

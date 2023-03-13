@@ -198,7 +198,7 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
 
 bool ResizeObserver::removeTarget(Element& target)
 {
-    auto* observerData = target.resizeObserverData();
+    auto* observerData = target.resizeObserverDataIfExists();
     if (!observerData)
         return false;
 

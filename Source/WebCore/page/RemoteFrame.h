@@ -63,7 +63,6 @@ public:
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame*, Markable<LayerHostingContextIdentifier>);
 
-    FrameType frameType() const final { return FrameType::Remote; }
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
 

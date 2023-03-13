@@ -588,7 +588,7 @@ public:
     static constexpr GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARMRegisters::r5;
-    static constexpr GPRReg nonPreservedNonArgumentGPR1 = InvalidGPRReg;
+    static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARMRegisters::r4;
 
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;

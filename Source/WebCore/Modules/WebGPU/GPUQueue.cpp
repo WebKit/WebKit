@@ -71,10 +71,10 @@ void GPUQueue::writeBuffer(
     const GPUBuffer& buffer,
     GPUSize64 bufferOffset,
     BufferSource&& data,
-    GPUSize64 dataOffset,
+    std::optional<GPUSize64> dataOffset,
     std::optional<GPUSize64> size)
 {
-    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), data.length(), dataOffset, size);
+    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), data.length(), dataOffset.value_or(0), size);
 }
 
 void GPUQueue::writeTexture(

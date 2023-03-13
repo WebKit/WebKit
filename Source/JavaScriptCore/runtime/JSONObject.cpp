@@ -880,12 +880,10 @@ void FastStringifier::recordFastPropertyEnumerationFailure(JSObject& object)
         recordFailure("overridesAnyFormOfGetOwnPropertyNames"_s);
     else if (hasIndexedProperties(structure.indexingType()))
         recordFailure("hasIndexedProperties"_s);
-    else if (structure.hasGetterSetterProperties())
+    else if (structure.hasAnyKindOfGetterSetterProperties())
         recordFailure("getter/setter: "_s + firstGetterSetterPropertyName(object));
     else if (structure.hasReadOnlyOrGetterSetterPropertiesExcludingProto())
         recordFailure("hasReadOnlyOrGetterSetterPropertiesExcludingProto"_s);
-    else if (structure.hasCustomGetterSetterProperties())
-        recordFailure("hasCustomGetterSetterProperties"_s);
     else if (structure.isUncacheableDictionary())
         recordFailure("isUncacheableDictionary"_s);
     else if (structure.hasUnderscoreProtoPropertyExcludingOriginalProto())

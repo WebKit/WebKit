@@ -1,0 +1,49 @@
+<!DOCTYPE> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that copying the text 'Foo:' and pasting into a plain text field works as expected. To run the test manually, click the button, focus the text field, and paste.");
+    source = document.getElementById("source");
+    target = document.getElementById("target");
+
+    source.addEventListener("click", event => {
+        let span = document.createElement("span");
+        span.textContent = "foo";
+        span.addEventListener("copy", event => {
+            event.clipboardData.setData("text/plain", "Foo:");
+            event.preventDefault()
+        });
+        document.body.appendChild(span);
+        getSelection().selectAllChildren(span);
+        document.execCommand("Copy");
+        span.remove();
+    });
+
+    doneWithPaste = false;
+    target.addEventListener("paste", event => {
+        doneWithPaste = true;
+    });
+
+    if (window.testRunner) {
+        await UIHelper.activateElement(source);
+        target.focus();
+        document.execCommand("Paste");
+    }
+
+    await shouldBecomeEqual("doneWithPaste", "true");
+    shouldBeEqualToString("target.value", "Foo:");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <button id="source">Click me</button>
+    <input type="text" id="target" placeholder="Paste here" />
+</body>
+</html>

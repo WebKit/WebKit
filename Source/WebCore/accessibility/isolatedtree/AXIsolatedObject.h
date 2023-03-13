@@ -57,6 +57,7 @@ public:
     AXIsolatedObject* editableAncestor() override { return Accessibility::editableAncestor(*this); };
     bool canSetFocusAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
     bool isTextControl() const override { return boolAttributeValue(AXPropertyName::IsTextControl); }
+    bool supportsLiveRegion(bool = true) const override { return boolAttributeValue(AXPropertyName::SupportsLiveRegion); }
 
 private:
     void detachRemoteParts(AccessibilityDetachmentType) override;
@@ -178,10 +179,7 @@ private:
     bool isFieldset() const override { return boolAttributeValue(AXPropertyName::IsFieldset); }
     bool isGroup() const override { return boolAttributeValue(AXPropertyName::IsGroup); }
     bool isMenuList() const override { return boolAttributeValue(AXPropertyName::IsMenuList); }
-    bool isMenuListPopup() const override { return boolAttributeValue(AXPropertyName::IsMenuListPopup); }
-    bool isMenuListOption() const override { return boolAttributeValue(AXPropertyName::IsMenuListOption); }
     bool isButton() const override { return boolAttributeValue(AXPropertyName::IsButton); }
-    bool isStyleFormatGroup() const override { return boolAttributeValue(AXPropertyName::IsStyleFormatGroup); }
     bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
     bool isEnabled() const override { return boolAttributeValue(AXPropertyName::IsEnabled); }
     bool isSelected() const override { return boolAttributeValue(AXPropertyName::IsSelected); }
@@ -194,12 +192,10 @@ private:
     FloatRect relativeFrame() const override;
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const override { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
-    bool canSetTextRangeAttributes() const override { return boolAttributeValue(AXPropertyName::CanSetTextRangeAttributes); }
     bool canSetValueAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
     bool canSetNumericValue() const override { return boolAttributeValue(AXPropertyName::CanSetNumericValue); }
     bool canSetSelectedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
     bool canSetSelectedChildren() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
-    bool canSetExpandedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetExpandedAttribute); }
     // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
     bool accessibilityIsIgnored() const override { return false; }
     unsigned blockquoteLevel() const override { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
@@ -223,7 +219,7 @@ private:
     AccessibilitySortDirection sortDirection() const override { return static_cast<AccessibilitySortDirection>(intAttributeValue(AXPropertyName::SortDirection)); }
     bool supportsRangeValue() const override { return boolAttributeValue(AXPropertyName::SupportsRangeValue); }
     String identifierAttribute() const override;
-    String linkRelValue() const override { return stringAttributeValue(AXPropertyName::LinkRelValue); }
+    String linkRelValue() const override;
     Vector<String> classList() const override;
     AccessibilityCurrentState currentState() const override { return static_cast<AccessibilityCurrentState>(intAttributeValue(AXPropertyName::CurrentState)); }
     bool supportsCurrent() const override { return boolAttributeValue(AXPropertyName::SupportsCurrent); }
@@ -317,14 +313,12 @@ private:
     void selectedChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::SelectedChildren, children); }
     void setSelectedChildren(const AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::VisibleChildren, children); }
-    void tabChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::TabChildren, children); }
     AccessibilityChildrenVector contents() override;
     AtomString tagName() const override;
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void updateChildrenIfNecessary() override;
     bool isDetachedFromParent() override;
-    bool supportsLiveRegion(bool = true) const override { return boolAttributeValue(AXPropertyName::SupportsLiveRegion); }
-    bool isInsideLiveRegion(bool = true) const override { return boolAttributeValue(AXPropertyName::IsInsideLiveRegion); }
+    AXIsolatedObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }
     const String liveRegionStatus() const override { return stringAttributeValue(AXPropertyName::LiveRegionStatus); }
     const String liveRegionRelevant() const override { return stringAttributeValue(AXPropertyName::LiveRegionRelevant); }
     bool liveRegionAtomic() const override { return boolAttributeValue(AXPropertyName::LiveRegionAtomic); }

@@ -67,9 +67,13 @@ static void checkURLArgument(NSURL *url)
         return nil;
 
     if (!identifier)
-        [NSException raise:NSInvalidArgumentException format:@"Identifier cannot be nil"];
+        [NSException raise:NSInvalidArgumentException format:@"Identifier is nil"];
 
-    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, UUID(identifier));
+    auto uuid = UUID(identifier);
+    if (!uuid.isValid())
+        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", uuid.toString().utf8().data()];
+
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, uuid);
 
     return self;
 }

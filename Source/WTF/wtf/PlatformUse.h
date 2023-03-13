@@ -240,12 +240,7 @@
 /* Use GLib's event loop abstraction. Primarily GTK port uses it. */
 #define USE_GLIB_EVENT_LOOP 1
 #elif OS(WINDOWS)
-/* Use Windows message pump abstraction.
- * Even if the port is AppleWin, we use the Windows message pump system for the event loop,
- * so that USE(WINDOWS_EVENT_LOOP) && USE(CF) can be true.
- * And PLATFORM(WIN) and PLATFORM(GTK) are exclusive. If the port is GTK,
- * PLATFORM(WIN) should be false. And in that case, GLib's event loop is used.
- */
+/* Use Windows message pump abstraction. */
 #define USE_WINDOWS_EVENT_LOOP 1
 #elif PLATFORM(COCOA)
 /* OS X and IOS. Use CoreFoundation & GCD abstraction. */

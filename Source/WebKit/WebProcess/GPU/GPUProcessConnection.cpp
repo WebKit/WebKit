@@ -384,10 +384,10 @@ void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableV
 }
 #endif
 
-void GPUProcessConnection::updateMediaConfiguration()
+void GPUProcessConnection::updateMediaConfiguration(bool forceUpdate)
 {
 #if PLATFORM(COCOA)
-    bool settingsChanged = false;
+    bool settingsChanged = forceUpdate;
 
     if (m_mediaOverridesForTesting.systemHasAC != SystemBatteryStatusTestingOverrides::singleton().hasAC() || m_mediaOverridesForTesting.systemHasBattery != SystemBatteryStatusTestingOverrides::singleton().hasBattery())
         settingsChanged = true;

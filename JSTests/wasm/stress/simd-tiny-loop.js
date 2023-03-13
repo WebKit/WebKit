@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1", "--watchdog=1000", "--watchdog-exception-ok")
-//@ skip if $architecture != "arm64" && $architecture != "x86_64"
+//@ skip if !$isSIMDPlatform
 //@ skip
 //FIXME: this test is currently broken.
 import { instantiate } from "../wabt-wrapper.js"

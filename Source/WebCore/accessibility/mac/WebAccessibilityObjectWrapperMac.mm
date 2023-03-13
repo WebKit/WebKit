@@ -1808,13 +1808,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityLinkRelationshipTypeAttribute])
         return backingObject->linkRelValue();
 
-    if ([attributeName isEqualToString:NSAccessibilityTabsAttribute]) {
-        if (backingObject->isTabList()) {
-            AccessibilityObject::AccessibilityChildrenVector tabsChildren;
-            backingObject->tabChildren(tabsChildren);
-            return makeNSArray(tabsChildren);
-        }
-    }
+    if ([attributeName isEqualToString:NSAccessibilityTabsAttribute] && backingObject->isTabList())
+        return makeNSArray(backingObject->tabChildren());
 
     if ([attributeName isEqualToString:NSAccessibilityContentsAttribute])
         return makeNSArray(backingObject->contents());

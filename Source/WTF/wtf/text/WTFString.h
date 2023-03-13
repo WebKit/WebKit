@@ -441,7 +441,7 @@ inline String::String(StaticStringImpl* string)
 }
 
 inline String::String(ASCIILiteral characters)
-    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::create(characters) })
+    : m_impl(characters.isNull() ? nullptr : RefPtr { StringImpl::create(characters) })
 {
 }
 

@@ -1258,6 +1258,7 @@ public:
     void queueTaskToDispatchEventOnWindow(TaskSource, Ref<Event>&&);
     void enqueueOverflowEvent(Ref<Event>&&);
     void dispatchPageshowEvent(PageshowEventPersistence);
+    void dispatchPagehideEvent(PageshowEventPersistence);
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
@@ -2261,6 +2262,9 @@ private:
 
     unsigned m_activeParserCount { 0 };
     unsigned m_styleRecalcCount { 0 };
+
+    enum class PageStatus : uint8_t { None, Shown, Hidden };
+    PageStatus m_lastPageStatus { PageStatus::None };
 
     DocumentClasses m_documentClasses;
 

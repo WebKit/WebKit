@@ -59,6 +59,7 @@
 #include "GPUTextureDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
+#include "JSGPUInternalError.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUPipelineError.h"
 #include "JSGPURenderPipeline.h"
@@ -112,7 +113,10 @@ void GPUDevice::destroy()
 
 Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
 {
-    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()));
+    auto bufferSize = bufferDescriptor.size;
+    auto usage = bufferDescriptor.usage;
+    auto mappedAtCreation = bufferDescriptor.mappedAtCreation;
+    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()), bufferSize, usage, mappedAtCreation);
 }
 
 Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
@@ -241,6 +245,9 @@ void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
             promise.resolve(error);
         }, [&] (Ref<PAL::WebGPU::ValidationError>&& validationError) {
             GPUError error = RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
+            promise.resolve(error);
+        }, [&] (Ref<PAL::WebGPU::InternalError>&& internalError) {
+            GPUError error = RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
             promise.resolve(error);
         });
     });

@@ -138,7 +138,7 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             optionElement.value = value;
             optionElement.textContent = this._userPreferenceValueLabel(value, systemValue);
 
-            let selectedValue = WI.cssManager.overridenUserPreferences.get(preferenceName) || defaultValue;
+            let selectedValue = WI.cssManager.overriddenUserPreferences.get(preferenceName) || defaultValue;
             if (value === selectedValue)
                 optionElement.setAttribute("selected", true);
 

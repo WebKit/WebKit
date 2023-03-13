@@ -123,6 +123,15 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
 
         downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
     }
+
+    auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });
+    for (const auto& [key, value] : nodesWithPendingKeyboardScrollAnimations) {
+        RefPtr targetNode = nodeForID(key);
+        if (!is<ScrollingTreeScrollingNode>(targetNode))
+            continue;
+
+        downcast<ScrollingTreeScrollingNode>(*targetNode).handleKeyboardScrollRequest(value);
+    }
 }
 
 void RemoteScrollingTreeMac::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
@@ -186,6 +195,13 @@ bool RemoteScrollingTreeMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID nod
     return false;
 }
 
+bool RemoteScrollingTreeMac::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID nodeID, const RequestedKeyboardScrollData& request)
+{
+    ASSERT(m_treeLock.isLocked());
+    m_nodesWithPendingKeyboardScrollAnimations.set(nodeID, request);
+    return true;
+}
+
 void RemoteScrollingTreeMac::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
 {
     RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, horizontal, vertical] {
@@ -232,6 +248,16 @@ void RemoteScrollingTreeMac::removeWheelEventTestCompletionDeferralForReason(Scr
         if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
             scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
     });
+}
+
+void RemoteScrollingTreeMac::lockLayersForHitTesting()
+{
+    m_layerHitTestMutex.lock();
+}
+
+void RemoteScrollingTreeMac::unlockLayersForHitTesting()
+{
+    m_layerHitTestMutex.unlock();
 }
 
 static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
@@ -293,6 +319,8 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     if (!rootScrollingNode)
         return nullptr;
 
+    ASSERT(m_layerHitTestMutex.isLocked());
+
     RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
 
     auto rootContentsLayerPosition = FrameView::positionForRootContentLayer(rootScrollingNode->currentScrollPosition(), rootScrollingNode->scrollOrigin(), rootScrollingNode->topContentInset(), rootScrollingNode->headerHeight());
@@ -334,6 +362,8 @@ OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTy
     auto* rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return { };
+
+    ASSERT(m_layerHitTestMutex.isLocked());
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
 

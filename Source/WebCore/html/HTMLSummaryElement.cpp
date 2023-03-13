@@ -111,7 +111,7 @@ int HTMLSummaryElement::defaultTabIndex() const
 
 bool HTMLSummaryElement::supportsFocus() const
 {
-    return isActiveSummary();
+    return isActiveSummary() || HTMLElement::supportsFocus();
 }
 
 void HTMLSummaryElement::defaultEventHandler(Event& event)

@@ -27,6 +27,7 @@
 #include "DocumentParser.h"
 
 #include "Document.h"
+#include "EventTarget.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

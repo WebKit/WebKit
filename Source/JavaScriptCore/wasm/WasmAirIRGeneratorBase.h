@@ -2887,10 +2887,10 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitEntryTierUpCheck()
 
             const unsigned extraPaddingBytes = 0;
             RegisterSet registersToSpill = { };
-            registersToSpill.add(GPRInfo::argumentGPR1, IgnoreVectors);
+            registersToSpill.add(GPRInfo::nonPreservedNonArgumentGPR0, IgnoreVectors);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
-            jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
+            jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::nonPreservedNonArgumentGPR0);
             MacroAssembler::Call call = jit.nearCall();
 
             ASSERT(!registersToSpill.numberOfSetFPRs());
@@ -2932,7 +2932,7 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoopTierUpCheck(uint32_t l
 
     patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     RegisterSetBuilder clobberLate;
-    clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
+    clobberLate.add(GPRInfo::nonPreservedNonArgumentGPR0, IgnoreVectors);
     patch->clobberLate(clobberLate);
 
     Vector<ConstrainedTmp> patchArgs;
@@ -2969,8 +2969,8 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoopTierUpCheck(uint32_t l
             tierUp.link(&jit);
 
             jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr, savedFPWidth);
-            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
-            jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
+            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::nonPreservedNonArgumentGPR0).linkTo(tierUpResume, &jit);
+            jit.farJump(GPRInfo::nonPreservedNonArgumentGPR0, WasmEntryPtrTag);
         });
     });
 

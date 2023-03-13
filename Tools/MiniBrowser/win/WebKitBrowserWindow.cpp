@@ -36,10 +36,12 @@
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKInspector.h>
+#include <WebKit/WKNavigationResponseRef.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKProtectionSpaceCurl.h>
 #include <WebKit/WKSecurityOriginRef.h>
+#include <WebKit/WKURLResponse.h>
 #include <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsiteDataStoreRefCurl.h>
@@ -168,6 +170,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(BrowserWindowClient& client, WKPageConf
     WKPageNavigationClientV0 navigationClient = { };
     navigationClient.base.version = 0;
     navigationClient.base.clientInfo = this;
+    navigationClient.decidePolicyForNavigationResponse = decidePolicyForNavigationResponse;
     navigationClient.didFailProvisionalNavigation = didFailProvisionalNavigation;
     navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;
     WKPageSetPageNavigationClient(page, &navigationClient.base);
@@ -491,6 +494,22 @@ void WebKitBrowserWindow::didChangeActiveURL(const void* clientInfo)
     auto page = WKViewGetPage(thisWindow.m_view.get());
     WKRetainPtr<WKURLRef> url = adoptWK(WKPageCopyActiveURL(page));
     thisWindow.m_client.activeURLChanged(createString(url.get()));
+}
+
+void WebKitBrowserWindow::decidePolicyForNavigationResponse(WKPageRef page, WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    auto& thisWindow = toWebKitBrowserWindow(clientInfo);
+    auto response = adoptWK(WKNavigationResponseCopyResponse(navigationResponse));
+    auto code = WKURLResponseHTTPStatusCode(response.get());
+    auto expectedContentLength = WKURLResponseGetExpectedContentLength(response.get());
+    if (code > 300 && !expectedContentLength) {
+        std::wstringstream text;
+        text << L"Error Code: " << code << std::endl;
+        text << L"MIME type: " << createString(adoptWK(WKURLResponseCopyMIMEType(response.get())).get()) << std::endl;
+        text << L"URL: " << createString(adoptWK(WKURLResponseCopyURL(response.get())).get());
+        MessageBox(thisWindow.m_hMainWnd, text.str().c_str(), L"No Content", MB_OK | MB_ICONWARNING);
+    }
+    WKFramePolicyListenerUse(listener);
 }
 
 void WebKitBrowserWindow::didFailProvisionalNavigation(WKPageRef page, WKNavigationRef navigation, WKErrorRef error, WKTypeRef userData, const void* clientInfo)

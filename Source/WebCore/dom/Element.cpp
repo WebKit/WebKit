@@ -4412,23 +4412,19 @@ void Element::requestPointerLock()
 
 #endif
 
-void Element::disconnectFromIntersectionObservers()
+void Element::disconnectFromIntersectionObserversSlow(IntersectionObserverData& observerData)
 {
-    auto* observerData = intersectionObserverDataIfExists();
-    if (!observerData)
-        return;
-
-    for (const auto& registration : observerData->registrations) {
+    for (const auto& registration : observerData.registrations) {
         if (registration.observer)
             registration.observer->targetDestroyed(*this);
     }
-    observerData->registrations.clear();
+    observerData.registrations.clear();
 
-    for (const auto& observer : observerData->observers) {
+    for (const auto& observer : observerData.observers) {
         if (observer)
             observer->rootDestroyed();
     }
-    observerData->observers.clear();
+    observerData.observers.clear();
 }
 
 IntersectionObserverData& Element::ensureIntersectionObserverData()
@@ -4561,15 +4557,11 @@ bool Element::hasPendingKeyframesUpdate(PseudoId pseudoId) const
     return data && data->hasPendingKeyframesUpdate();
 }
 
-void Element::disconnectFromResizeObservers()
+void Element::disconnectFromResizeObserversSlow(ResizeObserverData& observerData)
 {
-    auto* observerData = resizeObserverData();
-    if (!observerData)
-        return;
-
-    for (const auto& observer : observerData->observers)
+    for (const auto& observer : observerData.observers)
         observer->targetDestroyed(*this);
-    observerData->observers.clear();
+    observerData.observers.clear();
 }
 
 ResizeObserverData& Element::ensureResizeObserverData()
@@ -4580,7 +4572,7 @@ ResizeObserverData& Element::ensureResizeObserverData()
     return *rareData.resizeObserverData();
 }
 
-ResizeObserverData* Element::resizeObserverData()
+ResizeObserverData* Element::resizeObserverDataIfExists()
 {
     return hasRareData() ? elementRareData()->resizeObserverData() : nullptr;
 }

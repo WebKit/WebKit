@@ -41,6 +41,8 @@ GPUError GPUUncapturedErrorEvent::error() const
         return RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
     }, [] (Ref<PAL::WebGPU::ValidationError>&& validationError) -> GPUError {
         return RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
+    }, [] (Ref<PAL::WebGPU::InternalError>&& internalError) -> GPUError {
+        return RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
     });
 
 }

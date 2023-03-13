@@ -41,7 +41,7 @@ class RenderBox;
 class StyleImage;
 class FloatingObject;
 
-std::unique_ptr<Shape> makeShapeForShapeOutside(const RenderBox&);
+Ref<const Shape> makeShapeForShapeOutside(const RenderBox&);
 
 class ShapeOutsideDeltas final {
 public:
@@ -128,7 +128,7 @@ private:
 
     const RenderBox& m_renderer;
 
-    mutable std::unique_ptr<Shape> m_shape;
+    mutable RefPtr<const Shape> m_shape;
     LayoutSize m_cachedShapeLogicalSize;
 
     ShapeOutsideDeltas m_shapeOutsideDeltas;

@@ -908,7 +908,7 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
             return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
     }
 
-    if (receiver->structure()->hasCustomGetterSetterProperties()) {
+    if (receiver->structure()->hasAnyKindOfGetterSetterProperties()) {
         unsigned attributes;
         if (receiver->getDirectOffset(vm, propertyName, attributes) != invalidOffset && (attributes & PropertyAttribute::CustomValue))
             return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
@@ -2086,7 +2086,7 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     Structure* structure = this->structure();
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
-    structure->setHasCustomGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
+    structure->setHasAnyKindOfGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
     return result;
 }
 
@@ -2103,7 +2103,7 @@ void JSObject::putDirectCustomGetterSetterWithoutTransition(VM& vm, PropertyName
 
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
-    structure->setHasCustomGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
+    structure->setHasAnyKindOfGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
 }
 
 bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, GetterSetter* accessor, unsigned attributes)
@@ -2116,7 +2116,7 @@ bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, Gett
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 
-    structure->setHasGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
+    structure->setHasAnyKindOfGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
     return result;
 }
 
@@ -2130,7 +2130,7 @@ void JSObject::putDirectNonIndexAccessorWithoutTransition(VM& vm, PropertyName p
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 
-    structure->setHasGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
+    structure->setHasAnyKindOfGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
 }
 
 // https://tc39.es/ecma262/#sec-hasproperty

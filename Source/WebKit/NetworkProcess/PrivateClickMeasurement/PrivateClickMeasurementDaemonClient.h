@@ -36,6 +36,7 @@ class DaemonClient : public Client, public CanMakeWeakPtr<DaemonClient> {
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;
+    bool usesEphemeralDataStore() const final { return false; }
     bool runningInDaemon() const final { return true; }
 };
 

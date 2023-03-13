@@ -186,7 +186,7 @@ static void applyCommonPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTr
         layer.masksToBounds = properties.masksToBounds;
 }
 
-void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStore::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
 {
     applyCommonPropertiesToLayer(layer, properties);
 
@@ -255,10 +255,13 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackingStoreChanged
         || properties.changedProperties & LayerChange::BackingStoreAttachmentChanged)
     {
-        auto* backingStore = properties.backingStore.get();
-        if (backingStore && properties.backingStoreAttached)
+        auto* backingStore = properties.backingStoreProperties.get();
+        if (backingStore && properties.backingStoreAttached) {
+            if (layerTreeNode)
+                backingStore->updateCachedBuffers(*layerTreeNode, layerContentsType);
+
             backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore());
-        else
+        } else
             [layer _web_clearContents];
     }
 
@@ -293,11 +296,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    applyPropertiesToLayer(node.layer(), layerTreeHost, properties, layerContentsType);
+    applyPropertiesToLayer(node.layer(), &node, layerTreeHost, properties, layerContentsType);
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     applyCommonPropertiesToLayer(node.interactionRegionsLayer(), properties);
     if (properties.changedProperties & LayerChange::EventRegionChanged)

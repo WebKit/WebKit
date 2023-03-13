@@ -56,6 +56,7 @@ public:
     void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction = WebCore::ScrollingLayerPositionAction::Sync) override;
     void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingTreeScrollingNode&) override;
     bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
+    bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) override;
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
@@ -72,6 +73,23 @@ protected:
 
     // This gets nulled out via invalidate(), since the scrolling thread can hold a ref to the ScrollingTree after the RemoteScrollingCoordinatorProxy has gone away.
     WeakPtr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
+};
+
+class RemoteLayerTreeHitTestLocker {
+public:
+    RemoteLayerTreeHitTestLocker(RemoteScrollingTree& scrollingTree)
+        : m_scrollingTree(scrollingTree)
+    {
+        m_scrollingTree->lockLayersForHitTesting();
+    }
+    
+    ~RemoteLayerTreeHitTestLocker()
+    {
+        m_scrollingTree->unlockLayersForHitTesting();
+    }
+
+private:
+    Ref<RemoteScrollingTree> m_scrollingTree;
 };
 
 } // namespace WebKit

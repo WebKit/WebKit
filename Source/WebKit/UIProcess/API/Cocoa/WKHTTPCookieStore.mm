@@ -129,7 +129,7 @@ static WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKCookiePolicy w
 {
     switch (wkCookiePolicy) {
     case WKCookiePolicyAllow:
-        return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
+        return WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     case WKCookiePolicyDisallow:
         return WebCore::HTTPCookieAcceptPolicy::Never;
     }
@@ -139,11 +139,11 @@ static WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKCookiePolicy w
 static WKCookiePolicy toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy policy)
 {
     switch (policy) {
-    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
+    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
         return WKCookiePolicyAllow;
     case WebCore::HTTPCookieAcceptPolicy::Never:
         return WKCookiePolicyDisallow;
-    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
     case WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         return WKCookiePolicyAllow;
     }

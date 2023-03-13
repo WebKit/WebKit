@@ -96,14 +96,7 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::disable()
 
 Protocol::ErrorStringOr<void> InspectorConsoleAgent::clearMessages()
 {
-    m_consoleMessages.clear();
-    m_expiredConsoleMessageCount = 0;
-
-    m_injectedScriptManager.releaseObjectGroup("console"_s);
-
-    if (m_enabled)
-        m_frontendDispatcher->messagesCleared();
-
+    clearMessages(Inspector::Protocol::Console::ClearReason::ConsoleAPI);
     return { };
 }
 
@@ -112,12 +105,23 @@ bool InspectorConsoleAgent::developerExtrasEnabled() const
     return m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled();
 }
 
-void InspectorConsoleAgent::reset()
+void InspectorConsoleAgent::mainFrameNavigated()
 {
-    clearMessages();
+    clearMessages(Inspector::Protocol::Console::ClearReason::MainFrameNavigation);
 
     m_times.clear();
     m_counts.clear();
+}
+
+void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearReason reason)
+{
+    m_consoleMessages.clear();
+    m_expiredConsoleMessageCount = 0;
+
+    m_injectedScriptManager.releaseObjectGroup("console"_s);
+
+    if (m_enabled)
+        m_frontendDispatcher->messagesCleared(reason);
 }
 
 void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> message)

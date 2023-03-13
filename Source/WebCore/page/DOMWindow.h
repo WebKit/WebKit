@@ -31,7 +31,6 @@
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
 #include "Frame.h"
-#include "FrameDestructionObserver.h"
 #include "ImageBitmap.h"
 #include "ReducedResolutionSeconds.h"
 #include "ScrollToOptions.h"
@@ -88,6 +87,7 @@ class VisualViewport;
 class WebCoreOpaqueRoot;
 class WebKitNamespace;
 class WebKitPoint;
+class WindowProxy;
 
 #if ENABLE(DEVICE_ORIENTATION)
 class DeviceMotionController;
@@ -466,9 +466,6 @@ private:
 
     String m_status;
     String m_defaultStatus;
-
-    enum class PageStatus { None, Shown, Hidden };
-    PageStatus m_lastPageStatus { PageStatus::None };
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_scrollEventListenerCount { 0 };

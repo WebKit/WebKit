@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "DocumentParser.h"
 
 namespace WebCore {

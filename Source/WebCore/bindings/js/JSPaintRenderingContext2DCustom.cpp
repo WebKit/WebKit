@@ -29,6 +29,8 @@
 #if ENABLE(CSS_PAINTING_API)
 
 #include "WebCoreOpaqueRootInlines.h"
+#include <JavaScriptCore/AbstractSlotVisitorInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 using namespace JSC;

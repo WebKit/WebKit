@@ -1550,10 +1550,7 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
         platformMediaSessionManager->processWillSuspend();
 #endif
 
-#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
-    if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
-        m_nonVisibleProcessMemoryCleanupTimer.startOneShot(nonVisibleProcessMemoryCleanupDelay);
-#else
+#if !PLATFORM(MAC)
     if (!m_suppressMemoryPressureHandler) {
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
         for (auto& page : m_pageMap.values())
@@ -2170,12 +2167,12 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 
 #if PLATFORM(COCOA)
     if (useGPUProcessForMedia) {
-        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this] () {
-            ensureGPUProcessConnection().updateMediaConfiguration();
+        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this] (bool forceUpdate) {
+            ensureGPUProcessConnection().updateMediaConfiguration(forceUpdate);
         });
 #if ENABLE(VP9)
-        VP9TestingOverrides::singleton().setConfigurationChangedCallback([this] () {
-            ensureGPUProcessConnection().updateMediaConfiguration();
+        VP9TestingOverrides::singleton().setConfigurationChangedCallback([this] (bool forceUpdate) {
+            ensureGPUProcessConnection().updateMediaConfiguration(forceUpdate);
         });
 #endif
     } else {

@@ -83,13 +83,14 @@ public:
     void setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&&);
     std::optional<ScreenDataOverrides> vp9ScreenSizeAndScale()  { return m_screenSizeAndScale; }
 
-    void setConfigurationChangedCallback(std::function<void()>&&);
+    void setConfigurationChangedCallback(std::function<void(bool)>&&);
+    void resetOverridesToDefaultValues();
 
 private:
     std::optional<bool> m_hardwareDecoderDisabled;
     std::optional<bool> m_vp9DecoderDisabled;
     std::optional<ScreenDataOverrides> m_screenSizeAndScale;
-    Function<void()> m_configurationChangedCallback;
+    Function<void(bool)> m_configurationChangedCallback;
 };
 
 }

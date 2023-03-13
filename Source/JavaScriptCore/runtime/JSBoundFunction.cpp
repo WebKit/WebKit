@@ -49,7 +49,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObj
         args.append(callFrame->uncheckedArgument(i));
     RELEASE_ASSERT(!args.hasOverflowed());
 
-    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
+    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->flattenedTargetFunction());
     ExecutableBase* executable = targetFunction->executable();
     if (executable->hasJITCodeForCall()) {
         // Force the executable to cache its arity entrypoint.
@@ -81,7 +81,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionCall, (JSGlobalObject* globalObject, CallF
         return encodedJSValue();
     }
 
-    JSObject* targetFunction = boundFunction->targetFunction();
+    JSObject* targetFunction = boundFunction->flattenedTargetFunction();
     auto callData = JSC::getCallData(targetFunction);
     ASSERT(callData.type != CallData::Type::None);
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, targetFunction, callData, boundFunction->boundThis(), args)));
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionConstruct, (JSGlobalObject* glob
         args.append(callFrame->uncheckedArgument(i));
     RELEASE_ASSERT(!args.hasOverflowed());
 
-    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
+    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->flattenedTargetFunction());
     auto constructData = JSC::getConstructData(targetFunction);
     ASSERT(constructData.type != CallData::Type::None);
 
@@ -132,7 +132,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
         return encodedJSValue();
     }
 
-    JSObject* targetFunction = boundFunction->targetFunction();
+    JSObject* targetFunction = boundFunction->flattenedTargetFunction();
     auto constructData = JSC::getConstructData(targetFunction);
     ASSERT(constructData.type != CallData::Type::None);
 
@@ -152,6 +152,7 @@ JSC_DEFINE_HOST_FUNCTION(hasInstanceBoundFunction, (JSGlobalObject* globalObject
     JSBoundFunction* boundObject = jsCast<JSBoundFunction*>(callFrame->uncheckedArgument(0));
     JSValue value = callFrame->uncheckedArgument(1);
 
+    // Not using flattenedTargetFunction() since we need to query the direct targetFunction here.
     return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(globalObject, value)));
 }
 
@@ -187,7 +188,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
     return result;
 }
 
-JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, double length, JSString* nameMayBeNull)
+JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSObject* flattenedTargetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, double length, JSString* nameMayBeNull)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -196,13 +197,13 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    bool isJSFunction = getJSFunction(targetFunction);
-    bool canConstruct = targetFunction->isConstructor();
+    bool isJSFunction = getJSFunction(flattenedTargetFunction);
+    bool canConstruct = flattenedTargetFunction->isConstructor();
 
     NativeExecutable* executable = vm.getBoundFunction(isJSFunction, canConstruct);
-    Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);
+    Structure* structure = getBoundFunctionStructure(vm, globalObject, flattenedTargetFunction);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, structure, targetFunction, boundThis, boundArgs, nameMayBeNull, length);
+    JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm)) JSBoundFunction(vm, executable, globalObject, structure, targetFunction, flattenedTargetFunction, boundThis, boundArgs, nameMayBeNull, length);
 
     function->finishCreation(vm);
     return function;
@@ -213,9 +214,10 @@ bool JSBoundFunction::customHasInstance(JSObject* object, JSGlobalObject* global
     return jsCast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(globalObject, value);
 }
 
-JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, double length)
+JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSObject* flattenedTargetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, double length)
     : Base(vm, executable, globalObject, structure)
     , m_targetFunction(vm, this, targetFunction)
+    , m_flattendTargetFunction(vm, this, flattenedTargetFunction)
     , m_boundThis(vm, this, boundThis)
     , m_boundArgs(vm, this, boundArgs, WriteBarrier<JSImmutableButterfly>::MayBeNull)
     , m_nameMayBeNull(vm, this, nameMayBeNull, WriteBarrier<JSString>::MayBeNull)
@@ -254,6 +256,7 @@ void JSBoundFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(thisObject->m_targetFunction);
+    visitor.append(thisObject->m_flattendTargetFunction);
     visitor.append(thisObject->m_boundThis);
     visitor.append(thisObject->m_boundArgs);
     visitor.append(thisObject->m_nameMayBeNull);

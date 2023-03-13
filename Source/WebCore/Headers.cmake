@@ -18,6 +18,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUBufferBindingLayout.h
     Modules/WebGPU/GPUBufferBindingType.h
     Modules/WebGPU/GPUBufferDescriptor.h
+    Modules/WebGPU/GPUBufferMapState.h
     Modules/WebGPU/GPUBufferUsage.h
     Modules/WebGPU/GPUCanvasCompositingAlphaMode.h
     Modules/WebGPU/GPUCanvasConfiguration.h

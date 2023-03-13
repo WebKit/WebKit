@@ -29,7 +29,6 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
-#include "JSObject.h"
 #include "JSSymbolTableObject.h"
 #include "SymbolTable.h"
 #include <wtf/SegmentedVector.h>

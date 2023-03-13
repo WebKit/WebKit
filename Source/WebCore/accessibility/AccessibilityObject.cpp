@@ -2853,18 +2853,6 @@ const String AccessibilityObject::placeholderValue() const
     return nullAtom();
 }
     
-bool AccessibilityObject::isInsideLiveRegion(bool excludeIfOff) const
-{
-    return liveRegionAncestor(excludeIfOff);
-}
-    
-AccessibilityObject* AccessibilityObject::liveRegionAncestor(bool excludeIfOff) const
-{
-    return Accessibility::findAncestor<AccessibilityObject>(*this, true, [excludeIfOff] (const AccessibilityObject& object) {
-        return object.supportsLiveRegion(excludeIfOff);
-    });
-}
-
 bool AccessibilityObject::supportsARIAAttributes() const
 {
     // This returns whether the element supports any global ARIA attributes.
@@ -3529,12 +3517,9 @@ IntRect AccessibilityObject::scrollVisibleContentRect() const
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::contents()
 {
-    if (isTabList()) {
-        AccessibilityChildrenVector tabs;
-        tabChildren(tabs);
-        return tabs;
-    }
-    
+    if (isTabList())
+        return tabChildren();
+
     if (isScrollView()) {
         // A scroll view's contents are everything except the scroll bars.
         AccessibilityChildrenVector nonScrollbarChildren;

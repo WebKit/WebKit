@@ -855,9 +855,7 @@ static bool canPerformFastPropertyEnumerationForCopyDataProperties(Structure* st
     // https://bugs.webkit.org/show_bug.cgi?id=185358
     if (hasIndexedProperties(structure->indexingType()))
         return false;
-    if (structure->hasGetterSetterProperties())
-        return false;
-    if (structure->hasCustomGetterSetterProperties())
+    if (structure->hasAnyKindOfGetterSetterProperties())
         return false;
     if (structure->isUncacheableDictionary())
         return false;

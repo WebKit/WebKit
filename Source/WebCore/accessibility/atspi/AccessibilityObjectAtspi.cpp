@@ -982,7 +982,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         // to be obtainable in the same fashion as an ARIA landmark, fall back on the computedRoleString.
         // We also want to do this for the style-format-group element types so that the type of format
         // group it is doesn't get lost to a generic platform role.
-        if (liveObject && liveObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (m_coreObject->isLandmark() || m_coreObject->isStyleFormatGroup()))
+        if (liveObject && liveObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (liveObject->isLandmark() || liveObject->isStyleFormatGroup()))
             map.set("xml-roles"_s, computedRoleString);
     }
 

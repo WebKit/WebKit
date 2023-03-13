@@ -1619,6 +1619,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUBufferBindingLayout.idl
     Modules/WebGPU/GPUBufferBindingType.idl
     Modules/WebGPU/GPUBufferDescriptor.idl
+    Modules/WebGPU/GPUBufferMapState.idl
     Modules/WebGPU/GPUBufferUsage.idl
     Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
     Modules/WebGPU/GPUCanvasConfiguration.idl
@@ -1665,6 +1666,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUImageCopyTextureTagged.idl
     Modules/WebGPU/GPUImageDataLayout.idl
     Modules/WebGPU/GPUIndexFormat.idl
+    Modules/WebGPU/GPUInternalError.idl
     Modules/WebGPU/GPULoadOp.idl
     Modules/WebGPU/GPUMapMode.idl
     Modules/WebGPU/GPUMipmapFilterMode.idl

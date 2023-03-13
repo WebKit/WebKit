@@ -610,4 +610,35 @@ TEST(WKWebsiteDataStorePrivate, FetchWithSize)
     TestWebKitAPI::Util::run(&readyToContinue);
 }
 
+TEST(WKWebsiteDataStore, DataStoreForNilIdentifier)
+{
+    bool hasException = false;
+    @try {
+        auto websiteDataStore = [WKWebsiteDataStore dataStoreForIdentifier:[[NSUUID alloc] initWithUUIDString:@"1234"]];
+        EXPECT_NOT_NULL(websiteDataStore);
+    } @catch (NSException *exception) {
+        EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+        EXPECT_WK_STREQ(@"Identifier is nil", exception.reason);
+        hasException = true;
+    }
+    EXPECT_TRUE(hasException);
+}
+
+TEST(WKWebsiteDataStore, DataStoreForEmptyIdentifier)
+{
+    bool hasException = false;
+    @try {
+        auto data = [NSMutableData dataWithLength:16];
+        unsigned char* dataBytes = (unsigned char*) [data mutableBytes];
+        auto emptyUUID = [[NSUUID alloc] initWithUUIDBytes:dataBytes];
+        auto websiteDataStore = [WKWebsiteDataStore dataStoreForIdentifier:emptyUUID];
+        EXPECT_NOT_NULL(websiteDataStore);
+    } @catch (NSException *exception) {
+        EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+        EXPECT_WK_STREQ(@"Identifier (00000000-0000-0000-0000-000000000000) is invalid for data store", exception.reason);
+        hasException = true;
+    }
+    EXPECT_TRUE(hasException);
+}
+
 } // namespace TestWebKitAPI

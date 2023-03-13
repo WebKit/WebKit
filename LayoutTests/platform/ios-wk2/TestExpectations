@@ -1348,6 +1348,8 @@ fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 # <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-001.html [ Pass Failure ]
 
+webkit.org/b/253708 editing/pasteboard/copy-paste-text-with-trailing-colon.html [ Failure ]
+
 # Timeout running prompt() because mock implementation is absent.
 webkit.org/b/203572 media/remoteplayback-prompt.html [ Skip ]
 webkit.org/b/203572 media/remoteplayback-target-availability.html [ Skip ]

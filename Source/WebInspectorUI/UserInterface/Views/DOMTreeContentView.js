@@ -54,7 +54,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showPrintStylesChanged();
 
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `Page.overrideUserPreference` did not exist yet.
-        this._overrideUserPreferencesNavigationItem = new WI.ActivateButtonNavigationItem("toggle-user-preferences", WI.UIString("Override user preferences"), WI.UIString("User preferences overriden"), "Images/AppearanceOverride.svg", 16, 16);
+        this._overrideUserPreferencesNavigationItem = new WI.ActivateButtonNavigationItem("toggle-user-preferences", WI.UIString("Override user preferences"), WI.UIString("User preferences overridden"), "Images/AppearanceOverride.svg", 16, 16);
         this._overrideUserPreferencesNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleOverrideUserPreferencesButtonClicked, this);
         // COMPATIBILITY (macOS 13, iOS 16.0): `Page.setForcedAppearance()` was removed in favor of `Page.overrideUserPreference()`
         this._overrideUserPreferencesNavigationItem.enabled = WI.cssManager.supportsOverrideUserPreference || WI.cssManager.supportsOverrideColorScheme;
@@ -88,7 +88,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._domNodeChanged, this);
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.DefaultUserPreferencesDidChange, this._defaultUserPreferencesDidChange, this);
-        WI.cssManager.addEventListener(WI.CSSManager.Event.OverridenUserPreferencesDidChange, this._overridenUserPreferencesDidChange, this);
+        WI.cssManager.addEventListener(WI.CSSManager.Event.OverriddenUserPreferencesDidChange, this._overriddenUserPreferencesDidChange, this);
 
         this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
 
@@ -702,9 +702,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._userPreferencesOverridesPopover.show(this._overrideUserPreferencesNavigationItem.element);
     }
 
-    _overridenUserPreferencesDidChange()
+    _overriddenUserPreferencesDidChange()
     {
-        this._overrideUserPreferencesNavigationItem.activated = WI.cssManager.overridenUserPreferences.size > 0;
+        this._overrideUserPreferencesNavigationItem.activated = WI.cssManager.overriddenUserPreferences.size > 0;
     }
 
     _defaultUserPreferencesDidChange()

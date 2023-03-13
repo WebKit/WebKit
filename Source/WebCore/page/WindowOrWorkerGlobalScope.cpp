@@ -33,6 +33,7 @@
 #include "SerializedScriptValue.h"
 #include "StructuredSerializeOptions.h"
 #include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 

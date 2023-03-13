@@ -209,9 +209,8 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
 {
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
-    setHasGetterSetterProperties(classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::Accessor)));
-    setHasCustomGetterSetterProperties(classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::CustomAccessorOrValue)));
-    setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasGetterSetterProperties() || classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
+    setHasAnyKindOfGetterSetterProperties(classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
+    setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
@@ -228,8 +227,8 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity);
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
     ASSERT(!hasRareData());
-    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::Accessor));
-    ASSERT(hasGetterSetterProperties() == m_classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::Accessor)));
+    ASSERT(hasAnyKindOfGetterSetterProperties() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::AccessorOrCustomAccessorOrValue));
 
     validateFlags();
 
@@ -251,9 +250,8 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
 {
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
-    setHasGetterSetterProperties(m_classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::Accessor)));
-    setHasCustomGetterSetterProperties(m_classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::CustomAccessorOrValue)));
-    setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasGetterSetterProperties() || m_classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
+    setHasAnyKindOfGetterSetterProperties(m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
+    setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
@@ -271,8 +269,8 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     m_blob = TypeInfoBlob(0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
-    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::Accessor));
-    ASSERT(hasGetterSetterProperties() == m_classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::Accessor)));
+    ASSERT(hasAnyKindOfGetterSetterProperties() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::AccessorOrCustomAccessorOrValue));
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
@@ -293,8 +291,7 @@ Structure::Structure(VM& vm, Structure* previous)
     setDictionaryKind(previous->dictionaryKind());
     setIsPinnedPropertyTable(false);
     setHasBeenFlattenedBefore(previous->hasBeenFlattenedBefore());
-    setHasGetterSetterProperties(previous->hasGetterSetterProperties());
-    setHasCustomGetterSetterProperties(previous->hasCustomGetterSetterProperties());
+    setHasAnyKindOfGetterSetterProperties(previous->hasAnyKindOfGetterSetterProperties());
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
     setHasUnderscoreProtoPropertyExcludingOriginalProto(previous->hasUnderscoreProtoPropertyExcludingOriginalProto());
     setIsQuickPropertyAccessAllowedForEnumeration(previous->isQuickPropertyAccessAllowedForEnumeration());
@@ -324,8 +321,8 @@ Structure::Structure(VM& vm, Structure* previous)
 
     if (previous->m_globalObject)
         m_globalObject.set(vm, this, previous->m_globalObject.get());
-    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticPropertyWithAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::Accessor));
-    ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticPropertyWithAttributes(static_cast<uint8_t>(PropertyAttribute::Accessor)));
+    ASSERT(hasAnyKindOfGetterSetterProperties() || !m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticPropertyWithAnyOfAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::AccessorOrCustomAccessorOrValue));
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
@@ -1420,7 +1417,7 @@ void Structure::dumpContextHeader(PrintStream& out)
     out.print("Structures:");
 }
 
-bool ClassInfo::hasStaticPropertyWithAttributes(uint8_t attributes) const
+bool ClassInfo::hasStaticPropertyWithAnyOfAttributes(uint8_t attributes) const
 {
     for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
         if (const HashTable* table = ci->staticPropHashTable) {
@@ -1481,9 +1478,7 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
 {
     if (!isQuickPropertyAccessAllowedForEnumeration())
         return false;
-    if (hasGetterSetterProperties())
-        return false;
-    if (hasCustomGetterSetterProperties())
+    if (hasAnyKindOfGetterSetterProperties())
         return false;
     if (isUncacheableDictionary())
         return false;

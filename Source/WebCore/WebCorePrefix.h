@@ -67,6 +67,7 @@
 #ifdef __cplusplus
 #include <algorithm>
 #include <cstddef>
+#include <functional>
 #include <new>
 #endif
 

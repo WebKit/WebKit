@@ -353,6 +353,7 @@ JSC_DEFINE_HOST_FUNCTION(makeBoundFunction, (JSGlobalObject* globalObject, CallF
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* target = asObject(callFrame->uncheckedArgument(0));
+    JSObject* flattenedTarget = target;
     JSValue boundThis = callFrame->uncheckedArgument(1);
     JSValue boundArgs = callFrame->uncheckedArgument(2);
     JSImmutableButterfly* butterfly = boundArgs.isCell() ? jsCast<JSImmutableButterfly*>(boundArgs) : nullptr;
@@ -364,13 +365,13 @@ JSC_DEFINE_HOST_FUNCTION(makeBoundFunction, (JSGlobalObject* globalObject, CallF
         JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
         if (boundFunction->canCloneBoundArgs()) {
             boundThis = boundFunction->boundThis();
-            target = boundFunction->targetFunction();
+            flattenedTarget = boundFunction->flattenedTargetFunction();
             if (!butterfly && boundFunction->boundArgs())
                 butterfly = boundFunction->boundArgs();
         }
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, boundThis, butterfly, length, nameString)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, flattenedTarget, boundThis, butterfly, length, nameString)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(hasOwnLengthProperty, (JSGlobalObject* globalObject, CallFrame* callFrame))

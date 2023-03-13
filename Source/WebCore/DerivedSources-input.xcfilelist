@@ -50,6 +50,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferBinding.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferBindingLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferBindingType.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferDescriptor.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
@@ -96,6 +97,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUImageCopyTexture.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUImageCopyTextureTagged.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUImageDataLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUIndexFormat.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUInternalError.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPULoadOp.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUMapMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUMipmapFilterMode.idl

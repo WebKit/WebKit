@@ -75,6 +75,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferBindingLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferBindingType.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferDescriptor.idl \
+    $(WebCore)/Modules/WebGPU/GPUBufferMapState.idl \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasCompositingAlphaMode.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasConfiguration.idl \
@@ -121,6 +122,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUImageCopyTextureTagged.idl \
     $(WebCore)/Modules/WebGPU/GPUImageDataLayout.idl \
     $(WebCore)/Modules/WebGPU/GPUIndexFormat.idl \
+    $(WebCore)/Modules/WebGPU/GPUInternalError.idl \
     $(WebCore)/Modules/WebGPU/GPULoadOp.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
     $(WebCore)/Modules/WebGPU/GPUMipmapFilterMode.idl \

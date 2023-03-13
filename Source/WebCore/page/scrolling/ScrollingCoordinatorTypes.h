@@ -65,7 +65,7 @@ constexpr auto debugScrollingStateTreeAsTextBehaviors = OptionSet<ScrollingState
     ScrollingStateTreeAsTextBehavior::IncludeLayerIDs, ScrollingStateTreeAsTextBehavior::IncludeNodeIDs, ScrollingStateTreeAsTextBehavior::IncludeLayerPositions
 };
 
-enum class ScrollingLayerPositionAction {
+enum class ScrollingLayerPositionAction : uint8_t {
     Set,
     SetApproximate,
     Sync

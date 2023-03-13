@@ -46,6 +46,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLParserIdioms.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ValidationMessage.h"
 #include <wtf/Ref.h>
@@ -59,8 +60,7 @@ using namespace HTMLNames;
 ValidatedFormListedElement::ValidatedFormListedElement(HTMLFormElement* form)
     : FormListedElement { form }
 {
-    if (supportsReadOnly())
-        ASSERT(readOnlyBarsFromConstraintValidation());
+    ASSERT(!supportsReadOnly() || readOnlyBarsFromConstraintValidation());
 }
 
 ValidatedFormListedElement::~ValidatedFormListedElement() = default;

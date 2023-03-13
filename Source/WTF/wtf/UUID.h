@@ -101,6 +101,7 @@ public:
     WTF_EXPORT_PRIVATE String toString() const;
 
     operator bool() const { return !!m_data; }
+    bool isValid() const { return m_data != emptyValue && m_data != deletedValue; }
 
     UInt128 data() const { return m_data; }
 

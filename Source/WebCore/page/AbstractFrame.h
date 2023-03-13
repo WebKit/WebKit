@@ -47,7 +47,7 @@ public:
     virtual ~AbstractFrame();
 
     enum class FrameType : bool { Local, Remote };
-    virtual FrameType frameType() const = 0;
+    FrameType frameType() const { return m_frameType; }
 
     WindowProxy& windowProxy() { return m_windowProxy; }
     const WindowProxy& windowProxy() const { return m_windowProxy; }
@@ -67,7 +67,7 @@ public:
     virtual bool preventsParentFromBeingComplete() const = 0;
 
 protected:
-    AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame* parent);
+    AbstractFrame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, AbstractFrame* parent);
     void resetWindowProxy();
 
 private:
@@ -81,6 +81,7 @@ private:
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
     AbstractFrame& m_mainFrame;
     const Ref<Settings> m_settings;
+    FrameType m_frameType;
 };
 
 } // namespace WebCore

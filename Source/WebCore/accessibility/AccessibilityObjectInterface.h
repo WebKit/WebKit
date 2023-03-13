@@ -924,8 +924,6 @@ public:
     virtual bool isGroup() const = 0;
     virtual bool isImageMapLink() const = 0;
     virtual bool isMenuList() const = 0;
-    virtual bool isMenuListPopup() const = 0;
-    virtual bool isMenuListOption() const = 0;
 
     // Native spin buttons.
     bool isSpinButton() const { return roleValue() == AccessibilityRole::SpinButton; }
@@ -965,7 +963,6 @@ public:
 #endif
 
     virtual bool isLandmark() const = 0;
-    virtual bool isStyleFormatGroup() const = 0;
     virtual bool isKeyboardFocusable() const = 0;
 
     virtual bool isChecked() const = 0;
@@ -1011,12 +1008,12 @@ public:
     virtual String datetimeAttributeValue() const = 0;
 
     virtual bool canSetFocusAttribute() const = 0;
-    virtual bool canSetTextRangeAttributes() const = 0;
+    bool canSetTextRangeAttributes() const;
     virtual bool canSetValueAttribute() const = 0;
     virtual bool canSetNumericValue() const = 0;
     virtual bool canSetSelectedAttribute() const = 0;
     virtual bool canSetSelectedChildren() const = 0;
-    virtual bool canSetExpandedAttribute() const = 0;
+    bool canSetExpandedAttribute() const;
 
     virtual Element* element() const = 0;
     virtual Node* node() const = 0;
@@ -1234,7 +1231,7 @@ public:
     virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual void visibleChildren(AccessibilityChildrenVector&) = 0;
-    virtual void tabChildren(AccessibilityChildrenVector&) = 0;
+    AccessibilityChildrenVector tabChildren();
     virtual AXCoreObject* activeDescendant() const = 0;
     bool isDescendantOfObject(const AXCoreObject*) const;
     bool isAncestorOfObject(const AXCoreObject*) const;
@@ -1307,7 +1304,8 @@ public:
 
     // ARIA live-region features.
     virtual bool supportsLiveRegion(bool excludeIfOff = true) const = 0;
-    virtual bool isInsideLiveRegion(bool excludeIfOff = true) const = 0;
+    virtual AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const = 0;
+    bool isInsideLiveRegion(bool excludeIfOff = true) const;
     virtual const String liveRegionStatus() const = 0;
     virtual const String liveRegionRelevant() const = 0;
     virtual bool liveRegionAtomic() const = 0;
@@ -1455,6 +1453,37 @@ inline SpinButtonType AXCoreObject::spinButtonType()
     return incrementButton() || decrementButton() ? SpinButtonType::Composite : SpinButtonType::Standalone;
 }
 
+inline bool AXCoreObject::isInsideLiveRegion(bool excludeIfOff) const
+{
+    return liveRegionAncestor(excludeIfOff);
+}
+
+inline AXCoreObject::AccessibilityChildrenVector AXCoreObject::tabChildren()
+{
+    if (roleValue() != AccessibilityRole::TabList)
+        return { };
+
+    AXCoreObject::AccessibilityChildrenVector result;
+    for (const auto& child : children()) {
+        if (child->isTabItem())
+            result.append(child);
+    }
+    return result;
+}
+
+inline bool AXCoreObject::canSetTextRangeAttributes() const
+{
+    return isTextControl();
+}
+
+inline bool AXCoreObject::canSetExpandedAttribute() const
+{
+    if (roleValue() == AccessibilityRole::Details)
+        return true;
+
+    return supportsExpanded();
+}
+
 inline String AXCoreObject::currentValue() const
 {
     switch (currentState()) {
@@ -1598,6 +1627,14 @@ T* findRelatedObjectInAncestry(const T& object, AXRelationType relationType, con
             return ancestor;
     }
     return nullptr;
+}
+
+template<typename T>
+T* liveRegionAncestor(const T& object, bool excludeIfOff)
+{
+    return findAncestor<T>(object, true, [excludeIfOff] (const T& object) {
+        return object.supportsLiveRegion(excludeIfOff);
+    });
 }
 
 void findMatchingObjects(const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);

@@ -37,6 +37,14 @@
 #include <WebCore/GraphicsContextCG.h>
 #endif
 
+#if ENABLE(APPLE_PAY)
+#include <WebCore/ApplePayLogoSystemImage.h>
+#endif
+
+#if ENABLE(VIDEO)
+#include <WebCore/VideoFrame.h>
+#endif
+
 namespace TestWebKitAPI {
 
 constexpr unsigned testContextWidth = 77;
@@ -151,7 +159,7 @@ struct ChangeAntialias {
         return R"DL(
 (set-state
   (change-flags [should-antialias])
-  (should-antialias 0)))DL"_s;            
+  (should-antialias 0)))DL"_s;
     }
 };
 
@@ -222,7 +230,32 @@ struct ChangeAntialiasInEmptySaveRestore {
     }
 };
 
-using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave, ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore>;
+struct DrawSystemImage {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+#if ENABLE(APPLE_PAY)
+        auto image = WebCore::ApplePayLogoSystemImage::create(WebCore::ApplePayLogoStyle::White);
+        c.setShouldAntialias(false);
+        c.drawSystemImage(image.get(), {0, 0, 5, 5}); // This is being tested. The previous antialias == false should be used.
+#endif
+    }
+
+    static String description()
+    {
+#if ENABLE(APPLE_PAY)
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 0))
+(draw-system-image
+  (destination at (0,0) size 5x5)))DL"_s;
+#else
+        return ""_s;
+#endif
+    }
+};
+
+using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave, ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage>;
 
 }
 

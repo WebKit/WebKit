@@ -36,6 +36,7 @@ Modules/WebGPU/GPUComputePipeline.cpp
 Modules/WebGPU/GPUDevice.cpp
 Modules/WebGPU/GPUDeviceLostInfo.cpp
 Modules/WebGPU/GPUExternalTexture.cpp
+Modules/WebGPU/GPUInternalError.cpp
 Modules/WebGPU/GPUPipelineError.cpp
 Modules/WebGPU/GPUPipelineLayout.cpp
 Modules/WebGPU/GPUPresentationContext.cpp
@@ -3396,6 +3397,7 @@ JSGPUBufferBinding.cpp
 JSGPUBufferBindingLayout.cpp
 JSGPUBufferBindingType.cpp
 JSGPUBufferDescriptor.cpp
+JSGPUBufferMapState.cpp
 JSGPUBufferUsage.cpp
 JSGPUCanvasCompositingAlphaMode.cpp
 JSGPUCanvasConfiguration.cpp
@@ -3443,6 +3445,7 @@ JSGPUImageCopyTexture.cpp
 JSGPUImageCopyTextureTagged.cpp
 JSGPUImageDataLayout.cpp
 JSGPUIndexFormat.cpp
+JSGPUInternalError.cpp
 JSGPULoadOp.cpp
 JSGPUMapMode.cpp
 JSGPUMipmapFilterMode.cpp

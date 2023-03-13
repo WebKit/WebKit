@@ -3584,10 +3584,10 @@ void B3IRGenerator::emitEntryTierUpCheck()
 
             const unsigned extraPaddingBytes = 0;
             RegisterSet registersToSpill = { };
-            registersToSpill.add(GPRInfo::argumentGPR1, IgnoreVectors);
+            registersToSpill.add(GPRInfo::nonPreservedNonArgumentGPR0, IgnoreVectors);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
-            jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
+            jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::nonPreservedNonArgumentGPR0);
             MacroAssembler::Call call = jit.nearCall();
 
             ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
@@ -3643,7 +3643,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
 
     patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     RegisterSet clobberLate;
-    clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
+    clobberLate.add(GPRInfo::nonPreservedNonArgumentGPR0, IgnoreVectors);
     patch->clobberLate(clobberLate);
 
     patch->append(countDownLocation, ValueRep::SomeRegister);
@@ -3674,8 +3674,8 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
             tierUp.link(&jit);
 
             jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr, savedFPWidth);
-            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
-            jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
+            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::nonPreservedNonArgumentGPR0).linkTo(tierUpResume, &jit);
+            jit.farJump(GPRInfo::nonPreservedNonArgumentGPR0, WasmEntryPtrTag);
         });
     });
 }

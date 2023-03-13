@@ -60,26 +60,35 @@ void VP9TestingOverrides::setHardwareDecoderDisabled(std::optional<bool>&& disab
 {
     m_hardwareDecoderDisabled = WTFMove(disabled);
     if (m_configurationChangedCallback)
-        m_configurationChangedCallback();
+        m_configurationChangedCallback(false);
 }
 
 void VP9TestingOverrides::setVP9DecoderDisabled(std::optional<bool>&& disabled)
 {
     m_vp9DecoderDisabled = WTFMove(disabled);
     if (m_configurationChangedCallback)
-        m_configurationChangedCallback();
+        m_configurationChangedCallback(false);
 }
 
 void VP9TestingOverrides::setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&& overrides)
 {
     m_screenSizeAndScale = WTFMove(overrides);
     if (m_configurationChangedCallback)
-        m_configurationChangedCallback();
+        m_configurationChangedCallback(false);
 }
 
-void VP9TestingOverrides::setConfigurationChangedCallback(std::function<void()>&& callback)
+void VP9TestingOverrides::setConfigurationChangedCallback(std::function<void(bool)>&& callback)
 {
     m_configurationChangedCallback = WTFMove(callback);
+}
+
+void VP9TestingOverrides::resetOverridesToDefaultValues()
+{
+    setHardwareDecoderDisabled(std::nullopt);
+    setVP9DecoderDisabled(std::nullopt);
+    setVP9ScreenSizeAndScale(std::nullopt);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback(true);
 }
 
 enum class ResolutionCategory : uint8_t {

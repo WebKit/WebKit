@@ -548,6 +548,13 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
 
     // FIXME: Need to track state better and only call this when the running animation is for CSS smooth scrolling. Calling should be harmless, though.
     m_client.didStopAnimatedScroll();
+
+    if (is<ScrollAnimationKeyboard>(animation)) {
+        didStopKeyboardScrolling();
+        startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);
+        return;
+    }
+
     startOrStopAnimationCallbacks();
     stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);
 }

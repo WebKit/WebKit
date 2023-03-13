@@ -75,13 +75,6 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
         }
     };
 
-    // GC support is experimental and currently will throw a runtime error when struct
-    // and array type indices are exported via a function signature to JS.
-    if (Options::useWebAssemblyGC() && (wasmFrameConvention.argumentsIncludeGCTypeIndex || wasmFrameConvention.resultsIncludeGCTypeIndex)) {
-        emitThrowWasmToJSException(jit, GPRInfo::wasmContextInstancePointer, ExceptionType::InvalidGCTypeUse);
-        return;
-    }
-
     if (signature.returnsVoid())
         jit.moveTrustedValue(jsUndefined(), JSRInfo::returnValueJSR);
     else if (signature.returnCount() == 1) {

@@ -129,19 +129,27 @@ void SystemBatteryStatusTestingOverrides::setHasBattery(std::optional<bool>&& ha
 {
     m_hasBattery = WTFMove(hasBattery);
     if (m_configurationChangedCallback)
-        m_configurationChangedCallback();
+        m_configurationChangedCallback(false);
 }
 
 void SystemBatteryStatusTestingOverrides::setHasAC(std::optional<bool>&& hasAC)
 {
     m_hasAC = WTFMove(hasAC);
     if (m_configurationChangedCallback)
-        m_configurationChangedCallback();
+        m_configurationChangedCallback(false);
 }
 
-void SystemBatteryStatusTestingOverrides::setConfigurationChangedCallback(std::function<void()>&& callback)
+void SystemBatteryStatusTestingOverrides::setConfigurationChangedCallback(std::function<void(bool)>&& callback)
 {
     m_configurationChangedCallback = WTFMove(callback);
+}
+
+void SystemBatteryStatusTestingOverrides::resetOverridesToDefaultValues()
+{
+    setHasBattery(std::nullopt);
+    setHasAC(std::nullopt);
+    if (m_configurationChangedCallback)
+        m_configurationChangedCallback(true);
 }
 
 }

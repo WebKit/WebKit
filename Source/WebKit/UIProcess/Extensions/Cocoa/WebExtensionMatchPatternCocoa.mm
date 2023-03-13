@@ -300,7 +300,7 @@ NSArray *WebExtensionMatchPattern::expandedStrings() const
 
 bool WebExtensionMatchPattern::matchesAllHosts() const
 {
-    return isValid() && (m_matchesAllURLs || host() == "*"_s);
+    return isValid() && (m_matchesAllURLs || pattern().matchAllHosts());
 }
 
 bool WebExtensionMatchPattern::isValidScheme(String scheme)

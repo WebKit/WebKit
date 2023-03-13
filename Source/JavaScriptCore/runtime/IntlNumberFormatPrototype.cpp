@@ -130,7 +130,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
         // b. The value of F’s length property is 1.
         auto* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlNumberFormatFuncFormat, ImplementationVisibility::Public);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, nf, nullptr, 1, nullptr);
+        boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, targetObject, nf, nullptr, 1, nullptr);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set nf.[[boundFormat]] to bf.
         nf->setBoundFormat(vm, boundFormat);

@@ -237,6 +237,7 @@ void Recorder::drawNativeImageInternal(NativeImage& image, const FloatSize& imag
 
 void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
+    appendStateChangeItemIfNecessary();
 #if USE(SYSTEM_PREVIEW)
     if (is<ARKitBadgeSystemImage>(systemImage)) {
         if (auto image = downcast<ARKitBadgeSystemImage>(systemImage).image()) {

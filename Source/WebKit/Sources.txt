@@ -130,6 +130,7 @@ NetworkProcess/Notifications/WebPushDaemonConnection.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEphemeralStore.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp
@@ -337,6 +338,7 @@ Shared/WebGPU/WebGPUImageCopyExternalImage.cpp
 Shared/WebGPU/WebGPUImageCopyTexture.cpp
 Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp
 Shared/WebGPU/WebGPUImageDataLayout.cpp
+Shared/WebGPU/WebGPUInternalError.cpp
 Shared/WebGPU/WebGPUMultisampleState.cpp
 Shared/WebGPU/WebGPUObjectDescriptorBase.cpp
 Shared/WebGPU/WebGPUOrigin2D.cpp

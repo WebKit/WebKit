@@ -538,15 +538,17 @@ class Git(Scm):
 
     @decorators.Memoize()
     def source_remotes(self, cached=True, personal=False):
-        candidates = [self.default_remote]
+        security_levels = {}
         config = self.config(cached=cached)
         for candidate in config.keys():
-            if not candidate.startswith('webkitscmpy.remotes'):
+            if not candidate.startswith('webkitscmpy.remotes') or not candidate.endswith('url'):
                 continue
-            candidate = candidate.split('.')[-1]
-            if candidate in candidates:
-                continue
+            candidate = candidate.split('.')[-2]
             if config.get('remote.{}.url'.format(candidate)):
+                security_levels[candidate] = int(config.get('webkitscmpy.remotes.{}.security-level'.format(candidate), '0'))
+        candidates = [self.default_remote] if security_levels.get(self.default_remote, 0) == 0 else []
+        for _, candidate in sorted([(v, k) for k, v in security_levels.items()]):
+            if candidate not in candidates:
                 candidates.append(candidate)
 
         personal_remotes = []

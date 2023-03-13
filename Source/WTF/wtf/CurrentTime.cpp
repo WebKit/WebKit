@@ -43,11 +43,6 @@
 #include <mutex>
 #include <sys/time.h>
 #elif OS(WINDOWS)
-
-// Windows is first since we want to use hires timers, despite USE(CF)
-// being defined.
-// If defined, WIN32_LEAN_AND_MEAN disables timeBeginPeriod/timeEndPeriod.
-#undef WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <math.h>
 #include <stdint.h>

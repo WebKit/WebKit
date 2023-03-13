@@ -399,7 +399,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
     };
 
-    auto computeFloatEdge = [&](auto& floatItem) -> std::optional<LayoutUnit> {
+    auto computeFloatEdgeAndBottom = [&](auto& floatItem) -> std::optional<std::pair<LayoutUnit, LayoutUnit>> {
         auto marginRect = floatItem.rectWithMargin();
         if (!contains(marginRect))
             return { };
@@ -407,22 +407,30 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         if (auto* shape = floatItem.shape()) {
             // Shapes are relative to the border box.
             auto borderRect = floatItem.borderBoxRect();
-
             auto positionInShape = adjustedCandidateTop - borderRect.top();
+
+            if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
+                return { };
+
             auto segment = shape->getExcludedInterval(positionInShape, candidateHeight);
             if (!segment.isValid)
                 return { };
 
+            // Bottom is used to decide the next line top if nothing fits. With shape we'll just sample one pixel down.
+            // FIXME: This is potentially slow.
+            auto bottom = adjustedCandidateTop + 1_lu;
+
             if (floatItem.isLeftPositioned()) {
                 auto shapeRight = borderRect.left() + LayoutUnit { segment.logicalRight };
                 // Shape can't extend beyond the margin box.
-                return std::min(shapeRight, marginRect.right());
+                return std::pair { std::min(shapeRight, marginRect.right()), bottom };
             }
             auto shapeLeft = borderRect.left() + LayoutUnit { segment.logicalLeft };
-            return std::max(shapeLeft, marginRect.left());
+            return std::pair { std::max(shapeLeft, marginRect.left()), bottom };
         }
 
-        return floatItem.isLeftPositioned() ? marginRect.right() : marginRect.left();
+        auto edge = floatItem.isLeftPositioned() ? marginRect.right() : marginRect.left();
+        return std::pair { edge, marginRect.bottom() };
     };
 
     auto constraints = Constraints { };
@@ -431,17 +439,16 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             if ((constraints.left && floatItem.isLeftPositioned()) || (constraints.right && !floatItem.isLeftPositioned()))
                 continue;
 
-            auto edge = computeFloatEdge(floatItem);
-            if (!edge)
+            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem);
+            if (!edgeAndBottom)
                 continue;
 
-            // FIXME: Is this correct with shape-outside?
-            auto bottom = floatItem.rectWithMargin().bottom();
+            auto [edge, bottom] = *edgeAndBottom;
 
             if (floatItem.isLeftPositioned())
-                constraints.left = PointInContextRoot { *edge, bottom };
+                constraints.left = PointInContextRoot { edge, bottom };
             else
-                constraints.right = PointInContextRoot { *edge, bottom };
+                constraints.right = PointInContextRoot { edge, bottom };
 
             if ((constraints.left && constraints.right)
                 || (constraints.left && !floatingState.hasRightPositioned())
@@ -450,18 +457,18 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         }
     } else {
         for (auto& floatItem : makeReversedRange(floatingState.floats())) {
-            auto edge = computeFloatEdge(floatItem);
-            if (!edge)
+            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem);
+            if (!edgeAndBottom)
                 continue;
 
-            auto bottom = floatItem.rectWithMargin().bottom();
+            auto [edge, bottom] = *edgeAndBottom;
 
             if (floatItem.isLeftPositioned()) {
-                if (!constraints.left || constraints.left->x < *edge)
-                    constraints.left = PointInContextRoot { *edge, bottom };
+                if (!constraints.left || constraints.left->x < edge)
+                    constraints.left = PointInContextRoot { edge, bottom };
             } else {
-                if (!constraints.right || constraints.right->x > *edge)
-                    constraints.right = PointInContextRoot { *edge, bottom };
+                if (!constraints.right || constraints.right->x > edge)
+                    constraints.right = PointInContextRoot { edge, bottom };
             }
             // FIXME: Bail out when floats are way above.
         }

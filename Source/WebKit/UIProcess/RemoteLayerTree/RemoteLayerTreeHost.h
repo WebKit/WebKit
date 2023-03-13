@@ -92,7 +92,7 @@ private:
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 
-    RemoteLayerBackingStore::LayerContentsType layerContentsType() const;
+    RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType() const;
 
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
     WeakPtr<RemoteLayerTreeNode> m_rootNode;

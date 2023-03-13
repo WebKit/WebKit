@@ -128,6 +128,8 @@ public:
 #ifdef __OBJC__
     id asLayerContents() const { return (__bridge id)m_surface.get(); }
 #endif
+    WEBCORE_EXPORT RetainPtr<id> asCAIOSurfaceLayerContents() const;
+
     IOSurfaceRef surface() const { return m_surface.get(); }
     WEBCORE_EXPORT CGContextRef ensurePlatformContext(PlatformDisplayID = 0);
     // The graphics context cached on the surface counts as a "user", so to get

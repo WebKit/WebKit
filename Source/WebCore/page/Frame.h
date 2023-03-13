@@ -298,7 +298,6 @@ private:
 
     void dropChildren();
 
-    FrameType frameType() const final { return FrameType::Local; }
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
 

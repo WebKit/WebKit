@@ -199,6 +199,8 @@ OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWh
     if (!scrollingTree)
         return { };
 
+    auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
+
     // Replicate the hack in EventDispatcher::internalWheelEvent(). We could pass rubberBandableEdges all the way through the
     // WebProcess and back via the ScrollingTree, but we only ever need to consult it here.
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began)
@@ -348,6 +350,7 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
         return;
 
     scrollingTree->displayDidRefresh(displayID);
+    scrollingTree->applyLayerPositions();
 }
 
 void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplayID)

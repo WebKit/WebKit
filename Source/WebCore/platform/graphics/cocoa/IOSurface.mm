@@ -34,6 +34,7 @@
 #import "PlatformScreen.h"
 #import "ProcessCapabilities.h"
 #import "ProcessIdentity.h"
+#import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MachSendRight.h>
@@ -335,6 +336,16 @@ void IOSurface::setBytesPerRowAlignment(size_t bytesPerRowAlignment)
 MachSendRight IOSurface::createSendRight() const
 {
     return MachSendRight::adopt(IOSurfaceCreateMachPort(m_surface.get()));
+}
+
+RetainPtr<id> IOSurface::asCAIOSurfaceLayerContents() const
+{
+    // CAIOSurface keeps most of the server-side rendering ojects alive,
+    // but doesn't mark the IOSurface as in-use. We can retain it for efficiency
+    // without breaking use-counting.
+    if (PAL::canLoad_QuartzCore_CAIOSurfaceCreate())
+        return bridge_id_cast(adoptCF(CAIOSurfaceCreate(m_surface.get())));
+    return nil;
 }
 
 RetainPtr<CGImageRef> IOSurface::createImage()

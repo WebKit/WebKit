@@ -770,11 +770,9 @@ ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
     // https://bugs.webkit.org/show_bug.cgi?id=185358
     if (hasIndexedProperties(indexingType()))
         return false;
-    if (hasGetterSetterProperties())
+    if (hasAnyKindOfGetterSetterProperties())
         return false;
     if (hasReadOnlyOrGetterSetterPropertiesExcludingProto())
-        return false;
-    if (hasCustomGetterSetterProperties())
         return false;
     if (isUncacheableDictionary())
         return false;

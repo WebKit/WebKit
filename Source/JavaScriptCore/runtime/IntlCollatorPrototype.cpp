@@ -125,7 +125,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlCollatorPrototypeGetterCompare, (JSGlobalObject* gl
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_s, intlCollatorFuncCompare, ImplementationVisibility::Public);
 
         // c. Let bc be BoundFunctionCreate(F, «this value»).
-        boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, collator, nullptr, 2, nullptr);
+        boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, targetObject, collator, nullptr, 2, nullptr);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set collator.[[boundCompare]] to bc.
         collator->setBoundCompare(vm, boundCompare);

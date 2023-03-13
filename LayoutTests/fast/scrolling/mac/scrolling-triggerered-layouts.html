@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 10000px;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 0;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        async function doMouseWheelScroll()
+        {
+            await UIHelper.renderingUpdate();
+
+            await UIHelper.startMonitoringWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "began", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            await UIHelper.waitForScrollCompletion();
+
+            await UIHelper.renderingUpdate();
+        }
+
+        let layoutCount = 0;
+        async function scrollTest()
+        {
+            debug('');
+            debug("Test that scrolling doesn't trigger a layout per scroll");
+
+            const initialLayoutCount = internals.layoutCount;
+            await doMouseWheelScroll();
+            const finalLayoutCount = internals.layoutCount;
+            layoutCount = finalLayoutCount - initialLayoutCount;
+            shouldBeTrue('layoutCount <= 4');
+            if (layoutCount > 4)
+                debug('saw ' + layoutCount + ' layouts')
+            finishJSTest();
+        }
+
+        window.addEventListener('load', scrollTest, false);
+    </script>
+</head>
+<body>
+    <div class="fixed">fixed</div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

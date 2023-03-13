@@ -87,6 +87,17 @@ public:
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }
     void setRemoteContextHostedIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_remoteContextHostedIdentifier = identifier; }
 
+    // A cached CAIOSurface object to retain CA render resources.
+    struct CachedContentsBuffer {
+        WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
+        RetainPtr<id> m_buffer;
+    };
+
+    Vector<CachedContentsBuffer> takeCachedContentsBuffers() { return WTFMove(m_cachedContentsBuffers); }
+    void setCachedContentsBuffers(Vector<CachedContentsBuffer>&& buffers)
+    {
+        m_cachedContentsBuffers = WTFMove(buffers);
+    }
 private:
     void initializeLayer();
 
@@ -110,6 +121,8 @@ private:
 
     WebCore::GraphicsLayer::PlatformLayerID m_actingScrollContainerID;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_stationaryScrollContainerIDs;
+
+    Vector<CachedContentsBuffer> m_cachedContentsBuffers;
 };
 
 }

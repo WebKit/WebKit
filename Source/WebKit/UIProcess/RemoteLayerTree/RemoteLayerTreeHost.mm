@@ -41,6 +41,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -66,20 +67,22 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
     clearLayers();
 }
 
-RemoteLayerBackingStore::LayerContentsType RemoteLayerTreeHost::layerContentsType() const
+RemoteLayerBackingStoreProperties::LayerContentsType RemoteLayerTreeHost::layerContentsType() const
 {
     // If a surface will be referenced by multiple layers (as in the tile debug indicator), CAMachPort cannot be used.
     if (m_drawingArea->hasDebugIndicator())
-        return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+        return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
 
     // If e.g. SceneKit will be doing an in-process snapshot of the layer tree, CAMachPort cannot be used: rdar://problem/47481972
     if (m_drawingArea->page().windowKind() == WindowKind::InProcessSnapshotting)
-        return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+        return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
 
+    if (PAL::canLoad_QuartzCore_CAIOSurfaceCreate())
+        return RemoteLayerBackingStoreProperties::LayerContentsType::CachedIOSurface;
 #if HAVE(MACH_PORT_CALAYER_CONTENTS)
-    return RemoteLayerBackingStore::LayerContentsType::CAMachPort;
+    return RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort;
 #else
-    return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+    return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
 #endif
 }
 
@@ -196,7 +199,7 @@ void RemoteLayerTreeHost::asyncSetLayerContents(GraphicsLayer::PlatformLayerID l
     if (!node)
         return;
 
-    RetainPtr<id> contents = RemoteLayerBackingStore::layerContentsBufferFromBackendHandle(WTFMove(handle), layerContentsType());
+    RetainPtr<id> contents = RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendHandle(WTFMove(handle), layerContentsType());
     node->layer().contents = contents.get();
 }
 

@@ -62,7 +62,6 @@ class DeprecatedPort(object):
     @staticmethod
     def port(port_name):
         ports = {
-            "ftw": FTWPort,
             "gtk-wk2": GtkWK2Port,
             "ios-device": IOSPort,
             "ios-simulator-wk2": IOSSimulatorWK2Port,
@@ -189,20 +188,6 @@ class WinCairoPort(DeprecatedPort):
     def run_webkit_tests_command(self, build_style=None):
         command = super(WinCairoPort, self).run_webkit_tests_command(build_style)
         command.append("--wincairo")
-        return command
-
-
-class FTWPort(DeprecatedPort):
-    port_flag_name = "ftw"
-
-    def build_webkit_command(self, build_style=None):
-        command = super(FTWPort, self).build_webkit_command(build_style=build_style)
-        command.append('--ftw')
-        return command
-
-    def run_webkit_tests_command(self, build_style=None):
-        command = super(FTWPort, self).run_webkit_tests_command(build_style)
-        command.append("--ftw")
         return command
 
 

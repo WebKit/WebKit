@@ -32,6 +32,7 @@
 #include "WebImage.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Document.h>
+#include <WebCore/Element.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>

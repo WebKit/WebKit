@@ -64,7 +64,9 @@ static RefPtr<LibWebRTCAudioModule> audioModuleFromSource(RealtimeMediaSource& s
 
 std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::createRenderer(AudioTrackPrivateMediaStream& stream)
 {
+#if !RELEASE_LOG_DISABLED
     auto& track = stream.m_streamTrack.get();
+#endif
     return AudioMediaStreamTrackRenderer::create(AudioMediaStreamTrackRenderer::Init {
         [stream = WeakPtr { stream }] {
             if (stream)

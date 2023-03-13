@@ -158,7 +158,12 @@ TEST(WebKit, CookieCachePruning)
     }
 }
 
+// FIXME: Re-enable this test for iOS once webkit.org/b/253387 is resolved
+#if PLATFORM(IOS)
+TEST(WebKit, DISABLED_CookieAccessFromPDFInAboutBlank)
+#else
 TEST(WebKit, CookieAccessFromPDFInAboutBlank)
+#endif
 {
     auto delegate = adoptNS([TestUIDelegate new]);
     __block RetainPtr<WKWebView> openedWebView;

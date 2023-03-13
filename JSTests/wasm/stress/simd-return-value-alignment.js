@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1")
-//@ skip if $architecture != "arm64" && $architecture != "x86_64"
+//@ skip if !$isSIMDPlatform
 
 /*
 (module
