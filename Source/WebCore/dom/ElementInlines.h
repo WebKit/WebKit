@@ -220,4 +220,9 @@ inline void Element::hideNonce()
     hideNonceSlow();
 }
 
+inline Element* Document::cssTarget() const
+{
+    return m_cssTarget.get();
+}
+
 }
