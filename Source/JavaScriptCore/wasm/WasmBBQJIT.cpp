@@ -5907,16 +5907,14 @@ public:
         if (!m_tierUp)
             return;
 
-        clobber(GPRInfo::argumentGPR0);
-        clobber(GPRInfo::argumentGPR1);
-
+        static_assert(GPRInfo::nonPreservedNonArgumentGPR0 == wasmScratchGPR);
         m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(&m_tierUp->m_counter)), wasmScratchGPR);
         Jump tierUp = m_jit.branchAdd32(CCallHelpers::PositiveOrZero, TrustedImm32(TierUpCount::functionEntryIncrement()), Address(wasmScratchGPR));
         MacroAssembler::Label tierUpResume = m_jit.label();
         auto functionIndex = m_functionIndex;
         addLatePath([tierUp, tierUpResume, functionIndex](BBQJIT& generator, CCallHelpers& jit) {
             tierUp.link(&jit);
-            jit.move(TrustedImm32(functionIndex), GPRInfo::argumentGPR1);
+            jit.move(TrustedImm32(functionIndex), GPRInfo::nonPreservedNonArgumentGPR0);
             MacroAssembler::Call call = jit.nearCall();
             jit.jump(tierUpResume);
 
@@ -6084,7 +6082,6 @@ public:
         for (size_t i = 0; i < m_functionSignature->argumentCount(); i ++)
             m_topLevel.touch(i); // Ensure arguments are flushed to persistent locations when this block ends.
 
-        // This clobbers argumentGPR0 and argumentGPR1. So call it after flushing arguments.
         emitEntryTierUpCheck();
 
         return m_topLevel;
@@ -6236,9 +6233,7 @@ public:
         m_tierUp->outerLoops().append(outerLoops);
         m_outerLoops.append(loopIndex);
 
-        clobber(GPRInfo::argumentGPR0);
-        clobber(GPRInfo::argumentGPR1);
-
+        static_assert(GPRInfo::nonPreservedNonArgumentGPR0 == wasmScratchGPR);
         m_jit.move(TrustedImm64(bitwise_cast<uintptr_t>(&m_tierUp->m_counter)), wasmScratchGPR);
 
         TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
@@ -6258,8 +6253,8 @@ public:
 
             Probe::SavedFPWidth savedFPWidth = generator.m_usesSIMD ? Probe::SavedFPWidth::SaveVectors : Probe::SavedFPWidth::DontSaveVectors; // By the time we reach the late path, we should know whether or not the function uses SIMD.
             jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr, savedFPWidth);
-            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
-            jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
+            jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::nonPreservedNonArgumentGPR0).linkTo(tierUpResume, &jit);
+            jit.farJump(GPRInfo::nonPreservedNonArgumentGPR0, WasmEntryPtrTag);
         });
     }
 
