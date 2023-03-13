@@ -7061,8 +7061,7 @@ WebAudioEnabled:
   condition: ENABLE(WEB_AUDIO)
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(IOS)": true
-      default: false
+      default: true
     WebKit:
       default: true
     WebCore:
