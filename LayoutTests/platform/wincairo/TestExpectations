@@ -1134,7 +1134,6 @@ editing/selection/caret-rtl-right.html [ Pass Failure ]
 editing/selection/context-menu-text-selection-lookup.html [ Failure ]
 editing/selection/drag-start-event-client-x-y.html [ Failure ]
 editing/selection/extend-selection-word.html [ Failure ]
-editing/selection/home-end.html [ Failure ]
 editing/selection/move-by-word-visually-mac.html [ Failure ]
 editing/selection/move-left-right.html [ Failure ]
 editing/selection/selection-across-shadow-boundaries-readonly-1.html [ Pass ImageOnlyFailure ]
@@ -1563,7 +1562,6 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
-[ Release ] editing/selection/caret-rtl-2-left.html [ Pass Failure ]
 [ Release ] fetch/fetch-worker-crash.html [ Pass Timeout ]
 [ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Crash Failure ]
 animations/shadow-host-child-change.html [ Skip ]
@@ -1579,9 +1577,6 @@ editing/selection/move-by-word-visually-across-object-element-1.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
 editing/selection/select-out-of-floated-non-editable-13.html [ Failure ]
-editing/selection/selecting-content-by-overshooting-the-deprecated-flex-container.html [ Failure ]
-editing/selection/selecting-content-by-overshooting-the-flex-container.html [ Failure ]
-editing/selection/selecting-content-by-overshooting-the-grid-container.html [ Failure ]
 editing/selection/selection-display-block-sibling.html [ Missing ]
 editing/selection/selection-display-flex.html [ Missing ]
 editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed.html [ Missing ]
@@ -2472,7 +2467,6 @@ storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure Pass ]
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
 
-editing/inserting/editable-html-element.html [ Failure ]
 editing/style/unbold-in-bold.html [ Failure ]
 
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
