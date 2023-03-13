@@ -2100,7 +2100,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
     }
 
     StringBuilder builder;
-    for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
             continue;
         
@@ -2110,7 +2110,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             continue;
         }
         
-        if (!shouldUseAccessibilityObjectInnerText(child, mode))
+        if (!shouldUseAccessibilityObjectInnerText(child.get(), mode))
             continue;
 
         if (is<AccessibilityNodeObject>(*child)) {
