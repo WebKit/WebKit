@@ -42,6 +42,7 @@
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "NetworkLoadMetrics.h"
+#include "Quirks.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -122,7 +123,8 @@ void CrossOriginPreflightChecker::startPreflight()
     options.serviceWorkersMode = ServiceWorkersMode::None;
     options.initiatorContext = m_loader.options().initiatorContext;
 
-    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin(), m_loader.referrer()), options);
+    bool includeFetchMetadata = m_loader.document().settings().fetchMetadataEnabled() && !m_loader.document().quirks().shouldDisableFetchMetadata();
+    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin(), m_loader.referrer(), includeFetchMetadata), options);
     preflightRequest.setInitiatorType(AtomString { m_loader.options().initiatorType });
 
     ASSERT(!m_resource);
@@ -136,7 +138,8 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     if (!loader.document().frame())
         return;
 
-    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer());
+    bool includeFetchMetadata = loader.document().settings().fetchMetadataEnabled() && !loader.document().quirks().shouldDisableFetchMetadata();
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer(), includeFetchMetadata);
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
