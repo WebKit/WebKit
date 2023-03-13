@@ -48,6 +48,11 @@
         window.getSelection().setBaseAndExtent(target, 0, target, 1);
 
         await UIHelper.activateElement(clickTarget);
+
+        document.activeElement.blur();
+        await UIHelper.waitForKeyboardToHide();
+
+        testRunner.notifyDone();
     }
     </script>
 </head>

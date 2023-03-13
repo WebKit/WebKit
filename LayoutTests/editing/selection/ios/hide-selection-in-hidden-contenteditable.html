@@ -78,6 +78,9 @@ function selectionToString() {
     await UIHelper.tapAt(32, 32);
     document.querySelector("#selection-after").textContent = selectionToString();
 
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+
     testRunner.notifyDone();
 })();
 </script>

@@ -42,6 +42,8 @@
             caretRect = await UIHelper.getUICaretViewRect();
             shouldBe("caretRect.width", "0");
             shouldBe("caretRect.height", "0");
+            document.activeElement.blur();
+            await UIHelper.waitForKeyboardToHide();
             finishJSTest();
         });
     </script>

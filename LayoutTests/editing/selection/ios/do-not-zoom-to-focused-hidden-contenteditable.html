@@ -81,12 +81,14 @@ async function runTest() {
 
     await UIHelper.activateAndWaitForInputSessionAt(160, 80);
     document.querySelector("#div-scale").textContent = internals.pageScaleFactor().toFixed(3);
-    UIHelper.resignFirstResponder();
+    document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();
 
     await UIHelper.activateAndWaitForInputSessionAt(160, 240);
     document.querySelector("#iframe-scale").textContent = internals.pageScaleFactor().toFixed(3);
 
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
     testRunner.notifyDone();
 }
 </script>

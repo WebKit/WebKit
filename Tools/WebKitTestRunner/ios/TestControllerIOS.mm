@@ -107,11 +107,13 @@ static void overridePresentMenuOrPopoverOrViewController()
 
 namespace WTR {
 
+static bool isDoneWaitingForKeyboardToStartDismissing = true;
 static bool isDoneWaitingForKeyboardToDismiss = true;
 static bool isDoneWaitingForMenuToDismiss = true;
 
 static void handleKeyboardWillHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
+    isDoneWaitingForKeyboardToStartDismissing = true;
     isDoneWaitingForKeyboardToDismiss = false;
 }
 
@@ -341,8 +343,13 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
             scrollView.contentOffset = CGPointMake(-currentContentInset.left, -currentContentInset.top);
         }
 
-        if (webView.interactingWithFormControl)
+        if (webView.interactingWithFormControl) {
+            if (webView.showingKeyboard) {
+                isDoneWaitingForKeyboardToStartDismissing = false;
+                [[UIKeyboardImpl activeInstance] dismissKeyboard];
+            }
             shouldRestoreFirstResponder = [webView resignFirstResponder];
+        }
 
         [webView immediatelyDismissContextMenuIfNeeded];
 
@@ -353,6 +360,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
     UIMenuController.sharedMenuController.menuVisible = NO;
 
+    runUntil(isDoneWaitingForKeyboardToStartDismissing, m_currentInvocation->shortTimeout());
     runUntil(isDoneWaitingForKeyboardToDismiss, m_currentInvocation->shortTimeout());
     runUntil(isDoneWaitingForMenuToDismiss, m_currentInvocation->shortTimeout());
 
