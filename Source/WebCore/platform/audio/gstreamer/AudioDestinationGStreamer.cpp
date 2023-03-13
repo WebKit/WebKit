@@ -136,6 +136,11 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
         g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
             if (GST_IS_AUDIO_BASE_SINK(object))
                 g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
+
+#if PLATFORM(REALTEK)
+            if (!g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstRTKAudioSink"))
+                g_object_set(object, "media-tunnel", FALSE, "audio-service", TRUE, nullptr);
+#endif
         }), nullptr);
 
         // Autoaudiosink does the real sink detection in the GST_STATE_NULL->READY transition
