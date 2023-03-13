@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1", "--useBBQJIT=0", "--useWasmLLInt=1")
-//@ skip if !$isSIMDPlatform
+//@ skip if !$isSIMDPlatform or $memoryLimited
 import * as assert from "../assert.js"
 
 function instantiate(filename, importObject) {
