@@ -68,6 +68,8 @@ private:
     void setNodeValue(const String&) final;
     void notifyParentAfterChange(const ContainerNode::ChildChange&);
 
+    void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
+
     String m_data;
 };
 

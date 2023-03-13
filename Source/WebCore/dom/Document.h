@@ -1905,6 +1905,7 @@ private:
     void updateSleepDisablerIfNeeded();
 
     RefPtr<ResizeObserver> ensureResizeObserverForContainIntrinsicSize();
+    void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
     const Ref<const Settings> m_settings;
 

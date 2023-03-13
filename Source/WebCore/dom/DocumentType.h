@@ -48,6 +48,8 @@ private:
     NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
+    void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
+
     String m_name;
     String m_publicId;
     String m_systemId;

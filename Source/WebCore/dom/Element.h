@@ -876,6 +876,8 @@ private:
     bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
     bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
 
+    void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
+
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
 };
