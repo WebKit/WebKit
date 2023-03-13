@@ -56,9 +56,7 @@ constexpr bool alwaysDumpConstructionSite = false;
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
-    if (!Options::dumpDisassembly() && !Options::dumpBBQDisassembly()
-        && !Options::dumpOMGDisassembly() && !Options::dumpFTLDisassembly()
-        && !Options::dumpDFGDisassembly() && !Options::dumpGraphAfterParsing())
+    if (!Options::needDisassemblySupport() || !Options::dumpCompilerConstructionSite())
         return emptyString();
 
     StringPrintStream s;
