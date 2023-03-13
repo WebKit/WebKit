@@ -164,7 +164,6 @@ my (
     $textAutosizingSupport,
     $threeDTransformsSupport,
     $touchEventsSupport,
-    $touchSliderSupport,
     $trackingPrevention,
     $unifiedBuildsSupport,
     $userMessageHandlersSupport,
@@ -496,9 +495,6 @@ my @features = (
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", value => \$touchEventsSupport },
-
-    { option => "touch-slider", desc => "Toggle Touch Slider support",
-      define => "ENABLE_TOUCH_SLIDER", value => \$touchSliderSupport },
 
     { option => "tracking-prevention", desc => "Toggle tracking prevention support",
       define => "ENABLE_TRACKING_PREVENTION", value => \$trackingPrevention },
