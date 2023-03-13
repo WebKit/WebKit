@@ -92,7 +92,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     }
 
 #if ENABLE(VARIATION_FONTS)
-    auto variants = buildVariationSettings(freeTypeFace, description);
+    auto variants = buildVariationSettings(freeTypeFace, description, fontCreationContext);
     if (!variants.isEmpty()) {
         FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }

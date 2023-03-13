@@ -456,7 +456,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     RefPtr<cairo_scaled_font_t> scaledFont = adoptRef(cairo_scaled_font_create(fontFace.get(), &matrix, &matrix, options.get()));
     CairoFtFaceLocker cairoFtFaceLocker(scaledFont.get());
     if (FT_Face freeTypeFace = cairoFtFaceLocker.ftFace()) {
-        auto variants = buildVariationSettings(freeTypeFace, fontDescription);
+        auto variants = buildVariationSettings(freeTypeFace, fontDescription, fontCreationContext);
         if (!variants.isEmpty())
             FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
@@ -542,12 +542,33 @@ VariationDefaultsMap defaultVariationValues(FT_Face face, ShouldLocalizeAxisName
     return result;
 }
 
-String buildVariationSettings(FT_Face face, const FontDescription& fontDescription)
+String buildVariationSettings(FT_Face face, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
 {
     auto defaultValues = defaultVariationValues(face, ShouldLocalizeAxisNames::No);
     const auto& variations = fontDescription.variationSettings();
 
     VariationsMap variationsToBeApplied;
+
+    auto fontSelectionRequest = fontDescription.fontSelectionRequest();
+    float weight = fontSelectionRequest.weight;
+    float width = fontSelectionRequest.width;
+    float slope = fontSelectionRequest.slope.value_or(normalItalicValue());
+    auto fontStyleAxis = fontDescription.fontStyleAxis();
+    
+    if (auto weightValue = fontCreationContext.fontFaceCapabilities().weight)
+        weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
+    if (auto widthValue = fontCreationContext.fontFaceCapabilities().width)
+        width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
+    if (auto slopeValue = fontCreationContext.fontFaceCapabilities().slope)
+        slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
+
+    variationsToBeApplied.set({ { 'w', 'g', 'h', 't' } }, weight);
+    variationsToBeApplied.set({ { 'w', 'd', 't', 'h' } }, width);
+    if (fontStyleAxis == FontStyleAxis::ital)
+        variationsToBeApplied.set({ { 'i', 't', 'a', 'l' } }, 1);
+    else
+        variationsToBeApplied.set({ { 's', 'l', 'n', 't' } }, slope);
+
     auto applyVariation = [&](const FontTag& tag, float value) {
         auto iterator = defaultValues.find(tag);
         if (iterator == defaultValues.end())
