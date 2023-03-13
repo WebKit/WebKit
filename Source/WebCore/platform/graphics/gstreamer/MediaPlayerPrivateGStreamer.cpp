@@ -1815,6 +1815,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         if (!m_isLegacyPlaybin && currentState == GST_STATE_PAUSED && newState == GST_STATE_PLAYING)
             playbin3SendSelectStreamsIfAppropriate();
         updateStates();
+        checkPlayingConsistency();
 
         break;
     }
@@ -4260,6 +4261,41 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadat
     metadata.expectedDisplayTime = metadata.presentationTime;
 
     return metadata;
+}
+
+static bool areAllSinksPlayingForBin(GstBin* bin)
+{
+    for (auto* element : GstIteratorAdaptor<GstElement>(GUniquePtr<GstIterator>(gst_bin_iterate_sinks(bin)))) {
+        if (GST_IS_BIN(element) && !areAllSinksPlayingForBin(GST_BIN_CAST(element)))
+            return false;
+
+        GstState state, pending;
+        gst_element_get_state(element, &state, &pending, 0);
+        if (state != GST_STATE_PLAYING && pending != GST_STATE_PLAYING)
+            return false;
+    }
+    return true;
+}
+
+void MediaPlayerPrivateGStreamer::checkPlayingConsistency()
+{
+    if (!pipeline())
+        return;
+
+    GstState state, pending;
+    gst_element_get_state(pipeline(), &state, &pending, 0);
+    if (state == GST_STATE_PLAYING && pending == GST_STATE_VOID_PENDING) {
+        if (!areAllSinksPlayingForBin(GST_BIN(pipeline()))) {
+            if (!m_didTryToRecoverPlayingState) {
+                GST_WARNING_OBJECT(pipeline(), "Playbin is in PLAYING state but some sinks aren't, trying to recover.");
+                ASSERT_NOT_REACHED_WITH_MESSAGE("Playbin is in PLAYING state but some sinks aren't. This should not happen.");
+                m_didTryToRecoverPlayingState = true;
+                gst_element_set_state(pipeline(), GST_STATE_PAUSED);
+                gst_element_set_state(pipeline(), GST_STATE_PLAYING);
+            }
+        } else
+            m_didTryToRecoverPlayingState = false;
+    }
 }
 
 }
