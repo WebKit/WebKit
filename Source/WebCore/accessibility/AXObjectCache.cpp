@@ -2159,7 +2159,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_haspopupAttr)
         postNotification(element, AXHasPopupChanged);
     else if (attrName == aria_hiddenAttr) {
-        if (auto* parent = get(element->parentNode()))
+        if (RefPtr parent = get(element->parentNode()))
             handleChildrenChanged(*parent);
 
         if (m_currentModalElement && m_currentModalElement->isDescendantOf(element)) {
