@@ -467,9 +467,9 @@ sub _generate_bugmail {
     }
 
     my $email = Bugzilla::MIME->new($msg_header);
-    if (scalar(@parts) == 1) {
-        $email->content_type_set($parts[0]->content_type);
-    } else {
+    # WEBKIT_CHANGES: Back ported changes from 5.0.6
+    # https://bugs.webkit.org/show_bug.cgi?id=253790
+    if (scalar(@parts) > 1) {
         $email->content_type_set('multipart/alternative');
         # Some mail clients need same encoding for each part, even empty ones.
         $email->charset_set('UTF-8') if $use_utf8;
