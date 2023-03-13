@@ -88,7 +88,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
-    encoder << useFormSemanticContext;
+    encoder << headerBannerHeight;
+    encoder << footerBannerHeight;
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -365,6 +366,10 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.useSystemAppearance))
         return std::nullopt;
     if (!decoder.decode(parameters.useFormSemanticContext))
+        return std::nullopt;
+    if (!decoder.decode(parameters.headerBannerHeight))
+        return std::nullopt;
+    if (!decoder.decode(parameters.footerBannerHeight))
         return std::nullopt;
 #endif
 

@@ -3739,6 +3739,36 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [CATransaction commit];
 }
 
+void WebViewImpl::setHeaderBannerLayer(CALayer *headerBannerLayer)
+{
+    if (m_headerBannerLayer)
+        [m_headerBannerLayer removeFromSuperlayer];
+
+    m_headerBannerLayer = headerBannerLayer;
+
+    // If WebPage has not been created yet, WebPageCreationParameters.headerBannerHeight
+    // will be used to adjust the page content size.
+    if (page().hasRunningProcess()) {
+        int headerBannerHeight = headerBannerLayer ? headerBannerLayer.frame.size.height : 0;
+        page().setHeaderBannerHeight(headerBannerHeight);
+    }
+}
+
+void WebViewImpl::setFooterBannerLayer(CALayer *footerBannerLayer)
+{
+    if (m_footerBannerLayer)
+        [m_footerBannerLayer removeFromSuperlayer];
+
+    m_footerBannerLayer = footerBannerLayer;
+
+    // If WebPage has not been created yet, WebPageCreationParameters.footerBannerHeight
+    // will be used to adjust the page content size.
+    if (page().hasRunningProcess()) {
+        int footerBannerHeight = footerBannerLayer ? footerBannerLayer.frame.size.height : 0;
+        page().setFooterBannerHeight(footerBannerHeight);
+    }
+}
+
 void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
 {
     ASSERT(!m_thumbnailView || !thumbnailView);

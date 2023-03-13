@@ -100,6 +100,30 @@ bool RemoteLayerTreeHost::css3DTransformInteroperabilityEnabled() const
     return m_drawingArea->page().preferences().css3DTransformInteroperabilityEnabled();
 }
 
+#if PLATFORM(MAC)
+bool RemoteLayerTreeHost::updateBannerLayers(const RemoteLayerTreeTransaction& transaction)
+{
+    auto scrolledContentsLayer = layerForID(transaction.scrolledContentsLayerID());
+    if (!scrolledContentsLayer)
+        return false;
+
+    auto updateBannerLayer = [](CALayer *bannerLayer, CALayer *scrolledContentsLayer) -> bool {
+        if (!bannerLayer)
+            return false;
+
+        if ([bannerLayer superlayer] == scrolledContentsLayer)
+            return false;
+
+        [scrolledContentsLayer addSublayer:bannerLayer];
+        return true;
+    };
+
+    bool headerBannerLayerChanged = updateBannerLayer(m_drawingArea->page().headerBannerLayer(), scrolledContentsLayer);
+    bool footerBannerLayerChanged = updateBannerLayer(m_drawingArea->page().footerBannerLayer(), scrolledContentsLayer);
+    return headerBannerLayerChanged || footerBannerLayerChanged;
+}
+#endif
+
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
     if (!m_drawingArea)
@@ -188,6 +212,11 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     // The Interaction Regions subtree is always on top.
     [m_rootNode->interactionRegionsLayer() removeFromSuperlayer];
     [m_rootNode->layer() addSublayer:m_rootNode->interactionRegionsLayer()];
+#endif
+
+#if PLATFORM(MAC)
+    if (updateBannerLayers(transaction))
+        rootLayerChanged = true;
 #endif
 
     return rootLayerChanged;

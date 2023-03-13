@@ -321,6 +321,11 @@ public:
 #endif
 #endif
 
+#if PLATFORM(MAC)
+    virtual CALayer *headerBannerLayer() const = 0;
+    virtual CALayer *footerBannerLayer() const = 0;
+#endif
+
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     virtual void selectionDidChange() = 0;
 #endif

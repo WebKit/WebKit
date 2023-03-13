@@ -8736,6 +8736,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.colorSpace = pageClient().colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;
     parameters.useFormSemanticContext = useFormSemanticContext();
+    parameters.headerBannerHeight = headerBannerHeight();
+    parameters.footerBannerHeight = footerBannerHeight();
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -10348,14 +10350,14 @@ void WebPageProxy::setUseSystemAppearance(bool useSystemAppearance)
     send(Messages::WebPage::SetUseSystemAppearance(useSystemAppearance));
 }
     
-void WebPageProxy::setHeaderBannerHeightForTesting(int height)
+void WebPageProxy::setHeaderBannerHeight(int height)
 {
-    send(Messages::WebPage::SetHeaderBannerHeightForTesting(height));
+    send(Messages::WebPage::SetHeaderBannerHeight(height));
 }
 
-void WebPageProxy::setFooterBannerHeightForTesting(int height)
+void WebPageProxy::setFooterBannerHeight(int height)
 {
-    send(Messages::WebPage::SetFooterBannerHeightForTesting(height));
+    send(Messages::WebPage::SetFooterBannerHeight(height));
 }
 
 void WebPageProxy::didEndMagnificationGesture()

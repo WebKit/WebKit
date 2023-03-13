@@ -524,6 +524,12 @@ void ScrollingTree::clearLatchedNode()
     m_latchingController.clearLatchedNode();
 }
 
+float ScrollingTree::mainFrameTopContentInset() const
+{
+    Locker locker { m_treeStateLock };
+    return m_rootNode->topContentInset();
+}
+
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
 {
     Locker locker { m_treeStateLock };

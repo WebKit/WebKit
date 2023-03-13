@@ -809,6 +809,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(MAC)
     setUseSystemAppearance(parameters.useSystemAppearance);
     setUseFormSemanticContext(parameters.useFormSemanticContext);
+    setHeaderBannerHeight(parameters.headerBannerHeight);
+    setFooterBannerHeight(parameters.footerBannerHeight);
 #endif
 
     // If the page is created off-screen, its visibilityState should be prerender.
@@ -2650,17 +2652,19 @@ void WebPage::showPageBanners()
         m_footerBanner->showIfHidden();
 }
 
-void WebPage::setHeaderBannerHeightForTesting(int height)
+#endif // !PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+void WebPage::setHeaderBannerHeight(int height)
 {
     corePage()->setHeaderHeight(height);
 }
 
-void WebPage::setFooterBannerHeightForTesting(int height)
+void WebPage::setFooterBannerHeight(int height)
 {
     corePage()->setFooterHeight(height);
 }
-
-#endif // !PLATFORM(IOS_FAMILY)
+#endif
 
 void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& completionHandler)
 {

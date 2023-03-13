@@ -56,6 +56,8 @@ private:
 
     bool isRemoteLayerTreeDrawingAreaProxyMac() const override { return true; }
 
+    void layoutBannerLayers(const RemoteLayerTreeTransaction&);
+
     void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
 
     void adjustTransientZoom(double, WebCore::FloatPoint) override;

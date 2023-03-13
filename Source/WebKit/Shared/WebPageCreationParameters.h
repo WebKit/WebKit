@@ -164,6 +164,8 @@ struct WebPageCreationParameters {
     std::optional<WebCore::DestinationColorSpace> colorSpace;
     bool useSystemAppearance { false };
     bool useFormSemanticContext { false };
+    int headerBannerHeight { 0 };
+    int footerBannerHeight { 0 };
 #endif
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;

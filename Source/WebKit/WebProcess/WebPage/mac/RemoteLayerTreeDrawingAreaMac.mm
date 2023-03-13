@@ -111,6 +111,12 @@ void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransacti
         return;
 
     transaction.setPageScalingLayerID(renderViewGraphicsLayer->primaryLayerID());
+
+    auto* scrolledContentsLayer = frameView->graphicsLayerForScrolledContents();
+    if (!scrolledContentsLayer)
+        return;
+
+    transaction.setScrolledContentsLayerID(scrolledContentsLayer->primaryLayerID());
 }
 
 } // namespace WebKit

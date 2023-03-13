@@ -636,6 +636,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(MAC)
     encoder << m_pageScalingLayerID;
+    encoder << m_scrolledContentsLayerID;
 #endif
 
     encoder << m_pageScaleFactor;
@@ -748,6 +749,8 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
 
 #if PLATFORM(MAC)
     if (!decoder.decode(result.m_pageScalingLayerID))
+        return false;
+    if (!decoder.decode(result.m_scrolledContentsLayerID))
         return false;
 #endif
 
@@ -1054,6 +1057,7 @@ String RemoteLayerTreeTransaction::description() const
 
 #if PLATFORM(MAC)
     ts.dumpProperty("pageScalingLayer", m_pageScalingLayerID);
+    ts.dumpProperty("scrolledContentsLayerID", m_scrolledContentsLayerID);
 #endif
 
     ts.dumpProperty("minimumScaleFactor", m_minimumScaleFactor);

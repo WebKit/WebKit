@@ -2787,6 +2787,7 @@ void Page::setHeaderHeight(int headerHeight)
     if (!renderView)
         return;
 
+    frameView->updateScrollbars(frameView->scrollPosition());
     frameView->setNeedsLayoutAfterViewConfigurationChange();
     frameView->setNeedsCompositingGeometryUpdate();
 }
@@ -2807,6 +2808,7 @@ void Page::setFooterHeight(int footerHeight)
     if (!renderView)
         return;
 
+    frameView->updateScrollbars(frameView->scrollPosition());
     frameView->setNeedsLayoutAfterViewConfigurationChange();
     frameView->setNeedsCompositingGeometryUpdate();
 }

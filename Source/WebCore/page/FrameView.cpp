@@ -1053,6 +1053,13 @@ GraphicsLayer* FrameView::graphicsLayerForPageScale()
     return backing->graphicsLayer();
 }
 
+GraphicsLayer* FrameView::graphicsLayerForScrolledContents()
+{
+    if (auto* renderView = m_frame->contentRenderer())
+        return renderView->compositor().scrolledContentsLayer();
+    return nullptr;
+}
+
 #if HAVE(RUBBER_BANDING)
 GraphicsLayer* FrameView::graphicsLayerForTransientZoomShadow()
 {

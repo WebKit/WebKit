@@ -170,6 +170,7 @@ public:
 
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPageScale();
+    WEBCORE_EXPORT GraphicsLayer* graphicsLayerForScrolledContents();
 #if HAVE(RUBBER_BANDING)
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForTransientZoomShadow();
 #endif
@@ -381,8 +382,8 @@ public:
     WEBCORE_EXPORT static FloatPoint positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, float topContentInset, float headerHeight);
     WEBCORE_EXPORT FloatPoint positionForRootContentLayer() const;
 
-    static float yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topContentInset);
-    static float yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight);
+    WEBCORE_EXPORT static float yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topContentInset);
+    WEBCORE_EXPORT static float yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT LayoutRect viewportConstrainedObjectsRect() const;

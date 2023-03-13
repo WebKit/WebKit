@@ -224,6 +224,8 @@ public:
 
     virtual void removePendingScrollAnimationForNode(ScrollingNodeID) { }
 
+    WEBCORE_EXPORT float mainFrameTopContentInset() const;
+
     WEBCORE_EXPORT FloatPoint mainFrameScrollPosition() const;
 
     WEBCORE_EXPORT OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;

@@ -555,8 +555,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SemanticContextDidChange(bool useFormSemanticContext)
 
-    SetHeaderBannerHeightForTesting(int height)
-    SetFooterBannerHeightForTesting(int height)
+    SetHeaderBannerHeight(int height)
+    SetFooterBannerHeight(int height)
 
     DidEndMagnificationGesture()
 #endif

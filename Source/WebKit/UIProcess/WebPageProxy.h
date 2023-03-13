@@ -998,6 +998,13 @@ public:
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
     CALayer *acceleratedCompositingRootLayer() const;
 
+#if PLATFORM(MAC)
+    CALayer *headerBannerLayer() const;
+    CALayer *footerBannerLayer() const;
+    int headerBannerHeight() const;
+    int footerBannerHeight() const;
+#endif
+
     void setTextAsync(const String&);
 
     void insertTextAsync(const String&, const EditingRange& replacementRange, InsertTextOptions&&);
@@ -1669,8 +1676,8 @@ public:
     void handleAcceptedCandidate(WebCore::TextCheckingResult);
     void didHandleAcceptedCandidate();
 
-    void setHeaderBannerHeightForTesting(int);
-    void setFooterBannerHeightForTesting(int);
+    void setHeaderBannerHeight(int);
+    void setFooterBannerHeight(int);
 
     void didEndMagnificationGesture();
 #endif

@@ -395,6 +395,30 @@ CALayer *WebPageProxy::acceleratedCompositingRootLayer() const
     return pageClient().acceleratedCompositingRootLayer();
 }
 
+CALayer *WebPageProxy::headerBannerLayer() const
+{
+    return pageClient().headerBannerLayer();
+}
+
+CALayer *WebPageProxy::footerBannerLayer() const
+{
+    return pageClient().footerBannerLayer();
+}
+
+int WebPageProxy::headerBannerHeight() const
+{
+    if (auto *headerBannerLayer = this->headerBannerLayer())
+        return headerBannerLayer.frame.size.height;
+    return 0;
+}
+
+int WebPageProxy::footerBannerHeight() const
+{
+    if (auto *footerBannerLayer = this->footerBannerLayer())
+        return footerBannerLayer.frame.size.height;
+    return 0;
+}
+
 static NSString *temporaryPDFDirectoryPath()
 {
     static NeverDestroyed path = [] {

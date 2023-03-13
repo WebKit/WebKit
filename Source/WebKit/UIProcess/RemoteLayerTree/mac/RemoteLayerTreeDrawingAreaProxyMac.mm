@@ -128,15 +128,50 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
     observerID = { };
 }
 
+void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTreeTransaction& transaction)
+{
+    float totalContentsHeight = transaction.contentsSize().height();
+
+    auto layoutBannerLayer = [](CALayer *bannerLayer, float y, float width) {
+        if (bannerLayer.frame.origin.y == y && bannerLayer.frame.size.width == width)
+            return;
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:0];
+        [CATransaction setDisableActions:YES];
+        [bannerLayer setFrame:CGRectMake(0, y, width, bannerLayer.frame.size.height)];
+        [CATransaction commit];
+    };
+
+    float topContentInset = m_webPageProxy.scrollingCoordinatorProxy()->topContentInset();
+    auto scrollPosition = m_webPageProxy.scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
+    
+    if (auto* headerBannerLayer = m_webPageProxy.headerBannerLayer()) {
+        auto headerHeight = headerBannerLayer.frame.size.height;
+        totalContentsHeight += headerHeight;
+        auto y = FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset);
+        layoutBannerLayer(headerBannerLayer, y, size().width());
+    }
+
+    if (auto* footerBannerLayer = m_webPageProxy.footerBannerLayer()) {
+        auto footerHeight = footerBannerLayer.frame.size.height;
+        totalContentsHeight += footerBannerLayer.frame.size.height;
+        auto y = FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsHeight, footerHeight);
+        layoutBannerLayer(footerBannerLayer, y, size().width());
+    }
+}
+
 void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
 {
     m_pageScalingLayerID = transaction.pageScalingLayerID();
+
     if (m_transientZoomScale)
         applyTransientZoomToLayer();
     else if (m_transactionIDAfterEndingTransientZoom && transaction.transactionID() >= m_transactionIDAfterEndingTransientZoom) {
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
     }
+
+    layoutBannerLayers(transaction);
 }
 
 static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix& transform)
