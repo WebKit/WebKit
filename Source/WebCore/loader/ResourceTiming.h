@@ -54,6 +54,7 @@ public:
     ResourceTiming isolatedCopy() const;
 
     void updateExposure(const SecurityOrigin&);
+    void overrideInitiatorName(const String& type) { m_initiator = type; }
 
 private:
     ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
