@@ -123,7 +123,17 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
         "bus", m_renderBus.get(), "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
 
+#if PLATFORM(AMLOGIC)
+    // autoaudiosink changes child element state to READY internally in auto detection phase
+    // that causes resource acquisition in some cases interrupting any playback already running.
+    // On Amlogic we need to set direct-mode=false prop before changing state to READY
+    // but this is not possible with autoaudiosink.
+    GRefPtr<GstElement> audioSink = makeGStreamerElement("amlhalasink", nullptr);
+    ASSERT_WITH_MESSAGE(audioSink, "amlhalasink should be available in the system but it is not");
+    g_object_set(audioSink.get(), "direct-mode", FALSE, nullptr);
+#else
     GRefPtr<GstElement> audioSink = createPlatformAudioSink("music"_s);
+#endif
     m_audioSinkAvailable = audioSink;
     if (!audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
