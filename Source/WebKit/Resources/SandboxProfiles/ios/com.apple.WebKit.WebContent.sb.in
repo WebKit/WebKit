@@ -305,10 +305,7 @@
     )
 
 #if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
-    (with-filter
-        (require-all
-            (require-not (state-flag "EnableExperimentalSandbox"))
-            (require-not (state-flag "EnableExperimentalSandboxWithProbability")))
+    (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
         (allow mach-lookup (global-name "com.apple.CARenderServer")))
 #endif
 
