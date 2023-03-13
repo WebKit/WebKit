@@ -312,7 +312,6 @@
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
-#include <mach/mach_time.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
@@ -958,19 +957,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     auto experimentalSandbox = parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxEnabledKey());
     if (experimentalSandbox)
         sandbox_enable_state_flag("EnableExperimentalSandbox", *auditToken);
-#if USE(APPLE_INTERNAL_SDK)
-    uint64_t bootTime = mach_boottime_usec();
-    bool experimentalSandboxWithProbability = !(bootTime & 0x7u) || isRunningTest(WebCore::applicationBundleIdentifier());
-    experimentalSandboxWithProbability &= parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxWithProbabilityEnabledKey());
-    if (experimentalSandboxWithProbability) {
-        // Set sandbox state variable with probability of 1/8.
-        sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
-    }
 #if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
-    if (!(experimentalSandbox || experimentalSandboxWithProbability))
+    if (!shouldBlockIOKit || !experimentalSandbox)
         SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
 #endif
-#endif // USE(APPLE_INTERNAL_SDK)
 
     if (WebProcess::singleton().isLockdownModeEnabled())
         sandbox_enable_state_flag("LockdownModeEnabled", *auditToken);
