@@ -305,7 +305,8 @@
     )
 
 #if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
-    (allow mach-lookup (global-name "com.apple.CARenderServer"))
+    (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+        (allow mach-lookup (global-name "com.apple.CARenderServer")))
 #endif
 
     ; UIKit-required IOKit nodes.
