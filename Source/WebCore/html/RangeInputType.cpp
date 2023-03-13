@@ -157,7 +157,7 @@ void RangeInputType::handleTouchEvent(TouchEvent& event)
 
 #if PLATFORM(IOS_FAMILY)
     typedSliderThumbElement().handleTouchEvent(event);
-#elif ENABLE(TOUCH_SLIDER)
+#else
 
     if (element()->isDisabledFormControl())
         return;
@@ -172,12 +172,10 @@ void RangeInputType::handleTouchEvent(TouchEvent& event)
         typedSliderThumbElement().setPositionFromPoint(touches->item(0)->absoluteLocation());
         event.setDefaultHandled();
     }
-#else
-    UNUSED_PARAM(event);
 #endif
 }
 
-#if ENABLE(TOUCH_SLIDER)
+#if !PLATFORM(IOS_FAMILY)
 bool RangeInputType::hasTouchEventHandler() const
 {
     return true;
