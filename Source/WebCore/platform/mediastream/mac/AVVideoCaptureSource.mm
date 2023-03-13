@@ -414,6 +414,7 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
     ERROR_LOG_IF(error && loggerPtr(), LOGIDENTIFIER, [[error localizedDescription] UTF8String]);
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -440,11 +441,14 @@ static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
     }
 #endif
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 static inline int sensorOrientationFromVideoOutput(AVCaptureVideoDataOutput* videoOutput)
 {
     AVCaptureConnection* connection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return connection ? sensorOrientation([connection videoOrientation]) : 0;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 bool AVVideoCaptureSource::setupSession()
