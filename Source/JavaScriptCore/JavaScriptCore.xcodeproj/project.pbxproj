@@ -9827,6 +9827,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				0FFA549816B8835300B3A982 /* A64DOpcode.h in Headers */,
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
@@ -10742,7 +10743,6 @@
 				70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
-				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
 				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
@@ -12298,7 +12298,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(PROFILE_DATA_PATH)",
+				"$(WK_PROFILING_DATA_FOLDER_PATH)",
 				"$(SRCROOT)/../../Tools/Profiling/Empty.profdata",
 				"$(SRCROOT)/Scripts/copy-profiling-data.sh",
 			);

@@ -107,11 +107,17 @@ if [[ -n $APP ]] ; then
    jsargs+=(--browser-path "$APP")
    spargs+=(--browser-path "$APP")
    mmargs+=(--browser-path "$APP")
+   deployment_target=$(vtool -show-build "$APP"/Contents/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore | grep -m1 minos | tr -d -c .0-9)
 else
    jsargs+=(--build-directory $BUILD)
    spargs+=(--build-directory $BUILD)
    mmargs+=(--build-directory $BUILD)
+   deployment_target=$(vtool -show-build "$BUILD"/JavaScriptCore.framework/Versions/A/JavaScriptCore | grep -m1 minos | tr -d -c .0-9)
 fi
+
+# The reported target triple is based on an arbitrary binary (JavaScriptCore)
+# and this machine's architecture.
+target_triple=$(machine)-apple-macos${deployment_target}
 
 SPTH='OpenSource/Tools/Scripts'
 
@@ -128,7 +134,8 @@ rm *.result
 
 $SPTH/pgo-profile combine --jetstream "$BASE/jetstream" --speedometer "$BASE/speedometer" --motionmark "$BASE/motionmark" --output "$BASE/output"
 
-$SPTH/pgo-profile compress --input "$BASE/output" --output "$BASE/Internal/WebKit/WebKitAdditions/Profiling/"
+mkdir -p "$BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"
+$SPTH/pgo-profile compress --input "$BASE/output" --output "$BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"
 
-echo "Done! Find your profiles in $BASE/Internal/WebKit/WebKitAdditions/Profiling/"
+echo "Done! Find your profiles in $BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"
 echo "To check these in, do: 'cp -r $BASE/Internal/ ../Internal/'"

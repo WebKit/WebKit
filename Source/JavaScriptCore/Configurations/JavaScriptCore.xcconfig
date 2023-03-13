@@ -50,11 +50,6 @@ SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,JavaScriptCore.order;
 
-PROFILE_DATA_PATH = $(PROFILE_DATA_PATH_INTERNAL_$(USE_INTERNAL_SDK));
-PROFILE_DATA_PATH_INTERNAL_ = $(SRCROOT)/../../Tools/Profiling/Empty.profdata;
-PROFILE_DATA_PATH_INTERNAL_YES = $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed;
-PROFILE_DATA_PATH_INTERNAL_YES[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed;
-
 PROFILE_DATA_FLAGS_ENABLED = -fprofile-instr-use=$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.profdata;
 
 PROFILE_DATA_FLAGS = $(PROFILE_DATA_FLAGS_$(CONFIGURATION)_$(WK_PLATFORM_NAME));
