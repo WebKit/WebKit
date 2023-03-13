@@ -149,26 +149,6 @@ CString fileSystemRepresentation(const String& path)
     return string;
 }
 
-static String bundleName()
-{
-    static const NeverDestroyed<String> name = [] {
-        String name { "WebKit"_s };
-
-#if USE(CF)
-        if (CFBundleRef bundle = CFBundleGetMainBundle()) {
-            if (CFTypeRef bundleExecutable = CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleExecutableKey)) {
-                if (CFGetTypeID(bundleExecutable) == CFStringGetTypeID())
-                    name = reinterpret_cast<CFStringRef>(bundleExecutable);
-            }
-        }
-#endif
-
-        return name;
-    }();
-
-    return name;
-}
-
 static String storageDirectory(DWORD pathIdentifier)
 {
     Vector<UChar> buffer(MAX_PATH);
@@ -178,7 +158,7 @@ static String storageDirectory(DWORD pathIdentifier)
     buffer.shrink(wcslen(wcharFrom(buffer.data())));
     String directory = String::adopt(WTFMove(buffer));
 
-    directory = pathByAppendingComponent(directory, makeString("Apple Computer\\", bundleName()));
+    directory = pathByAppendingComponent(directory, "Apple Computer\\WebKit"_s);
     if (!makeAllDirectories(directory))
         return String();
 

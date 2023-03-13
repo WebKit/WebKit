@@ -55,11 +55,8 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #if USE(CF)
-#include <wtf/text/cf/StringConcatenateCF.h>
-#endif
-
-#if USE(CF) && !PLATFORM(WIN)
 #include "WebArchiveDumpSupport.h"
+#include <wtf/text/cf/StringConcatenateCF.h>
 #endif
 
 using namespace std;
@@ -747,7 +744,7 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-#if USE(CF) && !PLATFORM(WIN)
+#if USE(CF)
     auto wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     auto cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
     stringBuilder.append(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()).get());
