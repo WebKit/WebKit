@@ -340,26 +340,34 @@ bool ProxyObject::performHasProperty(JSGlobalObject* globalObject, PropertyName 
 
     bool trapResultAsBool = trapResult.toBoolean(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
+    if (trapResultAsBool)
+        return true;
 
-    if (!trapResultAsBool) {
-        PropertyDescriptor descriptor;
-        bool isPropertyDescriptorDefined = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor); 
-        RETURN_IF_EXCEPTION(scope, false);
-        if (isPropertyDescriptorDefined) {
-            if (!descriptor.configurable()) {
-                throwTypeError(globalObject, scope, "Proxy 'has' must return 'true' for non-configurable properties"_s);
-                return false;
-            }
-            bool isExtensible = target->isExtensible(globalObject);
-            RETURN_IF_EXCEPTION(scope, false);
-            if (!isExtensible) {
-                throwTypeError(globalObject, scope, "Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"_s);
-                return false;
-            }
+    scope.release();
+    validateNegativeHasTrapResult(globalObject, target, propertyName);
+    return false;
+}
+
+void ProxyObject::validateNegativeHasTrapResult(JSGlobalObject* globalObject, JSObject* target, PropertyName propertyName)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    PropertyDescriptor descriptor;
+    bool isPropertyDescriptorDefined = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor); 
+    RETURN_IF_EXCEPTION(scope, void());
+    if (isPropertyDescriptorDefined) {
+        if (!descriptor.configurable()) {
+            throwTypeError(globalObject, scope, "Proxy 'has' must return 'true' for non-configurable properties"_s);
+            return;
+        }
+        bool isExtensible = target->isExtensible(globalObject);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!isExtensible) {
+            throwTypeError(globalObject, scope, "Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"_s);
+            return;
         }
     }
-
-    return trapResultAsBool;
 }
 
 bool ProxyObject::getOwnPropertySlotCommon(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

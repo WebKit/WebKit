@@ -94,10 +94,25 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
 
     callLinkInfo->setUpCall(CallLinkInfo::Call, scratchGPR);
 
-    unsigned numberOfParameters = 3;
+    unsigned numberOfParameters;
+    JSFunction* proxyInternalMethod = nullptr;
 
-    if (m_type == ProxyObjectStore)
-        numberOfParameters++;
+    switch (m_type) {
+    case ProxyObjectHas:
+        numberOfParameters = 2;
+        proxyInternalMethod = globalObject->performProxyObjectHasFunction();
+        break;
+    case ProxyObjectLoad:
+        numberOfParameters = 3;
+        proxyInternalMethod = globalObject->performProxyObjectGetFunction();
+        break;
+    case ProxyObjectStore:
+        numberOfParameters = 4;
+        proxyInternalMethod = ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunction() : globalObject->performProxyObjectSetSloppyFunction();
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
     ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
@@ -115,29 +130,33 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
 
     jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
-    jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-
     if (!stubInfo.hasConstantIdentifier) {
         RELEASE_ASSERT(identifier());
         GPRReg propertyGPR = stubInfo.propertyGPR();
-        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
     } else
-        jit.storeTrustedValue(identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+        jit.storeTrustedValue(identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
 
-    if (m_type == ProxyObjectStore)
+    switch (m_type) {
+    case ProxyObjectLoad:
+        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
+        break;
+    case ProxyObjectStore:
+        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         jit.storeValue(valueRegs, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register)));
+        break;
+    default:
+        break;
+    }
 
-    JSFunction* proxyInternalMethod = m_type == ProxyObjectLoad ?
-        globalObject->performProxyObjectGetFunction() :
-        (ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunction() : globalObject->performProxyObjectSetSloppyFunction());
-
+    ASSERT(proxyInternalMethod);
     jit.move(CCallHelpers::TrustedImmPtr(proxyInternalMethod), scratchGPR);
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
     auto slowCase = CallLinkInfo::emitFastPath(jit, callLinkInfo, scratchGPR, scratchGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);
     auto doneLocation = jit.label();
 
-    if (m_type == ProxyObjectLoad)
+    if (m_type != ProxyObjectStore)
         jit.setupResults(valueRegs);
 
     auto done = jit.jump();
@@ -152,7 +171,7 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     jit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
     callLinkInfo->emitSlowPath(vm, jit);
 
-    if (m_type == ProxyObjectLoad)
+    if (m_type != ProxyObjectStore)
         jit.setupResults(valueRegs);
 
     done.link(&jit);
@@ -161,7 +180,7 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 
     RegisterSet dontRestore;
-    if (m_type == ProxyObjectLoad) {
+    if (m_type != ProxyObjectStore) {
         // This is the result value. We don't want to overwrite the result with what we stored to the stack.
         // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
         dontRestore.add(valueRegs, IgnoreVectors);

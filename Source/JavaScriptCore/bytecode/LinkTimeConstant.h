@@ -110,6 +110,7 @@ class JSGlobalObject;
     v(stringSubstring, nullptr) \
     v(makeBoundFunction, nullptr) \
     v(hasOwnLengthProperty, nullptr) \
+    v(handleNegativeProxyHasTrapResult, nullptr) \
     v(handleProxyGetTrapResult, nullptr) \
     v(handleProxySetTrapResultSloppy, nullptr) \
     v(handleProxySetTrapResultStrict, nullptr) \

@@ -1002,6 +1002,22 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncDateTimeFormat, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->format(globalObject, value)));
 }
 
+JSC_DEFINE_HOST_FUNCTION(globalFuncHandleNegativeProxyHasTrapResult, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* target = asObject(callFrame->uncheckedArgument(0));
+
+    Identifier propertyName = callFrame->uncheckedArgument(1).toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    scope.release();
+    ProxyObject::validateNegativeHasTrapResult(globalObject, target, propertyName);
+
+    return JSValue::encode(jsUndefined());
+}
+
 JSC_DEFINE_HOST_FUNCTION(globalFuncHandleProxyGetTrapResult, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();

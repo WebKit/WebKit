@@ -183,6 +183,7 @@ namespace JSC {
     macro(stringSubstring) \
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
+    macro(handleNegativeProxyHasTrapResult) \
     macro(handleProxyGetTrapResult) \
     macro(handleProxySetTrapResultSloppy) \
     macro(handleProxySetTrapResultStrict) \

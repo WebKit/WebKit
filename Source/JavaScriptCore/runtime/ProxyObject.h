@@ -79,6 +79,7 @@ public:
     JSObject* target() const { return jsCast<JSObject*>(internalField(Field::Target).get()); }
     JSValue handler() const { return internalField(Field::Handler).get(); }
 
+    static void validateNegativeHasTrapResult(JSGlobalObject*, JSObject*, PropertyName);
     static void validateGetTrapResult(JSGlobalObject*, JSValue trapResult, JSObject*, PropertyName);
     static bool validateSetTrapResult(JSGlobalObject*, JSValue trapResult, JSObject*, PropertyName, JSValue putValue, bool shouldThrow);
 

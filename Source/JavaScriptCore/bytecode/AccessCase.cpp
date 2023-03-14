@@ -82,6 +82,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case Replace:
@@ -325,6 +326,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
@@ -410,6 +412,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case CheckPrivateBrand:
@@ -496,6 +499,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
@@ -583,6 +587,7 @@ bool AccessCase::needsScratchFPR() const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfHit:
@@ -684,6 +689,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
             functor(accessCase.moduleEnvironment());
         break;
     }
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore: {
         auto& accessor = this->as<ProxyObjectAccessCase>();
@@ -780,6 +786,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
         doesCalls = true;
@@ -966,6 +973,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedResizableTypedArrayUint32Store:
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
         return other.type() == type();
@@ -1273,6 +1281,7 @@ void AccessCase::generateWithGuard(
         return;
     }
 
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore: {
         ASSERT(!viaProxy());
@@ -2776,6 +2785,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
     case InstanceOfGeneric:
@@ -3013,6 +3023,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
         func(static_cast<InstanceOfAccessCase*>(this));
         break;
 
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
         func(static_cast<ProxyObjectAccessCase*>(this));
@@ -3124,9 +3135,10 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
 
     case Getter:
     case Setter:
+    case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore: {
-        // Getter / Setter / ProxyObjectLoad / ProxyObjectStore relies on CodeBlock, which makes sharing impossible.
+        // Getter / Setter / ProxyObjectHas / ProxyObjectLoad / ProxyObjectStore relies on CodeBlock, which makes sharing impossible.
         return false;
     }
 

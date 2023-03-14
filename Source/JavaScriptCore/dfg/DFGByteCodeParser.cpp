@@ -4273,8 +4273,8 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
 
     unsigned numberOfParameters = 0;
     numberOfParameters++; // |this|
-    numberOfParameters++; // |receiver|
     numberOfParameters++; // |propertyName|
+    numberOfParameters++; // |receiver|
     numberOfParameters++; // True return PC.
 
     // Start with a register offset that corresponds to the last in-use register.
@@ -4294,8 +4294,8 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
     //    since we only really care about 'this' in this case. But we're not going to take that
     //    shortcut.
     set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
-    set(virtualRegisterForArgumentIncludingThis(1, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
-    set(virtualRegisterForArgumentIncludingThis(2, registerOffset), propertyNameNode, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(1, registerOffset), propertyNameNode, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(2, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
 
     // We've set some locals, but they are not user-visible. It's still OK to exit from here.
     m_exitOK = true;
@@ -5552,8 +5552,8 @@ void ByteCodeParser::handlePutById(
 
         unsigned numberOfParameters = 0;
         numberOfParameters++; // |this|
-        numberOfParameters++; // |receiver|
         numberOfParameters++; // |propertyName|
+        numberOfParameters++; // |receiver|
         numberOfParameters++; // |value|
         numberOfParameters++; // True return PC.
 
@@ -5574,8 +5574,8 @@ void ByteCodeParser::handlePutById(
         //    since we only really care about 'this' in this case. But we're not going to take that
         //    shortcut.
         set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
-        set(virtualRegisterForArgumentIncludingThis(1, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
-        set(virtualRegisterForArgumentIncludingThis(2, registerOffset), propertyNameNode, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(1, registerOffset), propertyNameNode, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(2, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
         set(virtualRegisterForArgumentIncludingThis(3, registerOffset), value, ImmediateNakedSet);
 
         // We've set some locals, but they are not user-visible. It's still OK to exit from here.
