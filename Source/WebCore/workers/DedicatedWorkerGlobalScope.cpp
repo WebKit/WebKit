@@ -33,10 +33,10 @@
 #include "DedicatedWorkerGlobalScope.h"
 
 #include "ContentSecurityPolicyResponseHeaders.h"
-#include "DOMWindow.h"
 #include "DedicatedWorkerThread.h"
 #include "EventNames.h"
 #include "JSRTCRtpScriptTransformer.h"
+#include "LocalDOMWindow.h"
 #include "MessageEvent.h"
 #include "RTCTransformEvent.h"
 #include "RequestAnimationFrameCallback.h"

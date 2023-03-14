@@ -27,12 +27,12 @@
 #include "WindowOrWorkerGlobalScopeFetch.h"
 
 #include "CachedResourceRequestInitiatorTypes.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
+#include "LocalDOMWindow.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
 
@@ -67,7 +67,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     }, cachedResourceRequestInitiatorTypes().fetch);
 }
 
-void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
+void WindowOrWorkerGlobalScopeFetch::fetch(LocalDOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
     auto* document = window.document();
     if (!document) {

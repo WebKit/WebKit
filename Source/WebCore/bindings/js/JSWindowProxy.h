@@ -29,7 +29,7 @@
 #pragma once
 
 #include "JSDOMConvertInterface.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
 #include "WindowProxy.h"
 #include <JavaScriptCore/JSProxy.h>
 

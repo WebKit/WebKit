@@ -38,11 +38,11 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMFormData.h"
-#include "JSDOMWindow.h"
 #include "JSElement.h"
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
 #include "JSHTMLElement.h"
+#include "JSLocalDOMWindow.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -213,7 +213,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     auto* context = scriptExecutionContext();
     if (!context)
         return;
-    auto* globalObject = toJSDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
+    auto* globalObject = toJSLocalDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
     if (!globalObject)
         return;
     JSGlobalObject* lexicalGlobalObject = globalObject;
@@ -285,7 +285,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     VM& vm = m_isolatedWorld->vm();
     JSLockHolder lock(vm);
 
-    auto* globalObject = toJSDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
+    auto* globalObject = toJSLocalDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
     if (!globalObject)
         return;
     JSGlobalObject* lexicalGlobalObject = globalObject;

@@ -29,7 +29,6 @@
 
 #include "Comment.h"
 #include "CustomElementRegistry.h"
-#include "DOMWindow.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "FrameDestructionObserverInlines.h"
@@ -49,6 +48,7 @@
 #include "HTMLTemplateElement.h"
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "NotImplemented.h"
 #include "SVGElementInlines.h"

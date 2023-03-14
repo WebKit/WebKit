@@ -51,12 +51,12 @@ static RefPtr<Node> selectionShadowAncestor(LocalFrame& frame)
     return node->document().ancestorNodeInThisScope(node);
 }
 
-DOMSelection::DOMSelection(DOMWindow& window)
+DOMSelection::DOMSelection(LocalDOMWindow& window)
     : DOMWindowProperty(&window)
 {
 }
 
-Ref<DOMSelection> DOMSelection::create(DOMWindow& window)
+Ref<DOMSelection> DOMSelection::create(LocalDOMWindow& window)
 {
     return adoptRef(*new DOMSelection(window));
 }

@@ -30,11 +30,11 @@
 #include "config.h"
 #include "Screen.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FloatRect.h"
 #include "FrameView.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PlatformScreen.h"
@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Screen);
 
-Screen::Screen(DOMWindow& window)
+Screen::Screen(LocalDOMWindow& window)
     : DOMWindowProperty(&window)
 {
 }

@@ -25,22 +25,22 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 
 class JSWindowProxy;
 
-class JSDOMWindow : public JSEventTarget {
+class JSLocalDOMWindow : public JSEventTarget {
 public:
     using Base = JSEventTarget;
-    using DOMWrapped = DOMWindow;
-    static JSDOMWindow* create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
+    using DOMWrapped = LocalDOMWindow;
+    static JSLocalDOMWindow* create(JSC::VM& vm, JSC::Structure* structure, Ref<LocalDOMWindow>&& impl, JSWindowProxy* proxy)
     {
-        JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm)) JSDOMWindow(vm, structure, WTFMove(impl), proxy);
+        JSLocalDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSLocalDOMWindow>(vm)) JSLocalDOMWindow(vm, structure, WTFMove(impl), proxy);
         ptr->finishCreation(vm, proxy);
         return ptr;
     }
 
-    static DOMWindow* toWrapped(JSC::VM&, JSC::JSValue);
+    static LocalDOMWindow* toWrapped(JSC::VM&, JSC::JSValue);
 
     DECLARE_INFO;
 
@@ -58,24 +58,24 @@ public:
     }
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
-    DOMWindow& wrapped() const
+    LocalDOMWindow& wrapped() const
     {
-        return static_cast<DOMWindow&>(Base::wrapped());
+        return static_cast<LocalDOMWindow&>(Base::wrapped());
     }
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance;
 protected:
-    JSDOMWindow(JSC::VM&, JSC::Structure*, Ref<DOMWindow>&&, JSWindowProxy*);
+    JSLocalDOMWindow(JSC::VM&, JSC::Structure*, Ref<LocalDOMWindow>&&, JSWindowProxy*);
     void finishCreation(JSC::VM&, JSWindowProxy*);
 };
 
 
-class JSDOMWindowPrototype final : public JSC::JSNonFinalObject {
+class JSLocalDOMWindowPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
-    static JSDOMWindowPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
+    static JSLocalDOMWindowPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSDOMWindowPrototype* ptr = new (NotNull, JSC::allocateCell<JSDOMWindowPrototype>(vm)) JSDOMWindowPrototype(vm, globalObject, structure);
+        JSLocalDOMWindowPrototype* ptr = new (NotNull, JSC::allocateCell<JSLocalDOMWindowPrototype>(vm)) JSLocalDOMWindowPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }
@@ -84,7 +84,7 @@ public:
     template<typename CellType, JSC::SubspaceAccess>
     static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
-        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSDOMWindowPrototype, Base);
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSLocalDOMWindowPrototype, Base);
         return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -93,18 +93,18 @@ public:
     }
 
 private:
-    JSDOMWindowPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
+    JSLocalDOMWindowPrototype(JSC::VM& vm, JSC::JSGlobalObject*, JSC::Structure* structure)
         : JSC::JSNonFinalObject(vm, structure)
     {
     }
 
     void finishCreation(JSC::VM&);
 };
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSDOMWindowPrototype, JSDOMWindowPrototype::Base);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSLocalDOMWindowPrototype, JSLocalDOMWindowPrototype::Base);
 
-template<> struct JSDOMWrapperConverterTraits<DOMWindow> {
-    using WrapperClass = JSDOMWindow;
-    using ToWrappedReturnType = DOMWindow*;
+template<> struct JSDOMWrapperConverterTraits<LocalDOMWindow> {
+    using WrapperClass = JSLocalDOMWindow;
+    using ToWrappedReturnType = LocalDOMWindow*;
 };
 
 } // namespace WebCore

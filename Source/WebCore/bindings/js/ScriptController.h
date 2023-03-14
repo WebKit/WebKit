@@ -89,9 +89,9 @@ public:
     enum class WorldType { User, Internal };
     WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld(const String& name, WorldType = WorldType::Internal);
 
-    JSDOMWindow* globalObject(DOMWrapperWorld& world)
+    JSLocalDOMWindow* globalObject(DOMWrapperWorld& world)
     {
-        return JSC::jsCast<JSDOMWindow*>(jsWindowProxy(world).window());
+        return JSC::jsCast<JSLocalDOMWindow*>(jsWindowProxy(world).window());
     }
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);

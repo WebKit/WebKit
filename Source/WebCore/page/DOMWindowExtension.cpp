@@ -26,17 +26,17 @@
 #include "config.h"
 #include "DOMWindowExtension.h"
 
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-DOMWindowExtension::DOMWindowExtension(DOMWindow* window, DOMWrapperWorld& world)
+DOMWindowExtension::DOMWindowExtension(LocalDOMWindow* window, DOMWrapperWorld& world)
     : m_window(window)
     , m_world(world)
     , m_wasDetached(false)
@@ -92,8 +92,8 @@ void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
         m_disconnectedFrame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = nullptr;
 
-    // DOMWindowExtension lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
-    // itself from any DOMWindow it is associated with if that DOMWindow is going away.
+    // DOMWindowExtension lifetime isn't tied directly to the LocalDOMWindow itself so it is important that it unregister
+    // itself from any LocalDOMWindow it is associated with if that LocalDOMWindow is going away.
     ASSERT(m_window);
     if (m_window)
         m_window->unregisterObserver(*this);
@@ -114,8 +114,8 @@ void DOMWindowExtension::willDestroyGlobalObjectInFrame()
         frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     }
 
-    // DOMWindowExtension lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
-    // itself from any DOMWindow it is associated with if that DOMWindow is going away.
+    // DOMWindowExtension lifetime isn't tied directly to the LocalDOMWindow itself so it is important that it unregister
+    // itself from any LocalDOMWindow it is associated with if that LocalDOMWindow is going away.
     ASSERT(m_window);
     if (m_window)
         m_window->unregisterObserver(*this);

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class ResourceError;
 class ResourceResponse;
 
@@ -42,7 +42,7 @@ protected:
 
 public:
     // InspectorInstrumentation
-    void frameWindowDiscarded(DOMWindow&);
+    void frameWindowDiscarded(LocalDOMWindow&);
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
     void didFailLoading(ResourceLoaderIdentifier, const ResourceError&);
 };

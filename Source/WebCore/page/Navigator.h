@@ -37,7 +37,7 @@ class ShareDataReader;
 class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
     WTF_MAKE_ISO_ALLOCATED(Navigator);
 public:
-    static Ref<Navigator> create(ScriptExecutionContext* context, DOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
+    static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();
 
     String appVersion() const;
@@ -77,7 +77,7 @@ public:
 
 private:
     void showShareData(ExceptionOr<ShareDataWithParsedURL&>, Ref<DeferredPromise>&&);
-    explicit Navigator(ScriptExecutionContext*, DOMWindow&);
+    explicit Navigator(ScriptExecutionContext*, LocalDOMWindow&);
 
     void initializePluginAndMimeTypeArrays();
 

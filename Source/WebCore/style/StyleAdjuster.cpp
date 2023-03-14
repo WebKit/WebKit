@@ -32,7 +32,6 @@
 
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
-#include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "ElementName.h"
 #include "EventNames.h"
@@ -47,6 +46,7 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
+#include "LocalDOMWindow.h"
 #include "MathMLElement.h"
 #include "ModalContainerObserver.h"
 #include "Page.h"

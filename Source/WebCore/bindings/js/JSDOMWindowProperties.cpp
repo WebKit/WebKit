@@ -43,7 +43,7 @@ using namespace JSC;
 const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProperties) };
 
 // https://html.spec.whatwg.org/multipage/window-object.html#dom-window-nameditem
-static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, DOMWindow& window, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
+static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, LocalDOMWindow& window, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
     if (auto* frame = window.frame()) {
         if (auto* scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChild(propertyNameToAtomString(propertyName)))) {

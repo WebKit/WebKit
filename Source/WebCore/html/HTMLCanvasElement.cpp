@@ -86,7 +86,7 @@
 #endif
 
 #if ENABLE(WEBXR)
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "Navigator.h"
 #include "NavigatorWebXR.h"
 #include "WebXRSystem.h"
@@ -305,7 +305,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isWebGPUType(contextId)) {
         GPU* gpu = nullptr;
         if (auto* window = document().domWindow()) {
-            // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
+            // FIXME: Should we be instead getting this through jsDynamicCast<JSLocalDOMWindow*>(state)->wrapped().navigator().gpu()?
             gpu = window->navigator().gpu();
         }
         auto context = createContextWebGPU(contextId, gpu);

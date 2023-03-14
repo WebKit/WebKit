@@ -27,12 +27,12 @@
 
 namespace WebCore {
 class AbstractDOMWindow;
-class DOMWindow;
+class LocalDOMWindow;
 class WindowProxy;
 }
 
-WebCore::DOMWindow* core(DOMAbstractView *);
-DOMAbstractView *kit(WebCore::DOMWindow*);
+WebCore::LocalDOMWindow* core(DOMAbstractView *);
+DOMAbstractView *kit(WebCore::LocalDOMWindow*);
 DOMAbstractView *kit(WebCore::AbstractDOMWindow*);
 DOMAbstractView *kit(WebCore::WindowProxy*);
 WebCore::WindowProxy* toWindowProxy(DOMAbstractView *);

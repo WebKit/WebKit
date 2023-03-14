@@ -32,8 +32,8 @@ namespace WebCore {
 
 class DOMRect;
 class DOMRectList;
-class DOMWindow;
 class DocumentFragment;
+class LocalDOMWindow;
 class NodeWithIndex;
 class Text;
 
@@ -108,7 +108,7 @@ public:
     void updateFromSelection(const SimpleRange&);
 
     // For use by garbage collection. Returns nullptr for ranges not assocated with selection.
-    DOMWindow* window() const;
+    LocalDOMWindow* window() const;
 
     static ExceptionOr<Node*> checkNodeOffsetPair(Node&, unsigned offset);
 

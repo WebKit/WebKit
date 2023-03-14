@@ -27,7 +27,6 @@
 #include "ServiceWorkerRegistration.h"
 
 #if ENABLE(SERVICE_WORKER)
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -35,6 +34,7 @@
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSNotification.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "NavigationPreloadManager.h"
 #include "NotificationClient.h"

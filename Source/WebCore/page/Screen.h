@@ -42,7 +42,7 @@ class ScreenOrientation;
 class Screen final : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Screen);
 public:
-    static Ref<Screen> create(DOMWindow& window) { return adoptRef(*new Screen(window)); }
+    static Ref<Screen> create(LocalDOMWindow& window) { return adoptRef(*new Screen(window)); }
     ~Screen();
 
     int height() const;
@@ -57,7 +57,7 @@ public:
     ScreenOrientation& orientation();
 
 private:
-    explicit Screen(DOMWindow&);
+    explicit Screen(LocalDOMWindow&);
 
     RefPtr<ScreenOrientation> m_screenOrientation;
 };

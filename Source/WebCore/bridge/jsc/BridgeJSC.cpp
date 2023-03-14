@@ -27,8 +27,8 @@
 #include "config.h"
 #include "BridgeJSC.h"
 
-#include "DOMWindow.h"
 #include "JSDOMWindowBase.h"
+#include "LocalDOMWindow.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/JSCInlines.h>

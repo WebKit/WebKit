@@ -27,11 +27,11 @@
 #include "ResourceTimingInformation.h"
 
 #include "CachedResource.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Performance.h"
 #include "ResourceTiming.h"

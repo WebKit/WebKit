@@ -19,10 +19,10 @@
 #include "config.h"
 #include "DOMObjectCache.h"
 
-#include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
 #include <glib-object.h>
@@ -96,9 +96,9 @@ public:
     {
         ASSERT(!m_objects.contains(&data));
 
-        WebCore::DOMWindow* domWindow = m_frame->document()->domWindow();
+        auto* domWindow = m_frame->document()->domWindow();
         if (domWindow && (!m_domWindowObserver || m_domWindowObserver->window() != domWindow)) {
-            // New DOMWindow, clear the cache and create a new DOMWindowObserver.
+            // New LocalDOMWindow, clear the cache and create a new DOMWindowObserver.
             clear();
             m_domWindowObserver = makeUnique<DOMWindowObserver>(*domWindow, *this);
         }
@@ -108,10 +108,10 @@ public:
     }
 
 private:
-    class DOMWindowObserver final : public WebCore::DOMWindow::Observer {
+    class DOMWindowObserver final : public WebCore::LocalDOMWindow::Observer {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        DOMWindowObserver(WebCore::DOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
+        DOMWindowObserver(WebCore::LocalDOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
             : m_window(window)
             , m_frameObserver(frameObserver)
         {
@@ -124,7 +124,7 @@ private:
                 m_window->unregisterObserver(*this);
         }
 
-        WebCore::DOMWindow* window() const { return m_window.get(); }
+        WebCore::LocalDOMWindow* window() const { return m_window.get(); }
 
     private:
         void willDetachGlobalObjectFromFrame() override
@@ -132,7 +132,7 @@ private:
             m_frameObserver.willDetachGlobalObjectFromFrame();
         }
 
-        WeakPtr<WebCore::DOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
+        WeakPtr<WebCore::LocalDOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
         DOMObjectCacheFrameObserver& m_frameObserver;
     };
 

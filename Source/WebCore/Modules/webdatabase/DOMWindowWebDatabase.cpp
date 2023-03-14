@@ -27,15 +27,15 @@
 #include "config.h"
 #include "DOMWindowWebDatabase.h"
 
-#include "DOMWindow.h"
 #include "Database.h"
 #include "DatabaseManager.h"
 #include "Document.h"
+#include "LocalDOMWindow.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
 
-ExceptionOr<RefPtr<Database>> DOMWindowWebDatabase::openDatabase(DOMWindow& window, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
+ExceptionOr<RefPtr<Database>> DOMWindowWebDatabase::openDatabase(LocalDOMWindow& window, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
     if (!window.isCurrentlyDisplayedInFrame())
         return RefPtr<Database> { nullptr };

@@ -28,7 +28,6 @@
 #include "JSDOMGlobalObject.h"
 
 #include "DOMConstructors.h"
-#include "DOMWindow.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FetchResponse.h"
@@ -38,10 +37,10 @@
 #include "JSAbortSignal.h"
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSDOMWindow.h"
 #include "JSEventListener.h"
 #include "JSFetchResponse.h"
 #include "JSIDBSerializationGlobalObject.h"
+#include "JSLocalDOMWindow.h"
 #include "JSMediaStream.h"
 #include "JSMediaStreamTrack.h"
 #include "JSRTCIceCandidate.h"
@@ -53,6 +52,7 @@
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include "JSWritableStream.h"
+#include "LocalDOMWindow.h"
 #include "ProcessIdentifier.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptController.h"
@@ -711,7 +711,7 @@ String JSDOMGlobalObject::agentClusterID() const
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
 {
     if (is<Document>(context))
-        return toJSDOMWindow(downcast<Document>(context).frame(), world);
+        return toJSLocalDOMWindow(downcast<Document>(context).frame(), world);
 
     if (is<WorkerOrWorkletGlobalScope>(context))
         return downcast<WorkerOrWorkletGlobalScope>(context).script()->globalScopeWrapper();

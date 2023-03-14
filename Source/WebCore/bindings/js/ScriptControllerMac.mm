@@ -31,10 +31,10 @@
 
 #import "BridgeJSC.h"
 #import "CommonVM.h"
-#import "DOMWindow.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
-#import "JSDOMWindow.h"
+#import "JSLocalDOMWindow.h"
+#import "LocalDOMWindow.h"
 #import "LocalFrame.h"
 #import "WebScriptObjectPrivate.h"
 #import "Widget.h"

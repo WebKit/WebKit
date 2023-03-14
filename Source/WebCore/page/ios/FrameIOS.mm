@@ -29,7 +29,6 @@
 
 #import "CommonVM.h"
 #import "ComposedTreeIterator.h"
-#import "DOMWindow.h"
 #import "Document.h"
 #import "DocumentMarkerController.h"
 #import "Editor.h"
@@ -48,6 +47,7 @@
 #import "HTMLObjectElement.h"
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
+#import "LocalDOMWindow.h"
 #import "Logging.h"
 #import "NodeRenderStyle.h"
 #import "NodeTraversal.h"

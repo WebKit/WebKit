@@ -63,7 +63,6 @@
 #include "DOMRectList.h"
 #include "DOMStringList.h"
 #include "DOMURL.h"
-#include "DOMWindow.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DisabledAdaptations.h"
@@ -131,6 +130,7 @@
 #include "JSImageData.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "Location.h"
@@ -410,7 +410,7 @@ using namespace HTMLNames;
 
 class InspectorStubFrontend final : public InspectorFrontendClientLocal, public FrontendChannel {
 public:
-    InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow);
+    InspectorStubFrontend(Page& inspectedPage, RefPtr<LocalDOMWindow>&& frontendWindow);
     virtual ~InspectorStubFrontend();
 
 private:
@@ -436,10 +436,10 @@ private:
     void sendMessageToFrontend(const String& message) final;
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
-    RefPtr<DOMWindow> m_frontendWindow;
+    RefPtr<LocalDOMWindow> m_frontendWindow;
 };
 
-InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow)
+InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<LocalDOMWindow>&& frontendWindow)
     : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), makeUnique<InspectorFrontendClientLocal::Settings>())
     , m_frontendWindow(frontendWindow.copyRef())
 {
@@ -654,7 +654,7 @@ void Internals::resetToConsistentState(Page& page)
 
     CanvasBase::setMaxPixelMemoryForTesting(std::nullopt);
     CanvasBase::setMaxCanvasAreaForTesting(std::nullopt);
-    DOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
+    LocalDOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
 #if PLATFORM(IOS)
     WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
@@ -2957,7 +2957,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(inspectedPage->mainFrame());
     auto* window = localMainFrame ? localMainFrame->document()->domWindow() : nullptr;
     auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
-    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
+    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<LocalDOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;
 }
 
@@ -6385,7 +6385,7 @@ void Internals::setMaximumIntervalForUserGestureForwardingForFetch(double interv
 
 void Internals::setTransientActivationDuration(double seconds)
 {
-    DOMWindow::overrideTransientActivationDurationForTesting(Seconds { seconds });
+    LocalDOMWindow::overrideTransientActivationDurationForTesting(Seconds { seconds });
 }
 
 void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
@@ -6522,7 +6522,7 @@ bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned sysc
 #endif
 }
 
-String Internals::windowLocationHost(DOMWindow& window)
+String Internals::windowLocationHost(LocalDOMWindow& window)
 {
     return window.location().host();
 }

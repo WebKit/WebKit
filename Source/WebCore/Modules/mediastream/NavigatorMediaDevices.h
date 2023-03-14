@@ -43,7 +43,7 @@ class Navigator;
 class NavigatorMediaDevices : public Supplement<Navigator>, public DOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NavigatorMediaDevices(DOMWindow*);
+    explicit NavigatorMediaDevices(LocalDOMWindow*);
     virtual ~NavigatorMediaDevices();
     static NavigatorMediaDevices* from(Navigator*);
 

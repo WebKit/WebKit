@@ -36,8 +36,8 @@
 #include "Document.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -153,7 +153,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
             if (globalObject == &mainGlobalObject)
                 continue;
 
-            auto& securityOrigin = downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+            auto& securityOrigin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
             notifyContextCreated(frameId, globalObject, jsWindowProxy->world(), &securityOrigin);
         }
     });

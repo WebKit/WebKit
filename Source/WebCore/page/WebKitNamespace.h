@@ -38,7 +38,7 @@ class UserMessageHandlersNamespace;
 
 class WebKitNamespace : public DOMWindowProperty, public RefCounted<WebKitNamespace> {
 public:
-    static Ref<WebKitNamespace> create(DOMWindow& window, UserContentProvider& userContentProvider)
+    static Ref<WebKitNamespace> create(LocalDOMWindow& window, UserContentProvider& userContentProvider)
     {
         return adoptRef(*new WebKitNamespace(window, userContentProvider));
     }
@@ -48,7 +48,7 @@ public:
     UserMessageHandlersNamespace* messageHandlers();
 
 private:
-    explicit WebKitNamespace(DOMWindow&, UserContentProvider&);
+    explicit WebKitNamespace(LocalDOMWindow&, UserContentProvider&);
 
     Ref<UserMessageHandlersNamespace> m_messageHandlerNamespace;
 };

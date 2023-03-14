@@ -27,11 +27,11 @@
 #include "VisualViewport.h"
 
 #include "ContextDestructionObserver.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(VisualViewport);
 
-VisualViewport::VisualViewport(DOMWindow& window)
+VisualViewport::VisualViewport(LocalDOMWindow& window)
     : DOMWindowProperty(&window)
 {
 }

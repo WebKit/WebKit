@@ -33,16 +33,16 @@
 
 namespace WebCore {
     
-class DOMWindow;
+class LocalDOMWindow;
 
-class DOMWindowSpeechSynthesis : public Supplement<DOMWindow>, public DOMWindowProperty {
+class DOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public DOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DOMWindowSpeechSynthesis(DOMWindow*);
+    explicit DOMWindowSpeechSynthesis(LocalDOMWindow*);
     virtual ~DOMWindowSpeechSynthesis();
     
-    WEBCORE_EXPORT static SpeechSynthesis* speechSynthesis(DOMWindow&);
-    static DOMWindowSpeechSynthesis* from(DOMWindow*);
+    WEBCORE_EXPORT static SpeechSynthesis* speechSynthesis(LocalDOMWindow&);
+    static DOMWindowSpeechSynthesis* from(LocalDOMWindow*);
     
 private:
     SpeechSynthesis* speechSynthesis();

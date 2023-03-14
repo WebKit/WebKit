@@ -61,7 +61,6 @@
 #include "DOMAudioSession.h"
 #include "DOMCSSPaintWorklet.h"
 #include "DOMImplementation.h"
-#include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
@@ -144,14 +143,15 @@
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
-#include "JSDOMWindowCustom.h"
 #include "JSLazyEventListener.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
 #include "LayoutDisallowedScope.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
@@ -3055,7 +3055,7 @@ ScriptableDocumentParser* Document::scriptableDocumentParser() const
     return parser() ? parser()->asScriptableDocumentParser() : nullptr;
 }
 
-ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url, const AtomString& name, const String& features)
+ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& url, const AtomString& name, const String& features)
 {
     if (!m_domWindow)
         return Exception { InvalidAccessError };
@@ -5255,7 +5255,7 @@ void Document::createDOMWindow()
     ASSERT(m_frame);
     ASSERT(!m_domWindow);
 
-    m_domWindow = DOMWindow::create(*this);
+    m_domWindow = LocalDOMWindow::create(*this);
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);
@@ -5266,7 +5266,7 @@ void Document::takeDOMWindowFrom(Document& document)
     ASSERT(m_frame);
     ASSERT(!m_domWindow);
     ASSERT(document.m_domWindow);
-    // A valid DOMWindow is needed by CachedFrame for its documents.
+    // A valid LocalDOMWindow is needed by CachedFrame for its documents.
     ASSERT(backForwardCacheState() == NotInBackForwardCache);
 
     m_domWindow = WTFMove(document.m_domWindow);

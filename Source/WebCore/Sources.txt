@@ -564,7 +564,6 @@ bindings/js/JSDOMPromiseDeferred.cpp
 bindings/js/JSDOMQuadCustom.cpp
 bindings/js/JSDOMSetLike.cpp
 bindings/js/JSDOMWindowBase.cpp
-bindings/js/JSDOMWindowCustom.cpp
 bindings/js/JSDOMWindowProperties.cpp
 bindings/js/JSDOMWrapper.cpp
 bindings/js/JSDOMWrapperCache.cpp
@@ -601,6 +600,7 @@ bindings/js/JSIntersectionObserverCustom.cpp
 bindings/js/JSIntersectionObserverEntryCustom.cpp
 bindings/js/JSKeyframeEffectCustom.cpp
 bindings/js/JSLazyEventListener.cpp
+bindings/js/JSLocalDOMWindowCustom.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSMediaStreamTrackCustom.cpp
 bindings/js/JSMessageChannelCustom.cpp
@@ -1820,7 +1820,6 @@ page/ContextMenuController.cpp
 page/Crypto.cpp
 page/DOMSelection.cpp
 page/DOMTimer.cpp
-page/DOMWindow.cpp
 page/DOMWindowExtension.cpp
 page/DOMWindowProperty.cpp
 page/DatabaseProvider.cpp
@@ -1845,6 +1844,7 @@ page/ImageOverlayController.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
+page/LocalDOMWindow.cpp
 page/LocalFrame.cpp
 page/Location.cpp
 page/LoggedInStatus.cpp
@@ -3277,7 +3277,6 @@ JSDOMStringList.cpp
 JSDOMStringMap.cpp
 JSDOMTokenList.cpp
 JSDOMURL.cpp
-JSDOMWindow.cpp
 JSDataCue.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
@@ -3665,6 +3664,7 @@ JSKeyframeAnimationOptions.cpp
 JSKeyframeEffect.cpp
 JSKeyframeEffectOptions.cpp
 JSLatencyMode.cpp
+JSLocalDOMWindow.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMathMLElement.cpp

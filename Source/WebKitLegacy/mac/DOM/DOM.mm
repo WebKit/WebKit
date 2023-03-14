@@ -287,7 +287,7 @@ Class kitClass(Node* impl)
 
 id <DOMEventTarget> kit(EventTarget* target)
 {
-    // We don't have Objective-C bindings for XMLHttpRequest, DOMWindow, and other non-Node targets.
+    // We don't have Objective-C bindings for XMLHttpRequest, LocalDOMWindow, and other non-Node targets.
     return is<Node>(target) ? kit(downcast<Node>(target)) : nil;
 }
 

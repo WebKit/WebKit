@@ -25,7 +25,7 @@
  
 #pragma once
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include <wtf/URL.h>
 #include "ScriptCachedFrameData.h"
 #include <wtf/RefPtr.h>

@@ -31,7 +31,6 @@
 
 #include "ChangeVersionData.h"
 #include "ChangeVersionWrapper.h"
-#include "DOMWindow.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
@@ -40,7 +39,8 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLTransaction.h"

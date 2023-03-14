@@ -40,7 +40,7 @@ class JSValue;
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class Document;
 class Location;
 
@@ -62,13 +62,13 @@ public:
     Location* location() const;
     void close(Document&);
     bool closed() const;
-    void focus(DOMWindow& incumbentWindow);
+    void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     unsigned length() const;
     WindowProxy* top() const;
     WindowProxy* opener() const;
     WindowProxy* parent() const;
-    void postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
+    void postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
 
 private:
     WEBCORE_EXPORT RemoteDOMWindow(RemoteFrame&, GlobalWindowIdentifier&&);

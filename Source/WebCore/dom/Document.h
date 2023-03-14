@@ -102,7 +102,7 @@ class Comment;
 class ConstantPropertyMap;
 class DOMImplementation;
 class DOMSelection;
-class DOMWindow;
+class LocalDOMWindow;
 class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
@@ -715,7 +715,7 @@ public:
     
     WEBCORE_EXPORT DocumentLoader* loader() const;
 
-    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> openForBindings(DOMWindow& activeWindow, DOMWindow& firstDOMWindow, const String& url, const AtomString& name, const String& features);
+    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstDOMWindow, const String& url, const AtomString& name, const String& features);
     WEBCORE_EXPORT ExceptionOr<Document&> openForBindings(Document* entryDocument, const String&, const String&);
 
     // FIXME: We should rename this at some point and give back the name 'open' to the HTML specified ones.
@@ -920,8 +920,8 @@ public:
     void createDOMWindow();
     void takeDOMWindowFrom(Document&);
 
-    DOMWindow* domWindow() const { return m_domWindow.get(); }
-    // In DOM Level 2, the Document's DOMWindow is called the defaultView.
+    LocalDOMWindow* domWindow() const { return m_domWindow.get(); }
+    // In DOM Level 2, the Document's LocalDOMWindow is called the defaultView.
     WEBCORE_EXPORT WindowProxy* windowProxy() const;
 
     inline bool hasBrowsingContext() const; // Defined in DocumentInlines.h.
@@ -932,7 +932,7 @@ public:
     OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
     void setParserContentPolicy(OptionSet<ParserContentPolicy> policy) { m_parserContentPolicy = policy; }
 
-    // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
+    // Helper functions for forwarding LocalDOMWindow event related tasks to the LocalDOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value, DOMWrapperWorld&);
     WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
@@ -1911,7 +1911,7 @@ private:
 
     UniqueRef<Quirks> m_quirks;
 
-    RefPtr<DOMWindow> m_domWindow;
+    RefPtr<LocalDOMWindow> m_domWindow;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
     OptionSet<ParserContentPolicy> m_parserContentPolicy;
 

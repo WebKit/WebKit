@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class Navigator;
 
 class UserActivation final : public RefCounted<UserActivation> {
@@ -48,7 +48,7 @@ public:
 private:
     explicit UserActivation(Navigator&);
 
-    DOMWindow* window() const;
+    LocalDOMWindow* window() const;
 
     WeakPtr<Navigator> m_navigator;
 };

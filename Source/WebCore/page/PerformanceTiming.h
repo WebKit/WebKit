@@ -46,7 +46,7 @@ struct DocumentEventTiming;
 
 class PerformanceTiming : public RefCounted<PerformanceTiming>, public DOMWindowProperty {
 public:
-    static Ref<PerformanceTiming> create(DOMWindow* window) { return adoptRef(*new PerformanceTiming(window)); }
+    static Ref<PerformanceTiming> create(LocalDOMWindow* window) { return adoptRef(*new PerformanceTiming(window)); }
 
     unsigned long long navigationStart() const;
     unsigned long long unloadEventStart() const;
@@ -71,7 +71,7 @@ public:
     unsigned long long loadEventEnd() const;
 
 private:
-    explicit PerformanceTiming(DOMWindow*);
+    explicit PerformanceTiming(LocalDOMWindow*);
 
     const DocumentEventTiming* documentEventTiming() const;
     const DocumentLoader* documentLoader() const;

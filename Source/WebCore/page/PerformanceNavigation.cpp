@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PerformanceNavigation::PerformanceNavigation(DOMWindow* window)
+PerformanceNavigation::PerformanceNavigation(LocalDOMWindow* window)
     : DOMWindowProperty(window)
 {
 }

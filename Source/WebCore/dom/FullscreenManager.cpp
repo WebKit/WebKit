@@ -30,7 +30,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -38,6 +37,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"

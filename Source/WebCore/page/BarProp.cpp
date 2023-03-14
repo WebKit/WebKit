@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BarProp);
 
-BarProp::BarProp(DOMWindow& window, Type type)
+BarProp::BarProp(LocalDOMWindow& window, Type type)
     : DOMWindowProperty(&window)
     , m_type(type)
 {

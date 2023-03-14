@@ -31,13 +31,13 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRSession.h"
 #include "JSXRReferenceSpaceType.h"
+#include "LocalDOMWindow.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "PlatformXR.h"
@@ -192,7 +192,7 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
 }
 
 // https://immersive-web.github.io/webxr/#immersive-session-request-is-allowed
-bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(DOMWindow& globalObject, Document& document) const
+bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow& globalObject, Document& document) const
 {
     // 1. If the request was not made while the global object has transient
     //    activation or when launching a web application, return false
@@ -218,7 +218,7 @@ bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(DOMWindow& glo
 }
 
 // https://immersive-web.github.io/webxr/#inline-session-request-is-allowed
-bool WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject(DOMWindow& globalObject, Document& document, const XRSessionInit& init) const
+bool WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject(LocalDOMWindow& globalObject, Document& document, const XRSessionInit& init) const
 {
     auto isEmptyOrViewer = [&document](const JSFeatureList& features) {
         if (features.isEmpty())

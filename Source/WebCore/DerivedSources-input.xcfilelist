@@ -1490,6 +1490,7 @@ $(PROJECT_DIR)/page/History.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
+$(PROJECT_DIR)/page/LocalDOMWindow.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
 $(PROJECT_DIR)/page/Navigator+UserActivation.idl

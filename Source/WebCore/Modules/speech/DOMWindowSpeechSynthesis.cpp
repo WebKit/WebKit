@@ -33,12 +33,12 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "Page.h"
 
 namespace WebCore {
 
-DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis(DOMWindow* window)
+DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis(LocalDOMWindow* window)
     : DOMWindowProperty(window)
 {
 }
@@ -51,9 +51,9 @@ const char* DOMWindowSpeechSynthesis::supplementName()
 }
 
 // static
-DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
+DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(LocalDOMWindow* window)
 {
-    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<DOMWindow>::from(window, supplementName()));
+    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<LocalDOMWindow>::from(window, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<DOMWindowSpeechSynthesis>(window);
         supplement = newSupplement.get();
@@ -63,7 +63,7 @@ DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
 }
 
 // static
-SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis(DOMWindow& window)
+SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis(LocalDOMWindow& window)
 {
     return DOMWindowSpeechSynthesis::from(&window)->speechSynthesis();
 }

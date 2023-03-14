@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver(WebCore::DOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
+WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     : m_window(window)
     , m_callback(WTFMove(callback))
 {

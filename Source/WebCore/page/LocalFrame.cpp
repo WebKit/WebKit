@@ -40,7 +40,6 @@
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "DocumentTimelinesController.h"
 #include "DocumentType.h"
@@ -71,6 +70,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSNode.h"
 #include "JSWindowProxy.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
@@ -241,7 +241,7 @@ void LocalFrame::setView(RefPtr<FrameView>&& view)
     if (m_view)
         m_view->prepareForDetach();
 
-    // Prepare for destruction now, so any unload event handlers get run and the DOMWindow is
+    // Prepare for destruction now, so any unload event handlers get run and the LocalDOMWindow is
     // notified. If we wait until the view is destroyed, then things won't be hooked up enough for
     // these calls to work.
     if (!view && m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache)
@@ -904,7 +904,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarMode::AlwaysOff);
 }
 
-DOMWindow* LocalFrame::window() const
+LocalDOMWindow* LocalFrame::window() const
 {
     return document() ? document()->domWindow() : nullptr;
 }
@@ -1151,7 +1151,7 @@ void LocalFrame::resetScript()
 LocalFrame* LocalFrame::fromJSContext(JSContextRef context)
 {
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
-    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj))
+    if (auto* window = JSC::jsDynamicCast<JSLocalDOMWindow*>(globalObjectObj))
         return window->wrapped().frame();
 #if ENABLE(SERVICE_WORKER)
     if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
@@ -1169,7 +1169,7 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
     JSC::JSValue value = toJS(globalObject, valueRef);
     JSC::VM& vm = globalObject->vm();
 
-    if (auto* window = JSDOMWindow::toWrapped(vm, value))
+    if (auto* window = JSLocalDOMWindow::toWrapped(vm, value))
         return window->frame();
 
     auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);

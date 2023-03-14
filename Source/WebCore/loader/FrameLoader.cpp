@@ -51,7 +51,6 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginEmbedderPolicy.h"
-#include "DOMWindow.h"
 #include "DatabaseManager.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -87,6 +86,7 @@
 #include "InspectorInstrumentation.h"
 #include "LinkLoader.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -520,7 +520,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
 
     auto* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
     if (!targetFrame) {
-        if (!DOMWindow::allowPopUp(m_frame) && !UserGestureIndicator::processingUserGesture())
+        if (!LocalDOMWindow::allowPopUp(m_frame) && !UserGestureIndicator::processingUserGesture())
             return;
 
         // FIXME: targetFrame can be null for two distinct reasons:
@@ -621,7 +621,7 @@ bool FrameLoader::didOpenURL()
     // its frame is not in a consistent state for rendering, so avoid setJSStatusBarText
     // since it may cause clients to attempt to render the frame.
     if (!m_stateMachine.creatingInitialEmptyDocument()) {
-        DOMWindow* window = m_frame.document()->domWindow();
+        auto* window = m_frame.document()->domWindow();
         window->setStatus(String());
         window->setDefaultStatus(String());
     }
@@ -2403,7 +2403,7 @@ void FrameLoader::willRestoreFromCachedPage()
     
     // Delete old status bar messages (if it _was_ activated on last URL).
     if (m_frame.script().canExecuteScripts(NotAboutToExecuteScript)) {
-        DOMWindow* window = m_frame.document()->domWindow();
+        auto* window = m_frame.document()->domWindow();
         window->setStatus(String());
         window->setDefaultStatus(String());
     }
@@ -3549,7 +3549,7 @@ static bool shouldAskForNavigationConfirmation(Document& document, const BeforeU
 
 bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
 {
-    DOMWindow* domWindow = m_frame.document()->domWindow();
+    auto* domWindow = m_frame.document()->domWindow();
     if (!domWindow)
         return true;
 
@@ -4426,7 +4426,7 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
 #endif
 
     // Ensure non-NaN values, minimum size as well as being within valid screen area.
-    FloatRect newWindowRect = DOMWindow::adjustWindowRect(*page, windowRect);
+    FloatRect newWindowRect = LocalDOMWindow::adjustWindowRect(*page, windowRect);
 
     if (!frame->page())
         return nullptr;

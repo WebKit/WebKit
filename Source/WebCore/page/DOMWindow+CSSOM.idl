@@ -26,6 +26,6 @@
 typedef USVString CSSOMString;
 
 // https://drafts.csswg.org/cssom/#extensions-to-the-window-interface
-partial interface DOMWindow {
+partial interface LocalDOMWindow {
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional CSSOMString? pseudoElement = null);
 };

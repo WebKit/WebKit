@@ -34,12 +34,12 @@ namespace WebCore {
 
 class StyleMedia final : public RefCounted<StyleMedia>, public DOMWindowProperty {
 public:
-    static Ref<StyleMedia> create(DOMWindow& window) { return adoptRef(*new StyleMedia(window)); }
+    static Ref<StyleMedia> create(LocalDOMWindow& window) { return adoptRef(*new StyleMedia(window)); }
 
     String type() const;
 
 private:
-    explicit StyleMedia(DOMWindow&);
+    explicit StyleMedia(LocalDOMWindow&);
 };
 
 } // namespace WebCore

@@ -1049,7 +1049,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
     boolean hasSameEventLoopAs(WindowProxy windowProxy);
 
-    DOMString windowLocationHost(DOMWindow window);
+    DOMString windowLocationHost(LocalDOMWindow window);
 
     undefined markContextAsInsecure();
 

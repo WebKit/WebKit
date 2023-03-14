@@ -2014,7 +2014,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (frameLoader.subframeLoader().containsPlugins())
         [result setObject:@YES forKey:WebFrameHasPlugins];
     
-    if (WebCore::DOMWindow* domWindow = _private->coreFrame->document()->domWindow()) {
+    if (auto* domWindow = _private->coreFrame->document()->domWindow()) {
         if (domWindow->hasEventListeners(WebCore::eventNames().unloadEvent))
             [result setObject:@YES forKey:WebFrameHasUnloadListener];
         if (domWindow->optionalApplicationCache())
@@ -2050,7 +2050,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     if (!strcmp(globalObjectObj->classInfo()->className, "JSWindowProxy"))
-        anyWorldGlobalObject = JSC::jsDynamicCast<WebCore::JSDOMWindow*>(static_cast<WebCore::JSWindowProxy*>(globalObjectObj)->window());
+        anyWorldGlobalObject = JSC::jsDynamicCast<WebCore::JSLocalDOMWindow*>(static_cast<WebCore::JSWindowProxy*>(globalObjectObj)->window());
 
     if (!anyWorldGlobalObject)
         return @"";
@@ -2296,7 +2296,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!world)
         return 0;
 
-    WebCore::JSDOMWindow* globalObject = coreFrame->script().globalObject(*core(world));
+    auto* globalObject = coreFrame->script().globalObject(*core(world));
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     JSC::JSLockHolder lock(lexicalGlobalObject);

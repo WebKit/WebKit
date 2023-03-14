@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-StyleMedia::StyleMedia(DOMWindow& window)
+StyleMedia::StyleMedia(LocalDOMWindow& window)
     : DOMWindowProperty(&window)
 {
     if (window.document()) {

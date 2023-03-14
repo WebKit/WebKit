@@ -51,7 +51,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(History);
 
-History::History(DOMWindow& window)
+History::History(LocalDOMWindow& window)
     : DOMWindowProperty(&window)
 {
 }

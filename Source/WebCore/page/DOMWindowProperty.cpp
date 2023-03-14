@@ -27,12 +27,12 @@
 #include "config.h"
 #include "DOMWindowProperty.h"
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 
 namespace WebCore {
 
-DOMWindowProperty::DOMWindowProperty(DOMWindow* window)
+DOMWindowProperty::DOMWindowProperty(LocalDOMWindow* window)
     : m_window(window)
 {
 }
@@ -42,7 +42,7 @@ LocalFrame* DOMWindowProperty::frame() const
     return m_window ? m_window->frame() : nullptr;
 }
 
-DOMWindow* DOMWindowProperty::window() const
+LocalDOMWindow* DOMWindowProperty::window() const
 {
     return m_window.get();
 }

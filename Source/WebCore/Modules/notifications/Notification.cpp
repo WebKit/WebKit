@@ -35,12 +35,12 @@
 
 #include "Notification.h"
 
-#include "DOMWindow.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "MessagePort.h"
 #include "NotificationClient.h"
 #include "NotificationData.h"

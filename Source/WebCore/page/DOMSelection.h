@@ -47,7 +47,7 @@ struct SimpleRange;
 
 class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
 public:
-    static Ref<DOMSelection> create(DOMWindow&);
+    static Ref<DOMSelection> create(LocalDOMWindow&);
 
     RefPtr<Node> baseNode() const;
     RefPtr<Node> extentNode() const;
@@ -88,7 +88,7 @@ public:
     void empty();
 
 private:
-    explicit DOMSelection(DOMWindow&);
+    explicit DOMSelection(LocalDOMWindow&);
 
     // FIXME: Change DOMWindowProperty::frame to return RefPtr and then delete this.
     RefPtr<LocalFrame> frame() const;

@@ -47,7 +47,6 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
-#include <WebCore/DOMWindow.h>
 #include <WebCore/ElementAncestorIteratorInlines.h>
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
@@ -60,6 +59,7 @@
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/JSElement.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/RenderElement.h>
 #include <wtf/UUID.h>
@@ -349,8 +349,8 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
 
 void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
 {
-    // If the frame and DOMWindow have become disconnected, then frame is already being destroyed
-    // and there is no way to get access to the frame from the observer's DOMWindow reference.
+    // If the frame and LocalDOMWindow have become disconnected, then frame is already being destroyed
+    // and there is no way to get access to the frame from the observer's LocalDOMWindow reference.
     if (!frame.coreFrame()->window() || !frame.coreFrame()->window()->frame())
         return;
 
@@ -370,7 +370,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 
 void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier frameID)
 {
-    // The observer is no longer needed, let it become GC'd and unregister itself from DOMWindow.
+    // The observer is no longer needed, let it become GC'd and unregister itself from LocalDOMWindow.
     if (m_frameObservers.contains(frameID))
         m_frameObservers.remove(frameID);
 

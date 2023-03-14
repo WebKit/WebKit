@@ -22,12 +22,12 @@
 #include "config.h"
 #include "JSDOMBindingSecurity.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTTPParsers.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowBase.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include <wtf/text/WTFString.h>
@@ -51,7 +51,7 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
     if (auto* templateHost = targetDocument->templateDocumentHost())
         targetDocument = templateHost;
 
-    DOMWindow& active = activeDOMWindow(*lexicalGlobalObject);
+    auto& active = activeDOMWindow(*lexicalGlobalObject);
 
     if (active.document()->securityOrigin().isSameOriginDomain(targetDocument->securityOrigin()))
         return true;
@@ -81,12 +81,12 @@ bool BindingSecurity::shouldAllowAccessToFrame(JSGlobalObject& lexicalGlobalObje
     return false;
 }
 
-bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobalObject, DOMWindow* globalObject, String& message)
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobalObject, LocalDOMWindow* globalObject, String& message)
 {
     return globalObject && shouldAllowAccessToDOMWindow(lexicalGlobalObject, *globalObject, message);
 }
 
-bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobalObject, DOMWindow& globalObject, String& message)
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& globalObject, String& message)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -99,12 +99,12 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobal
     return false;
 }
 
-bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow& target, SecurityReportingOption reportingOption)
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, LocalDOMWindow& target, SecurityReportingOption reportingOption)
 {
     return canAccessDocument(lexicalGlobalObject, target.document(), reportingOption);
 }
 
-bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow* target, SecurityReportingOption reportingOption)
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, LocalDOMWindow* target, SecurityReportingOption reportingOption)
 {
     return target && shouldAllowAccessToDOMWindow(lexicalGlobalObject, *target, reportingOption);
 }

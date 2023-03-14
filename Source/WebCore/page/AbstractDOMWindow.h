@@ -34,7 +34,7 @@ namespace WebCore {
 
 class Frame;
 
-// FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
+// FIXME: Rename DOMWindow to LocalDOMWindow and AbstractDOMWindow to DOMWindow.
 class AbstractDOMWindow : public RefCounted<AbstractDOMWindow>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(AbstractDOMWindow);
 public:
@@ -55,7 +55,7 @@ public:
 protected:
     explicit AbstractDOMWindow(GlobalWindowIdentifier&&);
 
-    EventTargetInterface eventTargetInterface() const final { return DOMWindowEventTargetInterfaceType; }
+    EventTargetInterface eventTargetInterface() const final { return LocalDOMWindowEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

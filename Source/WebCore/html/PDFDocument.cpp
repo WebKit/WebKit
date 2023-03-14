@@ -28,7 +28,6 @@
 #if ENABLE(PDFJS)
 
 #include "AddEventListenerOptions.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -41,6 +40,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"

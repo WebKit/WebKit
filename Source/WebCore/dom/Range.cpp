@@ -1083,7 +1083,7 @@ void Range::updateFromSelection(const SimpleRange& value)
     m_isAssociatedWithSelection = true;
 }
 
-DOMWindow* Range::window() const
+LocalDOMWindow* Range::window() const
 {
     return m_isAssociatedWithSelection ? m_ownerDocument->domWindow() : nullptr;
 }

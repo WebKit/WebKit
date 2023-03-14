@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
+#include "LocalDOMWindow.h"
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -101,7 +101,7 @@ inline void setEventHandlerAttribute(EventTarget& eventTarget, const AtomString&
 }
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
-inline JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+inline JSC::JSValue windowEventHandlerAttribute(LocalDOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     return eventHandlerAttribute(window, eventType, isolatedWorld);
 }
@@ -114,7 +114,7 @@ inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const Atom
 }
 
 template<typename JSMaybeErrorEventListener>
-inline void setWindowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+inline void setWindowEventHandlerAttribute(LocalDOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     window.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
 }

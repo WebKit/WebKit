@@ -871,7 +871,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle* 
     if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
+    auto* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, cssStyleDeclarationHandle->coreCSSStyleDeclaration()));
@@ -883,7 +883,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, Inj
     if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
+    auto* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, nodeHandle->coreNode()));
@@ -895,7 +895,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
     if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
+    auto* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, rangeHandle->coreRange()));

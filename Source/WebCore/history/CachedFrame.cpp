@@ -29,12 +29,12 @@
 #include "BackForwardCache.h"
 #include "CachedFramePlatformData.h"
 #include "CachedPage.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "NavigationDisabler.h"
@@ -128,7 +128,7 @@ void CachedFrameBase::restore()
     if (m_isMainFrame) {
         frame->loader().client().didRestoreFrameHierarchyForCachedFrame();
 
-        if (DOMWindow* domWindow = m_document->domWindow()) {
+        if (auto* domWindow = m_document->domWindow()) {
             // FIXME: Add SCROLL_LISTENER to the list of event types on Document, and use m_document->hasListenerType(). See <rdar://problem/9615482>.
             // FIXME: Can use Document::hasListenerType() now.
             if (domWindow->scrollEventListenerCount() && frame->page())
@@ -198,7 +198,7 @@ CachedFrame::CachedFrame(LocalFrame& frame)
 
 #if PLATFORM(IOS_FAMILY)
     if (m_isMainFrame) {
-        if (DOMWindow* domWindow = m_document->domWindow()) {
+        if (auto* domWindow = m_document->domWindow()) {
             if (domWindow->scrollEventListenerCount() && frame.page())
                 frame.page()->chrome().client().setNeedsScrollNotifications(frame, false);
         }
@@ -270,7 +270,7 @@ void CachedFrame::destroy()
     LocalFrame::clearTimers(m_view.get(), m_document.get());
 
     // FIXME: Why do we need to call removeAllEventListeners here? When the document is in back/forward cache, this method won't work
-    // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).
+    // fully anyway, because the document won't be able to access its LocalDOMWindow object (due to being frameless).
     m_document->removeAllEventListeners();
 
     m_document->setBackForwardCacheState(Document::NotInBackForwardCache);

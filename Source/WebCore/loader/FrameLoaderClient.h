@@ -70,7 +70,7 @@ class AuthenticationChallenge;
 class CachedFrame;
 class CachedResourceRequest;
 class Color;
-class DOMWindow;
+class LocalDOMWindow;
 class DOMWindowExtension;
 class DOMWrapperWorld;
 class DocumentLoader;

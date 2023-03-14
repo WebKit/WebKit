@@ -155,7 +155,7 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "MediaSource.h"
 #include "SourceBufferList.h"
 #endif
@@ -7892,7 +7892,7 @@ void HTMLMediaElement::updateRateChangeRestrictions()
 
 RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 {
-    RefPtr<DOMWindow> domWindow = document().domWindow();
+    RefPtr domWindow = document().domWindow();
     double timestamp = domWindow ? domWindow->nowTimestamp().milliseconds() : 0;
 
     auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : std::nullopt;

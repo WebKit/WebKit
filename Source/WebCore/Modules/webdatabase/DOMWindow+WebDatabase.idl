@@ -26,6 +26,6 @@
 
 [
     ImplementedBy=DOMWindowWebDatabase
-] partial interface DOMWindow {
+] partial interface LocalDOMWindow {
     [Custom, NotEnumerable] attribute any openDatabase;
 };

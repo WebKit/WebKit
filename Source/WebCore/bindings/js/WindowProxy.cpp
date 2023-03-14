@@ -181,7 +181,7 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
         }
 
         // ScriptController's m_cacheableBindingRootObject persists between page navigations
-        // so needs to know about the new JSDOMWindow.
+        // so needs to know about the new JSLocalDOMWindow.
         if (auto* cacheableBindingRootObject = scriptController ? scriptController->existingCacheableBindingRootObject() : nullptr)
             cacheableBindingRootObject->updateGlobalObject(windowProxy->window());
 

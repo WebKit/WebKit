@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-class DOMWindow;
 class Database;
 class DatabaseCallback;
+class LocalDOMWindow;
 
 class DOMWindowWebDatabase {
 public:
-    static ExceptionOr<RefPtr<Database>> openDatabase(DOMWindow&, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback);
+    static ExceptionOr<RefPtr<Database>> openDatabase(LocalDOMWindow&, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback);
 
     DOMWindowWebDatabase() = delete;
     ~DOMWindowWebDatabase() = delete;

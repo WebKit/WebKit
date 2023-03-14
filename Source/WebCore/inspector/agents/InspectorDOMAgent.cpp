@@ -54,7 +54,6 @@
 #include "DOMEditor.h"
 #include "DOMException.h"
 #include "DOMPatchSupport.h"
-#include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "Editing.h"
@@ -84,9 +83,10 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSDOMBindingSecurity.h"
-#include "JSDOMWindowCustom.h"
 #include "JSEventListener.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "JSNode.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MutationEvent.h"
 #include "Node.h"
@@ -2147,7 +2147,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
         .release();
     if (is<Node>(eventTarget))
         value->setNodeId(pushNodePathToFrontend(&downcast<Node>(eventTarget)));
-    else if (is<DOMWindow>(eventTarget))
+    else if (is<LocalDOMWindow>(eventTarget))
         value->setOnWindow(true);
     if (!scriptID.isNull()) {
         auto location = Protocol::Debugger::Location::create()

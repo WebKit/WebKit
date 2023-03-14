@@ -68,7 +68,7 @@ class TextStream;
 namespace WebCore {
 
 class Color;
-class DOMWindow;
+class LocalDOMWindow;
 class DataDetectionResultsStorage;
 class Document;
 class Editor;
@@ -132,7 +132,7 @@ public:
 
     WEBCORE_EXPORT ~LocalFrame();
 
-    WEBCORE_EXPORT DOMWindow* window() const;
+    WEBCORE_EXPORT LocalDOMWindow* window() const;
 
     void addDestructionObserver(FrameDestructionObserver&);
     void removeDestructionObserver(FrameDestructionObserver&);

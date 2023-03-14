@@ -33,7 +33,6 @@
 #include "config.h"
 #include "InspectorTimelineAgent.h"
 
-#include "DOMWindow.h"
 #include "Event.h"
 #include "FrameSnapshotting.h"
 #include "InspectorAnimationAgent.h"
@@ -43,8 +42,9 @@
 #include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindow.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "PageDebugger.h"
 #include "PageHeapAgent.h"

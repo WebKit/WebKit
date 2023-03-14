@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMOperation.h"
+#include "LocalDOMWindow.h"
 
 namespace WebCore {
 
-// Wrapper type for JSEventTarget's castedThis because JSDOMWindow and JSWorkerGlobalScope do not inherit JSEventTarget.
+// Wrapper type for JSEventTarget's castedThis because JSLocalDOMWindow and JSWorkerGlobalScope do not inherit JSEventTarget.
 class JSEventTargetWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -69,8 +69,8 @@ public:
             return throwThisTypeError(lexicalGlobalObject, throwScope, "EventTarget", operationName);
 
         auto& wrapped = thisObject->wrapped();
-        if (is<DOMWindow>(wrapped)) {
-            auto& window = downcast<DOMWindow>(wrapped);
+        if (is<LocalDOMWindow>(wrapped)) {
+            auto& window = downcast<LocalDOMWindow>(wrapped);
             if (!window.frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, window, ThrowSecurityError))
                 return JSC::JSValue::encode(JSC::jsUndefined());
         }

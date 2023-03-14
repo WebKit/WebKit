@@ -28,10 +28,10 @@
 #if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerClientData.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "SWClientConnection.h"
 #include "WorkerGlobalScope.h"

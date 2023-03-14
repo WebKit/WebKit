@@ -138,7 +138,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     if (!executionContextDocument.frame())
         return nullptr;
-    auto* globalObject = toJSDOMWindow(*executionContextDocument.frame(), isolatedWorld());
+    auto* globalObject = toJSLocalDOMWindow(*executionContextDocument.frame(), isolatedWorld());
     if (!globalObject)
         return nullptr;
 
@@ -213,12 +213,12 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, cons
     return create({ attributeName, attributeValue, document, document, nullptr, false });
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::create(DOMWindow& window, const QualifiedName& attributeName, const AtomString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
     ASSERT(window.document());
     auto& document = *window.document();
     ASSERT(document.frame());
-    return create({ attributeName, attributeValue, document, nullptr, toJSDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument() });
+    return create({ attributeName, attributeValue, document, nullptr, toJSLocalDOMWindow(document.frame(), mainThreadNormalWorld()), document.isSVGDocument() });
 }
 
 } // namespace WebCore

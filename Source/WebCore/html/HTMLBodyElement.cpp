@@ -27,7 +27,6 @@
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
@@ -36,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "JSHTMLBodyElement.h"
+#include "LocalDOMWindow.h"
 #include "MutableStyleProperties.h"
 #include "ResourceLoaderOptions.h"
 #include <wtf/IsoMallocInlines.h>

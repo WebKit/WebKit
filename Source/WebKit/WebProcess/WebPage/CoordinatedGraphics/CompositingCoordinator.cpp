@@ -29,11 +29,11 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NicosiaBackingStoreTextureMapperImpl.h>
 #include <WebCore/NicosiaContentLayerTextureMapperImpl.h>

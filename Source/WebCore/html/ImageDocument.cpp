@@ -29,7 +29,6 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -41,6 +40,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
@@ -260,7 +260,7 @@ void ImageDocument::createDocumentStructure()
         processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
-        if (RefPtr<DOMWindow> window = this->domWindow())
+        if (RefPtr window = this->domWindow())
             window->addEventListener(eventNames().resizeEvent, listener.copyRef(), false);
         imageElement->addEventListener(eventNames().clickEvent, WTFMove(listener), false);
 #endif

@@ -34,9 +34,9 @@
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/EventNames.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOriginData.h>

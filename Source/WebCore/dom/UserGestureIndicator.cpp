@@ -26,9 +26,9 @@
 #include "config.h"
 #include "UserGestureIndicator.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"

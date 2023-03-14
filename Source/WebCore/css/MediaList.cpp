@@ -24,8 +24,8 @@
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSStyleSheet.h"
-#include "DOMWindow.h"
 #include "Document.h"
+#include "LocalDOMWindow.h"
 #include "MediaQuery.h"
 #include "MediaQueryParser.h"
 #include <wtf/NeverDestroyed.h>

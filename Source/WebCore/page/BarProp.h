@@ -40,13 +40,13 @@ class BarProp final : public ScriptWrappable, public RefCounted<BarProp>, public
 public:
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
 
-    static Ref<BarProp> create(DOMWindow& window, Type type) { return adoptRef(*new BarProp(window, type)); }
+    static Ref<BarProp> create(LocalDOMWindow& window, Type type) { return adoptRef(*new BarProp(window, type)); }
 
     Type type() const;
     bool visible() const;
 
 private:
-    BarProp(DOMWindow&, Type);
+    BarProp(LocalDOMWindow&, Type);
     Type m_type;
 };
 

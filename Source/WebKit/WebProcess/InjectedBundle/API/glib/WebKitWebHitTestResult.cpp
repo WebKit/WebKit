@@ -422,7 +422,7 @@ JSCValue* webkit_web_hit_test_result_get_js_node(WebKitWebHitTestResult* webHitT
         world = webkit_script_world_get_default();
 
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
-    JSDOMWindow* globalObject = frame->script().globalObject(wkWorld->coreWorld());
+    auto* globalObject = frame->script().globalObject(wkWorld->coreWorld());
     auto jsContext = jscContextGetOrCreate(toGlobalRef(globalObject));
     JSValueRef jsValue = nullptr;
     {

@@ -34,7 +34,6 @@
 
 #include "AddEventListenerOptions.h"
 #include "DOMStringList.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -55,7 +54,8 @@
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindowCustom.h"
+#include "JSLocalDOMWindowCustom.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
@@ -547,7 +547,7 @@ static Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFrame* frame)
 
 static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 {
-    DOMWindow* domWindow = document->domWindow();
+    auto* domWindow = document->domWindow();
     if (!domWindow)
         return makeUnexpected("Missing window for given document"_s);
 

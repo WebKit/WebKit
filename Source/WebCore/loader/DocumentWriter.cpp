@@ -32,7 +32,6 @@
 
 #include "ContentSecurityPolicy.h"
 #include "DOMImplementation.h"
-#include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
@@ -41,6 +40,7 @@
 #include "FrameView.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"

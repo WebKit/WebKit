@@ -40,12 +40,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Storage);
 
-Ref<Storage> Storage::create(DOMWindow& window, Ref<StorageArea>&& storageArea)
+Ref<Storage> Storage::create(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
 {
     return adoptRef(*new Storage(window, WTFMove(storageArea)));
 }
 
-Storage::Storage(DOMWindow& window, Ref<StorageArea>&& storageArea)
+Storage::Storage(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
     : DOMWindowProperty(&window)
     , m_storageArea(WTFMove(storageArea))
 {

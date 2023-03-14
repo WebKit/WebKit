@@ -37,7 +37,7 @@ class LocalFrame;
 class DOMApplicationCache final : public RefCounted<DOMApplicationCache>, public EventTarget, public DOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(DOMApplicationCache);
 public:
-    static Ref<DOMApplicationCache> create(DOMWindow& window) { return adoptRef(*new DOMApplicationCache(window)); }
+    static Ref<DOMApplicationCache> create(LocalDOMWindow& window) { return adoptRef(*new DOMApplicationCache(window)); }
     virtual ~DOMApplicationCache() { ASSERT(!frame()); }
 
     unsigned short status() const;
@@ -49,7 +49,7 @@ public:
     using RefCounted::deref;
 
 private:
-    explicit DOMApplicationCache(DOMWindow&);
+    explicit DOMApplicationCache(LocalDOMWindow&);
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

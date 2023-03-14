@@ -27,7 +27,6 @@
 #include "Chrome.h"
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
@@ -35,9 +34,9 @@
 #include "FetchResponse.h"
 #include "InspectorController.h"
 #include "JSDOMBindingSecurity.h"
-#include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
 #include "JSFetchResponse.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "JSMicrotaskCallback.h"
 #include "JSNode.h"
 #include "LocalFrame.h"
@@ -107,7 +106,7 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
     return &table;
 };
 
-JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
+JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<LocalDOMWindow>&& window, JSWindowProxy* proxy)
     : JSDOMGlobalObject(vm, structure, proxy->world(), globalObjectMethodTable())
     , m_wrapped(WTFMove(window))
 {
@@ -310,7 +309,7 @@ JSWindowProxy& JSDOMWindowBase::proxy() const
     return *jsCast<JSWindowProxy*>(&JSDOMGlobalObject::proxy());
 }
 
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, DOMWindow& domWindow)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, LocalDOMWindow& domWindow)
 {
     auto* frame = domWindow.frame();
     if (!frame)
@@ -318,43 +317,43 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, DOMWindow& domWindow)
     return toJS(lexicalGlobalObject, frame->windowProxy());
 }
 
-JSDOMWindow* toJSDOMWindow(LocalFrame& frame, DOMWrapperWorld& world)
+JSLocalDOMWindow* toJSLocalDOMWindow(LocalFrame& frame, DOMWrapperWorld& world)
 {
     return frame.script().globalObject(world);
 }
 
-DOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
+LocalDOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
 {
-    return asJSDOMWindow(&callerGlobalObject(fallbackGlobalObject, &callFrame))->wrapped();
+    return asJSLocalDOMWindow(&callerGlobalObject(fallbackGlobalObject, &callFrame))->wrapped();
 }
 
-DOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject)
+LocalDOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject)
 {
-    return asJSDOMWindow(&callerGlobalObject(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
+    return asJSLocalDOMWindow(&callerGlobalObject(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
 }
 
-DOMWindow& activeDOMWindow(JSGlobalObject& lexicalGlobalObject)
+LocalDOMWindow& activeDOMWindow(JSGlobalObject& lexicalGlobalObject)
 {
-    return asJSDOMWindow(&lexicalGlobalObject)->wrapped();
+    return asJSLocalDOMWindow(&lexicalGlobalObject)->wrapped();
 }
 
-DOMWindow& firstDOMWindow(JSGlobalObject& lexicalGlobalObject)
+LocalDOMWindow& firstDOMWindow(JSGlobalObject& lexicalGlobalObject)
 {
     VM& vm = lexicalGlobalObject.vm();
-    return asJSDOMWindow(vm.deprecatedVMEntryGlobalObject(&lexicalGlobalObject))->wrapped();
+    return asJSLocalDOMWindow(vm.deprecatedVMEntryGlobalObject(&lexicalGlobalObject))->wrapped();
 }
 
-DOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
+LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
 {
-    return asJSDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, &callFrame))->wrapped();
+    return asJSLocalDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, &callFrame))->wrapped();
 }
 
-DOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject)
+LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject)
 {
-    return asJSDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
+    return asJSLocalDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
 }
 
-void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
+void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(LocalDOMWindow* window)
 {
     JSC::VM& vm = commonVM();
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData);

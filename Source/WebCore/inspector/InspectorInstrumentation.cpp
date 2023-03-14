@@ -34,7 +34,6 @@
 
 #include "CachedResource.h"
 #include "ComputedEffectTiming.h"
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"
 #include "Event.h"
@@ -56,6 +55,7 @@
 #include "InstrumentingAgents.h"
 #include "KeyframeEffect.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebuggerAgent.h"
@@ -248,7 +248,7 @@ void InspectorInstrumentation::documentDetachedImpl(InstrumentingAgents& instrum
         cssAgent->documentDetached(document);
 }
 
-void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& instrumentingAgents, DOMWindow* window)
+void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& instrumentingAgents, LocalDOMWindow* window)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
@@ -472,7 +472,7 @@ void InspectorInstrumentation::didDispatchEventImpl(InstrumentingAgents& instrum
         timelineAgent->didDispatchEvent(event.defaultPrevented());
 }
 
-void InspectorInstrumentation::willDispatchEventOnWindowImpl(InstrumentingAgents& instrumentingAgents, const Event& event, DOMWindow& window)
+void InspectorInstrumentation::willDispatchEventOnWindowImpl(InstrumentingAgents& instrumentingAgents, const Event& event, LocalDOMWindow& window)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->willDispatchEvent(event, window.frame());

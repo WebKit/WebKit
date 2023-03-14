@@ -34,7 +34,6 @@
 #include "BlobRegistry.h"
 #include "ContentFilter.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -45,6 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "ThreadableBlobRegistry.h"
@@ -267,7 +267,7 @@ void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigat
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxPopups))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
-    if (!DOMWindow::allowPopUp(m_frame))
+    if (!LocalDOMWindow::allowPopUp(m_frame))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *m_frame.document());

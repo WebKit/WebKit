@@ -73,7 +73,7 @@ namespace WebCore {
 
 class CachedResource;
 class CharacterData;
-class DOMWindow;
+class LocalDOMWindow;
 class DOMWrapperWorld;
 class Document;
 class DocumentLoader;
@@ -134,7 +134,7 @@ public:
     static void willInvalidateStyleAttr(Element&);
     static void didInvalidateStyleAttr(Element&);
     static void documentDetached(Document&);
-    static void frameWindowDiscarded(LocalFrame&, DOMWindow*);
+    static void frameWindowDiscarded(LocalFrame&, LocalDOMWindow*);
     static void mediaQueryResultChanged(Document&);
     static void activeStyleSheetsUpdated(Document&);
     static void didPushShadowRoot(Element& host, ShadowRoot&);
@@ -173,7 +173,7 @@ public:
     static void didDispatchEvent(Document&, const Event&);
     static void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
-    static void willDispatchEventOnWindow(LocalFrame*, const Event&, DOMWindow&);
+    static void willDispatchEventOnWindow(LocalFrame*, const Event&, LocalDOMWindow&);
     static void didDispatchEventOnWindow(LocalFrame*, const Event&);
     static void eventDidResetAfterDispatch(const Event&);
     static void willEvaluateScript(LocalFrame&, const String& url, int lineNumber, int columnNumber);
@@ -359,7 +359,7 @@ private:
     static void willInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
     static void documentDetachedImpl(InstrumentingAgents&, Document&);
-    static void frameWindowDiscardedImpl(InstrumentingAgents&, DOMWindow*);
+    static void frameWindowDiscardedImpl(InstrumentingAgents&, LocalDOMWindow*);
     static void mediaQueryResultChangedImpl(InstrumentingAgents&);
     static void activeStyleSheetsUpdatedImpl(InstrumentingAgents&, Document&);
     static void didPushShadowRootImpl(InstrumentingAgents&, Element& host, ShadowRoot&);
@@ -398,7 +398,7 @@ private:
     static void willHandleEventImpl(InstrumentingAgents&, ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didHandleEventImpl(InstrumentingAgents&, ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didDispatchEventImpl(InstrumentingAgents&, const Event&);
-    static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
+    static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, LocalDOMWindow&);
     static void didDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&);
     static void eventDidResetAfterDispatchImpl(InstrumentingAgents&, const Event&);
     static void willEvaluateScriptImpl(InstrumentingAgents&, LocalFrame&, const String& url, int lineNumber, int columnNumber);
@@ -669,7 +669,7 @@ inline void InspectorInstrumentation::documentDetached(Document& document)
         documentDetachedImpl(*agents, document);
 }
 
-inline void InspectorInstrumentation::frameWindowDiscarded(LocalFrame& frame, DOMWindow* domWindow)
+inline void InspectorInstrumentation::frameWindowDiscarded(LocalFrame& frame, LocalDOMWindow* domWindow)
 {
     if (auto* agents = instrumentingAgents(frame))
         frameWindowDiscardedImpl(*agents, domWindow);
@@ -924,7 +924,7 @@ inline void InspectorInstrumentation::didHandleEvent(ScriptExecutionContext& con
         return didHandleEventImpl(*agents, context, event, listener);
 }
 
-inline void InspectorInstrumentation::willDispatchEventOnWindow(LocalFrame* frame, const Event& event, DOMWindow& window)
+inline void InspectorInstrumentation::willDispatchEventOnWindow(LocalFrame* frame, const Event& event, LocalDOMWindow& window)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))

@@ -33,7 +33,7 @@ class JSGlobalObject;
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class LocalFrame;
 class Node;
 
@@ -48,10 +48,10 @@ template<typename T> T* checkSecurityForNode(JSC::JSGlobalObject&, T*);
 template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::JSGlobalObject&, ExceptionOr<T*>&&);
 template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::JSGlobalObject&, ExceptionOr<T&>&&);
 
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow&, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow&, String& message);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow*, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, LocalDOMWindow&, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow&, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, LocalDOMWindow*, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, LocalDOMWindow*, String& message);
 bool shouldAllowAccessToFrame(JSC::JSGlobalObject*, LocalFrame*, SecurityReportingOption = LogSecurityError);
 bool shouldAllowAccessToFrame(JSC::JSGlobalObject&, LocalFrame&, String& message);
 bool shouldAllowAccessToNode(JSC::JSGlobalObject&, Node*);

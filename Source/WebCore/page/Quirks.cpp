@@ -29,7 +29,6 @@
 #include "AllowedFonts.h"
 #include "Attr.h"
 #include "DOMTokenList.h"
-#include "DOMWindow.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -45,6 +44,7 @@
 #include "HTMLVideoElement.h"
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
+#include "LocalDOMWindow.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
 #include "PlatformMouseEvent.h"
@@ -837,7 +837,7 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
 bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType, const EventListener& eventListener)
 {
     auto eventTargetIsRoot = [](const EventTarget& eventTarget) {
-        if (is<DOMWindow>(eventTarget))
+        if (is<LocalDOMWindow>(eventTarget))
             return true;
 
         if (is<Node>(eventTarget)) {
@@ -873,8 +873,8 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
 
         // For SmoothScroll.js
         // Matches Blink intervention in https://chromium.googlesource.com/chromium/src/+/b6b13c9cfe64d52a4168d9d8d1ad9bb8f0b46a2a%5E%21/
-        if (is<DOMWindow>(eventTarget)) {
-            auto* document = downcast<DOMWindow>(eventTarget).document();
+        if (is<LocalDOMWindow>(eventTarget)) {
+            auto* document = downcast<LocalDOMWindow>(eventTarget).document();
             if (!document || !document->quirks().needsQuirks())
                 return false;
 

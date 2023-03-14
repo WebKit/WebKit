@@ -28,10 +28,10 @@
 
 #include "AnimationEventBase.h"
 #include "CSSTransition.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventLoop.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Settings.h"

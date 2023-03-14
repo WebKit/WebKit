@@ -30,9 +30,9 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"

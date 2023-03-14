@@ -1313,12 +1313,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/DOMWindow+RequestIdleCallback.idl \
     $(WebCore)/page/DOMWindow+Selection.idl \
     $(WebCore)/page/DOMWindow+VisualViewport.idl \
-    $(WebCore)/page/DOMWindow.idl \
     $(WebCore)/page/EventSource.idl \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/IntersectionObserver.idl \
     $(WebCore)/page/IntersectionObserverCallback.idl \
     $(WebCore)/page/IntersectionObserverEntry.idl \
+    $(WebCore)/page/LocalDOMWindow.idl \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/Navigator.idl \
     $(WebCore)/page/Navigator+IsLoggedIn.idl \
@@ -2276,7 +2276,7 @@ SUPPLEMENTAL_MAKEFILE_DEPS = SupplementalDependencies.dep
 ISO_SUBSPACES_HEADER_FILE = DOMIsoSubspaces.h
 CLIENT_ISO_SUBSPACES_HEADER_FILE = DOMClientIsoSubspaces.h
 CONSTRUCTORS_HEADER_FILE = DOMConstructors.h
-WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
+WINDOW_CONSTRUCTORS_FILE = LocalDOMWindowConstructors.idl
 WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = WorkerGlobalScopeConstructors.idl
 SHADOWREALMGLOBALSCOPE_CONSTRUCTORS_FILE = ShadowRealmGlobalScopeConstructors.idl
 DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = DedicatedWorkerGlobalScopeConstructors.idl

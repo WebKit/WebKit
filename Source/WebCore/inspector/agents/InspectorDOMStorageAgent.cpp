@@ -32,11 +32,11 @@
 #include "InspectorDOMStorageAgent.h"
 
 #include "DOMException.h"
-#include "DOMWindow.h"
 #include "Database.h"
 #include "Document.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
@@ -162,9 +162,9 @@ Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::clearDOMStorageItems(Ref
 
 String InspectorDOMStorageAgent::storageId(Storage& storage)
 {
-    Document* document = storage.frame()->document();
+    auto* document = storage.frame()->document();
     ASSERT(document);
-    DOMWindow* window = document->domWindow();
+    auto* window = document->domWindow();
     ASSERT(window);
     Ref<SecurityOrigin> securityOrigin = document->securityOrigin();
     bool isLocalStorage = window->optionalLocalStorage() == &storage;

@@ -28,11 +28,11 @@
 #include "config.h"
 #include "EventContext.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FocusEvent.h"
 #include "HTMLFormElement.h"
+#include "LocalDOMWindow.h"
 #include "MouseEvent.h"
 #include "TouchEvent.h"
 

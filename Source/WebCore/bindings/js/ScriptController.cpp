@@ -35,9 +35,9 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
-#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindow.h"
 #include "LoadableModuleScript.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -289,7 +289,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     JSC::VM& vm = world.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    jsCast<JSDOMWindow*>(windowProxy.window())->updateDocument();
+    jsCast<JSLocalDOMWindow*>(windowProxy.window())->updateDocument();
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
 
     if (Document* document = m_frame.document())
@@ -458,7 +458,7 @@ void ScriptController::updateDocument()
 {
     for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
         JSLockHolder lock(jsWindowProxy->world().vm());
-        jsCast<JSDOMWindow*>(jsWindowProxy->window())->updateDocument();
+        jsCast<JSLocalDOMWindow*>(jsWindowProxy->window())->updateDocument();
     }
 }
 
@@ -502,7 +502,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObj
 {
     for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
         auto* lexicalGlobalObject = jsWindowProxy->window();
-        auto* origin = &downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+        auto* origin = &downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
         result.append(std::make_pair(lexicalGlobalObject, origin));
     }
 }

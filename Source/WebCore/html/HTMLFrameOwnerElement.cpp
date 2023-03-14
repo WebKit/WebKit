@@ -22,8 +22,8 @@
 #include "config.h"
 #include "HTMLFrameOwnerElement.h"
 
-#include "DOMWindow.h"
 #include "FrameLoader.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"

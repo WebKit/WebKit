@@ -147,7 +147,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         return;
 
     if (scriptExecutionContext.isDocument()) {
-        auto* window = jsCast<JSDOMWindow*>(globalObject);
+        auto* window = jsCast<JSLocalDOMWindow*>(globalObject);
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
         if (wasCreatedFromMarkup()) {
@@ -164,7 +164,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     auto* jsFunctionGlobalObject = jsFunction->globalObject();
 
     RefPtr<Event> savedEvent;
-    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunctionGlobalObject);
+    auto* jsFunctionWindow = jsDynamicCast<JSLocalDOMWindow*>(jsFunctionGlobalObject);
     if (jsFunctionWindow) {
         savedEvent = jsFunctionWindow->currentEvent();
 

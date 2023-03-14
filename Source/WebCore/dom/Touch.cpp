@@ -29,8 +29,8 @@
 
 #include "Touch.h"
 
-#include "DOMWindow.h"
 #include "FrameView.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 
 namespace WebCore {

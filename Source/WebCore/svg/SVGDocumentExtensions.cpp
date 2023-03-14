@@ -22,11 +22,11 @@
 #include "config.h"
 #include "SVGDocumentExtensions.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"

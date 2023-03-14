@@ -18,38 +18,38 @@
 
 #pragma once
 
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
 
 namespace WebCore {
 
 class AbstractDOMWindow;
 class Frame;
 
-JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject*);
-const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject*);
+JSLocalDOMWindow* asJSLocalDOMWindow(JSC::JSGlobalObject*);
+const JSLocalDOMWindow* asJSLocalDOMWindow(const JSC::JSGlobalObject*);
 
 enum class DOMWindowType : bool { Local, Remote };
-template<DOMWindowType> bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, AbstractDOMWindow&, JSC::JSGlobalObject&, JSC::PropertyName, JSC::PropertySlot&, const String&);
+template<DOMWindowType> bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, AbstractDOMWindow&, JSC::JSGlobalObject&, JSC::PropertyName, JSC::PropertySlot&, const String&);
 
 enum class CrossOriginObject : bool { Window, Location };
 template<CrossOriginObject> void addCrossOriginOwnPropertyNames(JSC::JSGlobalObject&, JSC::PropertyNameArray&);
 
 bool handleCommonCrossOriginProperties(JSC::JSObject* thisObject, JSC::VM&, JSC::PropertyName, JSC::PropertySlot&);
 
-JSDOMWindow& mainWorldGlobalObject(LocalFrame&);
-JSDOMWindow* mainWorldGlobalObject(LocalFrame*);
+JSLocalDOMWindow& mainWorldGlobalObject(LocalFrame&);
+JSLocalDOMWindow* mainWorldGlobalObject(LocalFrame*);
 
-inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
+inline JSLocalDOMWindow* asJSLocalDOMWindow(JSC::JSGlobalObject* globalObject)
 {
-    return JSC::jsCast<JSDOMWindow*>(globalObject);
+    return JSC::jsCast<JSLocalDOMWindow*>(globalObject);
 }
 
-inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
+inline const JSLocalDOMWindow* asJSLocalDOMWindow(const JSC::JSGlobalObject* globalObject)
 {
-    return static_cast<const JSDOMWindow*>(globalObject);
+    return static_cast<const JSLocalDOMWindow*>(globalObject);
 }
 
-inline JSDOMWindow* mainWorldGlobalObject(LocalFrame* frame)
+inline JSLocalDOMWindow* mainWorldGlobalObject(LocalFrame* frame)
 {
     return frame ? &mainWorldGlobalObject(*frame) : nullptr;
 }

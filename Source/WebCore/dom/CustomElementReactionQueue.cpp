@@ -27,12 +27,12 @@
 #include "CustomElementReactionQueue.h"
 
 #include "CustomElementRegistry.h"
-#include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
+#include "LocalDOMWindow.h"
 #include "WindowEventLoop.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>

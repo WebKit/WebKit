@@ -1329,8 +1329,8 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject);
 
-    // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!globalObject->inherits<WebCore::JSDOMWindow>())
+    // Make sure the context has a LocalDOMWindow global object, otherwise this context didn't originate from a WebView.
+    if (!globalObject->inherits<WebCore::JSLocalDOMWindow>())
         return;
 
     WebCore::reportException(globalObject, toJS(globalObject, exception));
@@ -2236,12 +2236,12 @@ static NSMutableSet *knownPluginMIMETypes()
 
 + (BOOL)canCloseAllWebViews
 {
-    return WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents();
+    return WebCore::LocalDOMWindow::dispatchAllPendingBeforeUnloadEvents();
 }
 
 + (void)closeAllWebViews
 {
-    WebCore::DOMWindow::dispatchAllPendingUnloadEvents();
+    WebCore::LocalDOMWindow::dispatchAllPendingUnloadEvents();
 
     // This will close the WebViews in a random order. Change this if close order is important.
     for (WebView *webView in [(__bridge NSSet *)allWebViewsSet().get() allObjects])

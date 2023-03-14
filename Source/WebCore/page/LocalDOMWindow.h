@@ -111,25 +111,24 @@ struct WindowPostMessageOptions : public StructuredSerializeOptions {
     String targetOrigin { "/"_s };
 };
 
-// FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
-class DOMWindow final
+class LocalDOMWindow final
     : public AbstractDOMWindow
     , public ContextDestructionObserver
     , public Base64Utilities
     , public WindowOrWorkerGlobalScope
-    , public Supplementable<DOMWindow> {
-    WTF_MAKE_ISO_ALLOCATED(DOMWindow);
+    , public Supplementable<LocalDOMWindow> {
+    WTF_MAKE_ISO_ALLOCATED(LocalDOMWindow);
 public:
 
-    static Ref<DOMWindow> create(Document& document) { return adoptRef(*new DOMWindow(document)); }
-    WEBCORE_EXPORT virtual ~DOMWindow();
+    static Ref<LocalDOMWindow> create(Document& document) { return adoptRef(*new LocalDOMWindow(document)); }
+    WEBCORE_EXPORT virtual ~LocalDOMWindow();
 
-    // In some rare cases, we'll reuse a DOMWindow for a new Document. For example,
+    // In some rare cases, we'll reuse a LocalDOMWindow for a new Document. For example,
     // when a script calls window.open("..."), the browser gives JavaScript a window
     // synchronously but kicks off the load in the window asynchronously. Web sites
     // expect that modifications that they make to the window object synchronously
     // won't be blown away when the network load commits. To make that happen, we
-    // "securely transition" the existing DOMWindow to the Document that results from
+    // "securely transition" the existing LocalDOMWindow to the Document that results from
     // the network load. See also SecurityContext::isSecureTransitionTo.
     void didSecureTransitionTo(Document&);
 
@@ -189,23 +188,23 @@ public:
     WEBCORE_EXPORT bool consumeTransientActivation();
 
     WEBCORE_EXPORT Location& location();
-    void setLocation(DOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = LockHistoryBasedOnGestureState);
+    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = LockHistoryBasedOnGestureState);
 
     DOMSelection* getSelection();
 
     Element* frameElement() const;
 
     WEBCORE_EXPORT void focus(bool allowFocus = false);
-    void focus(DOMWindow& incumbentWindow);
+    void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     WEBCORE_EXPORT void close();
     void close(Document&);
     void print();
     void stop();
 
-    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
+    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
 
-    void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, const Function<void(DOMWindow&)>& prepareDialogFunction);
+    void showModalDialog(const String& urlString, const String& dialogFeaturesString, LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const Function<void(LocalDOMWindow&)>& prepareDialogFunction);
 
     void prewarmLocalStorageIfNecessary();
 
@@ -272,10 +271,10 @@ public:
 
     void printErrorMessage(const String&) const;
 
-    String crossDomainAccessErrorMessage(const DOMWindow& activeWindow, IncludeTargetOrigin);
+    String crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin);
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, DOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
     {
         return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
     }
@@ -391,7 +390,7 @@ public:
     WebKitNamespace* webkitNamespace();
 #endif
 
-    // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
+    // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
     // when its document is no longer the document that is displayed in its
     // frame), we would like to zero out m_frame to avoid being confused
     // by the document that is currently active in m_frame.
@@ -413,10 +412,10 @@ public:
     bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
 
     Page* page() const;
-    WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(DOMWindow&)>&);
+    WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(LocalDOMWindow&)>&);
 
 private:
-    explicit DOMWindow(Document&);
+    explicit LocalDOMWindow(Document&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
@@ -426,8 +425,8 @@ private:
 
     bool allowedToChangeWindowGeometry() const;
 
-    static ExceptionOr<RefPtr<LocalFrame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, DOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, const Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
-    bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
+    static ExceptionOr<RefPtr<LocalFrame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
+    bool isInsecureScriptAccess(LocalDOMWindow& activeWindow, const String& urlString);
 
 #if ENABLE(DEVICE_ORIENTATION)
     bool isAllowedToUseDeviceMotionOrOrientation(String& message) const;
@@ -502,21 +501,21 @@ private:
 #endif
 };
 
-inline String DOMWindow::status() const
+inline String LocalDOMWindow::status() const
 {
     return m_status;
 }
 
-inline String DOMWindow::defaultStatus() const
+inline String LocalDOMWindow::defaultStatus() const
 {
     return m_defaultStatus;
 }
 
-WebCoreOpaqueRoot root(DOMWindow*);
+WebCoreOpaqueRoot root(LocalDOMWindow*);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DOMWindow)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalDOMWindow)
     static bool isType(const WebCore::AbstractDOMWindow& window) { return window.isLocalDOMWindow(); }
-    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::DOMWindowEventTargetInterfaceType; }
+    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::LocalDOMWindowEventTargetInterfaceType; }
 SPECIALIZE_TYPE_TRAITS_END()
