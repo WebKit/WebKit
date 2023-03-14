@@ -4789,14 +4789,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI32GtU(ExpressionType arg0,
 }
 
 template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64ExtendSI32(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    append(SignExtend32ToPtr, arg0, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addI32Extend8S(ExpressionType arg0, ExpressionType& result) -> PartialResult
 {
     result = self().g32();
@@ -4809,38 +4801,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI32Extend16S(ExpressionType
 {
     result = self().g32();
     append(SignExtend16To32, arg0, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Extend8S(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    auto temp = self().g32();
-    append(Move32, arg0, temp);
-    append(SignExtend8To32, temp, temp);
-    append(SignExtend32ToPtr, temp, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Extend16S(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    auto temp = self().g32();
-    append(Move32, arg0, temp);
-    append(SignExtend16To32, temp, temp);
-    append(SignExtend32ToPtr, temp, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Extend32S(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    auto temp = self().g32();
-    append(Move32, arg0, temp);
-    append(SignExtend32ToPtr, temp, result);
     return { };
 }
 

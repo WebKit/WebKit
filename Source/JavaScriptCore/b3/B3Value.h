@@ -424,6 +424,8 @@ protected:
         case SExt8:
         case SExt16:
         case Trunc:
+        case SExt8To64:
+        case SExt16To64:
         case SExt32:
         case ZExt32:
         case FloatToDouble:
@@ -657,6 +659,8 @@ private:
         case SExt8:
         case SExt16:
         case Trunc:
+        case SExt8To64:
+        case SExt16To64:
         case SExt32:
         case ZExt32:
         case FloatToDouble:

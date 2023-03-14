@@ -638,6 +638,8 @@ Effects Value::effects() const
     case BitwiseCast:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Trunc:
@@ -839,6 +841,8 @@ ValueKey Value::key() const
     case Sqrt:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Clz:
@@ -1070,6 +1074,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
         return Int32;
     case Trunc:
         return firstChild->type() == Int64 ? Int32 : Float;
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
         return Int64;

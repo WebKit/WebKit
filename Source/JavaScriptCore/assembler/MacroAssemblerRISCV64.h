@@ -1279,12 +1279,44 @@ public:
         m_assembler.srliInsn<32>(dest, dest);
     }
 
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend8To32(src, dest);
+    }
+
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend16To32(src, dest);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        signExtend8To32(src, dest);
+        signExtend32To64(dest, dest);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        signExtend16To32(src, dest);
+        signExtend32To64(dest, dest);
+    }
+
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        signExtend32To64(src, dest);
+    }
+
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        signExtend32To64(imm, dest);
+    }
+
+    void signExtend32To64(RegisterID src, RegisterID dest)
     {
         m_assembler.addiwInsn(dest, src, Imm::I<0>());
     }
 
-    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         loadImmediate(imm, dest);
     }

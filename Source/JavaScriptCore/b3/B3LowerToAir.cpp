@@ -4232,16 +4232,23 @@ private:
             return;
         }
 
+        case SExt8To64: {
+            appendUnOp<SignExtend8To64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
+        case SExt16To64: {
+            appendUnOp<SignExtend16To64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
         case ZExt32: {
             appendUnOp<Move32, Air::Oops>(m_value->child(0));
             return;
         }
 
         case SExt32: {
-            // FIXME: We should have support for movsbq/movswq
-            // https://bugs.webkit.org/show_bug.cgi?id=152232
-            
-            appendUnOp<SignExtend32ToPtr, Air::Oops>(m_value->child(0));
+            appendUnOp<SignExtend32To64, Air::Oops>(m_value->child(0));
             return;
         }
 

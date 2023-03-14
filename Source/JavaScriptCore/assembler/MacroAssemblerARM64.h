@@ -1862,6 +1862,16 @@ public:
         m_assembler.sxth<32>(dest, src);
     }
 
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.uxth<64>(dest, src);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sxth<64>(dest, src);
+    }
+
     void load8(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<8>(dest, address.base, address.offset))
@@ -1937,6 +1947,16 @@ public:
     void signExtend8To32(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtb<32>(dest, src);
+    }
+
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.uxtb<64>(dest, src);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sxtb<64>(dest, src);
     }
 
     void store64(RegisterID src, Address address)
@@ -3193,14 +3213,24 @@ public:
         moveDouble(fpTempRegister, reg2);
     }
 
-    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         move(TrustedImm64(imm.m_value), dest);
     }
 
-    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    void signExtend32To64(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtw(dest, src);
+    }
+
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        signExtend32To64(imm, dest);
+    }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        signExtend32To64(src, dest);
     }
 
     void zeroExtend32ToWord(RegisterID src, RegisterID dest)

@@ -2033,7 +2033,7 @@ public:
                     break;
                 case LoadOpType::I64Load8S:
                     m_jit.load8SignedExtendTo32(location, resultLocation.asGPR());
-                    m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.signExtend32To64(resultLocation.asGPR(), resultLocation.asGPR());
                     break;
                 case LoadOpType::I32Load8U:
                     m_jit.load8(location, resultLocation.asGPR());
@@ -2046,7 +2046,7 @@ public:
                     break;
                 case LoadOpType::I64Load16S:
                     m_jit.load16SignedExtendTo32(location, resultLocation.asGPR());
-                    m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.signExtend32To64(resultLocation.asGPR(), resultLocation.asGPR());
                     break;
                 case LoadOpType::I32Load16U:
                     m_jit.load16(location, resultLocation.asGPR());
@@ -2062,7 +2062,7 @@ public:
                     break;
                 case LoadOpType::I64Load32S:
                     m_jit.load32(location, resultLocation.asGPR());
-                    m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.signExtend32To64(resultLocation.asGPR(), resultLocation.asGPR());
                     break;
                 case LoadOpType::I64Load:
                     m_jit.load64(location, resultLocation.asGPR());
@@ -5313,8 +5313,7 @@ public:
             "I64Extend8S", TypeKind::I64,
             BLOCK(Value::fromI64(static_cast<int64_t>(static_cast<int8_t>(operand.asI64())))),
             BLOCK(
-                m_jit.signExtend8To32(operandLocation.asGPR(), resultLocation.asGPR());
-                m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                m_jit.signExtend8To64(operandLocation.asGPR(), resultLocation.asGPR());
             )
         )
     }
@@ -5325,8 +5324,7 @@ public:
             "I64Extend16S", TypeKind::I64,
             BLOCK(Value::fromI64(static_cast<int64_t>(static_cast<int16_t>(operand.asI64())))),
             BLOCK(
-                m_jit.signExtend16To32(operandLocation.asGPR(), resultLocation.asGPR());
-                m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                m_jit.signExtend16To64(operandLocation.asGPR(), resultLocation.asGPR());
             )
         )
     }
@@ -5337,7 +5335,7 @@ public:
             "I64Extend32S", TypeKind::I64,
             BLOCK(Value::fromI64(static_cast<int64_t>(static_cast<int32_t>(operand.asI64())))),
             BLOCK(
-                m_jit.signExtend32ToPtr(operandLocation.asGPR(), resultLocation.asGPR());
+                m_jit.signExtend32To64(operandLocation.asGPR(), resultLocation.asGPR());
             )
         )
     }
@@ -5348,7 +5346,7 @@ public:
             "I64ExtendSI32", TypeKind::I64,
             BLOCK(Value::fromI64(static_cast<int64_t>(operand.asI32()))),
             BLOCK(
-                m_jit.signExtend32ToPtr(operandLocation.asGPR(), resultLocation.asGPR());
+                m_jit.signExtend32To64(operandLocation.asGPR(), resultLocation.asGPR());
             )
         )
     }

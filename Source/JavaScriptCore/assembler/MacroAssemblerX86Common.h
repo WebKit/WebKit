@@ -2573,7 +2573,7 @@ public:
         moveDouble(FPRegisterID::xmm7, reg2);
     }
 
-    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value)
             m_assembler.xorq_rr(dest, dest);
@@ -2581,9 +2581,19 @@ public:
             m_assembler.mov_i32r(imm.m_value, dest);
     }
 
-    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    void signExtend32To64(RegisterID src, RegisterID dest)
     {
         m_assembler.movsxd_rr(src, dest);
+    }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        signExtend32To64(src, dest);
+    }
+
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        signExtend32To64(imm, dest);
     }
 
     void zeroExtend32ToWord(RegisterID src, RegisterID dest)

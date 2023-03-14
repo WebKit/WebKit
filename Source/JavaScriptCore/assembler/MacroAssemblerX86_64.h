@@ -1062,6 +1062,26 @@ public:
         m_assembler.notq_m(dest.offset, dest.base, dest.index, dest.scale);
     }
 
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend8To32(src, dest);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movsbq_rr(src, dest);
+    }
+
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend16To32(src, dest);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movswq_rr(src, dest);
+    }
+
     void load64(Address address, RegisterID dest)
     {
         m_assembler.movq_mr(address.offset, address.base, dest);
