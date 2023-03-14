@@ -55,6 +55,7 @@ struct CompilationContext {
     std::unique_ptr<OpaqueByproducts> wasmEntrypointByproducts;
     std::unique_ptr<B3::Procedure> procedure;
     Box<PCToCodeOriginMap> pcToCodeOriginMap;
+    Box<PCToCodeOriginMapBuilder> pcToCodeOriginMapBuilder;
     Vector<CCallHelpers::Label> catchEntrypoints;
 };
 

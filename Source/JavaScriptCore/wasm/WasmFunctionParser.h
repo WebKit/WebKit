@@ -354,11 +354,12 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             m_context.dump(m_controlStack, &m_expressionStack);
         }
 
+        m_context.willParseOpcode();
         if (m_unreachableBlocks)
             WASM_FAIL_IF_HELPER_FAILS(parseUnreachableExpression());
-        else {
+        else
             WASM_FAIL_IF_HELPER_FAILS(parseExpression());
-        }
+        m_context.didParseOpcode();
     }
     WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel(&m_signature, m_expressionStack));
 

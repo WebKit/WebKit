@@ -509,6 +509,8 @@ struct AirIRGeneratorBase {
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<Derived>* parser) { m_parser = parser; };
+    ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { }
 

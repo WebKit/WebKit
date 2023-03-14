@@ -664,6 +664,8 @@ public:
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
+    ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { --m_stackSize; }
 
@@ -5257,6 +5259,11 @@ void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffe
     if (context.procedure && context.procedure->needsPCToOriginMap()) {
         B3::PCToOriginMap originMap = context.procedure->releasePCToOriginMap();
         context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, WTFMove(originMap)), linkBuffer);
+        return;
+    }
+    if (context.pcToCodeOriginMapBuilder) {
+        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(WTFMove(*context.pcToCodeOriginMapBuilder), linkBuffer);
+        return;
     }
 }
 

@@ -1272,6 +1272,7 @@ public:
         , m_fprLRU(jit.numberOfFPRegisters())
         , m_lastUseTimestamp(0)
         , m_compilation(compilation)
+        , m_pcToCodeOriginMapBuilder(Options::useSamplingProfiler())
     {
         RegisterSetBuilder gprSetBuilder = RegisterSetBuilder::allGPRs();
         gprSetBuilder.exclude(RegisterSetBuilder::specialRegisters());
@@ -6018,6 +6019,7 @@ public:
             LOG_INDENT();
         }
 
+        m_pcToCodeOriginMapBuilder.appendItem(m_jit.label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
         m_jit.emitFunctionPrologue();
         m_topLevel = ControlData(*this, BlockType::TopLevel, signature, 0);
 
@@ -7328,6 +7330,15 @@ public:
         return { };
     }
 
+    ALWAYS_INLINE void willParseOpcode()
+    {
+        m_pcToCodeOriginMapBuilder.appendItem(m_jit.label(), CodeOrigin(BytecodeIndex(m_parser->currentOpcodeStartingOffset())));
+    }
+
+    ALWAYS_INLINE void didParseOpcode()
+    {
+    }
+
     // SIMD
 
     void notifyFunctionUsesSIMD()
@@ -8386,6 +8397,13 @@ public:
         return WTFMove(m_catchEntrypoints);
     }
 
+    Box<PCToCodeOriginMapBuilder> takePCToCodeOriginMapBuilder()
+    {
+        if (m_pcToCodeOriginMapBuilder.didBuildMapping())
+            return Box<PCToCodeOriginMapBuilder>::create(WTFMove(m_pcToCodeOriginMapBuilder));
+        return nullptr;
+    }
+
 private:
     static bool isScratch(Location loc)
     {
@@ -9300,6 +9318,8 @@ private:
     std::array<JumpList, numberOfExceptionTypes> m_exceptions { };
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
     Vector<CCallHelpers::Label> m_catchEntrypoints;
+
+    PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 };
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
@@ -9321,6 +9341,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
 
     if (irGenerator.hasLoops())
         result->bbqSharedLoopEntrypoint = irGenerator.addLoopOSREntrypoint();
+
+    compilationContext.pcToCodeOriginMapBuilder = irGenerator.takePCToCodeOriginMapBuilder();
 
     return result;
 }

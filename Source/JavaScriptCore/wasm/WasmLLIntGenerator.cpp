@@ -370,6 +370,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
+    ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals();
 
     void setParser(FunctionParser<LLIntGenerator>* parser) { m_parser = parser; };
