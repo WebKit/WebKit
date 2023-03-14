@@ -3656,8 +3656,6 @@ webkit.org/b/240069 fast/css/continuationCrash.html [ Pass Failure ]
 
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
-webkit.org/b/240081 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
-
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
 webkit.org/b/239568 imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
