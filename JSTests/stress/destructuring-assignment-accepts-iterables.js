@@ -122,7 +122,7 @@ shouldThrow(function () {
             return 42;
         }
     };
-}, "TypeError: Iterator result interface is not an object.");
+}, "TypeError: undefined is not a function (near '...[a, b, c]...')");
 
 shouldThrow(function () {
     var [a, b, c] = {
