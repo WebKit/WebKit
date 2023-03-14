@@ -1449,7 +1449,7 @@ static bool moveElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, 
     return true;
 }
 
-static EncodedJSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* first, JSValue second)
+static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* first, JSValue second)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1462,7 +1462,15 @@ static EncodedJSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSAr
     checkedResultSize += 1;
     if (UNLIKELY(checkedResultSize.hasOverflowed())) {
         throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
+        return { };
+    }
+
+    // This code still can see concat-spreadable items. It is ProxyObject and DerivedArray.
+    // We should not use `isArray` check here since it is side-effectful for ProxyObject. Let's just bail out if it is ProxyObject or DerivedArray.
+    if (second.isObject()) {
+        JSType type = asObject(second)->type();
+        if (UNLIKELY(type == ProxyObjectType || type == DerivedArrayType))
+            return jsNull();
     }
 
     unsigned resultSize = checkedResultSize;
@@ -1475,24 +1483,23 @@ static EncodedJSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSAr
     JSArray* result = JSArray::tryCreate(vm, resultStructure, resultSize);
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
+        return { };
     }
 
     bool success = result->appendMemcpy(globalObject, vm, 0, first);
     EXCEPTION_ASSERT(!scope.exception() || !success);
     if (!success) {
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
 
         bool success = moveElements(globalObject, vm, result, 0, first, firstArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
-            return encodedJSValue();
+            return { };
     }
 
     scope.release();
     result->putDirectIndex(globalObject, firstArraySize, second);
-    return JSValue::encode(result);
-
+    return result;
 }
 
 template<typename T>
@@ -1541,7 +1548,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
 
     JSValue second = callFrame->uncheckedArgument(1);
     if (!isJSArray(second))
-        RELEASE_AND_RETURN(scope, concatAppendOne(globalObject, vm, firstArray, second));
+        RELEASE_AND_RETURN(scope, JSValue::encode(concatAppendOne(globalObject, vm, firstArray, second)));
 
     JSArray* secondArray = jsCast<JSArray*>(second);
     
