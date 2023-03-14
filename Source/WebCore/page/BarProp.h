@@ -28,14 +28,14 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class BarProp final : public ScriptWrappable, public RefCounted<BarProp>, public DOMWindowProperty {
+class BarProp final : public ScriptWrappable, public RefCounted<BarProp>, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(BarProp);
 public:
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };

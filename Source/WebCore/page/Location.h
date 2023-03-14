@@ -29,15 +29,15 @@
 #pragma once
 
 #include "DOMStringList.h"
-#include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
+#include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
 
 class LocalDOMWindow;
 
-class Location final : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
+class Location final : public ScriptWrappable, public RefCounted<Location>, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Location);
 public:
     static Ref<Location> create(LocalDOMWindow& window) { return adoptRef(*new Location(window)); }

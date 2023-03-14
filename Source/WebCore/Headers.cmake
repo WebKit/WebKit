@@ -1256,7 +1256,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/DOMSelection.h
     page/DOMTimer.h
     page/DOMWindowExtension.h
-    page/DOMWindowProperty.h
     page/DatabaseProvider.h
     page/DebugOverlayRegions.h
     page/DebugPageOverlays.h
@@ -1290,6 +1289,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/InteractionRegion.h
     page/LayoutMilestone.h
     page/LocalDOMWindow.h
+    page/LocalDOMWindowProperty.h
     page/LocalFrame.h
     page/LookalikeCharactersSanitizationData.h
     page/MediaCanStartListener.h

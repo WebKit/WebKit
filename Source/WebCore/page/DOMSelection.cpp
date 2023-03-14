@@ -52,7 +52,7 @@ static RefPtr<Node> selectionShadowAncestor(LocalFrame& frame)
 }
 
 DOMSelection::DOMSelection(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 
@@ -63,7 +63,7 @@ Ref<DOMSelection> DOMSelection::create(LocalDOMWindow& window)
 
 RefPtr<LocalFrame> DOMSelection::frame() const
 {
-    return DOMWindowProperty::frame();
+    return LocalDOMWindowProperty::frame();
 }
 
 std::optional<SimpleRange> DOMSelection::range() const

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 StyleMedia::StyleMedia(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
     if (window.document()) {
         window.document()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Warning,

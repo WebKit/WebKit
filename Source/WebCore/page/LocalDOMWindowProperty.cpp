@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "LocalDOMWindowProperty.h"
 
 #include "LocalDOMWindow.h"
-#include <wtf/WeakPtr.h>
+#include "LocalFrame.h"
 
 namespace WebCore {
 
-class LocalFrame;
+LocalDOMWindowProperty::LocalDOMWindowProperty(LocalDOMWindow* window)
+    : m_window(window)
+{
+}
 
-class DOMWindowProperty {
-public:
-    WEBCORE_EXPORT LocalFrame* frame() const;
-    LocalDOMWindow* window() const;
+LocalFrame* LocalDOMWindowProperty::frame() const
+{
+    return m_window ? m_window->frame() : nullptr;
+}
 
-protected:
-    explicit DOMWindowProperty(LocalDOMWindow*);
-    ~DOMWindowProperty() = default;
+LocalDOMWindow* LocalDOMWindowProperty::window() const
+{
+    return m_window.get();
+}
 
-private:
-    WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
-};
-
-} // namespace WebCore
+}

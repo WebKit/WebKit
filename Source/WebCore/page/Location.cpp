@@ -44,7 +44,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Location);
 
 Location::Location(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 

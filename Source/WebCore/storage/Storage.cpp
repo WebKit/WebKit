@@ -46,7 +46,7 @@ Ref<Storage> Storage::create(LocalDOMWindow& window, Ref<StorageArea>&& storageA
 }
 
 Storage::Storage(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
     , m_storageArea(WTFMove(storageArea))
 {
     ASSERT(frame());

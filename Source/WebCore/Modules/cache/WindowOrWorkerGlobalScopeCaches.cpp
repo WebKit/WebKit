@@ -28,9 +28,9 @@
 
 #include "CacheStorageProvider.h"
 #include "DOMCacheStorage.h"
-#include "DOMWindowProperty.h"
 #include "Document.h"
 #include "LocalDOMWindow.h"
+#include "LocalDOMWindowProperty.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "Supplementable.h"
@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class DOMWindowCaches : public Supplement<LocalDOMWindow>, public DOMWindowProperty {
+class DOMWindowCaches : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowCaches(LocalDOMWindow&);
@@ -73,7 +73,7 @@ private:
 // DOMWindowCaches supplement.
 
 DOMWindowCaches::DOMWindowCaches(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 

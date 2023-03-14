@@ -28,18 +28,18 @@
 #include "config.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 
-#include "DOMWindowProperty.h"
 #include "Document.h"
 #include "IDBConnectionProxy.h"
 #include "IDBFactory.h"
 #include "LocalDOMWindow.h"
+#include "LocalDOMWindowProperty.h"
 #include "Page.h"
 #include "Supplementable.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-class DOMWindowIndexedDatabase : public DOMWindowProperty, public Supplement<LocalDOMWindow> {
+class DOMWindowIndexedDatabase : public LocalDOMWindowProperty, public Supplement<LocalDOMWindow> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowIndexedDatabase(LocalDOMWindow&);
@@ -73,7 +73,7 @@ private:
 // DOMWindowIndexedDatabase supplement.
 
 DOMWindowIndexedDatabase::DOMWindowIndexedDatabase(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 

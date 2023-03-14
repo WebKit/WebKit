@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMApplicationCache);
 
 DOMApplicationCache::DOMApplicationCache(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
     if (auto* host = applicationCacheHost())
         host->setDOMApplicationCache(this);

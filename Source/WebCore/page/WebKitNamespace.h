@@ -27,7 +27,7 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -36,7 +36,7 @@ namespace WebCore {
 class UserContentProvider;
 class UserMessageHandlersNamespace;
 
-class WebKitNamespace : public DOMWindowProperty, public RefCounted<WebKitNamespace> {
+class WebKitNamespace : public LocalDOMWindowProperty, public RefCounted<WebKitNamespace> {
 public:
     static Ref<WebKitNamespace> create(LocalDOMWindow& window, UserContentProvider& userContentProvider)
     {

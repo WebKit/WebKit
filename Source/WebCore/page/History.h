@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
+#include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
 #include "SerializedScriptValue.h"
 #include <wtf/WallTime.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 
 class Document;
 
-class History final : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
+class History final : public ScriptWrappable, public RefCounted<History>, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(History);
 public:
     static Ref<History> create(LocalDOMWindow& window) { return adoptRef(*new History(window)); }

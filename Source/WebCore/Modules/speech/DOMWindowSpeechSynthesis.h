@@ -27,7 +27,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include "SpeechSynthesis.h"
 #include "Supplementable.h"
 
@@ -35,7 +35,7 @@ namespace WebCore {
     
 class LocalDOMWindow;
 
-class DOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public DOMWindowProperty {
+class DOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowSpeechSynthesis(LocalDOMWindow*);

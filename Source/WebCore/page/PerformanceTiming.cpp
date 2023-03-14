@@ -44,7 +44,7 @@
 namespace WebCore {
 
 PerformanceTiming::PerformanceTiming(LocalDOMWindow* window)
-    : DOMWindowProperty(window)
+    : LocalDOMWindowProperty(window)
 {
 }
 

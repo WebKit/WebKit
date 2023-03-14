@@ -41,7 +41,7 @@
 namespace WebCore {
 
 NavigatorMediaDevices::NavigatorMediaDevices(LocalDOMWindow* window)
-    : DOMWindowProperty(window)
+    : LocalDOMWindowProperty(window)
 {
 }
 

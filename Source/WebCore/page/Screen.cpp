@@ -48,7 +48,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Screen);
 
 Screen::Screen(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 

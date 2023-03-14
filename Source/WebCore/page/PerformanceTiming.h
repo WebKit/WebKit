@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -44,7 +44,7 @@ class NetworkLoadMetrics;
 
 struct DocumentEventTiming;
 
-class PerformanceTiming : public RefCounted<PerformanceTiming>, public DOMWindowProperty {
+class PerformanceTiming : public RefCounted<PerformanceTiming>, public LocalDOMWindowProperty {
 public:
     static Ref<PerformanceTiming> create(LocalDOMWindow* window) { return adoptRef(*new PerformanceTiming(window)); }
 

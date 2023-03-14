@@ -1821,7 +1821,6 @@ page/Crypto.cpp
 page/DOMSelection.cpp
 page/DOMTimer.cpp
 page/DOMWindowExtension.cpp
-page/DOMWindowProperty.cpp
 page/DatabaseProvider.cpp
 page/DebugPageOverlays.cpp
 page/DeprecatedGlobalSettings.cpp
@@ -1845,6 +1844,7 @@ page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
 page/LocalDOMWindow.cpp
+page/LocalDOMWindowProperty.cpp
 page/LocalFrame.cpp
 page/Location.cpp
 page/LoggedInStatus.cpp

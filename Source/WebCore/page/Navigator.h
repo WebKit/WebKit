@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include "NavigatorBase.h"
 #include "ScriptWrappable.h"
 #include "ShareData.h"
@@ -34,7 +34,7 @@ class DOMMimeTypeArray;
 class DOMPluginArray;
 class ShareDataReader;
 
-class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
+class Navigator final : public NavigatorBase, public ScriptWrappable, public LocalDOMWindowProperty, public Supplementable<Navigator> {
     WTF_MAKE_ISO_ALLOCATED(Navigator);
 public:
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }

@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(VisualViewport);
 
 VisualViewport::VisualViewport(LocalDOMWindow& window)
-    : DOMWindowProperty(&window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 

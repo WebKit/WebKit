@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
 #include "EventTarget.h"
+#include "LocalDOMWindowProperty.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class VisualViewport final : public RefCounted<VisualViewport>, public EventTarget, public DOMWindowProperty {
+class VisualViewport final : public RefCounted<VisualViewport>, public EventTarget, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(VisualViewport);
 public:
     static Ref<VisualViewport> create(LocalDOMWindow& window) { return adoptRef(*new VisualViewport(window)); }

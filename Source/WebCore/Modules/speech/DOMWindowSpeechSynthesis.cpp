@@ -39,7 +39,7 @@
 namespace WebCore {
 
 DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis(LocalDOMWindow* window)
-    : DOMWindowProperty(window)
+    : LocalDOMWindowProperty(window)
 {
 }
 
