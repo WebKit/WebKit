@@ -96,7 +96,8 @@ public:
     v(VirtualThunk) \
     v(WasmThunk) \
     v(ExtraCTIThunk) \
-    v(Wasm) \
+    v(WasmOMG) \
+    v(WasmBBQ) \
     v(YarrJIT) \
     v(CSSJIT) \
     v(Uncategorized) \

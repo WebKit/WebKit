@@ -110,7 +110,7 @@ void OMGPlan::work(CompilationEffort)
     }
 
     Entrypoint omgEntrypoint;
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
         Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex));

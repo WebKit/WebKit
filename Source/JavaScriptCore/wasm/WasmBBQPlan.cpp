@@ -169,7 +169,7 @@ void BBQPlan::work(CompilationEffort effort)
     Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls, tierUpPointer);
 
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
         Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex));
@@ -251,7 +251,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     Ref<BBQCallee> bbqCallee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
     m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, bbqCallee.get(), context, m_unlinkedWasmToWasmCalls[functionIndex], tierUpPointer);
     {
-        auto linkBuffer = makeUnique<LinkBuffer>(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
         if (linkBuffer->isValid())
             m_wasmInternalFunctionLinkBuffers[functionIndex] = WTFMove(linkBuffer);
     }
@@ -265,7 +265,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
         auto callee = JSEntrypointCallee::create();
         context.jsEntrypointJIT = makeUnique<CCallHelpers>();
         auto jsToWasmInternalFunction = createJSToWasmWrapper(*context.jsEntrypointJIT, callee.get(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
-        auto linkBuffer = makeUnique<LinkBuffer>(*context.jsEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
+        auto linkBuffer = makeUnique<LinkBuffer>(*context.jsEntrypointJIT, nullptr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
 
         auto result = m_jsToWasmInternalFunctions.add(functionIndex, std::tuple { WTFMove(callee), WTFMove(linkBuffer), WTFMove(jsToWasmInternalFunction) });
         ASSERT_UNUSED(result, result.isNewEntry);
