@@ -34,7 +34,6 @@ import fnmatch
 import optparse
 import re
 
-from webkitpy.port import builders
 from webkitpy.port import config
 from webkitpy.common.system import executive
 from webkitpy.common.system import filesystem
@@ -163,9 +162,17 @@ class PortFactory(object):
 
         If platform is not specified, we will glob-match all ports"""
         platform = platform or '*'
-        return fnmatch.filter(builders.all_port_names(), platform)
-
-    def get_from_builder_name(self, builder_name):
-        port_name = builders.port_name_for_builder_name(builder_name)
-        assert port_name, "unrecognized builder name '%s'" % builder_name
-        return self.get(port_name, _builder_options(builder_name))
+        all_port_names = [
+            'gtk',
+            'ios-simulator-16',
+            'ios-simulator-16-wk2',
+            'mac-bigsur-wk1',
+            'mac-bigsur-wk2',
+            'mac-monterey-wk1',
+            'mac-monterey-wk2',
+            'mac-ventura-wk1',
+            'mac-ventura-wk2',
+            'wincairo-win10',
+            'wpe'
+        ]
+        return fnmatch.filter(all_port_names, platform)

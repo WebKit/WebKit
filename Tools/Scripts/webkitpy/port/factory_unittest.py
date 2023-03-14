@@ -74,7 +74,3 @@ class FactoryTest(unittest.TestCase):
 
     def test_unknown_default(self):
         self.assertRaises(NotImplementedError, factory.PortFactory(MockSystemHost(os_name='vms')).get)
-
-    def test_get_from_builder_name(self):
-        self.assertEqual(factory.PortFactory(MockSystemHost()).get_from_builder_name('Apple Lion Release WK1 (Tests)').name(),
-                          'mac-lion')
