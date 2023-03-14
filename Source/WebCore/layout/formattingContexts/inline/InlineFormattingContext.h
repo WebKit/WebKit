@@ -42,6 +42,16 @@ class InlineDamage;
 class InlineFormattingState;
 class LineBox;
 
+struct InlineLayoutResult {
+    InlineDisplay::Content displayContent;
+    enum class Range : uint8_t {
+        Full, // Display content represents the complete inline content -result of full layout
+        FullFromDamage, // Display content represents part of the inline content starting from damaged line until the end of inline content -result of partial layout with continuous damage all the way to the end of the inline content
+        PartialFromDamage // Display content represents part of the inline content starting from damaged line until damage stops -result of partial layout with damage that does not cover the entire inline content
+    };
+    Range range { Range::Full };
+};
+
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
 class InlineFormattingContext final : public FormattingContext {
@@ -58,11 +68,11 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    InlineDisplay::Content layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
+    InlineLayoutResult layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    InlineDisplay::Content lineLayout(InlineItems&, const InlineItemRange&, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
+    InlineLayoutResult lineLayout(const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, LayoutPoint contentBoxTopLeft, const InlineDisplay::Content&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);

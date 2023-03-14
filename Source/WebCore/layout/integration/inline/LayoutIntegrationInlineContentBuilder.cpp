@@ -54,10 +54,23 @@ InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, Box
 {
 }
 
-void InlineContentBuilder::build(InlineDisplay::Content&& newDisplayContent, InlineContent& inlineContent) const
+void InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent) const
 {
     auto& displayContent = inlineContent.displayContent();
-    displayContent.boxes.isEmpty() ? displayContent.set(WTFMove(newDisplayContent)) : displayContent.append(WTFMove(newDisplayContent));
+    switch (layoutResult.range) {
+    case Layout::InlineLayoutResult::Range::Full:
+        displayContent.set(WTFMove(layoutResult.displayContent));
+        break;
+    case Layout::InlineLayoutResult::Range::FullFromDamage:
+        displayContent.append(WTFMove(layoutResult.displayContent));
+        break;
+    case Layout::InlineLayoutResult::Range::PartialFromDamage:
+        ASSERT_NOT_IMPLEMENTED_YET();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 
     auto updateIfTextRenderersNeedVisualReordering = [&] {
         // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content. 

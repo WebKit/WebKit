@@ -571,8 +571,8 @@ std::optional<LayoutRect> LineLayout::layout()
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     };
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
-    auto newDisplayContent = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
-    auto repaintRect = LayoutRect { constructContent(WTFMove(newDisplayContent)) };
+    auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
+    auto repaintRect = LayoutRect { constructContent(WTFMove(layoutResult)) };
 
     auto adjustments = adjustContent();
 
@@ -583,7 +583,7 @@ std::optional<LayoutRect> LineLayout::layout()
     return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
 }
 
-FloatRect LineLayout::constructContent(InlineDisplay::Content&& newDisplayContent)
+FloatRect LineLayout::constructContent(Layout::InlineLayoutResult&& layoutResult)
 {
     auto damagedRect = FloatRect { };
     auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lastLineIndex) {
@@ -594,6 +594,7 @@ FloatRect LineLayout::constructContent(InlineDisplay::Content&& newDisplayConten
             damagedRect.unite(lines[index].inkOverflow());
     };
 
+    auto newContentLastLineIndex = layoutResult.displayContent.boxes.last().lineIndex();
     auto destroyDamagedContent = [&] {
         if (!m_inlineContent || !m_lineDamage)
             return;
@@ -630,12 +631,14 @@ FloatRect LineLayout::constructContent(InlineDisplay::Content&& newDisplayConten
     destroyDamagedContent();
 
     auto constructFreshlyLaidOutContent = [&] {
-        if (newDisplayContent.lines.isEmpty())
+        if (layoutResult.displayContent.lines.isEmpty())
             return;
 
-        InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(newDisplayContent), ensureInlineContent());
-        if (!m_inlineContent->displayContent().lines.isEmpty())
-            adjustDamagedRectWithLineRange(!m_lineDamage || !m_lineDamage->contentPosition() ? 0 : m_lineDamage->contentPosition()->lineIndex, m_inlineContent->displayContent().lines.size() - 1);
+        InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(layoutResult), ensureInlineContent());
+        if (!m_inlineContent->displayContent().lines.isEmpty()) {
+            auto newContentFirstLineIndex = !m_lineDamage || !m_lineDamage->contentPosition() ? 0 : m_lineDamage->contentPosition()->lineIndex;
+            adjustDamagedRectWithLineRange(newContentFirstLineIndex, newContentLastLineIndex);
+        }
 
         m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
         m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();

@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include "InlineDamage.h"
 #include "InlineFormattingConstraints.h"
+#include "InlineFormattingContext.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
@@ -145,7 +146,7 @@ private:
 
     void prepareLayoutState();
     void prepareFloatingState();
-    FloatRect constructContent(InlineDisplay::Content&& newDisplayContent);
+    FloatRect constructContent(Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
