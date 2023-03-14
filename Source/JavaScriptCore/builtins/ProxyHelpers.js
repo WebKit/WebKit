@@ -39,7 +39,7 @@ function performProxyObjectGet(receiver, propertyName)
         return @getByValWithThis(target, receiver, propertyName);
 
     if (!@isCallable(trap))
-        @throwTypeError("'get' property of a Proxy's handler object should be callable");
+        @throwTypeError("'get' property of a Proxy's handler should be callable");
 
     var trapResult = trap.@call(handler, target, propertyName, receiver);
 

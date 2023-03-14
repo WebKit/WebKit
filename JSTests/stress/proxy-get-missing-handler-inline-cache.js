@@ -11,7 +11,7 @@ function shouldThrow(fn, expectedError) {
         throw new Error("Didn't throw!");
 }
 
-const callableGetTrapError = "TypeError: 'get' property of a Proxy's handler object should be callable";
+const callableGetTrapError = "TypeError: 'get' property of a Proxy's handler should be callable";
 
 shouldThrow(() => {
     var handler = {get: null};

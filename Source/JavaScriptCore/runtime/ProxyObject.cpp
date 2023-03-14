@@ -117,7 +117,7 @@ static JSValue performProxyGet(JSGlobalObject* globalObject, ProxyObject* proxyO
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
-    JSValue getHandler = handler->getMethod(globalObject, callData, vm.propertyNames->get, "'get' property of a Proxy's handler object should be callable"_s);
+    JSValue getHandler = handler->getMethod(globalObject, callData, vm.propertyNames->get, "'get' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (getHandler.isUndefined())
