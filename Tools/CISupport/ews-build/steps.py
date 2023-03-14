@@ -822,13 +822,15 @@ class FetchBranches(steps.ShellSequence, ShellMixin):
         super().__init__(timeout=5 * 60, logEnviron=False, **kwargs)
 
     def run(self):
-        self.commands = [util.ShellArg(command=['git', 'fetch', DEFAULT_REMOTE, '--prune'], logname='stdio')]
+        self.commands = [
+            util.ShellArg(command=['git', 'fetch', DEFAULT_REMOTE, '--prune'], logname='stdio'),
+            util.ShellArg(command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'], logname='stdio'),
+        ]
 
         project = self.getProperty('project', GITHUB_PROJECTS[0])
         remote = self.getProperty('remote', DEFAULT_REMOTE)
         if remote != DEFAULT_REMOTE:
             for command in [
-                ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
                 self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
                 ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
                 ['git', 'fetch', remote, '--prune'],

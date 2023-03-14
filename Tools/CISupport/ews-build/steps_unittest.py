@@ -6104,7 +6104,12 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['git', 'fetch', 'origin', '--prune']) +
             ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
-            0,
+            0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS)
         return self.runStep()
@@ -6160,7 +6165,12 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['git', 'fetch',  'origin', '--prune']) +
             ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
-            2,
+            2, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0,
         )
         self.expectOutcome(result=FAILURE)
         return self.runStep()
