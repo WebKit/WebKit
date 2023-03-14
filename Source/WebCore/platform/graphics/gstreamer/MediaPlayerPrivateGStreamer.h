@@ -554,6 +554,7 @@ private:
     RefPtr<MediaStreamPrivate> m_streamPrivate;
 #endif
 
+    bool m_isMuted { false };
     bool m_visible { false };
 
     // playbin3 only:
