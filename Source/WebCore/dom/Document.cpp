@@ -7401,7 +7401,7 @@ void Document::didAddOrRemoveMouseEventHandler(Node& node)
     }
 
     if (RefPtr frame = this->frame())
-        frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
+        frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::EventHandlerChange);
 #else
     UNUSED_PARAM(node);
 #endif

@@ -1185,7 +1185,7 @@ void Page::setInteractionRegionsEnabled(bool enable)
     if (needsUpdate) {
         auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
         if (localMainFrame)
-            localMainFrame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::Layout);
+            localMainFrame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::Layout);
     }
 }
 #endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
