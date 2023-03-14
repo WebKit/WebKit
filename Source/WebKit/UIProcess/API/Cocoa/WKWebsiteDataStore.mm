@@ -51,6 +51,7 @@
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
+#import <WebCore/NetworkStateOnLineOverride.h>
 #import <WebCore/RegistrationDatabase.h>
 #import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -1201,6 +1202,20 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return nil;
 
     return *identifier;
+}
+
+-(void)_overrideNetworkStateOnlineForTesting:(bool)onLine completionHandler:(void(^)(void))completionHandler
+{
+    _websiteDataStore->setOnLineOverrideForTesting(onLine ? WebCore::NetworkStateOnLineOverride::OnLine : WebCore::NetworkStateOnLineOverride::OffLine, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+-(void)_resetNetworkStateOnlineOverrideForTesting:(void(^)(void))completionHandler
+{
+    _websiteDataStore->setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride::None, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
 }
 
 - (NSString *)_webPushPartition

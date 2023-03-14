@@ -80,6 +80,7 @@ class ResourceRequest;
 class SecurityOrigin;
 class LocalWebLockRegistry;
 class PrivateClickMeasurement;
+enum class NetworkStateOnLineOverride : uint8_t;
 struct RecentSearch;
 
 struct MockWebAuthenticationConfiguration;
@@ -446,7 +447,9 @@ public:
     void clearProxyConfigData();
     void setProxyConfigData(const API::Data&, uuid_t proxyIdentifier);
 #endif
-    
+
+    void setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride, CompletionHandler<void()>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

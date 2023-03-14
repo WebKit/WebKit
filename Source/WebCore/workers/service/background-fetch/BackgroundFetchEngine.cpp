@@ -32,6 +32,7 @@
 #include "BackgroundFetchRecordInformation.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "NetworkStateNotifier.h"
 #include "RetrieveRecordsOptions.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
@@ -42,6 +43,18 @@ BackgroundFetchEngine::BackgroundFetchEngine(SWServer& server)
     : m_server(server)
     , m_store(server.createBackgroundFetchStore())
 {
+    NetworkStateNotifier::singleton().addListener([weakThis = WeakPtr { *this }](bool online) {
+        if (!weakThis || !online)
+            return;
+        auto pendingFetches = std::exchange(weakThis->m_pendingFetches, { });
+        for (auto& fetch : pendingFetches) {
+            if (fetch) {
+                fetch->perform([server = weakThis->m_server](auto& client, auto&& request, auto responseDataSize, auto origin) mutable {
+                    return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
+                });
+            }
+        }
+    });
 }
 
 // https://wicg.github.io/background-fetch/#dom-backgroundfetchmanager-fetch starting from step 8.3
@@ -74,8 +87,8 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
     }
 
     auto& fetch = *result.iterator->value;
-    fetch.doStore([server = m_server, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
-        if (!fetch || !server) {
+    fetch.doStore([weakThis = WeakPtr { *this }, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
+        if (!fetch || !weakThis) {
             callback(makeUnexpected(ExceptionData { TypeError, "Background fetch is gone"_s }));
             return;
         }
@@ -88,9 +101,12 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
             break;
         case BackgroundFetchStore::StoreResult::OK:
             if (!fetch->pausedFlagIsSet()) {
-                fetch->perform([server = WTFMove(server)](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
-                    return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
-                });
+                if (NetworkStateNotifier::singleton().onLine()) {
+                    fetch->perform([server = weakThis->m_server](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
+                        return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
+                    });
+                } else
+                    weakThis->m_pendingFetches.append(*fetch);
             }
             callback(fetch->information());
             break;
@@ -273,6 +289,7 @@ void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIden
 
 void BackgroundFetchEngine::addFetchFromStore(Span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
 {
+    // FIXME: If we are online, we might want to start/restart fetches.
     auto fetch = BackgroundFetch::createFromStore(data, *m_server, m_store.get(), [weakThis = WeakPtr { *this }](auto& fetch) {
         if (weakThis)
             weakThis->notifyBackgroundFetchUpdate(fetch);

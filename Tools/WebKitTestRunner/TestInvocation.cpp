@@ -974,6 +974,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().simulateClickBackgroundFetch(stringValue(messageBody));
         return nullptr;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetOnLineOverride")) {
+        TestController::singleton().setOnLineOverride(booleanValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "LastAddedBackgroundFetchIdentifier"))
         return TestController::singleton().lastAddedBackgroundFetchIdentifier();
     if (WKStringIsEqualToUTF8CString(messageName, "LastRemovedBackgroundFetchIdentifier"))

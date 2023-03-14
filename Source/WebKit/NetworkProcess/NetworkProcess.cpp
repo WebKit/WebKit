@@ -2942,4 +2942,10 @@ void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, 
 }
 #endif
 
+void NetworkProcess::setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride onLineOverride, CompletionHandler<void()>&& callback)
+{
+    NetworkStateNotifier::singleton().setOnLineOverrideForTesting(onLineOverride);
+    callback();
+}
+
 } // namespace WebKit

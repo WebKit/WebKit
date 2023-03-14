@@ -1941,6 +1941,16 @@ void NetworkProcessProxy::notifyMediaStreamingActivity(bool activity)
     send(Messages::NetworkProcess::NotifyMediaStreamingActivity(activity), 0);
 }
 
+void NetworkProcessProxy::setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride value,  CompletionHandler<void()>&& callback)
+{
+    if (!canSendMessage()) {
+        callback();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::SetOnLineOverrideForTesting(value), WTFMove(callback));
+}
+
 void NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebsiteDataType> dataTypes, const WebCore::ClientOrigin& origin, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin - webPageProxyID=%" PRIu64 " - BEGIN", this, webPageProxyID.toUInt64());

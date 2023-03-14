@@ -91,6 +91,7 @@ class ResourceError;
 class UserContentURLPattern;
 enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeHttpOnlyCookies : bool;
+enum class NetworkStateOnLineOverride : uint8_t;
 enum class StoredCredentialsPolicy : uint8_t;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
@@ -414,6 +415,8 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
 #endif
+
+    void setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride, CompletionHandler<void()>&&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
