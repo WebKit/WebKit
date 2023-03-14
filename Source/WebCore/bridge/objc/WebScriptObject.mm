@@ -333,12 +333,8 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 
 static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray *array, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
-    int i, numObjects = array ? [array count] : 0;
-    
-    for (i = 0; i < numObjects; i++) {
-        id anObject = [array objectAtIndex:i];
+    for (id anObject in array)
         aList.append(convertObjcValueToValue(lexicalGlobalObject, &anObject, ObjcObjectType, rootObject));
-    }
 }
 
 - (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args
