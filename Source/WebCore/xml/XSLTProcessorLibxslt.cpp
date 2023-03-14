@@ -51,10 +51,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 
-#if OS(DARWIN) && !PLATFORM(GTK)
-#include "SoftLinkLibxslt.h"
-#endif
-
 namespace WebCore {
 
 void XSLTProcessor::genericErrorFunc(void*, const char*, ...)
@@ -321,13 +317,8 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     }
     m_stylesheet->clearDocuments();
 
-#if OS(DARWIN) && !PLATFORM(GTK)
-    int origXsltMaxDepth = *xsltMaxDepth;
-    *xsltMaxDepth = 1000;
-#else
     int origXsltMaxDepth = xsltMaxDepth;
     xsltMaxDepth = 1000;
-#endif
 
     xmlChar* origMethod = sheet->method;
     if (!origMethod && mimeType == "text/html"_s)
@@ -381,11 +372,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     }
 
     sheet->method = origMethod;
-#if OS(DARWIN) && !PLATFORM(GTK)
-    *xsltMaxDepth = origXsltMaxDepth;
-#else
     xsltMaxDepth = origXsltMaxDepth;
-#endif
     setXSLTLoadCallBack(0, 0, 0);
     xsltFreeStylesheet(sheet);
     m_stylesheet = nullptr;

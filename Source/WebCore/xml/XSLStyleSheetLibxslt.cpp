@@ -40,10 +40,6 @@
 #include <wtf/HexNumber.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if OS(DARWIN) && !PLATFORM(GTK)
-#include "SoftLinkLibxslt.h"
-#endif
-
 namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(XSLStyleSheet* parentSheet, const String& originalURL, const URL& finalURL)
