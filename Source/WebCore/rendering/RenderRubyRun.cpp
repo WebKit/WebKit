@@ -32,6 +32,7 @@
 
 #include "RenderRubyRun.h"
 
+#include "InlineIteratorLineBox.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyText.h"
@@ -149,11 +150,12 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
     // Place the RenderRubyText such that its bottom is flush with the lineTop of the first line of the RenderRubyBase.
     LayoutUnit lastLineRubyTextBottom = rt->logicalHeight();
     LayoutUnit firstLineRubyTextTop;
-    LegacyRootInlineBox* rootBox = rt->lastRootBox();
-    if (rootBox) {
+
+    if (auto textFirstLine = InlineIterator::firstLineBoxFor(*rt)) {
+        auto textLastLine = InlineIterator::lastLineBoxFor(*rt);
         // In order to align, we have to ignore negative leading.
-        firstLineRubyTextTop = rt->firstRootBox()->logicalTopLayoutOverflow();
-        lastLineRubyTextBottom = rootBox->logicalBottomLayoutOverflow();
+        firstLineRubyTextTop = textFirstLine->scrollableOverflowTop();
+        lastLineRubyTextBottom = textLastLine->scrollableOverflowBottom();
     }
     
     if (isHorizontalWritingMode() && rt->style().rubyPosition() == RubyPosition::InterCharacter) {
@@ -165,12 +167,11 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
         if (RenderRubyBase* rb = rubyBase()) {
             LayoutUnit firstLineTop;
             LayoutUnit lastLineBottom = logicalHeight();
-            LegacyRootInlineBox* rootBox = rb->firstRootBox();
-            if (rootBox)
-                firstLineTop = rootBox->logicalTopLayoutOverflow();
+            if (auto baseFirstLine = InlineIterator::firstLineBoxFor(*rb)) {
+                firstLineTop = baseFirstLine->scrollableOverflowTop();
+                lastLineBottom = baseFirstLine->scrollableOverflowBottom();
+            }
             firstLineTop += rb->logicalTop();
-            if (rootBox)
-                lastLineBottom = rootBox->logicalBottomLayoutOverflow();
             lastLineBottom += rb->logicalTop();
             rt->setX(rb->x() + rb->width() - font.letterSpacing());
             LayoutUnit extent = lastLineBottom - firstLineTop;
@@ -179,9 +180,8 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
     } else if (style().isFlippedLinesWritingMode() == (style().rubyPosition() == RubyPosition::After)) {
         LayoutUnit firstLineTop;
         if (RenderRubyBase* rb = rubyBase()) {
-            LegacyRootInlineBox* rootBox = rb->firstRootBox();
-            if (rootBox)
-                firstLineTop = rootBox->logicalTopLayoutOverflow();
+            if (auto baseFirstLine = InlineIterator::firstLineBoxFor(*rb))
+                firstLineTop = baseFirstLine->scrollableOverflowTop();
             firstLineTop += rb->logicalTop();
         }
         
@@ -189,9 +189,8 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
     } else {
         LayoutUnit lastLineBottom = logicalHeight();
         if (RenderRubyBase* rb = rubyBase()) {
-            LegacyRootInlineBox* rootBox = rb->lastRootBox();
-            if (rootBox)
-                lastLineBottom = rootBox->logicalBottomLayoutOverflow();
+            if (auto baseLastLine = InlineIterator::lastLineBoxFor(*rb))
+                lastLineBottom = baseLastLine->scrollableOverflowBottom();
             lastLineBottom += rb->logicalTop();
         }
 
@@ -234,15 +233,16 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     if (!rubyBase || !rubyText)
         return;
 
-    if (!rubyBase->firstRootBox())
+    auto firstLineBox = InlineIterator::firstLineBoxFor(*rubyBase);
+    if (!firstLineBox)
         return;
 
     LayoutUnit logicalWidth = this->logicalWidth();
     float logicalLeftOverhang = std::numeric_limits<float>::max();
     float logicalRightOverhang = std::numeric_limits<float>::max();
-    for (auto* rootInlineBox = rubyBase->firstRootBox(); rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
-        logicalLeftOverhang = std::min<float>(logicalLeftOverhang, rootInlineBox->logicalLeft());
-        logicalRightOverhang = std::min<float>(logicalRightOverhang, logicalWidth - rootInlineBox->logicalRight());
+    for (auto line = firstLineBox; line; line.traverseNext()) {
+        logicalLeftOverhang = std::min<float>(logicalLeftOverhang, line->contentLogicalLeft());
+        logicalRightOverhang = std::min<float>(logicalRightOverhang, logicalWidth - line->contentLogicalRight());
     }
 
     startOverhang = style().isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;

@@ -69,6 +69,8 @@ public:
 
     float inkOverflowTop() const;
     float inkOverflowBottom() const;
+    float scrollableOverflowTop() const;
+    float scrollableOverflowBottom() const;
 
     const RenderStyle& style() const { return isFirst() ? formattingContextRoot().firstLineStyle() : formattingContextRoot().style(); }
 
@@ -213,6 +215,20 @@ inline float LineBox::inkOverflowBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.inkOverflowBottom();
+    });
+}
+
+inline float LineBox::scrollableOverflowTop() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.scrollableOverflowTop();
+    });
+}
+
+inline float LineBox::scrollableOverflowBottom() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.scrollableOverflowBottom();
     });
 }
 
