@@ -74,7 +74,7 @@ private:
 
     enum class IsRoot : bool { Yes, No };
     void initializeProperties(const Ref<AccessibilityObject>&, IsRoot);
-    void initializePlatformProperties(const Ref<const AXCoreObject>&, IsRoot);
+    void initializePlatformProperties(const Ref<const AccessibilityObject>&);
 
     void setProperty(AXPropertyName, AXPropertyValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
@@ -330,7 +330,8 @@ private:
     AccessibilityChildrenVector documentLinks() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DocumentLinks)); }
     bool supportsCheckedState() const override { return boolAttributeValue(AXPropertyName::SupportsCheckedState); }
 
-    String stringValue() const override { return stringAttributeValue(AXPropertyName::StringValue); }
+    String stringValue() const override;
+    std::optional<String> platformStringValue() const;
 
     // Parameterized attribute retrieval.
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const override;
@@ -487,7 +488,6 @@ private:
     unsigned textLength() const override;
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const override;
-    bool shouldCacheAttributedText() const;
     NSAttributedString *cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange&, SpellCheck) const;
 #endif
     AXObjectCache* axObjectCache() const override;

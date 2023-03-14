@@ -350,12 +350,14 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForTextMarker
 #else
     auto range = textMarkerRange.simpleRange();
 #endif
-    if (!range)
-        return nil;
+    return range ? attributedStringForRange(*range, spellCheck) : nil;
+}
 
+RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(const SimpleRange& range, SpellCheck spellCheck) const
+{
     auto result = adoptNS([[NSMutableAttributedString alloc] init]);
 
-    auto contents = contentForRange(*range, spellCheck);
+    auto contents = contentForRange(range, spellCheck);
     for (id content in contents.get()) {
         auto item = retainPtr(content);
         if ([item isKindOfClass:[WebAccessibilityObjectWrapper class]]) {

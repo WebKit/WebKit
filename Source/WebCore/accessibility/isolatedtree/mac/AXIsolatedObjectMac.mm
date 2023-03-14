@@ -34,13 +34,30 @@
 
 namespace WebCore {
 
-void AXIsolatedObject::initializePlatformProperties(const Ref<const AXCoreObject>& object, IsRoot)
+static bool shouldCacheAttributedText(const AccessibilityObject& axObject)
+{
+    return (axObject.isStaticText() && !axObject.isARIAStaticText())
+        || axObject.roleValue() == AccessibilityRole::WebCoreLink
+        || axObject.isTextControl() || axObject.isTabItem();
+}
+
+void AXIsolatedObject::initializePlatformProperties(const Ref<const AccessibilityObject>& object)
 {
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::SpeechHint, object->speechHintAttributeValue().isolatedCopy());
 
-    if (shouldCacheAttributedText())
-        setProperty(AXPropertyName::AttributedText, object->attributedStringForTextMarkerRange(object->textMarkerRange(), SpellCheck::Yes));
+    RetainPtr<NSAttributedString> attributedText;
+    if (shouldCacheAttributedText(object)) {
+        if (auto range = object->simpleRange()) {
+            if ((attributedText = object->attributedStringForRange(*range, SpellCheck::Yes)))
+                setProperty(AXPropertyName::AttributedText, attributedText);
+        }
+    }
+
+    // Set the StringValue only if it differs from the AttributedText.
+    auto value = object->stringValue();
+    if (!attributedText || value != String([attributedText string]))
+        setProperty(AXPropertyName::StringValue, value.isolatedCopy());
 
     if (object->isWebArea()) {
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object->preventKeyboardDOMEventDispatch());
@@ -94,6 +111,13 @@ AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& 
     });
 }
 
+std::optional<String> AXIsolatedObject::platformStringValue() const
+{
+    if (auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText))
+        return [attributedText string];
+    return std::nullopt;
+}
+
 unsigned AXIsolatedObject::textLength() const
 {
     ASSERT(isTextControl());
@@ -113,11 +137,6 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
             return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
         return { };
     });
-}
-
-bool AXIsolatedObject::shouldCacheAttributedText() const
-{
-    return isTextControl() || isTabItem() || roleValue() == AccessibilityRole::WebCoreLink;
 }
 
 NSAttributedString *AXIsolatedObject::cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange& markerRange, SpellCheck spellCheck) const
