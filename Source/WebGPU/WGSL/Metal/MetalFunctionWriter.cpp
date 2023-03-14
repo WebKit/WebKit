@@ -553,13 +553,10 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
     m_stringBuilder.append(";\n");
 }
 
-RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& module)
+void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& module)
 {
     FunctionDefinitionWriter functionDefinitionWriter(module, stringBuilder);
     functionDefinitionWriter.visit(module);
-
-    // FIXME: return the actual entry points
-    return { String(""_s), String(""_s) };
 }
 
 } // namespace Metal

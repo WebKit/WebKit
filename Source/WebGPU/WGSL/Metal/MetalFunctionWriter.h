@@ -33,11 +33,7 @@ class ShaderModule;
 
 namespace Metal {
 
-struct RenderMetalFunctionEntryPoints {
-    String mangledVertexEntryPointName;
-    String mangledFragmentEntryPointName;
-};
-RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder&, ShaderModule&);
+void emitMetalFunctions(StringBuilder&, ShaderModule&);
 
 } // namespace Metal
 } // namespace WGSL

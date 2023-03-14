@@ -61,7 +61,7 @@ String generateMetalCode(ShaderModule& module)
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());
 
-    auto metalFunctionEntryPoints = Metal::emitMetalFunctions(stringBuilder, module);
+    Metal::emitMetalFunctions(stringBuilder, module);
 
     dumpMetalCodeIfNeeded(stringBuilder);
 
