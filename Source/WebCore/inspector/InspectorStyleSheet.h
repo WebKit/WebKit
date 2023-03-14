@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2023, Apple Inc. All rights reserved.
+ * Copyright (C) 2022, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,6 +131,7 @@ public:
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>> buildArrayForComputedStyle() const;
 
     ExceptionOr<String> text() const;
+    ExceptionOr<void> setText(const String&);
 
 private:
     InspectorStyle(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
@@ -178,9 +179,7 @@ public:
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
     Ref<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
     RefPtr<Inspector::Protocol::CSS::Grouping> buildObjectForGrouping(CSSRule*);
-
-    enum class IsUndo : bool { No, Yes };
-    virtual ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newText, String* oldText, IsUndo = IsUndo::No);
+    ExceptionOr<void> setStyleText(const InspectorCSSId&, const String& text, String* oldText);
 
     virtual ExceptionOr<String> text() const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
@@ -201,6 +200,7 @@ protected:
     virtual RefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
 
     // Also accessed by friend class InspectorStyle.
+    virtual ExceptionOr<void> setStyleText(CSSStyleDeclaration*, const String&);
     virtual Vector<size_t> lineEndings() const;
 
 private:
@@ -241,7 +241,6 @@ public:
     void didModifyElementAttribute();
     ExceptionOr<String> text() const final;
     CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const final { ASSERT_UNUSED(id, !id.ordinal()); return &inlineStyle(); }
-    ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newText, String* oldText, InspectorStyleSheet::IsUndo = InspectorStyleSheet::IsUndo::No) final;
 
 private:
     InspectorStyleSheetForInlineStyle(InspectorPageAgent*, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
@@ -254,6 +253,7 @@ private:
     RefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&) final;
 
     // Also accessed by friend class InspectorStyle.
+    ExceptionOr<void> setStyleText(CSSStyleDeclaration*, const String&) final;
     Vector<size_t> lineEndings() const final;
 
     CSSStyleDeclaration& inlineStyle() const;

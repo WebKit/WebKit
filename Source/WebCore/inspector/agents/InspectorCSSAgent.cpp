@@ -165,12 +165,12 @@ public:
 
     ExceptionOr<void> undo() override
     {
-        return m_styleSheet->setRuleStyleText(m_cssId, m_oldText, nullptr, InspectorStyleSheet::IsUndo::Yes);
+        return m_styleSheet->setStyleText(m_cssId, m_oldText, nullptr);
     }
 
     ExceptionOr<void> redo() override
     {
-        return m_styleSheet->setRuleStyleText(m_cssId, m_text, &m_oldText);
+        return m_styleSheet->setStyleText(m_cssId, m_text, &m_oldText);
     }
 
     String mergeId() override

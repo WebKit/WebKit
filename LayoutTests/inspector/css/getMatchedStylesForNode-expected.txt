@@ -186,8 +186,7 @@ Matched:
         "cssText": " z-index: 300; "
       },
       "sourceURL": "<filtered>",
-      "ruleId": "<filtered>",
-      "isImplicitlyNested": false
+      "ruleId": "<filtered>"
     },
     "matchingSelectors": [
       0
@@ -230,8 +229,7 @@ Matched:
         "cssText": " z-index: 200; "
       },
       "sourceURL": "<filtered>",
-      "ruleId": "<filtered>",
-      "isImplicitlyNested": false
+      "ruleId": "<filtered>"
     },
     "matchingSelectors": [
       0
@@ -274,8 +272,7 @@ Matched:
         "cssText": " z-index: 100; "
       },
       "sourceURL": "<filtered>",
-      "ruleId": "<filtered>",
-      "isImplicitlyNested": false
+      "ruleId": "<filtered>"
     },
     "matchingSelectors": [
       0
@@ -325,8 +322,7 @@ Pseudo:
             "cssText": " z-index: 1; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -374,8 +370,7 @@ Pseudo:
             "cssText": " z-index: 2; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -423,8 +418,7 @@ Pseudo:
             "cssText": " z-index: 4; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -472,8 +466,7 @@ Pseudo:
             "cssText": " z-index: 5; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -521,8 +514,7 @@ Pseudo:
             "cssText": " z-index: 6; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -570,8 +562,7 @@ Pseudo:
             "cssText": " z-index: 7; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -619,8 +610,7 @@ Pseudo:
             "cssText": " z-index: 8; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -668,8 +658,7 @@ Pseudo:
             "cssText": " z-index: 9; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -717,8 +706,7 @@ Pseudo:
             "cssText": " z-index: 10; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -766,8 +754,7 @@ Pseudo:
             "cssText": " z-index: 11; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -815,8 +802,7 @@ Pseudo:
             "cssText": " z-index: 12; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -864,8 +850,7 @@ Pseudo:
             "cssText": " z-index: 13; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -923,8 +908,7 @@ Inherited:
               "text": "(min-width: 0px)",
               "sourceURL": "<filtered>"
             }
-          ],
-          "isImplicitlyNested": false
+          ]
         },
         "matchingSelectors": [
           0
@@ -967,8 +951,7 @@ Inherited:
             "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",
-          "ruleId": "<filtered>",
-          "isImplicitlyNested": false
+          "ruleId": "<filtered>"
         },
         "matchingSelectors": [
           0
@@ -1020,8 +1003,7 @@ Inherited:
               "range": "<filtered>",
               "sourceURL": "<filtered>"
             }
-          ],
-          "isImplicitlyNested": false
+          ]
         },
         "matchingSelectors": [
           0
@@ -1080,8 +1062,7 @@ Inherited:
               "range": "<filtered>",
               "sourceURL": "<filtered>"
             }
-          ],
-          "isImplicitlyNested": false
+          ]
         },
         "matchingSelectors": [
           0
@@ -1131,8 +1112,7 @@ Inherited:
               "text": "(min-width: 3px)",
               "sourceURL": "<filtered>"
             }
-          ],
-          "isImplicitlyNested": false
+          ]
         },
         "matchingSelectors": [
           0
@@ -1182,8 +1162,7 @@ Inherited:
               "text": "(min-width: 4px)",
               "sourceURL": "<filtered>"
             }
-          ],
-          "isImplicitlyNested": false
+          ]
         },
         "matchingSelectors": [
           0

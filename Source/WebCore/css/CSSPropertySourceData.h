@@ -92,8 +92,9 @@ struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
 
     CSSRuleSourceData(StyleRuleType type)
         : type(type)
-        , styleSourceData(CSSStyleSourceData::create())
     {
+        if (type == StyleRuleType::Style || type == StyleRuleType::FontFace || type == StyleRuleType::Page)
+            styleSourceData = CSSStyleSourceData::create();
     }
 
     StyleRuleType type;
@@ -104,15 +105,14 @@ struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
     // Range of the rule body (e.g. style text for style rules) in the enclosing source.
     SourceRange ruleBodyRange;
 
-    // Only for CSSStyleRules. Not applicable if `isImplicitlyNested`.
+    // Only for CSSStyleRules.
     SelectorRangeList selectorRanges;
 
+    // Only for CSSStyleRules, CSSFontFaceRules, and CSSPageRules.
     RefPtr<CSSStyleSourceData> styleSourceData;
 
+    // Only for CSSMediaRules.
     RuleSourceDataList childRules;
-
-    bool isImplicitlyNested { false };
-    bool containsImplicitlyNestedProperties { false };
 };
 
 } // namespace WebCore
