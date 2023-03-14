@@ -59,7 +59,7 @@ final class JavaScriptToSwiftConversions : XCTestCase {
         webView.evaluateJavaScript(javaScript, in: nil, in: .defaultClient) { result in
             do {
                 let actualValue = try result.get() as? T
-                XCTAssertEqual(actualValue, expectedValue)
+                XCTAssertEqualObjects(actualValue, expectedValue)
                 evaluationExpectation.fulfill()
             } catch {
                 XCTFail("Evaluating \(javaScript.debugDescription) failed with error: \(error)")
@@ -129,7 +129,7 @@ final class JavaScriptToSwiftConversions : XCTestCase {
             return
         }
 
-        XCTAssertEqual(result, "Hello, world!")
+        XCTAssertEqualObjects(result, "Hello, world!")
     }
     #endif
 }

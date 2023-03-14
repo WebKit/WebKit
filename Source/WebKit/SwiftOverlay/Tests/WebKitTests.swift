@@ -43,16 +43,16 @@ class WebKitTests: XCTestCase {
         XCTAssert(type(of: configuration.rect) == Optional<CGRect>.self)
 
         configuration.rect = nil
-        XCTAssertEqual(configuration.rect, nil)
+        XCTAssertEqualObjects(configuration.rect, nil)
 
         configuration.rect = .null
-        XCTAssertEqual(configuration.rect, nil)
+        XCTAssertEqualObjects(configuration.rect, nil)
 
         configuration.rect = CGRect.zero
-        XCTAssertEqual(configuration.rect, .zero)
+        XCTAssertEqualObjects(configuration.rect, .zero)
 
         let originalPhoneBounds = CGRect(x: 0, y: 0, width: 320, height: 480)
         configuration.rect = originalPhoneBounds
-        XCTAssertEqual(configuration.rect, originalPhoneBounds)
+        XCTAssertEqualObjects(configuration.rect, originalPhoneBounds)
     }
 }
