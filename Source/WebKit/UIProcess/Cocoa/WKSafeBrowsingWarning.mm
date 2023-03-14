@@ -500,7 +500,9 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     [self clickedOnLink:URL];
