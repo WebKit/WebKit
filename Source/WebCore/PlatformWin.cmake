@@ -172,7 +172,16 @@ list(APPEND WebCore_LIBRARIES
     usp10
 )
 
+set(iconFiles
+    Resources/missingImage.png
+    Resources/missingImage@2x.png
+    Resources/missingImage@3x.png
+    Resources/panIcon.png
+    Resources/textAreaResizeCorner.png
+    Resources/textAreaResizeCorner@2x.png
+)
 
+file(COPY ${iconFiles} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/icons)
 
 file(COPY ${ModernMediaControlsImageFiles}
     DESTINATION

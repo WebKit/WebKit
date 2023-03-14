@@ -28,6 +28,7 @@
 
 #include "BitmapImage.h"
 #include "SharedBuffer.h"
+#include "WebCoreBundleWin.h"
 
 namespace WebCore {
 
@@ -37,7 +38,11 @@ void BitmapImage::invalidatePlatformData()
 
 Ref<Image> Image::loadPlatformResource(const char *name)
 {
+    auto path = webKitBundlePath(StringView::fromLatin1(name), "png"_s, "icons"_s);
+    auto data = FileSystem::readEntireFile(path);
     auto img = BitmapImage::create();
+    if (data)
+        img->setData(FragmentedSharedBuffer::create(WTFMove(*data)), true);
     return img;
 }
 
