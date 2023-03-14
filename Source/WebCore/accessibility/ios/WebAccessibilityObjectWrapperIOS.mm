@@ -1018,6 +1018,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Canvas:
     case AccessibilityRole::Caption:
     case AccessibilityRole::Cell:
+    case AccessibilityRole::Code:
     case AccessibilityRole::Column:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::Definition:
@@ -1981,7 +1982,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    if (self.axBackingObject->node() && self.axBackingObject->node()->hasTagName(codeTag))
+    if (self.axBackingObject->isCode())
         return UIAccessibilityTextualContextSourceCode;
     
     return nil;

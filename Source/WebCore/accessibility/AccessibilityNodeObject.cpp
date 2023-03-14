@@ -322,17 +322,18 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (headingLevel())
         return AccessibilityRole::Heading;
 
-    if (isStyleFormatGroup()) {
-        if (node()->hasTagName(delTag))
-            return AccessibilityRole::Deletion;
-        if (node()->hasTagName(insTag))
-            return AccessibilityRole::Insertion;
-        if (node()->hasTagName(subTag))
-            return AccessibilityRole::Subscript;
-        if (node()->hasTagName(supTag))
-            return AccessibilityRole::Superscript;
+    if (node()->hasTagName(codeTag))
+        return AccessibilityRole::Code;
+    if (node()->hasTagName(delTag))
+        return AccessibilityRole::Deletion;
+    if (node()->hasTagName(insTag))
+        return AccessibilityRole::Insertion;
+    if (node()->hasTagName(subTag))
+        return AccessibilityRole::Subscript;
+    if (node()->hasTagName(supTag))
+        return AccessibilityRole::Superscript;
+    if (isStyleFormatGroup())
         return treatStyleFormatGroupAsInline == TreatStyleFormatGroupAsInline::Yes ? AccessibilityRole::Inline : AccessibilityRole::TextGroup;
-    }
 
     if (node()->hasTagName(ddTag))
         return AccessibilityRole::DescriptionListDetail;

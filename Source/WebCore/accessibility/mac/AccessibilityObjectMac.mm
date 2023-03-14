@@ -413,24 +413,22 @@ String AccessibilityObject::subrolePlatformString() const
         break;
     }
 
-    if (isStyleFormatGroup()) {
-        using namespace HTMLNames;
-        auto tag = tagName();
-        if (tag == kbdTag)
-            return "AXKeyboardInputStyleGroup"_s;
-        if (tag == codeTag)
-            return "AXCodeStyleGroup"_s;
-        if (tag == preTag)
-            return "AXPreformattedStyleGroup"_s;
-        if (tag == sampTag)
-            return "AXSampleStyleGroup"_s;
-        if (tag == varTag)
-            return "AXVariableStyleGroup"_s;
-        if (tag == citeTag)
-            return "AXCiteStyleGroup"_s;
-        ASSERT_NOT_REACHED();
-        return String();
-    }
+    if (isCode())
+        return "AXCodeStyleGroup"_s;
+
+    using namespace HTMLNames;
+    auto tag = tagName();
+    if (tag == kbdTag)
+        return "AXKeyboardInputStyleGroup"_s;
+    if (tag == preTag)
+        return "AXPreformattedStyleGroup"_s;
+    if (tag == sampTag)
+        return "AXSampleStyleGroup"_s;
+    if (tag == varTag)
+        return "AXVariableStyleGroup"_s;
+    if (tag == citeTag)
+        return "AXCiteStyleGroup"_s;
+    ASSERT_WITH_MESSAGE(!isStyleFormatGroup(), "Should've been able to compute a subrole for style format group object");
 
     return String();
 }
@@ -821,6 +819,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::ComboBox, NSAccessibilityComboBoxRole },
         { AccessibilityRole::SplitGroup, NSAccessibilitySplitGroupRole },
         { AccessibilityRole::Splitter, NSAccessibilitySplitterRole },
+        { AccessibilityRole::Code, NSAccessibilityGroupRole },
         { AccessibilityRole::ColorWell, NSAccessibilityColorWellRole },
         { AccessibilityRole::GrowArea, NSAccessibilityGrowAreaRole },
         { AccessibilityRole::Sheet, NSAccessibilitySheetRole },

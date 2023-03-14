@@ -201,7 +201,7 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
     // Add code context if this node is within a <code> block.
     RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
     auto matchFunc = [] (const auto& axObject) {
-        return axObject.node() && axObject.node()->hasTagName(HTMLNames::codeTag);
+        return axObject.isCode();
     };
 
     if (const auto* parent = Accessibility::findAncestor<AccessibilityObject>(*object, true, WTFMove(matchFunc)))

@@ -24,6 +24,7 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <code class="testcase" id="code"></code>
     AXRole: AXGroup
+    computedRoleString: code
     AXSubrole: AXCodeStyleGroup
 
 <del class="testcase" id="del"></del>

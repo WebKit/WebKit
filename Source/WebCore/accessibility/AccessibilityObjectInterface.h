@@ -127,6 +127,7 @@ enum class AccessibilityRole {
     Caption,
     Cell,
     CheckBox,
+    Code,
     ColorWell,
     Column,
     ColumnHeader,
@@ -307,6 +308,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Cell"_s;
     case AccessibilityRole::CheckBox:
         return "CheckBox"_s;
+    case AccessibilityRole::Code:
+        return "Code"_s;
     case AccessibilityRole::ColorWell:
         return "ColorWell"_s;
     case AccessibilityRole::Column:
@@ -854,6 +857,7 @@ public:
 
     virtual bool isHeading() const = 0;
     virtual bool isLink() const = 0;
+    bool isCode() const { return roleValue() == AccessibilityRole::Code; }
     bool isImage() const { return roleValue() == AccessibilityRole::Image; }
     bool isImageMap() const { return roleValue() == AccessibilityRole::ImageMap; }
     bool isVideo() const { return roleValue() == AccessibilityRole::Video; }

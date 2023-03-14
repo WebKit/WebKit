@@ -2377,6 +2377,7 @@ static void initializeRoleMap()
         { "blockquote"_s, AccessibilityRole::Blockquote },
         { "button"_s, AccessibilityRole::Button },
         { "caption"_s, AccessibilityRole::Caption },
+        { "code"_s, AccessibilityRole::Code },
         { "checkbox"_s, AccessibilityRole::CheckBox },
         { "complementary"_s, AccessibilityRole::LandmarkComplementary },
         { "contentinfo"_s, AccessibilityRole::LandmarkContentInfo },
@@ -3853,6 +3854,9 @@ AtomString AccessibilityObject::tagName() const
 
 bool AccessibilityObject::isStyleFormatGroup() const
 {
+    if (isCode())
+        return true;
+
     Node* node = this->node();
     if (!node)
         return false;
