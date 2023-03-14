@@ -58,7 +58,12 @@
 
 #ifdef __cplusplus
 #include <algorithm> // needed for exception_defines.h
+#include <chrono>
 #include <functional>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <string>
 #endif
 
 #ifdef __OBJC__
@@ -69,4 +74,8 @@
 #ifdef __cplusplus
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#endif
+
+#if USE(OS_LOG)
+#include <os/log.h>
 #endif

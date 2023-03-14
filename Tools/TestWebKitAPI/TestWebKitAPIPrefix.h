@@ -36,6 +36,15 @@
 #endif
 
 #ifdef __cplusplus
+#include <algorithm> // needed for exception_defines.h
+#include <chrono>
+#include <functional>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <typeinfo>
+
 // The TestJSC executable doesn't use gtest it uses glib's testing
 #if !defined(BUILDING_TestJSC) && !defined(NO_GTEST_USAGE)
 #undef UniversalPrint
@@ -46,4 +55,8 @@
 #undef delete
 #include <wtf/FastMalloc.h>
 #include <wtf/text/StringView.h>
+#endif
+
+#if USE(OS_LOG)
+#include <os/log.h>
 #endif
