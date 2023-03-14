@@ -3608,12 +3608,13 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
     ENV = dict(
         GIT_COMMITTER_NAME='EWS',
         GIT_COMMITTER_EMAIL='ews@webkit.org',
-        GIT_USER=None,
-        GIT_PASSWORD=None,
+        GIT_USER='webkit-commit-queue',
+        GIT_PASSWORD='password',
     )
 
     def setUp(self):
         self.longMessage = True
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -6727,11 +6728,16 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
-    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
+    ENV = dict(
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+        GIT_USER='webkit-commit-queue',
+        GIT_PASSWORD='password',
+    )
 
     def setUp(self):
         self.longMessage = True
         Contributors.load = mock_load_contributors
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):

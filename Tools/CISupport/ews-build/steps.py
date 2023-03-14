@@ -5591,7 +5591,6 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
     description = ['canonicalize-commit']
     descriptionDone = ['Canonicalize Commit']
     haltOnFailure = True
-    env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
 
     def __init__(self, rebase_enabled=True, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
@@ -5633,6 +5632,13 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
             '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='{committer_name}';GIT_COMMITTER_EMAIL='{committer_email}'",
             f'HEAD...HEAD~1',
         ])
+
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        self.env = dict(
+            GIT_USER=username,
+            GIT_PASSWORD=access_token,
+            FILTER_BRANCH_SQUELCH_WARNING='1',
+        )
 
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
