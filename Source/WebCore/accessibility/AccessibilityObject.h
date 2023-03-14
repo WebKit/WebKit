@@ -203,7 +203,6 @@ public:
     virtual bool isSpinButtonPart() const { return false; }
     virtual bool isIncrementor() const { return false; }
     bool isMockObject() const override { return false; }
-    virtual bool isMediaControlLabel() const { return false; }
     virtual bool isMediaObject() const { return false; }
     bool isTextControl() const override;
     bool isARIATextControl() const;

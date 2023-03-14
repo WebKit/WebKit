@@ -95,11 +95,9 @@ static bool isDescriptiveText(AccessibilityTextSource textSource)
 
 String AccessibilityObject::descriptionAttributeValue() const
 {
-    // Static text objects should not have a description. Its content is communicated in its AXValue.
-    // One exception is the media control labels that have a value and a description. Those are set programatically.
-    if (roleValue() == AccessibilityRole::StaticText && !isMediaControlLabel())
+    if (!shouldComputeDescriptionAttributeValue())
         return { };
-    
+
     Vector<AccessibilityText> textOrder;
     accessibilityText(textOrder);
     
@@ -146,12 +144,8 @@ String AccessibilityObject::descriptionAttributeValue() const
 
 String AccessibilityObject::titleAttributeValue() const
 {
-    // Static text objects should not have a title. Its content is communicated in its AXValue.
-    if (roleValue() == AccessibilityRole::StaticText)
-        return String();
-
     // Meter elements should communicate their content via AXValueDescription.
-    if (isMeter())
+    if (!shouldComputeTitleAttributeValue() || isMeter())
         return { };
 
     // Summary element should use its text node as AXTitle.

@@ -2327,12 +2327,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return attachmentView;
         }
 
-        hit = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&axObject, &point] () -> RetainPtr<id> {
-            auto* widget = axObject->widget();
-            if (is<PluginViewBase>(widget))
-                return widget->accessibilityHitTest(IntPoint(point));
-            return nil;
-        });
+        // Only call out to the main-thread if this object has a backing widget to query.
+        if (axObject->isWidget()) {
+            hit = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&axObject, &point] () -> RetainPtr<id> {
+                auto* widget = axObject->widget();
+                if (is<PluginViewBase>(widget))
+                    return widget->accessibilityHitTest(IntPoint(point));
+                return nil;
+            });
+        }
 
         if (!hit)
             hit = axObject->wrapper();

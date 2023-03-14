@@ -1394,10 +1394,12 @@ public:
     virtual void setPreventKeyboardDOMEventDispatch(bool) = 0;
     virtual String speechHintAttributeValue() const = 0;
     virtual String descriptionAttributeValue() const = 0;
+    bool shouldComputeDescriptionAttributeValue() const;
     virtual String helpTextAttributeValue() const = 0;
     // This should be the visible text that's actually on the screen if possible.
     // If there's alternative text, that can override the title.
     virtual String titleAttributeValue() const = 0;
+    bool shouldComputeTitleAttributeValue() const;
 
     virtual bool hasApplePDFAnnotationAttribute() const = 0;
 #endif
@@ -1450,6 +1452,20 @@ inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objec
         return object ? object->objectID() : AXID();
     });
 }
+
+#if PLATFORM(COCOA)
+inline bool AXCoreObject::shouldComputeDescriptionAttributeValue() const
+{
+    // Static text objects shouldn't return a description. Their content is communicated via AXValue.
+    return roleValue() != AccessibilityRole::StaticText;
+}
+
+inline bool AXCoreObject::shouldComputeTitleAttributeValue() const
+{
+    // Static text objects shouldn't return a title. Their content is communicated via AXValue.
+    return roleValue() != AccessibilityRole::StaticText;
+}
+#endif // PLATFORM(COCOA)
 
 inline SpinButtonType AXCoreObject::spinButtonType()
 {

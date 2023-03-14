@@ -230,6 +230,9 @@ Vector<String> AXIsolatedObject::classList() const
 
 String AXIsolatedObject::descriptionAttributeValue() const
 {
+    if (!shouldComputeDescriptionAttributeValue())
+        return { };
+
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::Description);
 }
 
@@ -240,6 +243,9 @@ String AXIsolatedObject::helpTextAttributeValue() const
 
 String AXIsolatedObject::titleAttributeValue() const
 {
+    if (!shouldComputeTitleAttributeValue())
+        return { };
+
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::TitleAttributeValue);
 }
 
