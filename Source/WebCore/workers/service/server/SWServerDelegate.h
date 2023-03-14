@@ -56,7 +56,7 @@ public:
     virtual void addAllowedFirstPartyForCookies(ProcessIdentifier, std::optional<ProcessIdentifier>, RegistrableDomain&&) = 0;
 
     virtual void requestBackgroundFetchPermission(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
-    virtual std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, const WebCore::ClientOrigin&) = 0;
+    virtual std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&) = 0;
     virtual Ref<BackgroundFetchStore> createBackgroundFetchStore() = 0;
 };
 

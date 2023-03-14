@@ -54,7 +54,7 @@ struct BackgroundFetchState {
     WebCore::BackgroundFetchResult result { WebCore::BackgroundFetchResult::EmptyString };
     WebCore::BackgroundFetchFailureReason failureReason { WebCore::BackgroundFetchFailureReason::EmptyString };
     
-    bool isActive { false };
+    bool isPaused { false };
     
 #if PLATFORM(COCOA)
     NSDictionary *toDictionary() const;

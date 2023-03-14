@@ -931,6 +931,13 @@ WKRetainPtr<WKStringRef> InjectedBundle::lastUpdatedBackgroundFetchIdentifier() 
     return static_cast<WKStringRef>(result);
 }
 
+WKRetainPtr<WKStringRef> InjectedBundle::backgroundFetchState(WKStringRef identifier)
+{
+    WKTypeRef result = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("BackgroundFetchState").get(), identifier, &result);
+    return static_cast<WKStringRef>(result);
+}
+
 void InjectedBundle::textDidChangeInTextField()
 {
     m_testRunner->textDidChangeInTextFieldCallback();

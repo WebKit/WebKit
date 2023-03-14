@@ -34,6 +34,6 @@ struct WebKit::BackgroundFetchState {
     uint64_t uploaded;
     WebCore::BackgroundFetchResult result;
     WebCore::BackgroundFetchFailureReason failureReason;
-    bool isActive;
+    bool isPaused;
 };
 #endif

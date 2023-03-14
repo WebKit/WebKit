@@ -751,9 +751,9 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
     m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
 }
 
-std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client& client, const WebCore::BackgroundFetchRequest& request, const ClientOrigin& clientOrigin)
+std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client& client, const WebCore::BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
 {
-    return makeUnique<BackgroundFetchLoad>(m_networkProcess.get(), m_sessionID, client, request, clientOrigin);
+    return makeUnique<BackgroundFetchLoad>(m_networkProcess.get(), m_sessionID, client, request, responseDataSize, clientOrigin);
 }
 
 Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()

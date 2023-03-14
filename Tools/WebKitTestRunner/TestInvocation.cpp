@@ -952,13 +952,36 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setBackgroundFetchPermission(booleanValue(messageBody));
         return nullptr;
     }
+    if (WKStringIsEqualToUTF8CString(messageName, "GetBackgroundFetchIdentifier"))
+        return TestController::singleton().getBackgroundFetchIdentifier();
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AbortBackgroundFetch")) {
+        TestController::singleton().abortBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "PauseBackgroundFetch")) {
+        TestController::singleton().pauseBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ResumeBackgroundFetch")) {
+        TestController::singleton().resumeBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SimulateClickBackgroundFetch")) {
+        TestController::singleton().simulateClickBackgroundFetch(stringValue(messageBody));
+        return nullptr;
+    }
     if (WKStringIsEqualToUTF8CString(messageName, "LastAddedBackgroundFetchIdentifier"))
         return TestController::singleton().lastAddedBackgroundFetchIdentifier();
     if (WKStringIsEqualToUTF8CString(messageName, "LastRemovedBackgroundFetchIdentifier"))
         return TestController::singleton().lastRemovedBackgroundFetchIdentifier();
     if (WKStringIsEqualToUTF8CString(messageName, "LastUpdatedBackgroundFetchIdentifier"))
         return TestController::singleton().lastUpdatedBackgroundFetchIdentifier();
+    if (WKStringIsEqualToUTF8CString(messageName, "BackgroundFetchState"))
+        return TestController::singleton().backgroundFetchState(stringValue(messageBody));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetShouldSwapToEphemeralSessionOnNextNavigation")) {
         TestController::singleton().setShouldSwapToEphemeralSessionOnNextNavigation(booleanValue(messageBody));
@@ -1092,29 +1115,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermissionOnPrompt"))
         return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermissionOnPrompt(stringValue(messageBody))));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GetBackgroundFetchIdentifier"))
-        return TestController::singleton().getBackgroundFetchIdentifier();
-
-    if (WKStringIsEqualToUTF8CString(messageName, "AbortBackgroundFetch")) {
-        TestController::singleton().abortBackgroundFetch(stringValue(messageBody));
-        return nullptr;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "PauseBackgroundFetch")) {
-        TestController::singleton().pauseBackgroundFetch(stringValue(messageBody));
-        return nullptr;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "ResumeBackgroundFetch")) {
-        TestController::singleton().resumeBackgroundFetch(stringValue(messageBody));
-        return nullptr;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SimulateClickBackgroundFetch")) {
-        TestController::singleton().simulateClickBackgroundFetch(stringValue(messageBody));
-        return nullptr;
-    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));

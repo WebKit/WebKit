@@ -475,6 +475,12 @@ JSRetainPtr<JSStringRef> TestRunner::lastUpdatedBackgroundFetchIdentifier() cons
     return WKStringCopyJSString(identifier.get());
 }
 
+JSRetainPtr<JSStringRef> TestRunner::backgroundFetchState(JSStringRef identifier)
+{
+    auto state = InjectedBundle::singleton().backgroundFetchState(toWK(identifier).get());
+    return WKStringCopyJSString(state.get());
+}
+
 void TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation(bool shouldSwap)
 {
     postSynchronousPageMessage("SetShouldSwapToEphemeralSessionOnNextNavigation", shouldSwap);

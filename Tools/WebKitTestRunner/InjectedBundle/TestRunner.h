@@ -113,10 +113,6 @@ public:
     void setCacheModel(int);
     void setAsynchronousSpellCheckingEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
-    void setBackgroundFetchPermission(bool);
-    JSRetainPtr<JSStringRef> lastAddedBackgroundFetchIdentifier() const;
-    JSRetainPtr<JSStringRef> lastRemovedBackgroundFetchIdentifier() const;
-    JSRetainPtr<JSStringRef> lastUpdatedBackgroundFetchIdentifier() const;
 
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool);
     void setShouldSwapToDefaultSessionOnNextNavigation(bool);
@@ -307,6 +303,11 @@ public:
     void pauseBackgroundFetch(JSStringRef);
     void resumeBackgroundFetch(JSStringRef);
     void simulateClickBackgroundFetch(JSStringRef);
+    void setBackgroundFetchPermission(bool);
+    JSRetainPtr<JSStringRef> lastAddedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> lastRemovedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> lastUpdatedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> backgroundFetchState(JSStringRef);
 
     // Geolocation.
     void setGeolocationPermission(bool);

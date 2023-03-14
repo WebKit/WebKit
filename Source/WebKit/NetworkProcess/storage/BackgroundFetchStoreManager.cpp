@@ -146,7 +146,7 @@ void BackgroundFetchStoreManager::clearAllFetches(const Vector<String>& identifi
     });
 }
 
-void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
+void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
 {
     assertIsCurrent(m_taskQueue.get());
     
@@ -158,7 +158,7 @@ void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t 
         return;
     }
 
-    m_quotaCheckFunction(expectedSpace, [weakThis = WeakPtr { *this }, identifier, downloadTotal, uploadTotal, data = WTFMove(data), callback = WTFMove(callback)](bool result) mutable {
+    m_quotaCheckFunction(expectedSpace, [weakThis = WeakPtr { *this }, identifier, downloadTotal, uploadTotal, responseBodyIndexToClear, data = WTFMove(data), callback = WTFMove(callback)](bool result) mutable {
         if (!weakThis) {
             callback(StoreResult::InternalError);
             return;
@@ -167,11 +167,11 @@ void BackgroundFetchStoreManager::storeFetch(const String& identifier, uint64_t 
             callback(StoreResult::QuotaError);
             return;
         }
-        weakThis->storeFetchAfterQuotaCheck(identifier, downloadTotal, uploadTotal, WTFMove(data), WTFMove(callback));
+        weakThis->storeFetchAfterQuotaCheck(identifier, downloadTotal, uploadTotal, responseBodyIndexToClear, WTFMove(data), WTFMove(callback));
     });
 }
 
-void BackgroundFetchStoreManager::storeFetchAfterQuotaCheck(const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
+void BackgroundFetchStoreManager::storeFetchAfterQuotaCheck(const String& identifier, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&& data, CompletionHandler<void(StoreResult)>&& callback)
 {
     assertIsCurrent(m_taskQueue.get());
 
@@ -181,10 +181,12 @@ void BackgroundFetchStoreManager::storeFetchAfterQuotaCheck(const String& identi
     }
 
     auto filePath = FileSystem::pathByAppendingComponents(m_path, { identifier });
-    m_ioQueue->dispatch([queue = Ref { m_taskQueue }, filePath = WTFMove(filePath).isolatedCopy(), data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+    m_ioQueue->dispatch([queue = Ref { m_taskQueue }, filePath = WTFMove(filePath).isolatedCopy(), responseBodyIndexToClear, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         // FIXME: Cover the case of partial write.
         auto writtenSize = FileSystem::overwriteEntireFile(filePath, { data.data(), data.size() });
         auto result = static_cast<size_t>(writtenSize) == data.size() ? StoreResult::OK : StoreResult::InternalError;
+        if (result == StoreResult::OK && responseBodyIndexToClear)
+            FileSystem::deleteFile(makeString(filePath, "-", *responseBodyIndexToClear));
         RELEASE_LOG_ERROR_IF(result == StoreResult::InternalError, ServiceWorker, "BackgroundFetchStoreManager::storeFetch failed writing");
         queue->dispatch([result, callback = WTFMove(callback)]() mutable {
             callback(result);

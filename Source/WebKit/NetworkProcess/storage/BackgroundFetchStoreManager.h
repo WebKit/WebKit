@@ -56,13 +56,13 @@ public:
     void clearAllFetches(const Vector<String>&, CompletionHandler<void()>&&);
 
     using StoreResult = WebCore::BackgroundFetchStore::StoreResult;
-    void storeFetch(const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
+    void storeFetch(const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
     void storeFetchResponseBodyChunk(const String&, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&);
 
     void retrieveResponseBody(const String&, size_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 private:
-    void storeFetchAfterQuotaCheck(const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
+    void storeFetchAfterQuotaCheck(const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
 
     String m_path;
     Ref<WTF::WorkQueue> m_taskQueue;

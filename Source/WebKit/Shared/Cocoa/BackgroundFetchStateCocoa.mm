@@ -47,7 +47,7 @@ NSDictionary *BackgroundFetchState::toDictionary() const
         @"Uploaded" : @(uploaded),
         @"Result" : (NSString *)(convertEnumerationToString(result)),
         @"FailureReason" : (NSString *)(convertEnumerationToString(failureReason)),
-        @"IsActive" : @(isActive),
+        @"IsPaused" : @(isPaused),
     };
 }
 
