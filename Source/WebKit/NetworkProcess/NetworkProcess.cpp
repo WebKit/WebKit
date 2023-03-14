@@ -395,6 +395,9 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
+    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(firstPartyForCookies))
+        return completionHandler();
+
     auto& pair = m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
         return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
     }).iterator->value;
