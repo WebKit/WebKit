@@ -1,0 +1,17 @@
+<style>
+dialog { -webkit-mask-box-image-source: url(about:url); }
+div { column-span: all; }
+html { overflow: -webkit-paged-x; -webkit-perspective: 0vw; }
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+function runTest() {
+  dialog.appendChild(document.createElement("div"));
+  target.style.setProperty("overflow-wrap", "break-word");
+  target.style.setProperty("-webkit-column-width", "1px");
+}
+</script>
+<body id="target" onload=runTest()>
+  <dialog id="dialog" open="true">PASS if no crash.</dialog>
+</body>
