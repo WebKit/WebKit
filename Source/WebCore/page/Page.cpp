@@ -241,7 +241,7 @@ static void networkStateChanged(bool isOnLine)
 
     // Get all the frames of all the pages in all the page groups
     for (auto* page : allPages()) {
-        for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -263,11 +263,11 @@ static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
-static Ref<AbstractFrame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
+static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
 {
-    return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<AbstractFrame> {
+    return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
         return LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
-    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<AbstractFrame> {
+    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
     });
 }
@@ -784,7 +784,7 @@ bool Page::showAllPlugins() const
 
 inline std::optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMediaCanStartListener()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -811,11 +811,11 @@ void Page::setCanStartMedia(bool canStartMedia)
     }
 }
 
-static AbstractFrame* incrementFrame(AbstractFrame* curr, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
+static Frame* incrementFrame(Frame* current, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
 {
     return forward
-        ? curr->tree().traverseNext(canWrap, didWrap)
-        : curr->tree().traversePrevious(canWrap, didWrap);
+        ? current->tree().traverseNext(canWrap, didWrap)
+        : current->tree().traversePrevious(canWrap, didWrap);
 }
 
 bool Page::findString(const String& target, FindOptions options, DidWrap* didWrap)
@@ -825,7 +825,7 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
     CheckedRef focusController { *m_focusController };
-    RefPtr<AbstractFrame> frame = &focusController->focusedOrMainFrame();
+    RefPtr<Frame> frame = &focusController->focusedOrMainFrame();
     RefPtr startFrame = dynamicDowncast<LocalFrame>(frame.get());
     do {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
@@ -1011,7 +1011,7 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
 
     HashMap<RefPtr<LocalFrame>, unsigned> frameToTraversalIndexMap;
     unsigned currentFrameTraversalIndex = 0;
-    for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1213,7 +1213,7 @@ void Page::setDefersLoading(bool defers)
     }
 
     m_defersLoading = defers;
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1548,7 +1548,7 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
 
     view->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
     
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1621,7 +1621,7 @@ void Page::setIsInWindow(bool isInWindow)
 
 void Page::setIsInWindowInternal(bool isInWindow)
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1919,7 +1919,7 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (localMainFrame) {
         ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
 #if ASSERT_ENABLED
-        for (AbstractFrame* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+        for (auto* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(child);
             auto* frameView = localFrame->view();
             ASSERT(!frameView || !frameView->needsLayout());
@@ -2274,7 +2274,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
     m_debugger = debugger;
 
-    for (AbstractFrame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2307,7 +2307,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
     if (!enabled)
         return;
 
-    for (RefPtr<AbstractFrame> frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
@@ -2641,7 +2641,7 @@ void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
 
 void Page::stopKeyboardScrollAnimation()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3077,7 +3077,7 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
 
 void Page::suspendActiveDOMObjectsAndAnimations()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3087,7 +3087,7 @@ void Page::suspendActiveDOMObjectsAndAnimations()
 
 void Page::resumeActiveDOMObjectsAndAnimations()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3688,7 +3688,7 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
 void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Function<void(Document&)>& functor)
 {
     Vector<Ref<Document>> documents;
-    for (const AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (const Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3721,7 +3721,7 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 void Page::forEachFrame(const Function<void(LocalFrame&)>& functor)
 {
     Vector<Ref<LocalFrame>> frames;
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3790,7 +3790,7 @@ enum class DispatchedOnDocumentEventLoop : bool { No, Yes };
 static void dispatchPrintEvent(LocalFrame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
 {
     Vector<Ref<LocalFrame>> frames;
-    for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4239,7 +4239,7 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
 
 void Page::forceRepaintAllFrames()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4325,7 +4325,7 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
     if (!localMainFrame || localMainFrame->document()->topOrigin().data() != origin.topOrigin)
         return;
 
-    for (AbstractFrame* frame = &m_mainFrame.get(); frame;) {
+    for (auto* frame = &m_mainFrame.get(); frame;) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame || frame->frameID() == triggeringFrame) {
             frame = frame->tree().traverseNext();

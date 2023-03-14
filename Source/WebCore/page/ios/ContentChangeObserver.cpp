@@ -180,7 +180,7 @@ ContentChangeObserver::ContentChangeObserver(Document& document)
 
 static void willNotProceedWithClick(LocalFrame& mainFrame)
 {
-    for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

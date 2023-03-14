@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AbstractFrame.h"
+#include "Frame.h"
 
 #include "DocumentInlines.h"
 #include "HTMLFrameOwnerElement.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-AbstractFrame::AbstractFrame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, AbstractFrame* parent)
+Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent)
     : m_page(page)
     , m_frameID(frameID)
     , m_treeNode(*this, parent)
@@ -48,30 +48,30 @@ AbstractFrame::AbstractFrame(Page& page, FrameIdentifier frameID, FrameType fram
         parent->tree().appendChild(*this);
 }
 
-AbstractFrame::~AbstractFrame()
+Frame::~Frame()
 {
     m_windowProxy->detachFromFrame();
 }
 
-void AbstractFrame::resetWindowProxy()
+void Frame::resetWindowProxy()
 {
     m_windowProxy->detachFromFrame();
     m_windowProxy = WindowProxy::create(*this);
 }
 
-void AbstractFrame::detachFromPage()
+void Frame::detachFromPage()
 {
     m_page = nullptr;
 }
 
-void AbstractFrame::disconnectOwnerElement()
+void Frame::disconnectOwnerElement()
 {
     if (m_ownerElement) {
         m_ownerElement->clearContentFrame();
         m_ownerElement = nullptr;
     }
 
-    // FIXME: This is a layering violation. Move this code so AbstractFrame doesn't do anything with its Document.
+    // FIXME: This is a layering violation. Move this code so Frame doesn't do anything with its Document.
     if (auto* document = is<LocalFrame>(*this) ? downcast<LocalFrame>(*this).document() : nullptr)
         document->frameWasDisconnectedFromOwner();
 }

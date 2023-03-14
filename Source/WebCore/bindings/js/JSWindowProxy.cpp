@@ -29,8 +29,8 @@
 #include "config.h"
 #include "JSWindowProxy.h"
 
-#include "AbstractFrame.h"
 #include "CommonVM.h"
+#include "Frame.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"

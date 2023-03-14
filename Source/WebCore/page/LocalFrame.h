@@ -27,9 +27,9 @@
 
 #pragma once
 
-#include "AbstractFrame.h"
 #include "AdjustViewSizeOrNot.h"
 #include "Document.h"
+#include "Frame.h"
 #include "PageIdentifier.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
@@ -113,11 +113,11 @@ enum OverflowScrollAction { DoNotPerformOverflowScroll, PerformOverflowScroll };
 using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNode, IntRect* nodeBounds)>;
 #endif
 
-class LocalFrame final : public AbstractFrame {
+class LocalFrame final : public Frame {
 public:
     WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
-    WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, AbstractFrame& parent);
+    WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, Frame& parent);
 
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
@@ -293,7 +293,7 @@ public:
 private:
     friend class NavigationDisabler;
 
-    LocalFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, AbstractFrame* parent);
+    LocalFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent);
 
     void dropChildren();
 
@@ -373,5 +373,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrame&);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalFrame)
-static bool isType(const WebCore::AbstractFrame& frame) { return frame.frameType() == WebCore::AbstractFrame::FrameType::Local; }
+static bool isType(const WebCore::Frame& frame) { return frame.frameType() == WebCore::Frame::FrameType::Local; }
 SPECIALIZE_TYPE_TRAITS_END()

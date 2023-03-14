@@ -41,10 +41,9 @@ class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
 
-// FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
-class AbstractFrame : public ThreadSafeRefCounted<AbstractFrame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<AbstractFrame> {
+class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame> {
 public:
-    virtual ~AbstractFrame();
+    virtual ~Frame();
 
     enum class FrameType : bool { Local, Remote };
     FrameType frameType() const { return m_frameType; }
@@ -56,7 +55,7 @@ public:
     FrameIdentifier frameID() const { return m_frameID; }
     inline Page* page() const; // Defined in Page.h.
     Settings& settings() const { return m_settings.get(); }
-    AbstractFrame& mainFrame() const { return m_mainFrame; }
+    Frame& mainFrame() const { return m_mainFrame; }
     bool isMainFrame() const { return this == &m_mainFrame; }
 
     WEBCORE_EXPORT void detachFromPage();
@@ -67,7 +66,7 @@ public:
     virtual bool preventsParentFromBeingComplete() const = 0;
 
 protected:
-    AbstractFrame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, AbstractFrame* parent);
+    Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);
     void resetWindowProxy();
 
 private:
@@ -79,7 +78,7 @@ private:
     mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_ownerElement;
-    AbstractFrame& m_mainFrame;
+    Frame& m_mainFrame;
     const Ref<Settings> m_settings;
     FrameType m_frameType;
 };

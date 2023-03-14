@@ -3806,7 +3806,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     frameView.updateLayoutAndStyleIfNeededRecursive();
 
-    // FIXME: Move settings from Frame to AbstractFrame and remove this check.
+    // FIXME: Move settings from Frame to Frame and remove this check.
     auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
     if (!localFrame)
         return;
@@ -3904,7 +3904,7 @@ void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
 void WebPage::resetTextAutosizing()
 {
 #if ENABLE(TEXT_AUTOSIZING)
-    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

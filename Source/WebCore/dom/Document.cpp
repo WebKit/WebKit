@@ -466,7 +466,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, LocalF
         return false;
 
     const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
-    for (RefPtr<AbstractFrame> ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
+    for (RefPtr<Frame> ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
         RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame.get());
         if (!localAncestor)
             continue;
@@ -6220,7 +6220,7 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 void Document::setDesignMode(InheritedBool value)
 {
     m_designMode = value;
-    for (RefPtr<AbstractFrame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (RefPtr<Frame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame || !localFrame->document())
             continue;

@@ -69,7 +69,7 @@ UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGesture
     }
 
     auto& documentOrigin = document->securityOrigin();
-    for (AbstractFrame* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -116,7 +116,7 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
         document->topDocument().setUserDidInteractWithPage(true);
         if (auto* frame = document->frame()) {
             if (!frame->hasHadUserInteraction()) {
-                for (AbstractFrame *ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
+                for (Frame *ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
                     auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor);
                     if (!localAncestor)
                         continue;

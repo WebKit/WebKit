@@ -112,7 +112,7 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-void WebFrame::initWithCoreMainFrame(WebPage& page, AbstractFrame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
+void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
     ASSERT(!m_frameID);
     m_frameID = coreFrame.frameID();
@@ -188,7 +188,7 @@ WebPage* WebFrame::page() const
     return nullptr;
 }
 
-WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
+WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
         auto* webFrameLoaderClient = toWebFrameLoaderClient(localFrame->loader().client());
@@ -470,7 +470,7 @@ String WebFrame::contentsAsString() const
 
     if (isFrameSet()) {
         StringBuilder builder;
-        for (AbstractFrame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
             if (!builder.isEmpty())
                 builder.append(' ');
 
@@ -606,7 +606,7 @@ Ref<API::Array> WebFrame::childFrames()
     Vector<RefPtr<API::Object>> vector;
     vector.reserveInitialCapacity(size);
 
-    for (AbstractFrame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         WebFrame* webFrame = WebFrame::fromCoreFrame(*child);
         ASSERT(webFrame);
         if (!webFrame)

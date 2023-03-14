@@ -56,7 +56,7 @@ void PluginInfoProvider::refresh(bool reloadPages)
         if (!reloadPages)
             continue;
 
-        for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;

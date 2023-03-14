@@ -124,7 +124,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
 
 static LocalFrame* frameWithSelection(Page* page)
 {
-    for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -527,7 +527,7 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 
     FrameView* mainFrameView = localMainFrame->view();
 
-    for (AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

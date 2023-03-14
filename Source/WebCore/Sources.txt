@@ -1808,7 +1808,6 @@ mathml/MathMLTokenElement.cpp
 mathml/MathMLUnderOverElement.cpp
 mathml/MathMLUnknownElement.cpp
 page/AbstractDOMWindow.cpp
-page/AbstractFrame.cpp
 page/ActivityState.cpp
 page/AutoscrollController.cpp
 page/BarProp.cpp
@@ -1834,6 +1833,7 @@ page/DragController.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
 page/FocusController.cpp
+page/Frame.cpp
 page/FrameDestructionObserver.cpp
 page/FrameSnapshotting.cpp
 page/FrameTree.cpp

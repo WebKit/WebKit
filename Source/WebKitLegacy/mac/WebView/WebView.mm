@@ -1907,7 +1907,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)updateLayoutIgnorePendingStyleSheets
 {
     WebThreadRun(^{
-        for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+        for (WebCore::Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -3807,7 +3807,7 @@ IGNORE_WARNINGS_END
 
 - (void)_attachScriptDebuggerToAllFrames
 {
-    for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+    for (WebCore::Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3817,7 +3817,7 @@ IGNORE_WARNINGS_END
 
 - (void)_detachScriptDebuggerFromAllFrames
 {
-    for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+    for (WebCore::Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4140,7 +4140,7 @@ IGNORE_WARNINGS_END
 - (BOOL)_isUsingAcceleratedCompositing
 {
     auto* coreFrame = [self _mainCoreFrame];
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4192,7 +4192,7 @@ IGNORE_WARNINGS_END
 - (BOOL)_isSoftwareRenderable
 {
     auto* coreFrame = [self _mainCoreFrame];
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -6265,7 +6265,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     auto* coreFrame = [self _mainCoreFrame];
 #if !PLATFORM(IOS_FAMILY)
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -6277,7 +6277,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
 #endif
     _private->hostWindow = hostWindow;
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;

@@ -56,6 +56,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
+#include "ImageBuffer.h"
 #include "ImageOverlay.h"
 #include "InspectorController.h"
 #include "LocalFrame.h"

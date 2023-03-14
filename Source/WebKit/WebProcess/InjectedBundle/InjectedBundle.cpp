@@ -341,7 +341,7 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool exclude
 
     if (excludeDocumentsInPageGroupPages) {
         Page::forEachPage([&](Page& page) {
-            for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
                 auto* localFrame = dynamicDowncast<LocalFrame>(frame);
                 if (!localFrame)
                     continue;

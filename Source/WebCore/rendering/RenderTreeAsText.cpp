@@ -924,7 +924,7 @@ static void updateLayoutIgnoringPendingStylesheetsIncludingSubframes(Document& d
 {
     document.updateLayoutIgnorePendingStylesheets();
     auto* frame = document.frame();
-    for (AbstractFrame* subframe = frame; subframe; subframe = subframe->tree().traverseNext(frame)) {
+    for (Frame* subframe = frame; subframe; subframe = subframe->tree().traverseNext(frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(subframe);
         if (!localFrame)
             continue;

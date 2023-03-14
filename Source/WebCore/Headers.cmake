@@ -1235,7 +1235,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/cache/MemoryCache.h
 
     page/AbstractDOMWindow.h
-    page/AbstractFrame.h
     page/AbstractFrameView.h
     page/ActivityState.h
     page/ActivityStateChangeObserver.h
@@ -1277,6 +1276,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/EventHandler.h
     page/FocusController.h
     page/FocusDirection.h
+    page/Frame.h
     page/FrameDestructionObserver.h
     page/FrameDestructionObserverInlines.h
     page/FrameFlattening.h

@@ -351,7 +351,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
 Vector<Document*> InspectorDOMAgent::documents()
 {
     Vector<Document*> result;
-    for (AbstractFrame* frame = m_document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = m_document->frame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

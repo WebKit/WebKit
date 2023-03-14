@@ -307,7 +307,7 @@ Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJSON(const Ca
 
 LocalFrame* InspectorPageAgent::findFrameWithSecurityOrigin(Page& page, const String& originRawString)
 {
-    for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -619,7 +619,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> InspectorPag
 {
     ListHashSet<Cookie> allRawCookies;
 
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -730,7 +730,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& 
     if (!cookie)
         return makeUnexpected(errorString);
 
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -749,7 +749,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& 
 Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const String& cookieName, const String& url)
 {
     URL parsedURL({ }, url);
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -854,7 +854,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> Inspec
     auto searchStringType = (isRegex && *isRegex) ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
     auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive && *caseSensitive, searchStringType);
 
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1142,7 +1142,7 @@ Ref<Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTr
     }
 
     RefPtr<JSON::ArrayOf<Protocol::Page::FrameResourceTree>> childrenArray;
-    for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!childrenArray) {
             childrenArray = JSON::ArrayOf<Protocol::Page::FrameResourceTree>::create();
             result->setChildFrames(*childrenArray);

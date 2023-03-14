@@ -431,7 +431,7 @@ static NSURL *createUniqueWebDataURL();
 #endif
 
     auto coreFrame = _private->coreFrame;
-    for (WebCore::AbstractFrame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
@@ -472,7 +472,7 @@ static NSURL *createUniqueWebDataURL();
 - (void)_unmarkAllBadGrammar
 {
     auto coreFrame = _private->coreFrame;
-    for (WebCore::AbstractFrame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
@@ -485,7 +485,7 @@ static NSURL *createUniqueWebDataURL();
 {
 #if !PLATFORM(IOS_FAMILY)
     auto coreFrame = _private->coreFrame;
-    for (WebCore::AbstractFrame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
@@ -523,7 +523,7 @@ static NSURL *createUniqueWebDataURL();
     // FIXME: 4186050 is one known case that makes this debug check fail.
     BOOL found = NO;
     auto coreFrame = _private->coreFrame;
-    for (WebCore::AbstractFrame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
@@ -540,7 +540,7 @@ static NSURL *createUniqueWebDataURL();
 - (WebFrame *)_findFrameWithSelection
 {
     auto coreFrame = _private->coreFrame;
-    for (WebCore::AbstractFrame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
@@ -1874,7 +1874,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return;
     
     auto coreFrame = core(self);
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2561,7 +2561,7 @@ static NSURL *createUniqueWebDataURL()
     if (!coreFrame)
         return @[];
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree().childCount()];
-    for (WebCore::AbstractFrame* child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
+    for (auto* child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
         [children addObject:kit(dynamicDowncast<WebCore::LocalFrame>(child))];
     return children;
 }

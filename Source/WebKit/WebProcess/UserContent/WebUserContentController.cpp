@@ -134,7 +134,7 @@ void WebUserContentController::addContentWorlds(const Vector<std::pair<ContentWo
                     return;
 
                 auto& mainFrame = page.mainFrame();
-                for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+                for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
                     auto* localFrame = dynamicDowncast<LocalFrame>(frame);
                     if (!localFrame)
                         continue;
@@ -440,7 +440,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
                 return;
             }
 
-            for (AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext(localMainFrame)) {
+            for (WebCore::Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext(localMainFrame)) {
                 auto* localFrame = dynamicDowncast<LocalFrame>(frame);
                 if (!localFrame)
                     continue;

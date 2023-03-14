@@ -23,7 +23,7 @@
 namespace WebCore {
 
 class AbstractDOMWindow;
-class AbstractFrame;
+class Frame;
 
 JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject*);
 const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject*);

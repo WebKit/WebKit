@@ -54,7 +54,6 @@
 
 namespace WebCore {
 
-class AbstractFrame;
 class Archive;
 class CachedFrameBase;
 class CachedPage;
@@ -65,6 +64,7 @@ class DOMWrapperWorld;
 class Document;
 class DocumentLoader;
 class Event;
+class Frame;
 class FormState;
 class FormSubmission;
 class FrameLoadRequest;

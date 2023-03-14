@@ -877,7 +877,7 @@ bool FrameLoader::allChildrenAreComplete() const
 
 bool FrameLoader::allAncestorsAreComplete() const
 {
-    for (AbstractFrame* ancestor = &m_frame; ancestor; ancestor = ancestor->tree().parent()) {
+    for (Frame* ancestor = &m_frame; ancestor; ancestor = ancestor->tree().parent()) {
         auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor);
         if (!localAncestor)
             continue;
@@ -1058,7 +1058,7 @@ String FrameLoader::outgoingReferrer() const
 {
     // See http://www.whatwg.org/specs/web-apps/current-work/#fetching-resources
     // for why we walk the parent chain for srcdoc documents.
-    AbstractFrame* frame = &m_frame;
+    Frame* frame = &m_frame;
     while (frame && is<LocalFrame>(frame) && downcast<LocalFrame>(frame)->document()->isSrcdocDocument()) {
         frame = frame->tree().parent();
         // Srcdoc documents cannot be top-level documents, by definition,
@@ -1135,7 +1135,7 @@ void FrameLoader::updateFirstPartyForCookies()
 
 void FrameLoader::setFirstPartyForCookies(const URL& url)
 {
-    for (AbstractFrame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
+    for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1143,7 +1143,7 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
     }
 
     RegistrableDomain registrableDomain(url);
-    for (AbstractFrame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
+    for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1248,7 +1248,7 @@ void FrameLoader::completed()
 {
     Ref protectedFrame { m_frame };
 
-    for (AbstractFrame* descendant = m_frame.tree().traverseNext(&m_frame); descendant; descendant = descendant->tree().traverseNext(&m_frame)) {
+    for (auto* descendant = m_frame.tree().traverseNext(&m_frame); descendant; descendant = descendant->tree().traverseNext(&m_frame)) {
         auto* localDescendant = dynamicDowncast<LocalFrame>(descendant);
         if (!localDescendant)
             continue;
@@ -1266,7 +1266,7 @@ void FrameLoader::completed()
 
 void FrameLoader::started()
 {
-    for (AbstractFrame* frame = &m_frame; frame; frame = frame->tree().parent()) {
+    for (Frame* frame = &m_frame; frame; frame = frame->tree().parent()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1893,7 +1893,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
     if (clearProvisionalItem == ClearProvisionalItem::Yes)
         history().setProvisionalItem(nullptr);
 
-    for (RefPtr<AbstractFrame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (RefPtr child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
         RefPtr localChild = dynamicDowncast<LocalFrame>(child.get());
         if (!localChild)
             continue;
@@ -1931,7 +1931,7 @@ void FrameLoader::stopForBackForwardCache()
     if (m_documentLoader)
         m_documentLoader->stopLoading();
 
-    for (RefPtr<AbstractFrame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (RefPtr child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
         RefPtr localChild = dynamicDowncast<LocalFrame>(child.get());
         if (!localChild)
             continue;
@@ -2178,7 +2178,7 @@ void FrameLoader::commitProvisionalLoad()
 
         Vector<Ref<LocalFrame>> targetFrames;
         targetFrames.append(m_frame);
-        for (AbstractFrame* child = m_frame.tree().firstChild(); child; child = child->tree().traverseNext(&m_frame)) {
+        for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().traverseNext(&m_frame)) {
             auto* localChild = dynamicDowncast<LocalFrame>(child);
             if (!localChild)
                 continue;
@@ -2880,7 +2880,7 @@ void FrameLoader::checkLoadComplete()
     // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
     // is currently needed in order to null out the previous history item for all frames.
     Vector<Ref<LocalFrame>, 16> frames;
-    for (AbstractFrame* frame = &m_frame.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_frame.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2900,7 +2900,7 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
         return m_frame.document()->cachedResourceLoader().requestCount();
 
     int count = 0;
-    for (AbstractFrame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
+    for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3441,7 +3441,7 @@ bool FrameLoader::shouldClose()
     // Store all references to each subframe in advance since beforeunload's event handler may modify frame
     Vector<Ref<LocalFrame>, 16> targetFrames;
     targetFrames.append(m_frame);
-    for (AbstractFrame* child = m_frame.tree().firstChild(); child; child = child->tree().traverseNext(&m_frame)) {
+    for (auto* child = m_frame.tree().firstChild(); child; child = child->tree().traverseNext(&m_frame)) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
         if (!localChild)
             continue;

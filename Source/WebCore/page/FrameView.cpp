@@ -1211,7 +1211,7 @@ bool FrameView::flushCompositingStateIncludingSubframes()
 {
     bool allFramesFlushed = flushCompositingStateForThisFrame(m_frame.get());
 
-    for (AbstractFrame* child = m_frame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
+    for (Frame* child = m_frame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
         if (!localChild)
             continue;
@@ -1474,7 +1474,7 @@ bool FrameView::useSlowRepaintsIfNotOverlapped() const
 
 void FrameView::updateCanBlitOnScrollRecursively()
 {
-    for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+    for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2893,7 +2893,7 @@ void FrameView::applyRecursivelyWithVisibleRect(const Function<void(FrameView& f
 
     // Recursive call for subframes. We cache the current FrameView's windowClipRect to avoid recomputing it for every subframe.
     SetForScope windowClipRectCache(m_cachedWindowClipRect, &windowClipRect);
-    for (AbstractFrame* childFrame = m_frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+    for (Frame* childFrame = m_frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
         if (!localFrame)
             continue;
@@ -3480,7 +3480,7 @@ void FrameView::updateBackgroundRecursively(const std::optional<Color>& backgrou
 #endif
 #endif
 
-    for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+    for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4855,7 +4855,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
     // in the render tree only. This will allow us to restore the selection from the DOM
     // after we paint the snapshot.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+        for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -4874,7 +4874,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
 
     // Restore selection.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+        for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -5546,7 +5546,7 @@ void FrameView::setTracksRepaints(bool trackRepaints)
             m_frame->document()->updateLayout();
     }
 
-    for (AbstractFrame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -5715,7 +5715,7 @@ bool FrameView::isFlippedDocument() const
 
 void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
 {
-    for (AbstractFrame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
+    for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -5921,7 +5921,7 @@ ScrollBehaviorForFixedElements FrameView::scrollBehaviorForFixedElements() const
     return m_frame->settings().backgroundShouldExtendBeyondPage() ? StickToViewportBounds : StickToDocumentBounds;
 }
 
-AbstractFrame& FrameView::frame() const
+Frame& FrameView::frame() const
 {
     return m_frame;
 }

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class AbstractFrame;
+class Frame;
 
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class AbstractDOMWindow : public RefCounted<AbstractDOMWindow>, public EventTarget {
@@ -44,7 +44,7 @@ public:
 
     const GlobalWindowIdentifier& identifier() const { return m_identifier; }
 
-    virtual AbstractFrame* frame() const = 0;
+    virtual Frame* frame() const = 0;
 
     virtual bool isLocalDOMWindow() const = 0;
     virtual bool isRemoteDOMWindow() const = 0;

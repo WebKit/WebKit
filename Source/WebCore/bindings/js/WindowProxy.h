@@ -33,8 +33,8 @@ class Debugger;
 namespace WebCore {
 
 class AbstractDOMWindow;
-class AbstractFrame;
 class DOMWrapperWorld;
+class Frame;
 class JSDOMGlobalObject;
 class JSWindowProxy;
 
@@ -43,14 +43,14 @@ class WindowProxy : public RefCounted<WindowProxy> {
 public:
     using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
 
-    static Ref<WindowProxy> create(AbstractFrame& frame)
+    static Ref<WindowProxy> create(Frame& frame)
     {
         return adoptRef(*new WindowProxy(frame));
     }
 
     WEBCORE_EXPORT ~WindowProxy();
 
-    WEBCORE_EXPORT AbstractFrame* frame() const;
+    WEBCORE_EXPORT Frame* frame() const;
     void detachFromFrame();
 
     void destroyJSWindowProxy(DOMWrapperWorld&);
@@ -90,12 +90,12 @@ public:
     WEBCORE_EXPORT AbstractDOMWindow* window() const;
 
 private:
-    explicit WindowProxy(AbstractFrame&);
+    explicit WindowProxy(Frame&);
 
     JSWindowProxy& createJSWindowProxy(DOMWrapperWorld&);
     WEBCORE_EXPORT JSWindowProxy& createJSWindowProxyWithInitializedScript(DOMWrapperWorld&);
 
-    WeakPtr<AbstractFrame> m_frame;
+    WeakPtr<Frame> m_frame;
     UniqueRef<ProxyMap> m_jsWindowProxies;
 };
 

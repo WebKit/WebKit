@@ -653,7 +653,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlushIncludingSubf
     updateScrollCoordinatedLayersAfterFlush();
 
     auto& frame = m_renderView.frameView().frame();
-    for (AbstractFrame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
+    for (auto* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(subframe);
         if (!localFrame)
             continue;
@@ -2573,7 +2573,7 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 
 void RenderLayerCompositor::invalidateEventRegionForAllFrames()
 {
-    for (AbstractFrame* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &page().mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

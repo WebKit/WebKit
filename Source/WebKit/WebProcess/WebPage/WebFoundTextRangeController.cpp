@@ -363,7 +363,7 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
 
     RefPtr mainFrameView = localMainFrame->view();
 
-    for (WebCore::AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (WebCore::Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;

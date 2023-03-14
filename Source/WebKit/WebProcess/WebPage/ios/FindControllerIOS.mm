@@ -142,7 +142,7 @@ void FindController::resetMatchIndex()
 
 static void setSelectionChangeUpdatesEnabledInAllFrames(WebPage& page, bool enabled)
 {
-    for (AbstractFrame* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
+    for (auto* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(coreFrame);
         if (!localFrame)
             continue;

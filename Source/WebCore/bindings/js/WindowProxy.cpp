@@ -52,7 +52,7 @@ static void collectGarbageAfterWindowProxyDestruction()
         GCController::singleton().garbageCollectSoon();
 }
 
-WindowProxy::WindowProxy(AbstractFrame& frame)
+WindowProxy::WindowProxy(Frame& frame)
     : m_frame(frame)
     , m_jsWindowProxies(makeUniqueRef<ProxyMap>())
 {
@@ -64,7 +64,7 @@ WindowProxy::~WindowProxy()
     ASSERT(m_jsWindowProxies->isEmpty());
 }
 
-AbstractFrame* WindowProxy::frame() const
+Frame* WindowProxy::frame() const
 {
     return m_frame.get();
 }

@@ -3961,7 +3961,7 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
         auto& coreWorld = newWorld->coreWorld();
-        for (RefPtr<AbstractFrame> frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get()))
                 localFrame->loader().client().dispatchGlobalObjectAvailable(coreWorld);
         }
@@ -3987,7 +3987,7 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
         break;
     case ContentAsStringIncludesChildFrames::Yes:
         StringBuilder builder;
-        for (RefPtr<AbstractFrame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+        for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
             if (auto webFrame = WebFrame::fromCoreFrame(*frame))
                 builder.append(builder.isEmpty() ? "" : "\n\n", webFrame->contentsAsString());
         }
@@ -4010,7 +4010,7 @@ void WebPage::getRenderTreeExternalRepresentation(CompletionHandler<void(const S
 
 static LocalFrame* frameWithSelection(Page* page)
 {
-    for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4401,7 +4401,7 @@ void WebPage::setDataDetectionResults(NSArray *detectionResults)
 
 void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
-    for (RefPtr<AbstractFrame> frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
@@ -4423,7 +4423,7 @@ void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetection
 void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDetectorTypes, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
     DataDetectionResult mainFrameResult;
-    for (RefPtr<AbstractFrame> frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
@@ -5288,7 +5288,7 @@ void WebPage::changeSpellingToWord(const String& word)
 
 void WebPage::unmarkAllMisspellings()
 {
-    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -5299,7 +5299,7 @@ void WebPage::unmarkAllMisspellings()
 
 void WebPage::unmarkAllBadGrammar()
 {
-    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -6181,7 +6181,7 @@ static bool pageContainsAnyHorizontalScrollbars(LocalFrame* mainFrame)
             return true;
     }
 
-    for (AbstractFrame* frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -6224,7 +6224,7 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
     send(Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents(m_canShortCircuitHorizontalWheelEvents));
 }
 
-AbstractFrame* WebPage::mainFrame() const
+Frame* WebPage::mainFrame() const
 {
     return m_page ? &m_page->mainFrame() : nullptr;
 }
@@ -8357,7 +8357,7 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::Ha
 void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
 {
     m_appHighlightsVisible = appHighlightVisibility;
-    for (RefPtr<AbstractFrame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+    for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;

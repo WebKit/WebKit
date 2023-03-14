@@ -1585,7 +1585,7 @@ bool DOMWindow::consumeTransientActivation()
     if (!hasTransientActivation())
         return false;
 
-    for (RefPtr<AbstractFrame> frame = this->frame() ? &this->frame()->tree().top() : nullptr; frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr<Frame> frame = this->frame() ? &this->frame()->tree().top() : nullptr; frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
@@ -1616,7 +1616,7 @@ void DOMWindow::notifyActivated(MonotonicTime activationTime)
     if (!securityOrigin)
         return;
 
-    RefPtr<AbstractFrame> descendant = frame();
+    RefPtr<Frame> descendant = frame();
     while ((descendant = descendant->tree().traverseNext(frame()))) {
         auto* localDescendant = dynamicDowncast<LocalFrame>(descendant.get());
         if (!localDescendant)

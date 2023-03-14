@@ -149,8 +149,8 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
     return parent->textZoomFactor();
 }
 
-LocalFrame::LocalFrame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, AbstractFrame* parent)
-    : AbstractFrame(page, identifier, FrameType::Local, ownerElement, parent)
+LocalFrame::LocalFrame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent)
+    : Frame(page, identifier, FrameType::Local, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -191,7 +191,7 @@ Ref<LocalFrame> LocalFrame::createSubframe(Page& page, UniqueRef<FrameLoaderClie
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame()));
 }
 
-Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, AbstractFrame& parent)
+Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, Frame& parent)
 {
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, &parent));
 }

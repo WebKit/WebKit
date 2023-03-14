@@ -220,7 +220,7 @@ void FrameLoader::HistoryController::saveDocumentState()
 // history item.
 void FrameLoader::HistoryController::saveDocumentAndScrollState()
 {
-    for (AbstractFrame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
+    for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

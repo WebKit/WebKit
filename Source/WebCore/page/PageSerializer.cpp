@@ -231,7 +231,7 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
         }
     }
 
-    for (AbstractFrame* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+    for (auto* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
         if (!localFrame)
             continue;

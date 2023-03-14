@@ -51,11 +51,11 @@ class TextStream;
 namespace WebCore {
 
 class AXObjectCache;
-class AbstractFrame;
 class ContainerNode;
 class Element;
 class EventRegionContext;
 class FloatSize;
+class Frame;
 class GraphicsContext;
 class HTMLFrameOwnerElement;
 class LocalFrame;
@@ -107,7 +107,7 @@ public:
     FrameViewType viewType() const final { return FrameViewType::Local; }
 
     // FIXME: This should return Frame. If it were a RemoteFrame, we would have a RemoteFrameView.
-    WEBCORE_EXPORT AbstractFrame& frame() const;
+    WEBCORE_EXPORT Frame& frame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
 

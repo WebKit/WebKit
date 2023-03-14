@@ -54,7 +54,7 @@ RenderWidget* HTMLFrameOwnerElement::renderWidget() const
     return downcast<RenderWidget>(renderer());
 }
 
-void HTMLFrameOwnerElement::setContentFrame(AbstractFrame& frame)
+void HTMLFrameOwnerElement::setContentFrame(Frame& frame)
 {
     // Make sure we will not end up with two frames referencing the same owner element.
     ASSERT(!m_contentFrame || m_contentFrame->ownerElement() != this);
@@ -136,7 +136,7 @@ bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) co
 {
     // We allow one level of self-reference because some websites depend on that, but we don't allow more than one.
     bool foundOneSelfReference = false;
-    for (AbstractFrame* frame = document().frame(); frame; frame = frame->tree().parent()) {
+    for (Frame* frame = document().frame(); frame; frame = frame->tree().parent()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

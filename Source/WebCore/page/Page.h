@@ -309,8 +309,8 @@ public:
 
     EditorClient& editorClient() { return m_editorClient.get(); }
 
-    AbstractFrame& mainFrame() { return m_mainFrame.get(); }
-    const AbstractFrame& mainFrame() const { return m_mainFrame.get(); }
+    Frame& mainFrame() { return m_mainFrame.get(); }
+    const Frame& mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -1094,7 +1094,7 @@ private:
     const std::unique_ptr<ProgressTracker> m_progress;
 
     const std::unique_ptr<BackForwardController> m_backForwardController;
-    Ref<AbstractFrame> m_mainFrame;
+    Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 
@@ -1395,7 +1395,7 @@ inline PageGroup& Page::group()
     return *m_group;
 }
 
-inline Page* AbstractFrame::page() const
+inline Page* Frame::page() const
 {
     return m_page.get();
 }

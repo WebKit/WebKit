@@ -148,7 +148,7 @@ void PageDebugger::reportException(JSGlobalObject* state, JSC::Exception* except
 void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 {
     for (auto& page : pageGroup.pages()) {
-        for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;

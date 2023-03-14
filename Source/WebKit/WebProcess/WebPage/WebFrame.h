@@ -52,8 +52,8 @@ class Array;
 }
 
 namespace WebCore {
-class AbstractFrame;
 class CertificateInfo;
+class Frame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
@@ -79,14 +79,14 @@ public:
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
     ~WebFrame();
 
-    void initWithCoreMainFrame(WebPage&, WebCore::AbstractFrame&, bool receivedMainFrameIdentifierFromUIProcess);
+    void initWithCoreMainFrame(WebPage&, WebCore::Frame&, bool receivedMainFrameIdentifierFromUIProcess);
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
     void invalidate();
 
     WebPage* page() const;
 
-    static WebFrame* fromCoreFrame(const WebCore::AbstractFrame&);
+    static WebFrame* fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
 
@@ -221,7 +221,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WeakPtr<WebCore::AbstractFrame> m_coreFrame;
+    WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;
 
     struct PolicyCheck {

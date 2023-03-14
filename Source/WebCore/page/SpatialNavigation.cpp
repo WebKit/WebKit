@@ -504,7 +504,7 @@ bool canScrollInDirection(const LocalFrame* frame, FocusDirection direction)
 static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const LayoutRect& initialRect)
 {
     LayoutRect rect = initialRect;
-    for (AbstractFrame* frame = initialFrame; frame; frame = frame->tree().parent()) {
+    for (Frame* frame = initialFrame; frame; frame = frame->tree().parent()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

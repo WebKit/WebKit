@@ -451,7 +451,7 @@ FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID 
 
     // Walk the frame tree to find the matching FrameView. This is not ideal, but avoids back pointers to FrameViews
     // from ScrollingTreeStateNodes.
-    for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

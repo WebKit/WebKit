@@ -114,7 +114,7 @@ bool MouseWheelRegionOverlay::updateRegion()
 #else
     auto region = makeUnique<Region>();
     
-    for (const AbstractFrame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

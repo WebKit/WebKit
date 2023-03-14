@@ -1246,7 +1246,7 @@ ExceptionOr<void> Internals::suspendAnimations() const
         return Exception { InvalidAccessError };
 
     document->ensureTimelinesController().suspendAnimations();
-    for (AbstractFrame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1264,7 +1264,7 @@ ExceptionOr<void> Internals::resumeAnimations() const
         return Exception { InvalidAccessError };
 
     document->ensureTimelinesController().resumeAnimations();
-    for (AbstractFrame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2996,7 +2996,7 @@ unsigned Internals::numberOfScrollableAreas()
     if (frame->view()->scrollableAreas())
         count += frame->view()->scrollableAreas()->computeSize();
 
-    for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
         if (!localChild)
             continue;

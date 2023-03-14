@@ -82,7 +82,7 @@ void DeviceOrientationAndMotionAccessController::shouldAllowAccess(const Documen
         if (permissionState != DeviceOrientationOrMotionPermissionState::Granted)
             return;
 
-        for (AbstractFrame* frame = m_topDocument.frame(); frame && frame->window(); frame = frame->tree().traverseNext()) {
+        for (Frame* frame = m_topDocument.frame(); frame && frame->window(); frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;

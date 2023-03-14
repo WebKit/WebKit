@@ -581,7 +581,7 @@ public:
 
     WebFrame& mainWebFrame() const { return m_mainFrame; }
 
-    WebCore::AbstractFrame* mainFrame() const; // May return nullptr.
+    WebCore::Frame* mainFrame() const; // May return nullptr.
     WebCore::FrameView* mainFrameView() const; // May return nullptr.
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();

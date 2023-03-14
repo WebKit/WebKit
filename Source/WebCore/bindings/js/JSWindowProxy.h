@@ -40,7 +40,7 @@ class Debugger;
 namespace WebCore {
 
 class AbstractDOMWindow;
-class AbstractFrame;
+class Frame;
 
 class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSProxy {
 public:
@@ -77,7 +77,7 @@ private:
 };
 
 // JSWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
-// It is, however, strongly owned by AbstractFrame via its WindowProxy, so we can get one from a WindowProxy.
+// It is, however, strongly owned by Frame via its WindowProxy, so we can get one from a WindowProxy.
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, WindowProxy&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(lexicalGlobalObject, *windowProxy) : JSC::jsNull(); }
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WindowProxy& windowProxy) { return toJS(lexicalGlobalObject, windowProxy); }
