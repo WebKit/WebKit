@@ -190,8 +190,7 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
     size_t formatLength = strlen(format);
     Vector<char> formatWithPrefix(prefixLength + formatLength + 1);
     memcpy(formatWithPrefix.data(), prefix, prefixLength);
-    memcpy(formatWithPrefix.data() + prefixLength, format, formatLength);
-    formatWithPrefix[prefixLength + formatLength] = 0;
+    strcpy(formatWithPrefix.data() + prefixLength, format);
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
     vprintf_stderr_common(formatWithPrefix.data(), args);

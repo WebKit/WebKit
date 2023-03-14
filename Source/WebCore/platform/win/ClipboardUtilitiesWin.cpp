@@ -179,8 +179,7 @@ HGLOBAL createGlobalData(const Vector<char>& vector)
     if (!vm)
         return 0;
     char* buffer = static_cast<char*>(GlobalLock(vm));
-    memcpy(buffer, vector.data(), vector.size());
-    buffer[vector.size()] = 0;
+    strcpy(buffer, vector.data());
     GlobalUnlock(vm);
     return vm;
 }
@@ -190,8 +189,8 @@ HGLOBAL createGlobalData(const uint8_t* data, size_t length)
     HGLOBAL vm = ::GlobalAlloc(GPTR, length + 1);
     if (!vm)
         return 0;
-    uint8_t* buffer = static_cast<uint8_t*>(GlobalLock(vm));
-    memcpy(buffer, data, length);
+    char* buffer = static_cast<char*>(GlobalLock(vm));
+    strcpy(buffer, static_cast<char*>(data));
     buffer[length] = 0;
     GlobalUnlock(vm);
     return vm;
@@ -752,8 +751,7 @@ void setUTF8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dat
     if (!medium.hGlobal)
         return;
     char* buffer = static_cast<char*>(GlobalLock(medium.hGlobal));
-    memcpy(buffer, charString.data(), stringLength);
-    buffer[stringLength] = 0;
+    strcpy(buffer, charString.data());
     GlobalUnlock(medium.hGlobal);
     data->SetData(format, &medium, FALSE);
     ::GlobalFree(medium.hGlobal);

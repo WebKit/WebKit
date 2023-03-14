@@ -243,7 +243,7 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
 
 #if USE(ACCELERATE) && USE(CG)
     if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat) {
-        // FIXME: Can thes both just use per-row memcpy?
+        // FIXME: Can these both just use per-row memcpy?
         if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
             convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
         else

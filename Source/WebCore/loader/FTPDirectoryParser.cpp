@@ -327,7 +327,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                         /* if VMS has been detected and there is only one token and that
                          * token was a VMS filename then this is a multiline VMS LIST entry.
                          */
-                        if (pos >= (sizeof(state.carryBuffer) - 1))
+                        if (pos > (sizeof(state.carryBuffer) - 1))
                             pos = (sizeof(state.carryBuffer) - 1); /* shouldn't happen */
                         memcpy(state.carryBuffer, p, pos);
                         state.carryBufferLength = pos;

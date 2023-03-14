@@ -111,7 +111,7 @@ void CString::grow(size_t newLength)
     ASSERT(newLength > length());
 
     auto newBuffer = CStringBuffer::createUninitialized(newLength);
-    memcpy(newBuffer->mutableData(), m_buffer->data(), length() + 1);
+    strcpy(newBuffer->mutableData(), m_buffer->data());
     m_buffer = WTFMove(newBuffer);
 }
 
