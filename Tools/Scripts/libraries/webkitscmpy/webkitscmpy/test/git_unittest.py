@@ -413,7 +413,7 @@ CommitDate: {time_c}
 
             self.assertEqual(repo.config()['user.name'], 'Tim Apple')
             self.assertEqual(repo.config()['core.filemode'], 'true')
-            self.assertEqual(repo.config()['remote.origin.url'], 'git@example.org:/mock/repository')
+            self.assertEqual(repo.config()['remote.origin.url'], 'git@example.org:mock/repository')
             self.assertEqual(repo.config()['svn-remote.svn.url'], 'https://svn.example.org/repository/webkit')
             self.assertEqual(repo.config()['svn-remote.svn.fetch'], 'trunk:refs/remotes/origin/main')
             self.assertEqual(repo.config()['webkitscmpy.history'], 'when-user-owned')

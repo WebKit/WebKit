@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import re
 import sys
 
@@ -48,7 +49,7 @@ class Clean(Command):
         )
 
     @classmethod
-    def cleanup(cls, repository, argument, remote_target=None):
+    def cleanup(cls, repository, argument, remote_target=None, verbosity=0):
         if not repository.is_git:
             sys.stderr.write('Can only clean up branches on git repositories\n')
             return 1
@@ -81,6 +82,9 @@ class Clean(Command):
 
             argument = pr.head
 
+        push_env = os.environ.copy()
+        push_env['VERBOSITY'] = str(verbosity)
+
         did_delete = False
         code = 0
         regex = re.compile(r'^{}-(?P<count>\d+)$'.format(argument))
@@ -90,7 +94,7 @@ class Clean(Command):
                 did_delete = True
         for to_delete in repository.branches_for(remote=target):
             if to_delete == argument or regex.match(to_delete) and target == 'fork':
-                code += run([repository.executable(), 'push', target, '--delete', to_delete], cwd=repository.root_path).returncode
+                code += run([repository.executable(), 'push', target, '--delete', to_delete], cwd=repository.root_path, env=push_env).returncode
                 did_delete = True
 
         if not did_delete:
@@ -113,7 +117,7 @@ class Clean(Command):
 
         result = 0
         for argument in args.arguments:
-            result += cls.cleanup(repository, argument, remote_target=args.remote)
+            result += cls.cleanup(repository, argument, remote_target=args.remote, verbosity=args.verbose)
         return result
 
 
@@ -155,7 +159,7 @@ class DeletePRBranches(Command):
                 continue
             if any([pr.opened for pr in prs]):
                 continue
-            result += Clean.cleanup(repository, branch, remote_target=args.remote)
+            result += Clean.cleanup(repository, branch, remote_target=args.remote, verbosity=args.verbose)
 
         for name in repository.config().keys():
             match = Clean.REMOTE_RE.match(name)
