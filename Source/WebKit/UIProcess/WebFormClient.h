@@ -42,7 +42,7 @@ class WebFormClient : public API::FormClient, API::Client<WKPageFormClientBase> 
 public:
     explicit WebFormClient(const WKPageFormClientBase*);
 
-    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, WTF::Function<void(void)>&&) override;
+    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& textFieldValues, const RefPtr<API::Object>& userData, WTF::Function<void(void)>&&) override;
 };
 
 } // namespace WebKit

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 class InjectedBundle;
@@ -45,8 +46,8 @@ public:
 
     virtual void didCreatePage(WebKit::InjectedBundle&, WebKit::WebPage&) { }
     virtual void willDestroyPage(WebKit::InjectedBundle&, WebKit::WebPage&) { }
-    virtual void didReceiveMessage(WebKit::InjectedBundle&, const WTF::String&, API::Object*) { }
-    virtual void didReceiveMessageToPage(WebKit::InjectedBundle&, WebKit::WebPage&, const WTF::String&, API::Object*) { }
+    virtual void didReceiveMessage(WebKit::InjectedBundle&, const WTF::String&, const RefPtr<API::Object>&) { }
+    virtual void didReceiveMessageToPage(WebKit::InjectedBundle&, WebKit::WebPage&, const WTF::String&, const RefPtr<API::Object>&) { }
 };
 
 } // namespace InjectedBundle

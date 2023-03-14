@@ -35,15 +35,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody)
+void WebPageInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
 
-    m_client.didReceiveMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
+    m_client.didReceiveMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
-void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
+void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy* page, const String& messageName, const RefPtr<API::Object>& messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
 {
     if (!m_client.didReceiveSynchronousMessageFromInjectedBundle
         && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener)
@@ -51,11 +51,11 @@ void WebPageInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle
 
     if (m_client.didReceiveSynchronousMessageFromInjectedBundle) {
         WKTypeRef returnDataRef = nullptr;
-        m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
+        m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody.get()), &returnDataRef, m_client.base.clientInfo);
         return completionHandler(adoptRef(toImpl(returnDataRef)));
     }
 
-    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
+    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(page), toAPI(messageName.impl()), toAPI(messageBody.get()), toAPI(API::MessageListener::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

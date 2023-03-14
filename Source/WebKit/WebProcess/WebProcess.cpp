@@ -1760,7 +1760,7 @@ void WebProcess::seedResourceLoadStatisticsForTesting(const RegistrableDomain& f
     completionHandler();
 }
 
-RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
+RefPtr<API::Object> WebProcess::transformHandlesToObjects(const RefPtr<API::Object>& object)
 {
     struct Transformer final : UserData::Transformer {
         Transformer(WebProcess& webProcess)
@@ -1811,7 +1811,7 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
     return UserData::transform(object, Transformer(*this));
 }
 
-RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
+RefPtr<API::Object> WebProcess::transformObjectsToHandles(const RefPtr<API::Object>& object)
 {
     struct Transformer final : UserData::Transformer {
         bool shouldTransformObject(const API::Object& object) const override

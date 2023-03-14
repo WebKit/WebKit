@@ -91,7 +91,7 @@ namespace WebKit {
 using namespace WebCore;
 using namespace JSC;
 
-RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& parameters, API::Object* initializationUserData)
+RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& parameters, const RefPtr<API::Object>& initializationUserData)
 {
     TraceScope scope(TracePointCode::CreateInjectedBundleStart, TracePointCode::CreateInjectedBundleEnd);
     
@@ -130,13 +130,13 @@ void InjectedBundle::setServiceWorkerProxyCreationCallback(void (*callback)(uint
 #endif
 }
 
-void InjectedBundle::postMessage(const String& messageName, API::Object* messageBody)
+void InjectedBundle::postMessage(const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     auto& webProcess = WebProcess::singleton();
     webProcess.parentProcessConnection()->send(Messages::WebProcessPool::HandleMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
 }
 
-void InjectedBundle::postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void InjectedBundle::postSynchronousMessage(const String& messageName, const RefPtr<API::Object>& messageBody, RefPtr<API::Object>& returnData)
 {
     auto& webProcess = WebProcess::singleton();
     auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
@@ -272,12 +272,12 @@ void InjectedBundle::willDestroyPage(WebPage* page)
     m_client->willDestroyPage(*this, *page);
 }
 
-void InjectedBundle::didReceiveMessage(const String& messageName, API::Object* messageBody)
+void InjectedBundle::didReceiveMessage(const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     m_client->didReceiveMessage(*this, messageName, messageBody);
 }
 
-void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, API::Object* messageBody)
+void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     m_client->didReceiveMessageToPage(*this, *page, messageName, messageBody);
 }

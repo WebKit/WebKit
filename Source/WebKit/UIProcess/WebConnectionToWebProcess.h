@@ -43,8 +43,8 @@ private:
     WebConnectionToWebProcess(WebProcessProxy*);
 
     // WebConnection
-    RefPtr<API::Object> transformHandlesToObjects(API::Object*) override;
-    RefPtr<API::Object> transformObjectsToHandles(API::Object*) override;
+    RefPtr<API::Object> transformHandlesToObjects(const RefPtr<API::Object>&) override;
+    RefPtr<API::Object> transformObjectsToHandles(const RefPtr<API::Object>&) override;
     bool hasValidConnection() const override;
 
     // IPC::MessageSender

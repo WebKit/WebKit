@@ -77,19 +77,19 @@ struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
-    static RefPtr<InjectedBundle> create(WebProcessCreationParameters&, API::Object* initializationUserData);
+    static RefPtr<InjectedBundle> create(WebProcessCreationParameters&, const RefPtr<API::Object>& initializationUserData);
 
     ~InjectedBundle();
 
-    bool initialize(const WebProcessCreationParameters&, API::Object* initializationUserData);
+    bool initialize(const WebProcessCreationParameters&, const RefPtr<API::Object>& initializationUserData);
 
     void setBundleParameter(const String&, const IPC::DataReference&);
     void setBundleParameters(const IPC::DataReference&);
 
     // API
     void setClient(std::unique_ptr<API::InjectedBundle::Client>&&);
-    void postMessage(const String&, API::Object*);
-    void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
+    void postMessage(const String&, const RefPtr<API::Object>&);
+    void postSynchronousMessage(const String&, const RefPtr<API::Object>&, RefPtr<API::Object>& returnData);
     void setServiceWorkerProxyCreationCallback(void (*)(uint64_t));
 
     WebConnection* webConnectionToUIProcess() const;
@@ -120,8 +120,8 @@ public:
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
-    void didReceiveMessage(const String&, API::Object*);
-    void didReceiveMessageToPage(WebPage*, const String&, API::Object*);
+    void didReceiveMessage(const String&, const RefPtr<API::Object>&);
+    void didReceiveMessageToPage(WebPage*, const String&, const RefPtr<API::Object>&);
 
     static void reportException(JSContextRef, JSValueRef exception);
 

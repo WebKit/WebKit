@@ -32,12 +32,12 @@
 
 namespace WebKit {
 
-void WebConnectionClient::didReceiveMessage(WebConnection* connection, const String& messageName, API::Object* messageBody)
+void WebConnectionClient::didReceiveMessage(WebConnection* connection, const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     if (!m_client.didReceiveMessage)
         return;
     
-    m_client.didReceiveMessage(toAPI(connection), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
+    m_client.didReceiveMessage(toAPI(connection), toAPI(messageName.impl()), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
 void WebConnectionClient::didClose(WebConnection* connection)

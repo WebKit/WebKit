@@ -44,7 +44,7 @@ class WebConnection;
 
 class WebConnectionClient : public API::Client<WKConnectionClientBase> {
 public:
-    void didReceiveMessage(WebConnection*, const String&, API::Object*);
+    void didReceiveMessage(WebConnection*, const String&, const RefPtr<API::Object>&);
     void didClose(WebConnection*);
 };
 

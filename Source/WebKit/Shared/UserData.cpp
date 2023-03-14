@@ -124,7 +124,7 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
     return transformer.transformObject(object);
 }
 
-RefPtr<API::Object> UserData::transform(API::Object* object, const Transformer& transformer)
+RefPtr<API::Object> UserData::transform(const RefPtr<API::Object>& object, const Transformer& transformer)
 {
     if (!object)
         return nullptr;
@@ -145,7 +145,7 @@ bool UserData::decode(IPC::Decoder& decoder, UserData& userData)
     return decode(decoder, userData.m_object);
 }
 
-void UserData::encode(IPC::Encoder& encoder, const API::Object* object)
+void UserData::encode(IPC::Encoder& encoder, const RefPtr<API::Object>& object)
 {
     if (!object) {
         encoder << API::Object::Type::Null;

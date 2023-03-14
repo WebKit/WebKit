@@ -608,12 +608,12 @@ void PageClientImpl::restorePageCenterAndScale(std::optional<WebCore::FloatPoint
     [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
 }
 
-void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, API::Object* userData)
+void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const RefPtr<API::Object>& userData)
 {
     MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);
 
     NSObject <NSSecureCoding> *userObject = nil;
-    if (API::Data* data = static_cast<API::Data*>(userData)) {
+    if (API::Data* data = static_cast<API::Data*>(userData.get())) {
         auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
         auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
         unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;

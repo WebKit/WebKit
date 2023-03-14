@@ -92,12 +92,12 @@ ContextMenuItem WebContextMenuItemData::core() const
     return ContextMenuItem(m_action, m_title, m_enabled, m_checked, subMenuItems, m_indentationLevel);
 }
 
-API::Object* WebContextMenuItemData::userData() const
+RefPtr<API::Object> WebContextMenuItemData::userData() const
 {
-    return m_userData.get();
+    return m_userData;
 }
 
-void WebContextMenuItemData::setUserData(API::Object* userData)
+void WebContextMenuItemData::setUserData(const RefPtr<API::Object>& userData)
 {
     m_userData = userData;
 }

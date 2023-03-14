@@ -617,7 +617,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
     }).get()];
 }
 
-void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest& request, API::Navigation* navigation, API::Object* userInfo)
+void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest& request, API::Navigation* navigation, const RefPtr<API::Object>& userInfo)
 {
     if (!m_navigationState)
         return;
@@ -644,7 +644,7 @@ void NavigationState::NavigationClient::didStartProvisionalLoadForFrame(WebPageP
         [(id <WKNavigationDelegatePrivate>)navigationDelegate.get() _webView:m_navigationState->m_webView didStartProvisionalLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page))];
 }
 
-void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object*)
+void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNavigation(WebPageProxy& page, API::Navigation* navigation, const RefPtr<API::Object>&)
 {
     if (!m_navigationState)
         return;
@@ -730,7 +730,7 @@ static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, c
     return adoptNS([[NSError alloc] initWithDomain:originalError.domain code:originalError.code userInfo:userInfo.get()]);
 }
 
-void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(WebPageProxy& page, FrameInfoData&& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object*)
+void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(WebPageProxy& page, FrameInfoData&& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, const RefPtr<API::Object>&)
 {
     if (!m_navigationState)
         return;
@@ -768,7 +768,7 @@ void NavigationState::NavigationClient::didFailProvisionalLoadWithErrorForFrame(
         [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didFailProvisionalLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) withError:errorWithRecoveryAttempter.get()];
 }
 
-void NavigationState::NavigationClient::didCommitNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object*)
+void NavigationState::NavigationClient::didCommitNavigation(WebPageProxy& page, API::Navigation* navigation, const RefPtr<API::Object>&)
 {
     if (!m_navigationState)
         return;
@@ -795,7 +795,7 @@ void NavigationState::NavigationClient::didCommitLoadForFrame(WebKit::WebPagePro
         [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState->m_webView didCommitLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page))];
 }
 
-void NavigationState::NavigationClient::didFinishDocumentLoad(WebPageProxy& page, API::Navigation* navigation, API::Object*)
+void NavigationState::NavigationClient::didFinishDocumentLoad(WebPageProxy& page, API::Navigation* navigation, const RefPtr<API::Object>&)
 {
     if (!m_navigationState)
         return;
@@ -812,7 +812,7 @@ void NavigationState::NavigationClient::didFinishDocumentLoad(WebPageProxy& page
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState->m_webView navigationDidFinishDocumentLoad:wrapper(navigation)];
 }
 
-void NavigationState::NavigationClient::didFinishNavigation(WebPageProxy&, API::Navigation* navigation, API::Object*)
+void NavigationState::NavigationClient::didFinishNavigation(WebPageProxy&, API::Navigation* navigation, const RefPtr<API::Object>&)
 {
     if (!m_navigationState)
         return;
@@ -865,7 +865,7 @@ void NavigationState::NavigationClient::didChangeLookalikeCharacters(WebPageProx
         [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didChangeLookalikeCharactersFromURL:originalURL toURL:adjustedURL];
 }
 
-void NavigationState::NavigationClient::didFailNavigationWithError(WebPageProxy& page, const FrameInfoData& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userInfo)
+void NavigationState::NavigationClient::didFailNavigationWithError(WebPageProxy& page, const FrameInfoData& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, const RefPtr<API::Object>& userInfo)
 {
     if (!m_navigationState)
         return;
@@ -898,7 +898,7 @@ void NavigationState::NavigationClient::didFailLoadWithErrorForFrame(WebPageProx
         [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didFailLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) withError:errorWithRecoveryAttempter.get()];
 }
 
-void NavigationState::NavigationClient::didSameDocumentNavigation(WebPageProxy&, API::Navigation* navigation, SameDocumentNavigationType navigationType, API::Object*)
+void NavigationState::NavigationClient::didSameDocumentNavigation(WebPageProxy&, API::Navigation* navigation, SameDocumentNavigationType navigationType, const RefPtr<API::Object>&)
 {
     if (!m_navigationState)
         return;

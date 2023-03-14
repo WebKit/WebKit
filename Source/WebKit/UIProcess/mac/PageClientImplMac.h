@@ -249,8 +249,8 @@ private:
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     void handleControlledElementIDResponse(const String&) override;
 
-    void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) override;
-    NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) override;
+    void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, const RefPtr<API::Object>&) override;
+    NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, const RefPtr<API::Object>&) override;
 
     void didHandleAcceptedCandidate() override;
 

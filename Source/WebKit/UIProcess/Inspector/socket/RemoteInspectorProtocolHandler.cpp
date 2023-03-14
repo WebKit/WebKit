@@ -98,7 +98,7 @@ public:
     LoaderClient(Function<void()>&& loadedCallback)
         : m_loadedCallback { WTFMove(loadedCallback) } { }
 
-    void didFinishLoadForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) final
+    void didFinishLoadForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, const RefPtr<API::Object>&) final
     {
         m_loadedCallback();
     }

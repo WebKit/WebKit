@@ -327,7 +327,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
 
 - (void)_callReplyWithID:(uint64_t)replyID blockInvocation:(const WebKit::UserData&)blockInvocation
 {
-    auto encodedInvocation = blockInvocation.object();
+    auto encodedInvocation = blockInvocation.object().get();
     if (!encodedInvocation || encodedInvocation->type() != API::Object::Type::Dictionary)
         return;
 

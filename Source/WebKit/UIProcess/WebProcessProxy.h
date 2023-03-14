@@ -290,8 +290,8 @@ public:
 
     void requestTermination(ProcessTerminationReason);
 
-    RefPtr<API::Object> transformHandlesToObjects(API::Object*);
-    static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
+    RefPtr<API::Object> transformHandlesToObjects(const RefPtr<API::Object>&);
+    static RefPtr<API::Object> transformObjectsToHandles(const RefPtr<API::Object>&);
 
 #if PLATFORM(COCOA)
     RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);

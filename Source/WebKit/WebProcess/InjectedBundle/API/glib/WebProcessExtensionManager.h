@@ -45,7 +45,7 @@ class WebProcessExtensionManager {
 public:
     __attribute__((visibility("default"))) static WebProcessExtensionManager& singleton();
 
-    __attribute__((visibility("default"))) void initialize(InjectedBundle*, API::Object*);
+    __attribute__((visibility("default"))) void initialize(InjectedBundle*, const RefPtr<API::Object>&);
 
     WebKitWebProcessExtension* extension() const { return m_extension.get(); }
 

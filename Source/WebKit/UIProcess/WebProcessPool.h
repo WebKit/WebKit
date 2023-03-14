@@ -231,7 +231,7 @@ public:
 
     void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTFMove(userData); }
 
-    void postMessageToInjectedBundle(const String&, API::Object*);
+    void postMessageToInjectedBundle(const String&, const RefPtr<API::Object>&);
 
     void populateVisitedLinks();
 

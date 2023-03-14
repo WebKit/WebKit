@@ -51,12 +51,12 @@ void WebConnectionToUIProcess::invalidate()
 
 // WebConnection
 
-RefPtr<API::Object> WebConnectionToUIProcess::transformHandlesToObjects(API::Object* object)
+RefPtr<API::Object> WebConnectionToUIProcess::transformHandlesToObjects(const RefPtr<API::Object>& object)
 {
     return m_process->transformHandlesToObjects(object);
 }
 
-RefPtr<API::Object> WebConnectionToUIProcess::transformObjectsToHandles(API::Object* object)
+RefPtr<API::Object> WebConnectionToUIProcess::transformObjectsToHandles(const RefPtr<API::Object>& object)
 {
     return m_process->transformObjectsToHandles(object);
 }

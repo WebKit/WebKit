@@ -48,11 +48,11 @@ void WebProcessExtensionManager::scanModules(const String& webProcessExtensionsD
     }
 }
 
-static void parseUserData(API::Object* userData, String& webProcessExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
+static void parseUserData(const RefPtr<API::Object>& userData, String& webProcessExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
 {
     ASSERT(userData->type() == API::Object::Type::String);
 
-    CString userDataString = static_cast<API::String*>(userData)->string().utf8();
+    CString userDataString = static_cast<API::String*>(userData.get())->string().utf8();
     GRefPtr<GVariant> variant = g_variant_parse(nullptr, userDataString.data(),
         userDataString.data() + userDataString.length(), nullptr, nullptr);
 
@@ -96,7 +96,7 @@ bool WebProcessExtensionManager::initializeWebProcessExtension(Module* extension
     return false;
 }
 
-void WebProcessExtensionManager::initialize(InjectedBundle* bundle, API::Object* userDataObject)
+void WebProcessExtensionManager::initialize(InjectedBundle* bundle, const RefPtr<API::Object>& userDataObject)
 {
     ASSERT(bundle);
     ASSERT(userDataObject);

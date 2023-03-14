@@ -33,7 +33,7 @@ namespace API {
 class MessageListener : public ObjectImpl<Object::Type::MessageListener> {
     WTF_MAKE_NONCOPYABLE(MessageListener);
 public:
-    static Ref<MessageListener> create(CompletionHandler<void(RefPtr<API::Object>)>&& reply)
+    static Ref<MessageListener> create(CompletionHandler<void(RefPtr<API::Object>&&)>&& reply)
     {
         return adoptRef(*new MessageListener(WTFMove(reply)));
     }
@@ -44,10 +44,10 @@ public:
     }
 
 private:
-    MessageListener(CompletionHandler<void(RefPtr<API::Object>)>&& reply)
+    MessageListener(CompletionHandler<void(RefPtr<API::Object>&&)>&& reply)
         : m_reply(WTFMove(reply)) { }
 
-    CompletionHandler<void(RefPtr<API::Object>)> m_reply;
+    CompletionHandler<void(RefPtr<API::Object>&&)> m_reply;
 };
 
 } // namespace API

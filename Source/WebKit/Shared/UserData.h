@@ -47,14 +47,14 @@ public:
         virtual bool shouldTransformObject(const API::Object&) const = 0;
         virtual RefPtr<API::Object> transformObject(API::Object&) const = 0;
     };
-    static RefPtr<API::Object> transform(API::Object*, const Transformer&);
+    static RefPtr<API::Object> transform(const RefPtr<API::Object>&, const Transformer&);
 
-    API::Object* object() const { return m_object.get(); }
+    RefPtr<API::Object> object() const { return m_object; }
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, UserData&) WARN_UNUSED_RETURN;
 
-    static void encode(IPC::Encoder&, const API::Object*);
+    static void encode(IPC::Encoder&, const RefPtr<API::Object>&);
     static bool decode(IPC::Decoder&, RefPtr<API::Object>&) WARN_UNUSED_RETURN;
 
 private:

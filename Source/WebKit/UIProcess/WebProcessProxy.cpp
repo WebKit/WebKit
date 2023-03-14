@@ -1492,7 +1492,7 @@ void WebProcessProxy::disableSuddenTermination()
     ++m_numberOfTimesSuddenTerminationWasDisabled;
 }
 
-RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* object)
+RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(const RefPtr<API::Object>& object)
 {
     struct Transformer final : UserData::Transformer {
         Transformer(WebProcessProxy& webProcessProxy)
@@ -1542,10 +1542,10 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
         WebProcessProxy& m_webProcessProxy;
     };
 
-    return UserData::transform(object, Transformer(*this));
+    return UserData::transform(object.get(), Transformer(*this));
 }
 
-RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* object)
+RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(const RefPtr<API::Object>& object)
 {
     struct Transformer final : UserData::Transformer {
         bool shouldTransformObject(const API::Object& object) const override
@@ -1584,7 +1584,7 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
         }
     };
 
-    return UserData::transform(object, Transformer());
+    return UserData::transform(object.get(), Transformer());
 }
 
 void WebProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&& completionHandler)

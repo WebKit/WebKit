@@ -226,7 +226,7 @@ UIDelegate::ContextMenuClient::~ContextMenuClient()
 {
 }
 
-void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *menu, const ContextMenuContextData& data, API::Object* userInfo, CompletionHandler<void(RetainPtr<NSMenu>&&)>&& completionHandler)
+void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *menu, const ContextMenuContextData& data, const RefPtr<API::Object>& userInfo, CompletionHandler<void(RetainPtr<NSMenu>&&)>&& completionHandler)
 {
     if (!m_uiDelegate)
         return completionHandler(menu);
@@ -271,7 +271,7 @@ UIDelegate::UIClient::~UIClient()
 }
 
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers, API::Object* userInfo)
+void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers, const RefPtr<API::Object>& userInfo)
 {
     if (!m_uiDelegate)
         return;
@@ -499,7 +499,7 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
     }).get()];
 }
 
-void UIDelegate::UIClient::didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object* userInfo)
+void UIDelegate::UIClient::didResignInputElementStrongPasswordAppearance(WebPageProxy&, const RefPtr<API::Object>& userInfo)
 {
     if (!m_uiDelegate)
         return;
@@ -1022,7 +1022,7 @@ void UIDelegate::UIClient::toolbarsAreVisible(WebPageProxy&, Function<void(bool)
     }).get()];
 }
 
-void UIDelegate::UIClient::didClickAutoFillButton(WebPageProxy&, API::Object* userInfo)
+void UIDelegate::UIClient::didClickAutoFillButton(WebPageProxy&, const RefPtr<API::Object>& userInfo)
 {
     if (!m_uiDelegate)
         return;

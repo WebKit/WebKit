@@ -54,7 +54,7 @@ namespace API {
 struct SubstituteData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
+    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, const RefPtr<API::Object>& userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
         : content(WTFMove(content))
         , MIMEType(MIMEType)
         , encoding(encoding)

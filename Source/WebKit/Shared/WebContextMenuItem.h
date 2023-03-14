@@ -53,8 +53,8 @@ public:
 
     Ref<API::Array> submenuItemsAsAPIArray() const;
 
-    API::Object* userData() const;
-    void setUserData(API::Object*);
+    RefPtr<API::Object> userData() const;
+    void setUserData(const RefPtr<API::Object>&);
 
     const WebContextMenuItemData& data() { return m_webContextMenuItemData; }
 

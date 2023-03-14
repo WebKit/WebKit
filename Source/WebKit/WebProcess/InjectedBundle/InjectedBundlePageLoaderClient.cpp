@@ -51,12 +51,12 @@ InjectedBundlePageLoaderClient::InjectedBundlePageLoaderClient(const WKBundlePag
     ASSERT(!m_client.shouldGoToBackForwardListItem);
 }
 
-void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage& page, const ResourceRequest& request, API::Object* userData)
+void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage& page, const ResourceRequest& request, const RefPtr<API::Object>& userData)
 {
     if (!m_client.willLoadURLRequest)
         return;
 
-    m_client.willLoadURLRequest(toAPI(&page), toAPI(request), toAPI(userData), m_client.base.clientInfo);
+    m_client.willLoadURLRequest(toAPI(&page), toAPI(request), toAPI(userData.get()), m_client.base.clientInfo);
 }
 
 static void releaseSharedBuffer(unsigned char*, const void* data)
@@ -65,7 +65,7 @@ static void releaseSharedBuffer(unsigned char*, const void* data)
     static_cast<const SharedBuffer*>(data)->deref();
 }
 
-void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const ResourceRequest& request, RefPtr<FragmentedSharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& unreachableURL, API::Object* userData)
+void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const ResourceRequest& request, RefPtr<FragmentedSharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& unreachableURL, const RefPtr<API::Object>& userData)
 {
     if (!m_client.willLoadDataRequest)
         return;
@@ -77,7 +77,7 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
         data = API::Data::createWithoutCopying(contiguousBuffer->data(), contiguousBuffer->size(), releaseSharedBuffer, contiguousBuffer.ptr());
     }
 
-    m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.base.clientInfo);
+    m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData.get()), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)

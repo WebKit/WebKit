@@ -95,23 +95,23 @@ private:
         ~NavigationClient();
 
     private:
-        void didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest&, API::Navigation*, API::Object*) override;
+        void didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest&, API::Navigation*, const RefPtr<API::Object>&) override;
         void didStartProvisionalLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
-        void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, const RefPtr<API::Object>&) override;
         void willPerformClientRedirect(WebPageProxy&, const WTF::String&, double) override;
         void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
         void didCancelClientRedirect(WebPageProxy&) override;
-        void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&&, API::Navigation*, const WebCore::ResourceError&, const RefPtr<API::Object>&) override;
         void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
-        void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        void didCommitNavigation(WebPageProxy&, API::Navigation*, const RefPtr<API::Object>&) override;
         void didCommitLoadForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
-        void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, API::Object*) override;
-        void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, const RefPtr<API::Object>&) override;
+        void didFinishNavigation(WebPageProxy&, API::Navigation*, const RefPtr<API::Object>&) override;
         void didFinishLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
         void didFailLoadDueToNetworkConnectionIntegrity(WebPageProxy&, const URL&) override;
-        void didFailNavigationWithError(WebPageProxy&, const FrameInfoData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        void didFailNavigationWithError(WebPageProxy&, const FrameInfoData&, API::Navigation*, const WebCore::ResourceError&, const RefPtr<API::Object>&) override;
         void didFailLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
-        void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
+        void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, const RefPtr<API::Object>&) override;
         void didChangeLookalikeCharacters(WebPageProxy&, const URL&, const URL&) override;
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;

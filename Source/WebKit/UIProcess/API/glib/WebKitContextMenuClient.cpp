@@ -35,12 +35,12 @@ public:
     }
 
 private:
-    void getContextMenuFromProposedMenu(WebPageProxy&, Vector<Ref<WebKit::WebContextMenuItem>>&& proposedMenu, WebKit::WebContextMenuListenerProxy& contextMenuListener, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
+    void getContextMenuFromProposedMenu(WebPageProxy&, Vector<Ref<WebKit::WebContextMenuItem>>&& proposedMenu, WebKit::WebContextMenuListenerProxy& contextMenuListener, const WebHitTestResultData& hitTestResultData, const RefPtr<API::Object>& userData) override
     {
         GRefPtr<GVariant> variant;
         if (userData) {
             ASSERT(userData->type() == API::Object::Type::String);
-            CString userDataString = static_cast<API::String*>(userData)->string().utf8();
+            CString userDataString = static_cast<API::String*>(userData.get())->string().utf8();
             variant = adoptGRef(g_variant_parse(nullptr, userDataString.data(), userDataString.data() + userDataString.length(), nullptr, nullptr));
         }
 

@@ -1290,9 +1290,9 @@ public:
     void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
     bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
 
-    void postMessage(const String& messageName, API::Object* messageBody);
-    void postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
-    void postMessageIgnoringFullySynchronousMode(const String& messageName, API::Object* messageBody);
+    void postMessage(const String& messageName, const RefPtr<API::Object>& messageBody);
+    void postSynchronousMessageForTesting(const String& messageName, const RefPtr<API::Object>& messageBody, RefPtr<API::Object>& returnData);
+    void postMessageIgnoringFullySynchronousMode(const String& messageName, const RefPtr<API::Object>& messageBody);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setInputMethodState(WebCore::Element*);

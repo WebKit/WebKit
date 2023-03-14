@@ -44,8 +44,8 @@ class WebPageProxy;
 class WebPageInjectedBundleClient : public API::Client<WKPageInjectedBundleClientBase> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&);
+    void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, const RefPtr<API::Object>&);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, const RefPtr<API::Object>&, CompletionHandler<void(RefPtr<API::Object>)>&&);
 };
 
 } // namespace WebKit

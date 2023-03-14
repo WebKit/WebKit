@@ -47,8 +47,8 @@ class WebContextInjectedBundleClient : public API::InjectedBundleClient, public 
 public:
     explicit WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase*);
 
-    void didReceiveMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, API::Object*) override;
-    void didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&) override;
+    void didReceiveMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, const RefPtr<API::Object>&) override;
+    void didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool&, const WTF::String&, const RefPtr<API::Object>&, CompletionHandler<void(RefPtr<API::Object>)>&&) override;
     RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&) override;
 };
 

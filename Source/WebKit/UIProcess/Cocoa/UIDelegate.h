@@ -74,7 +74,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const ContextMenuContextData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
+        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const ContextMenuContextData&, const RefPtr<API::Object>&, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
@@ -104,14 +104,14 @@ private:
         void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void(unsigned long long)>&& completionHandler) final;
         bool lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType) final;
         void unlockScreenOrientation(WebPageProxy&) final;
-        void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
+        void didResignInputElementStrongPasswordAppearance(WebPageProxy&, const RefPtr<API::Object>&) final;
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
         void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>, API::Object*);
+        void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>, const RefPtr<API::Object>&);
 #endif
 
 #if PLATFORM(MAC)
@@ -134,7 +134,7 @@ private:
         void drawHeader(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
         void drawFooter(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
 
-        void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
+        void didClickAutoFillButton(WebPageProxy&, const RefPtr<API::Object>&) final;
         void toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&&) final;
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;

@@ -1211,7 +1211,7 @@ DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPa
     return downloadProxy;
 }
 
-void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
+void WebProcessPool::postMessageToInjectedBundle(const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     for (auto& process : m_processes) {
         // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.

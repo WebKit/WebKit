@@ -58,8 +58,8 @@ public:
     
     WebCore::ContextMenuItem core() const;
     
-    API::Object* userData() const;
-    void setUserData(API::Object*);
+    RefPtr<API::Object> userData() const;
+    void setUserData(const RefPtr<API::Object>&);
     
     void encode(IPC::Encoder&) const;
     static std::optional<WebContextMenuItemData> decode(IPC::Decoder&);

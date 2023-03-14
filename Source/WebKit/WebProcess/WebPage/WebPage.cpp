@@ -7349,17 +7349,17 @@ void WebPage::didChangeScrollOffsetForFrame(LocalFrame* frame)
     updateMainFrameScrollOffsetPinning();
 }
 
-void WebPage::postMessage(const String& messageName, API::Object* messageBody)
+void WebPage::postMessage(const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     send(Messages::WebPageProxy::HandleMessage(messageName, UserData(WebProcess::singleton().transformObjectsToHandles(messageBody))));
 }
 
-void WebPage::postMessageIgnoringFullySynchronousMode(const String& messageName, API::Object* messageBody)
+void WebPage::postMessageIgnoringFullySynchronousMode(const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     send(Messages::WebPageProxy::HandleMessage(messageName, UserData(WebProcess::singleton().transformObjectsToHandles(messageBody))), IPC::SendOption::IgnoreFullySynchronousMode);
 }
 
-void WebPage::postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void WebPage::postSynchronousMessageForTesting(const String& messageName, const RefPtr<API::Object>& messageBody, RefPtr<API::Object>& returnData)
 {
     auto& webProcess = WebProcess::singleton();
 

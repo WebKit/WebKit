@@ -47,7 +47,7 @@ void WebConnection::initializeConnectionClient(const WKConnectionClientBase* cli
     m_client.initialize(client);
 }
 
-void WebConnection::postMessage(const String& messageName, API::Object* messageBody)
+void WebConnection::postMessage(const String& messageName, const RefPtr<API::Object>& messageBody)
 {
     if (!hasValidConnection())
         return;

@@ -71,12 +71,12 @@ Ref<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
     return API::Array::create(WTFMove(submenuItems));
 }
 
-API::Object* WebContextMenuItem::userData() const
+RefPtr<API::Object> WebContextMenuItem::userData() const
 {
     return m_webContextMenuItemData.userData();
 }
 
-void WebContextMenuItem::setUserData(API::Object* userData)
+void WebContextMenuItem::setUserData(const RefPtr<API::Object>& userData)
 {
     m_webContextMenuItemData.setUserData(userData);
 }

@@ -55,8 +55,8 @@ class PageLoaderClient {
 public:
     virtual ~PageLoaderClient() = default;
 
-    virtual void willLoadURLRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, API::Object*) { }
-    virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, RefPtr<WebCore::FragmentedSharedBuffer>, const WTF::String&, const WTF::String&, const WTF::URL&, API::Object*) { }
+    virtual void willLoadURLRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, const RefPtr<API::Object>&) { }
+    virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, RefPtr<WebCore::FragmentedSharedBuffer>, const WTF::String&, const WTF::String&, const WTF::URL&, const RefPtr<API::Object>&) { }
 
     virtual void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }

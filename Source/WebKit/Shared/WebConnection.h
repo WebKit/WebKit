@@ -41,14 +41,14 @@ public:
     virtual ~WebConnection();
 
     void initializeConnectionClient(const WKConnectionClientBase*);
-    void postMessage(const String&, API::Object*);
+    void postMessage(const String&, const RefPtr<API::Object>&);
     void didClose();
 
 protected:
     explicit WebConnection();
 
-    virtual RefPtr<API::Object> transformHandlesToObjects(API::Object*) = 0;
-    virtual RefPtr<API::Object> transformObjectsToHandles(API::Object*) = 0;
+    virtual RefPtr<API::Object> transformHandlesToObjects(const RefPtr<API::Object>&) = 0;
+    virtual RefPtr<API::Object> transformObjectsToHandles(const RefPtr<API::Object>&) = 0;
 
     // IPC::MessageReceiver
     // Implemented in generated WebConnectionMessageReceiver.cpp

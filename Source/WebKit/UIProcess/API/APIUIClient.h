@@ -110,7 +110,7 @@ public:
     virtual void runJavaScriptPrompt(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
 
     virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
-    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy&, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>, Object*) { }
+    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy&, const WebKit::WebHitTestResultData&, OptionSet<WebKit::WebEventModifier>, const RefPtr<Object>&) { }
 
     virtual void didNotHandleKeyEvent(WebKit::WebPageProxy*, const WebKit::NativeWebKeyboardEvent&) { }
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }
@@ -196,9 +196,9 @@ public:
     virtual void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebKit::WebFrameProxy& webFrameProxy, WebKit::FrameInfoData&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
 #endif
 
-    virtual void didClickAutoFillButton(WebKit::WebPageProxy&, Object*) { }
+    virtual void didClickAutoFillButton(WebKit::WebPageProxy&, const RefPtr<Object>&) { }
 
-    virtual void didResignInputElementStrongPasswordAppearance(WebKit::WebPageProxy&, Object*) { }
+    virtual void didResignInputElementStrongPasswordAppearance(WebKit::WebPageProxy&, const RefPtr<Object>&) { }
 
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 
