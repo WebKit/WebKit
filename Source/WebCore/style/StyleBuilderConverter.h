@@ -54,6 +54,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "GridPositionsResolver.h"
 #include "Length.h"
+#include "ListStyleType.h"
 #include "LocalFrame.h"
 #include "QuotesData.h"
 #include "SVGElementTypeHelpers.h"
@@ -137,6 +138,7 @@ public:
     static std::optional<float> convertPerspective(BuilderState&, const CSSValue&);
     static std::optional<Length> convertMarqueeIncrement(BuilderState&, const CSSValue&);
     static std::optional<FilterOperations> convertFilterOperations(BuilderState&, const CSSValue&);
+    static ListStyleType convertListStyleType(const BuilderState&, const CSSValue&);
 #if PLATFORM(IOS_FAMILY)
     static bool convertTouchCallout(BuilderState&, const CSSValue&);
 #endif
@@ -283,6 +285,16 @@ inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderS
         ASSERT_NOT_REACHED();
         return Length();
     }
+}
+
+inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState&, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isValueID())
+        return { fromCSSValue<ListStyleType::Type>(primitiveValue), nullAtom() };
+    if (primitiveValue.isCustomIdent())
+        return { ListStyleType::Type::CustomCounterStyle, makeAtomString(primitiveValue.stringValue()) };
+    return { ListStyleType::Type::String, makeAtomString(primitiveValue.stringValue()) };
 }
 
 inline Length BuilderConverter::convertLengthMaxSizing(const BuilderState& builderState, const CSSValue& value)

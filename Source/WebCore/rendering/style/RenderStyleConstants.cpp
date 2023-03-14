@@ -669,11 +669,6 @@ TextStream& operator<<(TextStream& ts, ListStylePosition position)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, ListStyleType styleType)
-{
-    return ts << nameLiteral(toCSSValueID(styleType)).characters();
-}
-
 TextStream& operator<<(TextStream& ts, MarginTrimType marginTrimType)
 {
     switch (marginTrimType) {

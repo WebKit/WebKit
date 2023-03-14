@@ -112,7 +112,6 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ListStyleType);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
@@ -752,35 +751,6 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 }
 
 #endif
-
-inline void BuilderCustom::applyInheritListStyleType(BuilderState& builderState)
-{
-    builderState.style().setListStyleType(builderState.parentStyle().listStyleType());
-    builderState.style().setListStyleStringValue(builderState.parentStyle().listStyleStringValue());
-}
-
-inline void BuilderCustom::applyInitialListStyleType(BuilderState& builderState)
-{
-    builderState.style().setListStyleType(RenderStyle::initialListStyleType());
-    builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
-}
-
-inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isValueID()) {
-        builderState.style().setListStyleType(fromCSSValue<ListStyleType>(primitiveValue));
-        builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
-        return;
-    }
-    if (primitiveValue.isCustomIdent()) {
-        builderState.style().setListStyleType(ListStyleType::CustomCounterStyle);
-        builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
-        return;
-    }
-    builderState.style().setListStyleType(ListStyleType::String);
-    builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
-}
 
 inline void BuilderCustom::applyInheritOutlineStyle(BuilderState& builderState)
 {
@@ -1594,7 +1564,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
         } else if (item.isCounter()) {
             // FIXME: counter-style: we probably want to review this for custom counter-style.
             auto& counter = downcast<CSSCounterValue>(item);
-            auto listStyle = fromCSSValueID<ListStyleType>(counter.listStyle());
+            auto listStyle = fromCSSValueID<ListStyleType::Type>(counter.listStyle());
             builderState.style().setContent(makeUnique<CounterContent>(counter.identifier(), listStyle, counter.separator()), didSet);
             didSet = true;
         } else {

@@ -36,6 +36,7 @@
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LineClampValue.h"
+#include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "ScrollTypes.h"
@@ -814,12 +815,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(ListStyleType style)
+constexpr CSSValueID toCSSValueID(ListStyleType::Type style)
 {
     switch (style) {
-    case ListStyleType::None:
+    case ListStyleType::Type::None:
         return CSSValueNone;
-    case ListStyleType::String:
+    case ListStyleType::Type::String:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
         return CSSValueInvalid;
     default:
@@ -827,13 +828,13 @@ constexpr CSSValueID toCSSValueID(ListStyleType style)
     }
 }
 
-template<> constexpr ListStyleType fromCSSValueID(CSSValueID valueID)
+template<> constexpr ListStyleType::Type fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueNone:
-        return ListStyleType::None;
+        return ListStyleType::Type::None;
     default:
-        return static_cast<ListStyleType>(valueID - CSSValueDisc);
+        return static_cast<ListStyleType::Type>(valueID - CSSValueDisc);
     }
 }
 

@@ -2137,6 +2137,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/GridPosition.h
     rendering/style/GridTrackSize.h
     rendering/style/LineClampValue.h
+    rendering/style/ListStyleType.h
     rendering/style/NinePieceImage.h
     rendering/style/OffsetRotation.h
     rendering/style/OutlineValue.h

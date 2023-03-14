@@ -161,7 +161,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
 {
     m_inheritedFlags.emptyCells = static_cast<unsigned>(initialEmptyCells());
     m_inheritedFlags.captionSide = static_cast<unsigned>(initialCaptionSide());
-    m_inheritedFlags.listStyleType = static_cast<unsigned>(initialListStyleType());
     m_inheritedFlags.listStylePosition = static_cast<unsigned>(initialListStylePosition());
     m_inheritedFlags.visibility = static_cast<unsigned>(initialVisibility());
     m_inheritedFlags.textAlign = static_cast<unsigned>(initialTextAlign());
@@ -871,7 +870,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
-        || first.listStyleStringValue != second.listStyleStringValue
+        || first.listStyleType != second.listStyleType
         || first.listStyleImage != second.listStyleImage) // FIXME: needs arePointingToEqualData()?
         return true;
 
@@ -1005,8 +1004,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
     }
 
     if (static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay) == DisplayType::ListItem) {
-        if (m_inheritedFlags.listStyleType != other.m_inheritedFlags.listStyleType
-            || m_inheritedFlags.listStylePosition != other.m_inheritedFlags.listStylePosition)
+        if (m_inheritedFlags.listStylePosition != other.m_inheritedFlags.listStylePosition || m_rareInheritedData->listStyleType != other.m_rareInheritedData->listStyleType)
             return true;
     }
 

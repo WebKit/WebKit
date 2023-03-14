@@ -80,7 +80,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRareInheritedData);
 StyleRareInheritedData::StyleRareInheritedData()
     : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , listStyleImage(RenderStyle::initialListStyleImage())
-    , listStyleStringValue(RenderStyle::initialListStyleStringValue())
+    , listStyleType(RenderStyle::initialListStyleType())
     , textStrokeColor(RenderStyle::initialTextStrokeColor())
     , textFillColor(RenderStyle::initialTextFillColor())
     , textEmphasisColor(RenderStyle::initialTextEmphasisColor())
@@ -178,7 +178,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     : RefCounted<StyleRareInheritedData>()
     , textStrokeWidth(o.textStrokeWidth)
     , listStyleImage(o.listStyleImage)
-    , listStyleStringValue(o.listStyleStringValue)
+    , listStyleType(o.listStyleType)
     , textStrokeColor(o.textStrokeColor)
     , textFillColor(o.textFillColor)
     , textEmphasisColor(o.textEmphasisColor)
@@ -389,7 +389,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage)
-        && listStyleStringValue == o.listStyleStringValue
+        && listStyleType == o.listStyleType
         && textSpacingTrim == o.textSpacingTrim
         && textAutospace == o.textAutospace;
 }

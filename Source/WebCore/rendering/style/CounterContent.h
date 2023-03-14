@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include <wtf/text/AtomString.h>
 
@@ -32,21 +33,21 @@ namespace WebCore {
 class CounterContent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CounterContent(const AtomString& identifier, ListStyleType style, const AtomString& separator)
+    CounterContent(const AtomString& identifier, ListStyleType::Type style, const AtomString& separator)
         : m_identifier(identifier)
         , m_listStyle(style)
         , m_separator(separator)
     {
-        ASSERT(style != ListStyleType::String);
+        ASSERT(style != ListStyleType::Type::String);
     }
 
     const AtomString& identifier() const { return m_identifier; }
-    ListStyleType listStyle() const { return m_listStyle; }
+    ListStyleType::Type listStyle() const { return m_listStyle; }
     const AtomString& separator() const { return m_separator; }
 
 private:
     AtomString m_identifier;
-    ListStyleType m_listStyle;
+    ListStyleType::Type m_listStyle;
     AtomString m_separator;
 };
 

@@ -37,34 +37,34 @@
 
 namespace WebCore {
 
-static NSString *cocoaTextListMarkerName(ListStyleType style, bool ordered)
+static NSString *cocoaTextListMarkerName(ListStyleType::Type style, bool ordered)
 {
     switch (style) {
-    case ListStyleType::Disc:
+    case ListStyleType::Type::Disc:
         return NSTextListMarkerDisc;
-    case ListStyleType::Circle:
+    case ListStyleType::Type::Circle:
         return NSTextListMarkerCircle;
-    case ListStyleType::Square:
+    case ListStyleType::Type::Square:
         return NSTextListMarkerSquare;
-    case ListStyleType::Decimal:
+    case ListStyleType::Type::Decimal:
         return NSTextListMarkerDecimal;
-    case ListStyleType::Octal:
+    case ListStyleType::Type::Octal:
         return NSTextListMarkerOctal;
-    case ListStyleType::LowerRoman:
+    case ListStyleType::Type::LowerRoman:
         return NSTextListMarkerLowercaseRoman;
-    case ListStyleType::UpperRoman:
+    case ListStyleType::Type::UpperRoman:
         return NSTextListMarkerUppercaseRoman;
-    case ListStyleType::LowerAlpha:
+    case ListStyleType::Type::LowerAlpha:
         return NSTextListMarkerLowercaseAlpha;
-    case ListStyleType::UpperAlpha:
+    case ListStyleType::Type::UpperAlpha:
         return NSTextListMarkerUppercaseAlpha;
-    case ListStyleType::LowerLatin:
+    case ListStyleType::Type::LowerLatin:
         return NSTextListMarkerLowercaseLatin;
-    case ListStyleType::UpperLatin:
+    case ListStyleType::Type::UpperLatin:
         return NSTextListMarkerUppercaseLatin;
-    case ListStyleType::LowerHexadecimal:
+    case ListStyleType::Type::LowerHexadecimal:
         return NSTextListMarkerLowercaseHexadecimal;
-    case ListStyleType::UpperHexadecimal:
+    case ListStyleType::Type::UpperHexadecimal:
         return NSTextListMarkerUppercaseHexadecimal;
     default:
         // The remaining web-exposed list style types have no Cocoa equivalents.

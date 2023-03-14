@@ -2821,7 +2821,7 @@ enum class WebCore::TextGranularity : uint8_t {
 
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
-    WebCore::ListStyleType style
+    WebCore::ListStyleType::Type style
     int startingItemNumber
     bool ordered
 };

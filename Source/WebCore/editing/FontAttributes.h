@@ -27,6 +27,7 @@
 
 #include "Font.h"
 #include "FontShadow.h"
+#include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RetainPtr.h>
 
@@ -36,7 +37,7 @@ OBJC_CLASS NSTextList;
 namespace WebCore {
 
 struct TextList {
-    ListStyleType style { ListStyleType::None };
+    ListStyleType::Type style { ListStyleType::Type::None };
     int startingItemNumber { 0 };
     bool ordered { false };
 
