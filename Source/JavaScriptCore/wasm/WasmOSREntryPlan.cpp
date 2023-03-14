@@ -62,9 +62,10 @@ OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, u
     dataLogLnIf(WasmOSREntryPlanInternal::verbose, "Starting OMGForOSREntry plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
 }
 
-void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer)
+void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
 {
     CompilationMode targetCompilationMode = m_callee->compilationMode() == CompilationMode::LLIntMode ? CompilationMode::BBQForOSREntryMode : CompilationMode::OMGForOSREntryMode;
+    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMG code for WebAssembly OMGforOSREntry function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     if (UNLIKELY(shouldDumpDisassemblyFor(targetCompilationMode))) {
         auto* disassembler = context.procedure->code().disassembler();
 
@@ -83,6 +84,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
         });
 
         disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);
+        linkBuffer.didAlreadyDisassemble();
     }
 }
 
@@ -123,11 +125,9 @@ void OSREntryPlan::work(CompilationEffort)
     Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations;
     computeExceptionHandlerLocations(exceptionHandlerLocations, internalFunction, context, linkBuffer);
 
-    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMG code for WebAssembly OMGforOSREntry function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
-    dumpDisassembly(context, linkBuffer);
-    bool dumpDisassemblyAgain = false;
+    dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
     omgEntrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF(context.procedure->shouldDumpIR() || dumpDisassemblyAgain, linkBuffer, JITCompilationPtrTag, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
