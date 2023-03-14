@@ -22,14 +22,13 @@
 
 import getpass
 import os
-import re
 import requests
 import sys
 import time
 
 from .command import Command
+from .install_hooks import InstallHooks
 from requests.auth import HTTPBasicAuth
-from webkitbugspy import radar
 from webkitcorepy import arguments, run, Editor, OutputCapture, Terminal
 from webkitscmpy import log, local, remote
 
@@ -37,8 +36,6 @@ from webkitscmpy import log, local, remote
 class Setup(Command):
     name = 'setup'
     help = 'Configure local settings for the current repository'
-
-    REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+)(@|://)(?P<host>[^:/]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
 
     @classmethod
     def github(cls, args, repository, additional_setup=None, remote=None, team=None, **kwargs):
@@ -202,60 +199,6 @@ class Setup(Command):
         return None
 
     @classmethod
-    def _security_levels(cls, repository):
-        proc = run(
-            [local.Git.executable(), 'config', '--get-regexp', 'webkitscmpy.remotes'],
-            capture_output=True, cwd=repository.root_path,
-            encoding='utf-8',
-        )
-        if proc.returncode:
-            return {}
-
-        levels_by_name = {}
-        remotes_by_name = {}
-        for line in proc.stdout.splitlines():
-            key, value = line.split(' ', 1)
-            parts = key.split('.')
-            if len(parts) != 4:
-                continue
-            if parts[3] == 'url':
-                remotes_by_name[parts[2]] = value
-            elif parts[3] == 'security-level':
-                levels_by_name[parts[2]] = int(value)
-
-        result = {}
-        for name, rmt in remotes_by_name.items():
-            match = cls.REMOTE_RE.match(rmt)
-            if match:
-                result['{}:{}'.format(match.group('host'), match.group('path'))] = levels_by_name.get(name, None)
-
-        proc = run(
-            [local.Git.executable(), 'config', '--get-regexp', 'remote.+url'],
-            capture_output=True, cwd=repository.root_path,
-            encoding='utf-8',
-        )
-        if proc.returncode:
-            return result
-        for line in proc.stdout.splitlines():
-            _, value = line.split(' ', 1)
-            match = cls.REMOTE_RE.match(value)
-            if not match:
-                continue
-            key = '{}:{}'.format(match.group('host'), match.group('path'))
-            if key in result:
-                continue
-            repo = 'https://{}/{}'.format(match.group('host'), match.group('path'))
-            if not remote.GitHub.is_webserver(repo):
-                continue
-            parent = ((remote.GitHub(repo).request() or {}).get('parent') or {}).get('full_name')
-            if not parent:
-                continue
-            parent_key = '{}:{}'.format(match.group('host'), parent)
-            if parent_key in result:
-                result[key] = result[parent_key]
-        return result
-
-    @classmethod
     def git(cls, args, repository, additional_setup=None, hooks=None, **kwargs):
         local_config = repository.config()
         global_config = local.Git.config()
@@ -397,29 +340,7 @@ class Setup(Command):
             username = getpass.getuser()
 
         if hooks:
-            security_levels = cls._security_levels(repository)
-            for hook in os.listdir(hooks):
-                source_path = os.path.join(hooks, hook)
-                if not os.path.isfile(source_path):
-                    continue
-                log.info('Configuring and copying hook {} for this repository'.format(source_path))
-                with open(source_path, 'r') as f:
-                    from jinja2 import Template
-                    contents = Template(f.read()).render(
-                        location=source_path,
-                        python=os.path.basename(sys.executable),
-                        prefer_radar=bool(radar.Tracker.radarclient()),
-                        default_pre_push_mode='DEFAULT_MODE',
-                        security_levels=security_levels,
-                    )
-
-                target = os.path.join(repository.common_directory, 'hooks', hook)
-                if not os.path.exists(os.path.dirname(target)):
-                    os.makedirs(os.path.dirname(target))
-                with open(target, 'w') as f:
-                    f.write(contents)
-                    f.write('\n')
-                os.chmod(target, 0o775)
+            result += InstallHooks.main(args, repository, hooks=hooks, **kwargs)
 
         if args.all or not local_config.get('core.editor'):
             log.info('Setting git editor for {}...'.format(repository.root_path))
