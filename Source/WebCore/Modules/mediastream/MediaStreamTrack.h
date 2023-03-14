@@ -133,6 +133,7 @@ public:
         String deviceId;
         String groupId;
         String displaySurface;
+        std::optional<DoubleRange> focusDistance;
     };
     TrackCapabilities getCapabilities() const;
 

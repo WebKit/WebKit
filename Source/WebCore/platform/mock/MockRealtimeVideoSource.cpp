@@ -142,9 +142,17 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         if (mockCamera()) {
-            capabilities.addFacingMode(std::get<MockCameraProperties>(m_device.properties).facingMode);
+            auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
+            capabilities.addFacingMode(facingMode);
             capabilities.setDeviceId(hashedId());
             updateCapabilities(capabilities);
+
+            if (facingMode == VideoFacingMode::Environment) {
+                capabilities.setFocusDistance(CapabilityValueOrRange(0.2, std::numeric_limits<double>::max()));
+                auto supportedConstraints = settings().supportedConstraints();
+                supportedConstraints.setSupportsFocusDistance(true);
+                capabilities.setSupportedConstraints(supportedConstraints);
+            }
         } else if (mockDisplay()) {
             capabilities.setWidth(CapabilityValueOrRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
             capabilities.setHeight(CapabilityValueOrRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));

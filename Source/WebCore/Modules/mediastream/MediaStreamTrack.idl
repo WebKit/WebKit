@@ -73,6 +73,7 @@ enum MediaStreamTrackState { "live", "ended" };
     DOMString deviceId;
     DOMString groupId;
     DOMString displaySurface;
+    DoubleRange focusDistance;
 };
 
 [

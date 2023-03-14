@@ -287,6 +287,17 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
     if ([videoDevice position] == AVCaptureDevicePositionBack)
         capabilities.addFacingMode(VideoFacingMode::Environment);
 
+#if HAVE(AVCAPTUREDEVICE_MINFOCUSLENGTH)
+    double minimumFocusDistance = [videoDevice minimumFocusDistance];
+    if (minimumFocusDistance != -1.0) {
+        ASSERT(minimumFocusDistance >= 0);
+        auto supportedConstraints = settings().supportedConstraints();
+        supportedConstraints.setSupportsFocusDistance(true);
+        capabilities.setFocusDistance({ minimumFocusDistance / 1000, std::numeric_limits<double>::max() });
+        capabilities.setSupportedConstraints(supportedConstraints);
+    }
+#endif // HAVE(AVCAPTUREDEVICE_MINFOCUSLENGTH)
+
     updateCapabilities(capabilities);
 
     m_capabilities = WTFMove(capabilities);

@@ -540,6 +540,7 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
         break;
 
     case MediaConstraintType::Unknown:
@@ -679,6 +680,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         ASSERT(constraint.isBoolean());
         break;
 
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -872,6 +874,7 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
         return false;
         break;
 
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         // Unknown (or unsupported) constraints should be ignored.
         break;
@@ -912,6 +915,7 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
         case MediaConstraintType::GroupId:
         case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::LogicalSurface:
+        case MediaConstraintType::FocusDistance:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;

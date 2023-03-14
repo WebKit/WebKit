@@ -1398,6 +1398,10 @@
 #define HAVE_MEDIAPLAYBACKD 1
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000) || PLATFORM(IOS_FAMILY)
+#define HAVE_AVCAPTUREDEVICE_MINFOCUSLENGTH 1
+#endif
+
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && defined(__has_include)
 #if __has_include(<gio/gdesktopappinfo.h>)
 #define HAVE_GDESKTOPAPPINFO 1

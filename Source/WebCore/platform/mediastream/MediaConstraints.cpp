@@ -242,6 +242,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::GroupId:
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -271,6 +272,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::GroupId:
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -300,6 +302,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FacingMode:
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -331,6 +334,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::EchoCancellation:
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;

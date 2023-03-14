@@ -4100,6 +4100,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsGroupId();
     bool supportsDisplaySurface();
     bool supportsLogicalSurface();
+    bool supportsFocusDistance();
 };
 
 enum class WebCore::VideoFacingMode : uint8_t {
@@ -4171,6 +4172,7 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
     AtomString deviceId();
     AtomString groupId();
+    WebCore::CapabilityValueOrRange focusDistance();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 

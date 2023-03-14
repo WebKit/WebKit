@@ -292,10 +292,18 @@ static DoubleRange capabilityDoubleRange(const CapabilityValueOrRange& value)
         range.min = value.value().asDouble;
         range.max = range.min;
         break;
-    case CapabilityValueOrRange::DoubleRange:
-        range.min = value.rangeMin().asDouble;
-        range.max = value.rangeMax().asDouble;
+    case CapabilityValueOrRange::DoubleRange: {
+        auto min = value.rangeMin().asDouble;
+        auto max = value.rangeMax().asDouble;
+
+        ASSERT(min != std::numeric_limits<double>::min() || max != std::numeric_limits<double>::max());
+
+        if (min != std::numeric_limits<double>::min())
+            range.min = min;
+        if (max != std::numeric_limits<double>::max())
+            range.max = max;
         break;
+    }
     case CapabilityValueOrRange::Undefined:
     case CapabilityValueOrRange::ULong:
     case CapabilityValueOrRange::ULongRange:
@@ -367,6 +375,8 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
         result.deviceId = capabilities.deviceId();
     if (capabilities.supportsGroupId())
         result.groupId = capabilities.groupId();
+    if (capabilities.supportsFocusDistance())
+        result.focusDistance = capabilityDoubleRange(capabilities.focusDistance());
 
     auto settings = m_private->settings();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
