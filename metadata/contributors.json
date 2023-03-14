@@ -3765,6 +3765,13 @@
    },
    {
       "emails" : [
+         "jigen.zhou@sony.com"
+      ],
+      "github" : "jigenzhou",
+      "name" : "Jigen Zhou"
+   },
+   {
+      "emails" : [
          "jingzhao@chromium.org"
       ],
       "name" : "Jing Zhao"
