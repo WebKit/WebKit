@@ -1130,13 +1130,8 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
 
 bool MediaPlayerPrivateGStreamer::isMuted() const
 {
-    if (!m_volumeElement)
-        return false;
-
-    gboolean isMuted;
-    g_object_get(m_volumeElement.get(), "mute", &isMuted, nullptr);
-    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", boolForPrinting(isMuted));
-    return isMuted;
+    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", boolForPrinting(m_isMuted));
+    return m_isMuted;
 }
 
 void MediaPlayerPrivateGStreamer::commitLoad()
@@ -1635,11 +1630,13 @@ MediaPlayer::ReadyState MediaPlayerPrivateGStreamer::readyState() const
 
 void MediaPlayerPrivateGStreamer::setMuted(bool shouldMute)
 {
+    GST_DEBUG_OBJECT(pipeline(), "Attempting to set muted state to %s", boolForPrinting(shouldMute));
+
     if (!m_volumeElement || shouldMute == isMuted())
         return;
 
     GST_INFO_OBJECT(pipeline(), "Setting muted state to %s", boolForPrinting(shouldMute));
-    g_object_set(m_volumeElement.get(), "mute", shouldMute, nullptr);
+    g_object_set(m_volumeElement.get(), "mute", static_cast<gboolean>(shouldMute), nullptr);
     configureMediaStreamAudioTracks();
 }
 
@@ -1648,10 +1645,16 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfMute()
     if (!m_player || !m_volumeElement)
         return;
 
-    gboolean muted;
-    g_object_get(m_volumeElement.get(), "mute", &muted, nullptr);
-    GST_DEBUG_OBJECT(pipeline(), "Notifying player of new mute value: %s", boolForPrinting(muted));
-    m_player->muteChanged(static_cast<bool>(muted));
+    gboolean value;
+    bool isMuted;
+    g_object_get(m_volumeElement.get(), "mute", &value, nullptr);
+    isMuted = value;
+    if (isMuted == m_isMuted)
+        return;
+
+    m_isMuted = isMuted;
+    GST_DEBUG_OBJECT(pipeline(), "Notifying player of new mute value: %s", boolForPrinting(isMuted));
+    m_player->muteChanged(m_isMuted);
 }
 
 void MediaPlayerPrivateGStreamer::muteChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1903,7 +1906,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             }
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
             if (gst_structure_get(structure, "read-position", G_TYPE_UINT64, &m_networkReadPosition, "size", G_TYPE_UINT64, &m_httpResponseTotalSize, nullptr))
-                GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
+                GST_LOG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
         } else if (gst_structure_has_name(structure, "GstCacheDownloadComplete")) {
             GST_INFO_OBJECT(pipeline(), "Stream is fully downloaded, stopping monitoring downloading progress.");
             m_fillTimer.stop();
@@ -2834,7 +2837,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         player->handleStreamCollectionMessage(message);
     }), this);
 
-    g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
+    g_object_set(m_pipeline.get(), "mute", static_cast<gboolean>(m_player->muted()), nullptr);
 
     g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "element-setup", G_CALLBACK(+[](GstBin*, GstElement* element, MediaPlayerPrivateGStreamer* player) {
         player->configureElement(element);
@@ -4020,8 +4023,9 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
     } else
         GST_DEBUG_OBJECT(pipeline(), "Not setting stream volume, trusting system one");
 
-    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", toString(m_player->muted()).utf8().data());
-    g_object_set(m_volumeElement.get(), "mute", m_player->muted(), nullptr);
+    m_isMuted = m_player->muted();
+    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", boolForPrinting(m_isMuted));
+    g_object_set(m_volumeElement.get(), "mute", static_cast<gboolean>(m_isMuted), nullptr);
 
     g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);
     g_signal_connect_swapped(m_volumeElement.get(), "notify::mute", G_CALLBACK(muteChangedCallback), this);
