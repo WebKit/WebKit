@@ -1707,8 +1707,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute]) {
         if (backingObject->isAttachment()) {
-            if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute])
-                return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
+            id attachmentView = [self attachmentView];
+            if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute])
+                return [attachmentView accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         }
 
         return backingObject->titleAttributeValue();
@@ -1716,16 +1717,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:NSAccessibilityDescriptionAttribute]) {
         if (backingObject->isAttachment()) {
-            if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityDescriptionAttribute])
-                return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
+            id attachmentView = [self attachmentView];
+            if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityDescriptionAttribute])
+                return [attachmentView accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
         }
         return backingObject->descriptionAttributeValue();
     }
 
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (backingObject->isAttachment()) {
-            if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute])
-                return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
+            id attachmentView = [self attachmentView];
+            if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute])
+                return [attachmentView accessibilityAttributeValue:NSAccessibilityValueAttribute];
         }
 
         auto value = backingObject->value();
@@ -2319,8 +2322,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     id hit = nil;
     if (axObject) {
-        if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
-            return [axObject->wrapper() attachmentView];
+        if (axObject->isAttachment()) {
+            if (id attachmentView = [axObject->wrapper() attachmentView])
+                return attachmentView;
+        }
 
         hit = Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&axObject, &point] () -> RetainPtr<id> {
             auto* widget = axObject->widget();
@@ -3294,7 +3299,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXUIElementForTextMarkerAttribute]) {
         AXTextMarker marker(textMarker);
-        auto object = marker.object();
+        RefPtr object = marker.object();
         if (!object)
             return nil;
 
@@ -3302,8 +3307,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!wrapper)
             return nil;
 
-        if (id attachmentView = wrapper.attachmentView)
-            return attachmentView;
+        if (object->isAttachment()) {
+            if (id attachmentView = wrapper.attachmentView)
+                return attachmentView;
+        }
         return wrapper;
     }
 
@@ -3813,9 +3820,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         NSMutableArray *subarray = [NSMutableArray arrayWithCapacity:available];
         for (unsigned added = 0; added < available; ++index, ++added) {
             WebAccessibilityObjectWrapper* wrapper = children[index];
+
             // The attachment view should be returned, otherwise AX palindrome errors occur.
-            BOOL isAttachment = [wrapper isKindOfClass:[WebAccessibilityObjectWrapper class]] && wrapper.axBackingObject && wrapper.axBackingObject->isAttachment() && [wrapper attachmentView];
-            [subarray addObject:isAttachment ? [wrapper attachmentView] : wrapper];
+            id attachmentView = nil;
+            if ([wrapper isKindOfClass:[WebAccessibilityObjectWrapper class]] && wrapper.axBackingObject && wrapper.axBackingObject->isAttachment())
+                attachmentView = [wrapper attachmentView];
+            [subarray addObject:attachmentView ? attachmentView : wrapper];
         }
 
         return subarray;

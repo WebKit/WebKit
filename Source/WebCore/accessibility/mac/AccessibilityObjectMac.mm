@@ -697,8 +697,10 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         return;
 
     id wrapper = object->wrapper();
-    if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object->isAttachment() && [wrapper attachmentView])
-        wrapper = [wrapper attachmentView];
+    if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object->isAttachment()) {
+        if (id attachmentView = [wrapper attachmentView])
+            wrapper = [wrapper attachmentView];
+    }
 
     if (auto axElement = adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)))
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];

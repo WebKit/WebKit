@@ -270,8 +270,10 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
         // We want to return the attachment view instead of the object representing the attachment,
         // otherwise, we get palindrome errors in the AX hierarchy.
-        if (child->isAttachment() && wrapper.attachmentView)
-            return wrapper.attachmentView;
+        if (child->isAttachment()) {
+            if (id attachmentView = wrapper.attachmentView)
+                return attachmentView;
+        }
 
         return wrapper;
     }).autorelease();
