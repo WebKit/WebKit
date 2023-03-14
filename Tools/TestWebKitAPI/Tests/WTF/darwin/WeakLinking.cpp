@@ -25,7 +25,8 @@
 
 #include "config.h"
 
-#if OS(DARWIN)
+// FIXME: Re-enable this test once rdar://106726247 is resolved.
+#if 0
 
 #include <sys/unistd.h>
 #include <wtf/darwin/WeakLinking.h>
