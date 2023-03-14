@@ -71,7 +71,7 @@ InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
 
 WebFrame* InjectedBundleDOMWindowExtension::frame() const
 {
-    LocalFrame* frame = m_coreExtension->frame();
+    auto* frame = m_coreExtension->frame();
     if (!frame)
         return nullptr;
 

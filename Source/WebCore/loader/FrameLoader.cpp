@@ -518,7 +518,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     if (!m_frame.document()->contentSecurityPolicy()->allowFormAction(formAction))
         return;
 
-    LocalFrame* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
+    auto* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
     if (!targetFrame) {
         if (!DOMWindow::allowPopUp(m_frame) && !UserGestureIndicator::processingUserGesture())
             return;
@@ -1341,10 +1341,10 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
     auto completionHandler = [this, protectedFrame = Ref { m_frame }, formState = WeakPtr { formState }, frameName = request.frameName()] {
         // FIXME: It's possible this targetFrame will not be the same frame that was targeted by the actual
         // load if frame names have changed.
-        LocalFrame* sourceFrame = formState ? formState->sourceDocument().frame() : &m_frame;
+        auto* sourceFrame = formState ? formState->sourceDocument().frame() : &m_frame;
         if (!sourceFrame)
             sourceFrame = &m_frame;
-        LocalFrame* targetFrame = sourceFrame->loader().findFrameForNavigation(frameName);
+        auto* targetFrame = sourceFrame->loader().findFrameForNavigation(frameName);
         if (targetFrame && targetFrame != sourceFrame) {
             if (auto* page = targetFrame->page(); page && isInVisibleAndActivePage(*sourceFrame))
                 page->chrome().focus();
@@ -1523,7 +1523,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
         return;
 
     if (!request.frameName().isEmpty()) {
-        LocalFrame* frame = findFrameForNavigation(request.frameName());
+        auto* frame = findFrameForNavigation(request.frameName());
         if (frame) {
             request.setShouldCheckNewWindowPolicy(false);
             if (&frame->loader() != this) {

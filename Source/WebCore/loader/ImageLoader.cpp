@@ -107,7 +107,7 @@ static ImageEventSender& loadEventSender()
 
 static inline bool pageIsBeingDismissed(Document& document)
 {
-    LocalFrame* frame = document.frame();
+    auto* frame = document.frame();
     return frame && frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None;
 }
 

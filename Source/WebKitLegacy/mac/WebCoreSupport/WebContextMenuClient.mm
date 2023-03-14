@@ -265,13 +265,13 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
 
 void WebContextMenuClient::showContextMenu()
 {
-    Page* page = [m_webView page];
+    auto page = [m_webView page];
     if (!page)
         return;
-    LocalFrame* frame = page->contextMenuController().hitTestResult().innerNodeFrame();
+    auto* frame = page->contextMenuController().hitTestResult().innerNodeFrame();
     if (!frame)
         return;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return;
 

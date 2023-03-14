@@ -109,7 +109,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInFrame()
     Ref<DOMWindowExtension> protectedThis(*this);
 
     if (!m_wasDetached) {
-        LocalFrame* frame = this->frame();
+        auto* frame = this->frame();
         ASSERT(frame);
         frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     }
@@ -131,7 +131,7 @@ void DOMWindowExtension::willDetachGlobalObjectFromFrame()
     // while there is still work to do.
     Ref<DOMWindowExtension> protectedThis(*this);
 
-    LocalFrame* frame = this->frame();
+    auto* frame = this->frame();
     ASSERT(frame);
     frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
 

@@ -189,7 +189,7 @@ LocalFrame* HitTestResult::targetFrame() const
     if (!m_innerURLElement)
         return nullptr;
 
-    LocalFrame* frame = m_innerURLElement->document().frame();
+    auto* frame = m_innerURLElement->document().frame();
     if (!frame)
         return nullptr;
 
@@ -201,7 +201,7 @@ bool HitTestResult::isSelected() const
     if (!m_innerNonSharedNode)
         return false;
 
-    LocalFrame* frame = m_innerNonSharedNode->document().frame();
+    auto* frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return false;
 
@@ -213,7 +213,7 @@ String HitTestResult::selectedText() const
     if (!m_innerNonSharedNode)
         return emptyString();
 
-    LocalFrame* frame = m_innerNonSharedNode->document().frame();
+    auto* frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return emptyString();
 
@@ -611,7 +611,7 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (!is<Element>(*node) || !downcast<Element>(*node).isTextField())
         return false;
 
-    LocalFrame* frame = node->document().frame();
+    auto* frame = node->document().frame();
     if (!frame)
         return false;
 
@@ -750,11 +750,11 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!m_innerNonSharedNode)
         return Vector<String>();
 
-    DocumentMarker* marker = m_innerNonSharedNode->document().markers().markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::DictationAlternatives);
+    auto* marker = m_innerNonSharedNode->document().markers().markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 
-    LocalFrame* frame = innerNonSharedNode()->document().frame();
+    auto* frame = innerNonSharedNode()->document().frame();
     if (!frame)
         return Vector<String>();
 

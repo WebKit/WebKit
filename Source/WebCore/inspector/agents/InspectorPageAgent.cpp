@@ -775,7 +775,7 @@ Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorP
 {
     Protocol::ErrorString errorString;
 
-    LocalFrame* frame = assertFrame(errorString, frameId);
+    auto* frame = assertFrame(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -808,7 +808,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>>
         }
     }
 
-    LocalFrame* frame = assertFrame(errorString, frameId);
+    auto* frame = assertFrame(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -947,7 +947,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 
 LocalFrame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
-    LocalFrame* frame = frameForId(frameId);
+    auto* frame = frameForId(frameId);
     if (!frame)
         errorString = "Missing frame for given frameId"_s;
     return frame;

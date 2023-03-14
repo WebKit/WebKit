@@ -145,7 +145,7 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
 
         contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
     } else {
-        LocalFrame* frame = node->document().frame();
+        auto* frame = node->document().frame();
         if (!frame)
             return { };
 

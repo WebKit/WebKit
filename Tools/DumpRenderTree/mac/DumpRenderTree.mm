@@ -1800,7 +1800,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
         WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
 
 #if !PLATFORM(IOS_FAMILY)
-    if (WebCore::LocalFrame* frame = [webView _mainCoreFrame])
+    if (auto* frame = [webView _mainCoreFrame])
         WebCoreTestSupport::clearWheelEventTestMonitor(*frame);
 #endif
 

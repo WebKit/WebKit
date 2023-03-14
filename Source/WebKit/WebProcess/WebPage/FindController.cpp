@@ -136,7 +136,7 @@ static LocalFrame* frameWithSelection(Page* page)
 
 void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator)
 {
-    LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
 
 #if ENABLE(PDFKIT_PLUGIN)
     auto* pluginView = mainFramePlugIn();
@@ -259,7 +259,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     if (!pluginView)
 #endif
     {
-        if (LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
+        if (auto* selectedFrame = frameWithSelection(m_webPage->corePage())) {
             if (selectedFrame->selection().selectionBounds().isEmpty()) {
                 auto result = m_webPage->corePage()->findTextMatches(string, coreOptions, maxMatchCount);
                 m_findMatches = WTFMove(result.ranges);
@@ -352,7 +352,7 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    LocalFrame* frame = m_findMatches[matchIndex].start.document().frame();
+    auto* frame = m_findMatches[matchIndex].start.document().frame();
     if (!frame)
         return;
 
@@ -377,7 +377,7 @@ void FindController::selectFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    LocalFrame* frame = m_findMatches[matchIndex].start.document().frame();
+    auto* frame = m_findMatches[matchIndex].start.document().frame();
     if (!frame)
         return;
     frame->selection().setSelection(m_findMatches[matchIndex]);
@@ -389,7 +389,7 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 
     selectFindMatch(matchIndex);
 
-    LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -462,7 +462,7 @@ void FindController::willFindString()
 
 void FindController::didFindString()
 {
-    LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -499,7 +499,7 @@ void FindController::deviceScaleFactorDidChange()
 {
     ASSERT(isShowingOverlay());
 
-    LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -511,7 +511,7 @@ void FindController::redraw()
     if (!m_isShowingFindIndicator)
         return;
 
-    LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -602,7 +602,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     if (!m_isShowingFindIndicator)
         return;
 
-    if (LocalFrame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
+    if (auto* selectedFrame = frameWithSelection(m_webPage->corePage())) {
         IntRect findIndicatorRect = selectedFrame->view()->contentsToRootView(enclosingIntRect(selectedFrame->selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
 
         if (findIndicatorRect != m_findIndicatorRect) {

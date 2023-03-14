@@ -1857,8 +1857,8 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
 
 void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
 {
-    LocalFrame* mainFrame = m_mainFrame->coreFrame();
-    Document* mainFrameDocument = mainFrame->document();
+    auto* mainFrame = m_mainFrame->coreFrame();
+    auto* mainFrameDocument = mainFrame->document();
     if (!mainFrameDocument)
         return;
 
@@ -2092,7 +2092,7 @@ double WebPage::textZoomFactor() const
         return pluginView->pageScaleFactor();
 #endif
 
-    LocalFrame* frame = m_mainFrame->coreFrame();
+    auto* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
     return frame->textZoomFactor();
@@ -2107,7 +2107,7 @@ void WebPage::setTextZoomFactor(double zoomFactor)
     }
 #endif
 
-    LocalFrame* frame = m_mainFrame->coreFrame();
+    auto* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     frame->setTextZoomFactor(static_cast<float>(zoomFactor));
@@ -2120,7 +2120,7 @@ double WebPage::pageZoomFactor() const
         return pluginView->pageScaleFactor();
 #endif
 
-    LocalFrame* frame = m_mainFrame->coreFrame();
+    auto* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
     return frame->pageZoomFactor();
@@ -2135,7 +2135,7 @@ void WebPage::setPageZoomFactor(double zoomFactor)
     }
 #endif
 
-    LocalFrame* frame = m_mainFrame->coreFrame();
+    auto* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     frame->setPageZoomFactor(static_cast<float>(zoomFactor));
@@ -2211,7 +2211,7 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
     }
 #endif
 
-    LocalFrame* frame = m_mainFrame->coreFrame();
+    auto* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
@@ -2658,7 +2658,7 @@ void WebPage::setFooterBannerHeight(int height)
 void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& completionHandler)
 {
     ShareableBitmapHandle handle;
-    LocalFrame* coreFrame = m_mainFrame->coreFrame();
+    auto* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame) {
         completionHandler(handle);
         return;
@@ -2692,11 +2692,11 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
 RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double additionalScaleFactor, SnapshotOptions options)
 {
-    LocalFrame* coreFrame = m_mainFrame->coreFrame();
+    auto* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
         return nullptr;
 
-    FrameView* frameView = coreFrame->view();
+    auto* frameView = coreFrame->view();
     if (!frameView)
         return nullptr;
 
@@ -2804,11 +2804,11 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
 
 RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
-    LocalFrame* coreFrame = m_mainFrame->coreFrame();
+    auto* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
         return nullptr;
 
-    FrameView* frameView = coreFrame->view();
+    auto* frameView = coreFrame->view();
     if (!frameView)
         return nullptr;
 
@@ -2874,7 +2874,7 @@ void WebPage::pageDidScroll()
 void WebPage::pageStoppedScrolling()
 {
     // Maintain the current history item's scroll position up-to-date.
-    if (LocalFrame* frame = m_mainFrame->coreFrame())
+    if (auto* frame = m_mainFrame->coreFrame())
         frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
 }
 
@@ -5746,7 +5746,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
     if (!frame)
         return;
 
-    LocalFrame* coreFrame = frame->coreFrame();
+    auto* coreFrame = frame->coreFrame();
     if (!coreFrame)
         return;
 
@@ -6232,7 +6232,7 @@ AbstractFrame* WebPage::mainFrame() const
 // FIXME: This should return an AbstractFrameView.
 FrameView* WebPage::mainFrameView() const
 {
-    if (LocalFrame* frame = dynamicDowncast<LocalFrame>(mainFrame()))
+    if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
         return frame->view();
     return nullptr;
 }

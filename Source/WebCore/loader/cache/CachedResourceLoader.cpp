@@ -236,7 +236,7 @@ LocalFrame* CachedResourceLoader::frame() const
 
 ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::requestImage(CachedResourceRequest&& request, ImageLoading imageLoading)
 {
-    if (LocalFrame* frame = this->frame()) {
+    if (auto* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
             if (Document* document = frame->document())
                 request.upgradeInsecureRequestIfNeeded(*document);
@@ -445,7 +445,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::CSSStyleSheet:
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
-        if (LocalFrame* frame = this->frame()) {
+        if (auto* frame = this->frame()) {
             if (!MixedContentChecker::canRunInsecureContent(*frame, m_document->securityOrigin(), url))
                 return false;
             auto& top = frame->tree().top();
@@ -467,7 +467,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::SVGFontResource:
     case CachedResource::Type::FontResource: {
         // These resources can corrupt only the frame's pixels.
-        if (LocalFrame* frame = this->frame()) {
+        if (auto* frame = this->frame()) {
             if (!MixedContentChecker::canDisplayInsecureContent(*frame, m_document->securityOrigin(), contentTypeFromResourceType(type), url, MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes))
                 return false;
             auto& topFrame = frame->tree().top();
@@ -1538,7 +1538,7 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
 
 CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const URL& url) const
 {
-    LocalFrame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return CachePolicy::Verify;
 

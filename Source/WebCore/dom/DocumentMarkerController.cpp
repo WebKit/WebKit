@@ -144,7 +144,7 @@ void DocumentMarkerController::invalidateRectsForMarkersInNode(Node& node)
 
 static void updateMainFrameLayoutIfNeeded(Document& document)
 {
-    LocalFrame* frame = document.frame();
+    auto* frame = document.frame();
     if (!frame)
         return;
 

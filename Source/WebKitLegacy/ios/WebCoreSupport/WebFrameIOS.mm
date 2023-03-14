@@ -96,7 +96,7 @@ using namespace WebCore;
 
 - (void)clearSelection
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     if (frame)
         frame->selection().clearCurrentSelection();
     
@@ -106,7 +106,7 @@ using namespace WebCore;
 {
     WebTextSelectionState state = WebTextSelectionStateNone;
 
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
 
     if (frameSelection.isCaret())
@@ -130,7 +130,7 @@ using namespace WebCore;
 
 - (CGRect)closestCaretRectInMarkedTextRangeForPoint:(CGPoint)point
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     if (!frame)
         return { };
 
@@ -182,7 +182,7 @@ using namespace WebCore;
 - (void)collapseSelection
 {
     if ([self selectionState] == WebTextSelectionStateRange) {
-        LocalFrame* frame = [self coreFrame];
+        auto* frame = [self coreFrame];
         FrameSelection& frameSelection = frame->selection();
         VisiblePosition end(frameSelection.selection().end());
         frameSelection.moveTo(end);
@@ -192,7 +192,7 @@ using namespace WebCore;
 - (void)extendSelection:(BOOL)start
 {
     if ([self selectionState] == WebTextSelectionStateRange) {
-        LocalFrame* frame = [self coreFrame];
+        auto* frame = [self coreFrame];
         const VisibleSelection& originalSelection = frame->selection().selection();
         if (start) {
             VisiblePosition start = startOfWord(originalSelection.start());
@@ -246,43 +246,43 @@ using namespace WebCore;
 
 - (void)setRangedSelectionBaseToCurrentSelection
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     frame->setRangedSelectionBaseToCurrentSelection();
 }
 
 - (void)setRangedSelectionBaseToCurrentSelectionStart
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     frame->setRangedSelectionBaseToCurrentSelectionStart();
 }
 
 - (void)setRangedSelectionBaseToCurrentSelectionEnd
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     frame->setRangedSelectionBaseToCurrentSelectionEnd();
 }
 
 - (void)clearRangedSelectionInitialExtent
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     frame->clearRangedSelectionInitialExtent();
 }
 
 - (void)setRangedSelectionInitialExtentToCurrentSelectionStart
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     frame->setRangedSelectionInitialExtentToCurrentSelectionStart();
 }
 
 - (void)setRangedSelectionInitialExtentToCurrentSelectionEnd
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     frame->setRangedSelectionInitialExtentToCurrentSelectionEnd();
 }
 
 - (void)setRangedSelectionWithExtentPoint:(CGPoint)point
 {    
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     VisiblePosition pos = [self visiblePositionForPoint:point];
     VisibleSelection base = frame->rangedSelectionBase();
@@ -306,7 +306,7 @@ using namespace WebCore;
 
 - (BOOL)setRangedSelectionExtentPoint:(CGPoint)extentPoint baseIsStart:(BOOL)baseIsStart allowFlipping:(BOOL)allowFlipping
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     VisibleSelection rangedSelectionBase(frame->rangedSelectionBase());
     VisiblePosition baseStart(rangedSelectionBase.start(), rangedSelectionBase.affinity());
     VisiblePosition baseEnd;
@@ -402,7 +402,7 @@ using namespace WebCore;
     // expected to take the flip into account in subsequent calls to this function (for at
     // least as long as a single, logical selection session continues).
 
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     VisiblePosition base([self visiblePositionForPoint:basePoint]);
     VisiblePosition extent([self visiblePositionForPoint:extentPoint]);
@@ -446,7 +446,7 @@ using namespace WebCore;
     // don't care about base/extent.
     VisiblePosition first([self visiblePositionForPoint:firstPoint]);
     VisiblePosition second([self visiblePositionForPoint:secondPoint]);
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     frameSelection.moveTo(first, second);
 }
@@ -456,7 +456,7 @@ using namespace WebCore;
     // This method ensures that selection ends doesn't contract such that it no
     // longer contains these points. This is the desirable behavior when the
     // user does the tap-and-a-half + drag operation.
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     const VisibleSelection& originalSelection = frame->selection().selection();
     Position ensureStart([self visiblePositionForPoint:initialStartPoint].deepEquivalent());
     Position ensureEnd([self visiblePositionForPoint:initialEndPoint].deepEquivalent());
@@ -468,7 +468,7 @@ using namespace WebCore;
 
 - (void)aggressivelyExpandSelectionToWordContainingCaretSelection
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     VisiblePosition end = frameSelection.selection().visibleEnd();
     if (end == endOfDocument(end) && end != startOfDocument(end) && end == startOfLine(end))
@@ -503,7 +503,7 @@ using namespace WebCore;
 
 - (void)expandSelectionToSentence
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     VisiblePosition pos = frameSelection.selection().start();
     VisiblePosition start = startOfSentence(pos);
@@ -513,7 +513,7 @@ using namespace WebCore;
 
 - (WKWritingDirection)selectionBaseWritingDirection
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     switch (frame->editor().baseWritingDirectionForSelectionStart()) {
     case WritingDirection::LeftToRight:
         return WKWritingDirectionLeftToRight;
@@ -551,7 +551,7 @@ using namespace WebCore;
 {
     WKWritingDirection originalDirection = [self selectionBaseWritingDirection];
 
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     if (!frame->selection().selection().isContentEditable())
         return;
     
@@ -590,7 +590,7 @@ using namespace WebCore;
 
 - (void)moveSelectionToPoint:(CGPoint)point
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     VisiblePosition pos = [self _visiblePositionForPoint:point];
     frameSelection.moveTo(pos);
@@ -743,7 +743,7 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
     if ([self selectionState] != WebTextSelectionStateRange)
         return;
     
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     FrameSelection& frameSelection = frame->selection();
     auto start = frameSelection.selection().visibleStart();
     auto end = frameSelection.selection().visibleEnd();
@@ -794,13 +794,13 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
 
 - (BOOL)renderedCharactersExceed:(NSUInteger)threshold
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     return frame->view()->renderedCharactersExceed(threshold);
 }
 
 - (CGRect)elementRectAtPoint:(CGPoint)point
 {
-    LocalFrame* frame = [self coreFrame];
+    auto* frame = [self coreFrame];
     IntPoint adjustedPoint = frame->view()->windowToContents(roundedIntPoint(point));
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult result = frame->eventHandler().hitTestResultAtPoint(adjustedPoint, hitType);

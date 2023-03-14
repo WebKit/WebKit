@@ -591,7 +591,7 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
     if (m_lastEditorStateWasContentEditable == EditorStateIsContentEditable::Unset)
         return;
 
-    LocalFrame* frame = core([m_webView _selectedOrMainFrame]);
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 

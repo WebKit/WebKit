@@ -880,7 +880,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
     if (!renderer.isRenderView())
         return;
 
-    LocalFrame* frame = renderer.document().frame();
+    auto* frame = renderer.document().frame();
     if (!frame)
         return;
 

@@ -78,7 +78,7 @@ void WebContextMenuClient::searchWithSpotlight()
     if (!localMainFrame)
         return;
 
-    LocalFrame* selectionFrame = [&] () -> LocalFrame* {
+    auto* selectionFrame = [&] () -> LocalFrame* {
         for (AbstractFrame* selectionFrame = localMainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(selectionFrame);
             if (!localFrame)

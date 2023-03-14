@@ -544,7 +544,7 @@ bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 {
     auto event = KeyboardEvent::create(platformEvent, document().windowProxy());
 
-    if (LocalFrame* frame = document().frame()) {
+    if (auto* frame = document().frame()) {
         if (frame->eventHandler().accessibilityPreventsEventPropagation(event))
             event->stopPropagation();
     }

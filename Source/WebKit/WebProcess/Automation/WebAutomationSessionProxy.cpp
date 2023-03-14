@@ -474,7 +474,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdenti
         return;
     }
 
-    WebCore::LocalFrame* coreFrame = frame->coreFrame();
+    auto* coreFrame = frame->coreFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -562,7 +562,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    WebCore::LocalFrame* coreFrame = frame->coreFrame();
+    auto* coreFrame = frame->coreFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;

@@ -293,7 +293,7 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     if (!box)
         return -1;
 
-    LocalFrame* frame = element->document().frame();
+    auto* frame = element->document().frame();
     FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
     PrintContext printContext(frame);
     printContext.begin(pageRect.width(), pageRect.height());

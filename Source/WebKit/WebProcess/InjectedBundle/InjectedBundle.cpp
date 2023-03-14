@@ -179,7 +179,7 @@ void InjectedBundle::setAsynchronousSpellCheckingEnabled(bool enabled)
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
 {
-    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
+    auto* coreFrame = frame ? frame->coreFrame() : nullptr;
     if (!coreFrame)
         return -1;
     if (!pageWidthInPixels)
@@ -192,11 +192,11 @@ int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, dou
 
 int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, double pageWidthInPixels, double pageHeightInPixels)
 {
-    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
+    auto* coreFrame = frame ? frame->coreFrame() : nullptr;
     if (!coreFrame)
         return -1;
 
-    Element* element = coreFrame->document()->getElementById(id);
+    auto* element = coreFrame->document()->getElementById(id);
     if (!element)
         return -1;
 
@@ -210,7 +210,7 @@ int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, 
 
 String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
-    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
+    auto* coreFrame = frame ? frame->coreFrame() : nullptr;
     if (!coreFrame)
         return String();
 
@@ -219,7 +219,7 @@ String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex
 
 bool InjectedBundle::isPageBoxVisible(WebFrame* frame, int pageIndex)
 {
-    LocalFrame* coreFrame = frame ? frame->coreFrame() : 0;
+    auto* coreFrame = frame ? frame->coreFrame() : nullptr;
     if (!coreFrame)
         return false;
 

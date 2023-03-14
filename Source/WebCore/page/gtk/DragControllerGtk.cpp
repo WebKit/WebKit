@@ -72,7 +72,7 @@ void DragController::cleanupAfterSystemDrag()
 
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    LocalFrame* frame = element.document().frame();
+    auto* frame = element.document().frame();
     ASSERT(frame);
     frame->editor().writeImageToPasteboard(dataTransfer.pasteboard(), element, url, label);
 }

@@ -186,11 +186,11 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return NO;
 
-    LocalFrame* frame = core([(WebHTMLView *)documentView _frame]);
+    auto* frame = core([(WebHTMLView *)documentView _frame]);
     if (!frame)
         return NO;
     
-    FrameView *frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return NO;
 

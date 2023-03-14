@@ -238,7 +238,7 @@ static void removeAllBeforeUnloadEventListeners(DOMWindow* domWindow)
 static bool allowsBeforeUnloadListeners(DOMWindow* window)
 {
     ASSERT_ARG(window, window);
-    LocalFrame* frame = window->frame();
+    auto* frame = window->frame();
     if (!frame)
         return false;
     if (!frame->page())

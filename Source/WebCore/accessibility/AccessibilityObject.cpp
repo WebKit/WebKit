@@ -364,7 +364,7 @@ bool AccessibilityObject::hasMisspelling() const
     if (!node())
         return false;
     
-    LocalFrame* frame = node()->document().frame();
+    auto* frame = node()->document().frame();
     if (!frame)
         return false;
     
@@ -399,7 +399,7 @@ std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRan
     if (!node)
         return std::nullopt;
 
-    LocalFrame* frame = node->document().frame();
+    auto* frame = node->document().frame();
     if (!frame)
         return std::nullopt;
 
@@ -691,7 +691,7 @@ static std::optional<SimpleRange> rangeClosestToRange(const SimpleRange& referen
 
 std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
 {
-    LocalFrame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return std::nullopt;
     
@@ -980,7 +980,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     if (operation.textRanges.isEmpty())
         return result;
 
-    LocalFrame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return result;
 
@@ -1138,8 +1138,8 @@ bool AccessibilityObject::press()
     Element* actionElem = actionElement();
     if (!actionElem)
         return false;
-    if (LocalFrame* f = actionElem->document().frame())
-        f->loader().resetMultipleFormSubmissionProtection();
+    if (auto* frame = actionElem->document().frame())
+        frame->loader().resetMultipleFormSubmissionProtection();
     
     // Hit test at this location to determine if there is a sub-node element that should act
     // as the target of the action.
@@ -1198,11 +1198,11 @@ LocalFrame* AccessibilityObject::frame() const
 
 LocalFrame* AccessibilityObject::mainFrame() const
 {
-    Document* document = topDocument();
+    auto* document = topDocument();
     if (!document)
         return nullptr;
     
-    LocalFrame* frame = document->frame();
+    auto* frame = document->frame();
     if (!frame)
         return nullptr;
     

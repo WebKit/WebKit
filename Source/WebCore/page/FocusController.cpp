@@ -250,7 +250,7 @@ Element* FocusNavigationScope::owner() const
     ASSERT(m_treeScopeRootNode);
     if (is<ShadowRoot>(*m_treeScopeRootNode))
         return downcast<ShadowRoot>(*m_treeScopeRootNode).host();
-    if (LocalFrame* frame = m_treeScopeRootNode->document().frame())
+    if (auto* frame = m_treeScopeRootNode->document().frame())
         return frame->ownerElement();
     return nullptr;
 }
@@ -394,7 +394,7 @@ void FocusController::setFocusedFrame(LocalFrame* frame)
 
 LocalFrame& FocusController::focusedOrMainFrame() const
 {
-    if (LocalFrame* frame = focusedFrame())
+    if (auto* frame = focusedFrame())
         return *frame;
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     ASSERT(localMainFrame);

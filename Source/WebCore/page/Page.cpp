@@ -3057,7 +3057,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         && ratioOfViewThatIsUnpainted < gMaximumUnpaintedAreaRatio) {
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
-        if (LocalFrame* frame = dynamicDowncast<LocalFrame>(mainFrame()))
+        if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
             frame->loader().didReachLayoutMilestone(DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }

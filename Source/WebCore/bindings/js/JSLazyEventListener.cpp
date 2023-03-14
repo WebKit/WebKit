@@ -191,7 +191,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
     // FIXME: We should be able to provide source information for frameless documents too (e.g. for importing nodes from XMLHttpRequest.responseXML).
     TextPosition position;
     URL sourceURL;
-    if (LocalFrame* frame = arguments.document.frame()) {
+    if (auto* frame = arguments.document.frame()) {
         if (!frame->script().canExecuteScripts(AboutToCreateEventListener))
             return nullptr;
         position = frame->script().eventHandlerPosition();

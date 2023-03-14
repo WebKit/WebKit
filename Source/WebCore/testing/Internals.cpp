@@ -2498,9 +2498,9 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     if (!document.frame() || !document.frame()->view())
         return Exception { InvalidAccessError };
 
-    LocalFrame* frame = document.frame();
-    FrameView* frameView = document.view();
-    RenderView* renderView = document.renderView();
+    auto* frame = document.frame();
+    auto* frameView = document.view();
+    auto* renderView = document.renderView();
     if (!renderView)
         return nullptr;
 

@@ -155,7 +155,7 @@ using namespace JSC;
 
 - (WebFrame *)webFrame
 {
-    LocalFrame* frame = core(self)->frame();
+    auto* frame = core(self)->frame();
     if (!frame)
         return nil;
     return kit(frame);
