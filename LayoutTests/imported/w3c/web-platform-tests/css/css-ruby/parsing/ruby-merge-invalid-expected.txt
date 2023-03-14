@@ -1,0 +1,8 @@
+
+PASS e.style['ruby-merge'] = "none" should not set the property value
+PASS e.style['ruby-merge'] = "collapse" should not set the property value
+PASS e.style['ruby-merge'] = "10px" should not set the property value
+PASS e.style['ruby-merge'] = "merge separate" should not set the property value
+PASS e.style['ruby-merge'] = "merge auto" should not set the property value
+PASS e.style['ruby-merge'] = "auto separate" should not set the property value
+
