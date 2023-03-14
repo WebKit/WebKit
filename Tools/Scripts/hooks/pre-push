@@ -244,7 +244,7 @@ def main(name, remote):
         elif target_security_level == 0:
             print_tty('Pushing to {}, which is classified as a public remote'.format(name or remote))
         else:
-            print_tty('Pushing to {}, which has not classification. Treating it as a public remote'.format(name or remote))
+            print_tty('Pushing to {}, which has no classification. Treating it as a public remote'.format(name or remote))
 
     to_push = []
     for push in sys.stdin.readlines():
@@ -361,4 +361,3 @@ if __name__ == '__main__':
         print_tty('')
         print_error('User has canceled push')
         sys.exit(1)
-
