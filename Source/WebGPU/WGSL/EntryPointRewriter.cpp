@@ -54,7 +54,6 @@ private:
         Yes = 1,
     };
 
-    void collectStructs();
     void collectParameters();
     void checkReturnType();
     void constructInputStruct();
@@ -72,7 +71,6 @@ private:
     String m_structTypeName;
     String m_structParameterName;
     Reflection::EntryPointInformation m_information;
-    HashMap<String, AST::Structure*> m_structs;
 };
 
 EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, AST::Function& function, AST::StageAttribute::Stage stage)
@@ -98,7 +96,6 @@ void EntryPointRewriter::rewrite()
     m_structTypeName = makeString("__", m_function.name(), "_inT");
     m_structParameterName = makeString("__", m_function.name(), "_in");
 
-    collectStructs();
     collectParameters();
     checkReturnType();
 
@@ -129,12 +126,6 @@ Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation(
     return WTFMove(m_information);
 }
 
-void EntryPointRewriter::collectStructs()
-{
-    for (auto& structure : m_shaderModule.structures())
-        m_structs.add(structure.name(), &structure);
-}
-
 void EntryPointRewriter::collectParameters()
 {
     while (m_function.parameters().size()) {
@@ -152,11 +143,8 @@ void EntryPointRewriter::checkReturnType()
     // FIXME: we might have to duplicate this struct if it has other uses
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
         if (auto* structType = std::get_if<Types::Struct>(maybeReturnType->resolvedType())) {
-            auto it = m_structs.find(structType->name);
-            ASSERT(it != m_structs.end());
-            auto& structure = *it->value;
-            ASSERT(structure.role() == AST::StructureRole::UserDefined);
-            structure.setRole(AST::StructureRole::VertexOutput);
+            ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+            structType->structure.setRole(AST::StructureRole::VertexOutput);
         }
     }
 }
@@ -259,9 +247,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
             )
         ));
         path.append(data.m_name);
-        auto it = m_structs.find(structType->name);
-        ASSERT(it != m_structs.end());
-        for (auto& member : it->value->members())
+        for (auto& member : structType->structure.members())
             visit(path, MemberOrParameter { member.name(), member.type(), member.attributes() });
         path.removeLast();
         return;

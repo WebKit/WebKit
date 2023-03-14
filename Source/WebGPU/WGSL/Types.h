@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ASTForward.h"
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>
@@ -67,11 +68,12 @@ struct Matrix {
 
 struct Array {
     Type* element;
+
     std::optional<unsigned> size;
 };
 
 struct Struct {
-    String name;
+    AST::Structure& structure;
     HashMap<String, Type*> fields { };
 };
 

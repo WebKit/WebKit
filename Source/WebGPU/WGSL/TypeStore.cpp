@@ -112,9 +112,9 @@ TypeStore::TypeStore()
     allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x4, 4, 4);
 }
 
-Type* TypeStore::structType(const AST::Identifier& name)
+Type* TypeStore::structType(AST::Structure& structure)
 {
-    return allocateType<Struct>(name);
+    return allocateType<Struct>(structure);
 }
 
 Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, Type* elementType)

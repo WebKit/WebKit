@@ -158,7 +158,7 @@ std::optional<FailedCheck> TypeChecker::check()
 // Declarations
 void TypeChecker::visit(AST::Structure& structure)
 {
-    Type* structType = m_types.structType(structure.name());
+    Type* structType = m_types.structType(structure);
     introduceVariable(structure.name(), structType);
 }
 

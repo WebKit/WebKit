@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Types.h"
 
+#include "ASTStructure.h"
 #include <wtf/StringPrintStream.h>
 
 namespace WGSL {
@@ -58,7 +59,7 @@ void Type::dump(PrintStream& out) const
             out.print(">");
         },
         [&](const Struct& structure) {
-            out.print(structure.name);
+            out.print(structure.structure.name());
         },
         [&](const Function&) {
             // FIXME: implement this
