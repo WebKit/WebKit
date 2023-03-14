@@ -70,6 +70,7 @@ public:
     using ErrorType = String;
     using PartialResult = Expected<void, ErrorType>;
     using Address = MacroAssembler::Address;
+    using BaseIndex = MacroAssembler::BaseIndex;
     using Imm32 = MacroAssembler::Imm32;
     using Imm64 = MacroAssembler::Imm64;
     using TrustedImm32 = MacroAssembler::TrustedImm32;
@@ -1592,40 +1593,6 @@ public:
 
     // Globals
 
-    LoadOpType loadOpForTypeKind(TypeKind type)
-    {
-        switch (type) {
-        case TypeKind::I32:
-        case TypeKind::I31ref:
-            return LoadOpType::I32Load;
-        case TypeKind::I64:
-            return LoadOpType::I64Load;
-        case TypeKind::F32:
-            return LoadOpType::F32Load;
-        case TypeKind::F64:
-            return LoadOpType::F64Load;
-        case TypeKind::Ref:
-        case TypeKind::RefNull:
-        case TypeKind::Arrayref:
-        case TypeKind::Structref:
-        case TypeKind::Funcref:
-        case TypeKind::Externref:
-            return loadOpForTypeKind(Types::IPtr.kind);
-        case TypeKind::V128:
-            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Should be handling vectors separately (use V128Load, not a LoadOpType)");
-            return LoadOpType::I64Load;
-        case TypeKind::Void:
-        case TypeKind::Rec:
-        case TypeKind::Sub:
-        case TypeKind::Array:
-        case TypeKind::Struct:
-        case TypeKind::Func:
-            RELEASE_ASSERT_NOT_REACHED();
-            return LoadOpType::I64Load;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
     Value topValue(TypeKind type)
     {
         return Value::fromTemp(type, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size());
@@ -1653,54 +1620,47 @@ public:
         case Wasm::GlobalInformation::BindingMode::Portable:
             ASSERT(global.mutability == Wasm::Mutability::Mutable);
             m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, offset), wasmScratchGPR);
-            if (type.kind == TypeKind::V128) {
-                // Vectors aren't handled by the normal load-op helper, but since we know the offset is zero
-                // we don't need the song and dance of addSIMDLoad.
-                result = topValue(type.kind);
-                m_jit.loadVector(Address(wasmScratchGPR), loadIfNecessary(result).asFPR());
-            } else
-                result = emitLoadOp(loadOpForTypeKind(type.kind), Location::fromGPR(wasmScratchGPR), 0);
+            result = topValue(type.kind);
+            Location resultLocation = allocate(result);
+            switch (type.kind) {
+            case TypeKind::I32:
+            case TypeKind::I31ref:
+                m_jit.load32(Address(wasmScratchGPR), resultLocation.asGPR());
+                break;
+            case TypeKind::I64:
+                m_jit.load64(Address(wasmScratchGPR), resultLocation.asGPR());
+                break;
+            case TypeKind::F32:
+                m_jit.loadFloat(Address(wasmScratchGPR), resultLocation.asFPR());
+                break;
+            case TypeKind::F64:
+                m_jit.loadDouble(Address(wasmScratchGPR), resultLocation.asFPR());
+                break;
+            case TypeKind::V128:
+                m_jit.loadVector(Address(wasmScratchGPR), resultLocation.asFPR());
+                break;
+            case TypeKind::Func:
+            case TypeKind::Funcref:
+            case TypeKind::Ref:
+            case TypeKind::RefNull:
+            case TypeKind::Rec:
+            case TypeKind::Sub:
+            case TypeKind::Struct:
+            case TypeKind::Structref:
+            case TypeKind::Externref:
+            case TypeKind::Array:
+            case TypeKind::Arrayref:
+                m_jit.load64(Address(wasmScratchGPR), resultLocation.asGPR());
+                break;
+            case TypeKind::Void:
+                break;
+            }
             break;
         }
 
         LOG_INSTRUCTION("GetGlobal", index, RESULT(result));
 
         return { };
-    }
-
-    StoreOpType storeOpForTypeKind(TypeKind type)
-    {
-        switch (type) {
-        case TypeKind::I32:
-        case TypeKind::I31ref:
-            return StoreOpType::I32Store;
-        case TypeKind::I64:
-            return StoreOpType::I64Store;
-        case TypeKind::F32:
-            return StoreOpType::F32Store;
-        case TypeKind::F64:
-            return StoreOpType::F64Store;
-        case TypeKind::Rec:
-        case TypeKind::Ref:
-        case TypeKind::Sub:
-        case TypeKind::RefNull:
-        case TypeKind::Array:
-        case TypeKind::Arrayref:
-        case TypeKind::Struct:
-        case TypeKind::Structref:
-        case TypeKind::Func:
-        case TypeKind::Funcref:
-        case TypeKind::Externref:
-            return storeOpForTypeKind(Types::IPtr.kind);
-        case TypeKind::V128:
-            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Should be handling vectors separately (use V128Store, not a StoreOpType)");
-            return StoreOpType::I64Store;
-        case TypeKind::Void:
-            RELEASE_ASSERT_NOT_REACHED();
-            return StoreOpType::I64Store;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
     }
 
     void emitWriteBarrier(GPRReg cellGPR)
@@ -1759,13 +1719,54 @@ public:
         case Wasm::GlobalInformation::BindingMode::Portable: {
             ASSERT(global.mutability == Wasm::Mutability::Mutable);
             m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, offset), wasmScratchGPR);
-            if (type.kind == TypeKind::V128) {
-                // Vectors aren't handled by the normal load-op helper, but since we know the offset is zero
-                // we don't need the song and dance of addSIMDStore.
-                m_jit.storeVector(loadIfNecessary(value).asFPR(), Address(wasmScratchGPR));
+
+            Location valueLocation;
+            if (value.isConst() && value.isFloat()) {
+                ScratchScope<0, 1> scratches(*this);
+                valueLocation = Location::fromFPR(scratches.fpr(0));
+                emitMoveConst(value, valueLocation);
+            } else if (value.isConst()) {
+                ScratchScope<1, 0> scratches(*this);
+                valueLocation = Location::fromGPR(scratches.gpr(0));
+                emitMoveConst(value, valueLocation);
             } else
-                emitStoreOp(storeOpForTypeKind(type.kind), Location::fromGPR(wasmScratchGPR), value, 0);
+                valueLocation = loadIfNecessary(value);
+            ASSERT(valueLocation.isRegister());
             consume(value);
+
+            switch (type.kind) {
+            case TypeKind::I32:
+            case TypeKind::I31ref:
+                m_jit.store32(valueLocation.asGPR(), Address(wasmScratchGPR));
+                break;
+            case TypeKind::I64:
+                m_jit.store64(valueLocation.asGPR(), Address(wasmScratchGPR));
+                break;
+            case TypeKind::F32:
+                m_jit.storeFloat(valueLocation.asFPR(), Address(wasmScratchGPR));
+                break;
+            case TypeKind::F64:
+                m_jit.storeDouble(valueLocation.asFPR(), Address(wasmScratchGPR));
+                break;
+            case TypeKind::V128:
+                m_jit.storeVector(valueLocation.asFPR(), Address(wasmScratchGPR));
+                break;
+            case TypeKind::Func:
+            case TypeKind::Funcref:
+            case TypeKind::Ref:
+            case TypeKind::RefNull:
+            case TypeKind::Rec:
+            case TypeKind::Sub:
+            case TypeKind::Struct:
+            case TypeKind::Structref:
+            case TypeKind::Externref:
+            case TypeKind::Array:
+            case TypeKind::Arrayref:
+                m_jit.store64(valueLocation.asGPR(), Address(wasmScratchGPR));
+                break;
+            case TypeKind::Void:
+                break;
+            }
             if (isRefType(type)) {
                 m_jit.loadPtr(Address(wasmScratchGPR, Wasm::Global::offsetOfOwner() - Wasm::Global::offsetOfValue()), wasmScratchGPR);
                 emitWriteBarrier(wasmScratchGPR);
@@ -1836,6 +1837,90 @@ public:
         return Location::fromGPR(wasmScratchGPR);
     }
 
+    template<typename Functor>
+    auto emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint32_t uoffset, uint32_t sizeOfOperation, Functor&& functor) -> decltype(auto)
+    {
+        uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
+
+        ScratchScope<1, 0> scratches(*this);
+        Location pointerLocation;
+        if (pointer.isConst()) {
+            uint64_t constantPointer = static_cast<uint64_t>(static_cast<uint32_t>(pointer.asI32()));
+            uint64_t finalOffset = constantPointer + uoffset;
+            if (!(finalOffset > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) || !B3::Air::Arg::isValidAddrForm(B3::Air::Move, finalOffset, Width::Width128))) {
+                switch (m_mode) {
+                case MemoryMode::BoundsChecking: {
+                    m_jit.move(TrustedImm64(constantPointer + boundary), wasmScratchGPR);
+                    throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, wasmScratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
+                    break;
+                }
+                case MemoryMode::Signaling: {
+                    if (uoffset >= Memory::fastMappedRedzoneBytes()) {
+                        uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
+                        if ((constantPointer + boundary) >= maximum)
+                            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+                    }
+                    break;
+                }
+                }
+                return functor(CCallHelpers::Address(GPRInfo::wasmBaseMemoryPointer, static_cast<int32_t>(finalOffset)));
+            }
+            pointerLocation = Location::fromGPR(scratches.gpr(0));
+            emitMoveConst(pointer, pointerLocation);
+        } else
+            pointerLocation = loadIfNecessary(pointer);
+        ASSERT(pointerLocation.isGPR());
+
+        switch (m_mode) {
+        case MemoryMode::BoundsChecking: {
+            // We're not using signal handling only when the memory is not shared.
+            // Regardless of signaling, we must check that no memory access exceeds the current memory size.
+            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+            if (boundary)
+                m_jit.add64(TrustedImm64(boundary), wasmScratchGPR);
+            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, wasmScratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
+            break;
+        }
+
+        case MemoryMode::Signaling: {
+            // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
+            // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
+            // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
+            // the 32-bit limit (the offset is unsigned 32-bit). The redzone will catch most small offsets, and we'll explicitly bounds check any
+            // register + large offset access. We don't think this will be generated frequently.
+            //
+            // We could check that register + large offset doesn't exceed 4GiB+redzone since that's technically the limit we need to avoid overflowing the
+            // PROT_NONE region, but it's better if we use a smaller immediate because it can codegens better. We know that anything equal to or greater
+            // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
+            // any access equal to or greater than 4GiB will trap, no need to add the redzone.
+            if (uoffset >= Memory::fastMappedRedzoneBytes()) {
+                uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
+                m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+                if (boundary)
+                    m_jit.add64(TrustedImm64(boundary), wasmScratchGPR);
+                throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm64(static_cast<int64_t>(maximum))));
+            }
+            break;
+        }
+        }
+
+#if CPU(ARM64)
+        if (!(static_cast<uint64_t>(uoffset) > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) || !B3::Air::Arg::isValidAddrForm(B3::Air::Move, uoffset, Width::Width128)))
+            return functor(CCallHelpers::BaseIndex(GPRInfo::wasmBaseMemoryPointer, pointerLocation.asGPR(), CCallHelpers::TimesOne, static_cast<int32_t>(uoffset), CCallHelpers::Extend::ZExt32));
+
+        m_jit.addZeroExtend64(GPRInfo::wasmBaseMemoryPointer, pointerLocation.asGPR(), wasmScratchGPR);
+#else
+        m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+        m_jit.addPtr(GPRInfo::wasmBaseMemoryPointer, wasmScratchGPR);
+#endif
+
+        if (static_cast<uint64_t>(uoffset) > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) || !B3::Air::Arg::isValidAddrForm(B3::Air::Move, uoffset, Width::Width128)) {
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), wasmScratchGPR);
+            return functor(Address(wasmScratchGPR));
+        }
+        return functor(Address(wasmScratchGPR, static_cast<int32_t>(uoffset)));
+    }
+
     static inline uint32_t sizeOfLoadOp(LoadOpType op)
     {
         switch (op) {
@@ -1895,65 +1980,6 @@ public:
         return Address(pointerLocation.asGPR(), static_cast<int32_t>(uoffset));
     }
 
-    Value WARN_UNUSED_RETURN emitLoadOp(LoadOpType loadOp, Location pointer, uint32_t uoffset)
-    {
-        ASSERT(pointer.isGPR());
-
-        Address address = materializePointer(pointer, uoffset);
-        Value result = topValue(typeOfLoadOp(loadOp));
-        Location resultLocation = allocate(result);
-
-        switch (loadOp) {
-        case LoadOpType::I32Load8S:
-            m_jit.load8SignedExtendTo32(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load8S:
-            m_jit.load8SignedExtendTo32(address, resultLocation.asGPR());
-            m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
-            break;
-        case LoadOpType::I32Load8U:
-            m_jit.load8(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load8U:
-            m_jit.load8(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I32Load16S:
-            m_jit.load16SignedExtendTo32(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load16S:
-            m_jit.load16SignedExtendTo32(address, resultLocation.asGPR());
-            m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
-            break;
-        case LoadOpType::I32Load16U:
-            m_jit.load16(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load16U:
-            m_jit.load16(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I32Load:
-            m_jit.load32(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load32U:
-            m_jit.load32(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load32S:
-            m_jit.load32(address, resultLocation.asGPR());
-            m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
-            break;
-        case LoadOpType::I64Load:
-            m_jit.load64(address, resultLocation.asGPR());
-            break;
-        case LoadOpType::F32Load:
-            m_jit.loadFloat(address, resultLocation.asFPR());
-            break;
-        case LoadOpType::F64Load:
-            m_jit.loadDouble(address, resultLocation.asFPR());
-            break;
-        }
-
-        return result;
-    }
-
 #define CREATE_OP_STRING(name, ...) #name,
 
     constexpr static const char* LOAD_OP_NAMES[14] = {
@@ -1994,8 +2020,63 @@ public:
                 result = Value::fromF64(0);
                 break;
             }
-        } else
-            result = emitLoadOp(loadOp, emitCheckAndPreparePointer(pointer, uoffset, sizeOfLoadOp(loadOp)), uoffset);
+        } else {
+            result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeOfLoadOp(loadOp), [&](auto location) -> Value {
+                consume(pointer);
+                Value result = topValue(typeOfLoadOp(loadOp));
+                Location resultLocation = allocate(result);
+
+                switch (loadOp) {
+                case LoadOpType::I32Load8S:
+                    m_jit.load8SignedExtendTo32(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load8S:
+                    m_jit.load8SignedExtendTo32(location, resultLocation.asGPR());
+                    m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                    break;
+                case LoadOpType::I32Load8U:
+                    m_jit.load8(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load8U:
+                    m_jit.load8(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I32Load16S:
+                    m_jit.load16SignedExtendTo32(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load16S:
+                    m_jit.load16SignedExtendTo32(location, resultLocation.asGPR());
+                    m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                    break;
+                case LoadOpType::I32Load16U:
+                    m_jit.load16(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load16U:
+                    m_jit.load16(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I32Load:
+                    m_jit.load32(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load32U:
+                    m_jit.load32(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load32S:
+                    m_jit.load32(location, resultLocation.asGPR());
+                    m_jit.signExtend32ToPtr(resultLocation.asGPR(), resultLocation.asGPR());
+                    break;
+                case LoadOpType::I64Load:
+                    m_jit.load64(location, resultLocation.asGPR());
+                    break;
+                case LoadOpType::F32Load:
+                    m_jit.loadFloat(location, resultLocation.asFPR());
+                    break;
+                case LoadOpType::F64Load:
+                    m_jit.loadDouble(location, resultLocation.asFPR());
+                    break;
+                }
+
+                return result;
+            });
+        }
 
         LOG_INSTRUCTION(LOAD_OP_NAMES[(unsigned)loadOp - (unsigned)I32Load], pointer, uoffset, RESULT(result));
 
@@ -2022,51 +2103,6 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void emitStoreOp(StoreOpType storeOp, Location pointer, Value value, uint32_t uoffset)
-    {
-        ASSERT(pointer.isGPR());
-
-        Address address = materializePointer(pointer, uoffset);
-        Location valueLocation;
-        if (value.isConst() && value.isFloat()) {
-            ScratchScope<0, 1> scratches(*this);
-            valueLocation = Location::fromFPR(scratches.fpr(0));
-            emitMoveConst(value, valueLocation);
-        } else if (value.isConst()) {
-            ScratchScope<1, 0> scratches(*this);
-            valueLocation = Location::fromGPR(scratches.gpr(0));
-            emitMoveConst(value, valueLocation);
-        } else
-            valueLocation = loadIfNecessary(value);
-        ASSERT(valueLocation.isRegister());
-
-        consume(value);
-
-        switch (storeOp) {
-        case StoreOpType::I64Store8:
-        case StoreOpType::I32Store8:
-            m_jit.store8(valueLocation.asGPR(), address);
-            return;
-        case StoreOpType::I64Store16:
-        case StoreOpType::I32Store16:
-            m_jit.store16(valueLocation.asGPR(), address);
-            return;
-        case StoreOpType::I64Store32:
-        case StoreOpType::I32Store:
-            m_jit.store32(valueLocation.asGPR(), address);
-            return;
-        case StoreOpType::I64Store:
-            m_jit.store64(valueLocation.asGPR(), address);
-            return;
-        case StoreOpType::F32Store:
-            m_jit.storeFloat(valueLocation.asFPR(), address);
-            return;
-        case StoreOpType::F64Store:
-            m_jit.storeDouble(valueLocation.asFPR(), address);
-            return;
-        }
-    }
-
     constexpr static const char* STORE_OP_NAMES[9] = {
         "I32Store", "I64Store", "F32Store", "F64Store",
         "I32Store8", "I32Store16",
@@ -2081,8 +2117,49 @@ public:
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
             consume(pointer);
             consume(value);
-        } else
-            emitStoreOp(storeOp, emitCheckAndPreparePointer(pointer, uoffset, sizeOfStoreOp(storeOp)), value, uoffset);
+        } else {
+            emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeOfStoreOp(storeOp), [&](auto location) -> void {
+                Location valueLocation;
+                if (value.isConst() && value.isFloat()) {
+                    ScratchScope<0, 1> scratches(*this);
+                    valueLocation = Location::fromFPR(scratches.fpr(0));
+                    emitMoveConst(value, valueLocation);
+                } else if (value.isConst()) {
+                    ScratchScope<1, 0> scratches(*this);
+                    valueLocation = Location::fromGPR(scratches.gpr(0));
+                    emitMoveConst(value, valueLocation);
+                } else
+                    valueLocation = loadIfNecessary(value);
+                ASSERT(valueLocation.isRegister());
+
+                consume(value);
+                consume(pointer);
+
+                switch (storeOp) {
+                case StoreOpType::I64Store8:
+                case StoreOpType::I32Store8:
+                    m_jit.store8(valueLocation.asGPR(), location);
+                    return;
+                case StoreOpType::I64Store16:
+                case StoreOpType::I32Store16:
+                    m_jit.store16(valueLocation.asGPR(), location);
+                    return;
+                case StoreOpType::I64Store32:
+                case StoreOpType::I32Store:
+                    m_jit.store32(valueLocation.asGPR(), location);
+                    return;
+                case StoreOpType::I64Store:
+                    m_jit.store64(valueLocation.asGPR(), location);
+                    return;
+                case StoreOpType::F32Store:
+                    m_jit.storeFloat(valueLocation.asFPR(), location);
+                    return;
+                case StoreOpType::F64Store:
+                    m_jit.storeDouble(valueLocation.asFPR(), location);
+                    return;
+                }
+            });
+        }
 
         LOG_INSTRUCTION(STORE_OP_NAMES[(unsigned)storeOp - (unsigned)I32Store], pointer, uoffset, value, valueLocation);
 
@@ -7260,25 +7337,26 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, uoffset);
-        result = topValue(TypeKind::V128);
-        Location resultLocation = allocate(result);
-        m_jit.loadVector(address, resultLocation.asFPR());
-        LOG_INSTRUCTION("V128Load", pointer, pointerLocation, uoffset, RESULT(result));
-
+        result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, bytesForWidth(Width::Width128), [&](auto location) -> Value {
+            consume(pointer);
+            Value result = topValue(TypeKind::V128);
+            Location resultLocation = allocate(result);
+            m_jit.loadVector(location, resultLocation.asFPR());
+            LOG_INSTRUCTION("V128Load", pointer, uoffset, RESULT(result));
+            return result;
+        });
         return { };
     }
 
     PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t uoffset)
     {
-        Location valueLocation = loadIfNecessary(value);
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
-        consume(value);
-        Address address = materializePointer(pointerLocation, uoffset);
-        m_jit.storeVector(valueLocation.asFPR(), address);
-        LOG_INSTRUCTION("V128Store", pointer, pointerLocation, uoffset, value, valueLocation);
-
+        emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, bytesForWidth(Width::Width128), [&](auto location) -> void {
+            Location valueLocation = loadIfNecessary(value);
+            consume(pointer);
+            consume(value);
+            m_jit.storeVector(valueLocation.asFPR(), location);
+            LOG_INSTRUCTION("V128Store", pointer, uoffset, value, valueLocation);
+        });
         return { };
     }
 
@@ -7608,37 +7686,38 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, uoffset);
+        result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, sizeof(double), [&](auto location) -> Value {
+            consume(pointer);
+            Value result = topValue(TypeKind::V128);
+            Location resultLocation = allocate(result);
 
-        result = topValue(TypeKind::V128);
-        Location resultLocation = allocate(result);
+            LOG_INSTRUCTION("Vector", op, pointer, uoffset, RESULT(result));
 
-        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
+            m_jit.loadDouble(location, resultLocation.asFPR());
+            m_jit.vectorExtendLow(SIMDInfo { lane, signMode }, resultLocation.asFPR(), resultLocation.asFPR());
 
-        m_jit.loadDouble(address, resultLocation.asFPR());
-        m_jit.vectorExtendLow(SIMDInfo { lane, signMode }, resultLocation.asFPR(), resultLocation.asFPR());
-
+            return result;
+        });
         return { };
     }
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, uoffset);
+        result = emitCheckAndPrepareAndMaterializePointerApply(pointer, uoffset, op == SIMDLaneOperation::LoadPad32 ? sizeof(float) : sizeof(double), [&](auto location) -> Value {
+            consume(pointer);
+            Value result = topValue(TypeKind::V128);
+            Location resultLocation = allocate(result);
 
-        result = topValue(TypeKind::V128);
-        Location resultLocation = allocate(result);
+            LOG_INSTRUCTION("Vector", op, pointer, uoffset, RESULT(result));
 
-        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
-
-        if (op == SIMDLaneOperation::LoadPad32)
-            m_jit.loadFloat(address, resultLocation.asFPR());
-        else {
-            ASSERT(op == SIMDLaneOperation::LoadPad64);
-            m_jit.loadDouble(address, resultLocation.asFPR());
-        }
-
+            if (op == SIMDLaneOperation::LoadPad32)
+                m_jit.loadFloat(location, resultLocation.asFPR());
+            else {
+                ASSERT(op == SIMDLaneOperation::LoadPad64);
+                m_jit.loadDouble(location, resultLocation.asFPR());
+            }
+            return result;
+        });
         return { };
     }
 
