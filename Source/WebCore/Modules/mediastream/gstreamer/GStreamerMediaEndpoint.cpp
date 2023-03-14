@@ -81,6 +81,13 @@ GStreamerMediaEndpoint::GStreamerMediaEndpoint(GStreamerPeerConnectionBackend& p
     });
 }
 
+GStreamerMediaEndpoint::~GStreamerMediaEndpoint()
+{
+    if (!m_pipeline)
+        return;
+    teardownPipeline();
+}
+
 bool GStreamerMediaEndpoint::initializePipeline()
 {
     static uint32_t nPipeline = 0;
@@ -177,6 +184,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
 void GStreamerMediaEndpoint::teardownPipeline()
 {
     ASSERT(m_pipeline);
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Tearing down.");
 #if !RELEASE_LOG_DISABLED
     stopLoggingStats();
 #endif
