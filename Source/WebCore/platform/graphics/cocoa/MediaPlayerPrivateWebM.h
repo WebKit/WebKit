@@ -117,9 +117,15 @@ private:
     MediaTime durationMediaTime() const final { return m_duration; }
     MediaTime startTime() const final { return MediaTime::zeroTime(); }
     MediaTime initialTime() const final { return MediaTime::zeroTime(); }
+        
+    bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
-    void seek(const MediaTime&) final;
-    bool seeking() const final { return m_seeking; }
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) final;
+    bool seeking() const final;
+    void seekInternal();
+    void seekCompleted();
+    MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
+    MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
     void setRateDouble(double) final;
     double rate() const final { return m_rate; }
@@ -236,6 +242,8 @@ private:
     void destroyAudioRenderers();
     void clearTracks();
         
+    bool shouldBePlaying() const;
+        
     void registerNotifyWhenHasAvailableVideoFrame();
         
     void startVideoFrameMetadataGathering() final;
@@ -255,14 +263,32 @@ private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
+    struct PendingSeek {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        PendingSeek(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+            : targetTime(targetTime)
+            , negativeThreshold(negativeThreshold)
+            , positiveThreshold(positiveThreshold)
+        {
+        }
+        MediaTime targetTime;
+        MediaTime negativeThreshold;
+        MediaTime positiveThreshold;
+    };
+    std::unique_ptr<PendingSeek> m_pendingSeek;
+    
     MediaPlayer* m_player;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
+    mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
+    RetainPtr<id> m_timeChangedObserver;
+    RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     WeakPtr<WebMResourceClient> m_resourceClient;
+    Timer m_seekTimer;
 
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateWebM>> m_audioTracks;
@@ -295,7 +321,14 @@ private:
     ProcessIdentity m_resourceOwner;
     std::unique_ptr<BinarySemaphore> m_hasAvailableVideoFrameSemaphore;
 
+    enum SeekState {
+        Seeking,
+        WaitingForAvailableFame,
+        SeekCompleted,
+    };
+    SeekState m_seekCompleted { SeekCompleted };
     FloatSize m_naturalSize;
+    MediaTime m_lastSeekTime;
     MediaTime m_currentTime;
     MediaTime m_duration;
     double m_rate { 1 };
@@ -309,6 +342,7 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
     bool m_hasAvailableVideoFrame { false };
+    bool m_playing { false };
     bool m_seeking { false };
     bool m_visible { false };
     bool m_loadingProgressed { false };

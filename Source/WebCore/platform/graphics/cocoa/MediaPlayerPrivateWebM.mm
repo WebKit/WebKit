@@ -86,20 +86,50 @@ static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     : m_player(player)
     , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
+    , m_seekTimer(*this, &MediaPlayerPrivateWebM::seekInternal)
     , m_parser(adoptRef(*new SourceBufferParserWebM()))
     , m_appendQueue(WorkQueue::create("MediaPlayerPrivateWebM data parser queue"))
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier);
     m_parser->setLogger(m_logger, m_logIdentifier);
+
+    // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
+    // an arbitrarily large time value of once an hour:
+    __block WeakPtr weakThis { *this };
+    m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        
+        auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
+        ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_seeking, ", pending = ", !!m_pendingSeek);
+
+        if (m_seeking && !m_pendingSeek) {
+            m_seeking = false;
+
+            if (shouldBePlaying())
+                [m_synchronizer setRate:m_rate];
+            if (!seeking() && m_seekCompleted == SeekCompleted)
+                m_player->timeChanged();
+        }
+
+        if (m_pendingSeek)
+            seekInternal();
+
+        if (m_currentTimeDidChangeCallback)
+            m_currentTimeDidChangeCallback(clampedTime);
+    }];
 }
 
 MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (m_timeJumpedObserver)
+        [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
+    if (m_timeChangedObserver)
+        [m_synchronizer removeTimeObserver:m_timeChangedObserver.get()];
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
     if (m_videoFrameMetadataGatheringObserver)
@@ -109,6 +139,8 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
     destroyDecompressionSession();
     destroyAudioRenderers();
     clearTracks();
+    
+    m_seekTimer.stop();
 
     cancelLoad();
     abort();
@@ -237,6 +269,10 @@ void MediaPlayerPrivateWebM::play()
 #if PLATFORM(IOS_FAMILY)
     flushIfNeeded();
 #endif
+    
+    m_playing = true;
+    if (!shouldBePlaying())
+        return;
 
     [m_synchronizer setRate:m_rate];
 
@@ -246,6 +282,7 @@ void MediaPlayerPrivateWebM::play()
 
 void MediaPlayerPrivateWebM::pause()
 {
+    m_playing = false;
     [m_synchronizer setRate:0];
 }
 
@@ -265,29 +302,133 @@ void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
 
 MediaTime MediaPlayerPrivateWebM::currentMediaTime() const
 {
-    MediaTime synchronizerTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
+    MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
     if (synchronizerTime < MediaTime::zeroTime())
         return MediaTime::zeroTime();
-    if (synchronizerTime > durationMediaTime())
-        return durationMediaTime();
-
+    if (synchronizerTime < m_lastSeekTime)
+        return m_lastSeekTime;
     return synchronizerTime;
 }
 
-void MediaPlayerPrivateWebM::seek(const MediaTime& time)
+bool MediaPlayerPrivateWebM::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "time = ", time);
+    m_currentTimeDidChangeCallback = WTFMove(callback);
 
-    [m_synchronizer setRate:0 time:PAL::toCMTime(time)];
+    if (m_currentTimeDidChangeCallback) {
+        m_timeChangedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+            if (!m_currentTimeDidChangeCallback)
+                return;
+
+            auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
+            m_currentTimeDidChangeCallback(clampedTime);
+        }];
+
+    } else
+        m_timeChangedObserver = nullptr;
+
+    return true;
+}
+
+void MediaPlayerPrivateWebM::seekWithTolerance(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
+    
+    m_seeking = true;
+    m_pendingSeek = makeUnique<PendingSeek>(time, negativeThreshold, positiveThreshold);
+    
+    if (m_seekTimer.isActive())
+        m_seekTimer.stop();
+    m_seekTimer.startOneShot(0_s);
+}
+
+bool MediaPlayerPrivateWebM::seeking() const
+{
+    return m_seeking || m_seekCompleted != SeekCompleted;
+}
+
+void MediaPlayerPrivateWebM::seekInternal()
+{
+    std::unique_ptr<PendingSeek> pendingSeek;
+    pendingSeek.swap(m_pendingSeek);
+    
+    if (!pendingSeek)
+        return;
+    
+    if (!pendingSeek->negativeThreshold && !pendingSeek->positiveThreshold)
+        m_lastSeekTime = pendingSeek->targetTime;
+    else
+        m_lastSeekTime = fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
+    
+    if (m_lastSeekTime.hasDoubleValue())
+        m_lastSeekTime = MediaTime::createWithDouble(m_lastSeekTime.toDouble(), MediaTime::DefaultTimeScale);
+    
+    auto synchronizerTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
+    ALWAYS_LOG(LOGIDENTIFIER, "seekTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime);
+    
+    const auto doesNotRequireSeek = synchronizerTime == m_lastSeekTime;
+    
+    m_seekCompleted = Seeking;
+    flush();
+    [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
         auto trackId = trackBufferPair.key;
 
         trackBuffer.setNeedsReenqueueing(true);
-        reenqueueMediaForTime(trackBuffer, trackId, time);
+        reenqueueMediaForTime(trackBuffer, trackId, m_lastSeekTime);
     }
-    [m_synchronizer setRate:m_rate];
-    m_player->timeChanged();
+    seekCompleted();
+    // In cases where the destination seek time precisely matches the synchronizer's existing time
+    // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
+    // the seek completed successfully.
+    if (doesNotRequireSeek) {
+        m_seeking = false;
+
+        if (shouldBePlaying())
+            [m_synchronizer setRate:m_rate];
+        if (!seeking() && m_seekCompleted)
+            m_player->timeChanged();
+    }
+}
+
+void MediaPlayerPrivateWebM::seekCompleted()
+{
+    if (m_seekCompleted == SeekCompleted)
+        return;
+    if (hasVideo() && !m_hasAvailableVideoFrame) {
+        ALWAYS_LOG(LOGIDENTIFIER, "waiting for video frame");
+        m_seekCompleted = WaitingForAvailableFame;
+        return;
+    }
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_seekCompleted = SeekCompleted;
+    if (shouldBePlaying())
+        [m_synchronizer setRate:m_rate];
+    if (!m_seeking)
+        m_player->timeChanged();
+}
+
+MediaTime MediaPlayerPrivateWebM::clampTimeToLastSeekTime(const MediaTime& time) const
+{
+    if (m_lastSeekTime.isFinite() && time < m_lastSeekTime)
+        return m_lastSeekTime;
+
+    return time;
+}
+
+MediaTime MediaPlayerPrivateWebM::fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+{
+    auto seekTime = targetTime;
+
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
+        // Find the sample which contains the target time.
+        auto trackSeekTime = trackBuffer->findSeekTimeForTargetTime(targetTime, negativeThreshold, positiveThreshold);
+        
+        if (trackSeekTime.isValid() && abs(targetTime - trackSeekTime) > abs(targetTime - seekTime))
+            seekTime = trackSeekTime;
+    }
+
+    return seekTime;
 }
 
 void MediaPlayerPrivateWebM::setRateDouble(double rate)
@@ -297,7 +438,7 @@ void MediaPlayerPrivateWebM::setRateDouble(double rate)
 
     m_rate = std::max<double>(rate, 0);
 
-    if (!paused())
+    if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
 
     m_player->rateChanged();
@@ -552,6 +693,9 @@ void MediaPlayerPrivateWebM::setHasAvailableVideoFrame(bool hasAvailableVideoFra
 
     m_player->firstVideoFrameAvailable();
     setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
+    
+    if (m_seekCompleted == WaitingForAvailableFame)
+        seekCompleted();
 }
 
 void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
@@ -584,6 +728,9 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
 
     }];
 
+    if (m_playing && duration <= currentMediaTime())
+        pause();
+    
     m_duration = WTFMove(duration);
     m_player->durationChanged();
 }
@@ -605,6 +752,11 @@ void MediaPlayerPrivateWebM::setReadyState(MediaPlayer::ReadyState state)
 
     ALWAYS_LOG(LOGIDENTIFIER, state);
     m_readyState = state;
+    
+    if (shouldBePlaying())
+        [m_synchronizer setRate:m_rate];
+    else
+        [m_synchronizer setRate:0];
     
     m_player->readyStateChanged();
 }
@@ -1441,6 +1593,11 @@ void MediaPlayerPrivateWebM::clearTracks()
         m_player->removeAudioTrack(*track);
     }
     m_audioTracks.clear();
+}
+
+bool MediaPlayerPrivateWebM::shouldBePlaying() const
+{
+    return m_playing && !seeking() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
 }
 
 void MediaPlayerPrivateWebM::registerNotifyWhenHasAvailableVideoFrame()
