@@ -31,9 +31,9 @@
 #include <type_traits>
 #include <wtf/Vector.h>
 
-// inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
+inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
 
-template<typename T, size_t Extent>
+template<typename T, size_t Extent = gcGLSpanDynamicExtent>
 class GCGLSpan {
 public:
     explicit GCGLSpan(T* array, size_t size = Extent)

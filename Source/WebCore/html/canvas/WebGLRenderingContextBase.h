@@ -29,6 +29,7 @@
 
 #include "ActivityStateChangeObserver.h"
 #include "ExceptionOr.h"
+#include "GCGLSpan.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
 #include "ImageBuffer.h"
@@ -61,8 +62,6 @@
 #if ENABLE(WEBXR)
 #include "JSDOMPromiseDeferredForward.h"
 #endif
-
-#include "GCGLSpan.h"
 
 namespace JSC {
 class AbstractSlotVisitor;

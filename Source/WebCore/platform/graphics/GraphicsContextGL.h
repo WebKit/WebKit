@@ -36,6 +36,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include <limits>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -48,9 +49,7 @@
 #endif
 #endif
 
-inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
-
-template<typename T, size_t Extent = gcGLSpanDynamicExtent>
+template<typename T, size_t Extent = std::numeric_limits<size_t>::max()>
 class GCGLSpan;
 
 template<typename... Types>
