@@ -342,7 +342,7 @@ void BorderPainter::paintSides(const Sides& sides)
 
         if (!firstVisibleSide)
             firstVisibleSide = boxSide;
-        else if (currEdge.color() != sides.edges.at(*firstVisibleSide).color())
+        else if (!equalIgnoringSemanticColor(currEdge.color(), sides.edges.at(*firstVisibleSide).color()))
             allEdgesShareColor = false;
 
         if (!currEdge.color().isOpaque())
@@ -513,7 +513,7 @@ void BorderPainter::paintTranslucentBorderSides(const RoundedRect& outerBorder, 
                 commonColor = edge.color();
                 includeEdge = true;
             } else
-                includeEdge = edge.color() == commonColor;
+                includeEdge = equalIgnoringSemanticColor(edge.color(), commonColor);
 
             if (includeEdge)
                 commonColorEdgeSet.add(edgeFlagForSide(side));
