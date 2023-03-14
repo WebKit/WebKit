@@ -8792,7 +8792,7 @@ private:
         if (value.isPinned())
             return value.asPinned();
         if (value.isLocal()) {
-            ASSERT(value.asLocal() >= 0 && value.asLocal() < m_locals.size());
+            ASSERT(value.asLocal() < m_locals.size());
             return m_locals[value.asLocal()];
         }
         if (value.isTemp()) {
