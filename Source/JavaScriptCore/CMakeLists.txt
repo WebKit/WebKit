@@ -1550,4 +1550,12 @@ endif ()
 add_custom_target(JavaScriptCoreSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore JavaScriptCoreSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
 
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    # JavaScriptCoreSharedScripts and JSCBuiltins targets need to have
+    # a direct or indirect dependency for CMake Visual Studio
+    # generator to eliminate duplicated custom commands. Otherwise,
+    # JavaScriptCore_SCRIPTS will be generated in both projects.
+    add_dependencies(JavaScriptCoreSharedScripts JSCBuiltins)
+endif ()
+
 add_subdirectory(shell)
