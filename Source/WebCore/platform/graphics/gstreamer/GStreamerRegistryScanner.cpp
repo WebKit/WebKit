@@ -104,6 +104,8 @@ GStreamerRegistryScanner::ElementFactories::ElementFactories(OptionSet<ElementFa
         rtpPayloaderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PAYLOADER, GST_RANK_MARGINAL);
     if (types.contains(Type::RtpDepayloader))
         rtpDepayloaderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DEPAYLOADER, GST_RANK_MARGINAL);
+    if (types.contains(Type::Decryptor))
+        decryptorFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECRYPTOR, GST_RANK_MARGINAL);
 }
 
 GStreamerRegistryScanner::ElementFactories::~ElementFactories()
@@ -118,6 +120,7 @@ GStreamerRegistryScanner::ElementFactories::~ElementFactories()
     gst_plugin_feature_list_free(muxerFactories);
     gst_plugin_feature_list_free(rtpPayloaderFactories);
     gst_plugin_feature_list_free(rtpDepayloaderFactories);
+    gst_plugin_feature_list_free(decryptorFactories);
 }
 
 const char* GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToString(GStreamerRegistryScanner::ElementFactories::Type factoryType)
@@ -143,6 +146,8 @@ const char* GStreamerRegistryScanner::ElementFactories::elementFactoryTypeToStri
         return "RTP payloader";
     case Type::RtpDepayloader:
         return "RTP depayloader";
+    case Type::Decryptor:
+        return "Decryptor";
     case Type::All:
         break;
     }
@@ -173,6 +178,8 @@ GList* GStreamerRegistryScanner::ElementFactories::factory(GStreamerRegistryScan
         return rtpPayloaderFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::RtpDepayloader:
         return rtpDepayloaderFactories;
+    case GStreamerRegistryScanner::ElementFactories::Type::Decryptor:
+        return decryptorFactories;
     case GStreamerRegistryScanner::ElementFactories::Type::All:
         break;
     }
@@ -655,6 +662,42 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
         return SupportsType::IsNotSupported;
 
     const auto& codecs = contentType.codecs();
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    String cryptoblockformat = contentType.parameter("cryptoblockformat"_s);
+    if (!cryptoblockformat.isEmpty()) {
+        OptionSet<ElementFactories::Type> factoryTypes;
+        factoryTypes.add(ElementFactories::Type::Decryptor);
+        auto factories = ElementFactories(factoryTypes);
+
+        // https://developers.google.com/youtube/devices/living-room/certification-requirements
+        // section 15.1.3: The isTypeSupported method MUST support the cryptoblockformat mime-type
+        // parameter, and MUST support subsample as a parameter value.
+        if (cryptoblockformat != "subsample"_s)
+            return SupportsType::IsNotSupported;
+
+        if (!containerType.endsWith("webm"_s))
+            return SupportsType::IsNotSupported;
+
+#if GST_CHECK_VERSION(1, 22, 0)
+        for (const auto& mimeCodec : codecs) {
+            auto codecCaps = adoptGRef(gst_codec_utils_caps_from_mime_codec(mimeCodec.ascii().data()));
+            if (!codecCaps) {
+                GST_WARNING("Unable to convert codec %s to caps", mimeCodec.ascii().data());
+                continue;
+            }
+            auto* structure = gst_caps_get_structure(codecCaps.get(), 0);
+            const char* name = gst_structure_get_name(structure);
+            auto caps = adoptGRef(gst_caps_new_simple("application/x-webm-enc", "original-media-type", G_TYPE_STRING, name, nullptr));
+            if (!factories.hasElementForCaps(ElementFactories::Type::Decryptor, caps))
+                return SupportsType::IsNotSupported;
+        }
+#else
+        if (!factories.hasElementForMediaType(ElementFactories::Type::Decryptor, "application/x-webm-enc"))
+            return SupportsType::IsNotSupported;
+#endif // GST_CHECK_VERSION(1, 22, 0)
+    }
+#endif // ENABLE(ENCRYPTED_MEDIA)
 
     // Spec says we should not return "probably" if the codecs string is empty.
     if (codecs.isEmpty())
