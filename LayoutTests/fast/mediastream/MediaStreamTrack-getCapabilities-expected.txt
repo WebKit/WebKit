@@ -25,6 +25,7 @@ video track capabilities:
   capabilities.frameRate = { max: 120, min: 1 }
   capabilities.height = { max: 2160, min: 1 }
   capabilities.width = { max: 3840, min: 1 }
+  capabilities.zoom = { max: 4, min: 1 }
 
 audio track capabilities:
   capabilities.deviceId = <UUID>

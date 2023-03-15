@@ -43,9 +43,9 @@ class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource {
 public:
     virtual ~RealtimeVideoCaptureSource();
 
-    void clientUpdatedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate);
+    void clientUpdatedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom);
 
-    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
+    bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) override;
     virtual void generatePresets() = 0;
     virtual VideoFrameRotation videoFrameRotation() const;
 
@@ -59,10 +59,10 @@ public:
 protected:
     RealtimeVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
 
-    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
+    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) override;
 
     virtual bool prefersPreset(VideoPreset&) { return true; }
-    virtual void setFrameRateWithPreset(double, RefPtr<VideoPreset>) { };
+    virtual void setFrameRateAndZoomWithPreset(double, double, RefPtr<VideoPreset>) { };
     virtual bool canResizeVideoFrames() const { return false; }
     bool shouldUsePreset(VideoPreset& current, VideoPreset& candidate);
 
@@ -79,14 +79,16 @@ protected:
     static Span<const IntSize> standardVideoSizes();
 
 private:
-    struct CaptureSizeAndFrameRate {
+    struct CaptureSizeFrameRateAndZoom {
         RefPtr<VideoPreset> encodingPreset;
         IntSize requestedSize;
         double requestedFrameRate { 0 };
+        double requestedZoom { 0 };
     };
     bool supportsCaptureSize(std::optional<int>, std::optional<int>, const Function<bool(const IntSize&)>&&);
-    std::optional<CaptureSizeAndFrameRate> bestSupportedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
-    bool presetSupportsFrameRate(RefPtr<VideoPreset>, double);
+    std::optional<CaptureSizeFrameRateAndZoom> bestSupportedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
+    bool presetSupportsFrameRate(const VideoPreset&, double);
+    bool presetSupportsZoom(const VideoPreset&, double);
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "RealtimeVideoCaptureSource"; }
@@ -98,10 +100,11 @@ private:
     double m_observedFrameRate { 0 };
 };
 
-struct SizeAndFrameRate {
+struct SizeFrameRateAndZoom {
     std::optional<int> width;
     std::optional<int> height;
     std::optional<double> frameRate;
+    std::optional<double> zoom;
 
     String toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
@@ -112,8 +115,8 @@ struct SizeAndFrameRate {
 namespace WTF {
 template<typename Type> struct LogArgument;
 template <>
-struct LogArgument<WebCore::SizeAndFrameRate> {
-    static String toString(const WebCore::SizeAndFrameRate& size)
+struct LogArgument<WebCore::SizeFrameRateAndZoom> {
+    static String toString(const WebCore::SizeFrameRateAndZoom& size)
     {
         return size.toJSONString();
     }

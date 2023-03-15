@@ -46,4 +46,5 @@
     boolean deviceId = true;
     boolean groupId = true;
     boolean displaySurface = true;
+    boolean zoom = true;
 };

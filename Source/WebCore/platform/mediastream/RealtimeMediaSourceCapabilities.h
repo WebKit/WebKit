@@ -153,7 +153,7 @@ public:
         ReadWrite = 1,
     };
     
-    RealtimeMediaSourceCapabilities(CapabilityValueOrRange&& width, CapabilityValueOrRange&& height, CapabilityValueOrRange&& aspectRatio, CapabilityValueOrRange&& frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityValueOrRange&& volume, CapabilityValueOrRange&& sampleRate, CapabilityValueOrRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityValueOrRange&& focusDistance, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceCapabilities(CapabilityValueOrRange&& width, CapabilityValueOrRange&& height, CapabilityValueOrRange&& aspectRatio, CapabilityValueOrRange&& frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityValueOrRange&& volume, CapabilityValueOrRange&& sampleRate, CapabilityValueOrRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityValueOrRange&& focusDistance, CapabilityValueOrRange&& zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTFMove(width))
         , m_height(WTFMove(height))
         , m_aspectRatio(WTFMove(aspectRatio))
@@ -166,6 +166,7 @@ public:
         , m_deviceId(WTFMove(deviceId))
         , m_groupId(WTFMove(groupId))
         , m_focusDistance(WTFMove(focusDistance))
+        , m_zoom(WTFMove(zoom))
         , m_supportedConstraints(WTFMove(supportedConstraints))
     {
     }
@@ -226,6 +227,10 @@ public:
     const CapabilityValueOrRange& focusDistance() const { return m_focusDistance; }
     void setFocusDistance(const CapabilityValueOrRange& focusDistance) { m_focusDistance = focusDistance; }
 
+    bool supportsZoom() const { return m_supportedConstraints.supportsZoom(); }
+    const CapabilityValueOrRange& zoom() const { return m_zoom; }
+    void setZoom(const CapabilityValueOrRange& zoom) { m_zoom = zoom; }
+
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
@@ -242,6 +247,7 @@ private:
     AtomString m_deviceId;
     AtomString m_groupId;
     CapabilityValueOrRange m_focusDistance;
+    CapabilityValueOrRange m_zoom;
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

@@ -63,6 +63,8 @@ bool RealtimeMediaSourceSupportedConstraints::supportsConstraint(MediaConstraint
         return supportsLogicalSurface();
     case MediaConstraintType::FocusDistance:
         return supportsFocusDistance();
+    case MediaConstraintType::Zoom:
+        return supportsZoom();
     }
 
     ASSERT_NOT_REACHED();

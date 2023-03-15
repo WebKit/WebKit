@@ -178,6 +178,9 @@ public:
     double aspectRatio() const { return m_aspectRatio; }
     void setAspectRatio(double);
 
+    double zoom() const { return m_zoom; }
+    void setZoom(double);
+
     VideoFacingMode facingMode() const { return m_facingMode; }
     void setFacingMode(VideoFacingMode);
 
@@ -257,10 +260,10 @@ protected:
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
     void applyConstraints(const FlattenedConstraint&);
-    bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+    bool supportsSizeFrameRateAndZoom(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
 
-    virtual bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
-    virtual void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
+    virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
+    virtual void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
 
     void notifyMutedObservers();
     void notifyMutedChange(bool muted);
@@ -325,6 +328,7 @@ private:
     IntSize m_intrinsicSize;
     double m_frameRate { 30 };
     double m_aspectRatio { 0 };
+    double m_zoom { 1 };
     double m_volume { 1 };
     double m_sampleRate { 0 };
     double m_sampleSize { 0 };

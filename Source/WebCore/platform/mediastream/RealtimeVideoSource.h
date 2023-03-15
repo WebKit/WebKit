@@ -49,8 +49,8 @@ private:
     // RealtimeMediaSource
     void startProducingData() final;
     void stopProducingData() final;
-    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate) final;
-    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate) final;
+    bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom) final;
+    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom) final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     Ref<RealtimeMediaSource> clone() final;
     void endProducingData() final;

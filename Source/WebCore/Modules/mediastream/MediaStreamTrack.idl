@@ -74,6 +74,7 @@ enum MediaStreamTrackState { "live", "ended" };
     DOMString groupId;
     DOMString displaySurface;
     DoubleRange focusDistance;
+    DoubleRange zoom;
 };
 
 [
@@ -94,4 +95,5 @@ enum MediaStreamTrackState { "live", "ended" };
     DOMString deviceId;
     DOMString groupId;
     DOMString displaySurface;
+    double zoom;
 };

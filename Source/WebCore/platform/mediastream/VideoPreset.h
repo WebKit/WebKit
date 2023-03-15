@@ -43,6 +43,8 @@ struct FrameRateRange {
 struct VideoPresetData {
     IntSize size;
     Vector<FrameRateRange> frameRateRanges;
+    double minZoom { 1 };
+    double maxZoom { 1 };
 };
 
 
@@ -50,7 +52,7 @@ class VideoPreset : public RefCounted<VideoPreset> {
 public:
     static Ref<VideoPreset> create(VideoPresetData&& data)
     {
-        return adoptRef(*new VideoPreset(data.size, WTFMove(data.frameRateRanges), Base));
+        return adoptRef(*new VideoPreset(data.size, WTFMove(data.frameRateRanges), Base, data.minZoom, data.maxZoom));
     }
 
     enum VideoPresetType {
@@ -62,24 +64,31 @@ public:
     IntSize size;
     Vector<FrameRateRange> frameRateRanges;
     VideoPresetType type;
+    double minZoom { 1 };
+    double maxZoom { 1 };
 
     double maxFrameRate() const;
     double minFrameRate() const;
 
+    bool isZoomSupported() const { return minZoom != 1 || maxZoom != 1; }
+
     void log()const;
 
 protected:
-    VideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, VideoPresetType type)
+    VideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, VideoPresetType type, std::optional<double> minZoom, std::optional<double> maxZoom)
         : size(size)
         , frameRateRanges(WTFMove(frameRateRanges))
         , type(type)
+        , minZoom(minZoom.value_or(1))
+        , maxZoom(maxZoom.value_or(1))
     {
+        ASSERT(maxZoom >= minZoom);
     }
 };
 
 inline void VideoPreset::log() const
 {
-    WTFLogAlways("VideoPreset of size (%d,%d) and type %d", size.width(), size.height(), type);
+    WTFLogAlways("VideoPreset of size (%d,%d), type %d, zoom is [%f, %f]", size.width(), size.height(), type, minZoom, maxZoom);
     for (auto range : frameRateRanges)
         WTFLogAlways("VideoPreset frame rate range [%f, %f]", range.minimum, range.maximum);
 }

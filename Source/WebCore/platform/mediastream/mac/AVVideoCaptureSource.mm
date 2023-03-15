@@ -93,6 +93,17 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     return globalQueue;
 }
 
+static std::optional<double> computeMaxZoom(AVCaptureDeviceFormat* format)
+{
+#if PLATFORM(IOS_FAMILY)
+    // We restrict zoom for now as it might require elevated permissions.
+    return std::min([format videoMaxZoomFactor], 4.0);
+#else
+    UNUSED_PARAM(format);
+    return { };
+#endif
+}
+
 class AVVideoPreset : public VideoPreset {
 public:
     static Ref<AVVideoPreset> create(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
@@ -101,7 +112,7 @@ public:
     }
 
     AVVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
-        : VideoPreset(size, WTFMove(frameRateRanges), AVCapture)
+        : VideoPreset(size, WTFMove(frameRateRanges), AVCapture, { }, computeMaxZoom(format))
         , format(format)
     {
     }
@@ -234,6 +245,13 @@ void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettin
     m_currentSettings = std::nullopt;
 }
 
+static bool isZoomSupported(const Vector<Ref<VideoPreset>>& presets)
+{
+    return anyOf(presets, [](auto& preset) {
+        return preset->isZoomSupported();
+    });
+}
+
 const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
 {
     if (m_currentSettings)
@@ -265,6 +283,11 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     supportedConstraints.setSupportsHeight(true);
     supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsFrameRate(true);
+
+    if (isZoomSupported(presets())) {
+        supportedConstraints.setSupportsZoom(true);
+        settings.setZoom(zoom());
+    }
 
     settings.setSupportedConstraints(supportedConstraints);
 
@@ -349,16 +372,17 @@ bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
     return true;
 }
 
-void AVVideoCaptureSource::setFrameRateWithPreset(double requestedFrameRate, RefPtr<VideoPreset> preset)
+void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, RefPtr<VideoPreset> preset)
 {
     auto* avPreset = preset ? downcast<AVVideoPreset>(preset.get()) : nullptr;
     m_currentPreset = avPreset;
     m_currentFrameRate = requestedFrameRate;
+    m_currentZoom = requestedZoom;
 
-    setSessionSizeAndFrameRate();
+    setSessionSizeFrameRateAndZoom();
 }
 
-void AVVideoCaptureSource::setSessionSizeAndFrameRate()
+void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 {
     if (!m_session)
         return;
@@ -367,12 +391,12 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
     if (!avPreset)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { m_currentPreset->size.width(), m_currentPreset->size.height(), m_currentFrameRate });
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size.width(), m_currentPreset->size.height(), m_currentFrameRate, m_currentZoom });
 
     auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
     ASSERT(frameRateRange);
 
-    if (m_appliedPreset && m_appliedPreset->format.get() == m_currentPreset->format.get() && m_appliedFrameRateRange.get() == frameRateRange) {
+    if (m_appliedPreset && m_appliedPreset->format.get() == m_currentPreset->format.get() && m_appliedFrameRateRange.get() == frameRateRange && m_appliedZoom == m_currentZoom) {
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
         return;
     }
@@ -410,6 +434,14 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
                 [device() setActiveVideoMaxFrameDuration: frameDuration];
             } else
                 ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "cannot find proper frame rate range for the selected preset\n");
+
+#if PLATFORM(IOS_FAMILY)
+            if (m_currentZoom != m_appliedZoom) {
+                ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting zoom to ", m_currentZoom);
+                [device() setVideoZoomFactor:m_currentZoom];
+                m_appliedZoom = m_currentZoom;
+            }
+#endif
 
             [device() unlockForConfiguration];
             m_appliedFrameRateRange = frameRateRange;
@@ -549,7 +581,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     }
     [session() addOutput:m_videoOutput.get()];
 
-    setSessionSizeAndFrameRate();
+    setSessionSizeFrameRateAndZoom();
 
     m_sensorOrientation = sensorOrientationFromVideoOutput(m_videoOutput.get());
     computeVideoFrameRotation();

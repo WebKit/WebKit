@@ -278,6 +278,8 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.groupId = settings.groupId();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
+    if (settings.supportsZoom())
+        result.zoom = settings.zoom();
 
     // FIXME: shouldn't this include logicalSurface?
 
@@ -377,6 +379,8 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
         result.groupId = capabilities.groupId();
     if (capabilities.supportsFocusDistance())
         result.focusDistance = capabilityDoubleRange(capabilities.focusDistance());
+    if (capabilities.supportsZoom())
+        result.zoom = capabilityDoubleRange(capabilities.zoom());
 
     auto settings = m_private->settings();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)

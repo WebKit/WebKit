@@ -1475,6 +1475,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::IntConstraint> m_sampleRate;
     std::optional<WebCore::IntConstraint> m_sampleSize;
     std::optional<WebCore::DoubleConstraint> m_aspectRatio;
+    std::optional<WebCore::DoubleConstraint> m_zoom;
     std::optional<WebCore::DoubleConstraint> m_frameRate;
     std::optional<WebCore::DoubleConstraint> m_volume;
     std::optional<WebCore::BooleanConstraint> m_echoCancellation;
@@ -4047,6 +4048,7 @@ enum class WebCore::MediaConstraintType : uint8_t {
     GroupId,
     DisplaySurface,
     LogicalSurface,
+    Zoom,
 };
 
 header: <WebCore/MediaConstraints.h>
@@ -4089,6 +4091,8 @@ header: <WebCore/VideoPreset.h>
 [CustomHeader] struct WebCore::VideoPresetData {
     WebCore::IntSize size;
     Vector<WebCore::FrameRateRange> frameRateRanges;
+    double minZoom;
+    double maxZoom;
 };
 
 class WebCore::RealtimeMediaSourceSupportedConstraints {
@@ -4106,6 +4110,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsDisplaySurface();
     bool supportsLogicalSurface();
     bool supportsFocusDistance();
+    bool supportsZoom();
 };
 
 enum class WebCore::VideoFacingMode : uint8_t {
@@ -4139,6 +4144,7 @@ class WebCore::RealtimeMediaSourceSettings {
     AtomString label();
     WebCore::DisplaySurfaceType displaySurface();
     bool logicalSurface();
+    double zoom();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -4178,6 +4184,7 @@ class WebCore::RealtimeMediaSourceCapabilities {
     AtomString deviceId();
     AtomString groupId();
     WebCore::CapabilityValueOrRange focusDistance();
+    WebCore::CapabilityValueOrRange zoom();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 

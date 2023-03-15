@@ -95,12 +95,12 @@ private:
     bool interrupted() const final;
 
     VideoFrameRotation videoFrameRotation() const final { return m_videoFrameRotation; }
-    void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
+    void setFrameRateAndZoomWithPreset(double, double, RefPtr<VideoPreset>) final;
     bool prefersPreset(VideoPreset&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
 
-    void setSessionSizeAndFrameRate();
+    void setSessionSizeFrameRateAndZoom();
     bool setPreset(NSString*);
     void computeVideoFrameRotation();
     AVFrameRateRange* frameDurationForFrameRate(double);
@@ -138,8 +138,10 @@ private:
     RefPtr<AVVideoPreset> m_currentPreset;
     RefPtr<AVVideoPreset> m_appliedPreset;
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
+    double m_appliedZoom { 1 };
 
     double m_currentFrameRate;
+    double m_currentZoom { 1 };
     bool m_interrupted { false };
     bool m_isRunning { false };
 

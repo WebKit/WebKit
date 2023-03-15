@@ -66,6 +66,7 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsVolume(true);
     m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsDisplaySurface(true);
+    m_supportedConstraints.setSupportsZoom(true);
 }
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;

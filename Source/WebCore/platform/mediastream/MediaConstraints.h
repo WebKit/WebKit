@@ -619,6 +619,7 @@ public:
     std::optional<IntConstraint> sampleSize() const { return m_sampleSize; }
 
     std::optional<DoubleConstraint> aspectRatio() const { return m_aspectRatio; }
+    std::optional<DoubleConstraint> zoom() const { return m_zoom; }
     std::optional<DoubleConstraint> frameRate() const { return m_frameRate; }
     std::optional<DoubleConstraint> volume() const { return m_volume; }
 
@@ -638,6 +639,7 @@ private:
     std::optional<IntConstraint> m_sampleSize;
 
     std::optional<DoubleConstraint> m_aspectRatio;
+    std::optional<DoubleConstraint> m_zoom;
     std::optional<DoubleConstraint> m_frameRate;
     std::optional<DoubleConstraint> m_volume;
 

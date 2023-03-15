@@ -72,14 +72,15 @@ public:
         Label = 1 << 11,
         DisplaySurface = 1 << 12,
         LogicalSurface = 1 << 13,
+        Zoom = 1 << 14,
     };
 
-    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, AspectRatio, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface }; }
+    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, AspectRatio, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface, Zoom }; }
 
     WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
     explicit RealtimeMediaSourceSettings() = default;
-    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float aspectRatio, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, AtomString&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float aspectRatio, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, AtomString&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, double zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(width)
         , m_height(height)
         , m_aspectRatio(aspectRatio)
@@ -94,6 +95,7 @@ public:
         , m_label(WTFMove(label))
         , m_displaySurface(displaySurface)
         , m_logicalSurface(logicalSurface)
+        , m_zoom(zoom)
         , m_supportedConstraints(WTFMove(supportedConstraints))
     {
     }
@@ -150,6 +152,10 @@ public:
     bool logicalSurface() const { return m_logicalSurface; }
     void setLogicalSurface(bool logicalSurface) { m_logicalSurface = logicalSurface; }
 
+    bool supportsZoom() const { return m_supportedConstraints.supportsZoom(); }
+    double zoom() const { return m_zoom; }
+    void setZoom(double zoom) { m_zoom = zoom; }
+
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
@@ -175,6 +181,7 @@ private:
 
     DisplaySurfaceType m_displaySurface { DisplaySurfaceType::Invalid };
     bool m_logicalSurface { 0 };
+    double m_zoom { 1.0 };
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

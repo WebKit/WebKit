@@ -54,7 +54,7 @@ public:
     }
 
     GStreamerVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges)
-        : VideoPreset(size, WTFMove(frameRateRanges), GStreamer)
+        : VideoPreset(size, WTFMove(frameRateRanges), GStreamer, { }, { })
     {
     }
 };

@@ -117,6 +117,7 @@ public:
         std::optional<bool> logicalSurface;
         String deviceId;
         String groupId;
+        std::optional<double> zoom;
     };
     TrackSettings getSettings() const;
 
@@ -134,6 +135,7 @@ public:
         String groupId;
         String displaySurface;
         std::optional<DoubleRange> focusDistance;
+        std::optional<DoubleRange> zoom;
     };
     TrackCapabilities getCapabilities() const;
 

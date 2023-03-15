@@ -108,26 +108,26 @@ MockRealtimeVideoSource::~MockRealtimeVideoSource()
     allMockRealtimeVideoSource().remove(this);
 }
 
-bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+bool MockRealtimeVideoSource::supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
-    // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
+    // FIXME: consider splitting mock display into another class so we don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
     if (mockCamera())
-        return RealtimeVideoCaptureSource::supportsSizeAndFrameRate(width, height, rate);
+        return RealtimeVideoCaptureSource::supportsSizeFrameRateAndZoom(width, height, frameRate, zoom);
 
-    return RealtimeMediaSource::supportsSizeAndFrameRate(width, height, rate);
+    return RealtimeMediaSource::supportsSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
-void MockRealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+void MockRealtimeVideoSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
-    // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
+    // FIXME: consider splitting mock display into another class so we don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
     if (mockCamera()) {
-        RealtimeVideoCaptureSource::setSizeAndFrameRate(width, height, rate);
+        RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
         return;
     }
 
-    RealtimeMediaSource::setSizeAndFrameRate(width, height, rate);
+    RealtimeMediaSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
 void MockRealtimeVideoSource::generatePresets()
@@ -169,6 +169,13 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
     return m_capabilities.value();
 }
 
+static bool isZoomSupported(const Vector<Ref<VideoPreset>>& presets)
+{
+    return anyOf(presets, [](auto& preset) {
+        return preset->isZoomSupported();
+    });
+}
+
 const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
 {
     if (m_currentSettings)
@@ -176,10 +183,9 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
 
     RealtimeMediaSourceSettings settings;
     settings.setLabel(name());
-    if (mockCamera()) {
+    if (mockCamera())
         settings.setFacingMode(facingMode());
-        settings.setDeviceId(hashedId());
-    } else {
+    else {
         settings.setDisplaySurface(mockScreen() ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window);
         settings.setLogicalSurface(false);
     }
@@ -201,9 +207,13 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     supportedConstraints.setSupportsHeight(true);
     supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsDeviceId(true);
-    if (mockCamera())
+    if (mockCamera()) {
         supportedConstraints.setSupportsFacingMode(true);
-    else {
+        if (isZoomSupported(presets())) {
+            supportedConstraints.setSupportsZoom(true);
+            settings.setZoom(zoom());
+        }
+    } else {
         supportedConstraints.setSupportsDisplaySurface(true);
         supportedConstraints.setSupportsLogicalSurface(true);
     }
@@ -214,8 +224,9 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     return m_currentSettings.value();
 }
 
-void MockRealtimeVideoSource::setFrameRateWithPreset(double frameRate, RefPtr<VideoPreset> preset)
+void MockRealtimeVideoSource::setFrameRateAndZoomWithPreset(double frameRate, double zoom, RefPtr<VideoPreset> preset)
 {
+    UNUSED_PARAM(zoom);
     m_preset = WTFMove(preset);
     if (m_preset)
         setIntrinsicSize(m_preset->size);
@@ -464,7 +475,7 @@ void MockRealtimeVideoSource::generateFrame()
     auto size = this->captureSize();
     FloatRect frameRect(FloatPoint(), size);
 
-    context.fillRect(FloatRect(FloatPoint(), size), m_fillColor);
+    context.fillRect(FloatRect(FloatPoint(), size), zoom() >=  2 ? m_fillColorWithZoom : m_fillColor);
 
     if (!muted()) {
         drawText(context);

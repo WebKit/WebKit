@@ -201,6 +201,8 @@ void MediaTrackConstraintSetMap::filter(const Function<bool(const MediaConstrain
 
     if (m_aspectRatio && !m_aspectRatio->isEmpty() && callback(*m_aspectRatio))
         return;
+    if (m_zoom && !m_zoom->isEmpty() && callback(*m_zoom))
+        return;
     if (m_frameRate && !m_frameRate->isEmpty() && callback(*m_frameRate))
         return;
     if (m_volume && !m_volume->isEmpty() && callback(*m_volume))
@@ -243,6 +245,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::Zoom:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -260,6 +263,9 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
         break;
     case MediaConstraintType::Volume:
         m_volume = WTFMove(constraint);
+        break;
+    case MediaConstraintType::Zoom:
+        m_zoom = WTFMove(constraint);
         break;
 
     case MediaConstraintType::Width:
@@ -303,6 +309,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::Zoom:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -335,6 +342,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::Zoom:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;

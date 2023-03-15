@@ -225,6 +225,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::Volume:
         case MediaConstraintType::EchoCancellation:
         case MediaConstraintType::FocusDistance:
+        case MediaConstraintType::Zoom:
             // Ignored.
             break;
 
@@ -381,6 +382,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.deviceId = supported.supportsDeviceId();
     result.groupId = supported.supportsGroupId();
     result.displaySurface = supported.supportsDisplaySurface();
+    result.zoom = supported.supportsZoom();
 
     return result;
 }
