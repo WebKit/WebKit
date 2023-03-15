@@ -192,7 +192,7 @@ void NameManglerVisitor::visit(AST::NamedTypeName& type)
 void NameManglerVisitor::introduceVariable(AST::Identifier& name, MangledName::Kind kind)
 {
     const auto& mangledName = ContextProvider::introduceVariable(name, makeMangledName(name, kind));
-    name = AST::Identifier::makeWithSpan(name.span(), mangledName.toString());
+    m_callGraph.ast().replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName.toString()));
 }
 
 MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName::Kind kind)
@@ -208,7 +208,7 @@ void NameManglerVisitor::readVariable(AST::Identifier& name) const
 {
     // FIXME: this should be unconditional
     if (const auto* mangledName = ContextProvider::readVariable(name))
-        name = AST::Identifier::makeWithSpan(name.span(), mangledName->toString());
+        m_callGraph.ast().replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName->toString()));
 }
 
 void mangleNames(CallGraph& callGraph, PrepareResult& result)

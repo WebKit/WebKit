@@ -57,6 +57,38 @@ public:
     AST::Variable::List& variables() { return m_variables; }
     TypeStore& types() { return m_types; }
 
+    template<typename T>
+    void replace(T* current, T&& replacement)
+    {
+        RELEASE_ASSERT(current->kind() == replacement.kind());
+        std::swap(*current, replacement);
+        m_replacements.append([current, replacement = WTFMove(replacement)]() {
+            std::exchange(*current, replacement);
+        });
+    }
+
+    template<typename CurrentType, typename ReplacementType>
+    void replace(CurrentType* current, ReplacementType&& replacement)
+    {
+        static_assert(sizeof(ReplacementType) <= sizeof(CurrentType));
+
+        m_replacements.append([current, currentCopy = *current]() mutable {
+            bitwise_cast<ReplacementType*>(current)->~ReplacementType();
+            new (current) CurrentType(WTFMove(currentCopy));
+        });
+
+        current->~CurrentType();
+        new (current) ReplacementType(WTFMove(replacement));
+    }
+
+
+    void revertReplacements()
+    {
+        for (int i = m_replacements.size() - 1; i >= 0; --i)
+            m_replacements[i]();
+        m_replacements.clear();
+    }
+
 private:
     String m_source;
     Configuration m_configuration;
@@ -65,6 +97,7 @@ private:
     AST::Structure::List m_structures;
     AST::Variable::List m_variables;
     TypeStore m_types;
+    Vector<std::function<void()>> m_replacements;
 };
 
 } // namespace WGSL

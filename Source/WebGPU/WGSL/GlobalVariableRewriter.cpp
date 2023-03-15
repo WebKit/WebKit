@@ -112,15 +112,6 @@ void RewriteGlobalVariables::visit(AST::Variable& variable)
     def(variable.name());
 }
 
-template <typename TargetType, typename CurrentType, typename... Arguments>
-void replace(CurrentType&& dst, Arguments&&... arguments)
-{
-    static_assert(sizeof(TargetType) <= sizeof(CurrentType));
-    auto span = dst.span();
-    dst.~CurrentType();
-    new (&dst) TargetType(span, std::forward<Arguments>(arguments)...);
-}
-
 void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
 {
     auto name = identifier.identifier();
@@ -128,7 +119,7 @@ void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
         if (auto resource = global->resource) {
             auto base = makeUniqueRef<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->group));
             auto structureAccess = makeUniqueRef<AST::FieldAccessExpression>(identifier.span(), WTFMove(base), WTFMove(name));
-            replace<AST::IdentityExpression>(WTFMove(identifier), WTFMove(structureAccess));
+            m_callGraph.ast().replace(&identifier, AST::IdentityExpression(identifier.span(), WTFMove(structureAccess)));
         }
     }
 }

@@ -116,6 +116,7 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, Pipeli
 
     logPhaseTimes(phaseTimes);
 
+    ast.revertReplacements();
     return result;
 }
 
