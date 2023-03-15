@@ -73,6 +73,7 @@
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
+#include "WebPageInlines.h"
 #include "WebPaymentCoordinator.h"
 #include "WebPermissionController.h"
 #include "WebPlatformStrategies.h"

@@ -31,6 +31,7 @@
 #import "WebPage.h"
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrameView.h>
+#import <WebCore/Page.h>
 
 namespace WebKit {
 using namespace WebCore;

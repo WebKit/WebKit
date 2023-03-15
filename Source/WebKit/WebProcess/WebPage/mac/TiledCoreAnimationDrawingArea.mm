@@ -38,6 +38,7 @@
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
+#import "WebPageInlines.h"
 #import "WebPageProxyMessages.h"
 #import "WebPreferencesKeys.h"
 #import "WebPreferencesStore.h"

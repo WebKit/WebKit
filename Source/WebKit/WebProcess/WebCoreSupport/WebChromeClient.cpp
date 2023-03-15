@@ -129,6 +129,10 @@
 #include <WebCore/GraphicsContextGL.h>
 #endif
 
+#if ENABLE(WEBXR) && !USE(OPENXR)
+#include "PlatformXRSystemProxy.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "TiledCoreAnimationScrollingCoordinator.h"
 #endif

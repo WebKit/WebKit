@@ -29,6 +29,7 @@
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #import "DrawingArea.h"
+#import "Logging.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/Model.h>

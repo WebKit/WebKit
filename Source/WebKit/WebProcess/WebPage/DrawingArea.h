@@ -56,6 +56,7 @@ class GraphicsLayer;
 class GraphicsLayerFactory;
 class LocalFrame;
 class LocalFrameView;
+class TiledBacking;
 struct ViewportAttributes;
 enum class DelegatedScrollingMode : uint8_t;
 }

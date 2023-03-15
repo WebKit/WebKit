@@ -104,6 +104,10 @@
 #include <WebCore/FullscreenManager.h>
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionControllerProxy.h"
+#endif
+
 #define PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
 #define WEBFRAME (&webFrame())
 #define WEBFRAMEID (webFrame().frameID().object().toUInt64())

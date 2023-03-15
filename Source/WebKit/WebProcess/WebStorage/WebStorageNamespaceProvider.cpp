@@ -29,6 +29,7 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"
 #include "WebPage.h"
+#include "WebPageInlines.h"
 #include "WebProcess.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

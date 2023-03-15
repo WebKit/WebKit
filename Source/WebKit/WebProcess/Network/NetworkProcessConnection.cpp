@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "LibWebRTCNetwork.h"
+#include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "RTCDataChannelRemoteManager.h"
 #include "StorageAreaMap.h"

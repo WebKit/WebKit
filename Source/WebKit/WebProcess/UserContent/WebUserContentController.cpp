@@ -41,6 +41,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/Page.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/UserStyleSheet.h>

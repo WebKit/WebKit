@@ -37,6 +37,7 @@
 #include "EditorState.h"
 #include "EventDispatcher.h"
 #include "FindController.h"
+#include "FocusedElementInformation.h"
 #include "FormDataReference.h"
 #include "FrameTreeNodeData.h"
 #include "GeolocationPermissionRequestManager.h"
@@ -54,6 +55,7 @@
 #include "NotificationPermissionRequestManager.h"
 #include "PageBanner.h"
 #include "PluginView.h"
+#include "PolicyDecision.h"
 #include "PrintInfo.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteWebInspectorUI.h"
@@ -117,6 +119,7 @@
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
+#include "WebPageInlines.h"
 #include "WebPageInspectorTargetController.h"
 #include "WebPageMessages.h"
 #include "WebPageOverlay.h"
@@ -147,6 +150,7 @@
 #include "WebValidationMessageClient.h"
 #include "WebWheelEvent.h"
 #include "WebsiteDataStoreParameters.h"
+#include "WebsitePoliciesData.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
@@ -221,6 +225,7 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PingLoader.h>
@@ -403,6 +408,14 @@
 
 #if ENABLE(LOCKDOWN_MODE_API)
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionControllerProxy.h"
+#endif
+
+#if ENABLE(WEBXR) && !USE(OPENXR)
+#include "PlatformXRSystemProxy.h"
 #endif
 
 namespace WebKit {

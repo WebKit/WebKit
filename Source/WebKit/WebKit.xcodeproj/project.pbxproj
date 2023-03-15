@@ -5568,6 +5568,7 @@
 		762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesRefPrivate.h; sourceTree = "<group>"; };
 		7A0D7861220791EC00EBCF54 /* ResourceLoadStatisticsDatabaseStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsDatabaseStore.h; path = Classifier/ResourceLoadStatisticsDatabaseStore.h; sourceTree = "<group>"; };
 		7A0D7862220791ED00EBCF54 /* ResourceLoadStatisticsDatabaseStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoadStatisticsDatabaseStore.cpp; path = Classifier/ResourceLoadStatisticsDatabaseStore.cpp; sourceTree = "<group>"; };
+		7A10937629BF8B71006BDB7B /* WebPageInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInlines.h; sourceTree = "<group>"; };
 		7A1E2A841EEFE88A0037A0E0 /* APINotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINotificationProvider.h; sourceTree = "<group>"; };
 		7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageLoaderClient.h; sourceTree = "<group>"; };
 		7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAccessStatus.h; path = Classifier/StorageAccessStatus.h; sourceTree = "<group>"; };
@@ -11997,6 +11998,7 @@
 				C0CE72581247E4DA00BC0EC4 /* WebPage.messages.in */,
 				BC7B621412A4219A00D174A4 /* WebPageGroupProxy.cpp */,
 				BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */,
+				7A10937629BF8B71006BDB7B /* WebPageInlines.h */,
 				2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */,
 				2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */,
 				BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */,

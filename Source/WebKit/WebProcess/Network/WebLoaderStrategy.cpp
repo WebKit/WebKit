@@ -39,6 +39,7 @@
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
+#include "WebPageInlines.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"

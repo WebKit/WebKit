@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,12 @@
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "ContentAsStringIncludesChildFrames.h"
+#include "ContentWorldShared.h"
 #include "DataReference.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
 #include "EventDispatcher.h"
-#include "FocusedElementInformation.h"
 #include "GeolocationIdentifier.h"
 #include "IdentifierTypes.h"
 #include "InjectedBundlePageContextMenuClient.h"
@@ -50,18 +50,17 @@
 #include "MessageSender.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PDFPluginIdentifier.h"
-#include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "SharedMemory.h"
 #include "StorageNamespaceIdentifier.h"
 #include "TransactionID.h"
+#include "UserContentControllerIdentifier.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
 #include "WebPageProxyIdentifier.h"
-#include "WebURLSchemeHandler.h"
+#include "WebURLSchemeHandlerIdentifier.h"
 #include "WebUndoStepID.h"
-#include "WebUserContentController.h"
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/ActivityState.h>
@@ -71,18 +70,19 @@
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/HTMLMenuElement.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HighlightVisibility.h>
-#include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaKeySystemRequest.h>
-#include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/PointerID.h>
@@ -159,14 +159,6 @@
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
-#if ENABLE(WEBXR) && !USE(OPENXR)
-#include "PlatformXRSystemProxy.h"
-#endif
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-#include "WebExtensionControllerProxy.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include <WebCore/VisibleSelection.h>
 #include <wtf/RetainPtr.h>
@@ -198,6 +190,7 @@ class SharedBufferReference;
 
 namespace WebCore {
 
+class AbstractFrame;
 class CachedPage;
 class CaptureDevice;
 class DocumentLoader;
@@ -215,18 +208,21 @@ class HTMLPlugInElement;
 class HTMLVideoElement;
 class IgnoreSelectionChangeForScope;
 class IntPoint;
+class IntRect;
 class KeyboardEvent;
 class LocalFrame;
 class LocalFrameView;
 class MediaPlaybackTargetContext;
 class MediaSessionCoordinator;
 class Page;
+class PolicyDecision;
 class PrintContext;
 class Range;
 class RenderImage;
 class Report;
 class ResourceRequest;
 class ResourceResponse;
+class ScrollingCoordinator;
 class SelectionData;
 class SelectionGeometry;
 class SharedBuffer;
@@ -244,7 +240,12 @@ enum class DOMPasteAccessResponse : uint8_t;
 enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
+enum class FinalizeRenderingUpdateFlags : uint8_t;
 enum class HighlightRequestOriginatedInApp : bool;
+enum class LookalikeCharacterSanitizationTrigger : uint8_t;
+enum class MediaProducerMediaCaptureKind : uint8_t;
+enum class MediaProducerMediaState : uint32_t;
+enum class MediaProducerMutedState : uint8_t;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class TextIndicatorPresentationTransition : uint8_t;
@@ -253,6 +254,8 @@ enum class WheelEventProcessingSteps : uint8_t;
 enum class WritingDirection : uint8_t;
 enum class ViolationReportType : uint8_t;
 
+using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
+using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 using PlatformDisplayID = uint32_t;
 
 struct AttributedString;
@@ -293,6 +296,7 @@ class FindController;
 class GPUProcessConnection;
 class GamepadData;
 class GeolocationPermissionRequestManager;
+class InjectedBundleScriptWorld;
 class LayerHostingContext;
 class MediaDeviceSandboxExtensions;
 class MediaKeySystemPermissionRequestManager;
@@ -345,6 +349,7 @@ class RemoteLayerTreeTransaction;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
 enum class DragControllerAction : uint8_t;
+enum class NavigatingToAppBoundDomain : bool;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
 
@@ -353,8 +358,9 @@ struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditorState;
-struct FrameTreeNodeData;
+struct FocusedElementInformation;
 struct FontInfo;
+struct FrameTreeNodeData;
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
@@ -377,6 +383,14 @@ class VisibleContentRectUpdateInfo;
 class RevealItem;
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+class WebExtensionControllerProxy;
+#endif
+
+#if ENABLE(WEBXR) && !USE(OPENXR)
+class PlatformXRSystemProxy;
+#endif
+
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
 
@@ -394,13 +408,13 @@ public:
 
     WebCore::Page* corePage() const { return m_page.get(); }
     WebCore::PageIdentifier identifier() const { return m_identifier; }
-    StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64()); }
+    inline StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const;
     PAL::SessionID sessionID() const;
     bool usesEphemeralSession() const;
 
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }
-    WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
+    inline WebCore::IntRect bounds() const;
 
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
 
@@ -518,10 +532,7 @@ public:
 
     void setActivePopupMenu(WebPopupMenu*);
 
-    void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds limit)
-    {
-        m_page->setDOMTimerAlignmentIntervalIncreaseLimit(limit);
-    }
+    inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
 #if ENABLE(INPUT_TYPE_COLOR)
     WebColorChooser* activeColorChooser() const { return m_activeColorChooser; }
@@ -673,8 +684,8 @@ public:
     void removePluginView(PluginView*);
 #endif
 
-    bool isVisible() const { return m_activityState.contains(WebCore::ActivityState::IsVisible); }
-    bool isVisibleOrOccluded() const { return m_activityState.contains(WebCore::ActivityState::IsVisibleOrOccluded); }
+    inline bool isVisible() const;
+    inline bool isVisibleOrOccluded() const;
 
     OptionSet<WebCore::ActivityState::Flag> activityState() const { return m_activityState; }
     bool isThrottleable() const;
@@ -1396,7 +1407,7 @@ public:
 
     void updateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers);
 
-    UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
+    inline UserContentControllerIdentifier userContentControllerIdentifier() const;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     WebExtensionControllerProxy* webExtensionControllerProxy() const { return m_webExtensionController.get(); }

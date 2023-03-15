@@ -33,6 +33,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 

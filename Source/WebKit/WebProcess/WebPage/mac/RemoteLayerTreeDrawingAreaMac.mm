@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "Logging.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
 #import <WebCore/GraphicsLayer.h>

@@ -29,6 +29,9 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "WebPage.h"
+#include "WebPageInlines.h"
+#include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>

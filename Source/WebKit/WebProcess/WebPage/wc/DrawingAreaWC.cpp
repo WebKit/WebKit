@@ -35,11 +35,14 @@
 #include "RemoteWCLayerTreeHostProxy.h"
 #include "UpdateInfo.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageInlines.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/Page.h>
 
 namespace WebKit {
 using namespace WebCore;
