@@ -24,6 +24,7 @@ import contextlib
 import io
 import logging
 import sys
+import webbrowser
 
 if not sys.platform.startswith('win'):
     import readline
@@ -165,16 +166,25 @@ class Terminal(object):
                 sys.stderr.write('User aborted URL open\n')
                 return False
 
-        if sys.platform.startswith('win'):
-            process = run(['start', url])
+        if (url.startswith('http://') or url.startswith('https://')):
+            try:
+                webbrowser.open(url)
+                return True
+            except webbrowser.Error:
+                sys.stderr.write(
+                    "Failed to open '{}' in the browser, continuing\n".format(url))
+                return False
         else:
-            # TODO: Use shutil directly when Python 2.7 is removed
-            from whichcraft import which
-            if sys.platform.startswith('linux') and which('xdg-open'):
-                process = run(['xdg-open', url])
+            if sys.platform.startswith('win'):
+                process = run(['explorer', url])
             else:
-                process = run(['open', url])
-        return True if process.returncode == 0 else False
+                # TODO: Use shutil directly when Python 2.7 is removed
+                from whichcraft import which
+                if sys.platform.startswith('linux') and which('xdg-open'):
+                    process = run(['xdg-open', url])
+                else:
+                    process = run(['open', url])
+            return True if process.returncode == 0 else False
 
     class Text(object):
         value = lambda value: '\033[{}m'.format(value)
