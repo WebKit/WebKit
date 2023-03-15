@@ -5004,6 +5004,11 @@ public:
 
     void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
+        if (!lane.m_value) {
+            if (src != dest)
+                moveDouble(src, dest);
+            return;
+        }
         m_assembler.dupElement(dest, src, simdLane, lane.m_value);
     }
 
