@@ -3299,6 +3299,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                 self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
             self.setCommand(self.command + ['--skip-failing-tests'])
 
+        if platform in ['gtk', 'wpe']:
+            self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
+
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
 
@@ -4025,6 +4028,8 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
 
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
+        # On the repeat steps we don't enable coredump generation (makes the run much slower if there are crashes)
+        self.setCommand([arg for arg in self.command if arg != '--enable-core-dumps-nolimit'])
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
         self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST] + sorted(first_results_failing_tests))
 
@@ -4084,6 +4089,8 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
 
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
+        # On the repeat steps we don't enable coredump generation (makes the run much slower if there are crashes)
+        self.setCommand([arg for arg in self.command if arg != '--enable-core-dumps-nolimit'])
         with_change_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
         first_run_failures = set(self.getProperty('first_run_failures', []))
         with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)

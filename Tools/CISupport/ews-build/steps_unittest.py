@@ -2819,7 +2819,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests', '--enable-core-dumps-nolimit']
                         )
             + 0,
         )
@@ -2838,7 +2838,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests', '--enable-core-dumps-nolimit']
                         )
             + 2
         )

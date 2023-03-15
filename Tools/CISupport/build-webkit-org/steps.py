@@ -703,6 +703,9 @@ class RunWebKitTests(shell.Test):
         if platform == "win":
             self.setCommand(self.command + ['--batch-size', '100', '--root=' + os.path.join("WebKitBuild", self.getProperty('configuration'), "bin64")])
 
+        if platform in ['gtk', 'wpe']:
+            self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
+
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
         return shell.Test.start(self)

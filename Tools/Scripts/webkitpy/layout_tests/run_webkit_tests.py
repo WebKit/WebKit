@@ -32,6 +32,7 @@ from __future__ import print_function
 import logging
 import optparse
 import os
+import resource
 import traceback
 
 from webkitpy.common.host import Host
@@ -309,6 +310,7 @@ def parse_args(args):
         optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                  '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
+        optparse.make_option('--enable-core-dumps-nolimit', action='store_true', default=False, help='Enable core dumps for the test run (runs the equivalent of "ulimit -c unlimited" before starting the tests).'),
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
         optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
         optparse.make_option("--allowed-host", type="string", action="append", default=[], help="If specified, tests are allowed to make requests to the specified hostname."),
@@ -500,6 +502,13 @@ def run(port, options, args, logging_stream):
 
     try:
         printer = printing.Printer(port, options, logging_stream, logger=logger)
+
+        if options.enable_core_dumps_nolimit:
+            try:
+                resource.setrlimit(resource.RLIMIT_CORE, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+                _log.debug('Enabled coredumps for test run')
+            except (ValueError, OSError) as e:
+                _log.error('Failed to enable coredumps: %s' % str(e))
 
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)
