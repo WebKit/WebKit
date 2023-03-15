@@ -92,7 +92,7 @@
   </meson>
 
   <!-- at-spi2-atk needed to build with A11y support -->
-  <meson id="at-spi2-atk" mesonargs="">
+  <meson id="at-spi2-atk">
     <pkg-config>atk.pc</pkg-config>
     <dependencies>
       <dep package="glib"/>
@@ -109,8 +109,8 @@
              autogen-sh="configure"
              autogenargs="--enable-egl=yes --enable-glesv2">
     <dependencies>
-      <dep package="glib"/>
       <dep package="fontconfig"/>
+      <dep package="glib"/>
       <dep package="pixman"/>
     </dependencies>
     <branch module="releases/cairo-${version}.tar.xz" version="1.16.0"
@@ -128,7 +128,7 @@
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure"
-             autogenargs="--disable-docs"
+             autogenargs="--enable-libxml2 --disable-docs"
              supports-non-srcdir-builds="no">
     <dependencies>
       <dep package="freetype6"/>
@@ -144,9 +144,10 @@
     <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
   </autotools>
 
-  <autotools id="freetype6" autogen-sh="configure"
-        autogenargs="--with-harfbuzz=no">
-    <branch module="freetype/freetype-2.9.1.tar.bz2" version="2.9.1"
+  <autotools id="freetype6" 
+             autogen-sh="configure"
+             autogenargs="--with-harfbuzz=no">
+    <branch module="freetype/freetype-${version}.tar.bz2" version="2.9.1"
             repo="savannah.gnu.org"
             hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
   </autotools>
@@ -238,9 +239,9 @@
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/sources/libsoup/2.70/libsoup-${version}.tar.xz" version="2.70.0"
+    <branch module="/sources/libsoup/2.71/libsoup-${version}.tar.xz" version="2.71.0"
             repo="download.gnome.org"
-            hash="sha256:54b020f74aefa438918d8e53cff62e2b1e59efe2de53e06b19a4b07b1f4d5342">
+            hash="sha256:88e24fad72d16e1cb692c8782688dbee4bf44151efb0d9ed25b14f3849d9896e">
     </branch>
   </meson>
 

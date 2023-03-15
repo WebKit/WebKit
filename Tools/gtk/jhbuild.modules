@@ -7,39 +7,40 @@
 
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
+      <dep package="adwaita-icon-theme"/>
+      <dep package="atk"/>
       <dep package="avif"/>
       <dep package="cairo"/>
-      <dep package="fonts"/>
+      <dep package="dav1d"/>
       <dep package="dicts"/>
       <dep package="fontconfig"/>
+      <dep package="fonts"/>
       <dep package="freetype6"/>
-      <dep package="harfbuzz"/>
-      <dep package="libxml2"/>
       <dep package="gdk-pixbuf"/>
-      <dep package="gtk+"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
-      <dep package="adwaita-icon-theme"/>
+      <dep package="gtk+"/>
+      <dep package="harfbuzz"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
-      <dep package="atk"/>
-      <dep package="webkit-gstreamer-testing-dependencies"/>
-      <dep package="pango"/>
-      <dep package="llvm"/>
-      <dep package="shared-mime-info"/>
-      <dep package="libsecret"/>
-      <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
+      <dep package="libgpg-error"/>
+      <dep package="libsecret"/>
+      <dep package="libsoup"/>
+      <dep package="libxml2"/>
+      <dep package="llvm"/>
       <dep package="manette"/>
       <dep package="openjpeg"/>
+      <dep package="pango"/>
+      <dep package="shared-mime-info"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="wpebackend-fdo"/>
       <if condition-set="linux">
+          <dep package="at-spi2-atk"/>
+          <dep package="at-spi2-core"/>
+          <dep package="mesa"/>
+          <dep package="weston"/>
           <dep package="xdg-dbus-proxy"/>
           <dep package="xserver"/>
-          <dep package="mesa"/>
-          <dep package="at-spi2-core"/>
-          <dep package="at-spi2-atk"/>
-          <dep package="weston"/>
       </if>
       <if condition-set="macos">
           <dep package="gsettings-desktop-schemas"/>
@@ -50,16 +51,12 @@
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
   <repository type="git" name="github.com"
       href="https://github.com"/>
-  <repository type="tarball" name="github-tarball"
+  <repository type="tarball" name="tarball.github.com"
       href="https://github.com/"/>
-  <repository type="tarball" name="sourceware.org-mirror"
-      href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
   <repository type="tarball" name="download.gnome.org"
       href="https://download.gnome.org"/>
-  <repository type="git" name="git.gnome.org"
-      href="https://git.gnome.org/browse/"/>
   <repository type="tarball" name="cairographics.org"
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
@@ -70,8 +67,6 @@
       href="http://xmlsoft.org"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
-  <repository type="git" name="freedesktop-git"
-      href="http://anongit.freedesktop.org/git"/>
  <repository type="tarball" name="dri.freedesktop.org"
       href="https://dri.freedesktop.org"/>
   <repository type="tarball" name="mesa.freedesktop.org"
@@ -80,8 +75,6 @@
       href="http://wayland.freedesktop.org"/>
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
-  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
-      href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="wpewebkit"
@@ -89,24 +82,162 @@
   <repository type="tarball" name="downloads.videolan.org"
       href="https://downloads.videolan.org"/>
 
+  <autotools id="adwaita-icon-theme" autogen-sh="configure">
+    <dependencies>
+      <dep package="gtk+"/>
+      <dep package="librsvg"/>
+    </dependencies>
+    <branch module="pub/GNOME/sources/adwaita-icon-theme/3.24/adwaita-icon-theme-${version}.tar.xz" version="3.24.0"
+            repo="ftp.gnome.org"
+            hash="sha256:ccf79ff3bd340254737ce4d28b87f0ccee4b3358cd3cd5cd11dc7b42f41b272a"/>
+  </autotools>
+
+  <meson id="atk" mesonargs="-Dintrospection=false">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
+            repo="download.gnome.org"
+            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
+  </meson>
+
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
+            repo="download.gnome.org"
+            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
+    </branch>
+  </meson>
+
+  <meson id="at-spi2-atk">
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
+    <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
+            repo="download.gnome.org"
+            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
+    </branch>
+  </meson>
+
+  <cmake id="avif" cmakeargs="-DCMAKE_BUILD_TYPE=Release -DAVIF_CODEC_DAV1D=ON">
+    <dependencies>
+      <dep package="dav1d"/>
+    </dependencies>
+    <branch repo="tarball.github.com"
+            module="AOMediaCodec/libavif/archive/v${version}.tar.gz"
+            checkoutdir="libavif-${version}"
+            version="0.7.3"
+            hash="sha256:a4ce03649c58ec9f3dc6ab2b7cf7d58474b149acf1e4c563be4081bad60ed2dd"/>
+  </cmake>
+
   <autotools id="cairo"
              autogen-sh="configure">
+    <dependencies>
+      <dep package="fontconfig"/>
+      <dep package="glib"/>
+      <dep package="pixman"/>
+    </dependencies>
     <if condition-set="linux">
       <autogenargs value="--enable-gl=yes --enable-egl=yes --enable-glx=yes"/>
     </if>
     <if condition-set="macos">
       <autogenargs value="ac_cv_func_rsvg_pixbuf_from_file=no --disable-lto"/>
     </if>
-    <dependencies>
-      <dep package="fontconfig"/>
-      <dep package="pixman"/>
-      <dep package="glib"/>
-    </dependencies>
-    <branch module="releases/cairo-1.16.0.tar.xz" version="1.16.0"
+    <branch module="releases/cairo-${version}.tar.xz" version="1.16.0"
             repo="cairographics.org"
-	    hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14">
+            hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14">
       <!-- See https://gitlab.freedesktop.org/cairo/cairo/merge_requests/5 -->
       <patch file="cairo-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <meson id="dav1d">
+    <branch repo="downloads.videolan.org"
+            module="/pub/videolan/dav1d/${version}/dav1d-${version}.tar.xz"
+            version="0.7.0"
+            hash="sha256:d3e2445006b9be4cf53625e7e37cf1693eca1aa361868e7ff5f309e2549e9e75">
+    </branch>
+  </meson>
+
+  <autotools id="dicts" 
+             skip-autogen="true"
+             supports-non-srcdir-builds="no">
+    <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
+  </autotools>
+
+  <autotools id="fontconfig"
+             autogenargs="--enable-libxml2 --disable-docs"
+             supports-non-srcdir-builds="no">
+    <dependencies>
+      <dep package="freetype6"/>
+      <dep package="libxml2"/>
+    </dependencies>
+    <if condition-set="macos">
+      <autogenargs value="--with-add-fonts=/System/Library/Fonts,/Library/Fonts,~/Library/Fonts"/>
+    </if>
+    <branch module="software/fontconfig/release/fontconfig-${version}.tar.bz2" version="2.13.1"
+            repo="freedesktop.org"
+            hash="sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"/>
+  </autotools>
+
+  <autotools id="fonts"
+             skip-autogen="true"
+             supports-non-srcdir-builds="no">
+    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
+  </autotools>
+
+  <autotools id="freetype6" 
+             autogen-sh="configure"
+             autogenargs="--with-harfbuzz=no">
+    <branch module="freetype/freetype-${version}.tar.bz2" version="2.9.1"
+            repo="savannah.gnu.org"
+            hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
+  </autotools>
+
+  <meson id="glib" mesonargs="-Dlibmount=disabled -Dselinux=disabled">
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
+    </branch>
+  </meson>
+
+  <meson id="glib-networking">
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
+  </meson>
+
+  <autotools id="harfbuzz"
+             autogen-sh="configure"
+             autogenargs="--with-cairo=no --with-glib=yes --with-freetype=yes --with-fontconfig=yes --with-icu=yes">
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="freetype6"/>
+      <dep package="fontconfig"/>
+      <dep package="icu"/>
+    </dependencies>
+    <branch module="software/harfbuzz/release/harfbuzz-${version}.tar.bz2"
+            version="2.2.0"
+            checkoutdir="harfbuzz-${version}"
+            repo="freedesktop.org"
+            hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
+  </autotools>
+
+  <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --enable-weak-threads">
+    <pkg-config>icu-i18n.pc</pkg-config>
+    <branch module="unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
+            repo="tarball.github.com"
+            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
+      <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -116,56 +247,6 @@
     <branch module="releases/pixman-${version}.tar.gz" version="0.40.0"
             repo="cairographics.org"
             hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc"/>
-  </autotools>
-
-  <autotools id="fonts" supports-non-srcdir-builds="no"
-             skip-autogen="true">
-    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
-  </autotools>
-
-  <meson id="dav1d">
-    <branch repo="downloads.videolan.org"
-            module="/pub/videolan/dav1d/0.7.0/dav1d-0.7.0.tar.xz"
-            version="0.7.0"
-            hash="sha256:d3e2445006b9be4cf53625e7e37cf1693eca1aa361868e7ff5f309e2549e9e75">
-    </branch>
-  </meson>
-
-  <cmake id="avif" cmakeargs="-DCMAKE_BUILD_TYPE=Release -DAVIF_CODEC_DAV1D=ON">
-    <dependencies>
-      <dep package="dav1d"/>
-    </dependencies>
-    <branch repo="github-tarball"
-            module="AOMediaCodec/libavif/archive/v${version}.tar.gz"
-            checkoutdir="libavif-${version}"
-            version="0.7.3"
-            hash="sha256:a4ce03649c58ec9f3dc6ab2b7cf7d58474b149acf1e4c563be4081bad60ed2dd"/>
-  </cmake>
-
-  <autotools id="dicts" supports-non-srcdir-builds="no"
-             skip-autogen="true">
-    <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
-  </autotools>
-
-  <autotools id="freetype6" autogen-sh="configure"
-        autogenargs="--with-harfbuzz=no">
-    <branch module="freetype/freetype-2.9.1.tar.bz2" version="2.9.1"
-            repo="savannah.gnu.org"
-            hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
-  </autotools>
-
-  <autotools id="harfbuzz" autogen-sh="configure"
-        autogenargs="--with-freetype=yes --with-fontconfig=yes --with-icu=yes">
-    <dependencies>
-      <dep package="icu"/>
-      <dep package="freetype6"/>
-      <dep package="fontconfig"/>
-    </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-${version}.tar.bz2"
-            version="2.2.0"
-            checkoutdir="harfbuzz-${version}"
-            repo="freedesktop.org"
-            hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
   </autotools>
 
   <autotools id="gdk-pixbuf" autogen-sh="configure"
@@ -224,35 +305,20 @@
             hash="sha256:db440670cb6f3c098b076df3735fbc4e69359bd605385e87c90ee48344a804ca"/>
   </autotools>
 
-  <meson id="glib"
-         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
-    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
-            repo="download.gnome.org"
-            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
-    </branch>
-  </meson>
-
-  <meson id="glib-networking">
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-    <branch module="/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
-            repo="download.gnome.org"
-            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
-  </meson>
-
   <autotools id="libpsl"
              autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
+    <pkg-config>libpsl.pc</pkg-config>
     <dependencies>
       <dep package="icu"/>
     </dependencies>
     <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
             version="0.20.2"
-            repo="github-tarball"
+            repo="tarball.github.com"
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
   <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
+    <pkg-config>libsoup-2.4.pc</pkg-config>
     <if condition-set="macos">
       <mesonargs value="-Dtls_check=false"/>
     </if>
@@ -266,65 +332,10 @@
     </branch>
   </meson>
 
-  <autotools id="fontconfig"
-             autogenargs="--enable-libxml2 --disable-docs"
+  <autotools id="libxml2" 
+             autogen-sh="./autogen.sh; ./configure --with-python=no"
              supports-non-srcdir-builds="no">
-    <if condition-set="macos">
-      <autogenargs value="--with-add-fonts=/System/Library/Fonts,/Library/Fonts,~/Library/Fonts"/>
-    </if>
-    <dependencies>
-      <dep package="freetype6"/>
-      <dep package="libxml2"/>
-    </dependencies>
-    <branch module="software/fontconfig/release/fontconfig-2.13.1.tar.bz2" version="2.13.1"
-            repo="freedesktop.org"
-            hash="sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"/>
-  </autotools>
-
-  <autotools id="adwaita-icon-theme" autogen-sh="configure">
-    <dependencies>
-      <dep package="gtk+"/>
-      <dep package="librsvg"/>
-    </dependencies>
-    <branch module="pub/GNOME/sources/adwaita-icon-theme/3.24/adwaita-icon-theme-3.24.0.tar.xz" version="3.24.0"
-            repo="ftp.gnome.org"
-            hash="sha256:ccf79ff3bd340254737ce4d28b87f0ccee4b3358cd3cd5cd11dc7b42f41b272a"/>
-  </autotools>
-
-  <meson id="atk" mesonargs="-Dintrospection=false">
-      <branch module="/sources/atk/2.38/atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:ac4de2a4ef4bd5665052952fe169657e65e895c5057dffb3c2a810f6191a0c36"/>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-  </meson>
-
-  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
-    <branch module="/sources/at-spi2-core/2.44/at-spi2-core-${version}.tar.xz" version="2.44.1"
-            repo="download.gnome.org"
-            hash="sha256:4beb23270ba6cf7caf20b597354d75194d89afb69d2efcf15f4271688ba6f746">
-    </branch>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-  </meson>
-
-  <meson id="at-spi2-atk" mesonargs="">
-      <branch module="/sources/at-spi2-atk/2.38/at-spi2-atk-${version}.tar.xz" version="2.38.0"
-            repo="download.gnome.org"
-            hash="sha256:cfa008a5af822b36ae6287f18182c40c91dd699c55faa38605881ed175ca464f">
-    </branch>
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="atk"/>
-      <dep package="at-spi2-core"/>
-    </dependencies>
-  </meson>
-
-  <autotools id="libxml2" supports-non-srcdir-builds="no"
-             autogen-sh="./autogen.sh; ./configure --with-python=no">
-    <branch module="/sources/libxml2-2.9.5.tar.gz" version="2.9.5"
+    <branch module="/sources/libxml2-${version}.tar.gz" version="2.9.5"
             repo="xmlsoft.org"
             hash="sha256:4031c1ecee9ce7ba4f313e91ef6284164885cdb69937a123f6a83bb6a72dcd38"/>
   </autotools>
@@ -438,16 +449,6 @@
             hash="sha256:c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf"/>
   </autotools>
 
-  <autotools id="icu"
-             autogen-sh="./source/configure"
-             autogenargs="--disable-samples --enable-weak-threads">
-    <branch module="icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
-            repo="webkitgtk-jhbuild-mirror"
-            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
-      <patch file="icudata-stdlibs.patch" strip="1"/>
-    </branch>
-  </autotools>
-
   <autotools id="libgpg-error" autogen-sh="autoreconf">
     <branch module="libgpg-error/libgpg-error-${version}.tar.bz2"
             version="1.36"
@@ -482,7 +483,7 @@
   </meson>
 
   <cmake id="openjpeg">
-    <branch repo="github-tarball"
+    <branch repo="tarball.github.com"
             module="uclouvain/openjpeg/archive/v${version}.tar.gz"
             checkoutdir="openjpeg-${version}"
             version="2.3.0"
@@ -557,7 +558,7 @@
   </autotools>
 
   <distutils id="meson" python3="1">
-    <branch repo="github-tarball"
+    <branch repo="tarball.github.com"
             version="0.59.0"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
@@ -568,7 +569,7 @@
   </distutils>
 
   <autotools id="xdg-dbus-proxy" autogen-sh="configure">
-    <branch repo="github-tarball"
+    <branch repo="tarball.github.com"
             version="0.1.0"
             module="flatpak/xdg-dbus-proxy/releases/download/${version}/xdg-dbus-proxy-${version}.tar.xz"
             checkoutdir="xdg-dbus-proxy-${version}"
