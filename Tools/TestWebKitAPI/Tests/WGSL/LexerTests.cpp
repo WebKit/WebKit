@@ -32,22 +32,22 @@ static WGSL::Token checkSingleToken(const String& string, WGSL::TokenType type)
 {
     WGSL::Lexer<LChar> lexer(string);
     WGSL::Token result = lexer.lex();
-    EXPECT_EQ(result.type, type);
+    EXPECT_EQ(result.m_type, type);
     return result;
 }
 
 static void checkSingleLiteral(const String& string, WGSL::TokenType type, double literalValue)
 {
     WGSL::Token result = checkSingleToken(string, type);
-    EXPECT_EQ(result.literalValue, literalValue);
+    EXPECT_EQ(result.m_literalValue, literalValue);
 }
 
 template<typename T>
 static WGSL::Token checkNextTokenIs(WGSL::Lexer<T>& lexer, WGSL::TokenType type, unsigned lineNumber)
 {
     WGSL::Token result = lexer.lex();
-    EXPECT_EQ(result.type, type);
-    EXPECT_EQ(result.span.line, lineNumber);
+    EXPECT_EQ(result.m_type, type);
+    EXPECT_EQ(result.m_span.m_line, lineNumber);
     return result;
 }
 
@@ -55,14 +55,14 @@ template<typename T>
 static void checkNextTokenIsIdentifier(WGSL::Lexer<T>& lexer, const String& ident, unsigned lineNumber)
 {
     WGSL::Token result = checkNextTokenIs(lexer, WGSL::TokenType::Identifier, lineNumber);
-    EXPECT_EQ(result.ident, ident);
+    EXPECT_EQ(result.m_ident, ident);
 }
 
 template<typename T>
 static void checkNextTokenIsLiteral(WGSL::Lexer<T>& lexer, WGSL::TokenType type, double literalValue, unsigned lineNumber)
 {
     WGSL::Token result = checkNextTokenIs(lexer, type, lineNumber);
-    EXPECT_EQ(result.literalValue, literalValue);
+    EXPECT_EQ(result.m_literalValue, literalValue);
 }
 
 template<typename T>

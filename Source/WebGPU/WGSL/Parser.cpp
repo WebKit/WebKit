@@ -141,7 +141,7 @@ struct TemplateTypes<TT> {
 
 static bool canBeginUnaryExpression(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::And:
     case TokenType::Tilde:
     case TokenType::Star:
@@ -155,7 +155,7 @@ static bool canBeginUnaryExpression(const Token& token)
 
 static bool canContinueMultiplicativeExpression(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::Modulo:
     case TokenType::Slash:
     case TokenType::Star:
@@ -167,7 +167,7 @@ static bool canContinueMultiplicativeExpression(const Token& token)
 
 static bool canContinueAdditiveExpression(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::Minus:
     case TokenType::Plus:
         return true;
@@ -178,7 +178,7 @@ static bool canContinueAdditiveExpression(const Token& token)
 
 static bool canContinueBitwiseExpression(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::And:
     case TokenType::Or:
     case TokenType::Xor:
@@ -190,7 +190,7 @@ static bool canContinueBitwiseExpression(const Token& token)
 
 static bool canContinueRelationalExpression(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::Gt:
     case TokenType::GtEq:
     case TokenType::Lt:
@@ -205,17 +205,17 @@ static bool canContinueRelationalExpression(const Token& token)
 
 static bool canContinueShortCircuitAndExpression(const Token& token)
 {
-    return token.type == TokenType::AndAnd;
+    return token.m_type == TokenType::AndAnd;
 }
 
 static bool canContinueShortCircuitOrExpression(const Token& token)
 {
-    return token.type == TokenType::OrOr;
+    return token.m_type == TokenType::OrOr;
 }
 
 static AST::BinaryOperation toBinaryOperation(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::And:
         return AST::BinaryOperation::And;
     case TokenType::AndAnd:
@@ -259,7 +259,7 @@ static AST::BinaryOperation toBinaryOperation(const Token& token)
 
 static AST::UnaryOperation toUnaryOperation(const Token& token)
 {
-    switch (token.type) {
+    switch (token.m_type) {
     case TokenType::And:
         return AST::UnaryOperation::AddressOf;
     case TokenType::Tilde:
@@ -313,12 +313,12 @@ Result<AST::Expression::Ref> parseExpression(const String& source)
 template<typename Lexer>
 Expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
 {
-    if (current().type == type) {
+    if (current().m_type == type) {
         Expected<Token, TokenType> result = { m_current };
         m_current = m_lexer.lex();
         return result;
     }
-    return makeUnexpected(current().type);
+    return makeUnexpected(current().m_type);
 }
 
 template<typename Lexer>
@@ -326,11 +326,11 @@ template<TokenType... TTs>
 Expected<Token, TokenType> Parser<Lexer>::consumeTypes()
 {
     auto token = m_current;
-    if (TemplateTypes<TTs...>::includes(token.type)) {
+    if (TemplateTypes<TTs...>::includes(token.m_type)) {
         m_current = m_lexer.lex();
         return { token };
     }
-    return makeUnexpected(token.type);
+    return makeUnexpected(token.m_type);
 }
 
 template<typename Lexer>
@@ -360,7 +360,7 @@ Result<AST::Identifier> Parser<Lexer>::parseIdentifier()
 
     CONSUME_TYPE_NAMED(name, Identifier);
 
-    return AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), WTFMove(name.ident));
+    return AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), WTFMove(name.m_ident));
 }
 
 template<typename Lexer>
@@ -368,10 +368,10 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
 
-    while (current().type == TokenType::Semicolon)
+    while (current().m_type == TokenType::Semicolon)
         consume();
 
-    if (current().type == TokenType::KeywordConst) {
+    if (current().m_type == TokenType::KeywordConst) {
         PARSE(variable, Variable);
         CONSUME_TYPE(Semicolon);
         m_shaderModule.variables().append(WTFMove(variable));
@@ -380,7 +380,7 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
 
     PARSE(attributes, Attributes);
 
-    switch (current().type) {
+    switch (current().m_type) {
     case TokenType::KeywordStruct: {
         PARSE(structure, Structure, WTFMove(attributes));
         m_shaderModule.structures().append(WTFMove(structure));
@@ -408,7 +408,7 @@ Result<AST::Attribute::List> Parser<Lexer>::parseAttributes()
 {
     AST::Attribute::List attributes;
 
-    while (current().type == TokenType::Attribute) {
+    while (current().m_type == TokenType::Attribute) {
         PARSE(firstAttribute, Attribute);
         attributes.append(WTFMove(firstAttribute));
     }
@@ -424,51 +424,51 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
     CONSUME_TYPE(Attribute);
     CONSUME_TYPE_NAMED(ident, Identifier);
 
-    if (ident.ident == "group"_s) {
+    if (ident.m_ident == "group"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(GroupAttribute, id.literalValue);
+        RETURN_NODE_REF(GroupAttribute, id.m_literalValue);
     }
 
-    if (ident.ident == "binding"_s) {
+    if (ident.m_ident == "binding"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(BindingAttribute, id.literalValue);
+        RETURN_NODE_REF(BindingAttribute, id.m_literalValue);
     }
 
-    if (ident.ident == "location"_s) {
+    if (ident.m_ident == "location"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(LocationAttribute, id.literalValue);
+        RETURN_NODE_REF(LocationAttribute, id.m_literalValue);
     }
 
-    if (ident.ident == "builtin"_s) {
+    if (ident.m_ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(name, Identifier);
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(BuiltinAttribute, WTFMove(name));
     }
 
-    if (ident.ident == "workgroup_size"_s) {
+    if (ident.m_ident == "workgroup_size"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteralUnsigned);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(WorkgroupSizeAttribute, id.literalValue);
+        RETURN_NODE_REF(WorkgroupSizeAttribute, id.m_literalValue);
     }
 
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
-    if (ident.ident == "vertex"_s)
+    if (ident.m_ident == "vertex"_s)
         RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
-    if (ident.ident == "compute"_s)
+    if (ident.m_ident == "compute"_s)
         RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Compute);
-    if (ident.ident == "fragment"_s)
+    if (ident.m_ident == "fragment"_s)
         RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
 
     FAIL("Unknown attribute. Supported attributes are 'group', 'binding', 'location', 'builtin', 'vertex', 'compute', 'fragment'."_s);
@@ -484,10 +484,10 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
     CONSUME_TYPE(BraceLeft);
 
     AST::StructureMember::List members;
-    while (current().type != TokenType::BraceRight) {
+    while (current().m_type != TokenType::BraceRight) {
         PARSE(member, StructureMember);
         members.append(makeUniqueRef<AST::StructureMember>(WTFMove(member)));
-        if (current().type == TokenType::Comma)
+        if (current().m_type == TokenType::Comma)
             consume();
         else
             break;
@@ -516,25 +516,25 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 {
     START_PARSE();
 
-    if (current().type == TokenType::KeywordArray)
+    if (current().m_type == TokenType::KeywordArray)
         return parseArrayType();
-    if (current().type == TokenType::KeywordI32) {
+    if (current().m_type == TokenType::KeywordI32) {
         consume();
         RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "i32"_s }));
     }
-    if (current().type == TokenType::KeywordF32) {
+    if (current().m_type == TokenType::KeywordF32) {
         consume();
         RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "f32"_s }));
     }
-    if (current().type == TokenType::KeywordU32) {
+    if (current().m_type == TokenType::KeywordU32) {
         consume();
         RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "u32"_s }));
     }
-    if (current().type == TokenType::KeywordBool) {
+    if (current().m_type == TokenType::KeywordBool) {
         consume();
         RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "bool"_s }));
     }
-    if (current().type == TokenType::Identifier) {
+    if (current().m_type == TokenType::Identifier) {
         PARSE(name, Identifier);
         return parseTypeNameAfterIdentifier(WTFMove(name), _startOfElementPosition);
     }
@@ -546,7 +546,7 @@ template<typename Lexer>
 Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
 {
     auto kind = AST::ParameterizedTypeName::stringViewToKind(name.id());
-    if (kind && current().type == TokenType::Lt) {
+    if (kind && current().m_type == TokenType::Lt) {
         CONSUME_TYPE(Lt);
         PARSE(elementType, TypeName);
         CONSUME_TYPE(Gt);
@@ -565,7 +565,7 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
     AST::TypeName::Ptr maybeElementType;
     AST::Expression::Ptr maybeElementCount;
 
-    if (current().type == TokenType::Lt) {
+    if (current().m_type == TokenType::Lt) {
         // We differ from the WGSL grammar here by allowing the type to be optional,
         // which allows us to use `parseArrayType` in `parseCallExpression`.
         consume();
@@ -573,7 +573,7 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
         PARSE(elementType, TypeName);
         maybeElementType = WTFMove(elementType);
 
-        if (current().type == TokenType::Comma) {
+        if (current().m_type == TokenType::Comma) {
             consume();
             // FIXME: According to https://www.w3.org/TR/WGSL/#syntax-element_count_expression
             // this should be: AdditiveExpression | BitwiseExpression.
@@ -600,7 +600,7 @@ template<typename Lexer>
 Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attribute::List&& attributes)
 {
     auto flavor = [](const Token& token) -> AST::VariableFlavor {
-        switch (token.type) {
+        switch (token.m_type) {
         case TokenType::KeywordConst:
             return AST::VariableFlavor::Const;
         case TokenType::KeywordLet:
@@ -608,7 +608,7 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
         case TokenType::KeywordOverride:
             return AST::VariableFlavor::Override;
         default:
-            ASSERT(token.type == TokenType::KeywordVar);
+            ASSERT(token.m_type == TokenType::KeywordVar);
             return AST::VariableFlavor::Var;
         }
     };
@@ -624,7 +624,7 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
     auto varFlavor = flavor(varKind);
 
     std::unique_ptr<AST::VariableQualifier> maybeQualifier = nullptr;
-    if (current().type == TokenType::Lt) {
+    if (current().m_type == TokenType::Lt) {
         PARSE(variableQualifier, VariableQualifier);
         maybeQualifier = WTF::makeUnique<AST::VariableQualifier>(WTFMove(variableQualifier));
     }
@@ -632,14 +632,14 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
     PARSE(name, Identifier);
 
     AST::TypeName::Ptr maybeType = nullptr;
-    if (current().type == TokenType::Colon) {
+    if (current().m_type == TokenType::Colon) {
         consume();
         PARSE(TypeName, TypeName);
         maybeType = WTFMove(TypeName);
     }
 
     std::unique_ptr<AST::Expression> maybeInitializer = nullptr;
-    if (current().type == TokenType::Equal) {
+    if (current().m_type == TokenType::Equal) {
         consume();
         PARSE(initializerExpr, Expression);
         maybeInitializer = initializerExpr.moveToUniquePtr();
@@ -658,7 +658,7 @@ Result<AST::VariableQualifier> Parser<Lexer>::parseVariableQualifier()
 
     // FIXME: verify that Read is the correct default in all cases.
     AST::AccessMode accessMode = AST::AccessMode::Read;
-    if (current().type == TokenType::Comma) {
+    if (current().m_type == TokenType::Comma) {
         consume();
         PARSE(actualAccessMode, AccessMode);
         accessMode = actualAccessMode;
@@ -674,23 +674,23 @@ Result<AST::StorageClass> Parser<Lexer>::parseStorageClass()
 {
     START_PARSE();
 
-    if (current().type == TokenType::KeywordFunction) {
+    if (current().m_type == TokenType::KeywordFunction) {
         consume();
         return { AST::StorageClass::Function };
     }
-    if (current().type == TokenType::KeywordPrivate) {
+    if (current().m_type == TokenType::KeywordPrivate) {
         consume();
         return { AST::StorageClass::Private };
     }
-    if (current().type == TokenType::KeywordWorkgroup) {
+    if (current().m_type == TokenType::KeywordWorkgroup) {
         consume();
         return { AST::StorageClass::Workgroup };
     }
-    if (current().type == TokenType::KeywordUniform) {
+    if (current().m_type == TokenType::KeywordUniform) {
         consume();
         return { AST::StorageClass::Uniform };
     }
-    if (current().type == TokenType::KeywordStorage) {
+    if (current().m_type == TokenType::KeywordStorage) {
         consume();
         return { AST::StorageClass::Storage };
     }
@@ -703,15 +703,15 @@ Result<AST::AccessMode> Parser<Lexer>::parseAccessMode()
 {
     START_PARSE();
 
-    if (current().type == TokenType::KeywordRead) {
+    if (current().m_type == TokenType::KeywordRead) {
         consume();
         return { AST::AccessMode::Read };
     }
-    if (current().type == TokenType::KeywordWrite) {
+    if (current().m_type == TokenType::KeywordWrite) {
         consume();
         return { AST::AccessMode::Write };
     }
-    if (current().type == TokenType::KeywordReadWrite) {
+    if (current().m_type == TokenType::KeywordReadWrite) {
         consume();
         return { AST::AccessMode::ReadWrite };
     }
@@ -729,10 +729,10 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
 
     CONSUME_TYPE(ParenLeft);
     AST::Parameter::List parameters;
-    while (current().type != TokenType::ParenRight) {
+    while (current().m_type != TokenType::ParenRight) {
         PARSE(parameter, Parameter);
         parameters.append(makeUniqueRef<AST::Parameter>(WTFMove(parameter)));
-        if (current().type == TokenType::Comma)
+        if (current().m_type == TokenType::Comma)
             consume();
         else
             break;
@@ -741,7 +741,7 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
 
     AST::Attribute::List returnAttributes;
     AST::TypeName::Ptr maybeReturnType = nullptr;
-    if (current().type == TokenType::Arrow) {
+    if (current().m_type == TokenType::Arrow) {
         consume();
         PARSE(parsedReturnAttributes, Attributes);
         returnAttributes = WTFMove(parsedReturnAttributes);
@@ -772,10 +772,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
 
-    while (current().type == TokenType::Semicolon)
+    while (current().m_type == TokenType::Semicolon)
         consume();
 
-    switch (current().type) {
+    switch (current().m_type) {
     case TokenType::BraceLeft: {
         PARSE(compoundStmt, CompoundStatement);
         return { makeUniqueRef<AST::CompoundStatement>(WTFMove(compoundStmt)) };
@@ -813,7 +813,7 @@ Result<AST::CompoundStatement> Parser<Lexer>::parseCompoundStatement()
     CONSUME_TYPE(BraceLeft);
 
     AST::Statement::List statements;
-    while (current().type != TokenType::BraceRight) {
+    while (current().m_type != TokenType::BraceRight) {
         PARSE(stmt, Statement);
         statements.append(WTFMove(stmt));
     }
@@ -830,7 +830,7 @@ Result<AST::ReturnStatement> Parser<Lexer>::parseReturnStatement()
 
     CONSUME_TYPE(KeywordReturn);
 
-    if (current().type == TokenType::Semicolon) {
+    if (current().m_type == TokenType::Semicolon) {
         RETURN_NODE(ReturnStatement, { });
     }
 
@@ -842,7 +842,7 @@ template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseShortCircuitExpression(AST::Expression::Ref&& lhs, TokenType continuingToken, AST::BinaryOperation op)
 {
     START_PARSE();
-    while (current().type == continuingToken) {
+    while (current().m_type == continuingToken) {
         consume();
         PARSE(rhs, RelationalExpression);
         lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
@@ -890,7 +890,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseShiftExpressionPostUnary(AST::E
         return parseAdditiveExpressionPostUnary(WTFMove(lhs));
 
     START_PARSE();
-    switch (current().type) {
+    switch (current().m_type) {
     case TokenType::GtGt: {
         consume();
         PARSE(rhs, UnaryExpression);
@@ -917,7 +917,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseAdditiveExpressionPostUnary(AST
     while (canContinueAdditiveExpression(current())) {
         // parseMultiplicativeExpression handles multiplicative operators so
         // token should be PLUS or MINUS.
-        ASSERT(current().type == TokenType::Plus || current().type == TokenType::Minus);
+        ASSERT(current().m_type == TokenType::Plus || current().m_type == TokenType::Minus);
         const auto op = toBinaryOperation(current());
         consume();
         PARSE(unary, UnaryExpression);
@@ -933,8 +933,8 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseBitwiseExpressionPostUnary(AST:
 {
     START_PARSE();
     const auto op = toBinaryOperation(current());
-    const TokenType continuingToken = current().type;
-    while (current().type == continuingToken) {
+    const TokenType continuingToken = current().m_type;
+    while (current().m_type == continuingToken) {
         consume();
         PARSE(rhs, UnaryExpression);
         lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
@@ -949,7 +949,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseMultiplicativeExpressionPostUna
     START_PARSE();
     while (canContinueMultiplicativeExpression(current())) {
         auto op = AST::BinaryOperation::Multiply;
-        switch (current().type) {
+        switch (current().m_type) {
         case TokenType::Modulo:
             op = AST::BinaryOperation::Modulo;
             break;
@@ -1006,7 +1006,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePostfixExpression(UniqueRef<AST
     // FIXME: add the case for array/vector/matrix access
 
     for (;;) {
-        switch (current().type) {
+        switch (current().m_type) {
         case TokenType::BracketLeft: {
             consume();
             PARSE(arrayIndex, Expression);
@@ -1044,7 +1044,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
 {
     START_PARSE();
 
-    switch (current().type) {
+    switch (current().m_type) {
     // paren_expression
     case TokenType::ParenLeft: {
         consume();
@@ -1059,7 +1059,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         // template-parameter list. Here we are checking for vector or matrix
         // type names. Alternatively, those names could be turned into keywords
         auto typePrefix = AST::ParameterizedTypeName::stringViewToKind(ident.id());
-        if ((typePrefix && current().type == TokenType::Lt) || current().type == TokenType::ParenLeft) {
+        if ((typePrefix && current().m_type == TokenType::Lt) || current().m_type == TokenType::ParenLeft) {
             PARSE(type, TypeNameAfterIdentifier, WTFMove(ident), _startOfElementPosition);
             PARSE(arguments, ArgumentExpressionList);
             RETURN_NODE_UNIQUE_REF(CallExpression, WTFMove(type), WTFMove(arguments));
@@ -1081,23 +1081,23 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         RETURN_NODE_UNIQUE_REF(BoolLiteral, false);
     case TokenType::IntegerLiteral: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteral);
-        RETURN_NODE_UNIQUE_REF(AbstractIntegerLiteral, lit.literalValue);
+        RETURN_NODE_UNIQUE_REF(AbstractIntegerLiteral, lit.m_literalValue);
     }
     case TokenType::IntegerLiteralSigned: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteralSigned);
-        RETURN_NODE_UNIQUE_REF(Signed32Literal, lit.literalValue);
+        RETURN_NODE_UNIQUE_REF(Signed32Literal, lit.m_literalValue);
     }
     case TokenType::IntegerLiteralUnsigned: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteralUnsigned);
-        RETURN_NODE_UNIQUE_REF(Unsigned32Literal, lit.literalValue);
+        RETURN_NODE_UNIQUE_REF(Unsigned32Literal, lit.m_literalValue);
     }
     case TokenType::DecimalFloatLiteral: {
         CONSUME_TYPE_NAMED(lit, DecimalFloatLiteral);
-        RETURN_NODE_UNIQUE_REF(AbstractFloatLiteral, lit.literalValue);
+        RETURN_NODE_UNIQUE_REF(AbstractFloatLiteral, lit.m_literalValue);
     }
     case TokenType::HexFloatLiteral: {
         CONSUME_TYPE_NAMED(lit, HexFloatLiteral);
-        RETURN_NODE_UNIQUE_REF(AbstractFloatLiteral, lit.literalValue);
+        RETURN_NODE_UNIQUE_REF(AbstractFloatLiteral, lit.m_literalValue);
     }
     // TODO: bitcast expression
 
@@ -1141,7 +1141,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseCoreLHSExpression()
 {
     START_PARSE();
 
-    switch (current().type) {
+    switch (current().m_type) {
     case TokenType::ParenLeft: {
         consume();
         PARSE(expr, LHSExpression);
@@ -1166,10 +1166,10 @@ Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
     CONSUME_TYPE(ParenLeft);
 
     AST::Expression::List arguments;
-    while (current().type != TokenType::ParenRight) {
+    while (current().m_type != TokenType::ParenRight) {
         PARSE(expr, Expression);
         arguments.append(WTFMove(expr));
-        if (current().type != TokenType::ParenRight) {
+        if (current().m_type != TokenType::ParenRight) {
             CONSUME_TYPE(Comma);
         }
     }

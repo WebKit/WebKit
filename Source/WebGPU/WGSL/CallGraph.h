@@ -40,13 +40,13 @@ class CallGraph {
 
 public:
     struct Callee {
-        AST::Function* target;
-        Vector<AST::CallExpression*> callSites;
+        AST::Function* m_target;
+        Vector<AST::CallExpression*> m_callSites;
     };
 
     struct EntryPoint {
-        AST::Function& function;
-        AST::StageAttribute::Stage stage;
+        AST::Function& m_function;
+        AST::StageAttribute::Stage m_stage;
     };
 
     ShaderModule& ast() const { return m_ast; }

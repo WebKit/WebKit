@@ -337,8 +337,8 @@ T Lexer<T>::shift(unsigned i)
     // At one point timing showed that setting m_current to 0 unconditionally was faster than an if-else sequence.
     m_current = 0;
     m_code += i;
-    m_currentPosition.offset += i;
-    m_currentPosition.lineOffset += i;
+    m_currentPosition.m_offset += i;
+    m_currentPosition.m_lineOffset += i;
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
     return last;
@@ -355,8 +355,8 @@ T Lexer<T>::peek(unsigned i)
 template <typename T>
 void Lexer<T>::newLine()
 {
-    m_currentPosition.line += 1;
-    m_currentPosition.lineOffset = 0;
+    m_currentPosition.m_line += 1;
+    m_currentPosition.m_lineOffset = 0;
 }
 
 template <typename T>

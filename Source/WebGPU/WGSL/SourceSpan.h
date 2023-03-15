@@ -28,38 +28,38 @@
 namespace WGSL {
 
 struct SourcePosition {
-    unsigned line;
-    unsigned lineOffset;
-    unsigned offset;
+    unsigned m_line;
+    unsigned m_lineOffset;
+    unsigned m_offset;
 };
 
 struct SourceSpan {
-    // FIXME: we could possibly skip lineOffset and recompute it only when trying to show an error
+    // FIXME: we could possibly skip m_lineOffset and recompute it only when trying to show an error
     // This would shrink the AST size by 32 bits per AST node, at the cost of a bit of code complexity in the error toString function.
-    unsigned line;
-    unsigned lineOffset;
-    unsigned offset;
-    unsigned length;
+    unsigned m_line;
+    unsigned m_lineOffset;
+    unsigned m_offset;
+    unsigned m_length;
 
     static constexpr SourceSpan empty() { return { 0, 0, 0, 0 }; }
 
     constexpr SourceSpan(unsigned line, unsigned lineOffset, unsigned offset, unsigned length)
-        : line(line)
-        , lineOffset(lineOffset)
-        , offset(offset)
-        , length(length)
+        : m_line(line)
+        , m_lineOffset(lineOffset)
+        , m_offset(offset)
+        , m_length(length)
     { }
 
     constexpr SourceSpan(SourcePosition start, SourcePosition end)
-        : SourceSpan(start.line, start.lineOffset, start.offset, end.offset - start.offset)
+        : SourceSpan(start.m_line, start.m_lineOffset, start.m_offset, end.m_offset - start.m_offset)
     { }
 
     constexpr bool operator==(const SourceSpan& other) const
     {
-        return (line == other.line
-            && lineOffset == other.lineOffset
-            && offset == other.offset
-            && length == other.length);
+        return (m_line == other.m_line
+            && m_lineOffset == other.m_lineOffset
+            && m_offset == other.m_offset
+            && m_length == other.m_length);
     }
 
     constexpr bool operator!=(const SourceSpan& other) const

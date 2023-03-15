@@ -55,8 +55,8 @@ public:
     SourcePosition currentPosition() const { return m_currentPosition; }
 
 private:
-    unsigned currentOffset() const { return m_currentPosition.offset; }
-    unsigned currentTokenLength() const { return currentOffset() - m_tokenStartingPosition.offset; }
+    unsigned currentOffset() const { return m_currentPosition.m_offset; }
+    unsigned currentTokenLength() const { return currentOffset() - m_tokenStartingPosition.m_offset; }
 
     Token makeToken(TokenType type)
     {

@@ -114,16 +114,16 @@ enum class TokenType: uint32_t {
 String toString(TokenType);
 
 struct Token {
-    TokenType type;
-    SourceSpan span;
+    TokenType m_type;
+    SourceSpan m_span;
     union {
-        double literalValue;
-        String ident;
+        double m_literalValue;
+        String m_ident;
     };
 
     Token(TokenType type, SourcePosition position, unsigned length)
-        : type(type)
-        , span(position.line, position.lineOffset, position.offset, length)
+        : m_type(type)
+        , m_span(position.m_line, position.m_lineOffset, position.m_offset, length)
     {
         ASSERT(type != TokenType::Identifier);
         ASSERT(type != TokenType::IntegerLiteral);
@@ -134,9 +134,9 @@ struct Token {
     }
 
     Token(TokenType type, SourcePosition position, unsigned length, double literalValue)
-        : type(type)
-        , span(position.line, position.lineOffset, position.offset, length)
-        , literalValue(literalValue)
+        : m_type(type)
+        , m_span(position.m_line, position.m_lineOffset, position.m_offset, length)
+        , m_literalValue(literalValue)
     {
         ASSERT(type == TokenType::IntegerLiteral
             || type == TokenType::IntegerLiteralSigned
@@ -146,33 +146,33 @@ struct Token {
     }
 
     Token(TokenType type, SourcePosition position, unsigned length, String&& ident)
-        : type(type)
-        , span(position.line, position.lineOffset, position.offset, length)
-        , ident(WTFMove(ident))
+        : m_type(type)
+        , m_span(position.m_line, position.m_lineOffset, position.m_offset, length)
+        , m_ident(WTFMove(ident))
     {
-        ASSERT(ident.impl() && ident.impl()->bufferOwnership() == StringImpl::BufferInternal);
+        ASSERT(m_ident.impl() && m_ident.impl()->bufferOwnership() == StringImpl::BufferInternal);
         ASSERT(type == TokenType::Identifier);
     }
 
     Token& operator=(Token&& other)
     {
-        if (type == TokenType::Identifier)
-            ident.~String();
+        if (m_type == TokenType::Identifier)
+            m_ident.~String();
 
-        type = other.type;
-        span = other.span;
+        m_type = other.m_type;
+        m_span = other.m_span;
 
-        switch (other.type) {
+        switch (other.m_type) {
         case TokenType::Identifier:
-            new (NotNull, &ident) String();
-            ident = other.ident;
+            new (NotNull, &m_ident) String();
+            m_ident = other.m_ident;
             break;
         case TokenType::IntegerLiteral:
         case TokenType::IntegerLiteralSigned:
         case TokenType::IntegerLiteralUnsigned:
         case TokenType::DecimalFloatLiteral:
         case TokenType::HexFloatLiteral:
-            literalValue = other.literalValue;
+            m_literalValue = other.m_literalValue;
             break;
         default:
             break;
@@ -182,20 +182,20 @@ struct Token {
     }
 
     Token(const Token& other)
-        : type(other.type)
-        , span(other.span)
+        : m_type(other.m_type)
+        , m_span(other.m_span)
     {
-        switch (other.type) {
+        switch (other.m_type) {
         case TokenType::Identifier:
-            new (NotNull, &ident) String();
-            ident = other.ident;
+            new (NotNull, &m_ident) String();
+            m_ident = other.m_ident;
             break;
         case TokenType::IntegerLiteral:
         case TokenType::IntegerLiteralSigned:
         case TokenType::IntegerLiteralUnsigned:
         case TokenType::DecimalFloatLiteral:
         case TokenType::HexFloatLiteral:
-            literalValue = other.literalValue;
+            m_literalValue = other.m_literalValue;
             break;
         default:
             break;
@@ -204,8 +204,8 @@ struct Token {
 
     ~Token()
     {
-        if (type == TokenType::Identifier)
-            (&ident)->~String();
+        if (m_type == TokenType::Identifier)
+            (&m_ident)->~String();
     }
 };
 

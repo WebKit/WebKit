@@ -60,12 +60,12 @@ private:
 
     struct Global {
         struct Resource {
-            unsigned group;
-            unsigned binding;
+            unsigned m_group;
+            unsigned m_binding;
         };
 
-        std::optional<Resource> resource;
-        AST::Variable* declaration;
+        std::optional<Resource> m_resource;
+        AST::Variable* m_declaration;
     };
 
     static AST::Identifier argumentBufferParameterName(unsigned group);
@@ -92,7 +92,7 @@ void RewriteGlobalVariables::run()
     collectGlobals();
     insertStructs();
     for (auto& entryPoint : m_callGraph.entrypoints())
-        visitEntryPoint(entryPoint.function);
+        visitEntryPoint(entryPoint.m_function);
     m_callGraph.ast().variables().clear();
 }
 
@@ -116,8 +116,8 @@ void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
 {
     auto name = identifier.identifier();
     if (Global* global = read(name)) {
-        if (auto resource = global->resource) {
-            auto base = makeUniqueRef<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->group));
+        if (auto resource = global->m_resource) {
+            auto base = makeUniqueRef<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->m_group));
             auto structureAccess = makeUniqueRef<AST::FieldAccessExpression>(identifier.span(), WTFMove(base), WTFMove(name));
             m_callGraph.ast().replace(&identifier, AST::IdentityExpression(identifier.span(), WTFMove(structureAccess)));
         }
@@ -154,8 +154,8 @@ void RewriteGlobalVariables::collectGlobals()
 
         if (resource.has_value()) {
             Global& global = result.iterator->value;
-            auto result = m_groupBindingMap.add(resource->group, IndexMap<Global*>());
-            result.iterator->value.add(resource->binding, &global);
+            auto result = m_groupBindingMap.add(resource->m_group, IndexMap<Global*>());
+            result.iterator->value.add(resource->m_binding, &global);
         }
     }
 }
@@ -182,9 +182,9 @@ auto RewriteGlobalVariables::requiredGroups() -> IndexSet
         auto it = m_globals.find(globalName);
         RELEASE_ASSERT(it != m_globals.end());
         auto& global = it->value;
-        if (!global.resource.has_value())
+        if (!global.m_resource.has_value())
             continue;
-        groups.add(global.resource->group);
+        groups.add(global.m_resource->m_group);
     }
     return groups;
 }
@@ -202,12 +202,12 @@ void RewriteGlobalVariables::insertStructs()
             unsigned binding = bindingGlobal.key;
             auto& global = *bindingGlobal.value;
 
-            ASSERT(global.declaration->maybeTypeName());
-            auto span = global.declaration->span();
+            ASSERT(global.m_declaration->maybeTypeName());
+            auto span = global.m_declaration->span();
             structMembers.append(makeUniqueRef<AST::StructureMember>(
                 span,
-                AST::Identifier::make(global.declaration->name()),
-                adoptRef(*new AST::ReferenceTypeName(span, *global.declaration->maybeTypeName())),
+                AST::Identifier::make(global.m_declaration->name()),
+                adoptRef(*new AST::ReferenceTypeName(span, *global.m_declaration->maybeTypeName())),
                 AST::Attribute::List {
                     adoptRef(*new AST::BindingAttribute(span, binding))
                 }
