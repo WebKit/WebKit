@@ -219,6 +219,7 @@
 		3A15784228D1505B00142DB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
 		3A15784428D1505B00142DB1 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
 		3A15784528D1505B00142DB1 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
+		3A31EA7D29C0D1AA0045E65B /* UUIDCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A31EA7529C0D1AA0045E65B /* UUIDCocoa.mm */; };
 		3A5DDADA28D15169004DA950 /* LexerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5DDAD228D15169004DA950 /* LexerTests.cpp */; };
 		3A5DDAEE28D156FC004DA950 /* ParserTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5DDAED28D156FC004DA950 /* ParserTests.cpp */; };
 		3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDAF428D1638A004DA950 /* libicucore.tbd */; };
@@ -2251,6 +2252,7 @@
 		37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuDefaultItemsHaveTags.mm; sourceTree = "<group>"; };
 		3A1337AB28F9177600F29B73 /* UniqueRefVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRefVector.cpp; sourceTree = "<group>"; };
 		3A15785328D1505B00142DB1 /* TestWGSL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWGSL; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A31EA7529C0D1AA0045E65B /* UUIDCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UUIDCocoa.mm; sourceTree = "<group>"; };
 		3A5DDAD228D15169004DA950 /* LexerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LexerTests.cpp; sourceTree = "<group>"; };
 		3A5DDADB28D15328004DA950 /* TestWGSL.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestWGSL.xcconfig; sourceTree = "<group>"; };
 		3A5DDAED28D156FC004DA950 /* ParserTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserTests.cpp; sourceTree = "<group>"; };
@@ -5658,6 +5660,7 @@
 				44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */,
 				44652CB626FCD405005EC272 /* TypeCastsCocoaARC.mm */,
 				E3C21A7B21B25CA2003B31A3 /* URLExtras.mm */,
+				3A31EA7529C0D1AA0045E65B /* UUIDCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -6173,6 +6176,7 @@
 				E3A1E78521B25B91008C6007 /* URLParser.cpp in Sources */,
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				41D2A21F27906F9F0088FCCE /* UUID.cpp in Sources */,
+				3A31EA7D29C0D1AA0045E65B /* UUIDCocoa.mm in Sources */,
 				7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */,
 				44B28A0728D18ADA0010172C /* VectorCF.cpp in Sources */,
 				37C7CC2D1EA4146B007BD956 /* WeakLinking.cpp in Sources */,

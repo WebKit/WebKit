@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +24,24 @@
  */
 
 #import "config.h"
-#import "UUID.h"
+#import <wtf/UUID.h>
 
-#import "RetainPtr.h"
+#import "PlatformUtilities.h"
 
-namespace WTF {
-
-UUID::operator NSUUID *() const
+TEST(WTF, NSUUIDConversionForDeletedValue)
 {
-    return [[NSUUID alloc] initWithUUIDString:toString()];
+    UUID deletedUUID { UUID::deletedValue };
+    NSUUID *deletedNSUUID = deletedUUID;
+    EXPECT_STREQ("00000000-0000-0000-0000-000000000001", [[deletedUUID UUIDString] UTF8String]);
+    auto uuid = UUID::fromNSUUID(deletedNSUUID);
+    EXPECT_FALSE(uuid);
 }
 
-std::optional<UUID> UUID::fromNSUUID(NSUUID *nsUUID)
+TEST(WTF, NSUUIDConversionForEmptyValue)
 {
-    if (!nsUUID)
-        return std::nullopt;
-
-    // Use string instead of bytes to avoid consideration of endianess (NSUUID stores UUID as array of bytes,
-    // and we store UUID as UInt128).
-    return parse(String([nsUUID UUIDString]));
+    UUID emptyUUID { UUID::emptyValue };
+    NSUUID *emptyNSUUID = emptyUUID;
+    EXPECT_STREQ("00000000-0000-0000-0000-000000000000", [[emptyNSUUID UUIDString] UTF8String]);
+    auto uuid = UUID::fromNSUUID(emptyNSUUID);
+    EXPECT_FALSE(uuid);
 }
-
-}
-
