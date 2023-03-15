@@ -27,6 +27,7 @@
 #include "DrawingArea.h"
 
 #include "DrawingAreaMessages.h"
+#include "Logging.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
