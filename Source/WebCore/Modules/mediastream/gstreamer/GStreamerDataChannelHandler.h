@@ -84,6 +84,8 @@ private:
 
     std::optional<size_t> m_cachedBufferedAmount;
     bool m_closing { false };
+
+    String m_channelId;
 };
 
 } // namespace WebCore
