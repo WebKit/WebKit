@@ -82,7 +82,8 @@ protected:
 
     bool requiresTailProcessing() const final { return false; }
 
-    PlaybackState m_playbackState { UNSCHEDULED_STATE };
+    // This is accessed from the main thread and the audio thread.
+    std::atomic<PlaybackState> m_playbackState { UNSCHEDULED_STATE };
 
     // m_startTime is the time to start playing based on the context's timeline (0 or a time less than the context's current time means "now").
     double m_startTime { 0 }; // in seconds
