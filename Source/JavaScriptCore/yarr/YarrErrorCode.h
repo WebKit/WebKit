@@ -67,6 +67,7 @@ enum class ErrorCode : uint8_t {
     InvalidRegularExpressionFlags,
     InvalidClassSetOperation,
     NegatedClassSetMayContainStrings,
+    InvalidClassSetCharacter,
 };
 
 JS_EXPORT_PRIVATE ASCIILiteral errorMessage(ErrorCode);
