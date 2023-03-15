@@ -56,6 +56,12 @@ struct Content {
         boxes.appendVector(WTFMove(newContent.boxes));
     }
 
+    void remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes)
+    {
+        lines.remove(firstLineIndex, numberOfLines);
+        boxes.remove(firstBoxIndex, numberOfBoxes);
+    }
+
     Lines lines;
     Boxes boxes;
 };

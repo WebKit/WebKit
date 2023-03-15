@@ -42,7 +42,7 @@ class InlineContentBuilder {
 public:
     InlineContentBuilder(const RenderBlockFlow&, BoxTree&);
 
-    void build(Layout::InlineLayoutResult&&, InlineContent&) const;
+    FloatRect build(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
     void updateLineOverflow(InlineContent&) const;
 
 private:

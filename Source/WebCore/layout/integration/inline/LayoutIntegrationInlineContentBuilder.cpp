@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
 
+#include "InlineDamage.h"
 #include "InlineDisplayBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
@@ -54,16 +55,71 @@ InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, Box
 {
 }
 
-void InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent) const
+FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent, const Layout::InlineDamage* lineDamage) const
 {
-    auto& displayContent = inlineContent.displayContent();
+    auto firstDamagedLineIndex = [&]() -> std::optional<size_t> {
+        auto& displayContentFromPreviousLayout = inlineContent.displayContent();
+        if (!lineDamage || !lineDamage->contentPosition() || !displayContentFromPreviousLayout.lines.size())
+            return { };
+        auto canidateLineIndex = lineDamage->contentPosition()->lineIndex;
+        if (canidateLineIndex >= displayContentFromPreviousLayout.lines.size()) {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+        return { canidateLineIndex };
+    }();
+
+    auto firstDamagedBoxIndex = [&]() -> std::optional<size_t> {
+        auto& displayContentFromPreviousLayout = inlineContent.displayContent();
+        return firstDamagedLineIndex ? std::make_optional(displayContentFromPreviousLayout.lines[*firstDamagedLineIndex].firstBoxIndex()) : std::nullopt;
+    }();
+
+    auto numberOfDamagedLines = [&]() -> std::optional<size_t> {
+        if (!firstDamagedLineIndex)
+            return { };
+        auto& displayContentFromPreviousLayout = inlineContent.displayContent();
+        return { displayContentFromPreviousLayout.lines.size() - *firstDamagedLineIndex };
+    }();
+
+    auto numberOfDamagedBoxes = [&]() -> std::optional<size_t> {
+        if (!firstDamagedLineIndex || !numberOfDamagedLines || !firstDamagedBoxIndex)
+            return { };
+        auto& displayContentFromPreviousLayout = inlineContent.displayContent();
+        ASSERT(*firstDamagedLineIndex + *numberOfDamagedLines <= displayContentFromPreviousLayout.lines.size());
+        size_t boxCount = 0;
+        for (size_t i = 0; i < *numberOfDamagedLines; ++i)
+            boxCount += displayContentFromPreviousLayout.lines[*firstDamagedLineIndex + i].boxCount();
+        ASSERT(boxCount);
+        return { boxCount };
+    }();
+    auto numberOfNewLines = layoutResult.displayContent.lines.size();
+
+    auto damagedRect = FloatRect { };
+    auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lineCount, auto& lines) {
+        ASSERT(firstLineIndex + lineCount <= lines.size());
+        for (size_t i = 0; i < lineCount; ++i)
+            damagedRect.unite(lines[firstLineIndex + i].inkOverflow());
+    };
+
+    // Repaint the damaged content boundary.
+    adjustDamagedRectWithLineRange(firstDamagedLineIndex.value_or(0), numberOfDamagedLines.value_or(inlineContent.displayContent().lines.size()), inlineContent.displayContent().lines);
+
+    inlineContent.releaseCaches();
+
     switch (layoutResult.range) {
     case Layout::InlineLayoutResult::Range::Full:
-        displayContent.set(WTFMove(layoutResult.displayContent));
+        inlineContent.displayContent().set(WTFMove(layoutResult.displayContent));
         break;
-    case Layout::InlineLayoutResult::Range::FullFromDamage:
+    case Layout::InlineLayoutResult::Range::FullFromDamage: {
+        if (!firstDamagedLineIndex || !numberOfDamagedLines || !firstDamagedBoxIndex || !numberOfDamagedBoxes) {
+            // FIXME: Not sure if inlineContent::set or silent failing is what we should do here.
+            break;
+        }
+        auto& displayContent = inlineContent.displayContent();
+        displayContent.remove(*firstDamagedLineIndex, *numberOfDamagedLines, *firstDamagedBoxIndex, *numberOfDamagedBoxes);
         displayContent.append(WTFMove(layoutResult.displayContent));
         break;
+    }
     case Layout::InlineLayoutResult::Range::PartialFromDamage:
         ASSERT_NOT_IMPLEMENTED_YET();
         break;
@@ -71,10 +127,14 @@ void InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult, Inli
         ASSERT_NOT_REACHED();
         break;
     }
+    if (firstDamagedLineIndex) {
+        // Repaint the new content boundary.
+        adjustDamagedRectWithLineRange(*firstDamagedLineIndex, numberOfNewLines, inlineContent.displayContent().lines);
+    }
 
     auto updateIfTextRenderersNeedVisualReordering = [&] {
         // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content. 
-        for (auto& displayBox : displayContent.boxes) {
+        for (auto& displayBox : inlineContent.displayContent().boxes) {
             auto& layoutBox = displayBox.layoutBox();
             if (!is<Layout::InlineTextBox>(layoutBox))
                 continue;
@@ -84,6 +144,8 @@ void InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult, Inli
     };
     updateIfTextRenderersNeedVisualReordering();
     adjustDisplayLines(inlineContent);
+
+    return damagedRect;
 }
 
 void InlineContentBuilder::updateLineOverflow(InlineContent& inlineContent) const

@@ -585,66 +585,11 @@ std::optional<LayoutRect> LineLayout::layout()
 
 FloatRect LineLayout::constructContent(Layout::InlineLayoutResult&& layoutResult)
 {
-    auto damagedRect = FloatRect { };
-    auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lastLineIndex) {
-        ASSERT(firstLineIndex <= lastLineIndex);
-        ASSERT(m_inlineContent && m_inlineContent->displayContent().lines.size() > lastLineIndex);
-        auto& lines = m_inlineContent->displayContent().lines;
-        for (auto index = firstLineIndex; index <= lastLineIndex; ++index)
-            damagedRect.unite(lines[index].inkOverflow());
-    };
+    auto damagedRect = InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(layoutResult), ensureInlineContent(), m_lineDamage.get());
 
-    auto newContentLastLineIndex = layoutResult.displayContent.boxes.last().lineIndex();
-    auto destroyDamagedContent = [&] {
-        if (!m_inlineContent || !m_lineDamage)
-            return;
-        m_inlineContent->releaseCaches();
-        if (!m_lineDamage->contentPosition())
-            return;
-        auto& displayContentFromPreviousLayout = m_inlineContent->displayContent();
-        auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
-        if (damagedLineIndex >= displayContentFromPreviousLayout.lines.size()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        if (!damagedLineIndex) {
-            adjustDamagedRectWithLineRange(0, displayContentFromPreviousLayout.lines.size() - 1);
-            displayContentFromPreviousLayout.clear();
-            return;
-        }
-        auto firstDamagedLineIndex = damagedLineIndex;
-        auto lastDamagedLineIndex = displayContentFromPreviousLayout.lines.size() - 1;
-        ASSERT(firstDamagedLineIndex <= lastDamagedLineIndex);
-        auto& damagedLine = displayContentFromPreviousLayout.lines[damagedLineIndex];
-        auto numberOfDamagedBoxes = [&] {
-            size_t boxCount = 0;
-            for (auto index = firstDamagedLineIndex; index <= lastDamagedLineIndex; ++index)
-                boxCount += displayContentFromPreviousLayout.lines[index].boxCount();
-            ASSERT(boxCount);
-            return boxCount;
-        };
-
-        adjustDamagedRectWithLineRange(firstDamagedLineIndex, lastDamagedLineIndex);
-        displayContentFromPreviousLayout.boxes.remove(damagedLine.firstBoxIndex(), numberOfDamagedBoxes());
-        displayContentFromPreviousLayout.lines.remove(firstDamagedLineIndex, lastDamagedLineIndex - firstDamagedLineIndex + 1);
-    };
-    destroyDamagedContent();
-
-    auto constructFreshlyLaidOutContent = [&] {
-        if (layoutResult.displayContent.lines.isEmpty())
-            return;
-
-        InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(layoutResult), ensureInlineContent());
-        if (!m_inlineContent->displayContent().lines.isEmpty()) {
-            auto newContentFirstLineIndex = !m_lineDamage || !m_lineDamage->contentPosition() ? 0 : m_lineDamage->contentPosition()->lineIndex;
-            adjustDamagedRectWithLineRange(newContentFirstLineIndex, newContentLastLineIndex);
-        }
-
-        m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
-        m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
-        m_inlineContent->shrinkToFit();
-    };
-    constructFreshlyLaidOutContent();
+    m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
+    m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
+    m_inlineContent->shrinkToFit();
 
     m_inlineFormattingState.resetNestedListMarkerOffsets();
     m_inlineFormattingState.shrinkToFit();
