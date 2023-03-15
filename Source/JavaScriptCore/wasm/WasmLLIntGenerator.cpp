@@ -716,6 +716,8 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -754,6 +756,8 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -822,6 +826,8 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -886,6 +892,8 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:

@@ -3155,7 +3155,19 @@ void B3IRGenerator::emitRefTestOrCast(CastKind castKind, ExpressionType referenc
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
     case Wasm::TypeKind::Eqref:
+    case Wasm::TypeKind::Anyref:
         // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+        break;
+    case Wasm::TypeKind::Nullref:
+        // Casts to any bottom type should always fail.
+        if (castKind == CastKind::Cast) {
+            B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+            throwException->setGenerator(castFailure);
+        } else {
+            m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), falseBlock);
+            falseBlock->addPredecessor(m_currentBlock);
+            m_currentBlock = m_proc.addBlock();
+        }
         break;
     case Wasm::TypeKind::I31ref: {
         emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, Below, origin(), get(reference), constant(Int64, JSValue::NumberTag)), castFailure, falseBlock);

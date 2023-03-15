@@ -154,6 +154,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Rec:
             case TypeKind::Sub:
@@ -243,6 +245,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Rec:
             case TypeKind::Sub:

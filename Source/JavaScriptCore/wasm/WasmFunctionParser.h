@@ -1987,10 +1987,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 WASM_VALIDATOR_FAIL_IF(!isExternref(ref.type()), opName, " to type ", ref.type(), " expected an externref");
                 break;
             case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Arrayref:
             case TypeKind::Structref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), eqrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
                 break;
             default:
                 ASSERT(heapType >= 0);

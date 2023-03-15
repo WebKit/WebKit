@@ -182,6 +182,8 @@ public:
             case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Sub:
             case TypeKind::Rec:
@@ -226,6 +228,8 @@ public:
             case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Sub:
             case TypeKind::Rec:

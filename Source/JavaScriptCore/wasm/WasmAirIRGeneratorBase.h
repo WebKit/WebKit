@@ -2735,7 +2735,20 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind cas
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
     case Wasm::TypeKind::Eqref:
+    case Wasm::TypeKind::Anyref:
         // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+        break;
+    case Wasm::TypeKind::Nullref:
+        // Casts to any bottom type should always fail.
+        if (castKind == CastKind::Cast) {
+            B3::PatchpointValue* throwException = addPatchpoint(B3::Void);
+            throwException->setGenerator(castFailure);
+            emitPatchpoint(throwException, ExpressionType());
+        } else {
+            append(Jump);
+            m_currentBlock->setSuccessors(falseBlock);
+            m_currentBlock = m_code.addBlock();
+        }
         break;
     case Wasm::TypeKind::I31ref:
         emitCheckOrBranchForCast(castKind, [&]() {
