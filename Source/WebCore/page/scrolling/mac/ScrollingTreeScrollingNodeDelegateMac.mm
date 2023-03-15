@@ -63,8 +63,8 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
         auto verticalScrollbar = scrollingStateNode.verticalScrollerImp();
         if (horizontalScrollbar || verticalScrollbar) {
             m_scrollerPair.releaseReferencesToScrollerImpsOnTheMainThread();
-            m_scrollerPair.horizontalScroller().setscrollerImp(horizontalScrollbar);
-            m_scrollerPair.verticalScroller().setscrollerImp(verticalScrollbar);
+            m_scrollerPair.horizontalScroller().setScrollerImp(horizontalScrollbar);
+            m_scrollerPair.verticalScroller().setScrollerImp(verticalScrollbar);
         }
     }
     
@@ -95,10 +95,8 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     else if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Cancelled)
         m_inMomentumPhase = false;
     
-    if (wasInMomentumPhase != m_inMomentumPhase) {
-        [m_scrollerPair.scrollerImpVertical() setUsePresentationValue:m_inMomentumPhase];
-        [m_scrollerPair.scrollerImpHorizontal() setUsePresentationValue:m_inMomentumPhase];
-    }
+    if (wasInMomentumPhase != m_inMomentumPhase)
+        m_scrollerPair.setUsePresentationValues(m_inMomentumPhase);
 
     auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { scrollingTree(), scrollingNode().scrollingNodeID(), WheelEventTestMonitor::HandlingWheelEvent };
 
@@ -287,25 +285,15 @@ void ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged(bool inRub
 
 void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()
 {
-    if (m_inMomentumPhase && m_scrollerPair.hasScrollerImp()) {
+    if (m_inMomentumPhase && m_scrollerPair.hasScrollerImp() && m_scrollerPair.isUsingPresentationValues()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        auto scrollOffset = scrollingNode().currentScrollOffset();
-
         [CATransaction lock];
 
-        if ([m_scrollerPair.scrollerImpVertical() shouldUsePresentationValue]) {
-            float presentationValue;
-            float overhangAmount;
-            ScrollableArea::computeScrollbarValueAndOverhang(scrollOffset.y(), totalContentsSize().height(), scrollableAreaSize().height(), presentationValue, overhangAmount);
-            [m_scrollerPair.scrollerImpVertical() setPresentationValue:presentationValue];
-        }
+        auto horizontalValues = m_scrollerPair.valuesForOrientation(ScrollbarOrientation::Horizontal);
+        m_scrollerPair.setHorizontalScrollbarPresentationValue(horizontalValues.value);
 
-        if ([m_scrollerPair.scrollerImpHorizontal() shouldUsePresentationValue]) {
-            float presentationValue;
-            float overhangAmount;
-            ScrollableArea::computeScrollbarValueAndOverhang(scrollOffset.x(), totalContentsSize().width(), scrollableAreaSize().width(), presentationValue, overhangAmount);
-            [m_scrollerPair.horizontalScroller().scrollerImp() setPresentationValue:presentationValue];
-        }
+        auto verticalValues = m_scrollerPair.valuesForOrientation(ScrollbarOrientation::Vertical);
+        m_scrollerPair.setVerticalScrollbarPresentationValue(verticalValues.value);
 
         [CATransaction unlock];
         END_BLOCK_OBJC_EXCEPTIONS

@@ -314,7 +314,7 @@ enum class FeatureToAnimate {
 
 namespace WebCore {
 
-ScrollerMac::ScrollerMac(ScrollerPairMac& pair, Orientation orientation)
+ScrollerMac::ScrollerMac(ScrollerPairMac& pair, ScrollbarOrientation orientation)
     : m_pair(pair)
     , m_orientation(orientation)
 {
@@ -331,7 +331,7 @@ void ScrollerMac::attach()
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
 
     NSScrollerStyle newStyle = [m_pair.scrollerImpPair() scrollerStyle];
-    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:newStyle controlSize:NSControlSizeRegular horizontal:m_orientation == Orientation::Horizontal replacingScrollerImp:nil];
+    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:newStyle controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
     [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
 }
 
@@ -344,7 +344,7 @@ void ScrollerMac::setHostLayer(CALayer *layer)
 
     [m_scrollerImp setLayer:layer];
 
-    if (m_orientation == Orientation::Vertical)
+    if (m_orientation == ScrollbarOrientation::Vertical)
         [m_pair.scrollerImpPair() setVerticalScrollerImp:layer ? m_scrollerImp.get() : nil];
     else
         [m_pair.scrollerImpPair() setHorizontalScrollerImp:layer ?  m_scrollerImp.get() : nil];
@@ -365,9 +365,9 @@ void ScrollerMac::updateValues()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-WebCore::FloatPoint ScrollerMac::convertFromContent(const WebCore::FloatPoint& point) const
+FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
 {
-    return WebCore::FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
+    return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
 }
 
 }

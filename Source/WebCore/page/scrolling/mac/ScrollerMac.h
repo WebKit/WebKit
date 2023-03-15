@@ -27,7 +27,7 @@
 
 #if PLATFORM(MAC)
 
-#include <WebCore/FloatPoint.h>
+#include "ScrollTypes.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
@@ -36,13 +36,13 @@ OBJC_CLASS WebScrollerImpDelegateMac;
 
 namespace WebCore {
 
+class FloatPoint;
 class ScrollerPairMac;
 
 class ScrollerMac {
+    friend class ScrollerPairMac;
 public:
-    enum class Orientation { Vertical, Horizontal };
-    
-    ScrollerMac(ScrollerPairMac&, Orientation);
+    ScrollerMac(ScrollerPairMac&, ScrollbarOrientation);
 
     ~ScrollerMac();
 
@@ -50,23 +50,22 @@ public:
 
     ScrollerPairMac& pair() { return m_pair; }
 
-    Orientation orientation() const { return m_orientation; }
+    ScrollbarOrientation orientation() const { return m_orientation; }
 
     CALayer *hostLayer() const { return m_hostLayer.get(); }
     void setHostLayer(CALayer *);
 
     RetainPtr<NSScrollerImp> takeScrollerImp() { return std::exchange(m_scrollerImp, { }); }
     NSScrollerImp *scrollerImp() { return m_scrollerImp.get(); }
-    void setscrollerImp(NSScrollerImp *imp) { m_scrollerImp = imp; }
+    void setScrollerImp(NSScrollerImp *imp) { m_scrollerImp = imp; }
 
-
-    WebCore::FloatPoint convertFromContent(const WebCore::FloatPoint&) const;
+    FloatPoint convertFromContent(const FloatPoint&) const;
 
     void updateValues();
 
 private:
     ScrollerPairMac& m_pair;
-    const Orientation m_orientation;
+    const ScrollbarOrientation m_orientation;
 
     RetainPtr<CALayer> m_hostLayer;
     RetainPtr<NSScrollerImp> m_scrollerImp;
