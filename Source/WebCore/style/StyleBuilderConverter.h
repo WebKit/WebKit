@@ -293,7 +293,7 @@ inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState&,
     if (primitiveValue.isValueID())
         return { fromCSSValue<ListStyleType::Type>(primitiveValue), nullAtom() };
     if (primitiveValue.isCustomIdent())
-        return { ListStyleType::Type::CustomCounterStyle, makeAtomString(primitiveValue.stringValue()) };
+        return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
     return { ListStyleType::Type::String, makeAtomString(primitiveValue.stringValue()) };
 }
 

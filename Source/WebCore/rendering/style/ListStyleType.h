@@ -128,13 +128,13 @@ struct ListStyleType {
         TraditionalChineseInformal,
         TraditionalChineseFormal,
         EthiopicNumeric,
-        CustomCounterStyle,
+        CounterStyle,
         String,
         None
     };
 
     Type type { Type::None };
-    // The identifier serve as string value when the Type is String and as a counter-style name (identifier) when the type is CounterStyle.
+    // The identifier is the string when the type is String and is the @counter-style name when the type is CounterStyle.
     AtomString identifier;
     bool operator==(const ListStyleType& other) const { return type == other.type && identifier == other.identifier; }
 };
@@ -244,7 +244,7 @@ template<> struct EnumTraits<WebCore::ListStyleType::Type> {
         WebCore::ListStyleType::Type::TraditionalChineseInformal,
         WebCore::ListStyleType::Type::TraditionalChineseFormal,
         WebCore::ListStyleType::Type::EthiopicNumeric,
-        WebCore::ListStyleType::Type::CustomCounterStyle,
+        WebCore::ListStyleType::Type::CounterStyle,
         WebCore::ListStyleType::Type::String,
         WebCore::ListStyleType::Type::None
     >;

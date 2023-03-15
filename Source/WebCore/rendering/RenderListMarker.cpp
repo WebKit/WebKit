@@ -304,7 +304,7 @@ static ListStyleType::Type effectiveListMarkerType(ListStyleType::Type type, int
 {
     // Note, the following switch statement has been explicitly grouped by list-style-type ordinal range.
     switch (type) {
-    case ListStyleType::Type::CustomCounterStyle:
+    case ListStyleType::Type::CounterStyle:
     case ListStyleType::Type::ArabicIndic:
     case ListStyleType::Type::Bengali:
     case ListStyleType::Type::Binary:
@@ -421,7 +421,7 @@ static ListStyleType::Type effectiveListMarkerType(ListStyleType::Type type, int
 static StringView listMarkerSuffix(ListStyleType::Type type)
 {
     switch (type) {
-    case ListStyleType::Type::CustomCounterStyle:
+    case ListStyleType::Type::CounterStyle:
         return { };
     case ListStyleType::Type::Asterisks:
     case ListStyleType::Type::Circle:
@@ -565,7 +565,7 @@ String listMarkerText(ListStyleType::Type type, int value, CSSCounterStyle* coun
     case ListStyleType::Type::DisclosureOpen:
         return { &blackDownPointingSmallTriangle, 1 };
 
-    case ListStyleType::Type::CustomCounterStyle:
+    case ListStyleType::Type::CounterStyle:
         if (!counterStyle)
             return String::number(value);
         return counterStyle->text(value);
@@ -1845,7 +1845,7 @@ void RenderListMarker::updateContent()
         // FIXME: Depending on the string value, we may need the real bidi algorithm. (rdar://106139180)
         m_textIsLeftToRightDirection = u_charDirection(m_textWithSuffix[0]) != U_RIGHT_TO_LEFT;
         break;
-    case ListStyleType::Type::CustomCounterStyle: {
+    case ListStyleType::Type::CounterStyle: {
         auto* counter = counterStyle();
         ASSERT(counter);
         auto text = makeString(counter->prefix(), counter->text(m_listItem->value()));

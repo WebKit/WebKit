@@ -38,7 +38,7 @@ TextStream& operator<<(TextStream& ts, ListStyleType::Type styleType)
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, ListStyleType listStyle)
 {
-    if (listStyle.type == ListStyleType::Type::CustomCounterStyle)
+    if (listStyle.type == ListStyleType::Type::CounterStyle)
         ts << listStyle.identifier;
     else if (listStyle.type == ListStyleType::Type::String)
         ts << "\"" << listStyle.identifier << "\"";
