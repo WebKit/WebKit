@@ -77,7 +77,6 @@ public:
     float textStrokeWidth;
 
     RefPtr<StyleImage> listStyleImage;
-    ListStyleType listStyleType;
 
     StyleColor textStrokeColor;
     StyleColor textFillColor;
@@ -212,6 +211,8 @@ public:
 #endif
     TextSpacingTrim textSpacingTrim;
     TextAutospace textAutospace;
+
+    ListStyleType listStyleType;
 
 private:
     StyleRareInheritedData();
