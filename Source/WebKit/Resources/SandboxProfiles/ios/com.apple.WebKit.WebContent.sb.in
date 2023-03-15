@@ -876,12 +876,12 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection "IOGPU")))
-#endif
 
 (deny iokit-open-user-client
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+#endif
 
 (deny iokit-open-user-client (with no-report)
     (iokit-user-client-class "AppleJPEGDriverUserClient"))
