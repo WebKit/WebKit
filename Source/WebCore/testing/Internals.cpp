@@ -988,6 +988,34 @@ void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
     frame()->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
 }
 
+static Internals::ResourceLoadPriority toInternalsResourceLoadPriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityVeryLow;
+    case ResourceLoadPriority::Low:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityLow;
+    case ResourceLoadPriority::Medium:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityMedium;
+    case ResourceLoadPriority::High:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityHigh;
+    case ResourceLoadPriority::VeryHigh:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityVeryHigh;
+    }
+    ASSERT_NOT_REACHED();
+    return Internals::ResourceLoadPriority::ResourceLoadPriorityLow;
+}
+
+std::optional<Internals::ResourceLoadPriority> Internals::getResourcePriority(const String& url)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return std::nullopt;
+    if (auto* resource = document->cachedResourceLoader().cachedResource(url))
+        return toInternalsResourceLoadPriority(resource->loadPriority());
+    return std::nullopt;
+}
+
 bool Internals::isFetchObjectContextStopped(const FetchObject& object)
 {
     return switchOn(object, [](const RefPtr<FetchRequest>& request) {

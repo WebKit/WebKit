@@ -270,6 +270,7 @@ void HTMLLinkElement::process()
         attributeWithoutSynchronization(imagesizesAttr),
         nonce(),
         referrerPolicy(),
+        fetchPriorityHint(),
     };
 
     m_linkLoader.loadLink(params, document());
@@ -326,6 +327,7 @@ void HTMLLinkElement::process()
             options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
         options.integrity = m_integrityMetadataForPendingSheetRequest;
         options.referrerPolicy = params.referrerPolicy;
+        options.fetchPriorityHint = fetchPriorityHint();
 
         auto request = createPotentialAccessControlRequest(m_url, WTFMove(options), document(), crossOrigin());
         request.setPriority(WTFMove(priority));
@@ -686,7 +688,12 @@ void HTMLLinkElement::setFetchPriorityForBindings(const AtomString& value)
 
 String HTMLLinkElement::fetchPriorityForBindings() const
 {
-    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
+    return convertEnumerationToString(fetchPriorityHint());
+}
+
+RequestPriority HTMLLinkElement::fetchPriorityHint() const
+{
+    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
 }
 
 } // namespace WebCore

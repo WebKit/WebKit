@@ -87,6 +87,8 @@ public:
     FetchIdentifier navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier; }
     void setNavigationPreloadIdentifier(FetchIdentifier identifier) { m_navigationPreloadIdentifier = identifier; }
 
+    RequestPriority fetchPriorityHint() const { return m_fetchPriorityHint; }
+
 private:
     FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
 
@@ -102,6 +104,7 @@ private:
     ResourceRequest m_request;
     URLKeepingBlobAlive m_requestURL;
     FetchOptions m_options;
+    RequestPriority m_fetchPriorityHint { RequestPriority::Auto };
     String m_referrer;
     Ref<AbortSignal> m_signal;
     FetchIdentifier m_navigationPreloadIdentifier;

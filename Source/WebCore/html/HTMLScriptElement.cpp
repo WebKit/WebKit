@@ -212,7 +212,12 @@ void HTMLScriptElement::setFetchPriorityForBindings(const AtomString& value)
 
 String HTMLScriptElement::fetchPriorityForBindings() const
 {
-    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
+    return convertEnumerationToString(fetchPriorityHint());
+}
+
+RequestPriority HTMLScriptElement::fetchPriorityHint() const
+{
+    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
 }
 
 }

@@ -70,7 +70,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     return String { referrerURL.string() };
 }
 
-static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, String& referrer, ScriptExecutionContext& context, const FetchRequest::Init& init)
+static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, String& referrer, RequestPriority& fetchPriorityHint, ScriptExecutionContext& context, const FetchRequest::Init& init)
 {
     if (!init.window.isUndefinedOrNull() && !init.window.isEmpty())
         return Exception { TypeError, "Window can only be null."_s };
@@ -91,6 +91,9 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
 
     if (init.referrerPolicy)
         options.referrerPolicy = init.referrerPolicy.value();
+
+    if (init.priority)
+        fetchPriorityHint = *init.priority;
 
     if (init.mode) {
         options.mode = init.mode.value();
@@ -144,7 +147,7 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
 
-    auto exception = buildOptions(m_options, m_request, m_referrer, *scriptExecutionContext(), init);
+    auto exception = buildOptions(m_options, m_request, m_referrer, m_fetchPriorityHint, *scriptExecutionContext(), init);
     if (exception)
         return WTFMove(exception.value());
 
@@ -222,6 +225,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 
     m_options = input.m_options;
     m_referrer = input.m_referrer;
+    m_fetchPriorityHint = input.m_fetchPriorityHint;
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())

@@ -36,6 +36,7 @@
 #include "FetchIdentifier.h"
 #include "FetchOptions.h"
 #include "HTTPHeaderNames.h"
+#include "RequestPriority.h"
 #include "ServiceWorkerTypes.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/EnumTraits.h>
@@ -190,6 +191,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
+        , fetchPriorityHint(RequestPriority::Auto)
     { }
 
     ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
@@ -212,7 +214,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
-
+        , fetchPriorityHint(RequestPriority::Auto)
     {
         this->credentials = credentials;
         this->mode = mode;
@@ -246,6 +248,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     PreflightPolicy preflightPolicy : bitWidthOfPreflightPolicy;
     LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;
     LoadedFromPluginElement loadedFromPluginElement : bitWidthOfLoadedFromPluginElement;
+    RequestPriority fetchPriorityHint : bitWidthOfFetchPriorityHint;
 
     FetchIdentifier navigationPreloadIdentifier;
     String nonce;

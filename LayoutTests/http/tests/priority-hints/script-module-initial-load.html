@@ -1,0 +1,60 @@
+<script src=../resources/testharness.js></script>
+<script src=../resources/testharnessreport.js></script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+const priority_tests = [
+  {
+    url: new URL('../resources/dummy.js', location),
+    expected_priority: "ResourceLoadPriorityVeryHigh",
+    description: 'high fetchpriority on module <script> raises the priority to very high'
+  },
+  {
+    url: new URL('../resources/dummy.js?1', location),
+    expected_priority: "ResourceLoadPriorityMedium",
+    description: 'low fetchpriority on module <script> lowers the priority to medium'
+  },
+  {
+    url: new URL('../resources/dummy.js?2', location),
+    expected_priority: "ResourceLoadPriorityHigh",
+    description: 'auto fetchpriority on module <script> has no effect'
+  },
+  {
+    url: new URL('../resources/dummy.js?3', location),
+    expected_priority: "ResourceLoadPriorityHigh",
+    description: 'invalid fetchpriority on module <script> has no effect'
+  },
+  {
+    url: new URL('../resources/dummy.js?4', location),
+    expected_priority: "ResourceLoadPriorityHigh",
+    description: 'missing fetchpriority on module <script> has no effect'
+  },
+];
+
+</script>
+
+<script id=script1 type=module fetchpriority=high src=../resources/dummy.js></script>
+<script id=script2 type=module fetchpriority=low src=../resources/dummy.js?1></script>
+<script id=script3 type=module fetchpriority=auto src=../resources/dummy.js?2></script>
+<script id=script4 type=module fetchpriority=xyz src=../resources/dummy.js?3></script>
+<script id=script5 type=module src=../resources/dummy.js?4></script>
+
+<script>
+  promise_test(async (t) => {
+    const base_msg = ' was fetched by the preload scanner';
+    assert_true(internals.isPreloaded(script1.src), script1.src + base_msg);
+    assert_true(internals.isPreloaded(script2.src), script2.src + base_msg);
+    assert_true(internals.isPreloaded(script3.src), script3.src + base_msg);
+    assert_true(internals.isPreloaded(script4.src), script4.src + base_msg);
+    assert_true(internals.isPreloaded(script5.src), script5.src + base_msg);
+  }, 'all scripts were fetched by the preload scanner');
+
+  // Setup the tests described by |priority_tests|.
+  for (const test of priority_tests) {
+    async_test(t => {
+      checkResourcePriority(test.url, test.expected_priority, test.description);
+      t.done();
+    });
+  }
+</script>

@@ -194,6 +194,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         if (isImageElement) {
             auto& imageElement = downcast<HTMLImageElement>(element());
             options.referrerPolicy = imageElement.referrerPolicy();
+            options.fetchPriorityHint = imageElement.fetchPriorityHint();
             if (imageElement.usesSrcsetOrPicture())
                 options.initiator = Initiator::Imageset;
         }

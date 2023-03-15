@@ -216,6 +216,7 @@ public:
     enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
     void setOverrideResourceLoadPriority(ResourceLoadPriority);
     void setStrictRawResourceValidationPolicyDisabled(bool);
+    std::optional<ResourceLoadPriority> getResourcePriority(const String& url);
 
     using FetchObject = std::variant<RefPtr<FetchRequest>, RefPtr<FetchResponse>>;
     bool isFetchObjectContextStopped(const FetchObject&);

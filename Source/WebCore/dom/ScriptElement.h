@@ -25,6 +25,7 @@
 #include "ContentSecurityPolicy.h"
 #include "LoadableScript.h"
 #include "ReferrerPolicy.h"
+#include "RequestPriority.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ScriptType.h"
 #include "UserGestureIndicator.h"
@@ -121,6 +122,7 @@ private:
     virtual String forAttributeValue() const = 0;
     virtual String eventAttributeValue() const = 0;
     virtual ReferrerPolicy referrerPolicy() const = 0;
+    virtual RequestPriority fetchPriorityHint() const { return RequestPriority::Auto; }
 
     Element& m_element;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };

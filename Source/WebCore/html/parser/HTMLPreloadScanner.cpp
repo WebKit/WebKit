@@ -34,6 +34,7 @@
 #include "HTMLSrcsetParser.h"
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
+#include "JSRequestPriority.h"
 #include "LinkLoader.h"
 #include "LinkRelAttribute.h"
 #include "Logging.h"
@@ -160,7 +161,7 @@ public:
         if (HTMLImageElement::hasLazyLoadableAttributeValue(m_lazyloadAttribute))
             return nullptr;
 
-        auto request = makeUnique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_scriptType, m_referrerPolicy);
+        auto request = makeUnique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_scriptType, m_referrerPolicy, m_fetchPriorityHint);
         request->setCrossOriginMode(m_crossOriginMode);
         request->setNonce(m_nonceAttribute);
         request->setScriptIsAsync(m_scriptIsAsync);
@@ -204,6 +205,10 @@ private:
             }
             if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
                 m_sizesAttribute = attributeValue.toString();
+                break;
+            }
+            if (match(attributeName, fetchpriorityAttr)) {
+                m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
                 break;
             }
             if (m_document.lazyImageLoadingEnabled()) {
@@ -257,6 +262,9 @@ private:
             } else if (match(attributeName, asyncAttr)) {
                 m_scriptIsAsync = true;
                 break;
+            } else if (match(attributeName, fetchpriorityAttr)) {
+                m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
+                break;
             }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;
@@ -281,6 +289,8 @@ private:
                 m_typeAttribute = attributeValue.toString();
             else if (match(attributeName, referrerpolicyAttr))
                 m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+            else if (match(attributeName, fetchpriorityAttr))
+                m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
             break;
         case TagId::Input:
             if (match(attributeName, srcAttr))
@@ -405,6 +415,7 @@ private:
     float m_deviceScaleFactor;
     ScriptType m_scriptType { ScriptType::Classic };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
+    RequestPriority m_fetchPriorityHint { RequestPriority::Auto };
 };
 
 TokenPreloadScanner::TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor)

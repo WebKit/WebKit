@@ -121,7 +121,8 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
             continue;
 
         LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),
-            parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString) };
+            parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString),
+            parseEnumerationFromString<RequestPriority>(header.fetchPriorityHint()).value_or(RequestPriority::Auto) };
 
         preconnectIfNeeded(params, document);
         preloadIfNeeded(params, document, nullptr);
@@ -330,6 +331,7 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
 
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
     options.referrerPolicy = params.referrerPolicy;
+    options.fetchPriorityHint = params.fetchPriorityHint;
     options.nonce = params.nonce;
 
     auto linkRequest = [&]() {

@@ -44,7 +44,7 @@ Ref<InlineClassicScript> InlineClassicScript::create(ScriptElement& scriptElemen
 }
 
 InlineClassicScript::InlineClassicScript(const AtomString& nonce, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
-    : ScriptElementCachedScriptFetcher(nonce, ReferrerPolicy::EmptyString, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
+    : ScriptElementCachedScriptFetcher(nonce, ReferrerPolicy::EmptyString, RequestPriority::Auto, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
 {
 }
 

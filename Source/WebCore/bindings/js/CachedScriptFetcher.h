@@ -27,6 +27,7 @@
 
 #include "CachedResourceHandle.h"
 #include "ReferrerPolicy.h"
+#include "RequestPriority.h"
 #include "ResourceLoadPriority.h"
 #include <JavaScriptCore/ScriptFetcher.h>
 #include <wtf/text/WTFString.h>
@@ -43,12 +44,13 @@ public:
     static Ref<CachedScriptFetcher> create(const String& charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriorityHint, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
         : m_nonce(nonce)
         , m_charset(charset)
         , m_initiatorType(initiatorType)
         , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
         , m_referrerPolicy(referrerPolicy)
+        , m_fetchPriorityHint(fetchPriorityHint)
     {
     }
 
@@ -65,6 +67,7 @@ private:
     AtomString m_initiatorType;
     bool m_isInUserAgentShadowTree { false };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
+    RequestPriority m_fetchPriorityHint { RequestPriority::Auto };
 };
 
 } // namespace WebCore

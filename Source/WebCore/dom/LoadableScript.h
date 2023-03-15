@@ -58,8 +58,8 @@ public:
     void removeClient(LoadableScriptClient&);
 
 protected:
-    LoadableScript(const AtomString& nonce, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
-        : ScriptElementCachedScriptFetcher(nonce, policy, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
+    LoadableScript(const AtomString& nonce, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+        : ScriptElementCachedScriptFetcher(nonce, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     {
     }
 

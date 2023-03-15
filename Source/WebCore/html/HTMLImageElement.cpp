@@ -1028,7 +1028,12 @@ void HTMLImageElement::setFetchPriorityForBindings(const AtomString& value)
 
 String HTMLImageElement::fetchPriorityForBindings() const
 {
-    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
+    return convertEnumerationToString(fetchPriorityHint());
+}
+
+RequestPriority HTMLImageElement::fetchPriorityHint() const
+{
+    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
 }
 
 }

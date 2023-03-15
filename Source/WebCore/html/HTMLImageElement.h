@@ -45,6 +45,7 @@ struct ImageCandidate;
 
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
+enum class RequestPriority : uint8_t;
 
 class HTMLImageElement : public HTMLElement, public FormAssociatedElement, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
@@ -169,6 +170,7 @@ public:
 
     void setFetchPriorityForBindings(const AtomString&);
     String fetchPriorityForBindings() const;
+    RequestPriority fetchPriorityHint() const;
 
 protected:
     constexpr static auto CreateHTMLImageElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
