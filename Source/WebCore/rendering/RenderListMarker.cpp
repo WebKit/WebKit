@@ -1496,7 +1496,7 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
 {
     RenderBox::styleDidChange(diff, oldStyle);
     if (oldStyle) {
-        if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType() || style().listStyleType().type == ListStyleType::Type::String)
+        if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType())
             setNeedsLayoutAndPrefWidthsRecalc();
         if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType()) {
             setNeedsLayoutAndPrefWidthsRecalc();
