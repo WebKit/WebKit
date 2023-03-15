@@ -67,7 +67,7 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
-    , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
+    , m_idTargetObserverRegistry(makeUniqueRef<IdTargetObserverRegistry>())
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -76,7 +76,7 @@ TreeScope::TreeScope(Document& document)
     : m_rootNode(document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
-    , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
+    , m_idTargetObserverRegistry(makeUniqueRef<IdTargetObserverRegistry>())
 {
     document.setTreeScope(*this);
 }

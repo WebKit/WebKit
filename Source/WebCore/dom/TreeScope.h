@@ -30,6 +30,7 @@
 #include "TreeScopeOrderedMap.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -116,7 +117,8 @@ public:
 
     ContainerNode& rootNode() const { return m_rootNode; }
 
-    IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
+    IdTargetObserverRegistry& idTargetObserverRegistry() { return m_idTargetObserverRegistry.get(); }
+    const IdTargetObserverRegistry& idTargetObserverRegistry() const { return m_idTargetObserverRegistry.get(); }
 
     RadioButtonGroups& radioButtonGroups();
 
@@ -150,7 +152,7 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_imagesByUsemap;
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
-    std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    UniqueRef<IdTargetObserverRegistry> m_idTargetObserverRegistry;
     
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
     RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
