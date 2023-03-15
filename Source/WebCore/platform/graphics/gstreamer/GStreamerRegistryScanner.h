@@ -124,7 +124,8 @@ protected:
             Muxer        = 1 << 7,
             RtpPayloader = 1 << 8,
             RtpDepayloader = 1 << 9,
-            All          = (1 << 9) - 1
+            Decryptor    = 1 << 10,
+            All          = (1 << 10) - 1
         };
 
         explicit ElementFactories(OptionSet<Type>);
@@ -147,6 +148,7 @@ protected:
         GList* muxerFactories { nullptr };
         GList* rtpPayloaderFactories { nullptr };
         GList* rtpDepayloaderFactories { nullptr };
+        GList* decryptorFactories { nullptr };
     };
 
     void initializeDecoders(const ElementFactories&);

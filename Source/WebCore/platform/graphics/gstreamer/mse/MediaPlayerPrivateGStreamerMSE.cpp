@@ -462,6 +462,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     if (ok && videoDecodingLimits && width == videoDecodingLimits->mediaMaxWidth && height == videoDecodingLimits->mediaMaxHeight && frameRate > videoDecodingLimits->mediaMaxFrameRate)
         return result;
 
+    registerWebKitGStreamerElements();
+
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
     result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
