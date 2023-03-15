@@ -449,7 +449,7 @@ class EmptyPopupMenu : public PopupMenu {
 public:
     EmptyPopupMenu() = default;
 private:
-    void show(const IntRect&, FrameView*, int) final { }
+    void show(const IntRect&, LocalFrameView*, int) final { }
     void hide() final { }
     void updateFromElement() final { }
     void disconnectClient() final { }

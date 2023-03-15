@@ -23,11 +23,11 @@
 #include "SVGInlineTextBox.h"
 
 #include "FloatConversion.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LegacyInlineFlowBox.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"

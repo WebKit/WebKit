@@ -66,8 +66,8 @@
 #import "DOMElementInternal.h"
 #import "WebUIKitDelegate.h"
 #import <WebCore/AudioSession.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <wtf/SoftLinking.h>

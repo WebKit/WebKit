@@ -30,8 +30,8 @@
 
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/RenderLayerBacking.h>
 
 namespace WebKit {

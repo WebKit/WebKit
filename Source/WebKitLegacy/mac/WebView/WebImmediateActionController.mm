@@ -42,10 +42,10 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontMetrics.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
@@ -383,11 +383,11 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!frame)
         return { };
 
-    WebCore::FrameView* view = frame->view();
+    auto* view = frame->view();
     if (!view)
         return { };
 
-    WebCore::RenderObject* renderer = node->renderer();
+    auto* renderer = node->renderer();
     if (!renderer)
         return { };
 

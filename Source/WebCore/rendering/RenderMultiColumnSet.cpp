@@ -28,8 +28,8 @@
 #include "RenderMultiColumnSet.h"
 
 #include "BorderPainter.h"
-#include "FrameView.h"
 #include "HitTestResult.h"
+#include "LocalFrameView.h"
 #include "PaintInfo.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderLayer.h"

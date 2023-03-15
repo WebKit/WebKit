@@ -30,9 +30,9 @@
 
 #import "AccessibilityRenderObject.h"
 #import "EventNames.h"
-#import "FrameView.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
+#import "LocalFrameView.h"
 #import "RenderObject.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperIOS.h"

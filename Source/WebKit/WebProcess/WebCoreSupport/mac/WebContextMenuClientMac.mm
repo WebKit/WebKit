@@ -33,8 +33,8 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TranslationContextMenuInfo.h>

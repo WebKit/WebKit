@@ -88,17 +88,17 @@ class View;
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
-class FrameView final : public AbstractFrameView {
-    WTF_MAKE_ISO_ALLOCATED(FrameView);
+class LocalFrameView final : public AbstractFrameView {
+    WTF_MAKE_ISO_ALLOCATED(LocalFrameView);
 public:
     friend class RenderView;
     friend class Internals;
     friend class FrameViewLayoutContext;
 
-    WEBCORE_EXPORT static Ref<FrameView> create(LocalFrame&);
-    static Ref<FrameView> create(LocalFrame&, const IntSize& initialSize);
+    WEBCORE_EXPORT static Ref<LocalFrameView> create(LocalFrame&);
+    static Ref<LocalFrameView> create(LocalFrame&, const IntSize& initialSize);
 
-    virtual ~FrameView();
+    virtual ~LocalFrameView();
 
     HostWindow* hostWindow() const final;
     
@@ -619,10 +619,10 @@ public:
 
     WEBCORE_EXPORT void setScrollingPerformanceTestingEnabled(bool);
 
-    // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
-    // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all
-    // FrameViews in the back/forward cache, but FrameView::pagination() only affects the current
-    // FrameView. FrameView::pagination() will return m_pagination if it has been set. Otherwise,
+    // Page and LocalFrameView both store a Pagination value. Page::pagination() is set only by API,
+    // and LocalFrameView::pagination() is set only by CSS. Page::pagination() will affect all
+    // FrameViews in the back/forward cache, but LocalFrameView::pagination() only affects the current
+    // LocalFrameView. LocalFrameView::pagination() will return m_pagination if it has been set. Otherwise,
     // it will return Page::pagination() since currently there are no callers that need to
     // distinguish between the two.
     const Pagination& pagination() const;
@@ -737,7 +737,7 @@ public:
     OverscrollBehavior verticalOverscrollBehavior() const final;
 
 private:
-    explicit FrameView(LocalFrame&);
+    explicit LocalFrameView(LocalFrame&);
 
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
@@ -793,7 +793,7 @@ private:
     void performFixedWidthAutoSize();
     void performSizeToContentAutoSize();
 
-    void applyRecursivelyWithVisibleRect(const Function<void(FrameView& frameView, const IntRect& visibleRect)>&);
+    void applyRecursivelyWithVisibleRect(const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>&);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations(const IntRect& visibleRect);
@@ -881,7 +881,7 @@ private:
 
     void updateScrollCorner() final;
 
-    FrameView* parentFrameView() const;
+    LocalFrameView* parentFrameView() const;
 
     void markRootOrBodyRendererDirty() const;
 
@@ -1056,7 +1056,7 @@ private:
     bool m_inUpdateEmbeddedObjects { false };
 };
 
-inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
+inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
 {
     if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
         return;
@@ -1068,11 +1068,11 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
         m_visuallyNonEmptyPixelCount = area;
 }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const FrameView&);
+WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrameView&);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FrameView)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalFrameView)
 static bool isType(const WebCore::AbstractFrameView& view) { return view.viewType() == WebCore::AbstractFrameView::FrameViewType::Local; }
 static bool isType(const WebCore::Widget& widget) { return widget.isFrameView(); }
 SPECIALIZE_TYPE_TRAITS_END()

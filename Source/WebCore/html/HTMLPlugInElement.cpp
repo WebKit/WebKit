@@ -122,7 +122,7 @@ PluginViewBase* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) 
 
 RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
 {
-    RefPtr<FrameView> view = document().view();
+    RefPtr view = document().view();
     if (!view || (!view->inUpdateEmbeddedObjects() && !view->layoutContext().isInLayout() && !view->isPainting())) {
         // Needs to load the plugin immediatedly because this function is called
         // when JavaScript code accesses the plugin.

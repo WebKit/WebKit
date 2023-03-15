@@ -1942,12 +1942,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
     return result;
 }
 
-FrameView* AccessibilityRenderObject::documentFrameView() const 
+LocalFrameView* AccessibilityRenderObject::documentFrameView() const 
 { 
     if (!m_renderer)
         return nullptr;
 
-    // this is the RenderObject's Document's Frame's FrameView 
+    // this is the RenderObject's Document's Frame's LocalFrameView
     return &m_renderer->view().frameView();
 }
 
@@ -2272,7 +2272,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         return VisiblePosition();
 
 #if PLATFORM(MAC)
-    FrameView* frameView = &renderView->frameView();
+    auto* frameView = &renderView->frameView();
 #endif
 
     Node* innerNode = nullptr;
@@ -2305,8 +2305,8 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             break;
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        Widget* widget = downcast<RenderWidget>(*renderer).widget();
-        auto* frameView = dynamicDowncast<FrameView>(widget);
+        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             break;
         auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
@@ -2318,7 +2318,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 
         renderView = document->renderView();
 #if PLATFORM(MAC)
-        frameView = downcast<FrameView>(widget);
+        frameView = downcast<LocalFrameView>(widget);
 #endif
     }
     
@@ -2883,7 +2883,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     if (!is<SVGImage>(image))
         return nullptr;
 
-    FrameView* frameView = downcast<SVGImage>(*image).frameView();
+    auto* frameView = downcast<SVGImage>(*image).frameView();
     if (!frameView)
         return nullptr;
 
@@ -2945,7 +2945,7 @@ void AccessibilityRenderObject::addAttachmentChildren()
     if (!isAttachment())
         return;
 
-    // FrameView's need to be inserted into the AX hierarchy when encountered.
+    // LocalFrameView's need to be inserted into the AX hierarchy when encountered.
     Widget* widget = widgetForAttachmentView();
     if (!widget || !widget->isFrameView())
         return;

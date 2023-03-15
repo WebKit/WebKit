@@ -507,7 +507,7 @@ private:
 #endif
     Page* page() const override;
     Document* document() const override;
-    FrameView* documentFrameView() const override;
+    LocalFrameView* documentFrameView() const override;
     ScrollView* scrollView() const override;
     void detachFromParent() override;
     AXCoreObject* activeDescendant() const override;

@@ -65,7 +65,7 @@ private:
     bool isRemoteScrollingCoordinator() const override { return true; }
     
     // ScrollingCoordinator
-    bool coordinatesScrollingForFrameView(const WebCore::FrameView&) const override;
+    bool coordinatesScrollingForFrameView(const WebCore::LocalFrameView&) const override;
     void scheduleTreeStateCommit() override;
 
     bool isRubberBandInProgress(WebCore::ScrollingNodeID) const final;

@@ -681,8 +681,8 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 - (BOOL)_mediaQueryMatchesForOrientation:(int)orientation
 {
-    Document& document = static_cast<HTMLLinkElement*>(core(self))->document();
-    FrameView* frameView = document.frame() ? document.frame()->view() : 0;
+    auto& document = static_cast<HTMLLinkElement*>(core(self))->document();
+    auto* frameView = document.frame() ? document.frame()->view() : 0;
     if (!frameView)
         return false;
     int layoutWidth = frameView->layoutWidth();

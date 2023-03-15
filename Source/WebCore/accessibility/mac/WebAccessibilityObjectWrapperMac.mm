@@ -545,7 +545,7 @@ static inline BOOL AXObjectIsTextMarkerRange(id object)
     if (!document)
         return IntRect();
     
-    FrameView* frameView = document->view();
+    auto* frameView = document->view();
     if (!frameView)
         return IntRect();
     

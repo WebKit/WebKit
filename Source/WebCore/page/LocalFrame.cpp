@@ -56,7 +56,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HTMLFormControlElement.h"
@@ -71,6 +70,7 @@
 #include "JSNode.h"
 #include "JSWindowProxy.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
@@ -233,7 +233,7 @@ void LocalFrame::removeDestructionObserver(FrameDestructionObserver& observer)
     m_destructionObservers.remove(&observer);
 }
 
-void LocalFrame::setView(RefPtr<FrameView>&& view)
+void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
 {
     // We the custom scroll bars as early as possible to prevent m_doc->detach()
     // from messing with the view such that its scroll bars won't be torn down.
@@ -750,10 +750,10 @@ LocalFrame* LocalFrame::frameForWidget(const Widget& widget)
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
-    return dynamicDowncast<LocalFrame>(downcast<FrameView>(widget).frame());
+    return dynamicDowncast<LocalFrame>(downcast<LocalFrameView>(widget).frame());
 }
 
-void LocalFrame::clearTimers(FrameView *view, Document *document)
+void LocalFrame::clearTimers(LocalFrameView *view, Document *document)
 {
     if (!view)
         return;
@@ -875,9 +875,9 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
 
     setView(nullptr);
 
-    RefPtr<FrameView> frameView;
+    RefPtr<LocalFrameView> frameView;
     if (isMainFrame) {
-        frameView = FrameView::create(*this, viewportSize);
+        frameView = LocalFrameView::create(*this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
 #if USE(COORDINATED_GRAPHICS)
         frameView->setFixedVisibleContentRect(fixedVisibleContentRect);
@@ -886,7 +886,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
 #endif
         frameView->setUseFixedLayout(useFixedLayout);
     } else
-        frameView = FrameView::create(*this);
+        frameView = LocalFrameView::create(*this);
 
     frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode, horizontalLock, verticalLock);
 
@@ -959,7 +959,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     std::optional<ScrollPosition> scrollPositionAfterZoomed;
     if (m_pageZoomFactor != pageZoomFactor) {
         // Compute the scroll position with scale after zooming to stay the same position in the content.
-        if (FrameView* view = this->view()) {
+        if (auto* view = this->view()) {
             scrollPositionAfterZoomed = view->scrollPosition();
             scrollPositionAfterZoomed->scale(pageZoomFactor / m_pageZoomFactor);
         }
@@ -974,7 +974,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
             localFrame->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
     }
 
-    if (FrameView* view = this->view()) {
+    if (auto* view = this->view()) {
         if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
             view->layoutContext().layout();
 

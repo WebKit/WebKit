@@ -31,10 +31,10 @@
 
 #include "CachedResourceLoader.h"
 #include "CairoOperations.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include <shlwapi.h>
 #include <wtf/MainThread.h>

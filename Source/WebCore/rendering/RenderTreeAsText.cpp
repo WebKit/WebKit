@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "ElementInlines.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
@@ -41,6 +40,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -638,8 +638,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 
     if (is<RenderWidget>(o)) {
         Widget* widget = downcast<RenderWidget>(o).widget();
-        if (is<FrameView>(widget)) {
-            FrameView& view = downcast<FrameView>(*widget);
+        if (is<LocalFrameView>(widget)) {
+            LocalFrameView& view = downcast<LocalFrameView>(*widget);
             auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
             if (RenderView* root = localFrame ? localFrame->contentRenderer() : nullptr) {
                 if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)))

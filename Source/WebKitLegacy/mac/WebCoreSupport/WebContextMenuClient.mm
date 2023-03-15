@@ -45,10 +45,10 @@
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/Document.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBox.h>
@@ -169,7 +169,7 @@ WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePicke
     if (!node)
         return NSZeroRect;
 
-    FrameView* frameView = node->document().view();
+    auto* frameView = node->document().view();
     if (!frameView) {
         // This method shouldn't be called in cases where the controlled node isn't in a rendered view.
         ASSERT_NOT_REACHED();

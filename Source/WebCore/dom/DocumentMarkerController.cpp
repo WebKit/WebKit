@@ -152,7 +152,7 @@ static void updateMainFrameLayoutIfNeeded(Document& document)
     if (!localFrame)
         return;
 
-    FrameView* mainFrameView = localFrame->view();
+    auto* mainFrameView = localFrame->view();
     if (!mainFrameView)
         return;
 
@@ -190,7 +190,7 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
     RefPtr frame = m_document.frame();
     if (!frame)
         return result;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return result;
 

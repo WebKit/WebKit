@@ -27,7 +27,7 @@
 #include "KeyboardScrollingAnimator.h"
 
 #include "EventNames.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "PlatformKeyboardEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollTypes.h"

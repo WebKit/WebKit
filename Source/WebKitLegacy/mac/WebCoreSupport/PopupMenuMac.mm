@@ -29,8 +29,8 @@
 #import <WebCore/ChromeClient.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Font.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PopupMenuClient.h>
 #import <pal/spi/mac/NSCellSPI.h>
@@ -126,7 +126,7 @@ void PopupMenuMac::populate()
     }
 }
 
-void PopupMenuMac::show(const IntRect& r, FrameView* v, int selectedIndex)
+void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
 {
     populate();
     int numItems = [m_popup numberOfItems];

@@ -29,8 +29,8 @@
 #include "Document.h"
 #include "FloatRect.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "PrintContext.h"
 #include "RenderObject.h"
 

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PageOverlay.h"
 
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PageOverlayController.h"
@@ -80,7 +80,7 @@ IntRect PageOverlay::bounds() const
     if (!localMainFrame)
         return IntRect();
 
-    FrameView* frameView = localMainFrame->view();
+    auto* frameView = localMainFrame->view();
 
     if (!frameView)
         return IntRect();
@@ -133,7 +133,7 @@ IntSize PageOverlay::viewToOverlayOffset() const
 
     case OverlayType::Document: {
         auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+        auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
         return frameView ? toIntSize(frameView->viewToContents(IntPoint())) : IntSize();
     }
     }
@@ -185,7 +185,7 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
 
     if (m_overlayType == PageOverlay::OverlayType::Document) {
         auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        if (FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr) {
+        if (auto* frameView = localMainFrame ? localMainFrame->view() : nullptr) {
             auto offset = frameView->scrollOrigin();
             graphicsContext.translate(toFloatSize(offset));
             paintRect.moveBy(-offset);

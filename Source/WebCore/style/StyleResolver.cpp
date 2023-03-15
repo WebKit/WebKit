@@ -45,10 +45,10 @@
 #include "Document.h"
 #include "ElementRuleCollector.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MediaList.h"
 #include "NodeRenderStyle.h"
@@ -159,7 +159,7 @@ void Resolver::initialize()
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
-    FrameView* view = document().view();
+    auto* view = document().view();
     if (view)
         m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType() };
     else

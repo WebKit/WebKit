@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "RenderWidget.h"
 
 namespace WebCore {
@@ -40,7 +40,7 @@ protected:
     RenderFrameBase(HTMLFrameElementBase&, RenderStyle&&);
 
 public:
-    FrameView* childView() const { return downcast<FrameView>(RenderWidget::widget()); }
+    LocalFrameView* childView() const { return downcast<LocalFrameView>(RenderWidget::widget()); }
 
 private:
     void widget() const = delete;

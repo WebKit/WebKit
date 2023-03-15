@@ -23,9 +23,9 @@
 
 #include "Document.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include <stdarg.h>

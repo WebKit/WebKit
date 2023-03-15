@@ -36,12 +36,12 @@
 #import "FloatQuad.h"
 #import "FocusController.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "GapRects.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
 #import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "Page.h"
 #import "PageOverlayController.h"
@@ -354,7 +354,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
-    FrameView& mainFrameView = *mainFrame().view();
+    auto& mainFrameView = *mainFrame().view();
 
     for (auto& range : phoneNumberRanges) {
         // FIXME: This makes a big rect if the range extends from the end of one line to the start of the next. Handle that case better?
@@ -397,7 +397,7 @@ void ServicesOverlayController::buildSelectionHighlight()
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
     if (auto selectionRange = m_page.selection().firstRange()) {
-        FrameView* mainFrameView = mainFrame().view();
+        auto* mainFrameView = mainFrame().view();
         if (!mainFrameView)
             return;
 
@@ -636,7 +636,7 @@ void ServicesOverlayController::didScrollFrame(PageOverlay&, LocalFrame& frame)
 
 void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDetectorHighlight& highlight)
 {
-    FrameView* frameView = mainFrame().view();
+    auto* frameView = mainFrame().view();
     if (!frameView)
         return;
 

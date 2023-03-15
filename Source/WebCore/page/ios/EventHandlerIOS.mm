@@ -36,9 +36,9 @@
 #import "DragState.h"
 #import "EventNames.h"
 #import "FocusController.h"
-#import "FrameView.h"
 #import "KeyboardEvent.h"
 #import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "MouseEventWithHitTestResults.h"
 #import "Page.h"
 #import "Pasteboard.h"
@@ -346,7 +346,7 @@ NSView *EventHandler::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    FrameView* topFrameView = m_frame.view();
+    auto* topFrameView = m_frame.view();
     NSView *topView = topFrameView ? topFrameView->platformWidget() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         m_mouseDownView = nil;
@@ -465,7 +465,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& wid
 
 void EventHandler::mouseDown(WebEvent *event)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -485,7 +485,7 @@ void EventHandler::mouseDown(WebEvent *event)
 
 void EventHandler::mouseUp(WebEvent *event)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -533,7 +533,7 @@ void EventHandler::mouseMoved(WebEvent *event)
 
 static bool frameHasPlatformWidget(const LocalFrame& frame)
 {
-    if (FrameView* frameView = frame.view()) {
+    if (auto* frameView = frame.view()) {
         if (frameView->platformWidget())
             return true;
     }

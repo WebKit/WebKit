@@ -42,7 +42,6 @@
 #include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFormElement.h"
@@ -57,6 +56,7 @@
 #include "LegacyInlineTextBox.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MutableStyleProperties.h"
 #include "Page.h"
@@ -1782,7 +1782,7 @@ bool FrameSelection::recomputeCaretRect()
     if (!m_document)
         return false;
 
-    FrameView* v = m_document->view();
+    auto* v = m_document->view();
     if (!v)
         return false;
 
@@ -2519,7 +2519,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     // FIXME: This code only handles scrolling the startContainer's layer, but
     // the selection rect could intersect more than just that.
     // See <rdar://problem/4799899>.
-    FrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
+    LocalFrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
     updateAppearance();
 
 #if PLATFORM(IOS_FAMILY)

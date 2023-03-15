@@ -35,7 +35,7 @@
 #include "EventNames.h"
 #include "EventSender.h"
 #include "FloatConversion.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGDocumentExtensions.h"

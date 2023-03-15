@@ -62,7 +62,6 @@
 #include "FocusController.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocumentParser.h"
@@ -74,6 +73,7 @@
 #include "HTMLNames.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Quirks.h"
 #include "ScriptController.h"
 #include "StyleResolver.h"
@@ -105,14 +105,14 @@ HTMLDocument::~HTMLDocument() = default;
 int HTMLDocument::width()
 {
     updateLayoutIgnorePendingStylesheets();
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     return frameView ? frameView->contentsWidth() : 0;
 }
 
 int HTMLDocument::height()
 {
     updateLayoutIgnorePendingStylesheets();
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     return frameView ? frameView->contentsHeight() : 0;
 }
 

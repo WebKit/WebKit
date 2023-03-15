@@ -131,7 +131,6 @@ class FontFaceSet;
 class FontLoadRequest;
 class FormController;
 class FrameSelection;
-class FrameView;
 class FullscreenManager;
 class GPUCanvasContext;
 class HTMLAllCollection;
@@ -165,6 +164,7 @@ class LayoutRect;
 class LazyLoadImageObserver;
 class LiveNodeList;
 class LocalFrame;
+class LocalFrameView;
 class Locale;
 class Location;
 class MediaCanStartListener;
@@ -622,7 +622,7 @@ public:
     Vector<AtomString> formElementsState() const;
     void setStateForNewFormElements(const Vector<AtomString>&);
 
-    WEBCORE_EXPORT FrameView* view() const; // Can be null.
+    WEBCORE_EXPORT LocalFrameView* view() const; // Can be null.
     inline Page* page() const; // Defined in Page.h
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;

@@ -33,8 +33,8 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebViewPrivate.h"
-#import <WebCore/FrameView.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 
 // WebClipView's entire reason for existing is to set the clip used by focus ring redrawing.
 // There's no easy way to prevent the focus ring from drawing outside the passed-in clip rectangle

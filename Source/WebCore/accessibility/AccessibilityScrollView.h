@@ -71,7 +71,7 @@ private:
     bool isFocused() const override;
 
     Document* document() const override;
-    FrameView* documentFrameView() const override;
+    LocalFrameView* documentFrameView() const override;
     LayoutRect elementRect() const override;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override { return parentObject(); }

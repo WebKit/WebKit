@@ -148,14 +148,14 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
     if (auto* headerBannerLayer = m_webPageProxy.headerBannerLayer()) {
         auto headerHeight = headerBannerLayer.frame.size.height;
         totalContentsHeight += headerHeight;
-        auto y = FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset);
+        auto y = LocalFrameView::yPositionForHeaderLayer(scrollPosition, topContentInset);
         layoutBannerLayer(headerBannerLayer, y, size().width());
     }
 
     if (auto* footerBannerLayer = m_webPageProxy.footerBannerLayer()) {
         auto footerHeight = footerBannerLayer.frame.size.height;
         totalContentsHeight += footerBannerLayer.frame.size.height;
-        auto y = FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsHeight, footerHeight);
+        auto y = LocalFrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsHeight, footerHeight);
         layoutBannerLayer(footerBannerLayer, y, size().width());
     }
 }

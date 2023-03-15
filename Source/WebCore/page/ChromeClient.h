@@ -514,7 +514,7 @@ public:
     virtual void didAddHeaderLayer(GraphicsLayer&) { }
     virtual void didAddFooterLayer(GraphicsLayer&) { }
 
-    virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
+    virtual bool shouldUseTiledBackingForFrameView(const LocalFrameView&) const { return false; }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     virtual void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) { };

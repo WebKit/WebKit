@@ -70,7 +70,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GeolocationController.h"
 #include "HTMLElement.h"
@@ -90,6 +89,7 @@
 #include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalFrameView.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "LowPowerModeNotifier.h"
@@ -1285,7 +1285,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     if (!localMainFrame)
         return;
     Document* document = localMainFrame->document();
-    RefPtr<FrameView> view = document->view();
+    RefPtr view = document->view();
 
     if (scale == m_pageScaleFactor) {
         if (view && view->scrollPosition() != origin && !delegatesScaling())
@@ -1526,7 +1526,7 @@ void Page::setTopContentInset(float contentInset)
     
     m_topContentInset = contentInset;
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->topContentInsetDidChange(m_topContentInset);
 }
 
@@ -1542,7 +1542,7 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
 void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view)
         return;
 
@@ -1552,7 +1552,7 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView)
             continue;
 
@@ -1575,7 +1575,7 @@ void Page::setVerticalScrollElasticity(ScrollElasticity elasticity)
     m_verticalScrollElasticity = elasticity;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->setVerticalScrollElasticity(elasticity);
 }
     
@@ -1587,7 +1587,7 @@ void Page::setHorizontalScrollElasticity(ScrollElasticity elasticity)
     m_horizontalScrollElasticity = elasticity;
     
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->setHorizontalScrollElasticity(elasticity);
 }
 
@@ -1625,7 +1625,7 @@ void Page::setIsInWindowInternal(bool isInWindow)
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (FrameView* frameView = localFrame->view())
+        if (auto* frameView = localFrame->view())
             frameView->setIsInWindow(isInWindow);
     }
 
@@ -1646,7 +1646,7 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 void Page::layoutIfNeeded()
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->updateLayoutAndStyleIfNeededRecursive();
 }
 
@@ -2595,7 +2595,7 @@ void Page::resumeAnimatingImages()
     // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
     // require that we repaint animated images to kickstart the animation loop.
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->resumeVisibleImageAnimationsIncludingSubframes();
 }
 
@@ -2705,7 +2705,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 #endif
 
         auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-        if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+        if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->show();
 
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
@@ -2749,7 +2749,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 
         suspendScriptedAnimations();
         auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-        if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+        if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->hide();
     }
 
@@ -2779,7 +2779,7 @@ void Page::setHeaderHeight(int headerHeight)
     m_headerHeight = headerHeight;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
     if (!frameView)
         return;
 
@@ -2800,7 +2800,7 @@ void Page::setFooterHeight(int footerHeight)
     m_footerHeight = footerHeight;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
     if (!frameView)
         return;
 
@@ -2916,11 +2916,11 @@ Color Page::themeColor() const
 Color Page::pageExtendedBackgroundColor() const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
     if (!frameView)
         return Color();
 
-    RenderView* renderView = frameView->renderView();
+    auto* renderView = frameView->renderView();
     if (!renderView)
         return Color();
 
@@ -3589,7 +3589,7 @@ bool Page::useDarkAppearance() const
 {
 #if ENABLE(DARK_MODE_CSS)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view || view->mediaType() != screenAtom())
         return false;
     if (m_useDarkAppearanceOverride)
@@ -4243,7 +4243,7 @@ void Page::forceRepaintAllFrames()
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView || !frameView->renderView())
             continue;
 

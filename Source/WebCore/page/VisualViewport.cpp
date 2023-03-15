@@ -30,9 +30,9 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "FrameView.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 

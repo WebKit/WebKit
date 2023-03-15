@@ -71,12 +71,12 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>
@@ -1495,8 +1495,8 @@ void WebFrameLoaderClient::restoreViewState()
 {
 #if PLATFORM(IOS_FAMILY)
     auto& frame = *m_frame->coreFrame();
-    HistoryItem* currentItem = frame.loader().history().currentItem();
-    if (FrameView* view = frame.view()) {
+    auto* currentItem = frame.loader().history().currentItem();
+    if (auto* view = frame.view()) {
         if (m_frame->isMainFrame())
             m_frame->page()->restorePageState(*currentItem);
         else if (!view->wasScrolledByUser())
@@ -1630,7 +1630,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         webPage->fixedLayoutSize(), fixedVisibleContentRect, shouldUseFixedLayout,
         horizontalScrollbarMode, horizontalLock, verticalScrollbarMode, verticalLock);
 
-    RefPtr<FrameView> view = m_frame->coreFrame()->view();
+    RefPtr view = m_frame->coreFrame()->view();
 
     if (overrideSizeForCSSDefaultViewportUnits)
         view->setOverrideSizeForCSSDefaultViewportUnits(*overrideSizeForCSSDefaultViewportUnits);

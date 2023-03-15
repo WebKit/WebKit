@@ -148,7 +148,7 @@ void WebViewRenderingUpdateScheduler::postRenderingUpdateCallback()
     commits them via flushCompositingState(). There are then two situations in
     which we can call flushCompositingState():
 
-    1. When painting. FrameView::paintContents() makes a call to flushCompositingState().
+    1. When painting. LocalFrameView::paintContents() makes a call to flushCompositingState().
 
     2. When style changes/layout have made changes to the layer tree which do not
        result in painting. In this case we need a run loop observer to do a

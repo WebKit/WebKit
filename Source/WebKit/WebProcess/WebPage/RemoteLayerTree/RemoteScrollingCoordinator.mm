@@ -37,9 +37,9 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebProcess.h"
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
@@ -68,7 +68,7 @@ void RemoteScrollingCoordinator::scheduleTreeStateCommit()
     m_webPage->drawingArea()->triggerRenderingUpdate();
 }
 
-bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& frameView) const
+bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFrameView& frameView) const
 {
     RenderView* renderView = frameView.renderView();
     return renderView && renderView->usesCompositing();

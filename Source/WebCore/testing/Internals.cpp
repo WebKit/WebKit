@@ -88,7 +88,6 @@
 #include "FontCache.h"
 #include "FormController.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCObservation.h"
 #include "GridPosition.h"
@@ -132,6 +131,7 @@
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "Location.h"
 #include "MallocStatistics.h"
@@ -554,7 +554,7 @@ void Internals::resetToConsistentState(Page& page)
 
     page.setCompositingPolicyOverride(WebCore::CompositingPolicy::Normal);
 
-    FrameView* mainFrameView = localMainFrame->view();
+    auto* mainFrameView = localMainFrame->view();
     if (mainFrameView) {
         page.setHeaderHeight(0);
         page.setFooterHeight(0);
@@ -2017,7 +2017,7 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
         if (!localFrame)
             return Exception { InvalidAccessError };
 
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView || !frameView->isScrollable())
             return Exception { InvalidAccessError };
 
@@ -2283,7 +2283,7 @@ Vector<String> Internals::recentSearches(const HTMLInputElement& element)
 
 ExceptionOr<void> Internals::scrollElementToRect(Element& element, int x, int y, int w, int h)
 {
-    FrameView* frameView = element.document().view();
+    auto* frameView = element.document().view();
     if (!frameView)
         return Exception { InvalidAccessError };
     frameView->scrollElementToRect(element, { x, y, w, h });

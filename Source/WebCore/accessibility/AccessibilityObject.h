@@ -466,7 +466,7 @@ public:
 #endif
     Page* page() const override;
     Document* document() const override;
-    FrameView* documentFrameView() const override;
+    LocalFrameView* documentFrameView() const override;
     LocalFrame* frame() const;
     LocalFrame* mainFrame() const;
     Document* topDocument() const;

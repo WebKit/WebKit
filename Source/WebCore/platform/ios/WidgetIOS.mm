@@ -31,10 +31,10 @@
 #import "Cursor.h"
 #import "Document.h"
 #import "FontCascade.h"
-#import "FrameView.h"
 #import "GraphicsContext.h"
 #import "HostWindow.h"
 #import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "PlatformMouseEvent.h"
 #import "ScrollView.h"
 #import "WAKScrollView.h"
@@ -76,7 +76,7 @@ void Widget::setFocus(bool focused)
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    FrameView* view = root();
+    auto* view = root();
     if (!view)
         return;
     view->hostWindow()->setCursor(cursor);

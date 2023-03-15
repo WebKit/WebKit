@@ -39,12 +39,12 @@
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameSelection.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageAnalysisQueue.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PathUtilities.h>
@@ -525,7 +525,7 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
     if (!localMainFrame)
         return rects;
 
-    FrameView* mainFrameView = localMainFrame->view();
+    auto* mainFrameView = localMainFrame->view();
 
     for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);

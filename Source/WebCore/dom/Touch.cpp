@@ -29,9 +29,9 @@
 
 #include "Touch.h"
 
-#include "FrameView.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ static int contentsX(LocalFrame* frame)
 {
     if (!frame)
         return 0;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return 0;
     return frameView->scrollX() / frame->pageZoomFactor() / frame->frameScaleFactor();
@@ -49,7 +49,7 @@ static int contentsY(LocalFrame* frame)
 {
     if (!frame)
         return 0;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return 0;
     return frameView->scrollY() / frame->pageZoomFactor() / frame->frameScaleFactor();

@@ -44,7 +44,6 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameSnapshotting.h"
-#include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
@@ -54,6 +53,7 @@
 #include "InspectorOverlay.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -1049,7 +1049,7 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
         return;
 
     LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
-    FrameView* view = renderer.document().view();
+    auto* view = renderer.document().view();
 
     LayoutRect rootRect = absoluteRect;
     auto* localFrame = dynamicDowncast<LocalFrame>(view->frame());

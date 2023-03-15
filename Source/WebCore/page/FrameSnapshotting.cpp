@@ -35,12 +35,12 @@
 #include "Document.h"
 #include "FloatRect.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderAncestorIterator.h"
 #include "RenderObject.h"
@@ -85,13 +85,13 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
     Ref document = *frame.document();
     document->updateLayout();
 
-    FrameView::SelectionInSnapshot shouldIncludeSelection = FrameView::IncludeSelection;
+    LocalFrameView::SelectionInSnapshot shouldIncludeSelection = LocalFrameView::IncludeSelection;
     if (options.flags.contains(SnapshotFlags::ExcludeSelectionHighlighting))
-        shouldIncludeSelection = FrameView::ExcludeSelection;
+        shouldIncludeSelection = LocalFrameView::ExcludeSelection;
 
-    FrameView::CoordinateSpaceForSnapshot coordinateSpace = FrameView::DocumentCoordinates;
+    LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
     if (options.flags.contains(SnapshotFlags::InViewCoordinates))
-        coordinateSpace = FrameView::ViewCoordinates;
+        coordinateSpace = LocalFrameView::ViewCoordinates;
 
     ScopedFramePaintingState state(frame, nullptr);
 

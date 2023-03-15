@@ -78,8 +78,8 @@ class AXTextMarkerRange;
 class AccessibilityScrollView;
 class Document;
 class Element;
-class FrameView;
 class LocalFrame;
+class LocalFrameView;
 class Node;
 class Page;
 class Path;
@@ -1198,7 +1198,7 @@ public:
 #endif
     virtual Page* page() const = 0;
     virtual Document* document() const = 0;
-    virtual FrameView* documentFrameView() const = 0;
+    virtual LocalFrameView* documentFrameView() const = 0;
     virtual ScrollView* scrollView() const = 0;
     virtual String language() const = 0;
     // 1-based, to match the aria-level spec.

@@ -620,7 +620,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     }
 
     // Respect scroll offset, after mapping to container coordinates.
-    if (RefPtr<FrameView> view = document().view()) {
+    if (RefPtr view = document().view()) {
         LayoutPoint scrollPosition = view->scrollPosition();
         scrollPosition.scale(scale);
         transformState.move(-toLayoutSize(scrollPosition));

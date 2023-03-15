@@ -45,7 +45,6 @@
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GridArea.h"
 #include "GridPositionsResolver.h"
@@ -56,6 +55,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -110,12 +110,12 @@ static void truncateWithEllipsis(String& string, size_t length)
         string = makeString(StringView(string).left(length), ellipsis);
 }
 
-static FloatPoint localPointToRootPoint(const FrameView* view, const FloatPoint& point)
+static FloatPoint localPointToRootPoint(const LocalFrameView* view, const FloatPoint& point)
 {
     return view->contentsToRootView(point);
 }
 
-static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
+static void contentsQuadToCoordinateSystem(const LocalFrameView* mainView, const LocalFrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     quad.setP1(localPointToRootPoint(view, quad.p1()));
     quad.setP2(localPointToRootPoint(view, quad.p2()));
@@ -148,9 +148,9 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
         return;
 
     highlight.setDataFromConfig(highlightConfig);
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
-    FrameView* mainView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* mainView = localMainFrame ? localMainFrame->view() : nullptr;
 
     // (Legacy)RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRootOrLegacySVGRoot();
@@ -322,9 +322,9 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
     if (!containingFrame)
         return;
 
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
-    FrameView* mainView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* mainView = localMainFrame ? localMainFrame->view() : nullptr;
 
     static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
 
@@ -662,7 +662,7 @@ void InspectorOverlay::update()
     if (!localMainFrame)
         return;
 
-    FrameView* view = localMainFrame->view();
+    auto* view = localMainFrame->view();
     if (!view)
         return;
 
@@ -867,7 +867,7 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverl
     if (!localMainFrame)
         return;
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
 
@@ -926,7 +926,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     if (!localMainFrame)
         return;
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
     if (!pageView->delegatesScrollingToNativeView())
         scrollOffset = pageView->visibleContentRect().location();
 
@@ -1201,11 +1201,11 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     String elementWidth;
     String elementHeight;
     if (is<RenderBoxModelObject>(renderer)) {
-        RenderBoxModelObject* modelObject = downcast<RenderBoxModelObject>(renderer);
+        auto* modelObject = downcast<RenderBoxModelObject>(renderer);
         elementWidth = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject));
         elementHeight = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject));
     } else {
-        FrameView* containingView = node.document().frame()->view();
+        auto* containingView = node.document().frame()->view();
         IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
         elementWidth = String::number(boundingBox.width());
         elementHeight = String::number(boundingBox.height());
@@ -1269,7 +1269,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     if (!localMainFrame)
         return { };
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
 
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
@@ -1541,7 +1541,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     if (!localMainFrame)
         return { };
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
     if (!pageView)
         return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
@@ -1564,7 +1564,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     auto* containingFrame = node->document().frame();
     if (!containingFrame)
         return { };
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
 
     auto computedStyle = node->computedStyle();
     if (!computedStyle)

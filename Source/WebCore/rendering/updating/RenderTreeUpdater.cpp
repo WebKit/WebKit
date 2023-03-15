@@ -31,8 +31,12 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Element.h"
+#include "FrameViewLayoutContext.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
+#include "LayoutState.h"
+#include "LayoutTreeBuilder.h"
+#include "LocalFrameView.h"
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
@@ -50,11 +54,6 @@
 #include "TextManipulationController.h"
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
-
-#include "FrameView.h"
-#include "FrameViewLayoutContext.h"
-#include "LayoutState.h"
-#include "LayoutTreeBuilder.h"
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"

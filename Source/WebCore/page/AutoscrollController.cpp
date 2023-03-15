@@ -29,9 +29,9 @@
 #include "AutoscrollController.h"
 
 #include "EventHandler.h"
-#include "FrameView.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderView.h"
@@ -104,7 +104,7 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
 #if ENABLE(PAN_SCROLLING)
     if (panScrollInProgress()) {
-        FrameView& frameView = scrollable->view().frameView();
+        auto& frameView = scrollable->view().frameView();
         frameView.removePanScrollIcon();
         frameView.setCursor(pointerCursor());
     }
@@ -277,7 +277,7 @@ void AutoscrollController::autoscrollTimerFired()
                 return;
             }
         }
-        if (FrameView* view = frame.view())
+        if (auto* view = frame.view())
             updatePanScrollState(view, frame.eventHandler().lastKnownMousePosition());
         m_autoscrollRenderer->panScroll(m_panScrollStartPos);
         break;
@@ -291,7 +291,7 @@ void AutoscrollController::startAutoscrollTimer()
 }
 
 #if ENABLE(PAN_SCROLLING)
-void AutoscrollController::updatePanScrollState(FrameView* view, const IntPoint& lastKnownMousePosition)
+void AutoscrollController::updatePanScrollState(LocalFrameView* view, const IntPoint& lastKnownMousePosition)
 {
     // At the original click location we draw a 4 arrowed icon. Over this icon there won't be any scroll
     // So we don't want to change the cursor over this area

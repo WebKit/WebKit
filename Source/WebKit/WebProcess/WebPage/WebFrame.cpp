@@ -64,7 +64,6 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
 #include <WebCore/FrameSnapshotting.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -77,6 +76,7 @@
 #include <WebCore/JSFile.h>
 #include <WebCore/JSRange.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RemoteDOMWindow.h>
@@ -511,7 +511,7 @@ IntSize WebFrame::size() const
     if (!localFrame)
         return IntSize();
 
-    FrameView* frameView = localFrame->view();
+    auto* frameView = localFrame->view();
     if (!frameView)
         return IntSize();
 
@@ -712,7 +712,7 @@ IntRect WebFrame::contentBounds() const
     if (!localFrame)
         return IntRect();
     
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -725,7 +725,7 @@ IntRect WebFrame::visibleContentBounds() const
     if (!localFrame)
         return IntRect();
     
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -739,7 +739,7 @@ IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
     if (!localFrame)
         return IntRect();
     
-    FrameView* view = localFrame->view();
+    LocalFrameView* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -753,7 +753,7 @@ IntSize WebFrame::scrollOffset() const
     if (!localFrame)
         return IntSize();
     
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return IntSize();
 
@@ -766,7 +766,7 @@ bool WebFrame::hasHorizontalScrollbar() const
     if (!localFrame)
         return false;
 
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return false;
 
@@ -779,7 +779,7 @@ bool WebFrame::hasVerticalScrollbar() const
     if (!localFrame)
         return false;
 
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return false;
 
@@ -801,7 +801,7 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
     if (!localFrame)
         return false;
 
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return false;
 

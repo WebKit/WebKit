@@ -32,8 +32,8 @@
 #include "Document.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
-#include "FrameView.h"
 #include "Image.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "PublicSuffix.h"
 #include "SharedBuffer.h"
@@ -257,7 +257,7 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
 
     SetForScope reentrancyProtector(m_inPruneResources, true);
 
-    MonotonicTime currentTime = FrameView::currentPaintTimeStamp();
+    MonotonicTime currentTime = LocalFrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
         currentTime = MonotonicTime::now();
     

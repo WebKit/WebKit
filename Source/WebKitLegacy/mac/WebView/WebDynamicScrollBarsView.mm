@@ -30,8 +30,8 @@
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
 #import <WebCore/DeprecatedGlobalSettings.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 
 using namespace WebCore;

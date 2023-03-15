@@ -80,7 +80,7 @@ void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
     s_haveScheduledWidgetToMove = false;
 }
 
-static void moveWidgetToParentSoon(Widget& child, FrameView* parent)
+static void moveWidgetToParentSoon(Widget& child, LocalFrameView* parent)
 {
     if (!WidgetHierarchyUpdatesSuspensionScope::isSuspended()) {
         if (parent)
@@ -248,8 +248,8 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     LayoutRect paintRect = paintInfo.rect;
 
     OptionSet<PaintBehavior> oldBehavior = PaintBehavior::Normal;
-    if (is<FrameView>(*m_widget) && (paintInfo.paintBehavior & PaintBehavior::TileFirstPaint)) {
-        FrameView& frameView = downcast<FrameView>(*m_widget);
+    if (is<LocalFrameView>(*m_widget) && (paintInfo.paintBehavior & PaintBehavior::TileFirstPaint)) {
+        LocalFrameView& frameView = downcast<LocalFrameView>(*m_widget);
         oldBehavior = frameView.paintBehavior();
         frameView.setPaintBehavior(oldBehavior | PaintBehavior::TileFirstPaint);
     }
@@ -278,8 +278,8 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (!widgetPaintOffset.isZero())
         paintInfo.context().translate(-widgetPaintOffset);
 
-    if (is<FrameView>(*m_widget)) {
-        FrameView& frameView = downcast<FrameView>(*m_widget);
+    if (is<LocalFrameView>(*m_widget)) {
+        LocalFrameView& frameView = downcast<LocalFrameView>(*m_widget);
         bool runOverlapTests = !frameView.useSlowRepaintsIfNotOverlapped();
         if (paintInfo.overlapTestRequests && runOverlapTests) {
             ASSERT(!paintInfo.overlapTestRequests->contains(this) || (paintInfo.overlapTestRequests->get(this) == m_widget->frameRect()));
@@ -314,7 +314,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // FIXME: Shouldn't check if the frame view needs layout during event region painting. This is a workaround
     // for the fact that non-composited frames depend on their enclosing compositing layer to perform an event
     // region update on their behalf. See <https://webkit.org/b/210311> for more details.
-    bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && is<FrameView>(m_widget) && !downcast<FrameView>(*m_widget).needsLayout();
+    bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && is<LocalFrameView>(m_widget) && !downcast<LocalFrameView>(*m_widget).needsLayout();
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
 
@@ -356,7 +356,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderWidget::setOverlapTestResult(bool isOverlapped)
 {
     ASSERT(m_widget);
-    downcast<FrameView>(*m_widget).setIsOverlapped(isOverlapped);
+    downcast<LocalFrameView>(*m_widget).setIsOverlapped(isOverlapped);
 }
 
 RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
@@ -371,8 +371,8 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
 
     // if the frame size got changed, or if view needs layout (possibly indicating
     // content size is wrong) we have to do a layout to set the right widget size.
-    if (is<FrameView>(*m_widget)) {
-        FrameView& frameView = downcast<FrameView>(*m_widget);
+    if (is<LocalFrameView>(*m_widget)) {
+        LocalFrameView& frameView = downcast<LocalFrameView>(*m_widget);
         // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
         auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
         if ((widgetSizeChanged || frameView.needsLayout())
@@ -406,9 +406,9 @@ RenderWidget* RenderWidget::find(const Widget& widget)
 bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     auto shouldHitTestChildFrameContent = request.allowsChildFrameContent() || (request.allowsVisibleChildFrameContent() && visibleToHitTesting(request));
-    auto hasRenderView = is<FrameView>(widget()) && downcast<FrameView>(*widget()).renderView();
+    auto hasRenderView = is<LocalFrameView>(widget()) && downcast<LocalFrameView>(*widget()).renderView();
     if (shouldHitTestChildFrameContent && hasRenderView) {
-        FrameView& childFrameView = downcast<FrameView>(*widget());
+        LocalFrameView& childFrameView = downcast<LocalFrameView>(*widget());
 
         LayoutPoint adjustedLocation = accumulatedOffset + location();
         LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - toIntSize(childFrameView.scrollPosition());
@@ -475,9 +475,9 @@ bool RenderWidget::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderWidget::embeddedContentBox() const
 {
-    if (!is<FrameView>(widget()))
+    if (!is<LocalFrameView>(widget()))
         return nullptr;
-    return downcast<FrameView>(*widget()).embeddedContentBox();
+    return downcast<LocalFrameView>(*widget()).embeddedContentBox();
 }
 
 } // namespace WebCore

@@ -563,7 +563,7 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
     // Find the next descendant of this attachment object so search can continue through frames.
     if (object->isAttachment()) {
         Widget* widget = object->widgetForAttachmentView();
-        auto* frameView = dynamicDowncast<FrameView>(widget);
+        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return;
         auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
@@ -1852,7 +1852,7 @@ RemoteAXObjectRef AccessibilityObject::remoteParentObject() const
 
 Document* AccessibilityObject::document() const
 {
-    FrameView* frameView = documentFrameView();
+    auto* frameView = documentFrameView();
     if (!frameView)
         return nullptr;
 
@@ -1871,7 +1871,7 @@ Page* AccessibilityObject::page() const
     return document->page();
 }
 
-FrameView* AccessibilityObject::documentFrameView() const 
+LocalFrameView* AccessibilityObject::documentFrameView() const 
 { 
     const AccessibilityObject* object = this;
     while (object && !object->isAccessibilityRenderObject()) 
@@ -3363,7 +3363,7 @@ void AccessibilityObject::scrollToMakeVisible(const ScrollRectToVisibleOptions& 
         parentObject()->scrollToMakeVisible();
 
     if (auto* renderer = this->renderer())
-        FrameView::scrollRectToVisible(boundingBoxRect(), *renderer, false, options);
+        LocalFrameView::scrollRectToVisible(boundingBoxRect(), *renderer, false, options);
 }
 
 void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocus) const

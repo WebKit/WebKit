@@ -55,7 +55,6 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -68,6 +67,7 @@
 #include "ImageOrientation.h"
 #include "ImageOverlay.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Model.h"
 #include "MoveSelectionCommand.h"
 #include "MutableStyleProperties.h"
@@ -432,7 +432,7 @@ DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, Opt
 
     // It's unclear why this check is after tryDHTMLDrag.
     // We send drag events in tryDHTMLDrag and that may be the reason.
-    RefPtr<FrameView> frameView = m_documentUnderMouse->view();
+    RefPtr frameView = m_documentUnderMouse->view();
     if (!frameView)
         return DragHandlingMethod::None;
 
@@ -743,7 +743,7 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, std::optional<DragOp
         return false;
 
     Ref protectedLocalMainFrame(*localMainFrame);
-    RefPtr<FrameView> viewProtector = protectedLocalMainFrame->view();
+    RefPtr viewProtector = protectedLocalMainFrame->view();
     if (!viewProtector)
         return false;
 
@@ -1379,7 +1379,7 @@ void DragController::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPo
         return;
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
     Ref protectedLocalMainFrame(*localMainFrame);
-    RefPtr<FrameView> viewProtector = protectedLocalMainFrame->view();
+    RefPtr viewProtector = protectedLocalMainFrame->view();
 
     auto mouseDownPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDownPoint));
     auto mouseDraggedPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDraggedPoint));
@@ -1405,7 +1405,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
         return;
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
     Ref protectedLocalMainFrame(*localMainFrame);
-    RefPtr<FrameView> viewProtector = protectedLocalMainFrame->view();
+    RefPtr viewProtector = protectedLocalMainFrame->view();
 
     DragItem item;
     item.image = WTFMove(image);
@@ -1596,7 +1596,7 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
     if (!m_documentUnderMouse)
         return;
     auto* frame = m_documentUnderMouse->frame();
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return;
     IntPoint framePoint = frameView->windowToContents(windowPoint);

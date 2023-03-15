@@ -67,7 +67,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HTTPParsers.h"
 #include "History.h"
 #include "IdleRequestOptions.h"
@@ -77,6 +76,7 @@
 #include "JSDOMWindowBase.h"
 #include "JSExecState.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Location.h"
 #include "Logging.h"
 #include "MediaQueryList.h"
@@ -1762,7 +1762,7 @@ void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping cla
     if (!isCurrentlyDisplayedInFrame())
         return;
 
-    RefPtr<FrameView> view = frame()->view();
+    RefPtr view = frame()->view();
     if (!view)
         return;
 

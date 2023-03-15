@@ -38,9 +38,9 @@
 #include "Document.h"
 #include "FontCache.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HistoryItem.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
@@ -330,7 +330,7 @@ void SettingsBase::mediaTypeOverrideChanged()
     if (!localMainFrame)
         return;
 
-    FrameView* view = localMainFrame->view();
+    auto* view = localMainFrame->view();
     if (view)
         view->setMediaType(AtomString(m_page->settings().mediaTypeOverride()));
 

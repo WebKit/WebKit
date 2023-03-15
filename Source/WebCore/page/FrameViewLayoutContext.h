@@ -32,10 +32,10 @@
 namespace WebCore {
 
 class Document;
-class FrameView;
 class LayoutScope;
 class LayoutSize;
 class LocalFrame;
+class LocalFrameView;
 class RenderBlockFlow;
 class RenderBox;
 class RenderObject;
@@ -46,10 +46,11 @@ namespace Layout {
 class LayoutState;
 class LayoutTree;
 }
-    
+
+// FIXME: Rename to LocalFrameViewLayoutContext.
 class FrameViewLayoutContext {
 public:
-    FrameViewLayoutContext(FrameView&);
+    FrameViewLayoutContext(LocalFrameView&);
     ~FrameViewLayoutContext();
 
     WEBCORE_EXPORT void layout();
@@ -157,11 +158,11 @@ private:
     void layoutUsingFormattingContext();
 
     LocalFrame& frame() const;
-    FrameView& view() const;
+    LocalFrameView& view() const;
     RenderView* renderView() const;
     Document* document() const;
 
-    FrameView& m_frameView;
+    LocalFrameView& m_frameView;
     Timer m_layoutTimer;
     Timer m_asynchronousTasksTimer;
     WeakPtr<RenderElement> m_subtreeLayoutRoot;

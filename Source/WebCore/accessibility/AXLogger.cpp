@@ -34,7 +34,7 @@
 #endif
 #include "AXObjectCache.h"
 #include "Document.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include <algorithm>

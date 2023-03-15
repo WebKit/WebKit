@@ -30,11 +30,11 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include <WebCore/Document.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/NicosiaBackingStoreTextureMapperImpl.h>
 #include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
 #include <WebCore/NicosiaImageBackingStore.h>
@@ -261,7 +261,7 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
     }
 
     auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
-    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (view->useFixedLayout() && contentsRectDidChange) {
         // Round the rect instead of enclosing it to make sure that its size stays
         // the same while panning. This can have nasty effects on layout.

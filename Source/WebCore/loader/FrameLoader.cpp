@@ -69,7 +69,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GCController.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -88,6 +87,7 @@
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
@@ -2242,7 +2242,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     if (m_state != FrameState::Provisional)
         return;
 
-    if (FrameView* view = m_frame.view()) {
+    if (auto* view = m_frame.view()) {
         if (ScrollAnimator* scrollAnimator = view->existingScrollAnimator())
             scrollAnimator->cancelAnimations();
     }
@@ -2434,7 +2434,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     m_didCallImplicitClose = false;
     setOutgoingReferrer(url);
 
-    FrameView* view = cachedFrame.view();
+    auto* view = cachedFrame.view();
     
     // When navigating to a CachedFrame its FrameView should never be null.  If it is we'll crash in creative ways downstream.
     ASSERT(view);
@@ -3965,7 +3965,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
     // Save user view state to the current history item here since we don't do a normal load.
     // FIXME: Does form state need to be saved here too?
     history().saveScrollPositionAndViewStateToItem(history().currentItem());
-    if (FrameView* view = m_frame.view())
+    if (auto* view = m_frame.view())
         view->setWasScrolledByUser(false);
 
     history().setCurrentItem(item);

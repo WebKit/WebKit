@@ -24,10 +24,10 @@
 #include "MouseRelatedEvent.h"
 
 #include "Document.h"
-#include "FrameView.h"
 #include "LayoutPoint.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include <wtf/IsoMallocInlines.h>
@@ -89,7 +89,7 @@ void MouseRelatedEvent::initCoordinates()
     m_hasCachedRelativePosition = false;
 }
 
-FrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowProxy)
+LocalFrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowProxy)
 {
     if (!windowProxy || !is<LocalDOMWindow>(windowProxy->window()))
         return nullptr;
@@ -98,7 +98,7 @@ FrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowProxy)
     return frame ? frame->view() : nullptr;
 }
 
-LayoutPoint MouseRelatedEvent::pagePointToClientPoint(LayoutPoint pagePoint, FrameView* frameView)
+LayoutPoint MouseRelatedEvent::pagePointToClientPoint(LayoutPoint pagePoint, LocalFrameView* frameView)
 {
     if (!frameView)
         return pagePoint;
@@ -106,7 +106,7 @@ LayoutPoint MouseRelatedEvent::pagePointToClientPoint(LayoutPoint pagePoint, Fra
     return flooredLayoutPoint(frameView->documentToClientPoint(pagePoint));
 }
 
-LayoutPoint MouseRelatedEvent::pagePointToAbsolutePoint(LayoutPoint pagePoint, FrameView* frameView)
+LayoutPoint MouseRelatedEvent::pagePointToAbsolutePoint(LayoutPoint pagePoint, LocalFrameView* frameView)
 {
     if (!frameView)
         return pagePoint;

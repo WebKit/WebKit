@@ -188,7 +188,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     const RenderStyle& newStyle = style();
     if (oldStyle && oldStyle->scrollPadding() != newStyle.scrollPadding()) {
         if (isDocumentElementRenderer()) {
-            FrameView& frameView = view().frameView();
+            LocalFrameView& frameView = view().frameView();
             frameView.updateScrollbarSteps();
         } else if (RenderLayer* renderLayer = layer())
             renderLayer->updateScrollbarSteps();

@@ -29,9 +29,11 @@
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
 #include "FrameSelection.h"
+#include "FrameViewLayoutContext.h"
 #include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
@@ -74,9 +76,6 @@
 #include "RenderTreeMutationDisallowedScope.h"
 #include "RenderView.h"
 #include <wtf/SetForScope.h>
-
-#include "FrameView.h"
-#include "FrameViewLayoutContext.h"
 
 namespace WebCore {
 

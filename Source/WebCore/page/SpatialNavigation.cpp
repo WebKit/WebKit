@@ -30,13 +30,13 @@
 #include "SpatialNavigation.h"
 
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLSelectElement.h"
 #include "IntRect.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Node.h"
 #include "Page.h"
 #include "RenderInline.h"
@@ -291,7 +291,7 @@ bool hasOffscreenRect(Node* node, FocusDirection direction)
     // Get the FrameView in which |node| is (which means the current viewport if |node|
     // is not in an inner document), so we can check if its content rect is visible
     // before we actually move the focus to it.
-    FrameView* frameView = node->document().view();
+    auto* frameView = node->document().view();
     if (!frameView)
         return true;
 

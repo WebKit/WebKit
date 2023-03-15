@@ -41,8 +41,8 @@
 #include <WebCore/Document.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/ReportingScope.h>
 

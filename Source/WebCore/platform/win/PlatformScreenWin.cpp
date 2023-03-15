@@ -29,10 +29,10 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
-#include "FrameView.h"
 #include "HostWindow.h"
 #include "IntRect.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include <windows.h>
 

@@ -1786,8 +1786,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     ASSERT(self.axBackingObject->isScrollView());
 
     // Verify this is the top document. If not, we might need to go through the platform widget.
-    FrameView* frameView = self.axBackingObject->documentFrameView();
-    Document* document = self.axBackingObject->document();
+    auto* frameView = self.axBackingObject->documentFrameView();
+    auto* document = self.axBackingObject->document();
     if (document && frameView && document != &document->topDocument())
         return frameView->platformWidget();
     

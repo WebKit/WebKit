@@ -40,10 +40,10 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HTMLObjectElement.h"
 #include "HistoryItem.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
 #include "ScrollingCoordinator.h"
@@ -71,7 +71,7 @@ FrameLoader::HistoryController::~HistoryController() = default;
 
 void FrameLoader::HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 {
-    FrameView* frameView = m_frame.view();
+    auto* frameView = m_frame.view();
     if (!item || !frameView)
         return;
 
@@ -527,7 +527,7 @@ void FrameLoader::HistoryController::recursiveUpdateForCommit()
         saveDocumentState();
         saveScrollPositionAndViewStateToItem(m_currentItem.get());
 
-        if (FrameView* view = m_frame.view())
+        if (auto* view = m_frame.view())
             view->setWasScrolledByUser(false);
 
         // Now commit the provisional item

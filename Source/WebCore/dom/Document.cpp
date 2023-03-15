@@ -89,7 +89,6 @@
 #include "FormController.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCReachableRef.h"
 #include "GPUCanvasContext.h"
@@ -153,6 +152,7 @@
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
@@ -1484,7 +1484,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (!visualUpdatesAllowed)
         return;
 
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     bool needsLayout = frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout());
     if (needsLayout)
         updateLayout();
@@ -2021,7 +2021,7 @@ void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
     formController().setStateForNewFormElements(stateVector);
 }
 
-FrameView* Document::view() const
+LocalFrameView* Document::view() const
 {
     return m_frame ? m_frame->view() : nullptr;
 }
@@ -2103,8 +2103,8 @@ void Document::resolveStyle(ResolveStyleType type)
     if (!m_renderView)
         return;
 
-    FrameView& frameView = m_renderView->frameView();
-    Ref<FrameView> protect(frameView);
+    auto& frameView = m_renderView->frameView();
+    Ref protectedFrameView { frameView };
     if (frameView.isPainting())
         return;
     
@@ -2278,7 +2278,7 @@ bool Document::updateStyleIfNeeded()
     if (isResolvingContainerQueriesForSelfOrAncestor())
         return false;
 
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ASSERT(isMainThread());
@@ -2306,7 +2306,7 @@ void Document::updateLayout()
 {
     ASSERT(isMainThread());
 
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
@@ -2387,7 +2387,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     }
     
     // Check for re-entrancy and assert (same code that is in updateLayout()).
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
@@ -4529,7 +4529,7 @@ static bool serviceScrollAnimationForScrollableArea(const ScrollableArea* scroll
 void Document::runScrollSteps()
 {
     // Service user scroll animations before scroll event dispatch.
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     if (frameView) {
         MonotonicTime now = MonotonicTime::now();
         bool scrollAnimationsInProgress = serviceScrollAnimationForScrollableArea(frameView.get(), now);
@@ -5823,7 +5823,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
     m_backForwardCacheState = state;
 
-    FrameView* v = view();
+    auto* v = view();
     Page* page = this->page();
 
     switch (state) {
@@ -8301,7 +8301,7 @@ struct IntersectionObservationState {
     bool isIntersecting { false };
 };
 
-static std::optional<IntersectionObservationState> computeIntersectionState(FrameView& frameView, const IntersectionObserver& observer, Element& target, bool applyRootMargin)
+static std::optional<IntersectionObservationState> computeIntersectionState(LocalFrameView& frameView, const IntersectionObserver& observer, Element& target, bool applyRootMargin)
 {
     auto* targetRenderer = target.renderer();
     if (!targetRenderer)
@@ -9271,7 +9271,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
 #endif
 
     auto& frameView = renderView()->frameView();
-    Ref<FrameView> protector(frameView);
+    Ref<LocalFrameView> protector(frameView);
 
     bool resultLayer = renderView()->layer()->hitTest(request, location, result);
 

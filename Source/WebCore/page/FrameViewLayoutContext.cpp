@@ -28,9 +28,9 @@
 
 #include "DebugPageOverlays.h"
 #include "Document.h"
-#include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutDisallowedScope.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "RenderElement.h"
 #include "RenderLayoutState.h"
@@ -54,7 +54,7 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!frame().settings().layoutFormattingContextEnabled())
         return;
-    // FrameView::setContentsSize temporary disables layout.
+    // LocalFrameView::setContentsSize temporary disables layout.
     if (m_disableSetNeedsLayoutCount)
         return;
 
@@ -143,13 +143,13 @@ public:
     }
         
 private:
-    FrameView& m_view;
+    LocalFrameView& m_view;
     SetForScope<FrameViewLayoutContext::LayoutNestedState> m_nestedState;
     SetForScope<bool> m_schedulingIsEnabled;
     ScrollType m_previousScrollType;
 };
 
-FrameViewLayoutContext::FrameViewLayoutContext(FrameView& frameView)
+FrameViewLayoutContext::FrameViewLayoutContext(LocalFrameView& frameView)
     : m_frameView(frameView)
     , m_layoutTimer(*this, &FrameViewLayoutContext::layoutTimerFired)
     , m_asynchronousTasksTimer(*this, &FrameViewLayoutContext::runAsynchronousTasks)
@@ -162,9 +162,9 @@ FrameViewLayoutContext::~FrameViewLayoutContext()
 
 void FrameViewLayoutContext::layout()
 {
-    LOG_WITH_STREAM(Layout, stream << "FrameView " << &view() << " FrameViewLayoutContext::layout() with size " << view().layoutSize());
+    LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " FrameViewLayoutContext::layout() with size " << view().layoutSize());
 
-    Ref<FrameView> protectView(view());
+    Ref<LocalFrameView> protectView(view());
 
     performLayout();
 
@@ -209,7 +209,7 @@ void FrameViewLayoutContext::performLayout()
 
 #if !LOG_DISABLED
     if (m_firstLayout && !frame().ownerElement())
-        LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs", this, document()->timeSinceDocumentCreation().value());
+        LOG(Layout, "LocalFrameView %p elapsed time before first layout: %.3fs", this, document()->timeSinceDocumentCreation().value());
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (view().updateFixedPositionLayoutRect() && subtreeLayoutRoot())
@@ -391,7 +391,7 @@ void FrameViewLayoutContext::scheduleLayout()
 
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG(Layout, "FrameView %p layout timer scheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
+        LOG(Layout, "LocalFrameView %p layout timer scheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
 
     m_layoutTimer.startOneShot(0_s);
@@ -407,7 +407,7 @@ void FrameViewLayoutContext::unscheduleLayout()
 
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for FrameView " << frame().view() << " layout timer unscheduled at " << frame().document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer unscheduled at " << frame().document()->timeSinceDocumentCreation().value());
 #endif
 
     m_layoutTimer.stop();
@@ -471,7 +471,7 @@ void FrameViewLayoutContext::layoutTimerFired()
 {
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for FrameView " << frame().view() << " layout timer fired at " << frame().document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer fired at " << frame().document()->timeSinceDocumentCreation().value());
 #endif
     layout();
 }
@@ -635,7 +635,7 @@ LocalFrame& FrameViewLayoutContext::frame() const
     return downcast<LocalFrame>(view().frame());
 }
 
-FrameView& FrameViewLayoutContext::view() const
+LocalFrameView& FrameViewLayoutContext::view() const
 {
     return m_frameView;
 }

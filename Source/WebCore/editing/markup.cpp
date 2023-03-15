@@ -199,7 +199,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
         return page; 
 
     LocalFrame& frame = *localMainFrame;
-    frame.setView(FrameView::create(frame, IntSize { 800, 600 }));
+    frame.setView(LocalFrameView::create(frame, IntSize { 800, 600 }));
     frame.init();
 
     FrameLoader& loader = frame.loader();

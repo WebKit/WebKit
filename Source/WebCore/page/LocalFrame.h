@@ -79,7 +79,6 @@ class FrameDestructionObserver;
 class FrameLoader;
 class FrameLoaderClient;
 class FrameSelection;
-class FrameView;
 class HTMLFrameOwnerElement;
 class HTMLTableCellElement;
 class HitTestResult;
@@ -87,6 +86,7 @@ class ImageBuffer;
 class IntPoint;
 class IntRect;
 class IntSize;
+class LocalFrameView;
 class NavigationScheduler;
 class Node;
 class Page;
@@ -124,7 +124,7 @@ public:
     // Creates <html><body style="..."></body></html> doing minimal amount of work.
     WEBCORE_EXPORT void initWithSimpleHTMLDocument(const AtomString& style, const URL&);
 #endif
-    WEBCORE_EXPORT void setView(RefPtr<FrameView>&&);
+    WEBCORE_EXPORT void setView(RefPtr<LocalFrameView>&&);
     WEBCORE_EXPORT void createView(const IntSize&, const std::optional<Color>& backgroundColor,
         const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
         bool useFixedLayout = false, ScrollbarMode = ScrollbarMode::Auto, bool horizontalLock = false,
@@ -140,7 +140,7 @@ public:
     WEBCORE_EXPORT void willDetachPage();
 
     Document* document() const;
-    FrameView* view() const;
+    LocalFrameView* view() const;
 
     Editor& editor() { return document()->editor(); }
     const Editor& editor() const { return document()->editor(); }
@@ -241,7 +241,7 @@ public:
 #endif
 
     void clearTimers();
-    static void clearTimers(FrameView*, Document*);
+    static void clearTimers(LocalFrameView*, Document*);
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
@@ -310,7 +310,7 @@ private:
     UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
-    RefPtr<FrameView> m_view;
+    RefPtr<LocalFrameView> m_view;
     RefPtr<Document> m_doc;
 
     UniqueRef<ScriptController> m_script;
@@ -358,7 +358,7 @@ inline NavigationScheduler& LocalFrame::navigationScheduler() const
     return m_navigationScheduler.get();
 }
 
-inline FrameView* LocalFrame::view() const
+inline LocalFrameView* LocalFrame::view() const
 {
     return m_view.get();
 }

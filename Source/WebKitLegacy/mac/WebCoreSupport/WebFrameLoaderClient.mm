@@ -91,7 +91,6 @@
 #import <WebCore/FrameLoaderStateMachine.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
@@ -103,6 +102,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
@@ -982,7 +982,7 @@ void WebFrameLoaderClient::didChangeTitle(WebCore::DocumentLoader* loader)
 void WebFrameLoaderClient::didReplaceMultipartContent()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::FrameView *view = core(m_webFrame.get())->view())
+    if (auto* view = core(m_webFrame.get())->view())
         view->didReplaceMultipartContent();
 #endif
 }
@@ -1428,7 +1428,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);
     coreFrame->setView(nullptr);
-    auto coreView = WebCore::FrameView::create(*coreFrame);
+    auto coreView = WebCore::LocalFrameView::create(*coreFrame);
     coreFrame->setView(coreView.copyRef());
 
 #if PLATFORM(IOS_FAMILY)

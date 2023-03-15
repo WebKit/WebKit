@@ -38,7 +38,6 @@
 #import "EventNames.h"
 #import "FormController.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "HTMLAreaElement.h"
 #import "HTMLBodyElement.h"
 #import "HTMLDocument.h"
@@ -48,6 +47,7 @@
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
 #import "LocalDOMWindow.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "NodeRenderStyle.h"
 #import "NodeTraversal.h"
@@ -261,7 +261,7 @@ bool LocalFrame::hitTestResultAtViewportLocation(const FloatPoint& viewportLocat
     if (!m_doc || !m_doc->renderView())
         return false;
 
-    FrameView* view = m_view.get();
+    auto* view = m_view.get();
     if (!view)
         return false;
 
@@ -603,7 +603,7 @@ void LocalFrame::updateLayout() const
 
     document->updateLayout();
 
-    if (FrameView* view = this->view())
+    if (auto* view = this->view())
         view->adjustViewSize();
 }
 

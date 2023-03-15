@@ -34,7 +34,7 @@ PopupMenuIOS::PopupMenuIOS(PopupMenuClient* client)
 {
 }
 
-void PopupMenuIOS::show(const IntRect&, FrameView*, int /*selectedIndex*/)
+void PopupMenuIOS::show(const IntRect&, LocalFrameView*, int /*selectedIndex*/)
 {
 }
 

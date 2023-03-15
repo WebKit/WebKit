@@ -23,9 +23,9 @@
 #include "RenderSVGResourcePattern.h"
 
 #include "ElementChildIteratorInlines.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalFrameView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderingContext.h"

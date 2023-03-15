@@ -43,7 +43,6 @@
 #include "FocusOptions.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -54,6 +53,7 @@
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "Range.h"
 #include "RenderWidget.h"
@@ -940,7 +940,7 @@ void FocusController::setActiveInternal(bool active)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)
         return;
-    if (FrameView* view = localMainFrame->view()) {
+    if (auto* view = localMainFrame->view()) {
         if (!view->platformWidget()) {
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
@@ -967,7 +967,7 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
     if (!localMainFrame)
         return;
 
-    FrameView* view = localMainFrame->view();
+    auto* view = localMainFrame->view();
     if (!view)
         return;
 
@@ -977,7 +977,7 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView)
             continue;
 

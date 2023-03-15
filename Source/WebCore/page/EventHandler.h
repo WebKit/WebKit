@@ -70,12 +70,12 @@ class Element;
 class Event;
 class EventTarget;
 class FloatQuad;
-class FrameView;
 class HTMLFrameSetElement;
 class HitTestResult;
 class KeyboardEvent;
 class KeyboardScrollingAnimator;
 class LocalFrame;
+class LocalFrameView;
 class MouseEventWithHitTestResults;
 class Node;
 class Pasteboard;
@@ -406,7 +406,7 @@ private:
 
     bool internalKeyEvent(const PlatformKeyboardEvent&);
 
-    void updateCursor(FrameView&, const HitTestResult&, bool shiftKey);
+    void updateCursor(LocalFrameView&, const HitTestResult&, bool shiftKey);
 
     void hoverTimerFired();
 

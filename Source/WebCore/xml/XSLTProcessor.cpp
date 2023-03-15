@@ -30,8 +30,8 @@
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "Text.h"
@@ -80,7 +80,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     // Before parsing, we need to save & detach the old document and get the new document
     // in place. We have to do this only if we're rendering the result document.
     if (frame) {
-        if (FrameView* view = frame->view())
+        if (auto* view = frame->view())
             view->clear();
 
         if (Document* oldDocument = frame->document()) {

@@ -32,9 +32,9 @@
 #import "Editor.h"
 #import "ElementAncestorIteratorInlines.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "HTMLFieldSetElement.h"
 #import "HTMLInputElement.h"
+#import "LocalFrameView.h"
 #import "LocalizedStrings.h"
 #import "RenderObject.h"
 #import "Settings.h"
@@ -105,7 +105,7 @@ bool AccessibilityObject::fileUploadButtonReturnsValueInTitle() const
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
-    // FrameView attachments are now handled by AccessibilityScrollView, 
+    // LocalFrameView attachments are now handled by AccessibilityScrollView,
     // so if this is the attachment, it should be ignored.
     Widget* widget = nullptr;
     if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
