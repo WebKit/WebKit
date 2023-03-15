@@ -34,6 +34,11 @@
 #include "ZydisInternalDecoderData.h"
 #include "ZydisInternalSharedData.h"
 
+#if defined(ZYAN_GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
+
 /* ============================================================================================== */
 /* Internal enums and types                                                                       */
 /* ============================================================================================== */
@@ -5118,6 +5123,10 @@ ZyanStatus ZydisDecoderDecodeBuffer(const ZydisDecoder* decoder, const void* buf
 
     return ZYAN_STATUS_SUCCESS;
 }
+
+#if defined(ZYAN_GCC)
+#pragma GCC diagnostic pop
+#endif
 
 /* ============================================================================================== */
 
