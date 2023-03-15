@@ -177,7 +177,10 @@ private:
 
             RegType source = pairs[0].first;
             RegType dest = pairs[0].second;
-            swap(source, dest);
+            if constexpr (std::is_same_v<RegType, FPRReg>)
+                swapDouble(source, dest);
+            else
+                swap(source, dest);
             pairs.remove(0);
 
             RegType newSource = source;

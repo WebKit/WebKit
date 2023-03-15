@@ -1751,8 +1751,10 @@ public:
         move(temp.data(), reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         moveDouble(reg1, fpTempRegister);
         moveDouble(reg2, reg1);
         moveDouble(fpTempRegister, reg2);

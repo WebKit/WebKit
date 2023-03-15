@@ -3201,13 +3201,17 @@ public:
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         move(reg1, getCachedDataTempRegisterIDAndInvalidate());
         move(reg2, reg1);
         move(dataTempRegister, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         moveDouble(reg1, fpTempRegister);
         moveDouble(reg2, reg1);
         moveDouble(fpTempRegister, reg2);

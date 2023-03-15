@@ -2560,19 +2560,6 @@ public:
             m_assembler.xchgq_rr(reg1, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
-    {
-        if (reg1 == reg2)
-            return;
-
-        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
-        ASSERT(reg1 != FPRegisterID::xmm7);
-        ASSERT(reg2 != FPRegisterID::xmm7);
-        moveDouble(reg1, FPRegisterID::xmm7);
-        moveDouble(reg2, reg1);
-        moveDouble(FPRegisterID::xmm7, reg2);
-    }
-
     void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value)
@@ -2673,7 +2660,7 @@ public:
             m_assembler.xchgl_rr(reg1, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
     {
         if (reg1 == reg2)
             return;
