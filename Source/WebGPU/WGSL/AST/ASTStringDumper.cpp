@@ -36,9 +36,9 @@ namespace WGSL::AST {
 
 struct Indent {
     Indent(StringDumper& dumper)
-        : m_scope(dumper.m_indent, dumper.m_indent + "    ")
+        : scope(dumper.m_indent, dumper.m_indent + "    ")
     { }
-    SetForScope<String> m_scope;
+    SetForScope<String> scope;
 };
 
 static Indent bumpIndent(StringDumper& dumper)

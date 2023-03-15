@@ -105,7 +105,7 @@ void FunctionDefinitionWriter::write()
     for (auto& structure : m_callGraph.ast().structures())
         visit(structure);
     for (auto& entryPoint : m_callGraph.entrypoints())
-        visit(entryPoint.m_function);
+        visit(entryPoint.function);
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)

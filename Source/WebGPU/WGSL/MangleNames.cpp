@@ -105,11 +105,11 @@ private:
 void NameManglerVisitor::run()
 {
     for (const auto& entrypoint : m_callGraph.entrypoints()) {
-        String originalName = entrypoint.m_function.name();
-        introduceVariable(entrypoint.m_function.name(), MangledName::Function);
+        String originalName = entrypoint.function.name();
+        introduceVariable(entrypoint.function.name(), MangledName::Function);
         auto it = m_result.entryPoints.find(originalName);
         RELEASE_ASSERT(it != m_result.entryPoints.end());
-        it->value.mangledName = entrypoint.m_function.name();
+        it->value.mangledName = entrypoint.function.name();
     }
 
     auto& module = m_callGraph.ast();

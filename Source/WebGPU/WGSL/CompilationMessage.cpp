@@ -32,7 +32,7 @@ namespace WGSL {
 
 void CompilationMessage::dump(PrintStream& out) const
 {
-    out.print(m_span.m_line, ":", m_span.m_lineOffset, ": ", m_message);
+    out.print(m_span.line, ":", m_span.lineOffset, ": ", m_message);
 }
 
 } // namespace WGSL
