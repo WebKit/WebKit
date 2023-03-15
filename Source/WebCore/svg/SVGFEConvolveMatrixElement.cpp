@@ -171,8 +171,34 @@ void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
     updateSVGRendererForElementChange();
 }
 
+bool SVGFEConvolveMatrixElement::isValidTargetXOffset() const
+{
+    auto orderXValue = hasAttribute(SVGNames::orderAttr) ? orderX() : 3;
+    auto targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : static_cast<int>(floorf(orderXValue / 2));
+    return targetXValue >= 0 && targetXValue < orderXValue;
+}
+
+bool SVGFEConvolveMatrixElement::isValidTargetYOffset() const
+{
+    auto orderYValue = hasAttribute(SVGNames::orderAttr) ? orderY() : 3;
+    auto targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : static_cast<int>(floorf(orderYValue / 2));
+    return targetYValue >= 0 && targetYValue < orderYValue;
+}
+
 void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
+    if ((attrName == SVGNames::targetXAttr || attrName == SVGNames::orderAttr) && !isValidTargetXOffset()) {
+        InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
+        return;
+    }
+
+    if ((attrName == SVGNames::targetYAttr || attrName == SVGNames::orderAttr) && !isValidTargetYOffset()) {
+        InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
+        return;
+    }
+
     if (attrName == SVGNames::inAttr || attrName == SVGNames::orderAttr || attrName == SVGNames::kernelMatrixAttr) {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
@@ -208,17 +234,18 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
     if (orderXValue * orderYValue != kernelMatrixSize)
         return nullptr;
 
-    int targetXValue = targetX();
-    int targetYValue = targetY();
-    if (hasAttribute(SVGNames::targetXAttr) && (targetXValue < 0 || targetXValue >= orderXValue))
+    if (!isValidTargetXOffset())
         return nullptr;
 
+    if (!isValidTargetYOffset())
+        return nullptr;
+
+    int targetXValue = targetX();
     // The spec says the default value is: targetX = floor ( orderX / 2 ))
     if (!hasAttribute(SVGNames::targetXAttr))
         targetXValue = static_cast<int>(floorf(orderXValue / 2));
-    if (hasAttribute(SVGNames::targetYAttr) && (targetYValue < 0 || targetYValue >= orderYValue))
-        return nullptr;
 
+    int targetYValue = targetY();
     // The spec says the default value is: targetY = floor ( orderY / 2 ))
     if (!hasAttribute(SVGNames::targetYAttr))
         targetYValue = static_cast<int>(floorf(orderYValue / 2));
