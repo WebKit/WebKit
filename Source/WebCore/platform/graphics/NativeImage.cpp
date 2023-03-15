@@ -41,12 +41,19 @@ NativeImage::NativeImage(PlatformImagePtr&& platformImage, RenderingResourceIden
     : m_platformImage(WTFMove(platformImage))
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
 {
+    ASSERT(m_platformImage);
 }
 
 NativeImage::~NativeImage()
 {
     for (auto observer : m_observers)
         observer->releaseNativeImage(m_renderingResourceIdentifier);
+}
+
+void NativeImage::setPlatformImage(PlatformImagePtr&& platformImage)
+{
+    ASSERT(platformImage);
+    m_platformImage = WTFMove(platformImage);
 }
 
 } // namespace WebCore

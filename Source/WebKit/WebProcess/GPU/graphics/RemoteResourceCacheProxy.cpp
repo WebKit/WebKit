@@ -118,7 +118,13 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (!handle)
         return;
 
+    auto platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
+    if (!platformImage)
+        return;
+
+    image.setPlatformImage(WTFMove(platformImage));
     handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+
     m_nativeImages.add(image.renderingResourceIdentifier(), image);
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()

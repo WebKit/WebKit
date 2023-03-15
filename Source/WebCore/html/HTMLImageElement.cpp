@@ -706,12 +706,15 @@ void HTMLImageElement::setDecoding(AtomString&& decodingMode)
 String HTMLImageElement::decoding() const
 {
     switch (decodingMode()) {
+    case DecodingMode::Auto:
+        break;
+    case DecodingMode::SynchronousThumbnail:
+        ASSERT_NOT_REACHED();
+        break;
     case DecodingMode::Synchronous:
         return "sync"_s;
     case DecodingMode::Asynchronous:
         return "async"_s;
-    case DecodingMode::Auto:
-        break;
     }
     return autoAtom();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,12 +108,12 @@ bool ImageFrame::hasNativeImage(const std::optional<SubsamplingLevel>& subsampli
 
 bool ImageFrame::hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& subsamplingLevel) const
 {
-    return hasNativeImage(subsamplingLevel) && (m_decodingOptions.isSynchronous() || m_decodingOptions.hasFullSize());
+    return hasNativeImage(subsamplingLevel) && m_decodingOptions.hasFullSize();
 }
 
 bool ImageFrame::hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) const
 {
-    return hasNativeImage(subsamplingLevel) && m_decodingOptions.isAsynchronousCompatibleWith(decodingOptions);
+    return hasNativeImage(subsamplingLevel) && m_decodingOptions.isCompatibleWith(decodingOptions);
 }
 
 Color ImageFrame::singlePixelSolidColor() const

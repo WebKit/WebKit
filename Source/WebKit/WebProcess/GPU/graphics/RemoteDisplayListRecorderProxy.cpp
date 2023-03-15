@@ -80,6 +80,18 @@ RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
     return m_imageBuffer ? m_imageBuffer->renderingMode() : RenderingMode::Unaccelerated;
 }
 
+DecodingMode RemoteDisplayListRecorderProxy::preferredImageDecodingMode() const
+{
+    if (!m_imageBuffer)
+        return DecodingMode::Synchronous;
+
+    auto renderingPurpose = m_imageBuffer->renderingPurpose();
+    if (renderingPurpose == RenderingPurpose::DOM || renderingPurpose == RenderingPurpose::LayerBacking)
+        return DecodingMode::SynchronousThumbnail;
+
+    return DecodingMode::Synchronous;
+}
+
 void RemoteDisplayListRecorderProxy::recordSave()
 {
     send(Messages::RemoteDisplayListRecorder::Save());
