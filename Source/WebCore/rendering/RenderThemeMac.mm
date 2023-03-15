@@ -1621,7 +1621,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     if (validProgress && progress)
         paintAttachmentProgress(attachment, context, layout, progress);
 
-    if (usePlaceholder)
+    if (usePlaceholder && !element.isImageOnly())
         paintAttachmentPlaceholderBorder(attachment, context, layout);
 
     return true;

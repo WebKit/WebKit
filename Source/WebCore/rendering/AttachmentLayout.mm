@@ -40,42 +40,44 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 
-const CGFloat attachmentIconSize = 48;
-const CGFloat attachmentIconBackgroundPadding = 6;
-const CGFloat attachmentIconBackgroundSize = attachmentIconSize + attachmentIconBackgroundPadding;
-const CGFloat attachmentIconSelectionBorderThickness = 1;
-const CGFloat attachmentIconBackgroundRadius = 3;
-const CGFloat attachmentIconToTitleMargin = 2;
+constexpr CGFloat attachmentIconSize = 48;
+constexpr CGFloat attachmentIconBackgroundPadding = 6;
+constexpr CGFloat attachmentIconBackgroundSize = attachmentIconSize + attachmentIconBackgroundPadding;
+constexpr CGFloat attachmentIconSelectionBorderThickness = 1;
+constexpr CGFloat attachmentIconBackgroundRadius = 3;
+constexpr CGFloat attachmentIconToTitleMargin = 2;
+
+constexpr CGFloat attachmentImageOnlyIconSize = 52;
 
 constexpr auto attachmentIconBackgroundColor = Color::black.colorWithAlphaByte(30);
 constexpr auto attachmentIconBorderColor = Color::white.colorWithAlphaByte(125);
 
-const CGFloat attachmentTitleFontSize = 12;
-const CGFloat attachmentTitleBackgroundRadius = 3;
-const CGFloat attachmentTitleBackgroundPadding = 3;
-const CGFloat attachmentTitleMaximumWidth = 100 - (attachmentTitleBackgroundPadding * 2);
-const CFIndex attachmentTitleMaximumLineCount = 2;
+constexpr CGFloat attachmentTitleFontSize = 12;
+constexpr CGFloat attachmentTitleBackgroundRadius = 3;
+constexpr CGFloat attachmentTitleBackgroundPadding = 3;
+constexpr CGFloat attachmentTitleMaximumWidth = 100 - (attachmentTitleBackgroundPadding * 2);
+constexpr CFIndex attachmentTitleMaximumLineCount = 2;
 
 constexpr auto attachmentTitleInactiveBackgroundColor = SRGBA<uint8_t> { 204, 204, 204 };
 constexpr auto attachmentTitleInactiveTextColor = SRGBA<uint8_t> { 100, 100, 100 };
 
-const CGFloat attachmentSubtitleFontSize = 10;
-const int attachmentSubtitleWidthIncrement = 10;
+constexpr CGFloat attachmentSubtitleFontSize = 10;
+constexpr int attachmentSubtitleWidthIncrement = 10;
 constexpr auto attachmentSubtitleTextColor = SRGBA<uint8_t> { 82, 145, 214 };
 
-const CGFloat attachmentProgressBarWidth = 30;
-const CGFloat attachmentProgressBarHeight = 5;
-const CGFloat attachmentProgressBarOffset = -9;
-const CGFloat attachmentProgressBarBorderWidth = 1;
+constexpr CGFloat attachmentProgressBarWidth = 30;
+constexpr CGFloat attachmentProgressBarHeight = 5;
+constexpr CGFloat attachmentProgressBarOffset = -9;
+constexpr CGFloat attachmentProgressBarBorderWidth = 1;
 constexpr auto attachmentProgressBarBackgroundColor = Color::black.colorWithAlphaByte(89);
 constexpr auto attachmentProgressBarFillColor = Color::white;
 constexpr auto attachmentProgressBarBorderColor = Color::black.colorWithAlphaByte(128);
 
-const CGFloat attachmentPlaceholderBorderRadius = 5;
+constexpr CGFloat attachmentPlaceholderBorderRadius = 5;
 constexpr auto attachmentPlaceholderBorderColor = Color::black.colorWithAlphaByte(56);
-const CGFloat attachmentPlaceholderBorderWidth = 2;
-const CGFloat attachmentPlaceholderBorderDashLength = 6;
-const CGFloat attachmentMargin = 3;
+constexpr CGFloat attachmentPlaceholderBorderWidth = 2;
+constexpr CGFloat attachmentPlaceholderBorderDashLength = 6;
+constexpr CGFloat attachmentMargin = 3;
 
 static Color titleTextColorForAttachment(const RenderAttachment& attachment, AttachmentLayoutStyle style)
 {
@@ -163,6 +165,13 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
 AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, AttachmentLayoutStyle layoutStyle)
     : style(layoutStyle)
 {
+    if (attachment.attachmentElement().isImageOnly()) {
+        iconRect = FloatRect(0, 0, attachmentImageOnlyIconSize, attachmentImageOnlyIconSize);
+        iconBackgroundRect = iconRect;
+        attachmentRect = encloseRectToDevicePixels(iconBackgroundRect, attachment.document().deviceScaleFactor());
+        return;
+    }
+
     excludeTypographicLeading = false;
     layOutTitle(attachment);
     layOutSubtitle(attachment);
@@ -189,22 +198,22 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
 
 #if PLATFORM(IOS_FAMILY)
 
-const CGSize attachmentSize = { 160, 119 };
+constexpr CGSize attachmentSize = { 160, 119 };
 
-const CGFloat attachmentBorderRadius = 16;
+constexpr CGFloat attachmentBorderRadius = 16;
 constexpr auto attachmentBorderColor = SRGBA<uint8_t> { 204, 204, 204 };
 static CGFloat attachmentBorderThickness = 1;
 
 constexpr auto attachmentProgressColor = SRGBA<uint8_t> { 222, 222, 222 };
-const CGFloat attachmentProgressBorderThickness = 3;
+constexpr CGFloat attachmentProgressBorderThickness = 3;
 
-const CGFloat attachmentProgressSize = 36;
-const CGFloat attachmentIconSize = 48;
+constexpr CGFloat attachmentProgressSize = 36;
+constexpr CGFloat attachmentIconSize = 48;
 
-const CGFloat attachmentItemMargin = 8;
+constexpr CGFloat attachmentItemMargin = 8;
 
-const CGFloat attachmentWrappingTextMaximumWidth = 140;
-const CFIndex attachmentWrappingTextMaximumLineCount = 2;
+constexpr CGFloat attachmentWrappingTextMaximumWidth = 140;
+constexpr CFIndex attachmentWrappingTextMaximumLineCount = 2;
 
 static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& progress)
 {

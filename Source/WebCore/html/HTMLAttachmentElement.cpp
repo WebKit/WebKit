@@ -102,9 +102,27 @@ static const AtomString& attachmentContainerIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentPreviewAreaIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-preview-area"_s);
+    return identifier;
+}
+
 static const AtomString& attachmentPreviewIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-preview"_s);
+    return identifier;
+}
+
+static const AtomString& attachmentInformationAreaIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-information-area"_s);
+    return identifier;
+}
+
+static const AtomString& attachmentInformationBlockIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-information-block"_s);
     return identifier;
 }
 
@@ -126,9 +144,21 @@ static const AtomString& attachmentSubtitleIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentSaveAreaIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-area"_s);
+    return identifier;
+}
+
 static const AtomString& attachmentSaveButtonIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-button"_s);
+    return identifier;
+}
+
+static const AtomString& attachmentSaveIconIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-icon"_s);
     return identifier;
 }
 
@@ -149,7 +179,7 @@ static QualifiedName saveAttr()
 }
 
 template <typename ElementType>
-static Ref<ElementType> createContainedElement(HTMLElement& container, const AtomString& id, String textContent)
+static Ref<ElementType> createContainedElement(HTMLElement& container, const AtomString& id, String&& textContent = { })
 {
     Ref<ElementType> element = ElementType::create(container.document());
     element->setIdAttribute(id);
@@ -174,6 +204,8 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_containerElement->setIdAttribute(attachmentContainerIdentifier());
     root.appendChild(*m_containerElement);
 
+    auto previewArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentPreviewAreaIdentifier());
+
     // FIXME: This is using the same HTMLAttachmentElement type, but with different behavior (thanks to m_implementation), to fetch and show
     // the appropriate image (thumbnail, icon, etc.). In the longer term, this functionality should be folded into the Implementation::Modern
     // code, and the old Legacy/ImageOnly code should be removed; this element could be an image (with a different data member name). See rdar://105252742.
@@ -185,13 +217,17 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_innerLegacyAttachment->m_icon = WTFMove(m_icon);
     m_innerLegacyAttachment->m_iconSize = m_iconSize;
     m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
-    m_containerElement->appendChild(*m_innerLegacyAttachment);
+    previewArea->appendChild(*m_innerLegacyAttachment);
 
-    m_actionTextElement = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentActionIdentifier(), attachmentActionForDisplay());
+    auto informationArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentInformationAreaIdentifier());
 
-    m_titleElement = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentTitleIdentifier(), attachmentTitleForDisplay());
+    m_informationBlock = createContainedElement<HTMLDivElement>(informationArea, attachmentInformationBlockIdentifier());
 
-    m_subtitleElement = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentSubtitleIdentifier(), attachmentSubtitleForDisplay());
+    m_actionTextElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentActionIdentifier(), String { attachmentActionForDisplay() });
+
+    m_titleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentTitleIdentifier(), String { attachmentTitleForDisplay() });
+
+    m_subtitleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() });
 
     updateSaveButton(!attributeWithoutSynchronization(saveAttr()).isNull());
 }
@@ -234,20 +270,22 @@ private:
 
 void HTMLAttachmentElement::updateSaveButton(bool show)
 {
-    if (!m_containerElement)
-        return;
-
     if (!show) {
         if (m_saveButton) {
-            m_containerElement->removeChild(*m_saveButton);
+            m_informationBlock->removeChild(*m_saveArea);
             m_saveButton = nullptr;
+            m_saveArea = nullptr;
         }
         return;
     }
 
-    if (!m_saveButton) {
-        m_saveButton = createContainedElement<HTMLButtonElement>(*m_containerElement, attachmentSaveButtonIdentifier(), String { });
+    if (!m_saveButton && m_titleElement) {
+        m_saveArea = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSaveAreaIdentifier());
+
+        m_saveButton = createContainedElement<HTMLButtonElement>(*m_saveArea, attachmentSaveButtonIdentifier());
         m_saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this), { });
+
+        createContainedElement<HTMLDivElement>(*m_saveButton, attachmentSaveIconIdentifier());
     }
 }
 
