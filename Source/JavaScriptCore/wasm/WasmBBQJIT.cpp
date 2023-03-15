@@ -379,6 +379,7 @@ public:
         case TypeKind::Externref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
             return sizeof(EncodedJSValue);
         case TypeKind::Void:
             return 0;
@@ -1367,6 +1368,7 @@ public:
         case TypeKind::Arrayref:
         case TypeKind::Funcref:
         case TypeKind::Externref:
+        case TypeKind::Eqref:
             result = Value::fromRef(type.kind, static_cast<EncodedJSValue>(value));
             LOG_INSTRUCTION("RefConst", makeString(type.kind), RESULT(result));
             break;
@@ -1651,6 +1653,7 @@ public:
             case TypeKind::Externref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
                 m_jit.load64(Address(wasmScratchGPR), resultLocation.asGPR());
                 break;
             case TypeKind::Void:
@@ -1763,6 +1766,7 @@ public:
             case TypeKind::Externref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
                 m_jit.store64(valueLocation.asGPR(), Address(wasmScratchGPR));
                 break;
             case TypeKind::Void:
@@ -5960,6 +5964,11 @@ public:
         return { };
     }
 
+    PartialResult WARN_UNUSED_RETURN addRefEq(Value ref0, Value ref1, Value& result)
+    {
+        return addI64Eq(ref0, ref1, result);
+    }
+
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, Value& result)
     {
         // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
@@ -6147,6 +6156,7 @@ public:
             case TypeKind::RefNull:
             case TypeKind::Structref:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
                 clear(ClearMode::JSNull, type, m_locals[i]);
                 break;
             default:
@@ -6249,6 +6259,7 @@ public:
         case TypeKind::Arrayref:
         case TypeKind::Funcref:
         case TypeKind::Externref:
+        case TypeKind::Eqref:
             return B3::Type(is32Bit() ? B3::Int32 : B3::Int64);
         case TypeKind::F32:
             return B3::Type(B3::Float);
@@ -6491,6 +6502,7 @@ public:
                 case TypeKind::Structref:
                 case TypeKind::Funcref:
                 case TypeKind::Externref:
+                case TypeKind::Eqref:
                 case TypeKind::Rec:
                 case TypeKind::Sub:
                 case TypeKind::Array:
@@ -7126,6 +7138,7 @@ public:
         case TypeKind::Structref:
         case TypeKind::Funcref:
         case TypeKind::Externref:
+        case TypeKind::Eqref:
         case TypeKind::Rec:
         case TypeKind::Sub:
         case TypeKind::Array:
@@ -8426,6 +8439,7 @@ private:
         case TypeKind::Structref:
         case TypeKind::RefNull:
         case TypeKind::Externref:
+        case TypeKind::Eqref:
             m_jit.store64(TrustedImm64(constant.asRef()), loc.asAddress());
             break;
         case TypeKind::I64:
@@ -8464,6 +8478,7 @@ private:
         case TypeKind::Structref:
         case TypeKind::RefNull:
         case TypeKind::Externref:
+        case TypeKind::Eqref:
             m_jit.move(TrustedImm64(constant.asRef()), loc.asGPR());
             break;
         case TypeKind::F32:
@@ -8503,6 +8518,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
+        case TypeKind::Eqref:
             m_jit.store64(src.asGPR(), dst.asAddress());
             break;
         case TypeKind::V128:
@@ -8549,6 +8565,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Structref:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
             m_jit.transfer64(src.asAddress(), dst.asAddress());
             break;
         case TypeKind::V128: {
@@ -8587,6 +8604,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
+        case TypeKind::Eqref:
             m_jit.move(src.asGPR(), dst.asGPR());
             break;
         case TypeKind::F32:
@@ -8634,6 +8652,7 @@ private:
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
+        case TypeKind::Eqref:
             m_jit.load64(src.asAddress(), dst.asGPR());
             break;
         case TypeKind::V128:

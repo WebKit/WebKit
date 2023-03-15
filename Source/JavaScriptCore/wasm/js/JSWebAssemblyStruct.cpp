@@ -148,6 +148,7 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
     case TypeKind::Void:
     case TypeKind::Sub:
     case TypeKind::Rec:
+    case TypeKind::Eqref:
     case TypeKind::I31ref: {
         break;
     }

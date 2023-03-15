@@ -366,6 +366,7 @@ struct AirIRGeneratorBase {
     //                               addRefIsNull (in derived classes)
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -1236,6 +1237,12 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefAsNonNull(ExpressionType
     result = self().tmpForType(Type { TypeKind::Ref, reference.type().index });
     self().emitMoveWithoutTypeCheck(reference, result);
     return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addRefEq(ExpressionType ref0, ExpressionType ref1, ExpressionType& result) -> PartialResult
+{
+    return addI64Eq(ref0, ref1, result);
 }
 
 template <typename Derived, typename ExpressionType>
@@ -2727,7 +2734,8 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind cas
     switch (static_cast<TypeKind>(heapType)) {
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
-        // Casts to funcref/externref cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+    case Wasm::TypeKind::Eqref:
+        // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
         break;
     case Wasm::TypeKind::I31ref:
         emitCheckOrBranchForCast(castKind, [&]() {

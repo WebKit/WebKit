@@ -1986,11 +1986,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             case TypeKind::Externref:
                 WASM_VALIDATOR_FAIL_IF(!isExternref(ref.type()), opName, " to type ", ref.type(), " expected an externref");
                 break;
+            case TypeKind::Eqref:
             case TypeKind::I31ref:
             case TypeKind::Arrayref:
             case TypeKind::Structref:
-                // FIXME: once anyref is added this can allow any subtype of that.
-                WASM_VALIDATOR_FAIL_IF(isExternref(ref.type()) || isSubtype(ref.type(), funcrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), eqrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
                 break;
             default:
                 ASSERT(heapType >= 0);
@@ -2121,6 +2121,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
 
         m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+        return { };
+    }
+
+    case RefEq: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+
+        TypedExpression ref0;
+        TypedExpression ref1;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref0, "ref.eq");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref1, "ref.eq");
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(ref0.type(), eqrefType()), "ref.eq ref0 to type ", ref0.type().kind, " expected ", TypeKind::Eqref);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(ref1.type(), eqrefType()), "ref.eq ref1 to type ", ref1.type().kind, " expected ", TypeKind::Eqref);
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addRefEq(ref0, ref1, result));
+
+        m_expressionStack.constructAndAppend(Types::I32, result);
         return { };
     }
 
@@ -3056,7 +3073,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    case RefAsNonNull: {
+    case RefAsNonNull:
+    case RefEq: {
         return { };
     }
 

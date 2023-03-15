@@ -299,6 +299,7 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     case TypeKind::Void:
     case TypeKind::Sub:
     case TypeKind::Rec:
+    case TypeKind::Eqref:
     case TypeKind::I31ref: {
         break;
     }

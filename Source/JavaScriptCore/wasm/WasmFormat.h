@@ -127,6 +127,13 @@ inline bool isFuncref(Type type)
     return type.kind == TypeKind::Funcref;
 }
 
+inline bool isEqref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Eqref);
+}
+
 inline bool isI31ref(Type type)
 {
     if (!Options::useWebAssemblyGC())
@@ -160,6 +167,12 @@ inline Type externrefType()
     if (Options::useWebAssemblyTypedFunctionReferences())
         return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
     return Types::Externref;
+}
+
+inline Type eqrefType()
+{
+    ASSERT(Options::useWebAssemblyGC());
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Eqref) };
 }
 
 inline bool isRefWithTypeIndex(Type type)
@@ -220,10 +233,10 @@ inline bool isSubtype(Type sub, Type parent)
         return false;
 
     if (isRefWithTypeIndex(sub)) {
-        if (TypeInformation::get(sub.index).expand().is<ArrayType>() && isArrayref(parent))
+        if (TypeInformation::get(sub.index).expand().is<ArrayType>() && (isArrayref(parent) || isEqref(parent)))
             return true;
 
-        if (TypeInformation::get(sub.index).expand().is<StructType>() && isStructref(parent))
+        if (TypeInformation::get(sub.index).expand().is<StructType>() && (isStructref(parent) || isEqref(parent)))
             return true;
 
         if (TypeInformation::get(sub.index).expand().is<FunctionSignature>() && isFuncref(parent))
@@ -232,6 +245,9 @@ inline bool isSubtype(Type sub, Type parent)
         if (isRefWithTypeIndex(parent))
             return isSubtypeIndex(sub.index, parent.index);
     }
+
+    if (isEqref(parent) && (isI31ref(sub) || isStructref(sub) || isArrayref(sub)))
+        return true;
 
     if (sub.isRef() && parent.isRefNull() && sub.index == parent.index)
         return true;
@@ -257,6 +273,7 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     case TypeKind::I31ref:
     case TypeKind::Arrayref:
     case TypeKind::Structref:
+    case TypeKind::Eqref:
         return Options::useWebAssemblyGC();
     default:
         break;

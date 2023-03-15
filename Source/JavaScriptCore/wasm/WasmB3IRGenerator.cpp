@@ -553,6 +553,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -1425,6 +1426,11 @@ auto B3IRGenerator::addRefAsNonNull(ExpressionType reference, ExpressionType& re
         });
     }
     return { };
+}
+
+auto B3IRGenerator::addRefEq(ExpressionType ref0, ExpressionType ref1, ExpressionType& result) -> PartialResult
+{
+    return addI64Eq(ref0, ref1, result);
 }
 
 auto B3IRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
@@ -3148,7 +3154,8 @@ void B3IRGenerator::emitRefTestOrCast(CastKind castKind, ExpressionType referenc
     switch (static_cast<TypeKind>(heapType)) {
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
-        // Casts to funcref/externref cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+    case Wasm::TypeKind::Eqref:
+        // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
         break;
     case Wasm::TypeKind::I31ref: {
         emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, Below, origin(), get(reference), constant(Int64, JSValue::NumberTag)), castFailure, falseBlock);
