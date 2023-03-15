@@ -299,40 +299,44 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 {
     if (!is<BitmapImage>(image))
         return DecodingMode::Synchronous;
-    
+
+    auto preferredDecodingMode = paintInfo.context().preferredImageDecodingMode();
+
     const BitmapImage& bitmapImage = downcast<BitmapImage>(image);
     if (bitmapImage.canAnimate()) {
         // The DecodingMode for the current frame has to be Synchronous. The DecodingMode
         // for the next frame will be calculated in BitmapImage::internalStartAnimation().
-        return DecodingMode::Synchronous;
+        return preferredDecodingMode;
     }
 
     // Large image case.
 #if PLATFORM(IOS_FAMILY)
     if (IOSApplication::isIBooksStorytime())
-        return DecodingMode::Synchronous;
+        return preferredDecodingMode;
 #endif
     if (is<HTMLImageElement>(element())) {
         auto decodingMode = downcast<HTMLImageElement>(*element()).decodingMode();
-        if (decodingMode != DecodingMode::Auto)
-            return decodingMode;
+        if (decodingMode == DecodingMode::Asynchronous)
+            return DecodingMode::Asynchronous;
+        if (decodingMode == DecodingMode::Synchronous)
+            return preferredDecodingMode;
     }
     if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
     if (document().isImageDocument())
-        return DecodingMode::Synchronous;
+        return preferredDecodingMode;
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
-        return DecodingMode::Synchronous;
+        return preferredDecodingMode;
     if (!settings().largeImageAsyncDecodingEnabled())
-        return DecodingMode::Synchronous;
+        return preferredDecodingMode;
     if (!bitmapImage.canUseAsyncDecodingForLargeImages())
-        return DecodingMode::Synchronous;
+        return preferredDecodingMode;
     if (paintInfo.paintBehavior.contains(PaintBehavior::TileFirstPaint))
         return DecodingMode::Asynchronous;
     // FIXME: isVisibleInViewport() is not cheap. Find a way to make this condition faster.
     if (!isVisibleInViewport())
         return DecodingMode::Asynchronous;
-    return DecodingMode::Synchronous;
+    return preferredDecodingMode;
 }
 
 LayoutSize RenderBoxModelObject::relativePositionOffset() const

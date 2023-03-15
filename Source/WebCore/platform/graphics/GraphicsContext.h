@@ -259,6 +259,8 @@ public:
 
     virtual bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) { return true; }
 
+    virtual DecodingMode preferredImageDecodingMode() const { return DecodingMode::Synchronous; }
+
     WEBCORE_EXPORT virtual void drawSystemImage(SystemImage&, const FloatRect&);
 
     WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = { ImageOrientation::Orientation::FromImage });

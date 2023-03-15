@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -162,7 +162,7 @@ private:
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
     RefPtr<NativeImage> frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
-    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default);
+    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy

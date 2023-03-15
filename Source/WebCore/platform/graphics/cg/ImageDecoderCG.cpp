@@ -89,7 +89,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceMetadataOptions()
     return options;
 }
     
-static RetainPtr<CFMutableDictionaryRef> createImageSourceAsyncOptions()
+static RetainPtr<CFMutableDictionaryRef> createImageSourceThumbnailOptions()
 {
     RetainPtr<CFMutableDictionaryRef> options = createImageSourceOptions();
     CFDictionarySetValue(options.get(), kCGImageSourceShouldCacheImmediately, kCFBooleanTrue);
@@ -108,7 +108,7 @@ static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMut
 
 static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, const IntSize& sizeForDrawing)
 {
-    unsigned maxDimension = DecodingOptions::maxDimension(sizeForDrawing);
+    unsigned maxDimension = sizeForDrawing.maxDimension();
     RetainPtr<CFNumberRef> maxDimensionNumber = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &maxDimension));
     CFDictionarySetValue(options.get(), kCGImageSourceThumbnailMaxPixelSize, maxDimensionNumber.get());
     return WTFMove(options);
@@ -131,9 +131,9 @@ static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplin
     return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel);
 }
 
-static RetainPtr<CFDictionaryRef> imageSourceAsyncOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
+static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
-    static const auto options = createImageSourceAsyncOptions().leakRef();
+    static const auto options = createImageSourceThumbnailOptions().leakRef();
     return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel, sizeForDrawing);
 }
 
@@ -516,24 +516,24 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
     RetainPtr<CFDictionaryRef> options;
     RetainPtr<CGImageRef> image;
 
-    auto size = frameSizeAtIndex(index, SubsamplingLevel::Default);
+    ASSERT(decodingOptions.decodingMode() != DecodingMode::Auto);
 
-    if (!decodingOptions.isSynchronous()) {
-        // Don't consider the subsamplingLevel when comparing the image native size with sizeForDrawing.
-        
-        if (decodingOptions.hasSizeForDrawing()) {
-            // See which size is smaller: the image native size or the sizeForDrawing.
-            std::optional<IntSize> sizeForDrawing = decodingOptions.sizeForDrawing();
-            if (sizeForDrawing.value().unclampedArea() < size.unclampedArea())
-                size = sizeForDrawing.value();
-        }
-        
-        options = imageSourceAsyncOptions(subsamplingLevel, size);
-        image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
-    } else {
+    if (decodingOptions.decodingMode() == DecodingMode::Synchronous && !decodingOptions.sizeForDrawing()) {
         // Decode an image synchronously for its native size.
         options = imageSourceOptions(subsamplingLevel);
         image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
+    } else {
+        auto size = frameSizeAtIndex(index, SubsamplingLevel::Default);
+
+        // Don't consider the subsamplingLevel when comparing the image native size with sizeForDrawing.
+        if (auto sizeForDrawing = decodingOptions.sizeForDrawing()) {
+            // See which size is smaller: the image native size or the decodingSize.
+            if (sizeForDrawing->unclampedArea() < size.unclampedArea())
+                size = *sizeForDrawing;
+        }
+
+        options = imageSourceThumbnailOptions(subsamplingLevel, size);
+        image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
     }
     
 #if PLATFORM(IOS_FAMILY)

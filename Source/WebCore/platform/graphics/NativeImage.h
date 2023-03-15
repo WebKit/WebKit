@@ -57,7 +57,9 @@ public:
 
     WEBCORE_EXPORT ~NativeImage();
 
+    WEBCORE_EXPORT void setPlatformImage(PlatformImagePtr&&);
     const PlatformImagePtr& platformImage() const { return m_platformImage; }
+
     RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
     WEBCORE_EXPORT IntSize size() const;

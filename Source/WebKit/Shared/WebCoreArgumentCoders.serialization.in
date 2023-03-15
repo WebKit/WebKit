@@ -3525,6 +3525,7 @@ enum class WebCore::RTCPriorityType : uint8_t {
 
 [AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::DecodingMode : uint8_t {
     Auto,
+    SynchronousThumbnail,
     Synchronous,
     Asynchronous
 };
