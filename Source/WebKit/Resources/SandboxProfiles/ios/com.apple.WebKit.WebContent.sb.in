@@ -306,7 +306,7 @@
 
 #if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
     (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
-        (allow mach-lookup (global-name "com.apple.CARenderServer")))
+        (allow mach-lookup (with report) (with telemetry-backtrace) (global-name "com.apple.CARenderServer")))
 #endif
 
     ; UIKit-required IOKit nodes.
