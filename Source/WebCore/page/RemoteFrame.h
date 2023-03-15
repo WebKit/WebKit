@@ -66,7 +66,7 @@ private:
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
 
-    AbstractFrameView* virtualView() const final;
+    FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;
 
     Ref<RemoteDOMWindow> m_window;

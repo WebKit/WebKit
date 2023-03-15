@@ -1235,7 +1235,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/cache/KeepaliveRequestTracker.h
     loader/cache/MemoryCache.h
 
-    page/AbstractFrameView.h
     page/ActivityState.h
     page/ActivityStateChangeObserver.h
     page/AdjustViewSizeOrNot.h
@@ -1282,6 +1281,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameIdentifier.h
     page/FrameSnapshotting.h
     page/FrameTree.h
+    page/FrameView.h
     page/FrameViewLayoutContext.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h

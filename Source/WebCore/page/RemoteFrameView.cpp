@@ -41,7 +41,7 @@ void RemoteFrameView::setFrameRect(const IntRect& newRect)
     IntRect oldRect = frameRect();
     if (newRect.size() != oldRect.size())
         m_frame->client().sizeDidChange(newRect.size());
-    AbstractFrameView::setFrameRect(newRect);
+    FrameView::setFrameRect(newRect);
 }
 
 // FIXME: Implement all the stubs below.

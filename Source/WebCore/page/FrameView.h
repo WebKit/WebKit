@@ -29,10 +29,10 @@
 
 namespace WebCore {
 
-class AbstractFrameView : public ScrollView {
+class FrameView : public ScrollView {
 public:
-    enum class FrameViewType : bool { Local, Remote };
-    virtual FrameViewType viewType() const = 0;
+    enum class Type : bool { Local, Remote };
+    virtual Type viewType() const = 0;
 };
 
 }

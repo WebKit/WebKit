@@ -914,7 +914,7 @@ DOMWindow* LocalFrame::virtualWindow() const
     return window();
 }
 
-AbstractFrameView* LocalFrame::virtualView() const
+FrameView* LocalFrame::virtualView() const
 {
     return m_view.get();
 }

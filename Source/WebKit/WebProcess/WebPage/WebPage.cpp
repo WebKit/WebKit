@@ -6229,7 +6229,7 @@ Frame* WebPage::mainFrame() const
     return m_page ? &m_page->mainFrame() : nullptr;
 }
 
-// FIXME: This should return an AbstractFrameView.
+// FIXME: This should return an FrameView.
 LocalFrameView* WebPage::mainFrameView() const
 {
     if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))

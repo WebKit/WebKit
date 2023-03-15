@@ -83,7 +83,7 @@ bool RemoteFrame::preventsParentFromBeingComplete() const
     return m_preventsParentFromBeingComplete;
 }
 
-AbstractFrameView* RemoteFrame::virtualView() const
+FrameView* RemoteFrame::virtualView() const
 {
     return m_view.get();
 }

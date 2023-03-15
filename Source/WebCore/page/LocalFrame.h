@@ -300,7 +300,7 @@ private:
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
 
-    AbstractFrameView* virtualView() const final;
+    FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;
 
     HashSet<FrameDestructionObserver*> m_destructionObservers;

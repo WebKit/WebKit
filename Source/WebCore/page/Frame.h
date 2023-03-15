@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-class AbstractFrameView;
 class DOMWindow;
+class FrameView;
 class HTMLFrameOwnerElement;
 class Page;
 class Settings;
@@ -71,7 +71,7 @@ protected:
 
 private:
     virtual DOMWindow* virtualWindow() const = 0;
-    virtual AbstractFrameView* virtualView() const = 0;
+    virtual FrameView* virtualView() const = 0;
 
     WeakPtr<Page> m_page;
     const FrameIdentifier m_frameID;

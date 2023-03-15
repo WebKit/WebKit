@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "AbstractFrameView.h"
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
+#include "FrameView.h"
 #include "FrameViewLayoutContext.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
@@ -88,7 +88,7 @@ class View;
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
-class LocalFrameView final : public AbstractFrameView {
+class LocalFrameView final : public FrameView {
     WTF_MAKE_ISO_ALLOCATED(LocalFrameView);
 public:
     friend class RenderView;
@@ -104,7 +104,7 @@ public:
     
     WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
-    FrameViewType viewType() const final { return FrameViewType::Local; }
+    Type viewType() const final { return Type::Local; }
 
     // FIXME: This should return Frame. If it were a RemoteFrame, we would have a RemoteFrameView.
     WEBCORE_EXPORT Frame& frame() const;
@@ -1073,6 +1073,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrameView&);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalFrameView)
-static bool isType(const WebCore::AbstractFrameView& view) { return view.viewType() == WebCore::AbstractFrameView::FrameViewType::Local; }
+static bool isType(const WebCore::FrameView& view) { return view.viewType() == WebCore::FrameView::Type::Local; }
 static bool isType(const WebCore::Widget& widget) { return widget.isFrameView(); }
 SPECIALIZE_TYPE_TRAITS_END()
