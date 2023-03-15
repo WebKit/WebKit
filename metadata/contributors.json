@@ -6940,6 +6940,16 @@
       ]
    },
    {
+      "emails" : [
+         "tjc@igalia.com"
+      ],
+      "github" : "catamorphism",
+      "name" : "Tim Chevalier",
+      "nicks" : [
+         "tim"
+      ]
+   },
+   {
       "aliases" : [
          "Timothy Horton"
       ],
