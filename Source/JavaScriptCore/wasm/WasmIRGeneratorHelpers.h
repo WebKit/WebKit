@@ -67,6 +67,7 @@ struct PatchpointExceptionHandle {
             values[i] = OSREntryValue(params[i + paramsOffset], params.value()->child(i + childrenOffset)->type());
 
         generator->addStackMap(m_callSiteIndex, WTFMove(values));
+        JIT_COMMENT(jit, "Store call site index ", m_callSiteIndex, " at throw or call site.");
         jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     }
 

@@ -48,6 +48,7 @@ namespace JSC {
 namespace Wasm {
 
 class MemoryInformation;
+class OptimizingJITCallee;
 
 struct CompilationContext {
     std::unique_ptr<CCallHelpers> jsEntrypointJIT;
@@ -59,7 +60,7 @@ struct CompilationContext {
     Vector<CCallHelpers::Label> catchEntrypoints;
 };
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext&, Callee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext&, OptimizingJITCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr);
 
 void computePCToCodeOriginMap(CompilationContext&, LinkBuffer&);
 

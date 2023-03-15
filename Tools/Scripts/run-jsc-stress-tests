@@ -1758,7 +1758,7 @@ def runWebAssembly
             run("wasm-bbq", "-m", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-b3", "-m", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *FTL_OPTIONS)
             run("wasm-simd", "-m", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
-            run("wasm-agressive-inline", "-m", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=3", *(FTL_OPTIONS + EAGER_OPTIONS))
+            run("wasm-agressive-inline", "-m", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
         end
     end
 end
@@ -1789,7 +1789,7 @@ def runWebAssemblyJetStream2
             run("wasm-bbq", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *FTL_OPTIONS)
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
-            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=3", *(FTL_OPTIONS + EAGER_OPTIONS))
+            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
         end
     end
 end
@@ -1818,7 +1818,7 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
             run("wasm-bbqb3", "--useWasmLLInt=true", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
-            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=3", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -1845,7 +1845,7 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
             run("wasm-bbqb3", "--useWasmLLInt=true", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
-            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=3", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -1880,7 +1880,7 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
             runHarnessTest("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
             runHarnessTest("wasm-bbqb3", "--useWasmLLInt=true", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *FTL_OPTIONS)
             runHarnessTest("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
-            runHarnessTest("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=3", *(FTL_OPTIONS + EAGER_OPTIONS))
+            runHarnessTest("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
         end
     end
 end
@@ -1904,7 +1904,7 @@ def runWebAssemblyEmscripten(mode)
             run("wasm-bbq", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", "--useSinglePassBBQJIT=false", *FTL_OPTIONS)
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
-            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=3", *(FTL_OPTIONS + EAGER_OPTIONS))
+            run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
         end
     end
 end

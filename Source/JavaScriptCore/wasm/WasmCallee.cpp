@@ -31,6 +31,7 @@
 #include "LLIntExceptions.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCallingConvention.h"
+#include "WasmModuleInformation.h"
 
 namespace JSC { namespace Wasm {
 
@@ -232,6 +233,43 @@ const WasmInstruction* LLIntCallee::outOfLineJumpTarget(const WasmInstruction* p
     int offset = bytecodeOffset(pc);
     int target = outOfLineJumpOffset(offset);
     return m_instructions->at(offset + target).ptr();
+}
+
+void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation& info, uint32_t functionIndex)
+{
+    if (!nameSections.size())
+        nameSections.append(info.nameSection);
+    // The inline frame list is stored in postorder. For example:
+    // A { B() C() D { E() } F() } -> B C E D F A
+#if ASSERT_ENABLED
+    ASSERT(firstInlineCSI <= lastInlineCSI);
+    for (unsigned i = 0; i + 1 < codeOrigins.size(); ++i)
+        ASSERT(codeOrigins[i].lastInlineCSI <= codeOrigins[i + 1].lastInlineCSI);
+    for (unsigned i = 0; i < codeOrigins.size(); ++i)
+        ASSERT(codeOrigins[i].lastInlineCSI <= lastInlineCSI);
+    ASSERT(nameSections.size() == 1);
+    ASSERT(nameSections[0].ptr() == info.nameSection.ptr());
+#endif
+    codeOrigins.append({ firstInlineCSI, lastInlineCSI, functionIndex, 0 });
+}
+
+IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& isInlined) const
+{
+    isInlined = false;
+    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), WasmCodeOrigin { 0, csi, 0, 0}, [&] (const auto& a, const auto& b) {
+        return b.lastInlineCSI - a.lastInlineCSI;
+    });
+    if (!iter || iter == codeOrigins.end())
+        iter = codeOrigins.begin();
+    while (iter != codeOrigins.end()) {
+        if (iter->firstInlineCSI <= csi && iter->lastInlineCSI >= csi && !(depth--)) {
+            isInlined = true;
+            return IndexOrName(iter->functionIndex, nameSections[iter->moduleIndex]->get(iter->functionIndex));
+        }
+        ++iter;
+    }
+
+    return indexOrName();
 }
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
