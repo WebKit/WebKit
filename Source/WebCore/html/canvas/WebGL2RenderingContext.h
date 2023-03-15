@@ -317,7 +317,7 @@ private:
 
     IntRect getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height);
 
-    RefPtr<WebGLTexture> validateTexImageBinding(const char*, TexImageFunctionID, GCGLenum) final;
+    RefPtr<WebGLTexture> validateTexImageBinding(TexImageFunctionID, GCGLenum) final;
 
     // Helper function to check texture 3D target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
