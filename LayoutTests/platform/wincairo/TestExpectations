@@ -1925,8 +1925,6 @@ webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-
 
 webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 
-webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
-
 fast/css/before-after-pseudo-element-case-insensitivity.html [ ImageOnlyFailure ]
 fast/dynamic/float-from-empty-line.html [ Failure ]
 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
@@ -2396,7 +2394,8 @@ http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
-webgl/conformance/extensions/khr-parallel-shader-compile.html [ Failure ]
+
+webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
@@ -2443,7 +2442,8 @@ webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 
 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
-js/date-timeClip-large-values.html [ Failure ]
+
+[ Debug ] js/date-timeClip-large-values.html [ Failure ]
 
 # Tests depend on the system timezone.
 storage/indexeddb/modern/date-basic-private.html [ Failure Pass ]
