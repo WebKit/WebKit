@@ -34,36 +34,26 @@
       href="https://aomedia.googlesource.com/"/>
   <repository type="tarball" name="ffmpeg" href="https://ffmpeg.org/releases/"/>
 
-  <meson id="orc" mesonargs="-Dgtk_doc=disabled">
-    <branch module="orc/orc-${version}.tar.xz" version="0.4.30"
-            repo="gstreamer"
-            hash="sha256:ba41b92146a5691cd102eb79c026757d39e9d3b81a65810d2946a1786a1c4972">
-      <patch file="orc-satisfy-fno-common-under-gcc10.patch" strip="1"/>
-    </branch>
-  </meson>
-
   <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1">
     <branch repo="aomedia.googlesource.com" module="aom" checkoutdir="aom" branch="master"
             revision="master" tag="cdb083e84a71d6d31163a4f64f18dc1328fd782c" />
   </cmake>
+
+  <autotools id="ffmpeg"
+             autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-static --enable-pic --disable-avdevice --disable-postproc --disable-swscale
+                               --disable-programs --disable-ffplay --disable-ffprobe --disable-ffmpeg --disable-encoder=flac --disable-protocols --disable-devices
+                               --disable-network --disable-hwaccels --disable-dxva2 --disable-vdpau --disable-filters --enable-filter=yadif --disable-doc
+                               --disable-d3d11va --disable-dxva2 --disable-audiotoolbox --disable-videotoolbox --disable-vaapi --disable-crystalhd --disable-mediacodec
+                               --disable-nvenc --disable-mmal --disable-omx --disable-omx-rpi --disable-cuda --disable-cuvid --disable-libmfx --disable-libnpp
+                               --disable-iconv --disable-jni --disable-v4l2_m2m --enable-optimizations">
+    <branch repo="ffmpeg" version="4.0.4" module="ffmpeg-${version}.tar.gz" hash="sha256:80bb685abfcdda7c9b6c9c5caf1d8dbb927858050d7377c2b8f3488c7e8a9b7f"/>
+  </autotools>
 
   <meson id="graphene" mesonargs="-Dsse2=false">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
     <branch module="ebassi/graphene.git"
-            repo="github.com" />
-  </meson>
-
-  <autotools id="libsrtp">
-    <branch repo="github-tarball" module="cisco/libsrtp/archive/v${version}.tar.gz" version="2.2.0"
-            checkoutdir="libsrtp-${version}">
-      <patch file="libsrtp-Fix-building-with-gcc-10.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <meson id="openh264" mesonargs="-Dtests=disabled">
-    <branch module="cisco/openh264.git" tag="v2.3.0"
             repo="github.com" />
   </meson>
 
@@ -109,16 +99,6 @@
     </branch>
   </meson>
 
-  <autotools id="ffmpeg"
-             autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-static --enable-pic --disable-avdevice --disable-postproc --disable-swscale
-                               --disable-programs --disable-ffplay --disable-ffprobe --disable-ffmpeg --disable-encoder=flac --disable-protocols --disable-devices
-                               --disable-network --disable-hwaccels --disable-dxva2 --disable-vdpau --disable-filters --enable-filter=yadif --disable-doc
-                               --disable-d3d11va --disable-dxva2 --disable-audiotoolbox --disable-videotoolbox --disable-vaapi --disable-crystalhd --disable-mediacodec
-                               --disable-nvenc --disable-mmal --disable-omx --disable-omx-rpi --disable-cuda --disable-cuvid --disable-libmfx --disable-libnpp
-                               --disable-iconv --disable-jni --disable-v4l2_m2m --enable-optimizations">
-    <branch repo="ffmpeg" version="4.0.4" module="ffmpeg-${version}.tar.gz" hash="sha256:80bb685abfcdda7c9b6c9c5caf1d8dbb927858050d7377c2b8f3488c7e8a9b7f"/>
-  </autotools>
-
   <meson id="gst-libav">
     <dependencies>
       <dep package="gst-plugins-base"/>
@@ -128,10 +108,30 @@
     </branch>
   </meson>
 
+  <autotools id="libsrtp">
+    <branch repo="github-tarball" module="cisco/libsrtp/archive/v${version}.tar.gz" version="2.2.0"
+            checkoutdir="libsrtp-${version}">
+      <patch file="libsrtp-Fix-building-with-gcc-10.patch" strip="1"/>
+    </branch>
+  </autotools>
+
   <meson id="libva" mesonargs="-Denable_va_messaging=false">
     <branch module="intel/libva/archive/${version}.tar.gz" version="2.4.1"
             hash="sha256:68ca8d071dcb84ac82e3c6d7f02a55937d9f690fcb215853f4aa1de8d459812f"
            checkoutdir="libva-${version}" repo="github-tarball"/>
+  </meson>
+
+  <meson id="openh264" mesonargs="-Dtests=disabled">
+    <branch module="cisco/openh264.git" tag="v2.3.0"
+            repo="github.com" />
+  </meson>
+
+  <meson id="orc" mesonargs="-Dgtk_doc=disabled">
+    <branch module="orc/orc-${version}.tar.xz" version="0.4.30"
+            repo="gstreamer"
+            hash="sha256:ba41b92146a5691cd102eb79c026757d39e9d3b81a65810d2946a1786a1c4972">
+      <patch file="orc-satisfy-fno-common-under-gcc10.patch" strip="1"/>
+    </branch>
   </meson>
 
   <cmake id="thunder"
@@ -153,16 +153,6 @@
                     -DPLUGIN_ESPIAL=OFF -DNETWORKCONTROL=OFF">
     <branch repo="github-tarball" module="rdkcentral/Thunder/tarball/${version}" version="6adeee006fecdd1b2bc49bd360d49fc5718deb61" checkoutdir="thunder"/>
   </cmake>
-
-  <autotools id="widevine" supports-non-srcdir-builds="no"
-             autogen-sh="build.py" autogenargs="x86-64 -r -DOEMCRYPTO_KEYBOX_PATH_PREFIX=${prefix}"
-             makeargs="BUILDTYPE=Release -j1"
-             makeinstallargs="BUILDTYPE=Release -j1 -f Makefile.install" >
-    <dependencies>
-      <dep package="thunder"/>
-    </dependencies>
-    <branch repo="github-ssh" module="Metrological/widevine.git" checkoutdir="widevine" tag="264c137501b289e356b11dacc329b05636ea9396"/>
-  </autotools>
 
   <cmake id="thunder-cdmi-widevine" cmakeargs="-DCMAKE_BUILD_TYPE=RelWithDebInfo">
     <branch repo="github-tarball"
@@ -218,5 +208,15 @@
       <dep package="thunder-cdmi-widevine"/>
     </dependencies>
   </cmake>
+
+  <autotools id="widevine" supports-non-srcdir-builds="no"
+             autogen-sh="build.py" autogenargs="x86-64 -r -DOEMCRYPTO_KEYBOX_PATH_PREFIX=${prefix}"
+             makeargs="BUILDTYPE=Release -j1"
+             makeinstallargs="BUILDTYPE=Release -j1 -f Makefile.install" >
+    <dependencies>
+      <dep package="thunder"/>
+    </dependencies>
+    <branch repo="github-ssh" module="Metrological/widevine.git" checkoutdir="widevine" tag="264c137501b289e356b11dacc329b05636ea9396"/>
+  </autotools>
 
 </moduleset>
