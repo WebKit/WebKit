@@ -28,7 +28,6 @@
       <dep package="openjpeg"/>
       <dep package="openxr"/>
       <dep package="shared-mime-info"/>
-      <dep package="wayland-protocols"/>
       <dep package="wpebackend-fdo"/>
       <dep package="xdg-dbus-proxy"/>
 
@@ -43,12 +42,12 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="tarball.github.com"
       href="https://github.com"/>
+  <repository type="git" name="gitlab.gnome.org"
+      href="https://gitlab.gnome.org"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="tarball" name="gnupg.org"
@@ -107,18 +106,16 @@
 
   <autotools id="cairo"
              autogen-sh="configure"
-             autogenargs="--enable-egl=yes --enable-glesv2">
+             autogenargs="--enable-egl=yes --enable-glesv2 --enable-full-testing=no">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="glib"/>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="releases/cairo-${version}.tar.xz" version="1.16.0"
-            repo="cairographics.org"
-            hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14">
-      <!-- See https://gitlab.freedesktop.org/cairo/cairo/merge_requests/5 -->
-      <patch file="cairo-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch" strip="1"/>
-    </branch>
+    <!-- Version 1.17.6 -->
+    <branch module="freedesktop/cairo"
+            repo="github.com"
+            tag="b43e7c6f3cf7855e16170a06d3a9c7234c60ca94" />
   </autotools>
 
   <autotools id="dicts"
@@ -212,18 +209,6 @@
     </branch>
   </autotools>
 
-  <autotools id="libpsl"
-             autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
-    <pkg-config>libpsl.pc</pkg-config>
-    <dependencies>
-      <dep package="icu"/>
-    </dependencies>
-    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
-            version="0.20.2"
-            repo="tarball.github.com"
-            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
-  </autotools>
-
   <autotools id="libgpg-error" autogen-sh="autoreconf">
     <branch module="libgpg-error/libgpg-error-${version}.tar.bz2"
             version="1.36"
@@ -237,7 +222,6 @@
     <pkg-config>libsoup-2.4.pc</pkg-config>
     <dependencies>
       <dep package="glib-networking"/>
-      <dep package="libpsl"/>
     </dependencies>
     <branch module="/sources/libsoup/2.71/libsoup-${version}.tar.xz" version="2.71.0"
             repo="download.gnome.org"
@@ -261,11 +245,12 @@
             hash="b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
   </cmake>
 
-  <autotools id="libxml2" supports-non-srcdir-builds="no"
-             autogen-sh="./autogen.sh; ./configure --with-python=no">
-    <branch module="/sources/libxml2-2.9.5.tar.gz" version="2.9.5"
-            repo="xmlsoft.org"
-            hash="sha256:4031c1ecee9ce7ba4f313e91ef6284164885cdb69937a123f6a83bb6a72dcd38"/>
+  <autotools id="libxml2" 
+             autogen-sh="./autogen.sh; ./configure --with-python=no"
+             supports-non-srcdir-builds="no">
+    <pkg-config>libxml2.pc</pkg-config>
+    <branch module="GNOME/libxml2" tag="v2.10.3"
+            repo="gitlab.gnome.org" />
   </autotools>
 
   <!-- libmanette >= 0.2.4 required for GamePad support -->
@@ -300,9 +285,8 @@
   <autotools id="pixman"
              autogen-sh="configure"
              autogenargs="--enable-gtk=no">
-    <branch module="releases/pixman-${version}.tar.gz" version="0.40.0"
-            repo="cairographics.org"
-            hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc"/>
+  <branch module="freedesktop/pixman" tag="pixman-0.42.2"
+            repo="github.com" />
   </autotools>
 
   <autotools id="shared-mime-info"
@@ -315,13 +299,6 @@
     <branch module="/~hadess/shared-mime-info-${version}.tar.xz" version="1.10"
             repo="freedesktop.org"
             hash="sha256:c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf"/>
-  </autotools>
-
-  <autotools id="wayland-protocols" autogen-sh="configure">
-    <branch module="releases/wayland-protocols-${version}.tar.xz"
-            version="1.12"
-	    repo="wayland.freedesktop.org"
-	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
   </autotools>
 
   <meson id="wpebackend-fdo">
@@ -338,10 +315,9 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch repo="tarball.github.com"
-            version="0.1.0"
-            module="flatpak/xdg-dbus-proxy/releases/download/${version}/xdg-dbus-proxy-${version}.tar.xz"
+    <branch module="flatpak/xdg-dbus-proxy/releases/download/${version}/xdg-dbus-proxy-${version}.tar.xz" version="0.1.0"
             checkoutdir="xdg-dbus-proxy-${version}"
+            repo="tarball.github.com"
             hash="sha256:9eefd30fe66940c8daf0e8ce6479307694814edb8b636caeb5aa6d6a46a4bc14"/>
   </autotools>
 
