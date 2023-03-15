@@ -1,0 +1,6 @@
+Swipe target
+didBeginSwipe
+completeSwipeGesture
+willEndSwipe
+didEndSwipe
+

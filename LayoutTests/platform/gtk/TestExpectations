@@ -890,6 +890,8 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 
 # The test directly sends Cocoa events
 swipe/pushState-programmatic-back-while-swiping-crash.html [ Skip ]
+swipe/swipe-back-with-passive-wheel-listener.html [ Skip ]
+swipe/swipe-back-with-active-wheel-listener.html [ Skip ]
 
 # GTK port doesn't suport datalist in range elements
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ Skip ]
