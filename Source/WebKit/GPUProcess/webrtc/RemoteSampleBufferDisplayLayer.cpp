@@ -92,8 +92,11 @@ void RemoteSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tra
     m_sampleBufferDisplayLayer->updateRootLayerAffineTransform(transform);
 }
 
-void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::VideoFrame::Rotation rotation)
+void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::VideoFrame::Rotation rotation, std::optional<WTF::MachSendRight>&& fence)
 {
+    if (fence && fence->sendRight())
+        m_layerHostingContext->setFencePort(fence->sendRight());
+
     m_sampleBufferDisplayLayer->updateRootLayerBoundsAndPosition(bounds, rotation, LocalSampleBufferDisplayLayer::ShouldUpdateRootLayer::Yes);
 }
 

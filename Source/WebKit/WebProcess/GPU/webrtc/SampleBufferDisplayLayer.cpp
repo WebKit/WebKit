@@ -62,8 +62,10 @@ void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, Comp
     m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
-        if (contextId)
+        if (contextId) {
+            m_hostingContextID = *contextId;
             m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(*contextId);
+        }
         callback(!!m_videoLayer);
     });
 }
@@ -99,9 +101,9 @@ void SampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform transform
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateAffineTransform { transform }, m_identifier);
 }
 
-void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation)
+void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation, std::optional<WTF::MachSendRight>&& fence)
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, rotation }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, rotation, fence }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::flush()

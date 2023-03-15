@@ -78,7 +78,7 @@ public:
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
 
     void updateAffineTransform(CGAffineTransform)  final;
-    void updateBoundsAndPosition(CGRect, VideoFrameRotation) final;
+    void updateBoundsAndPosition(CGRect, VideoFrameRotation, std::optional<WTF::MachSendRight>&&) final;
 
     void flush() final;
     void flushAndRemoveImage() final;
