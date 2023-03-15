@@ -23,44 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DOMWindow.h"
 
-#include "EventTarget.h"
-#include "GlobalWindowIdentifier.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+#include "HTTPParsers.h"
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class Frame;
+WTF_MAKE_ISO_ALLOCATED_IMPL(DOMWindow);
 
-// FIXME: Rename DOMWindow to LocalDOMWindow and AbstractDOMWindow to DOMWindow.
-class AbstractDOMWindow : public RefCounted<AbstractDOMWindow>, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(AbstractDOMWindow);
-public:
-    virtual ~AbstractDOMWindow();
+HashMap<GlobalWindowIdentifier, DOMWindow*>& DOMWindow::allWindows()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<HashMap<GlobalWindowIdentifier, DOMWindow*>> map;
+    return map;
+}
 
-    static HashMap<GlobalWindowIdentifier, AbstractDOMWindow*>& allWindows();
+DOMWindow::DOMWindow(GlobalWindowIdentifier&& identifier)
+    : m_identifier(WTFMove(identifier))
+{
+    ASSERT(!allWindows().contains(identifier));
+    allWindows().add(identifier, this);
+}
 
-    const GlobalWindowIdentifier& identifier() const { return m_identifier; }
-
-    virtual Frame* frame() const = 0;
-
-    virtual bool isLocalDOMWindow() const = 0;
-    virtual bool isRemoteDOMWindow() const = 0;
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
-protected:
-    explicit AbstractDOMWindow(GlobalWindowIdentifier&&);
-
-    EventTargetInterface eventTargetInterface() const final { return LocalDOMWindowEventTargetInterfaceType; }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-private:
-    GlobalWindowIdentifier m_identifier;
-};
+DOMWindow::~DOMWindow()
+{
+    ASSERT(allWindows().contains(identifier()));
+    allWindows().remove(identifier());
+}
 
 } // namespace WebCore

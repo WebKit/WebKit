@@ -131,7 +131,7 @@ JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperW
     return windowProxy;
 }
 
-void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* newDOMWindow, bool goingIntoBackForwardCache)
+void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(DOMWindow* newDOMWindow, bool goingIntoBackForwardCache)
 {
     if (m_jsWindowProxies->isEmpty())
         return;
@@ -155,7 +155,7 @@ void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* ne
         collectGarbageAfterWindowProxyDestruction();
 }
 
-void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
+void WindowProxy::setDOMWindow(DOMWindow* newDOMWindow)
 {
     ASSERT(newDOMWindow);
 
@@ -199,7 +199,7 @@ void WindowProxy::attachDebugger(JSC::Debugger* debugger)
         windowProxy->attachDebugger(debugger);
 }
 
-AbstractDOMWindow* WindowProxy::window() const
+DOMWindow* WindowProxy::window() const
 {
     return m_frame ? m_frame->window() : nullptr;
 }

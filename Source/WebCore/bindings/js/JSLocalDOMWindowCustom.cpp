@@ -111,7 +111,7 @@ static ALWAYS_INLINE bool allowsLegacyExpandoIndexedProperties()
 }
 
 template <DOMWindowType windowType>
-bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, AbstractDOMWindow& window, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
+bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, DOMWindow& window, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -171,8 +171,8 @@ bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisO
     slot.setUndefined();
     return false;
 }
-template bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(JSDOMGlobalObject*, AbstractDOMWindow&, JSGlobalObject&, PropertyName, PropertySlot&, const String&);
-template bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(JSDOMGlobalObject*, AbstractDOMWindow&, JSGlobalObject&, PropertyName, PropertySlot&, const String&);
+template bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(JSDOMGlobalObject*, DOMWindow&, JSGlobalObject&, PropertyName, PropertySlot&, const String&);
+template bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(JSDOMGlobalObject*, DOMWindow&, JSGlobalObject&, PropertyName, PropertySlot&, const String&);
 
 // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
 bool handleCommonCrossOriginProperties(JSObject* thisObject, VM& vm, PropertyName propertyName, PropertySlot& slot)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "AbstractDOMWindow.h"
+#include "DOMWindow.h"
 #include "RemoteFrame.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/IsoMalloc.h>
@@ -44,7 +44,7 @@ class LocalDOMWindow;
 class Document;
 class Location;
 
-class RemoteDOMWindow final : public AbstractDOMWindow {
+class RemoteDOMWindow final : public DOMWindow {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
 public:
     static Ref<RemoteDOMWindow> create(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
@@ -82,5 +82,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteDOMWindow)
-    static bool isType(const WebCore::AbstractDOMWindow& window) { return window.isRemoteDOMWindow(); }
+    static bool isType(const WebCore::DOMWindow& window) { return window.isRemoteDOMWindow(); }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -94,7 +94,7 @@ DOMAbstractView *kit(WebCore::LocalDOMWindow* value)
     return wrapper.autorelease();
 }
 
-DOMAbstractView *kit(WebCore::AbstractDOMWindow* value)
+DOMAbstractView *kit(WebCore::DOMWindow* value)
 {
     if (!is<WebCore::LocalDOMWindow>(value))
         return nil;

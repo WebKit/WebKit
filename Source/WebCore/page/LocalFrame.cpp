@@ -909,7 +909,7 @@ LocalDOMWindow* LocalFrame::window() const
     return document() ? document()->domWindow() : nullptr;
 }
 
-AbstractDOMWindow* LocalFrame::virtualWindow() const
+DOMWindow* LocalFrame::virtualWindow() const
 {
     return window();
 }

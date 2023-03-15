@@ -301,7 +301,7 @@ private:
     bool preventsParentFromBeingComplete() const final;
 
     AbstractFrameView* virtualView() const final;
-    AbstractDOMWindow* virtualWindow() const final;
+    DOMWindow* virtualWindow() const final;
 
     HashSet<FrameDestructionObserver*> m_destructionObservers;
 

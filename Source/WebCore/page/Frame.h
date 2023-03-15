@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-class AbstractDOMWindow;
 class AbstractFrameView;
+class DOMWindow;
 class HTMLFrameOwnerElement;
 class Page;
 class Settings;
@@ -50,7 +50,7 @@ public:
 
     WindowProxy& windowProxy() { return m_windowProxy; }
     const WindowProxy& windowProxy() const { return m_windowProxy; }
-    AbstractDOMWindow* window() const { return virtualWindow(); }
+    DOMWindow* window() const { return virtualWindow(); }
     FrameTree& tree() const { return m_treeNode; }
     FrameIdentifier frameID() const { return m_frameID; }
     inline Page* page() const; // Defined in Page.h.
@@ -70,7 +70,7 @@ protected:
     void resetWindowProxy();
 
 private:
-    virtual AbstractDOMWindow* virtualWindow() const = 0;
+    virtual DOMWindow* virtualWindow() const = 0;
     virtual AbstractFrameView* virtualView() const = 0;
 
     WeakPtr<Page> m_page;

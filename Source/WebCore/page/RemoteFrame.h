@@ -67,7 +67,7 @@ private:
     bool preventsParentFromBeingComplete() const final;
 
     AbstractFrameView* virtualView() const final;
-    AbstractDOMWindow* virtualWindow() const final;
+    DOMWindow* virtualWindow() const final;
 
     Ref<RemoteDOMWindow> m_window;
     RefPtr<Frame> m_opener;

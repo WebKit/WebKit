@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include "AbstractDOMWindow.h"
 #include "Base64Utilities.h"
 #include "ContextDestructionObserver.h"
+#include "DOMWindow.h"
 #include "ExceptionOr.h"
 #include "ImageBitmap.h"
 #include "LocalFrame.h"
@@ -112,7 +112,7 @@ struct WindowPostMessageOptions : public StructuredSerializeOptions {
 };
 
 class LocalDOMWindow final
-    : public AbstractDOMWindow
+    : public DOMWindow
     , public ContextDestructionObserver
     , public Base64Utilities
     , public WindowOrWorkerGlobalScope
@@ -516,6 +516,6 @@ WebCoreOpaqueRoot root(LocalDOMWindow*);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LocalDOMWindow)
-    static bool isType(const WebCore::AbstractDOMWindow& window) { return window.isLocalDOMWindow(); }
+    static bool isType(const WebCore::DOMWindow& window) { return window.isLocalDOMWindow(); }
     static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::LocalDOMWindowEventTargetInterfaceType; }
 SPECIALIZE_TYPE_TRAITS_END()

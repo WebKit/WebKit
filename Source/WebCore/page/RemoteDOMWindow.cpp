@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteDOMWindow);
 
 RemoteDOMWindow::RemoteDOMWindow(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
-    : AbstractDOMWindow(WTFMove(identifier))
+    : DOMWindow(WTFMove(identifier))
     , m_frame(frame)
 {
 }

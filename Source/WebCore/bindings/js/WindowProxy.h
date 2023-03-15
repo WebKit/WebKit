@@ -32,7 +32,7 @@ class Debugger;
 
 namespace WebCore {
 
-class AbstractDOMWindow;
+class DOMWindow;
 class DOMWrapperWorld;
 class Frame;
 class JSDOMGlobalObject;
@@ -80,14 +80,14 @@ public:
 
     WEBCORE_EXPORT JSDOMGlobalObject* globalObject(DOMWrapperWorld&);
 
-    void clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow*, bool goingIntoBackForwardCache);
+    void clearJSWindowProxiesNotMatchingDOMWindow(DOMWindow*, bool goingIntoBackForwardCache);
 
-    WEBCORE_EXPORT void setDOMWindow(AbstractDOMWindow*);
+    WEBCORE_EXPORT void setDOMWindow(DOMWindow*);
 
     // Debugger can be nullptr to detach any existing Debugger.
     void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
 
-    WEBCORE_EXPORT AbstractDOMWindow* window() const;
+    WEBCORE_EXPORT DOMWindow* window() const;
 
 private:
     explicit WindowProxy(Frame&);

@@ -39,7 +39,7 @@ class Debugger;
 
 namespace WebCore {
 
-class AbstractDOMWindow;
+class DOMWindow;
 class Frame;
 
 class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSProxy {
@@ -50,18 +50,18 @@ public:
 
     template<typename CellType, JSC::SubspaceAccess> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm) { return subspaceForImpl(vm); }
 
-    static JSWindowProxy& create(JSC::VM&, AbstractDOMWindow&, DOMWrapperWorld&);
+    static JSWindowProxy& create(JSC::VM&, DOMWindow&, DOMWrapperWorld&);
 
     DECLARE_INFO;
 
     JSDOMGlobalObject* window() const { return static_cast<JSDOMGlobalObject*>(target()); }
 
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
-    void setWindow(AbstractDOMWindow&);
+    void setWindow(DOMWindow&);
 
     WindowProxy* windowProxy() const;
 
-    AbstractDOMWindow& wrapped() const;
+    DOMWindow& wrapped() const;
     static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
@@ -70,7 +70,7 @@ public:
 
 private:
     JSWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
-    void finishCreation(JSC::VM&, AbstractDOMWindow&);
+    void finishCreation(JSC::VM&, DOMWindow&);
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     Ref<DOMWrapperWorld> m_world;

@@ -58,14 +58,14 @@ inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorl
 {
 }
 
-void JSWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
+void JSWindowProxy::finishCreation(VM& vm, DOMWindow& window)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     setWindow(window);
 }
 
-JSWindowProxy& JSWindowProxy::create(VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
+JSWindowProxy& JSWindowProxy::create(VM& vm, DOMWindow& window, DOMWrapperWorld& world)
 {
     auto& structure = *Structure::create(vm, 0, jsNull(), TypeInfo(PureForwardingProxyType, StructureFlags), info());
     auto& proxy = *new (NotNull, allocateCell<JSWindowProxy>(vm)) JSWindowProxy(vm, structure, world);
@@ -86,7 +86,7 @@ void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
     GCController::singleton().garbageCollectSoon();
 }
 
-void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
+void JSWindowProxy::setWindow(DOMWindow& domWindow)
 {
     // Replacing JSLocalDOMWindow via telling JSWindowProxy to use the same LocalDOMWindow it already uses makes no sense,
     // so we'd better never try to.
@@ -148,7 +148,7 @@ void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
         currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
-AbstractDOMWindow& JSWindowProxy::wrapped() const
+DOMWindow& JSWindowProxy::wrapped() const
 {
     auto* window = this->window();
     if (auto* jsWindow = jsDynamicCast<JSRemoteDOMWindowBase*>(window))

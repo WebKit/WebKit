@@ -1234,7 +1234,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/cache/KeepaliveRequestTracker.h
     loader/cache/MemoryCache.h
 
-    page/AbstractDOMWindow.h
     page/AbstractFrameView.h
     page/ActivityState.h
     page/ActivityStateChangeObserver.h
@@ -1255,6 +1254,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/CrossSiteNavigationDataTransfer.h
     page/DOMSelection.h
     page/DOMTimer.h
+    page/DOMWindow.h
     page/DOMWindowExtension.h
     page/DatabaseProvider.h
     page/DebugOverlayRegions.h

@@ -60,7 +60,7 @@ RemoteFrame::RemoteFrame(Page& page, UniqueRef<RemoteFrameClient>&& client, Fram
 
 RemoteFrame::~RemoteFrame() = default;
 
-AbstractDOMWindow* RemoteFrame::virtualWindow() const
+DOMWindow* RemoteFrame::virtualWindow() const
 {
     return &window();
 }

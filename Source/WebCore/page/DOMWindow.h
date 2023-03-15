@@ -23,35 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AbstractDOMWindow.h"
+#pragma once
 
-#include "HTTPParsers.h"
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/NeverDestroyed.h>
+#include "EventTarget.h"
+#include "GlobalWindowIdentifier.h"
+#include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractDOMWindow);
+class Frame;
 
-HashMap<GlobalWindowIdentifier, AbstractDOMWindow*>& AbstractDOMWindow::allWindows()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<GlobalWindowIdentifier, AbstractDOMWindow*>> map;
-    return map;
-}
+class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
+    WTF_MAKE_ISO_ALLOCATED(DOMWindow);
+public:
+    virtual ~DOMWindow();
 
-AbstractDOMWindow::AbstractDOMWindow(GlobalWindowIdentifier&& identifier)
-    : m_identifier(WTFMove(identifier))
-{
-    ASSERT(!allWindows().contains(identifier));
-    allWindows().add(identifier, this);
-}
+    static HashMap<GlobalWindowIdentifier, DOMWindow*>& allWindows();
 
-AbstractDOMWindow::~AbstractDOMWindow()
-{
-    ASSERT(allWindows().contains(identifier()));
-    allWindows().remove(identifier());
-}
+    const GlobalWindowIdentifier& identifier() const { return m_identifier; }
+
+    virtual Frame* frame() const = 0;
+
+    virtual bool isLocalDOMWindow() const = 0;
+    virtual bool isRemoteDOMWindow() const = 0;
+
+    using RefCounted::ref;
+    using RefCounted::deref;
+
+protected:
+    explicit DOMWindow(GlobalWindowIdentifier&&);
+
+    EventTargetInterface eventTargetInterface() const final { return LocalDOMWindowEventTargetInterfaceType; }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
+private:
+    GlobalWindowIdentifier m_identifier;
+};
 
 } // namespace WebCore

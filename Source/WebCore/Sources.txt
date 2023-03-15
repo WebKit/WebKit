@@ -1807,7 +1807,6 @@ mathml/MathMLSpaceElement.cpp
 mathml/MathMLTokenElement.cpp
 mathml/MathMLUnderOverElement.cpp
 mathml/MathMLUnknownElement.cpp
-page/AbstractDOMWindow.cpp
 page/ActivityState.cpp
 page/AutoscrollController.cpp
 page/BarProp.cpp
@@ -1820,6 +1819,7 @@ page/ContextMenuController.cpp
 page/Crypto.cpp
 page/DOMSelection.cpp
 page/DOMTimer.cpp
+page/DOMWindow.cpp
 page/DOMWindowExtension.cpp
 page/DatabaseProvider.cpp
 page/DebugPageOverlays.cpp

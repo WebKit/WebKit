@@ -22,14 +22,14 @@
 
 namespace WebCore {
 
-class AbstractDOMWindow;
+class DOMWindow;
 class Frame;
 
 JSLocalDOMWindow* asJSLocalDOMWindow(JSC::JSGlobalObject*);
 const JSLocalDOMWindow* asJSLocalDOMWindow(const JSC::JSGlobalObject*);
 
 enum class DOMWindowType : bool { Local, Remote };
-template<DOMWindowType> bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, AbstractDOMWindow&, JSC::JSGlobalObject&, JSC::PropertyName, JSC::PropertySlot&, const String&);
+template<DOMWindowType> bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, DOMWindow&, JSC::JSGlobalObject&, JSC::PropertyName, JSC::PropertySlot&, const String&);
 
 enum class CrossOriginObject : bool { Window, Location };
 template<CrossOriginObject> void addCrossOriginOwnPropertyNames(JSC::JSGlobalObject&, JSC::PropertyNameArray&);
