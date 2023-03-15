@@ -132,6 +132,7 @@
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint32Array.h>
+#include <algorithm>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
@@ -169,136 +170,125 @@ static constexpr Seconds checkContextLossHandlingDelay { 3_s };
 static constexpr size_t maxActiveContexts = 16;
 static constexpr size_t maxActiveWorkerContexts = 4;
 
-namespace {
-
-template <typename T> IntRect texImageSourceSize(T& source)
+template <typename T> static IntRect texImageSourceSize(T& source)
 {
     return { 0, 0, static_cast<int>(source.width()), static_cast<int>(source.height()) };
 }
 
-    GCGLint clamp(GCGLint value, GCGLint min, GCGLint max)
-    {
-        if (value < min)
-            value = min;
-        if (value > max)
-            value = max;
-        return value;
-    }
+// Return true if a character belongs to the ASCII subset as defined in
+// GLSL ES 1.0 spec section 3.1.
+static bool validateCharacter(unsigned char c)
+{
+    // Printing characters are valid except " $ ` @ \ ' DEL.
+    if (c >= 32 && c <= 126
+        && c != '"' && c != '$' && c != '`' && c != '@' && c != '\\' && c != '\'')
+        return true;
+    // Horizontal tab, line feed, vertical tab, form feed, carriage return
+    // are also valid.
+    if (c >= 9 && c <= 13)
+        return true;
+    return false;
+}
 
-    // Return true if a character belongs to the ASCII subset as defined in
-    // GLSL ES 1.0 spec section 3.1.
-    bool validateCharacter(unsigned char c)
-    {
-        // Printing characters are valid except " $ ` @ \ ' DEL.
-        if (c >= 32 && c <= 126
-            && c != '"' && c != '$' && c != '`' && c != '@' && c != '\\' && c != '\'')
-            return true;
-        // Horizontal tab, line feed, vertical tab, form feed, carriage return
-        // are also valid.
-        if (c >= 9 && c <= 13)
-            return true;
-        return false;
-    }
+static bool isPrefixReserved(const String& name)
+{
+    if (name.startsWith("gl_"_s) || name.startsWith("webgl_"_s) || name.startsWith("_webgl_"_s))
+        return true;
+    return false;
+}
 
-    bool isPrefixReserved(const String& name)
-    {
-        if (name.startsWith("gl_"_s) || name.startsWith("webgl_"_s) || name.startsWith("_webgl_"_s))
-            return true;
-        return false;
-    }
+// ES2 formats and internal formats supported by TexImageSource.
+static const GCGLenum supportedFormatsES2[] = {
+    GraphicsContextGL::RGB,
+    GraphicsContextGL::RGBA,
+    GraphicsContextGL::LUMINANCE_ALPHA,
+    GraphicsContextGL::LUMINANCE,
+    GraphicsContextGL::ALPHA,
+};
 
-    // ES2 formats and internal formats supported by TexImageSource.
-    static const GCGLenum SupportedFormatsES2[] = {
-        GraphicsContextGL::RGB,
-        GraphicsContextGL::RGBA,
-        GraphicsContextGL::LUMINANCE_ALPHA,
-        GraphicsContextGL::LUMINANCE,
-        GraphicsContextGL::ALPHA,
-    };
+// ES2 types supported by TexImageSource.
+static const GCGLenum supportedTypesES2[] = {
+    GraphicsContextGL::UNSIGNED_BYTE,
+    GraphicsContextGL::UNSIGNED_SHORT_5_6_5,
+    GraphicsContextGL::UNSIGNED_SHORT_4_4_4_4,
+    GraphicsContextGL::UNSIGNED_SHORT_5_5_5_1,
+};
 
-    // ES2 types supported by TexImageSource.
-    static const GCGLenum SupportedTypesES2[] = {
-        GraphicsContextGL::UNSIGNED_BYTE,
-        GraphicsContextGL::UNSIGNED_SHORT_5_6_5,
-        GraphicsContextGL::UNSIGNED_SHORT_4_4_4_4,
-        GraphicsContextGL::UNSIGNED_SHORT_5_5_5_1,
-    };
+// ES3 internal formats supported by TexImageSource.
+static const GCGLenum supportedInternalFormatsTexImageSourceES3[] = {
+    GraphicsContextGL::R8,
+    GraphicsContextGL::R16F,
+    GraphicsContextGL::R32F,
+    GraphicsContextGL::R8UI,
+    GraphicsContextGL::RG8,
+    GraphicsContextGL::RG16F,
+    GraphicsContextGL::RG32F,
+    GraphicsContextGL::RG8UI,
+    GraphicsContextGL::RGB8,
+    GraphicsContextGL::SRGB8,
+    GraphicsContextGL::RGB565,
+    GraphicsContextGL::R11F_G11F_B10F,
+    GraphicsContextGL::RGB9_E5,
+    GraphicsContextGL::RGB16F,
+    GraphicsContextGL::RGB32F,
+    GraphicsContextGL::RGB8UI,
+    GraphicsContextGL::RGBA8,
+    GraphicsContextGL::SRGB8_ALPHA8,
+    GraphicsContextGL::RGB5_A1,
+    GraphicsContextGL::RGBA4,
+    GraphicsContextGL::RGBA16F,
+    GraphicsContextGL::RGBA32F,
+    GraphicsContextGL::RGBA8UI,
+    GraphicsContextGL::RGB10_A2,
+};
 
-    // ES3 internal formats supported by TexImageSource.
-    static const GCGLenum SupportedInternalFormatsTexImageSourceES3[] = {
-        GraphicsContextGL::R8,
-        GraphicsContextGL::R16F,
-        GraphicsContextGL::R32F,
-        GraphicsContextGL::R8UI,
-        GraphicsContextGL::RG8,
-        GraphicsContextGL::RG16F,
-        GraphicsContextGL::RG32F,
-        GraphicsContextGL::RG8UI,
-        GraphicsContextGL::RGB8,
-        GraphicsContextGL::SRGB8,
-        GraphicsContextGL::RGB565,
-        GraphicsContextGL::R11F_G11F_B10F,
-        GraphicsContextGL::RGB9_E5,
-        GraphicsContextGL::RGB16F,
-        GraphicsContextGL::RGB32F,
-        GraphicsContextGL::RGB8UI,
-        GraphicsContextGL::RGBA8,
-        GraphicsContextGL::SRGB8_ALPHA8,
-        GraphicsContextGL::RGB5_A1,
-        GraphicsContextGL::RGBA4,
-        GraphicsContextGL::RGBA16F,
-        GraphicsContextGL::RGBA32F,
-        GraphicsContextGL::RGBA8UI,
-        GraphicsContextGL::RGB10_A2,
-    };
+// ES3 formats supported by TexImageSource.
+static const GCGLenum supportedFormatsTexImageSourceES3[] = {
+    GraphicsContextGL::RED,
+    GraphicsContextGL::RED_INTEGER,
+    GraphicsContextGL::RG,
+    GraphicsContextGL::RG_INTEGER,
+    GraphicsContextGL::RGB,
+    GraphicsContextGL::RGB_INTEGER,
+    GraphicsContextGL::RGBA,
+    GraphicsContextGL::RGBA_INTEGER,
+};
 
-    // ES3 formats supported by TexImageSource.
-    static const GCGLenum SupportedFormatsTexImageSourceES3[] = {
-        GraphicsContextGL::RED,
-        GraphicsContextGL::RED_INTEGER,
-        GraphicsContextGL::RG,
-        GraphicsContextGL::RG_INTEGER,
-        GraphicsContextGL::RGB,
-        GraphicsContextGL::RGB_INTEGER,
-        GraphicsContextGL::RGBA,
-        GraphicsContextGL::RGBA_INTEGER,
-    };
+// ES3 types supported by TexImageSource.
+static const GCGLenum supportedTypesTexImageSourceES3[] = {
+    GraphicsContextGL::HALF_FLOAT,
+    GraphicsContextGL::FLOAT,
+    GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV,
+    GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV,
+};
 
-    // ES3 types supported by TexImageSource.
-    static const GCGLenum SupportedTypesTexImageSourceES3[] = {
-        GraphicsContextGL::HALF_FLOAT,
-        GraphicsContextGL::FLOAT,
-        GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV,
-        GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV,
-    };
+// Internal formats exposed by GL_EXT_sRGB.
+static const GCGLenum supportedInternalFormatsEXTsRGB[] = {
+    GraphicsContextGL::SRGB,
+    GraphicsContextGL::SRGB_ALPHA,
+};
 
-    // Internal formats exposed by GL_EXT_sRGB.
-    static const GCGLenum SupportedInternalFormatsEXTsRGB[] = {
-        GraphicsContextGL::SRGB,
-        GraphicsContextGL::SRGB_ALPHA,
-    };
+// Formats exposed by GL_EXT_sRGB.
+static const GCGLenum supportedFormatsEXTsRGB[] = {
+    GraphicsContextGL::SRGB,
+    GraphicsContextGL::SRGB_ALPHA,
+};
 
-    // Formats exposed by GL_EXT_sRGB.
-    static const GCGLenum SupportedFormatsEXTsRGB[] = {
-        GraphicsContextGL::SRGB,
-        GraphicsContextGL::SRGB_ALPHA,
-    };
+// Types exposed by GL_OES_texture_float.
+static const GCGLenum supportedTypesOESTextureFloat[] = {
+    GraphicsContextGL::FLOAT,
+};
 
-    // Types exposed by GL_OES_texture_float.
-    static const GCGLenum SupportedTypesOESTextureFloat[] = {
-        GraphicsContextGL::FLOAT,
-    };
-
-    // Types exposed by GL_OES_texture_half_float.
-    static const GCGLenum SupportedTypesOESTextureHalfFloat[] = {
-        GraphicsContextGL::HALF_FLOAT_OES,
-    };
-} // namespace anonymous
+// Types exposed by GL_OES_texture_half_float.
+static const GCGLenum supportedTypesOESTextureHalfFloat[] = {
+    GraphicsContextGL::HALF_FLOAT_OES,
+};
 
 class ScopedUnpackParametersResetRestore {
 public:
     explicit ScopedUnpackParametersResetRestore(WebGLRenderingContextBase* context, bool enabled = true)
-        : m_context(context), m_enabled(enabled)
+        : m_context(context)
+        , m_enabled(enabled)
     {
         if (m_enabled)
             m_context->resetUnpackParameters();
@@ -803,9 +793,9 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_areOESTextureFloatFormatsAndTypesAdded = false;
     m_areOESTextureHalfFloatFormatsAndTypesAdded = false;
     m_areEXTsRGBFormatsAndTypesAdded = false;
-    ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, SupportedFormatsES2);
-    ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, SupportedFormatsES2);
-    ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, SupportedTypesES2);
+    ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedFormatsES2);
+    ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsES2);
+    ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesES2);
 
     initializeVertexArrayObjects();
 }
@@ -1159,8 +1149,8 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     GCGLint maxSize = std::min(m_maxTextureSize, m_maxRenderbufferSize);
     GCGLint maxWidth = std::min(maxSize, m_maxViewportDims[0]);
     GCGLint maxHeight = std::min(maxSize, m_maxViewportDims[1]);
-    width = clamp(width, 1, maxWidth);
-    height = clamp(height, 1, maxHeight);
+    width = std::clamp(width, 1, maxWidth);
+    height = std::clamp(height, 1, maxHeight);
 
     if (m_needsUpdate) {
         notifyCanvasContentChanged();
@@ -4290,18 +4280,18 @@ bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID fun
 void WebGLRenderingContextBase::addExtensionSupportedFormatsAndTypes()
 {
     if (!m_areOESTextureFloatFormatsAndTypesAdded && m_oesTextureFloat) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, SupportedTypesOESTextureFloat);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesOESTextureFloat);
         m_areOESTextureFloatFormatsAndTypesAdded = true;
     }
 
     if (!m_areOESTextureHalfFloatFormatsAndTypesAdded && m_oesTextureHalfFloat) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, SupportedTypesOESTextureHalfFloat);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesOESTextureHalfFloat);
         m_areOESTextureHalfFloatFormatsAndTypesAdded = true;
     }
 
     if (!m_areEXTsRGBFormatsAndTypesAdded && m_extsRGB) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, SupportedInternalFormatsEXTsRGB);
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, SupportedFormatsEXTsRGB);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedInternalFormatsEXTsRGB);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsEXTsRGB);
         m_areEXTsRGBFormatsAndTypesAdded = true;
     }
 }
@@ -4316,9 +4306,9 @@ bool WebGLRenderingContextBase::validateTexImageSourceFormatAndType(TexImageFunc
     const char* functionName = texImageFunctionName(functionID);
     auto functionType = texImageFunctionType(functionID);
     if (!m_areWebGL2TexImageSourceFormatsAndTypesAdded && isWebGL2()) {
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, SupportedInternalFormatsTexImageSourceES3);
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, SupportedFormatsTexImageSourceES3);
-        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, SupportedTypesTexImageSourceES3);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedInternalFormatsTexImageSourceES3);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsTexImageSourceES3);
+        ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesTexImageSourceES3);
         m_areWebGL2TexImageSourceFormatsAndTypesAdded = true;
     }
 
@@ -5777,8 +5767,8 @@ void WebGLRenderingContextBase::enableOrDisable(GCGLenum capability, bool enable
 
 IntSize WebGLRenderingContextBase::clampedCanvasSize()
 {
-    return IntSize(clamp(canvasBase().width(), 1, m_maxViewportDims[0]),
-        clamp(canvasBase().height(), 1, m_maxViewportDims[1]));
+    IntSize canvasSize { static_cast<int>(canvasBase().width()), static_cast<int>(canvasBase().height()) };
+    return canvasSize.constrainedBetween({ 1, 1 }, { m_maxViewportDims[0], m_maxViewportDims[1] });
 }
 
 GCGLint WebGLRenderingContextBase::getMaxDrawBuffers()
