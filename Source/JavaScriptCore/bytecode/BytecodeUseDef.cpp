@@ -299,8 +299,8 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
 
     case op_iterator_next: {
         auto bytecode = instruction->as<OpIteratorNext>();
-        useAtEachCheckpoint(bytecode.m_iterator);
-        useAtEachCheckpointStartingWith(OpIteratorNext::computeNext, bytecode.m_next, bytecode.m_iterable);
+        useAtEachCheckpoint(bytecode.m_iterator, bytecode.m_next);
+        useAtEachCheckpointStartingWith(OpIteratorNext::computeNext, bytecode.m_iterable);
         return;
     }
 
