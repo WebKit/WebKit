@@ -1303,8 +1303,11 @@ auto SectionParser::parseCustom() -> PartialResult
     Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
     if (section.name == nameName) {
         NameSectionParser nameSectionParser(section.payload.begin(), section.payload.size(), m_info);
-        if (auto nameSection = nameSectionParser.parse())
+        auto nameSection = nameSectionParser.parse();
+        if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
+        else
+            dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
     } else if (section.name == branchHintsName) {
         BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
         branchHintsSectionParser.parse();

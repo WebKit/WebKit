@@ -552,6 +552,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     v(Bool, dumpCompilerConstructionSite, false, Normal, nullptr) \
+    v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \
