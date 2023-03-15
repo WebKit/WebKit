@@ -67,8 +67,6 @@ public:
     RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
-    void setOwnershipIdentity(const WebCore::ProcessIdentity&) { }
-
 private:
     unsigned bytesPerRow() const final;
 

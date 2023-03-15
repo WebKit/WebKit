@@ -594,6 +594,7 @@
 		7B9FC5D628A5326A007570E7 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */; };
 		7BA3936C271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BA3936B271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm */; };
 		7BAA4A9028CA14AE004CE938 /* StreamConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */; };
+		7BB62ABE29BB4BAA00228CD6 /* IOSurfaceTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62AB629BB4BAA00228CD6 /* IOSurfaceTests.mm */; };
 		7BB8BDE428F0781A00129836 /* CompletionHandlerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */; };
 		7BC8628F29B8B33500217CB5 /* DisplayListRecorderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BC8628729B8B33500217CB5 /* DisplayListRecorderTests.cpp */; };
 		7BE876032919457B00B15289 /* AudioStreamDescriptionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BE875FB2919457B00B15289 /* AudioStreamDescriptionCocoa.mm */; };
@@ -2776,6 +2777,7 @@
 		7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitPlatform.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BA3936B271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestGraphicsContextGLCocoa.mm; sourceTree = "<group>"; };
 		7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionTests.cpp; sourceTree = "<group>"; };
+		7BB62AB629BB4BAA00228CD6 /* IOSurfaceTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSurfaceTests.mm; sourceTree = "<group>"; };
 		7BB754AF274E39A100D00EC1 /* WebCoreTestUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreTestUtilities.h; sourceTree = "<group>"; };
 		7BB754B0274E39A100D00EC1 /* WebCoreTestUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTestUtilities.cpp; sourceTree = "<group>"; };
 		7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompletionHandlerTests.cpp; sourceTree = "<group>"; };
@@ -5582,6 +5584,7 @@
 				510A667A27D2FC7A00D22629 /* CoreMediaUtilities.mm */,
 				751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */,
 				41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */,
+				7BB62AB629BB4BAA00228CD6 /* IOSurfaceTests.mm */,
 				57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
 				A17991861E1C994E00A505ED /* SharedBuffer.mm */,
@@ -6371,6 +6374,7 @@
 				7A909A811D877480007E10F8 /* IntPointTests.cpp in Sources */,
 				7A909A821D877480007E10F8 /* IntRectTests.cpp in Sources */,
 				7A909A831D877480007E10F8 /* IntSizeTests.cpp in Sources */,
+				7BB62ABE29BB4BAA00228CD6 /* IOSurfaceTests.mm in Sources */,
 				F4B8A5C128F8B54F00E3F54F /* IPAddressTests.cpp in Sources */,
 				5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */,
 				CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */,

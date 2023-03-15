@@ -49,14 +49,16 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
+    if (creationContext.resourceOwner)
+        surface->setOwnershipIdentity(creationContext.resourceOwner);
 
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext();
+    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext();
     if (!cgContext)
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), 0, creationContext.surfacePool);
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), WTFMove(cgContext), 0, creationContext.surfacePool);
 }
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
@@ -69,19 +71,17 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     auto surface = IOSurface::createFromSendRight(WTFMove(std::get<MachSendRight>(handle)));
     if (!surface)
         return nullptr;
+    auto cgContext = surface->createPlatformContext();
+    if (!cgContext)
+        return nullptr;
 
     ASSERT(surface->colorSpace() == parameters.colorSpace);
-    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), 0, nullptr);
+    return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface), WTFMove(cgContext), 0, nullptr);
 }
 
 ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
-}
-
-void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
-{
-    m_surface->setOwnershipIdentity(resourceOwner);
 }
 
 RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(BackingStoreCopy copyBehavior)

@@ -85,18 +85,19 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
         return nullptr;
 
     auto displayID = creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0;
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(displayID);
+    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(displayID);
     if (!cgContext)
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), displayID, creationContext.surfacePool);
+    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), WTFMove(cgContext), displayID, creationContext.surfacePool);
 }
 
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTFMove(surface))
+    , m_platformContext(WTFMove(platformContext))
     , m_displayID(displayID)
     , m_ioSurfacePool(ioSurfacePool)
 {
@@ -107,13 +108,15 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
     ensureNativeImagesHaveCopiedBackingStore();
+    releaseGraphicsContext();
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
+
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context()
 {
     if (!m_context) {
-        m_context = makeUnique<GraphicsContextCG>(m_surface->ensurePlatformContext(m_displayID));
+        m_context = makeUnique<GraphicsContextCG>(ensurePlatformContext());
         applyBaseTransform(*m_context);
     }
     return *m_context;
@@ -122,6 +125,15 @@ GraphicsContext& ImageBufferIOSurfaceBackend::context()
 void ImageBufferIOSurfaceBackend::flushContext()
 {
     CGContextFlush(context().platformContext());
+}
+
+CGContextRef ImageBufferIOSurfaceBackend::ensurePlatformContext()
+{
+    if (!m_platformContext) {
+        m_platformContext = m_surface->createPlatformContext(m_displayID);
+        RELEASE_ASSERT(m_platformContext);
+    }
+    return m_platformContext.get();
 }
 
 IntSize ImageBufferIOSurfaceBackend::backendSize() const
@@ -153,7 +165,7 @@ void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
 {
     m_mayHaveOutstandingBackingStoreReferences = true;
-    return NativeImage::create(m_surface->createImage());
+    return NativeImage::create(m_surface->createImage(ensurePlatformContext()));
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(GraphicsContext& destination)
@@ -163,7 +175,7 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(Graph
         // The destination backend needs to read the actual pixels. Returning non-refence will
         // copy the pixels and but still cache the image to the context. This means we must
         // return the reference or cleanup later if we return the non-reference.
-        if (auto image = adoptCF(CGIOSurfaceContextCreateImageReference(m_surface->ensurePlatformContext()))) {
+        if (auto image = adoptCF(CGIOSurfaceContextCreateImageReference(ensurePlatformContext()))) {
             // CG has internal caches for some operations related to software bitmap draw. 
             // One of these caches are per-image color matching cache. Since these will not get any hits
             // from an image that is recreated every time, mark the image transient to skip these caches.
@@ -179,7 +191,8 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(Graph
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 {
-    return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
+    ensurePlatformContext();
+    return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface), WTFMove(m_platformContext)));
 }
 
 RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
@@ -210,7 +223,7 @@ bool ImageBufferIOSurfaceBackend::isInUse() const
 void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 {
     m_context = nullptr;
-    m_surface->releasePlatformContext();
+    m_platformContext = nullptr;
 }
 
 bool ImageBufferIOSurfaceBackend::setVolatile()
