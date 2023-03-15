@@ -118,7 +118,7 @@ Node::InsertedIntoAncestorResult ShadowRoot::insertedIntoAncestor(InsertionType 
     DocumentFragment::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
         document().didInsertInDocumentShadowRoot(*this);
-    if (!adoptedStyleSheets().isEmpty() && document().frame())
+    if (!adoptedStyleSheets().empty() && document().frame())
         styleScope().didChangeActiveStyleSheetCandidates();
     return InsertedIntoAncestorResult::Done;
 }

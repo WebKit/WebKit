@@ -496,18 +496,16 @@ void CSSStyleSheet::addAdoptingTreeScope(ShadowRoot& shadowRoot)
     shadowRoot.styleScope().didChangeActiveStyleSheetCandidates();
 }
 
-void CSSStyleSheet::removeAdoptingTreeScope(Document& document, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
+void CSSStyleSheet::removeAdoptingTreeScope(Document& document)
 {
     m_adoptingDocuments.remove(document);
-    if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
-        document.styleScope().didChangeStyleSheetContents();
+    document.styleScope().didChangeStyleSheetContents();
 }
 
-void CSSStyleSheet::removeAdoptingTreeScope(ShadowRoot& shadowRoot, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
+void CSSStyleSheet::removeAdoptingTreeScope(ShadowRoot& shadowRoot)
 {
     m_adoptingShadowRoots.remove(shadowRoot);
-    if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
-        shadowRoot.styleScope().didChangeStyleSheetContents();
+    shadowRoot.styleScope().didChangeStyleSheetContents();
 }
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMutationType mutationType, StyleRuleKeyframes* insertedKeyframesRule)

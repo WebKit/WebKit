@@ -54,13 +54,6 @@ CSSStyleSheetObservableArray::CSSStyleSheetObservableArray(ShadowRoot& shadowRoo
 {
 }
 
-void CSSStyleSheetObservableArray::willDestroyTreeScope()
-{
-    for (auto& sheet : m_sheets)
-        willRemoveSheet(*sheet, CSSStyleSheet::IsTreeScopeBeingDestroyed::Yes);
-    m_treeScope = nullptr;
-}
-
 bool CSSStyleSheetObservableArray::setValueAt(JSC::JSGlobalObject* lexicalGlobalObject, unsigned index, JSC::JSValue value)
 {
     auto& vm = lexicalGlobalObject->vm();
@@ -94,7 +87,7 @@ bool CSSStyleSheetObservableArray::deleteValueAt(JSC::JSGlobalObject*, unsigned 
 
     auto sheet = std::exchange(m_sheets[index], nullptr);
     m_sheets.remove(index);
-    willRemoveSheet(*sheet, CSSStyleSheet::IsTreeScopeBeingDestroyed::No);
+    willRemoveSheet(*sheet);
     return true;
 }
 
@@ -113,7 +106,7 @@ ExceptionOr<void> CSSStyleSheetObservableArray::setSheets(Vector<RefPtr<CSSStyle
     }
 
     for (auto& sheet : m_sheets)
-        willRemoveSheet(*sheet, CSSStyleSheet::IsTreeScopeBeingDestroyed::No);
+        willRemoveSheet(*sheet);
     m_sheets = WTFMove(sheets);
     for (auto& sheet : m_sheets)
         didAddSheet(*sheet);
@@ -153,14 +146,14 @@ void CSSStyleSheetObservableArray::didAddSheet(CSSStyleSheet& sheet)
     }, [](std::nullptr_t) { });
 }
 
-void CSSStyleSheetObservableArray::willRemoveSheet(CSSStyleSheet& sheet, CSSStyleSheet::IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
+void CSSStyleSheetObservableArray::willRemoveSheet(CSSStyleSheet& sheet)
 {
     WTF::switchOn(m_treeScope, [&](const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document) {
         if (document)
-            sheet.removeAdoptingTreeScope(*document, isTreeScopeBeingDestroyed);
+            sheet.removeAdoptingTreeScope(*document);
     }, [&](const WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData>& shadowRoot) {
         if (shadowRoot)
-            sheet.removeAdoptingTreeScope(*shadowRoot, isTreeScopeBeingDestroyed);
+            sheet.removeAdoptingTreeScope(*shadowRoot);
     }, [](std::nullptr_t) { });
 }
 

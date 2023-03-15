@@ -68,7 +68,6 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
     , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
-    , m_adoptedStyleSheets(CSSStyleSheetObservableArray::create(shadowRoot))
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -78,15 +77,11 @@ TreeScope::TreeScope(Document& document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
     , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
-    , m_adoptedStyleSheets(CSSStyleSheetObservableArray::create(document))
 {
     document.setTreeScope(*this);
 }
 
-TreeScope::~TreeScope()
-{
-    m_adoptedStyleSheets->willDestroyTreeScope();
-}
+TreeScope::~TreeScope() = default;
 
 void TreeScope::destroyTreeScopeData()
 {
@@ -553,19 +548,32 @@ RadioButtonGroups& TreeScope::radioButtonGroups()
     return *m_radioButtonGroups;
 }
 
-const Vector<RefPtr<CSSStyleSheet>>& TreeScope::adoptedStyleSheets() const
+CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
 {
-    return m_adoptedStyleSheets->sheets();
+    if (UNLIKELY(!m_adoptedStyleSheets)) {
+        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(m_rootNode))
+            m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(*shadowRoot);
+        else
+            m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(downcast<Document>(m_rootNode));
+    }
+    return *m_adoptedStyleSheets;
+}
+
+Span<const RefPtr<CSSStyleSheet>> TreeScope::adoptedStyleSheets() const
+{
+    return m_adoptedStyleSheets ? m_adoptedStyleSheets->sheets().span() : Span<const RefPtr<CSSStyleSheet>> { };
 }
 
 JSC::JSValue TreeScope::adoptedStyleSheetWrapper(JSDOMGlobalObject& lexicalGlobalObject)
 {
-    return JSC::JSObservableArray::create(&lexicalGlobalObject, m_adoptedStyleSheets.copyRef());
+    return JSC::JSObservableArray::create(&lexicalGlobalObject, ensureAdoptedStyleSheets());
 }
 
 ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&& sheets)
 {
-    return m_adoptedStyleSheets->setSheets(WTFMove(sheets));
+    if (!m_adoptedStyleSheets && sheets.isEmpty())
+        return { };
+    return ensureAdoptedStyleSheets().setSheets(WTFMove(sheets));
 }
 
 } // namespace WebCore

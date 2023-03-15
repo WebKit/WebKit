@@ -104,9 +104,8 @@ public:
 
     void clearOwnerRule() { m_ownerRule = nullptr; }
 
-    enum class IsTreeScopeBeingDestroyed : bool { No, Yes };
-    void removeAdoptingTreeScope(Document&, IsTreeScopeBeingDestroyed);
-    void removeAdoptingTreeScope(ShadowRoot&, IsTreeScopeBeingDestroyed);
+    void removeAdoptingTreeScope(Document&);
+    void removeAdoptingTreeScope(ShadowRoot&);
     void addAdoptingTreeScope(Document&);
     void addAdoptingTreeScope(ShadowRoot&);
 

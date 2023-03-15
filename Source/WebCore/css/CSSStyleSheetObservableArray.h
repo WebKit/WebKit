@@ -43,8 +43,6 @@ public:
     ExceptionOr<void> setSheets(Vector<RefPtr<CSSStyleSheet>>&&);
     const Vector<RefPtr<CSSStyleSheet>>& sheets() const { return m_sheets; }
 
-    void willDestroyTreeScope();
-
 private:
     explicit CSSStyleSheetObservableArray(Document&);
     explicit CSSStyleSheetObservableArray(ShadowRoot&);
@@ -60,7 +58,7 @@ private:
     TreeScope* treeScope() const;
 
     void didAddSheet(CSSStyleSheet&);
-    void willRemoveSheet(CSSStyleSheet&, CSSStyleSheet::IsTreeScopeBeingDestroyed);
+    void willRemoveSheet(CSSStyleSheet&);
 
     std::variant<WeakPtr<Document, WeakPtrImplWithEventTargetData>, WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData>, std::nullptr_t> m_treeScope;
     Vector<RefPtr<CSSStyleSheet>> m_sheets;
