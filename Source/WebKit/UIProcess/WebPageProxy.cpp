@@ -11375,7 +11375,7 @@ void WebPageProxy::setMockWebAuthenticationConfiguration(MockWebAuthenticationCo
 }
 #endif
 
-void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>& exclusionRules,
+void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>& exclusionRules, bool includeSubframes,
     TextManipulationItemCallback&& callback, WTF::CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
@@ -11383,7 +11383,7 @@ void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulation
         return;
     }
     m_textManipulationItemCallback = WTFMove(callback);
-    sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules, includeSubframes), WTFMove(completionHandler));
 }
 
 void WebPageProxy::didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>& items)

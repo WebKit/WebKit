@@ -6901,6 +6901,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
     resetFocusedElementForFrame(frame);
 
+    if (m_textManipulationIncludesSubframes)
+        startTextManipulationForFrame(*frame->coreFrame());
+
     if (!frame->isMainFrame())
         return;
 
@@ -7902,19 +7905,34 @@ std::optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Eleme
     return WebCore::ElementContext { element.boundingBoxInRootViewCoordinates(), m_identifier, document.identifier(), element.identifier() };
 }
 
-void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, CompletionHandler<void()>&& completionHandler)
+void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, bool includeSubframes, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_page)
         return completionHandler();
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!mainDocument)
+    m_textManipulationExclusionRules = WTFMove(exclusionRules);
+    m_textManipulationIncludesSubframes = includeSubframes;
+    if (m_textManipulationIncludesSubframes) {
+        for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered())
+            startTextManipulationForFrame(*frame);
+    } else if (RefPtr frame = m_mainFrame->coreFrame())
+        startTextManipulationForFrame(*frame);
+
+    // For now, we assume startObservingParagraphs find all paragraphs synchronously at once.
+    completionHandler();
+}
+
+void WebPage::startTextManipulationForFrame(WebCore::Frame& frame)
+{
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    RefPtr document = localFrame ? localFrame->document() : nullptr;
+    if (!document || document->textManipulationControllerIfExists())
         return;
 
-    mainDocument->textManipulationController().startObservingParagraphs([webPage = WeakPtr { *this }] (Document& document, const Vector<WebCore::TextManipulationItem>& items) {
+    auto exclusionRules = *m_textManipulationExclusionRules;
+    document->textManipulationController().startObservingParagraphs([webPage = WeakPtr { *this }] (Document& document, const Vector<WebCore::TextManipulationItem>& items) {
         auto* frame = document.frame();
-        if (!webPage || !frame || webPage->mainFrame() != frame)
+        if (!webPage || !frame)
             return;
 
         auto* webFrame = WebFrame::fromCoreFrame(*frame);
@@ -7923,8 +7941,6 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
 
         webPage->send(Messages::WebPageProxy::DidFindTextManipulationItems(items));
     }, WTFMove(exclusionRules));
-    // For now, we assume startObservingParagraphs find all paragraphs synchronously at once.
-    completionHandler();
 }
 
 void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationItem>& items,
@@ -7935,20 +7951,77 @@ void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationIte
         return;
     }
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!mainDocument) {
+    if (items.isEmpty()) {
         completionHandler(true, { });
         return;
     }
 
-    auto* controller = mainDocument->textManipulationControllerIfExists();
-    if (!controller) {
-        completionHandler(true, { });
+    auto currentFrameID = items[0].frameID;
+
+    auto completeManipulationForItems = [&](const Vector<WebCore::TextManipulationItem>& items) -> std::optional<Vector<TextManipulationControllerManipulationFailure>> {
+        ASSERT(!items.isEmpty());
+        auto* frame = WebProcess::singleton().webFrame(currentFrameID);
+        if (!frame)
+            return std::nullopt;
+
+        RefPtr coreFrame = frame->coreFrame();
+        if (!coreFrame)
+            return std::nullopt;
+
+        auto* controller = coreFrame->document()->textManipulationControllerIfExists();
+        if (!controller)
+            return std::nullopt;
+
+        return controller->completeManipulation(items);
+    };
+
+    bool containsItemsForMultipleFrames = WTF::anyOf(items, [&](auto& item) {
+        return currentFrameID != item.frameID;
+    });
+    if (!containsItemsForMultipleFrames) {
+        auto failures = completeManipulationForItems(items);
+        if (failures)
+            completionHandler(false, *failures);
+        else
+            completionHandler(true, { });
         return;
     }
 
-    completionHandler(false, controller->completeManipulation(items));
+    Vector<WebCore::TextManipulationController::ManipulationFailure> failuresForAllItems;
+
+    auto completeManipulationForCurrentFrame = [&](uint64_t startIndexForCurrentFrame, Vector<WebCore::TextManipulationItem> itemsForCurrentFrame) {
+        auto failures = completeManipulationForItems(std::exchange(itemsForCurrentFrame, { }));
+        if (!failures) {
+            uint64_t index = startIndexForCurrentFrame;
+            for (auto& item : itemsForCurrentFrame) {
+                failuresForAllItems.append(TextManipulationControllerManipulationFailure {
+                    item.frameID, item.identifier, index, TextManipulationControllerManipulationFailure::Type::NotAvailable });
+                ++index;
+            }
+            return;
+        }
+        for (auto& failure : *failures) {
+            failuresForAllItems.append(WTFMove(failure));
+            failuresForAllItems.last().index += startIndexForCurrentFrame;
+        }
+    };
+
+    uint64_t indexForCurrentItem = 0;
+    uint64_t itemCount = 0;
+    for (auto& item : items) {
+        if (currentFrameID != item.frameID) {
+            RELEASE_ASSERT(indexForCurrentItem >= itemCount);
+            completeManipulationForCurrentFrame(indexForCurrentItem - itemCount, items.span().subspan(indexForCurrentItem - itemCount, itemCount));
+            currentFrameID = item.frameID;
+            itemCount = 0;
+        }
+        ++indexForCurrentItem;
+        ++itemCount;
+    }
+    RELEASE_ASSERT(indexForCurrentItem >= itemCount);
+    completeManipulationForCurrentFrame(indexForCurrentItem - itemCount, items.span().subspan(indexForCurrentItem - itemCount, itemCount));
+
+    completionHandler(false, WTFMove(failuresForAllItems));
 }
 
 PAL::SessionID WebPage::sessionID() const

@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "TextManipulationController.h"
-#include "TextManipulationItem.h"
 
 #include "AccessibilityObject.h"
 #include "CharacterData.h"
@@ -49,6 +48,7 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "TextManipulationItem.h"
 #include "VisibleUnits.h"
 
 namespace WebCore {
@@ -642,6 +642,9 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
     ASSERT(!itemData.tokens.isEmpty());
     auto newID = m_itemIdentifier.generate();
     m_pendingItemsForCallback.append(TextManipulationItem {
+        m_document->frame()->frameID(),
+        !m_document->frame()->isMainFrame(),
+        !m_document->topOrigin().isSameSiteAs(m_document->securityOrigin()),
         newID,
         itemData.tokens.map([](auto& token) { return token; })
     });
@@ -666,15 +669,21 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
     HashSet<Ref<Node>> containersWithoutVisualOverflowBeforeReplacement;
     for (unsigned i = 0; i < completionItems.size(); ++i) {
         auto& itemToComplete = completionItems[i];
-        auto identifier = itemToComplete.identifier;
-        if (!identifier) {
-            failures.append(ManipulationFailure { identifier, i, ManipulationFailure::Type::InvalidItem });
+        auto frameID = itemToComplete.frameID;
+        auto itemID = itemToComplete.identifier;
+        if (!frameID || !m_document || !m_document->frame() || frameID != m_document->frame()->frameID()) {
+            failures.append(ManipulationFailure { frameID, itemID, i, ManipulationFailure::Type::NotAvailable });
             continue;
         }
 
-        auto itemDataIterator = m_items.find(identifier);
+        if (!itemID) {
+            failures.append(ManipulationFailure { frameID, itemID, i, ManipulationFailure::Type::InvalidItem });
+            continue;
+        }
+
+        auto itemDataIterator = m_items.find(itemID);
         if (itemDataIterator == m_items.end()) {
-            failures.append(ManipulationFailure { identifier, i, ManipulationFailure::Type::InvalidItem });
+            failures.append(ManipulationFailure { frameID, itemID, i, ManipulationFailure::Type::InvalidItem });
             continue;
         }
 
@@ -682,9 +691,8 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
         std::exchange(itemData, itemDataIterator->value);
         m_items.remove(itemDataIterator);
 
-        auto failureOrNullopt = replace(itemData, itemToComplete.tokens, containersWithoutVisualOverflowBeforeReplacement);
-        if (failureOrNullopt)
-            failures.append(ManipulationFailure { identifier, i, *failureOrNullopt });
+        if (auto failureOrNullopt = replace(itemData, itemToComplete.tokens, containersWithoutVisualOverflowBeforeReplacement))
+            failures.append(ManipulationFailure { frameID, itemID, i, *failureOrNullopt });
     }
 
     if (!containersWithoutVisualOverflowBeforeReplacement.isEmpty()) {

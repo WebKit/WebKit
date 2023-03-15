@@ -1959,7 +1959,7 @@ public:
 #endif
 
     using TextManipulationItemCallback = WTF::Function<void(const Vector<WebCore::TextManipulationItem>&)>;
-    void startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>&, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
+    void startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>&, bool includeSubframes, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
     void didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>&);
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, WTF::Function<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&&);
 

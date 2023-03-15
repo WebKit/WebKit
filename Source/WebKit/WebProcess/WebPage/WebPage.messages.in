@@ -656,7 +656,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SendMessageToWebProcessExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
-    StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> ()
+    StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules, bool includeSubframes) -> ()
     CompleteTextManipulation(Vector<WebCore::TextManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationController::ManipulationFailure> failures)
 
     SetOverriddenMediaType(String mediaType)

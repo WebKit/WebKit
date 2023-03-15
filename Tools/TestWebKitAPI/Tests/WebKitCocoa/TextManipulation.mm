@@ -1332,6 +1332,118 @@ TEST(TextManipulation, StartTextManipulationExtractsTableCellsAsSeparateItems)
     EXPECT_WK_STREQ("Baz", items[4].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationDoesNotFindContentInIframeIfIncludeSubframeIsNotSet)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    configuration.get().includeSubframes = YES;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><div>hello</div><div>world</div><iframe src='data:text/html,<p>WebKit</p>'>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].isSubframe, NO);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].isSubframe, NO);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("world", items[1].tokens[0].content);
+}
+
+TEST(TextManipulation, StartTextManipulationFindsContentInIframeIfIncludeSubframeIsSet)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    configuration.get().includeSubframes = YES;
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><div>hello</div><div>world</div><iframe src='data:text/html,<p>WebKit</p>'>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[0].isSubframe, NO);
+    EXPECT_EQ(items[0].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].isSubframe, NO);
+    EXPECT_EQ(items[1].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("world", items[1].tokens[0].content);
+    EXPECT_EQ(items[2].isSubframe, YES);
+    EXPECT_EQ(items[2].isCrossSiteSubframe, YES);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("WebKit", items[2].tokens[0].content);
+}
+
+TEST(TextManipulation, StartTextManipulationFindsContentInIframeInsertedLater)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    configuration.get().includeSubframes = YES;
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><div>hello</div><div>world</div>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].isSubframe, NO);
+    EXPECT_EQ(items[0].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].isSubframe, NO);
+    EXPECT_EQ(items[1].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("world", items[1].tokens[0].content);
+
+    done = false;
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        if (items.count == 3)
+            done = true;
+    };
+
+    [webView objectByEvaluatingJavaScript:@"frame = document.createElement('iframe');"
+        "document.body.appendChild(frame); frame.contentDocument.body.innerHTML = '<p>WebKit</p>';"];
+
+    TestWebKitAPI::Util::run(&done);
+
+    items = [delegate items];
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[0].isSubframe, NO);
+    EXPECT_EQ(items[0].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].isSubframe, NO);
+    EXPECT_EQ(items[1].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("world", items[1].tokens[0].content);
+    EXPECT_EQ(items[2].isSubframe, YES);
+    EXPECT_EQ(items[2].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("WebKit", items[2].tokens[0].content);
+
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;
@@ -2230,6 +2342,49 @@ TEST(TextManipulation, CompleteTextManipulationCanHandleSubsetOfItemsToFail)
     EXPECT_WK_STREQ("<p>hey, <b>dude</b></p><p>good</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationReplaceContentInIframe)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    configuration.get().includeSubframes = YES;
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html><body><div id='container'><p>helllo</p></div>"
+        "<script>frame = document.createElement('iframe'); document.body.appendChild(frame);"
+        "frame.contentDocument.body.innerHTML = '<p>worrld</p>';</script>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].isSubframe, NO);
+    EXPECT_EQ(items[0].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("helllo", items[0].tokens[0].content.UTF8String);
+    EXPECT_EQ(items[1].isSubframe, YES);
+    EXPECT_EQ(items[1].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_STREQ("worrld", items[1].tokens[0].content.UTF8String);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        (_WKTextManipulationItem *)createItem(items[0].identifier, { { items[0].tokens[0].identifier, @"hello" } }),
+        (_WKTextManipulationItem *)createItem(items[1].identifier, { { items[1].tokens[0].identifier, @"world" } }),
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("<p>hello</p>", [webView stringByEvaluatingJavaScript:@"container.innerHTML"]);
+    EXPECT_WK_STREQ("<p>world</p>", [webView stringByEvaluatingJavaScript:@"frame.contentDocument.body.innerHTML"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationFailWhenContentIsChanged)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
@@ -2348,6 +2503,51 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenContentIsAdded)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ("<p>hello, world \n bye</p><div>end</div>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
+TEST(TextManipulation, CompleteTextManipulationFailWhenContentIsChangedInIframe)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    configuration.get().includeSubframes = YES;
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p>helllo</p>"
+        "<script>frame = document.createElement('iframe'); document.body.appendChild(frame);"
+        "frame.contentDocument.body.innerHTML = '<p>worrld</p>';</script></body></html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].isSubframe, NO);
+    EXPECT_EQ(items[0].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("helllo", items[0].tokens[0].content.UTF8String);
+    EXPECT_EQ(items[1].isSubframe, YES);
+    EXPECT_EQ(items[1].isCrossSiteSubframe, NO);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_STREQ("worrld", items[1].tokens[0].content.UTF8String);
+
+    [webView stringByEvaluatingJavaScript:@"frame.contentDocument.body.innerHTML = 'new content'"];
+
+    done = false;
+    __block auto item0 = createItem(items[0].identifier, { { items[0].tokens[0].identifier, @"hey" }, });
+    __block auto item1 = createItem(items[1].identifier, { { items[1].tokens[0].identifier, @"dude" }, });
+    [webView _completeTextManipulationForItems:@[item0.get(), item1.get()] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors.count, 1UL);
+        EXPECT_EQ(errors.firstObject.domain, _WKTextManipulationItemErrorDomain);
+        EXPECT_EQ(errors.firstObject.code, _WKTextManipulationItemErrorContentChanged);
+        EXPECT_EQ(errors.firstObject.userInfo[_WKTextManipulationItemErrorItemKey], item1.get());
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("new content", [webView stringByEvaluatingJavaScript:@"frame.contentDocument.body.innerHTML"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationSuccedsWhenContentOutOfParagraphIsAdded)

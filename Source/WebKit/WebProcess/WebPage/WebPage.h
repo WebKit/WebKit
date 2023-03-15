@@ -1429,7 +1429,7 @@ public:
     RefPtr<WebCore::Element> elementForContext(const WebCore::ElementContext&) const;
     std::optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
 
-    void startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&&, CompletionHandler<void()>&&);
+    void startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&&, bool includesSubframes, CompletionHandler<void()>&&);
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, CompletionHandler<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&&);
 
 #if ENABLE(APPLE_PAY)
@@ -1725,6 +1725,8 @@ private:
     void tryMarkLayersVolatileCompletionHandler(MarkLayersVolatileDontRetryReason, bool didSucceed);
 
     String sourceForFrame(WebFrame*);
+
+    void startTextManipulationForFrame(WebCore::Frame&);
 
     void loadDataImpl(uint64_t navigationID, WebCore::ShouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::SubstituteData::SessionHistoryVisibility, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
@@ -2539,6 +2541,9 @@ private:
 #if HAVE(SCENEKIT)
     bool m_useSceneKitForModel { false };
 #endif
+
+    bool m_textManipulationIncludesSubframes { false };
+    std::optional<Vector<WebCore::TextManipulationController::ExclusionRule>> m_textManipulationExclusionRules;
 
     Vector<String> m_corsDisablingPatterns;
 

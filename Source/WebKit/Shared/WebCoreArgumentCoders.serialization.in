@@ -1783,6 +1783,9 @@ struct WebCore::EventTrackingRegions {
 enum class WebCore::HasInsecureContent : bool
 
 struct WebCore::TextManipulationItem {
+    WebCore::FrameIdentifier frameID;
+    bool isSubframe;
+    bool isCrossSiteSubframe;
     WebCore::TextManipulationItemIdentifier identifier;
     Vector<WebCore::TextManipulationToken> tokens;
 }
@@ -3131,6 +3134,7 @@ header: <WebCore/TextManipulationController.h>
 
 header: <WebCore/TextManipulationController.h>
 [Nested, CustomHeader] enum class WebCore::TextManipulationControllerManipulationFailure::Type : uint8_t {
+    NotAvailable,
     ContentChanged,
     InvalidItem,
     InvalidToken,
@@ -3139,6 +3143,7 @@ header: <WebCore/TextManipulationController.h>
 
 header: <WebCore/TextManipulationController.h>
 [CustomHeader] struct WebCore::TextManipulationControllerManipulationFailure {
+    WebCore::FrameIdentifier frameID;
     WebCore::TextManipulationItemIdentifier identifier;
     uint64_t index;
     WebCore::TextManipulationControllerManipulationFailure::Type type;
