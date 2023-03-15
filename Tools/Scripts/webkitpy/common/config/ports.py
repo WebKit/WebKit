@@ -68,12 +68,11 @@ class DeprecatedPort(object):
             "jsc-only": JscOnlyPort,
             "mac": MacPort,
             "mac-wk2": MacWK2Port,
-            "win": WinPort,
             "wincairo": WinCairoPort,
             "wpe": WpePort,
         }
         default_port = {
-            "Windows": WinPort,
+            "Windows": WinCairoPort,
             "Darwin": MacPort,
         }
         # Do we really need MacPort as the ultimate default?
@@ -166,15 +165,6 @@ class MacPort(DeprecatedPort):
 
 class MacWK2Port(DeprecatedPort):
     port_flag_name = "mac-wk2"
-
-
-class WinPort(DeprecatedPort):
-    port_flag_name = "win"
-
-    def run_webkit_tests_command(self, build_style=None):
-        command = super(WinPort, self).run_webkit_tests_command(build_style)
-        command.append("--dump-render-tree")
-        return command
 
 
 class WinCairoPort(DeprecatedPort):

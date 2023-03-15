@@ -492,10 +492,6 @@ def _set_up_derived_options(port, options):
     if options.platform in ["gtk", "wpe"]:
         options.webkit_test_runner = True
 
-    # Don't maintain render tree dump results for Apple Windows port.
-    if port.port_name == "win":
-        options.ignore_render_tree_dump_results = True
-
 def run(port, options, args, logging_stream):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)

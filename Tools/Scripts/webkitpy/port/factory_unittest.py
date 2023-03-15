@@ -60,11 +60,11 @@ class FactoryTest(unittest.TestCase):
         self.assert_port(port_name=None,  os_name='mac', os_version=Version.from_name('Lion'), cls=mac.MacPort)
 
     def test_win(self):
-        self.assert_port(port_name='win-xp', cls=win.WinPort)
-        self.assert_port(port_name='win-xp-wk2', cls=win.WinPort)
-        self.assert_port(port_name='win', os_name='win', os_version=Version.from_name('XP'), cls=win.WinPort)
-        self.assert_port(port_name=None, os_name='win', os_version=Version.from_name('XP'), cls=win.WinPort)
-        self.assert_port(port_name=None, os_name='win', os_version=Version.from_name('XP'), options=self.webkit_options, cls=win.WinPort)
+        self.assert_port(port_name='wincairo-win10', cls=win.WinCairoPort)
+        self.assert_port(port_name='wincairo-win10-wk2', cls=win.WinCairoPort)
+        self.assert_port(port_name='wincairo', os_name='win', os_version=Version.from_name('Win10'), cls=win.WinCairoPort)
+        self.assert_port(port_name=None, os_name='win', os_version=Version.from_name('Win10'), cls=win.WinCairoPort)
+        self.assert_port(port_name=None, os_name='win', os_version=Version.from_name('Win10'), options=self.webkit_options, cls=win.WinCairoPort)
 
     def test_gtk(self):
         self.assert_port(port_name='gtk', cls=gtk.GtkPort)

@@ -114,7 +114,6 @@ class PortFactory(object):
         'mac.MacPort',
         'test.TestPort',
         'win.WinCairoPort',
-        'win.WinPort',
         'wpe.WPEPort',
     )
 
@@ -128,7 +127,7 @@ class PortFactory(object):
         elif platform.is_mac():
             return 'mac'
         elif platform.is_win():
-            return 'win'
+            return 'wincairo'
         raise NotImplementedError('unknown platform: %s' % platform)
 
     def get(self, port_name=None, options=None, **kwargs):
