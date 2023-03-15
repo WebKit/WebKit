@@ -29,11 +29,11 @@
 
 namespace WGSL {
 
-class ShaderModule;
+class CallGraph;
 
 namespace Metal {
 
-void emitMetalFunctions(StringBuilder&, ShaderModule&);
+void emitMetalFunctions(StringBuilder&, CallGraph&);
 
 } // namespace Metal
 } // namespace WGSL

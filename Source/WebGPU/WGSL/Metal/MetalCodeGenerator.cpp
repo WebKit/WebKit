@@ -56,12 +56,12 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
     }
 }
 
-String generateMetalCode(ShaderModule& module)
+String generateMetalCode(CallGraph& callGraph)
 {
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());
 
-    Metal::emitMetalFunctions(stringBuilder, module);
+    Metal::emitMetalFunctions(stringBuilder, callGraph);
 
     dumpMetalCodeIfNeeded(stringBuilder);
 
