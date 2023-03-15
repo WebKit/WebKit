@@ -445,17 +445,19 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyChe
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
-bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, URL& newURL) const
+bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, ResourceRequest& request) const
 {
-    auto documentLoader = m_provisionalDocumentLoader ? m_provisionalDocumentLoader : m_documentLoader;
+    auto& documentLoader = m_provisionalDocumentLoader ? m_provisionalDocumentLoader : m_documentLoader;
+    auto& newURL = request.url();
+    const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
+        || (originalURL.protocolIs("http"_s) && RegistrableDomain(newURL) == RegistrableDomain(originalURL)))
+        && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain);
+
     if (documentLoader && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly)
         && newURL.protocolIs("http"_s)
-        && ((RegistrableDomain(newURL) == RegistrableDomain(originalURL) && !documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain))
-        || RegistrableDomain(newURL) != RegistrableDomain(originalURL))) {
+        && !isSameSiteBypassEnabled) {
         FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
-        newURL.setProtocol("https"_s);
-        if (newURL.port() == 80)
-            newURL.setPort(std::nullopt);
+        request.upgradeToHTTPS();
         return true;
     }
     return false;
@@ -486,9 +488,7 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
         frameRequest.setFrameName(m_frame.document()->baseTarget());
 
     auto currentURL { m_frame.document() ? m_frame.document()->url() : URL { } };
-    auto newURL { frameRequest.resourceRequest().url() };
-    if (upgradeRequestforHTTPSOnlyIfNeeded(currentURL, newURL) && frameRequest.resourceRequest().url() != newURL)
-        frameRequest.resourceRequest().setURL(newURL);
+    upgradeRequestforHTTPSOnlyIfNeeded(currentURL, frameRequest.resourceRequest());
 
     m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(frameRequest.resourceRequest(), ContentSecurityPolicy::InsecureRequestType::Navigation);
 

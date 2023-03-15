@@ -1015,12 +1015,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     auto& page = *frame.page();
 
-#if ENABLE(CONTENT_EXTENSIONS)
     if (m_documentLoader) {
         const auto& resourceRequest = request.resourceRequest();
+        bool madeHTTPS { false };
+#if ENABLE(CONTENT_EXTENSIONS)
         auto results = page.userContentProvider().processContentRuleListsForLoad(page, resourceRequest.url(), ContentExtensions::toResourceType(type, request.resourceRequest().requester()), *m_documentLoader);
         bool blockedLoad = results.summary.blockedLoad;
-        bool madeHTTPS = results.summary.madeHTTPS;
+        madeHTTPS = results.summary.madeHTTPS;
         request.applyResults(WTFMove(results), &page);
         if (blockedLoad) {
             CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Resource blocked by content blocker", frame);
@@ -1037,6 +1038,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             }
             return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
         }
+#endif
+        if (!madeHTTPS && type == CachedResource::Type::MainResource)
+            madeHTTPS = frame.loader().upgradeRequestforHTTPSOnlyIfNeeded(frame.document() ? frame.document()->url() : URL { }, request.resourceRequest());
+
         if (madeHTTPS
             && type == CachedResource::Type::MainResource
             && m_documentLoader->isLoadingMainResource()) {
@@ -1046,7 +1051,6 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         url = request.resourceRequest().url(); // The content extension could have changed it from http to https.
         url = MemoryCache::removeFragmentIdentifierIfNeeded(url); // Might need to remove fragment identifier again.
     }
-#endif
 
     if (m_documentLoader && !m_documentLoader->customHeaderFields().isEmpty()) {
         bool sameOriginRequest = false;

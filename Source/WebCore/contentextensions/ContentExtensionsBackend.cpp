@@ -351,15 +351,8 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
         request.setAllowCookies(false);
 
     if (results.summary.madeHTTPS) {
-        const URL& originalURL = request.url();
-        ASSERT(originalURL.protocolIs("http"_s));
-        ASSERT(!originalURL.port() || WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
-
-        URL newURL = originalURL;
-        newURL.setProtocol("https"_s);
-        if (originalURL.port())
-            newURL.setPort(WTF::defaultPortForProtocol("https"_s).value());
-        request.setURL(newURL);
+        ASSERT(!request.url().port() || WTF::isDefaultPortForProtocol(request.url().port().value(), request.url().protocol()));
+        request.upgradeToHTTPS();
     }
 
     std::sort(results.summary.modifyHeadersActions.begin(), results.summary.modifyHeadersActions.end(),

@@ -240,6 +240,8 @@ public:
     const std::optional<int>& inspectorInitiatorNodeIdentifier() const { return m_inspectorInitiatorNodeIdentifier; }
     void setInspectorInitiatorNodeIdentifier(int inspectorInitiatorNodeIdentifier) { m_inspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier; }
 
+    void upgradeToHTTPS();
+
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreview() const;
 
