@@ -264,6 +264,7 @@ public:
 #if PLATFORM(GTK)
     const SelectionData& selectionData() const;
     static std::unique_ptr<Pasteboard> createForGlobalSelection(std::unique_ptr<PasteboardContext>&&);
+    int64_t changeCount() const;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -286,12 +287,14 @@ public:
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
     int64_t changeCount() const;
     const PasteboardCustomData& readCustomData();
-#else
+#elif !PLATFORM(GTK)
     int64_t changeCount() const { return 0; }
 #endif
 
 #if PLATFORM(COCOA)
     const String& name() const { return m_pasteboardName; }
+#elif PLATFORM(GTK)
+    const String& name() const { return m_name; }
 #else
     const String& name() const { return emptyString(); }
 #endif
@@ -349,6 +352,7 @@ private:
 #if PLATFORM(GTK)
     std::optional<SelectionData> m_selectionData;
     String m_name;
+    int64_t m_changeCount { 0 };
 #endif
 
 #if PLATFORM(COCOA)

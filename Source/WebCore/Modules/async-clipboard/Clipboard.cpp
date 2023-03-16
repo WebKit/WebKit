@@ -314,9 +314,7 @@ void Clipboard::ItemWriter::write(const Vector<RefPtr<ClipboardItem>>& items)
 {
     ASSERT(m_promise);
     ASSERT(m_clipboard);
-#if PLATFORM(COCOA)
     m_changeCountAtStart = m_pasteboard->changeCount();
-#endif
     m_dataToWrite.fill(std::nullopt, items.size());
     m_pendingItemCount = items.size();
     for (size_t index = 0; index < items.size(); ++index) {
@@ -351,7 +349,6 @@ void Clipboard::ItemWriter::didSetAllData()
     if (!m_promise)
         return;
 
-#if PLATFORM(COCOA)
     auto newChangeCount = m_pasteboard->changeCount();
     if (m_changeCountAtStart != newChangeCount) {
         // FIXME: Instead of checking the changeCount here, send it over to the client (e.g. the UI process
@@ -359,7 +356,7 @@ void Clipboard::ItemWriter::didSetAllData()
         reject();
         return;
     }
-#endif // PLATFORM(COCOA)
+
     auto dataToWrite = std::exchange(m_dataToWrite, { });
     Vector<PasteboardCustomData> customData;
     customData.reserveInitialCapacity(dataToWrite.size());

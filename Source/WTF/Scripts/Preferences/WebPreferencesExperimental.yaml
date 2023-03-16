@@ -111,7 +111,7 @@ AsyncClipboardAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)" : true
+      "PLATFORM(COCOA) || PLATFORM(GTK)" : true
       default: false
     WebCore:
       default: false
