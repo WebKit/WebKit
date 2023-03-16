@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,5 +87,12 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, libxslt, xsltEvalAttrValueTemplate, xmlCh
 
 SOFT_LINK_VARIABLE_FOR_HEADER(WebCore, libxslt, xsltMaxDepth, int);
 #define xsltMaxDepth get_libxslt_xsltMaxDepth()
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, libxslt, xsltCreateRVT, xmlDocPtr, (xsltTransformContextPtr ctxt), (ctxt))
+#define xsltCreateRVT WebCore::softLink_libxslt_xsltCreateRVT
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, libxslt, xsltRegisterLocalRVT, int, (xsltTransformContextPtr ctxt, xmlDocPtr RVT), (ctxt, RVT))
+#define xsltRegisterLocalRVT WebCore::softLink_libxslt_xsltRegisterLocalRVT
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, libxslt, xsltXPathGetTransformContext, xsltTransformContextPtr, (xmlXPathParserContextPtr ctxt), (ctxt))
+#define xsltXPathGetTransformContext WebCore::softLink_libxslt_xsltXPathGetTransformContext
 
 #endif // OS(DARWIN) && !PLATFORM(GTK)
