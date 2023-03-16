@@ -183,7 +183,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-16",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["ios-16-sim-build-ews"],
-      "workernames": [ "ews111", "ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185", "ews200","ews201","ews202","ews203"]
+      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185", "ews200","ews201","ews202","ews203"]
     },
     {
       "name": "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
@@ -337,7 +337,7 @@
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-16-sim-build-ews"],
-      "workernames": ["ews110", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183"]
+      "workernames": ["ews110", "ews111", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183"]
     },
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
