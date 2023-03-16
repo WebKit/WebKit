@@ -1,0 +1,5 @@
+
+PASS .collapsed 1
+PASS .collapsed 2
+PASS .collapsed 3
+
