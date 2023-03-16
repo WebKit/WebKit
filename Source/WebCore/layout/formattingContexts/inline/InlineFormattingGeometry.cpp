@@ -251,11 +251,11 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
 
     auto* canidateBox = outOfFlowBox.nextInFlowSibling();
     if (!canidateBox)
-        canidateBox = outOfFlowBox.parent().isInlineBox() ? &outOfFlowBox.parent() : nullptr;
+        canidateBox = outOfFlowBox.parent().isInlineBox() ? outOfFlowBox.parent().nextInFlowSibling() : nullptr;
     while (canidateBox) {
         if (auto displayBoxIndex = nextDisplayBoxIndexOf(*canidateBox))
             return displayBoxIndex;
-        canidateBox = canidateBox->parent().isInlineBox() ? &canidateBox->parent() : nullptr;
+        canidateBox = canidateBox->parent().isInlineBox() ? canidateBox->parent().nextInFlowSibling() : nullptr;
     }
     return { };
 }
