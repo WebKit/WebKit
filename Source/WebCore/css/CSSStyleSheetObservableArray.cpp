@@ -34,24 +34,15 @@
 
 namespace WebCore {
 
-Ref<CSSStyleSheetObservableArray> CSSStyleSheetObservableArray::create(Document& document)
+Ref<CSSStyleSheetObservableArray> CSSStyleSheetObservableArray::create(ContainerNode& treeScope)
 {
-    return adoptRef(*new CSSStyleSheetObservableArray(document));
+    return adoptRef(*new CSSStyleSheetObservableArray(treeScope));
 }
 
-Ref<CSSStyleSheetObservableArray> CSSStyleSheetObservableArray::create(ShadowRoot& shadowRoot)
+CSSStyleSheetObservableArray::CSSStyleSheetObservableArray(ContainerNode& treeScope)
+    : m_treeScope(treeScope)
 {
-    return adoptRef(*new CSSStyleSheetObservableArray(shadowRoot));
-}
-
-CSSStyleSheetObservableArray::CSSStyleSheetObservableArray(Document& document)
-    : m_treeScope(WeakPtr { document })
-{
-}
-
-CSSStyleSheetObservableArray::CSSStyleSheetObservableArray(ShadowRoot& shadowRoot)
-    : m_treeScope(WeakPtr { shadowRoot })
-{
+    ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
 }
 
 bool CSSStyleSheetObservableArray::setValueAt(JSC::JSGlobalObject* lexicalGlobalObject, unsigned index, JSC::JSValue value)
@@ -126,35 +117,23 @@ std::optional<Exception> CSSStyleSheetObservableArray::shouldThrowWhenAddingShee
 
 TreeScope* CSSStyleSheetObservableArray::treeScope() const
 {
-    return WTF::switchOn(m_treeScope, [](const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document) -> TreeScope* {
-        return document.get();
-    }, [](const WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData>& shadowRoot) -> TreeScope* {
-        return shadowRoot.get();
-    }, [](std::nullptr_t) -> TreeScope* {
+    if (!m_treeScope)
         return nullptr;
-    });
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*m_treeScope))
+        return shadowRoot;
+    return &downcast<Document>(*m_treeScope);
 }
 
 void CSSStyleSheetObservableArray::didAddSheet(CSSStyleSheet& sheet)
 {
-    WTF::switchOn(m_treeScope, [&](const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document) {
-        if (document)
-            sheet.addAdoptingTreeScope(*document);
-    }, [&](const WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData>& shadowRoot) {
-        if (shadowRoot)
-            sheet.addAdoptingTreeScope(*shadowRoot);
-    }, [](std::nullptr_t) { });
+    if (m_treeScope)
+        sheet.addAdoptingTreeScope(*m_treeScope);
 }
 
 void CSSStyleSheetObservableArray::willRemoveSheet(CSSStyleSheet& sheet)
 {
-    WTF::switchOn(m_treeScope, [&](const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document) {
-        if (document)
-            sheet.removeAdoptingTreeScope(*document);
-    }, [&](const WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData>& shadowRoot) {
-        if (shadowRoot)
-            sheet.removeAdoptingTreeScope(*shadowRoot);
-    }, [](std::nullptr_t) { });
+    if (m_treeScope)
+        sheet.removeAdoptingTreeScope(*m_treeScope);
 }
 
 } // namespace WebCore

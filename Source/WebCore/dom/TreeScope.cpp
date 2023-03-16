@@ -550,12 +550,8 @@ RadioButtonGroups& TreeScope::radioButtonGroups()
 
 CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
 {
-    if (UNLIKELY(!m_adoptedStyleSheets)) {
-        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(m_rootNode))
-            m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(*shadowRoot);
-        else
-            m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(downcast<Document>(m_rootNode));
-    }
+    if (UNLIKELY(!m_adoptedStyleSheets))
+        m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(m_rootNode);
     return *m_adoptedStyleSheets;
 }
 
