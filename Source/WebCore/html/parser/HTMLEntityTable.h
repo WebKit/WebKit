@@ -1,6 +1,6 @@
-/*
- * Copyright (C) 2023 Apple, Inc. All Rights Reserved.
+/**
  * Copyright (C) 2010-2014 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,20 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
+#include <unicode/umachine.h>
 
 namespace WebCore {
 
-// Member order to optimize packing. There will be thousands of these objects.
+// Optimize packing since there are over 2000 of these.
 struct HTMLEntityTableEntry {
-    LChar lastCharacter() const;
+    const char* nameCharacters() const;
+    unsigned nameLength() const { return nameLengthExcludingSemicolon + nameIncludesTrailingSemicolon; }
 
-    UChar32 firstValue;
-    UChar secondValue; // UChar since double char sequences only use BMP chars.
-    uint16_t entityOffset;
-    uint8_t length;
+    unsigned firstCharacter : 21; // All Unicode characters fit in 21 bits.
+    unsigned optionalSecondCharacter : 16; // Two-character sequences are all BMP characters.
+    unsigned nameCharactersOffset : 14;
+    unsigned nameLengthExcludingSemicolon : 5;
+    unsigned nameIncludesTrailingSemicolon : 1;
 };
 
 class HTMLEntityTable {
@@ -47,8 +49,6 @@ public:
 
     static const HTMLEntityTableEntry* firstEntryStartingWith(UChar);
     static const HTMLEntityTableEntry* lastEntryStartingWith(UChar);
-
-    static const LChar* characters(const HTMLEntityTableEntry&);
 };
 
 } // namespace WebCore
