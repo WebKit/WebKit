@@ -60,6 +60,16 @@
    },
    {
       "emails" : [
+         "a_protyasha@apple.com"
+      ],
+      "github" : "aprotyas",
+      "name" : "Abrar Rahman Protyasha",
+      "nicks" : [
+         "aprotyas"
+      ]
+   },
+   {
+      "emails" : [
          "adachan@apple.com"
       ],
       "expertise" : "WebKit on Windows",
