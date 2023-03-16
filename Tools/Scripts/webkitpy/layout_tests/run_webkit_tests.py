@@ -32,7 +32,6 @@ from __future__ import print_function
 import logging
 import optparse
 import os
-import resource
 import traceback
 
 from webkitpy.common.host import Host
@@ -501,9 +500,10 @@ def run(port, options, args, logging_stream):
 
         if options.enable_core_dumps_nolimit:
             try:
+                import resource
                 resource.setrlimit(resource.RLIMIT_CORE, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
                 _log.debug('Enabled coredumps for test run')
-            except (ValueError, OSError) as e:
+            except (ModuleNotFoundError, ValueError, OSError) as e:
                 _log.error('Failed to enable coredumps: %s' % str(e))
 
         _set_up_derived_options(port, options)
