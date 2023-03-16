@@ -41,7 +41,7 @@ namespace WebCore {
 static void fillWithValue(float* values, float value, unsigned endFrame, unsigned& writeIndex)
 {
     if (writeIndex < endFrame) {
-        std::fill_n(values + writeIndex, endFrame - writeIndex, value);
+        std::fill(values + writeIndex, values + endFrame, value);
         writeIndex = endFrame;
     }
 }

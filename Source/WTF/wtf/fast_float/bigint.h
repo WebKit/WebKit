@@ -116,10 +116,7 @@ struct stackvec {
   // appended item.
   void resize_unchecked(size_t new_len, limb value) noexcept {
     if (new_len > len()) {
-      size_t count = new_len - len();
-      limb* first = data + len();
-      limb* last = first + count;
-      ::std::fill(first, last, value);
+      ::std::fill(data + len(), data + new_len, value);
       set_len(new_len);
     } else {
       set_len(new_len);
@@ -472,13 +469,9 @@ struct bigint {
       return false;
     } else if (!vec.is_empty()) {
       // move limbs
-      limb* dst = vec.data + n;
-      const limb* src = vec.data;
-      ::memmove(dst, src, sizeof(limb) * vec.len());
+      ::memmove(vec.data + n, vec.data, sizeof(limb) * vec.len());
       // fill in empty limbs
-      limb* first = vec.data;
-      limb* last = first + n;
-      ::std::fill(first, last, 0);
+      ::std::fill_n(vec.data, n, 0);
       vec.set_len(n + vec.len());
       return true;
     } else {
