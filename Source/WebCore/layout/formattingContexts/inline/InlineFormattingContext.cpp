@@ -162,7 +162,6 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     };
     auto displayContent = lineLayout(inlineItems, needsLayoutRange, previousLine(), { constraints, { } }, blockLayoutState).displayContent;
     computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), { constraints.horizontal().logicalLeft, constraints.logicalTop() }, displayContent);
-    InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(displayContent.boxes);
     // FIXME: Transition to non-formatting state based inline content.
     inlineFormattingState.lines() = WTFMove(displayContent.lines);
     inlineFormattingState.boxes() = WTFMove(displayContent.boxes);
@@ -193,7 +192,6 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowContentForIntegration(co
     auto inlineConstraints = downcast<ConstraintsForInlineContent>(constraints);
     auto layoutResult = lineLayout(inlineItems, needsLayoutRange, previousLine(), inlineConstraints, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), { inlineConstraints.horizontal().logicalLeft, inlineConstraints.logicalTop() }, layoutResult.displayContent);
-    InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(layoutResult.displayContent.boxes);
     return layoutResult;
 }
 

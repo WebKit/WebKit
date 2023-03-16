@@ -906,36 +906,6 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
     }
 }
 
-void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(InlineDisplay::Boxes& boxes)
-{
-    if (boxes.isEmpty()) {
-        // Line clamp may produce a completely empty IFC.
-        return;
-    }
-
-    HashMap<const Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
-    lastDisplayBoxForLayoutBoxIndexes.reserveInitialCapacity(boxes.size() - 1);
-
-    ASSERT(boxes[0].isRootInlineBox());
-    boxes[0].setIsFirstForLayoutBox(true);
-    size_t lastRootInlineBoxIndex = 0;
-
-    for (size_t index = 1; index < boxes.size(); ++index) {
-        auto& displayBox = boxes[index];
-        if (displayBox.isRootInlineBox()) {
-            lastRootInlineBoxIndex = index;
-            continue;
-        }
-        auto& layoutBox = displayBox.layoutBox();
-        if (lastDisplayBoxForLayoutBoxIndexes.set(&layoutBox, index).isNewEntry)
-            displayBox.setIsFirstForLayoutBox(true);
-    }
-    for (auto index : lastDisplayBoxForLayoutBoxIndexes.values())
-        boxes[index].setIsLastForLayoutBox(true);
-
-    boxes[lastRootInlineBoxIndex].setIsLastForLayoutBox(true);
-}
-
 InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode writingMode) const
 {
     switch (writingMode) {

@@ -47,6 +47,7 @@ public:
 
 private:
     void adjustDisplayLines(InlineContent&) const;
+    void computeIsFirstIsLastBoxForInlineContent(InlineContent&) const;
 
     const RenderBlockFlow& m_blockFlow;
     BoxTree& m_boxTree;
