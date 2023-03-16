@@ -2743,6 +2743,10 @@ imported/w3c/web-platform-tests/websockets/unload-a-document/001.html?wpt_flags=
 imported/w3c/web-platform-tests/websockets/unload-a-document/002.html?wpt_flags=h2 [ Skip ]
 imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=h2 [ Skip ]
 
+
+# rdar://106818567 ([ EWS Mac ] http/wpt/service-workers/service-worker-spinning-activate.https.html (layout-tests) is a flaky failure)
+http/wpt/service-workers/service-worker-spinning-activate.https.html [ Failure ]
+
 # Timing out since its import.
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?touch [ Skip ]
 
