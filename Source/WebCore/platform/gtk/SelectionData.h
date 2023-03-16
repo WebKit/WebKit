@@ -60,6 +60,11 @@ public:
     void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
     bool canSmartReplace() const { return m_canSmartReplace; }
 
+    void addBuffer(const String& type, const Ref<SharedBuffer>& buffer) { m_buffers.add(type, buffer.get()); }
+    const HashMap<String, Ref<SharedBuffer>>& buffers() const { return m_buffers; }
+    SharedBuffer* buffer(const String& type) { return m_buffers.get(type); }
+    void clearBuffers() { m_buffers.clear(); }
+
     void setCustomData(Ref<SharedBuffer>&& buffer) { m_customData = WTFMove(buffer); }
     SharedBuffer* customData() const { return m_customData.get(); }
     bool hasCustomData() const { return !!m_customData; }
@@ -77,6 +82,7 @@ private:
     RefPtr<Image> m_image;
     bool m_canSmartReplace { false };
     RefPtr<SharedBuffer> m_customData;
+    HashMap<String, Ref<SharedBuffer>> m_buffers;
 };
 
 } // namespace WebCore

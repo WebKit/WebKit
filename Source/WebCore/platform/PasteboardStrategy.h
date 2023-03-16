@@ -89,6 +89,7 @@ public:
     virtual RefPtr<SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) = 0;
     virtual void writeToClipboard(const String& pasteboardName, SelectionData&&) = 0;
     virtual void clearClipboard(const String& pasteboardName) = 0;
+    virtual int64_t changeCount(const String& pasteboardName) = 0;
 #endif // PLATFORM(GTK)
 
 #if USE(LIBWPE)
