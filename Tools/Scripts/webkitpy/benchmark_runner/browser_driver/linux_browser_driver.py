@@ -45,7 +45,8 @@ class LinuxBrowserDriver(BrowserDriver):
     process_search_list = []
     platform = 'linux'
 
-    def __init__(self):
+    def __init__(self, browser_args):
+        super().__init__(browser_args)
         self.process_name = self._get_first_executable_path_from_list(self.process_search_list)
         if self.process_name is None:
             raise ValueError('Cant find executable for browser {browser_name}. Searched list: {browser_process_list}'.format(
