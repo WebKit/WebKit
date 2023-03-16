@@ -11461,7 +11461,7 @@ void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& com
     sendWithAsyncReply(Messages::WebPage::GetProcessDisplayName(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
+void WebPageProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
 {
 #if ENABLE(MEDIA_STREAM)
 #if PLATFORM(COCOA)

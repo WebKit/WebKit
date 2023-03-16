@@ -1496,7 +1496,7 @@ void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(LocalFrame& fr
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS) && !PLATFORM(IOS_FAMILY)
-int WebChromeClient::deviceOrientation() const
+IntDegrees WebChromeClient::deviceOrientation() const
 {
     notImplemented();
     return 0;

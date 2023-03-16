@@ -105,7 +105,7 @@ private:
     AVFrameRateRange* frameDurationForFrameRate(double);
 
     // OrientationNotifier::Observer API
-    void orientationChanged(int orientation) final;
+    void orientationChanged(IntDegrees orientation) final;
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
@@ -124,8 +124,8 @@ private:
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 
-    int m_sensorOrientation { 0 };
-    int m_deviceOrientation { 0 };
+    IntDegrees m_sensorOrientation { 0 };
+    IntDegrees m_deviceOrientation { 0 };
     VideoFrameRotation m_videoFrameRotation { };
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;

@@ -1578,7 +1578,7 @@ public:
 
     ConstantPropertyMap& constantProperties() const { return *m_constantPropertyMap; }
 
-    void orientationChanged(int orientation);
+    void orientationChanged(IntDegrees orientation);
     OrientationNotifier& orientationNotifier() { return m_orientationNotifier; }
 
     WEBCORE_EXPORT const AtomString& bgColor() const;

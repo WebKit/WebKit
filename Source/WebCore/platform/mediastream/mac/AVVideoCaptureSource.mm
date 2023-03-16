@@ -440,7 +440,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
+static inline IntDegrees sensorOrientation(AVCaptureVideoOrientation videoOrientation)
 {
 #if PLATFORM(IOS_FAMILY)
     switch (videoOrientation) {
@@ -468,7 +468,7 @@ static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-static inline int sensorOrientationFromVideoOutput(AVCaptureVideoDataOutput* videoOutput)
+static inline IntDegrees sensorOrientationFromVideoOutput(AVCaptureVideoDataOutput* videoOutput)
 {
     AVCaptureConnection* connection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -587,7 +587,7 @@ void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
 #endif
 }
 
-void AVVideoCaptureSource::orientationChanged(int orientation)
+void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
 {
     ASSERT(orientation == 0 || orientation == 90 || orientation == -90 || orientation == 180);
     m_deviceOrientation = orientation;

@@ -145,7 +145,7 @@ Seconds WebChromeClient::eventThrottlingDelay()
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
-int WebChromeClient::deviceOrientation() const
+IntDegrees WebChromeClient::deviceOrientation() const
 {
     return m_page.deviceOrientation();
 }

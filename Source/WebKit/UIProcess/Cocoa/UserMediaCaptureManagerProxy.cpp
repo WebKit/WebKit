@@ -466,7 +466,7 @@ void UserMediaCaptureManagerProxy::clear()
     m_proxies.clear();
 }
 
-void UserMediaCaptureManagerProxy::setOrientation(uint64_t orientation)
+void UserMediaCaptureManagerProxy::setOrientation(WebCore::IntDegrees orientation)
 {
     m_orientationNotifier.orientationChanged(orientation);
 }

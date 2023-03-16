@@ -46,6 +46,8 @@ struct LogArgument {
     template<typename U = T> static typename std::enable_if<std::is_same<U, long>::value, String>::type toString(long argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned long long>::value, String>::type toString(unsigned long long argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, long long>::value, String>::type toString(long long argument) { return String::number(argument); }
+    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned short>::value, String>::type toString(unsigned short argument) { return String::number(argument); }
+    template<typename U = T> static typename std::enable_if<std::is_same<U, short>::value, String>::type toString(short argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_enum<U>::value, String>::type toString(U argument) { return String::number(static_cast<typename std::underlying_type<U>::type>(argument)); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, float>::value, String>::type toString(float argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, double>::value, String>::type toString(double argument) { return String::number(argument); }

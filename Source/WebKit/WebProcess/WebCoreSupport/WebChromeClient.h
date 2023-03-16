@@ -199,7 +199,7 @@ private:
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-    int deviceOrientation() const final;
+    WebCore::IntDegrees deviceOrientation() const final;
 #endif
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;

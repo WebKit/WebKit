@@ -319,7 +319,7 @@ public:
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-    virtual int deviceOrientation() const = 0;
+    virtual IntDegrees deviceOrientation() const = 0;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

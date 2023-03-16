@@ -369,7 +369,7 @@ void LocalFrame::orientationChanged()
     });
 }
 
-int LocalFrame::orientation() const
+IntDegrees LocalFrame::orientation() const
 {
     if (auto* page = this->page())
         return page->chrome().client().deviceOrientation();

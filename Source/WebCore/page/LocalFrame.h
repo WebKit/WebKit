@@ -237,7 +237,7 @@ public:
     //  0 is straight up; -90 is when the device is rotated 90 clockwise;
     //  90 is when rotated counter clockwise.
     WEBCORE_EXPORT void orientationChanged();
-    int orientation() const;
+    IntDegrees orientation() const;
 #endif
 
     void clearTimers();

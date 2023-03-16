@@ -34,6 +34,7 @@
 #include "ProcessThrottlerClient.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <memory>
@@ -79,7 +80,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);
     void setUseSCContentSharingPicker(bool);
-    void setOrientationForMediaCapture(uint64_t orientation);
+    void setOrientationForMediaCapture(WebCore::IntDegrees);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
@@ -171,7 +172,7 @@ private:
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
-    uint64_t m_orientation { 0 };
+    WebCore::IntDegrees m_orientation { 0 };
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     bool m_useSCContentSharingPicker { false };

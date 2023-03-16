@@ -651,7 +651,7 @@ ExceptionOr<RefPtr<Element>> LocalDOMWindow::matchingElementInFlatTree(Node& sco
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
-int LocalDOMWindow::orientation() const
+IntDegrees LocalDOMWindow::orientation() const
 {
     auto* frame = this->frame();
     if (!frame)

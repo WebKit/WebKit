@@ -509,7 +509,7 @@ bool MockRealtimeVideoSource::mockDisplayType(CaptureDevice::DeviceType type) co
     return std::get<MockDisplayProperties>(m_device.properties).type == type;
 }
 
-void MockRealtimeVideoSource::orientationChanged(int orientation)
+void MockRealtimeVideoSource::orientationChanged(IntDegrees orientation)
 {
     auto deviceOrientation = m_deviceOrientation;
     switch (orientation) {

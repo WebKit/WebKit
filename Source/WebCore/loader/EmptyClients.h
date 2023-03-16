@@ -204,7 +204,7 @@ class EmptyChromeClient : public ChromeClient {
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ORIENTATION_EVENTS)
-    int deviceOrientation() const final { return 0; }
+    IntDegrees deviceOrientation() const final { return 0; }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

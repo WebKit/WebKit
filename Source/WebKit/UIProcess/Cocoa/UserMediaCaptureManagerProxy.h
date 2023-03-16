@@ -32,6 +32,7 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #include "UserMediaCaptureManager.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/IntDegrees.h>
 #include <WebCore/OrientationNotifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RealtimeMediaSource.h>
@@ -73,7 +74,7 @@ public:
 
     void clear();
 
-    void setOrientation(uint64_t);
+    void setOrientation(WebCore::IntDegrees);
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 

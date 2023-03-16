@@ -85,7 +85,7 @@ private:
     bool isMockSource() const final { return true; }
 
     // OrientationNotifier::Observer
-    void orientationChanged(int orientation) final;
+    void orientationChanged(IntDegrees orientation) final;
     void monitorOrientation(OrientationNotifier&) final;
 
     void drawAnimation(GraphicsContext&);

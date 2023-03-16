@@ -341,6 +341,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::FrameIdentifier',
         'WebCore::GraphicsContextGLAttributes',
         'WebCore::GraphicsLayer::PlatformLayerID',
+        'WebCore::IntDegrees',
         'WebCore::ModalContainerControlType',
         'WebCore::NativeImageReference',
         'WebCore::PluginLoadClientPolicy',
