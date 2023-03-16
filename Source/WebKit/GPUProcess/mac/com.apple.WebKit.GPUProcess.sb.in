@@ -1108,6 +1108,7 @@
         SYS___pthread_sigmask
         SYS___semwait_signal
         SYS___semwait_signal_nocancel
+        SYS_abort_with_payload
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl
