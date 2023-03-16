@@ -27,9 +27,9 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
 #include "FrameView.h"
-#include "FrameViewLayoutContext.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
+#include "LocalFrameViewLayoutContext.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
 #include "RenderPtr.h"
@@ -91,9 +91,9 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 class LocalFrameView final : public FrameView {
     WTF_MAKE_ISO_ALLOCATED(LocalFrameView);
 public:
-    friend class RenderView;
     friend class Internals;
-    friend class FrameViewLayoutContext;
+    friend class LocalFrameViewLayoutContext;
+    friend class RenderView;
 
     WEBCORE_EXPORT static Ref<LocalFrameView> create(LocalFrame&);
     static Ref<LocalFrameView> create(LocalFrame&, const IntSize& initialSize);
@@ -127,8 +127,8 @@ public:
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
 
-    const FrameViewLayoutContext& layoutContext() const { return m_layoutContext; }
-    FrameViewLayoutContext& layoutContext() { return m_layoutContext; }
+    const LocalFrameViewLayoutContext& layoutContext() const { return m_layoutContext; }
+    LocalFrameViewLayoutContext& layoutContext() { return m_layoutContext; }
 
     WEBCORE_EXPORT bool didFirstLayout() const;
     void queuePostLayoutCallback(Function<void()>&&);
@@ -924,7 +924,7 @@ private:
     LayoutRect getPossiblyFixedRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
 
     const Ref<LocalFrame> m_frame;
-    FrameViewLayoutContext m_layoutContext;
+    LocalFrameViewLayoutContext m_layoutContext;
 
     std::unique_ptr<Display::View> m_displayView;
 

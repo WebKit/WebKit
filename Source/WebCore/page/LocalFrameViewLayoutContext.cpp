@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FrameViewLayoutContext.h"
+#include "LocalFrameViewLayoutContext.h"
 
 #include "DebugPageOverlays.h"
 #include "Document.h"
@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-void FrameViewLayoutContext::layoutUsingFormattingContext()
+void LocalFrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!frame().settings().layoutFormattingContextEnabled())
         return;
@@ -128,9 +128,9 @@ private:
 
 class LayoutScope {
 public:
-    LayoutScope(FrameViewLayoutContext& layoutContext)
+    LayoutScope(LocalFrameViewLayoutContext& layoutContext)
         : m_view(layoutContext.view())
-        , m_nestedState(layoutContext.m_layoutNestedState, layoutContext.m_layoutNestedState == FrameViewLayoutContext::LayoutNestedState::NotInLayout ? FrameViewLayoutContext::LayoutNestedState::NotNested : FrameViewLayoutContext::LayoutNestedState::Nested)
+        , m_nestedState(layoutContext.m_layoutNestedState, layoutContext.m_layoutNestedState == LocalFrameViewLayoutContext::LayoutNestedState::NotInLayout ? LocalFrameViewLayoutContext::LayoutNestedState::NotNested : LocalFrameViewLayoutContext::LayoutNestedState::Nested)
         , m_schedulingIsEnabled(layoutContext.m_layoutSchedulingIsEnabled, false)
         , m_previousScrollType(layoutContext.view().currentScrollType())
     {
@@ -144,25 +144,25 @@ public:
         
 private:
     LocalFrameView& m_view;
-    SetForScope<FrameViewLayoutContext::LayoutNestedState> m_nestedState;
+    SetForScope<LocalFrameViewLayoutContext::LayoutNestedState> m_nestedState;
     SetForScope<bool> m_schedulingIsEnabled;
     ScrollType m_previousScrollType;
 };
 
-FrameViewLayoutContext::FrameViewLayoutContext(LocalFrameView& frameView)
+LocalFrameViewLayoutContext::LocalFrameViewLayoutContext(LocalFrameView& frameView)
     : m_frameView(frameView)
-    , m_layoutTimer(*this, &FrameViewLayoutContext::layoutTimerFired)
-    , m_asynchronousTasksTimer(*this, &FrameViewLayoutContext::runAsynchronousTasks)
+    , m_layoutTimer(*this, &LocalFrameViewLayoutContext::layoutTimerFired)
+    , m_asynchronousTasksTimer(*this, &LocalFrameViewLayoutContext::runAsynchronousTasks)
 {
 }
 
-FrameViewLayoutContext::~FrameViewLayoutContext()
+LocalFrameViewLayoutContext::~LocalFrameViewLayoutContext()
 {
 }
 
-void FrameViewLayoutContext::layout()
+void LocalFrameViewLayoutContext::layout()
 {
-    LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " FrameViewLayoutContext::layout() with size " << view().layoutSize());
+    LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " LocalFrameViewLayoutContext::layout() with size " << view().layoutSize());
 
     Ref<LocalFrameView> protectView(view());
 
@@ -185,7 +185,7 @@ void FrameViewLayoutContext::layout()
     }
 }
 
-void FrameViewLayoutContext::performLayout()
+void LocalFrameViewLayoutContext::performLayout()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
     ASSERT(LayoutDisallowedScope::isLayoutAllowed());
@@ -278,7 +278,7 @@ void FrameViewLayoutContext::performLayout()
     DebugPageOverlays::didLayout(downcast<LocalFrame>(view().frame()));
 }
 
-void FrameViewLayoutContext::runOrScheduleAsynchronousTasks()
+void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
 {
     if (m_asynchronousTasksTimer.isActive())
         return;
@@ -304,7 +304,7 @@ void FrameViewLayoutContext::runOrScheduleAsynchronousTasks()
     }
 }
 
-void FrameViewLayoutContext::runAsynchronousTasks()
+void LocalFrameViewLayoutContext::runAsynchronousTasks()
 {
     m_asynchronousTasksTimer.stop();
     if (m_inAsynchronousTasks)
@@ -313,14 +313,14 @@ void FrameViewLayoutContext::runAsynchronousTasks()
     view().performPostLayoutTasks();
 }
 
-void FrameViewLayoutContext::flushAsynchronousTasks()
+void LocalFrameViewLayoutContext::flushAsynchronousTasks()
 {
     if (!m_asynchronousTasksTimer.isActive())
         return;
     runAsynchronousTasks();
 }
 
-void FrameViewLayoutContext::reset()
+void LocalFrameViewLayoutContext::reset()
 {
     m_layoutPhase = LayoutPhase::OutsideLayout;
     clearSubtreeLayoutRoot();
@@ -332,7 +332,7 @@ void FrameViewLayoutContext::reset()
     m_needsFullRepaint = true;
 }
 
-bool FrameViewLayoutContext::needsLayout() const
+bool LocalFrameViewLayoutContext::needsLayout() const
 {
     // This can return true in cases where the document does not have a body yet.
     // Document::shouldScheduleLayout takes care of preventing us from scheduling
@@ -344,7 +344,7 @@ bool FrameViewLayoutContext::needsLayout() const
         || (m_disableSetNeedsLayoutCount && m_setNeedsLayoutWasDeferred);
 }
 
-void FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
+void LocalFrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
 {
     if (m_disableSetNeedsLayoutCount) {
         m_setNeedsLayoutWasDeferred = true;
@@ -358,19 +358,19 @@ void FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
     }
 }
 
-void FrameViewLayoutContext::enableSetNeedsLayout()
+void LocalFrameViewLayoutContext::enableSetNeedsLayout()
 {
     ASSERT(m_disableSetNeedsLayoutCount);
     if (!--m_disableSetNeedsLayoutCount)
         m_setNeedsLayoutWasDeferred = false; // FIXME: Find a way to make the deferred layout actually happen.
 }
 
-void FrameViewLayoutContext::disableSetNeedsLayout()
+void LocalFrameViewLayoutContext::disableSetNeedsLayout()
 {
     ++m_disableSetNeedsLayoutCount;
 }
 
-void FrameViewLayoutContext::scheduleLayout()
+void LocalFrameViewLayoutContext::scheduleLayout()
 {
     // FIXME: We should assert the page is not in the back/forward cache, but that is causing
     // too many false assertions. See <rdar://problem/7218118>.
@@ -397,7 +397,7 @@ void FrameViewLayoutContext::scheduleLayout()
     m_layoutTimer.startOneShot(0_s);
 }
 
-void FrameViewLayoutContext::unscheduleLayout()
+void LocalFrameViewLayoutContext::unscheduleLayout()
 {
     if (m_asynchronousTasksTimer.isActive())
         m_asynchronousTasksTimer.stop();
@@ -407,13 +407,13 @@ void FrameViewLayoutContext::unscheduleLayout()
 
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer unscheduled at " << frame().document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer unscheduled at " << frame().document()->timeSinceDocumentCreation().value());
 #endif
 
     m_layoutTimer.stop();
 }
 
-void FrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
+void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
 {
     ASSERT(renderView());
     auto& renderView = *this->renderView();
@@ -467,33 +467,33 @@ void FrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
     InspectorInstrumentation::didInvalidateLayout(frame());
 }
 
-void FrameViewLayoutContext::layoutTimerFired()
+void LocalFrameViewLayoutContext::layoutTimerFired()
 {
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer fired at " << frame().document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameViewLayoutContext for LocalFrameView " << frame().view() << " layout timer fired at " << frame().document()->timeSinceDocumentCreation().value());
 #endif
     layout();
 }
 
-RenderElement* FrameViewLayoutContext::subtreeLayoutRoot() const
+RenderElement* LocalFrameViewLayoutContext::subtreeLayoutRoot() const
 {
     return m_subtreeLayoutRoot.get();
 }
 
-void FrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
+void LocalFrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
 {
     ASSERT(subtreeLayoutRoot());
     subtreeLayoutRoot()->markContainingBlocksForLayout(ScheduleRelayout::No);
     clearSubtreeLayoutRoot();
 }
 
-void FrameViewLayoutContext::setSubtreeLayoutRoot(RenderElement& layoutRoot)
+void LocalFrameViewLayoutContext::setSubtreeLayoutRoot(RenderElement& layoutRoot)
 {
     m_subtreeLayoutRoot = layoutRoot;
 }
 
-bool FrameViewLayoutContext::canPerformLayout() const
+bool LocalFrameViewLayoutContext::canPerformLayout() const
 {
     if (isInRenderTreeLayout())
         return false;
@@ -511,7 +511,7 @@ bool FrameViewLayoutContext::canPerformLayout() const
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
-void FrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
+void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 {
     auto& settings = layoutRoot.settings();
     bool idempotentMode = settings.textAutosizingUsesIdempotentMode();
@@ -533,7 +533,7 @@ void FrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 }
 #endif
 
-void FrameViewLayoutContext::updateStyleForLayout()
+void LocalFrameViewLayoutContext::updateStyleForLayout()
 {
     Document& document = *frame().document();
 
@@ -553,21 +553,21 @@ void FrameViewLayoutContext::updateStyleForLayout()
     document.updateStyleIfNeeded();
 }
 
-LayoutSize FrameViewLayoutContext::layoutDelta() const
+LayoutSize LocalFrameViewLayoutContext::layoutDelta() const
 {
     if (auto* layoutState = this->layoutState())
         return layoutState->layoutDelta();
     return { };
 }
     
-void FrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
+void LocalFrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
 {
     if (auto* layoutState = this->layoutState())
         layoutState->addLayoutDelta(delta);
 }
     
 #if ASSERT_ENABLED
-bool FrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
+bool LocalFrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 {
     if (auto* layoutState = this->layoutState())
         return layoutState->layoutDeltaMatches(delta);
@@ -575,14 +575,14 @@ bool FrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 }
 #endif
 
-RenderLayoutState* FrameViewLayoutContext::layoutState() const
+RenderLayoutState* LocalFrameViewLayoutContext::layoutState() const
 {
     if (m_layoutStateStack.isEmpty())
         return nullptr;
     return m_layoutStateStack.last().get();
 }
 
-void FrameViewLayoutContext::pushLayoutState(RenderElement& root)
+void LocalFrameViewLayoutContext::pushLayoutState(RenderElement& root)
 {
     ASSERT(!m_paintOffsetCacheDisableCount);
     ASSERT(!layoutState());
@@ -590,7 +590,7 @@ void FrameViewLayoutContext::pushLayoutState(RenderElement& root)
     m_layoutStateStack.append(makeUnique<RenderLayoutState>(root));
 }
 
-bool FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
+bool LocalFrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
 {
     if (layoutState())
         return false;
@@ -598,7 +598,7 @@ bool FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlo
     return true;
 }
     
-bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
+bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
 {
     // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
     auto* layoutState = this->layoutState();
@@ -617,35 +617,35 @@ bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSi
     return false;
 }
     
-void FrameViewLayoutContext::popLayoutState()
+void LocalFrameViewLayoutContext::popLayoutState()
 {
     m_layoutStateStack.removeLast();
 }
 
 #ifndef NDEBUG
-void FrameViewLayoutContext::checkLayoutState()
+void LocalFrameViewLayoutContext::checkLayoutState()
 {
     ASSERT(layoutDeltaMatches(LayoutSize()));
     ASSERT(!m_paintOffsetCacheDisableCount);
 }
 #endif
 
-LocalFrame& FrameViewLayoutContext::frame() const
+LocalFrame& LocalFrameViewLayoutContext::frame() const
 {
     return downcast<LocalFrame>(view().frame());
 }
 
-LocalFrameView& FrameViewLayoutContext::view() const
+LocalFrameView& LocalFrameViewLayoutContext::view() const
 {
     return m_frameView;
 }
 
-RenderView* FrameViewLayoutContext::renderView() const
+RenderView* LocalFrameViewLayoutContext::renderView() const
 {
     return view().renderView();
 }
 
-Document* FrameViewLayoutContext::document() const
+Document* LocalFrameViewLayoutContext::document() const
 {
     return frame().document();
 }

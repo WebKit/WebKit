@@ -1374,7 +1374,7 @@ void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 
 bool LocalFrameView::shouldDeferScrollUpdateAfterContentSizeChange()
 {
-    return (layoutContext().layoutPhase() < FrameViewLayoutContext::LayoutPhase::InPostLayout) && (layoutContext().layoutPhase() != FrameViewLayoutContext::LayoutPhase::OutsideLayout);
+    return (layoutContext().layoutPhase() < LocalFrameViewLayoutContext::LayoutPhase::InPostLayout) && (layoutContext().layoutPhase() != LocalFrameViewLayoutContext::LayoutPhase::OutsideLayout);
 }
 
 RenderBox* LocalFrameView::embeddedContentBox() const
@@ -1812,7 +1812,7 @@ void LocalFrameView::updateLayoutViewport()
     
     // Don't update the layout viewport if we're in the middle of adjusting scrollbars. We'll get another call
     // as a post-layout task.
-    if (layoutContext().layoutPhase() == FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust)
+    if (layoutContext().layoutPhase() == LocalFrameViewLayoutContext::LayoutPhase::InViewSizeAdjust)
         return;
 
     LayoutRect layoutViewport = layoutViewportRect();
@@ -2964,7 +2964,7 @@ void LocalFrameView::updatePlayStateForAllAnimationsIncludingSubframes()
 void LocalFrameView::updateLayerPositionsAfterScrolling()
 {
     // If we're scrolling as a result of updating the view size after layout, we'll update widgets and layer positions soon anyway.
-    if (layoutContext().layoutPhase() == FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust)
+    if (layoutContext().layoutPhase() == LocalFrameViewLayoutContext::LayoutPhase::InViewSizeAdjust)
         return;
 
     if (!layoutContext().isLayoutNested() && hasViewportConstrainedObjects()) {
@@ -3013,7 +3013,7 @@ bool LocalFrameView::shouldUpdateCompositingLayersAfterScrolling() const
 
 void LocalFrameView::updateCompositingLayersAfterScrolling()
 {
-    ASSERT(layoutContext().layoutPhase() >= FrameViewLayoutContext::LayoutPhase::InPostLayout || layoutContext().layoutPhase() == FrameViewLayoutContext::LayoutPhase::OutsideLayout);
+    ASSERT(layoutContext().layoutPhase() >= LocalFrameViewLayoutContext::LayoutPhase::InPostLayout || layoutContext().layoutPhase() == LocalFrameViewLayoutContext::LayoutPhase::OutsideLayout);
 
     if (!shouldUpdateCompositingLayersAfterScrolling())
         return;
@@ -3173,7 +3173,7 @@ void LocalFrameView::availableContentSizeChanged(AvailableSizeChangeReason reaso
         // FIXME: Merge this logic with m_setNeedsLayoutWasDeferred and find a more appropriate
         // way of handling potential recursive layouts when the viewport is resized to accomodate
         // the content but the content always overflows the viewport. See webkit.org/b/165781.
-        if (layoutContext().layoutPhase() != FrameViewLayoutContext::LayoutPhase::InViewSizeAdjust || !useFixedLayout())
+        if (layoutContext().layoutPhase() != LocalFrameViewLayoutContext::LayoutPhase::InViewSizeAdjust || !useFixedLayout())
             document->updateViewportUnitsOnResize();
     }
 

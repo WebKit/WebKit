@@ -47,11 +47,10 @@ class LayoutState;
 class LayoutTree;
 }
 
-// FIXME: Rename to LocalFrameViewLayoutContext.
-class FrameViewLayoutContext {
+class LocalFrameViewLayoutContext {
 public:
-    FrameViewLayoutContext(LocalFrameView&);
-    ~FrameViewLayoutContext();
+    LocalFrameViewLayoutContext(LocalFrameView&);
+    ~LocalFrameViewLayoutContext();
 
     WEBCORE_EXPORT void layout();
     bool needsLayout() const;

@@ -1283,7 +1283,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameSnapshotting.h
     page/FrameTree.h
     page/FrameView.h
-    page/FrameViewLayoutContext.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
     page/ImageAnalysisQueue.h
@@ -1293,6 +1292,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/LocalDOMWindowProperty.h
     page/LocalFrame.h
     page/LocalFrameView.h
+    page/LocalFrameViewLayoutContext.h
     page/LookalikeCharactersSanitizationData.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h

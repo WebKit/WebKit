@@ -36,11 +36,11 @@ namespace WebCore {
 class BidiContext;
 class FloatingObject;
 class FloatWithRect;
-class FrameViewLayoutContext;
 class LegacyInlineBox;
 class LegacyInlineIterator;
 class LineInfo;
 class LineLayoutState;
+class LocalFrameViewLayoutContext;
 class RenderBlockFlow;
 class RenderObject;
 class RenderRubyRun;
@@ -108,7 +108,7 @@ private:
     void updateFragmentForLine(LegacyRootInlineBox*) const;
 
     const RenderStyle& style() const;
-    const FrameViewLayoutContext& layoutContext() const;
+    const LocalFrameViewLayoutContext& layoutContext() const;
 
     RenderBlockFlow& m_flow;
     RenderLineBoxList m_lineBoxes;
