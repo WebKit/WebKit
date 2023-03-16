@@ -64,6 +64,12 @@ void Content::append(Content&& newContent)
     boxes.appendVector(WTFMove(newContent.boxes));
 }
 
+void Content::insert(Content&& newContent, size_t lineIndex, size_t boxIndex)
+{
+    lines.insertVector(lineIndex, WTFMove(newContent.lines));
+    boxes.insertVector(boxIndex, WTFMove(newContent.boxes));
+}
+
 void Content::remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes)
 {
     lines.remove(firstLineIndex, numberOfLines);

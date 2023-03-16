@@ -78,7 +78,16 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
         if (!firstDamagedLineIndex)
             return { };
         auto& displayContentFromPreviousLayout = inlineContent.displayContent();
-        return { displayContentFromPreviousLayout.lines.size() - *firstDamagedLineIndex };
+        ASSERT(layoutResult.range != Layout::InlineLayoutResult::Range::Full);
+        auto canidateLineCount = layoutResult.range == Layout::InlineLayoutResult::Range::FullFromDamage
+            ? displayContentFromPreviousLayout.lines.size() - *firstDamagedLineIndex
+            : layoutResult.displayContent.lines.size();
+
+        if (*firstDamagedLineIndex + canidateLineCount > displayContentFromPreviousLayout.lines.size()) {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+        return { canidateLineCount };
     }();
 
     auto numberOfDamagedBoxes = [&]() -> std::optional<size_t> {
@@ -93,6 +102,7 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
         return { boxCount };
     }();
     auto numberOfNewLines = layoutResult.displayContent.lines.size();
+    auto numberOfNewBoxes = layoutResult.displayContent.boxes.size();
 
     auto damagedRect = FloatRect { };
     auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lineCount, auto& lines) {
@@ -120,13 +130,35 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
         displayContent.append(WTFMove(layoutResult.displayContent));
         break;
     }
-    case Layout::InlineLayoutResult::Range::PartialFromDamage:
-        ASSERT_NOT_IMPLEMENTED_YET();
+    case Layout::InlineLayoutResult::Range::PartialFromDamage: {
+        if (!firstDamagedLineIndex || !numberOfDamagedLines || !firstDamagedBoxIndex || !numberOfDamagedBoxes) {
+            // FIXME: Not sure if inlineContent::set or silent failing is what we should do here.
+            break;
+        }
+        auto& displayContent = inlineContent.displayContent();
+        displayContent.remove(*firstDamagedLineIndex, *numberOfDamagedLines, *firstDamagedBoxIndex, *numberOfDamagedBoxes);
+        displayContent.insert(WTFMove(layoutResult.displayContent), *firstDamagedLineIndex, *firstDamagedBoxIndex);
+
+        auto adjustCachedBoxIndexesIfNeeded = [&] {
+            if (numberOfNewBoxes == *numberOfDamagedBoxes)
+                return;
+            auto firstCleanLineIndex = *firstDamagedLineIndex + *numberOfDamagedLines;
+            auto offset = numberOfNewBoxes - *numberOfDamagedBoxes;
+            auto& lines = displayContent.lines;
+            for (size_t cleanLineIndex = firstCleanLineIndex; cleanLineIndex < lines.size(); ++cleanLineIndex) {
+                ASSERT(lines[cleanLineIndex].firstBoxIndex() + offset > 0);
+                auto adjustedFirstBoxIndex = std::max<size_t>(0, lines[cleanLineIndex].firstBoxIndex() + offset);
+                lines[cleanLineIndex].setFirstBoxIndex(adjustedFirstBoxIndex);
+            }
+        };
+        adjustCachedBoxIndexesIfNeeded();
         break;
+    }
     default:
         ASSERT_NOT_REACHED();
         break;
     }
+
     if (firstDamagedLineIndex) {
         // Repaint the new content boundary.
         adjustDamagedRectWithLineRange(*firstDamagedLineIndex, numberOfNewLines, inlineContent.displayContent().lines);

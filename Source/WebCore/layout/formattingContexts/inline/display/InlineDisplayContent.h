@@ -41,6 +41,7 @@ struct Content {
     void clear();
     void set(Content&& newContent);
     void append(Content&& newContent);
+    void insert(Content&& newContent, size_t lineIndex, size_t boxIndex);
     void remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes);
 
     Lines lines;
