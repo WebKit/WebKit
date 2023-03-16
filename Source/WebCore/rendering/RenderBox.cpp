@@ -1394,6 +1394,28 @@ void RenderBox::clearOverridingLogicalWidthLength()
         gOverridingLogicalWidthLengthMap->remove(this);
 }
 
+void RenderBox::markMarginAsTrimmed(MarginTrimType newTrimmedMargin)
+{
+    ensureRareData().setTrimmedMargins(static_cast<MarginTrimType>(static_cast<unsigned>(rareData().trimmedMargins()) | static_cast<unsigned>(newTrimmedMargin)));
+}
+
+bool RenderBox::hasTrimmedMargin(MarginTrimType marginTrimType) const
+{
+    if (!hasRareData())
+        return false;
+    return static_cast<unsigned>(rareData().trimmedMargins()) & static_cast<unsigned>(marginTrimType);
+}
+
+bool RenderBox::hasTrimmedMarginTop() const
+{
+    ASSERT(containingBlock()->isBlockContainer() && !isFlexItem() && !isGridItem());
+    auto isHorizontalWritingMode = style().isHorizontalWritingMode();
+
+    if (isHorizontalWritingMode == containingBlock()->style().isHorizontalWritingMode())
+        return isHorizontalWritingMode ? hasTrimmedMargin(MarginTrimType::BlockStart) : hasTrimmedMargin(MarginTrimType::InlineStart);
+    return !isHorizontalWritingMode ? hasTrimmedMargin(MarginTrimType::BlockStart) : hasTrimmedMargin(MarginTrimType::InlineStart);
+}
+
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const
 {
     auto width = LayoutUnit { logicalWidth.value() };

@@ -62,7 +62,8 @@
 #include "NodeRenderStyle.h"
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
-#include "RenderBlock.h"
+#include "RenderAncestorIterator.h"
+#include "RenderBlockFlow.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
@@ -2285,6 +2286,34 @@ static inline bool isNonReplacedInline(RenderObject& renderer)
     return renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 }
 
+static bool containingBlockHasMarginTrim(const RenderBox& renderer, OptionSet<MarginTrimType> marginTrimType)
+{
+    ASSERT(!renderer.isFlexItem() && !renderer.isGridItem());
+
+    auto* containingBlock = renderer.containingBlock();
+    if (is<HTMLElement>(renderer.element()) || containingBlock->isRenderView())
+        return false;
+
+    if (containingBlock->isBlockContainer()) {
+        ASSERT(!marginTrimType.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }));
+
+        // If the containing block for this child is a block container, we cannot check if it
+        // the direct ancestor containing block has margin trim set since the child could be
+        // nested. Instead we should check all the way up to the block formatting context
+        // root when determining if a margin's value may depend on layout
+        auto* bfcRoot = renderer.blockFormattingContextRoot();
+        if (bfcRoot->style().marginTrim().containsAny(marginTrimType))
+            return true;
+
+        for (RenderAncestorConstIterator<RenderBlock>itr(renderer.containingBlock()); itr != bfcRoot; ++itr) {
+            if (itr->style().marginTrim().containsAny(marginTrimType))
+                return true;
+        }
+        return false;
+    }
+    return false;
+}
+
 static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, RenderObject* renderer)
 {
     switch (propertyID) {
@@ -2314,9 +2343,12 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
         if (!renderer || !renderer->isBox())
             return false;
         return !(style && style->marginTop().isFixed() && style->marginRight().isFixed()
-            && style->marginBottom().isFixed() && style->marginLeft().isFixed());
+            && style->marginBottom().isFixed() && style->marginLeft().isFixed())
+            || (is<RenderBox>(*renderer) && containingBlockHasMarginTrim(downcast<RenderBox>(*renderer), { MarginTrimType::BlockStart, MarginTrimType::BlockEnd }));
     }
     case CSSPropertyMarginTop:
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box && !box->isFlexItem() && !box->isGridItem() && containingBlockHasMarginTrim(*box, MarginTrimType::BlockStart))
+            return true;
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer);
     case CSSPropertyMarginRight:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer);
@@ -2719,6 +2751,25 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 bool ComputedStyleExtractor::hasProperty(CSSPropertyID propertyID)
 {
     return propertyValue(propertyID);
+}
+
+static bool rendererHasTrimmedMargin(const RenderElement* renderer, CSSPropertyID propertyId)
+{
+    switch(propertyId) {
+    case CSSPropertyMarginTop: {
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box && box->containingBlock()->isBlockContainer())
+            return box->hasTrimmedMarginTop();
+        break;
+    }
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginBottom:
+        ASSERT_NOT_IMPLEMENTED_YET();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return false;
 }
 
 RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer, PropertyValueType valueType)
@@ -3251,7 +3302,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createCustomIdent(style.specifiedLocale());
     case CSSPropertyMarginTop:
-        return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
+        return rendererHasTrimmedMargin(renderer, CSSPropertyMarginTop) ? zoomAdjustedPixelValue(downcast<RenderBox>(*renderer).marginTop(), style) : zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
     case CSSPropertyMarginRight: {
         Length marginRight = style.marginRight();
         if (marginRight.isFixed() || !is<RenderBox>(renderer))

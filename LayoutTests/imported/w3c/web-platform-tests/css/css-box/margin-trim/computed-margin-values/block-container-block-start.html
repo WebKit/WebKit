@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="trimmed block-start margins for block-level boxes in block containers sould be reflected in computed style">
+<style>
+.container {
+    background-color: green;
+    width: min-content;
+    margin-trim: block-start;
+}
+.outer {
+    background-color: green;
+    width: 100px;
+    height: 50px;
+}
+.child {
+    width: 100px;
+    margin-top: 50px;
+    height: 50px;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+</head>
+<body onload="checkLayout('.container > div')">
+    <div class="outer"></div>
+    <div id="target">
+        <div class="container">
+            <div data-expected-margin-top="0" class="child"></div>
+        </div>
+    </div>
+</body>
+</html>

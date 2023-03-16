@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="relative positioned items that are not the block-level first child should not have their margins trimmed">
+<style>
+container {
+    outline: 1px solid black;
+    display: block;
+    margin-trim: block;
+}
+item {
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin-block-start: 50px;
+    background-color: green;
+}
+.first-relative-pos {
+    position: relative;
+    left: 50px;
+    bottom: 50px;
+}
+.second-relative-pos {
+    position: relative;
+    left: 100px;
+    bottom: 200px;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+</head>
+<body onload="checkLayout('container > item')">
+<div id="target">
+<container>
+    <item data-expected-margin-top="0"></item>
+    <item data-expected-margin-top="50" class="first-relative-pos"></item>
+    <item data-expected-margin-top="50" class="second-relative-pos"></item>
+</container>
+</div>
+</body>
+</html>

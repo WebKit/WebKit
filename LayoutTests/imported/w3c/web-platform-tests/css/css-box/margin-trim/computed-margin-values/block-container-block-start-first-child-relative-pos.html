@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="relative positioned block-level first child should have its block-start margin trimmed">
+<style>
+.container {
+    background-color: green;
+    width: min-content;
+    margin-trim: block-start;
+}
+.child {
+    width: 100px;
+    margin-top: 50px;
+    height: 50px;
+    position: relative;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+</head>
+<body onload="checkLayout('.container > div')">
+    <div id="target">
+        <div class="container">
+            <div data-expected-margin-top="0" class="child"></div>
+        </div>
+    </div>
+</body>
+</html>

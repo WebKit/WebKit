@@ -364,6 +364,10 @@ public:
     void clearOverridingLogicalHeightLength();
     void clearOverridingLogicalWidthLength();
 
+     void markMarginAsTrimmed(MarginTrimType);
+     bool hasTrimmedMargin(MarginTrimType) const;
+     bool hasTrimmedMarginTop() const;
+
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const;
