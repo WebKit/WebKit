@@ -5268,6 +5268,8 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)_didCommitLoadForMainFrame
 {
+    [_keyboardScrollingAnimator stopScrollingImmediately];
+
     _seenHardwareKeyDownInNonEditableElement = NO;
 
     [self _elementDidBlur];

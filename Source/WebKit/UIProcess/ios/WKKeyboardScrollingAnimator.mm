@@ -69,6 +69,8 @@
 - (BOOL)beginWithEvent:(::WebEvent *)event;
 - (void)handleKeyEvent:(::WebEvent *)event;
 
+- (void)stopScrollingImmediately;
+
 @end
 
 @implementation WKKeyboardScrollingAnimator {
@@ -393,6 +395,13 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     _displayLink = nil;
 }
 
+- (void)stopScrollingImmediately
+{
+    [_scrollable didFinishScrolling];
+    [self stopDisplayLink];
+    _velocity = { };
+}
+
 - (void)displayLinkFired:(CADisplayLink *)sender
 {
     WebCore::FloatSize force;
@@ -494,6 +503,11 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
     [_animator invalidate];
     _animator = nil;
+}
+
+- (void)stopScrollingImmediately
+{
+    [_animator stopScrollingImmediately];
 }
 
 - (void)setDelegate:(id <WKKeyboardScrollViewAnimatorDelegate>)delegate

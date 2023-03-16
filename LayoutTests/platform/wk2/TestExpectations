@@ -862,8 +862,6 @@ imported/w3c/web-platform-tests/storage/ [ Pass ]
 
 fast/canvas/large-getImageData.html [ Pass ]
 
-webkit.org/b/253323 fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Pass Crash ]
-
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass Failure ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass Failure ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass Failure ]
