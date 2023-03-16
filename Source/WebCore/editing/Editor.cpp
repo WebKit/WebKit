@@ -3373,7 +3373,7 @@ void Editor::handleAlternativeTextUIResult(const String& correction)
 
 void Editor::dismissCorrectionPanelAsIgnored()
 {
-    m_alternativeTextController->dismiss(ReasonForDismissingAlternativeTextIgnored);
+    m_alternativeTextController->dismiss(ReasonForDismissingAlternativeText::Ignored);
 }
 
 void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, OptionSet<FrameSelection::SetSelectionOption> options)

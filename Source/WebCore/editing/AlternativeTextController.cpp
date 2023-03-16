@@ -92,7 +92,7 @@ AlternativeTextController::AlternativeTextController(Document& document)
 
 AlternativeTextController::~AlternativeTextController()
 {
-    dismiss(ReasonForDismissingAlternativeTextIgnored);
+    dismiss(ReasonForDismissingAlternativeText::Ignored);
 }
 
 void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType type)
@@ -122,7 +122,7 @@ void AlternativeTextController::stopPendingCorrection(const VisibleSelection& ol
         return;
 
     stopAlternativeTextUITimer();
-    dismiss(ReasonForDismissingAlternativeTextIgnored);
+    dismiss(ReasonForDismissingAlternativeText::Ignored);
 }
 
 void AlternativeTextController::applyPendingCorrection(const VisibleSelection& selectionAfterTyping)
@@ -139,7 +139,7 @@ void AlternativeTextController::applyPendingCorrection(const VisibleSelection& s
         }
     }
     if (doApplyCorrection)
-        handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted)); 
+        handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeText::Accepted));
     else
         m_rangeWithAlternative = std::nullopt;
 }
@@ -172,7 +172,7 @@ void AlternativeTextController::handleCancelOperation()
     if (!m_isActive)
         return;
     m_isActive = false;
-    dismiss(ReasonForDismissingAlternativeTextCancelled);
+    dismiss(ReasonForDismissingAlternativeText::Cancelled);
 }
 
 void AlternativeTextController::dismiss(ReasonForDismissingAlternativeText reasonForDismissing)
@@ -207,13 +207,13 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
     Position caretPosition = m_document.selection().selection().start();
 
     if (makeDeprecatedLegacyPosition(m_rangeWithAlternative->end) == caretPosition) {
-        handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted));
+        handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeText::Accepted));
         return true;
     } 
     
     // Pending correction should always be where caret is. But in case this is not always true, we still want to dismiss the panel without accepting the correction.
     ASSERT(makeDeprecatedLegacyPosition(m_rangeWithAlternative->end) == caretPosition);
-    dismiss(ReasonForDismissingAlternativeTextIgnored);
+    dismiss(ReasonForDismissingAlternativeText::Ignored);
     return false;
 }
 
@@ -427,7 +427,7 @@ void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* co
     markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(command);
     m_originalStringForLastDeletedAutocorrection = String();
 
-    dismiss(ReasonForDismissingAlternativeTextIgnored);
+    dismiss(ReasonForDismissingAlternativeText::Ignored);
 }
 
 void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition* command)

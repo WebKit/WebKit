@@ -364,9 +364,9 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     # Autocorrection messages
     ShowCorrectionPanel(enum:uint8_t WebCore::AlternativeTextType panelType, WebCore::FloatRect boundingBoxOfReplacedString, String replacedString, String replacementString, Vector<String> alternativeReplacementStrings)
-    DismissCorrectionPanel(int32_t reason)
-    DismissCorrectionPanelSoon(int32_t reason) -> (String result) Synchronous
-    RecordAutocorrectionResponse(int32_t response, String replacedString, String replacementString);
+    DismissCorrectionPanel(enum:uint8_t WebCore::ReasonForDismissingAlternativeText reason)
+    DismissCorrectionPanelSoon(enum:uint8_t WebCore::ReasonForDismissingAlternativeText reason) -> (String result) Synchronous
+    RecordAutocorrectionResponse(enum:uint8_t WebCore::AutocorrectionResponse response, String replacedString, String replacementString);
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
 

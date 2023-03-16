@@ -2574,9 +2574,9 @@ private:
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(CompletionHandler<void(bool)>&&);
     void showCorrectionPanel(WebCore::AlternativeTextType panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
-    void dismissCorrectionPanel(int32_t reason);
-    void dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&&);
-    void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
+    void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText);
+    void dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText, CompletionHandler<void(String)>&&);
+    void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString);
 
     void setEditableElementIsFocused(bool);
 

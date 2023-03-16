@@ -3342,7 +3342,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 
     [m_immediateActionController dismissContentRelativeChildWindows];
 
-    m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeTextIgnored);
+    m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText::Ignored);
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     [std::exchange(m_lastContextMenuTranslationPopover, nil) close];
