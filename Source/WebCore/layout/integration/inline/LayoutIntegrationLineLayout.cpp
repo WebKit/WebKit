@@ -365,7 +365,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     auto hasNonSyntheticBaseline = [&] {
         if (is<RenderListMarker>(replacedOrInlineBlock))
             return !downcast<RenderListMarker>(replacedOrInlineBlock).isImage();
-        if (is<RenderReplaced>(replacedOrInlineBlock)
+
+        if ((is<RenderReplaced>(replacedOrInlineBlock) && replacedOrInlineBlock.style().display() == DisplayType::Inline)
             || is<RenderListBox>(replacedOrInlineBlock)
             || is<RenderSlider>(replacedOrInlineBlock)
             || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
@@ -380,6 +381,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
         }
+        if (!is<RenderBlockFlow>(replacedOrInlineBlock))
+            return false;
         auto& blockFlow = downcast<RenderBlockFlow>(replacedOrInlineBlock);
         auto hasAppareance = blockFlow.style().hasEffectiveAppearance() && !blockFlow.theme().isControlContainer(blockFlow.style().effectiveAppearance());
         return hasAppareance || !blockFlow.childrenInline() || blockFlow.hasLines() || blockFlow.hasLineIfEmpty();
