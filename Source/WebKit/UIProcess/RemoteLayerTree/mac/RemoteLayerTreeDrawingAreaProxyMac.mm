@@ -130,6 +130,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
 
 void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTreeTransaction& transaction)
 {
+    auto* headerBannerLayer = m_webPageProxy.headerBannerLayer();
+    auto* footerBannerLayer = m_webPageProxy.footerBannerLayer();
+    if (!headerBannerLayer && !footerBannerLayer)
+        return;
+
     float totalContentsHeight = transaction.contentsSize().height();
 
     auto layoutBannerLayer = [](CALayer *bannerLayer, float y, float width) {
@@ -145,14 +150,14 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
     float topContentInset = m_webPageProxy.scrollingCoordinatorProxy()->topContentInset();
     auto scrollPosition = m_webPageProxy.scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
     
-    if (auto* headerBannerLayer = m_webPageProxy.headerBannerLayer()) {
+    if (headerBannerLayer) {
         auto headerHeight = headerBannerLayer.frame.size.height;
         totalContentsHeight += headerHeight;
         auto y = LocalFrameView::yPositionForHeaderLayer(scrollPosition, topContentInset);
         layoutBannerLayer(headerBannerLayer, y, size().width());
     }
 
-    if (auto* footerBannerLayer = m_webPageProxy.footerBannerLayer()) {
+    if (footerBannerLayer) {
         auto footerHeight = footerBannerLayer.frame.size.height;
         totalContentsHeight += footerBannerLayer.frame.size.height;
         auto y = LocalFrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsHeight, footerHeight);

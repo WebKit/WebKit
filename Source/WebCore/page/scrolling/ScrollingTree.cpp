@@ -527,13 +527,13 @@ void ScrollingTree::clearLatchedNode()
 float ScrollingTree::mainFrameTopContentInset() const
 {
     Locker locker { m_treeStateLock };
-    return m_rootNode->topContentInset();
+    return m_rootNode ? m_rootNode->topContentInset() : 0;
 }
 
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
 {
     Locker locker { m_treeStateLock };
-    return m_rootNode->currentScrollPosition();
+    return m_rootNode ? m_rootNode->currentScrollPosition() : FloatPoint { };
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
