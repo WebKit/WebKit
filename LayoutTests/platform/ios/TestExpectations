@@ -3668,6 +3668,8 @@ webkit.org/b/240489 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/254034 [ Debug ] imported/w3c/web-platform-tests/css/css-tables/auto-layout-calc-width-001.html [ Crash ]
 
+webkit.org/b/254030 [ Debug ] fast/table/calculated-width-on-col-within-colgroup.html [ Crash ]
+
 # webkit.org/b/243556 [ iOS ] 2* imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip* tests are constant Image failures
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-015.html [ ImageOnlyFailure ]
