@@ -45,7 +45,14 @@ public:
     {
     }
 
-    bool operator==(const DecodingOptions&) const = default;
+    bool operator==(const DecodingOptions& other) const
+    {
+        return m_decodingMode == other.m_decodingMode && m_sizeForDrawing == other.m_sizeForDrawing;
+    }
+    bool operator!=(const DecodingOptions& other) const
+    {
+        return !(*this == other);
+    }
 
     DecodingMode decodingMode() const { return m_decodingMode; }
     bool isAuto() const { return m_decodingMode == DecodingMode::Auto; }
