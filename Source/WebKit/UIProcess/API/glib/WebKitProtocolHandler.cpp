@@ -58,9 +58,6 @@
 
 #if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
-#if USE(GLX)
-#include <epoxy/glx.h>
-#endif
 #endif
 
 #if USE(GSTREAMER)
@@ -134,7 +131,7 @@ static bool webGLEnabled(WebKitURISchemeRequest* request)
 }
 #endif
 
-static const char* openGLAPI(bool isEGL)
+static const char* openGLAPI()
 {
     if (epoxy_is_desktop_gl())
         return "OpenGL (libepoxy)";
@@ -254,14 +251,12 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(hardwareAccelerationObject, "WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
 #endif
 
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     auto glContext = GLContext::createOffscreenContext();
     glContext->makeContextCurrent();
 
-    bool isEGL = glContext->isEGLContext();
-
-    addTableRow(hardwareAccelerationObject, "API"_s, makeString(openGLAPI(isEGL)));
-    addTableRow(hardwareAccelerationObject, "Native interface"_s, isEGL ? "EGL"_s : "GLX"_s);
+    addTableRow(hardwareAccelerationObject, "API"_s, makeString(openGLAPI()));
+    addTableRow(hardwareAccelerationObject, "Native interface"_s, "EGL"_s);
     addTableRow(hardwareAccelerationObject, "GL_RENDERER"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
     addTableRow(hardwareAccelerationObject, "GL_VENDOR"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
     addTableRow(hardwareAccelerationObject, "GL_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
@@ -281,24 +276,11 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(hardwareAccelerationObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
 #endif
 
-#if USE(GLX)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 && !isEGL) {
-        auto* x11Display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-        addTableRow(hardwareAccelerationObject, "GLX_VERSION"_s, makeString(glXGetClientString(x11Display, GLX_VERSION)));
-        addTableRow(hardwareAccelerationObject, "GLX_VENDOR"_s, makeString(glXGetClientString(x11Display, GLX_VENDOR)));
-        addTableRow(hardwareAccelerationObject, "GLX_EXTENSIONS"_s, makeString(glXGetClientString(x11Display, GLX_EXTENSIONS)));
-    }
-#endif
-
-#if USE(EGL)
-    if (isEGL) {
-        auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
-        addTableRow(hardwareAccelerationObject, "EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
-        addTableRow(hardwareAccelerationObject, "EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
-        addTableRow(hardwareAccelerationObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
-    }
-#endif
-#endif // USE(EGL) || USE(GLX)
+    auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
+    addTableRow(hardwareAccelerationObject, "EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
+    addTableRow(hardwareAccelerationObject, "EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
+    addTableRow(hardwareAccelerationObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
+#endif // USE(EGL)
 
     stopTable();
     jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));

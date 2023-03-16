@@ -40,10 +40,6 @@ typedef EGLNativeWindowType GLNativeWindowType;
 typedef uint64_t GLNativeWindowType;
 #endif // USE(EGL) && !PLATFORM(GTK)
 
-#if USE(CAIRO)
-typedef struct _cairo_device cairo_device_t;
-#endif
-
 typedef void* GCGLContext;
 
 // X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.

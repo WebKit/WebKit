@@ -2925,9 +2925,6 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 
 # From builds 12695-12698
 
-# GLX error in gst_gl_context_glx_create_context
-webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Pass Timeout ]
-
 http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]

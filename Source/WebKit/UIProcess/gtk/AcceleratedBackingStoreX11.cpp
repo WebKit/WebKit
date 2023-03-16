@@ -46,18 +46,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-#if USE(GLX)
-#include <X11/Xproto.h>
-#include <GL/glxproto.h>
-#endif
-
 namespace WebKit {
 
 static std::optional<int> s_damageEventBase;
 static std::optional<int> s_damageErrorBase;
-#if USE(GLX)
-static std::optional<int> s_glxErrorBase;
-#endif
 
 class XDamageNotifier {
     WTF_MAKE_NONCOPYABLE(XDamageNotifier);
@@ -143,10 +135,6 @@ private:
 bool AcceleratedBackingStoreX11::checkRequirements()
 {
     auto& display = downcast<WebCore::PlatformDisplayX11>(WebCore::PlatformDisplay::sharedDisplay());
-#if USE(GLX)
-    // GLX is optional, he we just want the error base.
-    display.supportsGLX(s_glxErrorBase);
-#endif
     return display.supportsXComposite() && display.supportsXDamage(s_damageEventBase, s_damageErrorBase);
 }
 
@@ -167,14 +155,6 @@ static inline unsigned char xDamageErrorCode(unsigned char errorCode)
     return static_cast<unsigned>(s_damageErrorBase.value()) + errorCode;
 }
 
-#if USE(GLX)
-static inline unsigned char glxErrorCode(unsigned char errorCode)
-{
-    ASSERT(s_glxErrorBase);
-    return static_cast<unsigned>(s_glxErrorBase.value()) + errorCode;
-}
-#endif
-
 AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11()
 {
     if (!m_surface && !m_damage)
@@ -182,10 +162,6 @@ AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11()
 
     Display* display = downcast<WebCore::PlatformDisplayX11>(WebCore::PlatformDisplay::sharedDisplay()).native();
     Vector<unsigned char> errorList = { BadDrawable, xDamageErrorCode(BadDamage) };
-#if USE(GLX)
-    if (s_glxErrorBase)
-        errorList.append(glxErrorCode(GLXBadWindow));
-#endif
     WebCore::XErrorTrapper trapper(display, WebCore::XErrorTrapper::Policy::Crash, WTFMove(errorList));
     if (m_damage) {
         XDamageNotifier::singleton().remove(m_damage.get());
@@ -204,10 +180,6 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
 
     if (m_surface) {
         Vector<unsigned char> errorList = { BadDrawable, xDamageErrorCode(BadDamage) };
-#if USE(GLX)
-        if (s_glxErrorBase)
-            errorList.append(glxErrorCode(GLXBadWindow));
-#endif
         WebCore::XErrorTrapper trapper(display, WebCore::XErrorTrapper::Policy::Crash, WTFMove(errorList));
         if (m_damage) {
             XDamageNotifier::singleton().remove(m_damage.get());
@@ -229,10 +201,6 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     size.scale(deviceScaleFactor);
 
     Vector<unsigned char> errorList = { BadDrawable, xDamageErrorCode(BadDamage) };
-#if USE(GLX)
-    if (s_glxErrorBase)
-        errorList.append(glxErrorCode(GLXBadWindow));
-#endif
     WebCore::XErrorTrapper trapper(display, WebCore::XErrorTrapper::Policy::Crash, WTFMove(errorList));
     ASSERT(downcast<WebCore::PlatformDisplayX11>(WebCore::PlatformDisplay::sharedDisplay()).native() == gdk_x11_display_get_xdisplay(gdk_display_get_default()));
 #if USE(GTK4)

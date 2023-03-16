@@ -93,7 +93,7 @@ class XvfbDriver(Driver):
     def _xvfb_run(self, environment):
         read_fd, write_fd = self._xvfb_pipe()
         run_xvfb = ['Xvfb', '-displayfd', str(write_fd), '-nolisten', 'tcp',
-                    '+extension', 'GLX', '-ac', '-screen', '0',
+                    '-ac', '-screen', '0',
                     '%sx%s' % (self._xvfb_screen_size(), self._xvfb_screen_depth())]
         if self._port._should_use_jhbuild():
             run_xvfb = self._port._jhbuild_wrapper + run_xvfb

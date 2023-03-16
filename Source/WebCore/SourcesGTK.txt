@@ -85,8 +85,6 @@ platform/graphics/gbm/GraphicsContextGLFallback.cpp
 platform/graphics/gbm/GraphicsContextGLGBM.cpp
 platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp
 
-platform/graphics/glx/GLContextGLX.cpp @no-unify
-
 platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
@@ -103,7 +101,6 @@ platform/graphics/wayland/PlatformDisplayWayland.cpp
 
 platform/graphics/x11/PlatformDisplayX11.cpp @no-unify
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
-platform/graphics/x11/XUniquePtr.cpp @no-unify
 platform/graphics/x11/XUniqueResource.cpp @no-unify
 
 platform/gtk/CursorGtk.cpp

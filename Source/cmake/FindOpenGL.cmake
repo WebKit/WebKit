@@ -33,9 +33,6 @@ Imported Targets
 ``OpenGL::OpenGL``
   The main OpenGL library, if found. It must *not* be assumed that this
   library provides symbols other than the base OpenGL set.
-``OpenGL::GLX``
-  The library containing the GL extension for the X11 windowing system,
-  if found.
 
 Result Variables
 ^^^^^^^^^^^^^^^^
@@ -51,7 +48,6 @@ This will define the following variables in your project:
 #]=======================================================================]
 
 # TODO:
-#  - Make GLX an optional component of the find-module.
 #  - Make EGL an optional component here, remove FindEGL.cmake.
 #  - Consider whether FindGLES2.cmake could be moved here as well.
 
@@ -61,8 +57,7 @@ pkg_check_modules(PC_OPENGL IMPORTED_TARGET opengl)
 if (PC_OPENGL_FOUND AND TARGET PkgConfig::PC_OPENGL)
     #
     # If the "opengl" module exists, it should be preferred; and the library
-    # name will typically be libOpenGL.so; in this case if GLX support is
-    # available a "glx" module will *also* be available. This is a modern
+    # name will typically be libOpenGL.so; This is a modern
     # Unix-ish convention and expected to be always provided by pkg-config
     # modules, so there is no need to fall-back to manually using find_path()
     # and find_library().
@@ -75,14 +70,6 @@ if (PC_OPENGL_FOUND AND TARGET PkgConfig::PC_OPENGL)
     endif ()
 
     get_target_property(OpenGL_LIBRARY PkgConfig::PC_OPENGL INTERFACE_LINK_LIBRARIES)
-
-    pkg_check_modules(PC_GLX IMPORTED_TARGET glx)
-    if (TARGET PkgConfig::PC_GLX AND NOT TARGET OpenGL::GLX)
-        add_library(OpenGL::GLX INTERFACE IMPORTED GLOBAL)
-        set_property(TARGET OpenGL::GLX PROPERTY
-            INTERFACE_LINK_LIBRARIES PkgConfig::PC_GLX
-        )
-    endif ()
 else ()
     # Otherwise, if an "opengl" pkg-config module does not exist, check for
     # the "gl" one, which may or may not be present.
@@ -105,26 +92,6 @@ else ()
             INTERFACE_COMPILE_OPTIONS "${PC_OPENGL_CFLAGS_OTHER}"
             INTERFACE_INCLUDE_DIRECTORIES "${OpenGL_INCLUDE_DIR}"
         )
-    endif ()
-
-    if (TARGET OpenGL::OpenGL)
-        # We don't use find_package for GLX because it is part of -lGL, unlike EGL. We need to
-        # have OPENGL_INCLUDE_DIRS as part of the directories check_include_files() looks for in
-        # case OpenGL is installed into a non-standard location.
-        include(CMakePushCheckState)
-        CMAKE_PUSH_CHECK_STATE()
-        set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OpenGL_INCLUDE_DIR})
-        include(CheckIncludeFiles)
-        check_include_files("GL/glx.h" OpenGL_GLX_FOUND)
-        CMAKE_POP_CHECK_STATE()
-
-        if (OpenGL_GLX_FOUND)
-            # XXX: Should this actually check that the OpenGL library contains the GLX symbols?
-            add_library(OpenGL::GLX INTERFACE IMPORTED GLOBAL)
-            set_property(TARGET OpenGL::GLX PROPERTY
-                INTERFACE_LINK_LIBRARIES OpenGL::OpenGL
-            )
-        endif ()
     endif ()
 endif ()
 
