@@ -237,16 +237,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto vertexShader = readFile("C:\\Users\\lithe\\Documents\\VertexShader2.spv");
     auto fragmentShader = readFile("C:\\Users\\lithe\\Documents\\FragmentShader2.spv");
 
-    vertexBufferRTT = std::unique_ptr<WebGPU::BufferHolder>(new WebGPU::BufferHolder(device->getBuffer(static_cast<unsigned int>(sizeof(float) * 6))));
-    buffer = std::unique_ptr<WebGPU::BufferHolder>(new WebGPU::BufferHolder(device->getBuffer(static_cast<unsigned int>(sizeof(float)))));
-    vertexBuffer = std::unique_ptr<WebGPU::BufferHolder>(new WebGPU::BufferHolder(device->getBuffer(static_cast<unsigned int>(sizeof(float) * 12))));
+    vertexBufferRTT = std::make_unique<WebGPU::BufferHolder>(device->getBuffer(static_cast<unsigned int>(sizeof(float) * 6)));
+    buffer = std::make_unique<WebGPU::BufferHolder>(device->getBuffer(static_cast<unsigned int>(sizeof(float))));
+    vertexBuffer = std::make_unique<WebGPU::BufferHolder>(device->getBuffer(static_cast<unsigned int>(sizeof(float) * 12)));
 
-    sampler = std::unique_ptr<WebGPU::SamplerHolder>(new WebGPU::SamplerHolder(device->getSampler(WebGPU::AddressMode::Repeat, WebGPU::Filter::Linear)));
+    sampler = std::make_unique<WebGPU::SamplerHolder>(device->getSampler(WebGPU::AddressMode::Repeat, WebGPU::Filter::Linear));
 
     WINDOWINFO windowInfo;
     auto success = GetWindowInfo(hWnd, &windowInfo);
     assert(success);
-    texture = std::unique_ptr<WebGPU::TextureHolder>(new WebGPU::TextureHolder(device->getTexture(windowInfo.rcClient.right - windowInfo.rcClient.left, windowInfo.rcClient.bottom - windowInfo.rcClient.top, WebGPU::PixelFormat::RGBA8)));
+    texture = std::make_unique<WebGPU::TextureHolder>(device->getTexture(windowInfo.rcClient.right - windowInfo.rcClient.left, windowInfo.rcClient.bottom - windowInfo.rcClient.top, WebGPU::PixelFormat::RGBA8));
 
     std::vector<WebGPU::RenderState::VertexAttribute> vertexAttributes = { {WebGPU::RenderState::VertexFormat::Float2, 0, 0} };
     std::vector<WebGPU::PixelFormat> colorPixelFormats = { WebGPU::PixelFormat::RGBA8 };
