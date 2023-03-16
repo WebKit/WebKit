@@ -79,7 +79,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return mockCamera() ? CaptureDevice::DeviceType::Camera : CaptureDevice::DeviceType::Screen; }
     bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
     void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
-    void setFrameRateAndZoomWithPreset(double, double, RefPtr<VideoPreset>) final;
+    void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
 
 
     bool isMockSource() const final { return true; }
@@ -124,7 +124,7 @@ private:
     Color m_fillColor { Color::black };
     Color m_fillColorWithZoom { Color::red };
     MockMediaDevice m_device;
-    RefPtr<VideoPreset> m_preset;
+    std::optional<VideoPreset> m_preset;
     VideoFrameRotation m_deviceOrientation { };
 };
 

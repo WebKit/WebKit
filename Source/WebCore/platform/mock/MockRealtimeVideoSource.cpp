@@ -169,10 +169,10 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
     return m_capabilities.value();
 }
 
-static bool isZoomSupported(const Vector<Ref<VideoPreset>>& presets)
+static bool isZoomSupported(const Vector<VideoPreset>& presets)
 {
     return anyOf(presets, [](auto& preset) {
-        return preset->isZoomSupported();
+        return preset.isZoomSupported();
     });
 }
 
@@ -224,19 +224,19 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     return m_currentSettings.value();
 }
 
-void MockRealtimeVideoSource::setFrameRateAndZoomWithPreset(double frameRate, double zoom, RefPtr<VideoPreset> preset)
+void MockRealtimeVideoSource::setFrameRateAndZoomWithPreset(double frameRate, double zoom, std::optional<VideoPreset>&& preset)
 {
     UNUSED_PARAM(zoom);
     m_preset = WTFMove(preset);
     if (m_preset)
-        setIntrinsicSize(m_preset->size);
+        setIntrinsicSize(m_preset->size());
     if (isProducingData())
         m_emitFrameTimer.startRepeating(1_s / frameRate);
 }
 
 IntSize MockRealtimeVideoSource::captureSize() const
 {
-    return m_preset ? m_preset->size : this->size();
+    return m_preset ? m_preset->size() : this->size();
 }
 
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)

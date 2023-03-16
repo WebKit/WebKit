@@ -51,7 +51,7 @@ VideoFrame::Rotation RealtimeVideoCaptureSource::videoFrameRotation() const
     return VideoFrame::Rotation::None;
 }
 
-const Vector<Ref<VideoPreset>>& RealtimeVideoCaptureSource::presets()
+const Vector<VideoPreset>& RealtimeVideoCaptureSource::presets()
 {
     if (m_presets.isEmpty())
         generatePresets();
@@ -63,30 +63,23 @@ const Vector<Ref<VideoPreset>>& RealtimeVideoCaptureSource::presets()
 Vector<VideoPresetData> RealtimeVideoCaptureSource::presetsData()
 {
     return WTF::map(presets(), [](auto& preset) -> VideoPresetData {
-        return { preset->size, preset->frameRateRanges };
+        return { preset.size(), preset.frameRateRanges() };
     });
 }
 
 void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPresetData>&& presetData)
 {
     auto presets = WTF::map(WTFMove(presetData), [](auto&& data) {
-        return VideoPreset::create(WTFMove(data));
+        return VideoPreset  { WTFMove(data) };
     });
     setSupportedPresets(WTFMove(presets));
 }
 
-void RealtimeVideoCaptureSource::setSupportedPresets(const Vector<Ref<VideoPreset>>& presets)
+void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPreset>&& presets)
 {
-    m_presets = WTF::map(presets, [](auto& preset) {
-        return preset.copyRef();
-    });
-
-    for (auto& preset : m_presets) {
-        std::sort(preset->frameRateRanges.begin(), preset->frameRateRanges.end(),
-            [&] (const auto& a, const auto& b) -> bool {
-                return a.minimum < b.minimum;
-        });
-    }
+    m_presets = WTFMove(presets);
+    for (auto& preset : m_presets)
+        preset.sortFrameRateRanges();
 }
 
 Span<const IntSize> RealtimeVideoCaptureSource::standardVideoSizes()
@@ -153,15 +146,15 @@ void RealtimeVideoCaptureSource::updateCapabilities(RealtimeMediaSourceCapabilit
     double minimumZoom = std::numeric_limits<double>::max();
     double maximumZoom = 1;
     for (const auto& preset : presets()) {
-        const auto& size = preset->size;
+        const auto& size = preset.size();
         updateMinMax(minimumWidth, maximumWidth, size.width());
         updateMinMax(minimumHeight, maximumHeight, size.height());
         updateMinMax(minimumAspectRatio, maximumAspectRatio, static_cast<double>(size.width()) / size.height());
 
-        minimumZoom = std::min(minimumZoom, preset->minZoom);
-        maximumZoom = std::max(maximumZoom, preset->maxZoom);
+        minimumZoom = std::min(minimumZoom, preset.minZoom());
+        maximumZoom = std::max(maximumZoom, preset.maxZoom());
 
-        for (const auto& rate : preset->frameRateRanges)
+        for (const auto& rate : preset.frameRateRanges())
             maximumFrameRate = std::max(maximumFrameRate, rate.maximum);
     }
 
@@ -197,7 +190,7 @@ bool RealtimeVideoCaptureSource::frameRateRangeIncludesRate(const FrameRateRange
 
 bool RealtimeVideoCaptureSource::presetSupportsFrameRate(const VideoPreset& preset, double frameRate)
 {
-    for (const auto& range : preset.frameRateRanges) {
+    for (const auto& range : preset.frameRateRanges()) {
         if (frameRateRangeIncludesRate(range, frameRate))
             return true;
     }
@@ -207,7 +200,7 @@ bool RealtimeVideoCaptureSource::presetSupportsFrameRate(const VideoPreset& pres
 
 bool RealtimeVideoCaptureSource::presetSupportsZoom(const VideoPreset& preset, double zoom)
 {
-    return preset.minZoom <= zoom && zoom <= preset.maxZoom;
+    return preset.minZoom() <= zoom && zoom <= preset.maxZoom();
 }
 
 bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, std::optional<int> height, const Function<bool(const IntSize&)>&& function)
@@ -232,9 +225,9 @@ bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, s
     return false;
 }
 
-bool RealtimeVideoCaptureSource::shouldUsePreset(VideoPreset& current, VideoPreset& candidate)
+bool RealtimeVideoCaptureSource::shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate)
 {
-    return candidate.size.width() <= current.size.width() && candidate.size.height() <= current.size.height() && prefersPreset(candidate);
+    return candidate.size().width() <= current.size().width() && candidate.size().height() <= current.size().height() && prefersPreset(candidate);
 }
 
 static inline double frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
@@ -246,10 +239,10 @@ static inline double frameRateFromPreset(const VideoPreset& preset, double curre
 
 static inline double zoomFromPreset(const VideoPreset& preset, double currentZoom)
 {
-    if (currentZoom < preset.minZoom)
-        return preset.minZoom;
-    if (currentZoom > preset.maxZoom)
-        return preset.maxZoom;
+    if (currentZoom < preset.minZoom())
+        return preset.minZoom();
+    if (currentZoom > preset.maxZoom())
+        return preset.maxZoom();
     return currentZoom;
 }
 
@@ -263,23 +256,23 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
         requestedHeight = size().height();
     }
 
-    RefPtr<VideoPreset> exactSizePreset;
-    RefPtr<VideoPreset> aspectRatioPreset;
+    std::optional<VideoPreset> exactSizePreset;
+    std::optional<VideoPreset> aspectRatioPreset;
     IntSize aspectRatioMatchSize;
-    RefPtr<VideoPreset> resizePreset;
+    std::optional<VideoPreset> resizePreset;
     IntSize resizeSize;
 
     for (const auto& preset : presets()) {
-        const auto& presetSize = preset->size;
+        const auto& presetSize = preset.size();
 
-        if (requestedFrameRate && !presetSupportsFrameRate(preset.get(), requestedFrameRate.value()))
+        if (requestedFrameRate && !presetSupportsFrameRate(preset, requestedFrameRate.value()))
             continue;
 
-        if (requestedZoom && !presetSupportsZoom(preset.get(), requestedZoom.value()))
+        if (requestedZoom && !presetSupportsZoom(preset, requestedZoom.value()))
             continue;
 
         if (!requestedWidth && !requestedHeight) {
-            exactSizePreset = preset.ptr();
+            exactSizePreset = preset;
             break;
         }
 
@@ -288,11 +281,11 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
             continue;
 
         auto lookForExactSizeMatch = [&] (const IntSize& size) -> bool {
-            return preset->size == size;
+            return preset.size() == size;
         };
         if (supportsCaptureSize(requestedWidth, requestedHeight, WTFMove(lookForExactSizeMatch))) {
             if (!exactSizePreset || prefersPreset(preset))
-                exactSizePreset = &preset.get();
+                exactSizePreset = preset;
             continue;
         }
 
@@ -301,7 +294,7 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
             auto aspectRatio = [] (const IntSize size) -> double {
                 return size.width() / static_cast<double>(size.height());
             };
-            if (std::abs(aspectRatio(preset->size) - aspectRatio(size)) > 10e-7 || !canResizeVideoFrames())
+            if (std::abs(aspectRatio(preset.size()) - aspectRatio(size)) > 10e-7 || !canResizeVideoFrames())
                 return false;
 
             encodingSize = size;
@@ -309,7 +302,7 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
         };
         if (supportsCaptureSize(requestedWidth, requestedHeight, WTFMove(lookForAspectRatioMatch))) {
             if (!aspectRatioPreset || shouldUsePreset(*aspectRatioPreset, preset)) {
-                aspectRatioPreset = &preset.get();
+                aspectRatioPreset = preset;
                 aspectRatioMatchSize = encodingSize;
             }
         }
@@ -317,33 +310,33 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
         if (exactSizePreset || aspectRatioPreset)
             continue;
 
-        if ((requestedWidth && requestedWidth.value() > preset->size.width()) || (requestedHeight && requestedHeight.value() > preset->size.height()))
+        if ((requestedWidth && requestedWidth.value() > preset.size().width()) || (requestedHeight && requestedHeight.value() > preset.size().height()))
             continue;
 
         if (requestedWidth && requestedHeight) {
             if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
-                resizePreset = &preset.get();
+                resizePreset = preset;
                 resizeSize = { requestedWidth.value(), requestedHeight.value() };
             }
         } else {
             for (auto& standardSize : standardVideoSizes()) {
-                if (standardSize.width() > preset->size.width() || standardSize.height() > preset->size.height())
+                if (standardSize.width() > preset.size().width() || standardSize.height() > preset.size().height())
                     break;
                 if ((requestedWidth && requestedWidth.value() != standardSize.width()) || (requestedHeight && requestedHeight.value() != standardSize.height()))
                     continue;
 
                 if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
-                    resizePreset = &preset.get();
+                    resizePreset = preset;
                     resizeSize = standardSize;
                 }
             }
 
             if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
-                resizePreset = &preset.get();
+                resizePreset = preset;
                 if (requestedWidth)
-                    resizeSize = { requestedWidth.value(), requestedWidth.value() * preset->size.height() / preset->size.width()};
+                    resizeSize = { requestedWidth.value(), requestedWidth.value() * preset.size().height() / preset.size().width() };
                 else
-                    resizeSize = { requestedHeight.value() * preset->size.width() / preset->size.height(), requestedHeight.value() };
+                    resizeSize = { requestedHeight.value() * preset.size().width() / preset.size().height(), requestedHeight.value() };
             }
         }
     }
@@ -351,13 +344,13 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
     if (!exactSizePreset && !aspectRatioPreset && !resizePreset) {
         WTFLogAlways("RealtimeVideoCaptureSource::bestSupportedSizeFrameRateAndZoom failed supporting constraints %d %d %f %f", requestedWidth ? *requestedWidth : -1, requestedHeight ? *requestedHeight : -1, requestedFrameRate ? *requestedFrameRate : -1, requestedZoom ? *requestedZoom : -1);
         for (const auto& preset : presets())
-            preset->log();
+            preset.log();
 
         return { };
     }
 
     if (exactSizePreset) {
-        auto size = exactSizePreset->size;
+        auto size = exactSizePreset->size();
         auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*exactSizePreset, frameRate());
         auto captureZoom = requestedZoom ? *requestedZoom : zoomFromPreset(*exactSizePreset, zoom());
         return CaptureSizeFrameRateAndZoom { WTFMove(exactSizePreset), size, captureFrameRate, captureZoom };
@@ -393,7 +386,7 @@ void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> widt
     }
 
     m_currentPreset = match->encodingPreset;
-    setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, match->encodingPreset);
+    setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
 
     if (!match->requestedSize.isEmpty())
         setSize(match->requestedSize);
@@ -438,8 +431,8 @@ void RealtimeVideoCaptureSource::clientUpdatedSizeFrameRateAndZoom(std::optional
         return;
 
     m_currentPreset = match->encodingPreset;
-    setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, match->encodingPreset);
-    setSize(match->encodingPreset->size);
+    setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
+    setSize(match->encodingPreset->size());
     setFrameRate(match->requestedFrameRate);
     setZoom(match->requestedZoom);
 }

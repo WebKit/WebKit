@@ -49,7 +49,6 @@ OBJC_CLASS WebCoreAVVideoCaptureSourceObserver;
 
 namespace WebCore {
 
-class AVVideoPreset;
 class ImageTransferSessionVT;
 
 enum class VideoFrameRotation : uint16_t;
@@ -95,8 +94,8 @@ private:
     bool interrupted() const final;
 
     VideoFrameRotation videoFrameRotation() const final { return m_videoFrameRotation; }
-    void setFrameRateAndZoomWithPreset(double, double, RefPtr<VideoPreset>) final;
-    bool prefersPreset(VideoPreset&) final;
+    void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
+    bool prefersPreset(const VideoPreset&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
 
@@ -135,8 +134,8 @@ private:
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
 
-    RefPtr<AVVideoPreset> m_currentPreset;
-    RefPtr<AVVideoPreset> m_appliedPreset;
+    std::optional<VideoPreset> m_currentPreset;
+    std::optional<VideoPreset> m_appliedPreset;
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
     double m_appliedZoom { 1 };
 
@@ -154,9 +153,5 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AVVideoPreset)
-    static bool isType(const WebCore::VideoPreset& preset) { return preset.type == WebCore::VideoPreset::VideoPresetType::AVCapture; }
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_STREAM)

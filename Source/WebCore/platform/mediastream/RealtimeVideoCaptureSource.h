@@ -54,21 +54,21 @@ public:
 
     void ensureIntrinsicSizeMaintainsAspectRatio();
 
-    const VideoPreset* currentPreset() const { return m_currentPreset.get(); }
+    const std::optional<VideoPreset> currentPreset() const { return m_currentPreset; }
 
 protected:
     RealtimeVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
 
     void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) override;
 
-    virtual bool prefersPreset(VideoPreset&) { return true; }
-    virtual void setFrameRateAndZoomWithPreset(double, double, RefPtr<VideoPreset>) { };
+    virtual bool prefersPreset(const VideoPreset&) { return true; }
+    virtual void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) { };
     virtual bool canResizeVideoFrames() const { return false; }
-    bool shouldUsePreset(VideoPreset& current, VideoPreset& candidate);
+    bool shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate);
 
-    void setSupportedPresets(const Vector<Ref<VideoPreset>>&);
+    void setSupportedPresets(Vector<VideoPreset>&&);
     void setSupportedPresets(Vector<VideoPresetData>&&);
-    const Vector<Ref<VideoPreset>>& presets();
+    const Vector<VideoPreset>& presets();
 
     bool frameRateRangeIncludesRate(const FrameRateRange&, double);
 
@@ -80,7 +80,7 @@ protected:
 
 private:
     struct CaptureSizeFrameRateAndZoom {
-        RefPtr<VideoPreset> encodingPreset;
+        std::optional<VideoPreset> encodingPreset;
         IntSize requestedSize;
         double requestedFrameRate { 0 };
         double requestedZoom { 0 };
@@ -94,8 +94,8 @@ private:
     const char* logClassName() const override { return "RealtimeVideoCaptureSource"; }
 #endif
 
-    RefPtr<VideoPreset> m_currentPreset;
-    Vector<Ref<VideoPreset>> m_presets;
+    std::optional<VideoPreset> m_currentPreset;
+    Vector<VideoPreset> m_presets;
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
 };

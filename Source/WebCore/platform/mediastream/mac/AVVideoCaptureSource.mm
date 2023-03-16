@@ -104,22 +104,6 @@ static std::optional<double> computeMaxZoom(AVCaptureDeviceFormat* format)
 #endif
 }
 
-class AVVideoPreset : public VideoPreset {
-public:
-    static Ref<AVVideoPreset> create(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
-    {
-        return adoptRef(*new AVVideoPreset(size, WTFMove(frameRateRanges), format));
-    }
-
-    AVVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
-        : VideoPreset(size, WTFMove(frameRateRanges), AVCapture, { }, computeMaxZoom(format))
-        , format(format)
-    {
-    }
-
-    RetainPtr<AVCaptureDeviceFormat> format;
-};
-
 CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
     auto *avDevice = [PAL::getAVCaptureDeviceClass() deviceWithUniqueID:device.persistentId()];
@@ -245,10 +229,10 @@ void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettin
     m_currentSettings = std::nullopt;
 }
 
-static bool isZoomSupported(const Vector<Ref<VideoPreset>>& presets)
+static bool isZoomSupported(const Vector<VideoPreset>& presets)
 {
     return anyOf(presets, [](auto& preset) {
-        return preset->isZoomSupported();
+        return preset.isZoomSupported();
     });
 }
 
@@ -361,10 +345,10 @@ double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
     return fitnessScore;
 }
 
-bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
+bool AVVideoCaptureSource::prefersPreset(const VideoPreset& preset)
 {
 #if PLATFORM(IOS_FAMILY)
-    return [static_cast<AVVideoPreset*>(&preset)->format.get() isVideoBinned];
+    return [preset.format() isVideoBinned];
 #else
     UNUSED_PARAM(preset);
 #endif
@@ -372,10 +356,9 @@ bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
     return true;
 }
 
-void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, RefPtr<VideoPreset> preset)
+void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
 {
-    auto* avPreset = preset ? downcast<AVVideoPreset>(preset.get()) : nullptr;
-    m_currentPreset = avPreset;
+    m_currentPreset = WTFMove(preset);
     m_currentFrameRate = requestedFrameRate;
     m_currentZoom = requestedZoom;
 
@@ -387,33 +370,32 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
     if (!m_session)
         return;
 
-    auto* avPreset = m_currentPreset.get();
-    if (!avPreset)
+    if (!m_currentPreset)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size.width(), m_currentPreset->size.height(), m_currentFrameRate, m_currentZoom });
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size().width(), m_currentPreset->size().height(), m_currentFrameRate, m_currentZoom });
 
     auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
     ASSERT(frameRateRange);
 
-    if (m_appliedPreset && m_appliedPreset->format.get() == m_currentPreset->format.get() && m_appliedFrameRateRange.get() == frameRateRange && m_appliedZoom == m_currentZoom) {
+    if (m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() && m_appliedFrameRateRange.get() == frameRateRange && m_appliedZoom == m_currentZoom) {
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
         return;
     }
 
-    ASSERT(avPreset->format);
+    ASSERT(m_currentPreset->format());
 
     NSError *error = nil;
     [m_session beginConfiguration];
     @try {
         if ([device() lockForConfiguration:&error]) {
-            [device() setActiveFormat:avPreset->format.get()];
+            [device() setActiveFormat:m_currentPreset->format()];
 
 #if PLATFORM(MAC)
             auto settingsDictionary = @{
                 (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
-                (__bridge NSString *)kCVPixelBufferWidthKey: @(avPreset->size.width()),
-                (__bridge NSString *)kCVPixelBufferHeightKey: @(avPreset->size.height()),
+                (__bridge NSString *)kCVPixelBufferWidthKey: @(m_currentPreset->size().width()),
+                (__bridge NSString *)kCVPixelBufferHeightKey: @(m_currentPreset->size().height()),
                 (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
             };
             [m_videoOutput setVideoSettings:settingsDictionary];
@@ -696,13 +678,13 @@ bool AVVideoCaptureSource::interrupted() const
 
 void AVVideoCaptureSource::generatePresets()
 {
-    Vector<Ref<VideoPreset>> presets;
+    Vector<VideoPreset> presets;
     for (AVCaptureDeviceFormat* format in [device() formats]) {
 
         CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(format.formatDescription);
         IntSize size = { dimensions.width, dimensions.height };
         auto index = presets.findIf([&size](auto& preset) {
-            return size == preset->size;
+            return size == preset.size();
         });
         if (index != notFound)
             continue;
@@ -711,7 +693,9 @@ void AVVideoCaptureSource::generatePresets()
         for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
-        presets.append(AVVideoPreset::create(size, WTFMove(frameRates), format));
+        VideoPreset preset { size, WTFMove(frameRates), { }, computeMaxZoom(format) };
+        preset.setFormat(format);
+        presets.append(WTFMove(preset));
     }
 
     setSupportedPresets(WTFMove(presets));

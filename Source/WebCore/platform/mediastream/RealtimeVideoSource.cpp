@@ -105,8 +105,8 @@ void RealtimeVideoSource::setSizeFrameRateAndZoom(std::optional<int> width, std:
     ASSERT(sourceSize.height());
     ASSERT(sourceSize.width());
 
-    auto* currentPreset = m_source->currentPreset();
-    auto intrinsicSize = currentPreset ? currentPreset->size : sourceSize;
+    auto currentPreset = m_source->currentPreset();
+    auto intrinsicSize = currentPreset ? currentPreset->size() : sourceSize;
 
     if (!width)
         width = intrinsicSize.width() * height.value() / intrinsicSize.height();
