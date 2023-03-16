@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "InlineDisplayContent.h"
-#include "InlineFormattingState.h"
-#include <optional>
-#include <wtf/Forward.h>
+
+#include "TextPainter.h"
+
 
 namespace WebCore {
+namespace InlineDisplay {
 
-class RenderStyle;
+static void invalidateGlyphCache(Boxes& boxes, size_t firstBoxIndex, size_t numberOfBoxes)
+{
+    ASSERT(firstBoxIndex + numberOfBoxes <= boxes.size());
+    for (size_t index = 0; index < numberOfBoxes; ++index)
+        TextPainter::removeGlyphDisplayList(boxes[firstBoxIndex + index]);
+}
 
-namespace Layout {
+static void invalidateGlyphCache(Boxes& boxes)
+{
+    invalidateGlyphCache(boxes, 0, boxes.size());
+}
 
-class Box;
-class InlineDamage;
-class InlineTextBox;
-class InlineFormattingState;
+void Content::clear()
+{
+    lines.clear();
+    invalidateGlyphCache(boxes);
+    boxes.clear();
+}
 
-class InlineInvalidation {
-public:
-    InlineInvalidation(InlineDamage&, const InlineItems&, const InlineDisplay::Boxes&);
+void Content::set(Content&& newContent)
+{
+    lines = WTFMove(newContent.lines);
+    invalidateGlyphCache(boxes);
+    boxes = WTFMove(newContent.boxes);
+}
 
-    void styleChanged(const Box&, const RenderStyle& oldStyle);
+void Content::append(Content&& newContent)
+{
+    lines.appendVector(WTFMove(newContent.lines));
+    boxes.appendVector(WTFMove(newContent.boxes));
+}
 
-    void textInserted(const InlineTextBox* damagedInlineTextBox = nullptr, std::optional<size_t> offset = { });
-    void textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
-    void textWillBeRemoved(UniqueRef<Box>&&);
-
-    void inlineLevelBoxInserted(const Box&);
-    void inlineLevelBoxWillBeRemoved(UniqueRef<Box>&&);
-
-    void horizontalConstraintChanged();
-
-private:
-    InlineDamage& m_inlineDamage;
-
-    const InlineItems& m_inlineItems;
-    const InlineDisplay::Boxes& m_displayBoxes;
-};
+void Content::remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes)
+{
+    lines.remove(firstLineIndex, numberOfLines);
+    invalidateGlyphCache(boxes, firstBoxIndex, numberOfBoxes);
+    boxes.remove(firstBoxIndex, numberOfBoxes);
+}
 
 }
 }
+
