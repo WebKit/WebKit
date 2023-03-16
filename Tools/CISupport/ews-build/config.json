@@ -130,6 +130,10 @@
     { "name": "ews187", "platform": "mac-monterey" },
     { "name": "ews188", "platform": "mac-monterey" },
     { "name": "ews189", "platform": "mac-monterey" },
+    { "name": "ews200", "platform": "ios-simulator-16" },
+    { "name": "ews201", "platform": "ios-simulator-16" },
+    { "name": "ews202", "platform": "ios-simulator-16" },
+    { "name": "ews203", "platform": "ios-simulator-16" },
     { "name": "webkit-cq-01", "platform": "mac-monterey" },
     { "name": "webkit-cq-02", "platform": "mac-monterey" },
     { "name": "webkit-cq-03", "platform": "mac-monterey" },
@@ -179,7 +183,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-16",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["ios-16-sim-build-ews"],
-      "workernames": [ "ews111", "ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
+      "workernames": [ "ews111", "ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185", "ews200","ews201","ews202","ews203"]
     },
     {
       "name": "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
