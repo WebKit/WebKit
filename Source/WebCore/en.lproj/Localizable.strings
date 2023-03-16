@@ -40,9 +40,6 @@
 /* Forced text track display name format that includes the language and/or locale (e.g. 'English Forced'). */
 "%@ Forced (text track)" = "%@ Forced";
 
-/* visible name of the GPU process. The argument is the application name. */
-"%@ Graphics and Media" = "%@ Graphics and Media";
-
 /* Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadata'). */
 "%@ Metadata (text track)" = "%@ Metadata";
 
