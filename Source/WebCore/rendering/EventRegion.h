@@ -62,6 +62,7 @@ public:
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(const Region&, RenderObject&);
+    bool shouldConsolidateInteractionRegion(IntRect, RenderObject&);
     void copyInteractionRegionsToEventRegion();
 #endif
 
@@ -74,6 +75,7 @@ private:
     Vector<InteractionRegion> m_interactionRegions;
     HashSet<IntRect> m_interactionRects;
     HashSet<IntRect> m_occlusionRects;
+    HashMap<ElementIdentifier, IntRect> m_discoveredInteractionRectsByElement;
 #endif
 };
 

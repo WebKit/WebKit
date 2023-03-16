@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    .nested {
+        position: relative;
+        display: inline-block;
+        padding: 10px;
+        cursor: pointer;
+    }
+    .secondary {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-radius: 5px;
+    }
+</style>
+<body>
+<div class="nested" style="border-radius: 12px;">
+    <div class="nested">
+        <div class="nested">
+            <div class="nested">
+                Nested
+            </div>
+        </div>
+    </div>
+</div>
+<div class="nested" style="border-radius: 12px;">
+    <div class="nested">
+        <div class="nested" style="background: green; border-radius: 8px">
+            <div class="nested">
+                Nested
+            </div>
+        </div>
+    </div>
+</div>
+<div class="nested" style="border-radius: 12px;">
+    <div class="nested">
+        <div class="nested">
+            <div class="nested">
+                Nested
+            </div>
+            <a href="#" class="secondary">Secondary</a>
+        </div>
+    </div>
+</div>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

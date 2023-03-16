@@ -26,10 +26,10 @@
 #include "config.h"
 #include "EventRegion.h"
 
-#include "ElementAncestorIteratorInlines.h"
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
 #include "Path.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SimpleRange.h"
@@ -126,18 +126,62 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
 
     if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
         auto bounds = interactionRegion->regionInLayerCoordinates.bounds();
-        if (interactionRegion->type == InteractionRegion::Type::Occlusion) {
-            if (m_occlusionRects.contains(bounds))
-                return;
-            m_occlusionRects.add(bounds);
-        } else {
+        if (interactionRegion->type == InteractionRegion::Type::Interaction) {
             if (m_interactionRects.contains(bounds))
                 return;
             m_interactionRects.add(bounds);
+
+            if (shouldConsolidateInteractionRegion(bounds, renderer))
+                return;
+            m_discoveredInteractionRectsByElement.add(interactionRegion->elementIdentifier, bounds);
+        } else {
+            if (m_occlusionRects.contains(bounds))
+                return;
+            m_occlusionRects.add(bounds);
         }
 
         m_interactionRegions.append(*interactionRegion);
     }
+}
+
+bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, RenderObject& renderer)
+{
+    if (!renderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+        return false;
+
+    for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+        if (!ancestor.element())
+            continue;
+
+        auto elementIdentifier = ancestor.element()->identifier();
+        auto rectIterator = m_discoveredInteractionRectsByElement.find(elementIdentifier);
+        if (rectIterator != m_discoveredInteractionRectsByElement.end()) {
+            auto parentBounds = rectIterator->value;
+            if (!parentBounds.contains(bounds))
+                return false;
+
+            float marginLeft = bounds.x() - parentBounds.x();
+            float marginRight = parentBounds.maxX() - bounds.maxX();
+            float marginTop = bounds.y() - parentBounds.y();
+            float marginBottom = parentBounds.maxY() - bounds.maxY();
+
+            constexpr auto maxMargin = 50;
+
+            if (marginLeft > maxMargin
+                || marginRight > maxMargin
+                || marginTop > maxMargin
+                || marginBottom > maxMargin)
+                return false;
+
+            return true;
+        }
+
+        // If we find a border / background, stop the search.
+        if (!ancestor.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+            return false;
+    }
+
+    return false;
 }
 
 void EventRegionContext::copyInteractionRegionsToEventRegion()
