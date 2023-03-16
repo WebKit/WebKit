@@ -292,7 +292,7 @@
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
-#include "DOMWindowSpeechSynthesis.h"
+#include "LocalDOMWindowSpeechSynthesis.h"
 #include "PlatformSpeechSynthesizerMock.h"
 #include "SpeechSynthesis.h"
 #endif
@@ -1558,7 +1558,7 @@ void Internals::enableMockSpeechSynthesizer()
     auto document = contextDocument();
     if (!document || !document->domWindow())
         return;
-    auto synthesis = DOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow());
+    auto synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow());
     if (!synthesis)
         return;
 

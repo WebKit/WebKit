@@ -291,6 +291,7 @@ Modules/screen-wake-lock/NavigatorScreenWakeLock.cpp
 Modules/screen-wake-lock/WakeLock.cpp
 Modules/screen-wake-lock/WakeLockManager.cpp
 Modules/screen-wake-lock/WakeLockSentinel.cpp
+Modules/speech/LocalDOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
 Modules/speech/SpeechRecognitionErrorEvent.cpp
@@ -302,7 +303,6 @@ Modules/speech/SpeechRecognitionUpdate.cpp
 Modules/speech/SpeechRecognitionCaptureSource.cpp
 Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp
 Modules/speech/SpeechRecognizer.cpp
-Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisErrorEvent.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
@@ -401,7 +401,6 @@ Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webcodecs/WebCodecsVideoFrame.cpp
 Modules/webcodecs/WebCodecsVideoFrameAlgorithms.cpp
 Modules/webdatabase/ChangeVersionWrapper.cpp
-Modules/webdatabase/DOMWindowWebDatabase.cpp
 Modules/webdatabase/Database.cpp
 Modules/webdatabase/DatabaseAuthorizer.cpp
 Modules/webdatabase/DatabaseContext.cpp
@@ -409,6 +408,7 @@ Modules/webdatabase/DatabaseManager.cpp
 Modules/webdatabase/DatabaseTask.cpp
 Modules/webdatabase/DatabaseThread.cpp
 Modules/webdatabase/DatabaseTracker.cpp
+Modules/webdatabase/LocalDOMWindowWebDatabase.cpp
 Modules/webdatabase/OriginLock.cpp
 Modules/webdatabase/SQLResultSet.cpp
 Modules/webdatabase/SQLResultSetRowList.cpp

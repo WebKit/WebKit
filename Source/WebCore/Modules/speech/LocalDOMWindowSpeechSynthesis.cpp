@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "DOMWindowSpeechSynthesis.h"
+#include "LocalDOMWindowSpeechSynthesis.h"
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
@@ -38,24 +38,24 @@
 
 namespace WebCore {
 
-DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis(LocalDOMWindow* window)
+LocalDOMWindowSpeechSynthesis::LocalDOMWindowSpeechSynthesis(LocalDOMWindow* window)
     : LocalDOMWindowProperty(window)
 {
 }
 
-DOMWindowSpeechSynthesis::~DOMWindowSpeechSynthesis() = default;
+LocalDOMWindowSpeechSynthesis::~LocalDOMWindowSpeechSynthesis() = default;
 
-const char* DOMWindowSpeechSynthesis::supplementName()
+const char* LocalDOMWindowSpeechSynthesis::supplementName()
 {
-    return "DOMWindowSpeechSynthesis";
+    return "LocalDOMWindowSpeechSynthesis";
 }
 
 // static
-DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(LocalDOMWindow* window)
+LocalDOMWindowSpeechSynthesis* LocalDOMWindowSpeechSynthesis::from(LocalDOMWindow* window)
 {
-    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<LocalDOMWindow>::from(window, supplementName()));
+    auto* supplement = static_cast<LocalDOMWindowSpeechSynthesis*>(Supplement<LocalDOMWindow>::from(window, supplementName()));
     if (!supplement) {
-        auto newSupplement = makeUnique<DOMWindowSpeechSynthesis>(window);
+        auto newSupplement = makeUnique<LocalDOMWindowSpeechSynthesis>(window);
         supplement = newSupplement.get();
         provideTo(window, supplementName(), WTFMove(newSupplement));
     }
@@ -63,12 +63,12 @@ DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(LocalDOMWindow* window)
 }
 
 // static
-SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis(LocalDOMWindow& window)
+SpeechSynthesis* LocalDOMWindowSpeechSynthesis::speechSynthesis(LocalDOMWindow& window)
 {
-    return DOMWindowSpeechSynthesis::from(&window)->speechSynthesis();
+    return LocalDOMWindowSpeechSynthesis::from(&window)->speechSynthesis();
 }
 
-SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis()
+SpeechSynthesis* LocalDOMWindowSpeechSynthesis::speechSynthesis()
 {
     if (!m_speechSynthesis && frame() && frame()->document())
         m_speechSynthesis = SpeechSynthesis::create(*frame()->document());

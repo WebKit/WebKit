@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSLocalDOMWindowCustom.h"
 
-#include "DOMWindowWebDatabase.h"
 #include "DeprecatedGlobalSettings.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLDocument.h"
@@ -44,6 +43,7 @@
 #include "JSRemoteDOMWindow.h"
 #include "JSWindowProxy.h"
 #include "JSWorker.h"
+#include "LocalDOMWindowWebDatabase.h"
 #include "LocalFrame.h"
 #include "Location.h"
 #include "ScheduledAction.h"
@@ -641,7 +641,7 @@ static inline JSC::EncodedJSValue jsLocalDOMWindowInstanceFunction_openDatabaseB
         throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 4, "creationCallback", "Window", "openDatabase");
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::DOMWindowWebDatabase::openDatabase(impl, WTFMove(name), WTFMove(version), WTFMove(displayName), WTFMove(estimatedSize), WTFMove(creationCallback))));
+    return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::LocalDOMWindowWebDatabase::openDatabase(impl, WTFMove(name), WTFMove(version), WTFMove(displayName), WTFMove(estimatedSize), WTFMove(creationCallback))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsLocalDOMWindowInstanceFunction_openDatabase, (JSGlobalObject* globalObject, CallFrame* callFrame))

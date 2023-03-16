@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    ImplementedBy=DOMWindowWebDatabase
-] partial interface LocalDOMWindow {
-    [Custom, NotEnumerable] attribute any openDatabase;
+#pragma once
+
+#if ENABLE(SPEECH_SYNTHESIS)
+
+#include "LocalDOMWindowProperty.h"
+#include "SpeechSynthesis.h"
+#include "Supplementable.h"
+
+namespace WebCore {
+    
+class LocalDOMWindow;
+
+class LocalDOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit LocalDOMWindowSpeechSynthesis(LocalDOMWindow*);
+    virtual ~LocalDOMWindowSpeechSynthesis();
+    
+    WEBCORE_EXPORT static SpeechSynthesis* speechSynthesis(LocalDOMWindow&);
+    static LocalDOMWindowSpeechSynthesis* from(LocalDOMWindow*);
+    
+private:
+    SpeechSynthesis* speechSynthesis();
+    static const char* supplementName();
+    
+    RefPtr<SpeechSynthesis> m_speechSynthesis;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(SPEECH_SYNTHESIS)

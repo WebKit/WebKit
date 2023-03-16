@@ -576,7 +576,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/screen-wake-lock/WakeLockSentinel.idl
     Modules/screen-wake-lock/WakeLockType.idl
 
-    Modules/speech/DOMWindow+SpeechSynthesis.idl
+    Modules/speech/LocalDOMWindow+SpeechSynthesis.idl
     Modules/speech/SpeechRecognitionErrorEvent.idl
     Modules/speech/SpeechRecognition.idl
     Modules/speech/SpeechRecognitionAlternative.idl
@@ -741,9 +741,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl
     Modules/webcodecs/WebCodecsVideoFrame.idl
 
-    Modules/webdatabase/DOMWindow+WebDatabase.idl
     Modules/webdatabase/Database.idl
     Modules/webdatabase/DatabaseCallback.idl
+    Modules/webdatabase/LocalDOMWindow+WebDatabase.idl
     Modules/webdatabase/SQLError.idl
     Modules/webdatabase/SQLResultSet.idl
     Modules/webdatabase/SQLResultSetRowList.idl
@@ -1249,19 +1249,19 @@ set(WebCore_NON_SVG_IDL_FILES
     page/BarProp.idl
     page/Crypto.idl
     page/DOMSelection.idl
-    page/DOMWindow+CSSOM.idl
-    page/DOMWindow+CSSOMView.idl
-    page/DOMWindow+Compat.idl
-    page/DOMWindow+DeviceMotion.idl
-    page/DOMWindow+DeviceOrientation.idl
-    page/DOMWindow+RequestIdleCallback.idl
-    page/DOMWindow+Selection.idl
-    page/DOMWindow+VisualViewport.idl
     page/EventSource.idl
     page/History.idl
     page/IntersectionObserver.idl
     page/IntersectionObserverCallback.idl
     page/IntersectionObserverEntry.idl
+    page/LocalDOMWindow+CSSOM.idl
+    page/LocalDOMWindow+CSSOMView.idl
+    page/LocalDOMWindow+Compat.idl
+    page/LocalDOMWindow+DeviceMotion.idl
+    page/LocalDOMWindow+DeviceOrientation.idl
+    page/LocalDOMWindow+RequestIdleCallback.idl
+    page/LocalDOMWindow+Selection.idl
+    page/LocalDOMWindow+VisualViewport.idl
     page/LocalDOMWindow.idl
     page/Location.idl
     page/Navigator+UserActivation.idl

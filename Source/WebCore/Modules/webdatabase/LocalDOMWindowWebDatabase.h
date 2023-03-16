@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SPEECH_SYNTHESIS,
-    ImplementedBy=DOMWindowSpeechSynthesis
-] partial interface LocalDOMWindow {
-    [SameObject] readonly attribute SpeechSynthesis speechSynthesis;
+#pragma once
+
+#include "ExceptionOr.h"
+
+namespace WebCore {
+
+class Database;
+class DatabaseCallback;
+class LocalDOMWindow;
+
+class LocalDOMWindowWebDatabase {
+public:
+    static ExceptionOr<RefPtr<Database>> openDatabase(LocalDOMWindow&, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback);
+
+    LocalDOMWindowWebDatabase() = delete;
+    ~LocalDOMWindowWebDatabase() = delete;
 };
+
+} // namespace WebCore
