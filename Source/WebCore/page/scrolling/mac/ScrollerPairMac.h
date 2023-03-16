@@ -86,8 +86,9 @@ private:
 
     NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
     NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
-
-    NSScrollerImpPair *scrollerImpPair() { return m_scrollerImpPair.get(); }
+    
+    NSScrollerImpPair *scrollerImpPair() WTF_REQUIRES_LOCK(m_scrollerImpPairLock) { return m_scrollerImpPair.get(); }
+    Lock& scrollerImpPairLock() WTF_RETURNS_LOCK(m_scrollerImpPairLock) { return m_scrollerImpPairLock; }
 
     WebCore::ScrollingTreeScrollingNode& m_scrollingNode;
 
@@ -97,6 +98,7 @@ private:
     WebCore::IntPoint m_lastKnownMousePosition;
     std::optional<WebCore::FloatPoint> m_lastScrollOffset;
 
+    mutable Lock m_scrollerImpPairLock;
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
     RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
     

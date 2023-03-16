@@ -128,6 +128,8 @@ ScrollerPairMac::ScrollerPairMac(WebCore::ScrollingTreeScrollingNode& node)
 
 void ScrollerPairMac::init()
 {
+    Locker locker { m_scrollerImpPairLock };
+
     m_scrollerImpPairDelegate = adoptNS([[WebScrollerImpPairDelegateMac alloc] initWithScrollerPair:this]);
 
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
@@ -140,12 +142,16 @@ void ScrollerPairMac::init()
 
 ScrollerPairMac::~ScrollerPairMac()
 {
+    Locker locker { m_scrollerImpPairLock };
+
     [m_scrollerImpPairDelegate invalidate];
     [m_scrollerImpPair setDelegate:nil];
 }
 
 void ScrollerPairMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
+    Locker locker { m_scrollerImpPairLock };
+
     switch (phase) {
     case WebCore::PlatformWheelEventPhase::Began:
         [m_scrollerImpPair beginScrollGesture];
@@ -167,6 +173,8 @@ bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
 {
     if (event.type() != WebCore::PlatformEvent::Type::MouseMoved)
         return false;
+    
+    Locker locker { m_scrollerImpPairLock };
 
     m_lastKnownMousePosition = event.position();
     [m_scrollerImpPair mouseMovedInContentArea];
@@ -193,6 +201,8 @@ void ScrollerPairMac::setVerticalScrollbarPresentationValue(float scrollbValue)
 
 void ScrollerPairMac::updateValues()
 {
+    Locker locker { m_scrollerImpPairLock };
+
     auto offset = m_scrollingNode.currentScrollOffset();
 
     if (offset != m_lastScrollOffset) {
