@@ -610,11 +610,12 @@ ExceptionOr<SelectorQuery&> SelectorQueryCache::add(const String& selectors, Doc
     if (selectorList->selectorsNeedNamespaceResolution())
         return Exception { SyntaxError };
 
+    auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(*selectorList, nullptr);
     const int maximumSelectorQueryCacheSize = 256;
     if (m_entries.size() == maximumSelectorQueryCacheSize)
         m_entries.remove(m_entries.random());
 
-    return *m_entries.add(selectors, makeUnique<SelectorQuery>(WTFMove(*selectorList))).iterator->value;
+    return *m_entries.add(selectors, makeUnique<SelectorQuery>(WTFMove(resolvedSelectorList))).iterator->value;
 }
 
 }

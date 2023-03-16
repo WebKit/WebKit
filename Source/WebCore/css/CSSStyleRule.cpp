@@ -113,6 +113,10 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     if (!selectorList)
         return;
 
+    // FIXME: We don't support setting nesting parent selector by CSSOM
+    if (selectorList->hasExplicitNestingParent())
+        return;
+
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     if (selectorList->componentCount() > Style::RuleData::maximumSelectorComponentCount)
         return;

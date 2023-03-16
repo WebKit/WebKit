@@ -1027,18 +1027,12 @@ void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
     visitAllSimpleSelectors(replaceParentSelector);
 }
 
-void CSSSelector::replaceNestingParentByNotAll()
+void CSSSelector::replaceNestingParentByPseudoClassScope()
 {
     auto replaceParentSelector = [] (CSSSelector& selector) {
         if (selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent) {
-            // We replace by :not(*)
-            auto allSelector = makeUnique<CSSParserSelector>(CSSSelector(anyQName()));
-            Vector<std::unique_ptr<CSSParserSelector>> vector;
-            vector.append(WTFMove(allSelector));
-            auto selectorList = makeUnique<CSSSelectorList>(WTFMove(vector));
-            selector.setMatch(Match::PseudoClass);
-            selector.setPseudoClassType(PseudoClassType::PseudoClassNot);
-            selector.setSelectorList(WTFMove(selectorList));
+            // Replace by :scope
+            selector.setPseudoClassType(PseudoClassType::PseudoClassScope);
         }
     };
 

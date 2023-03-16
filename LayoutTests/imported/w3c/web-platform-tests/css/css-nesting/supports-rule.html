@@ -33,6 +33,12 @@
     }
   }
 
+  @supports(selector(&)) {
+    .test-4 {
+      background-color: green;
+    }
+  }
+
   body * + * {
     margin-top: 8px;
   }
@@ -42,4 +48,5 @@
   <div class="test test-1"></div>
   <div class="test"><div class="test-2"></div></div>
   <div class="test test-3"></div>
+  <div class="test test-4"></div>
 </body>
