@@ -519,7 +519,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeSimpleSelector(CSSP
         selector = consumeId(range);
     else if (token.type() == DelimiterToken && token.delimiter() == '.')
         selector = consumeClass(range);
-    else if (token.type() == DelimiterToken && token.delimiter() == '&' && m_context.cssNestingEnabled && m_isNestedContext == CSSParserEnum::IsNestedContext::Yes) // FIXME: handle top-level nesting selector
+    else if (token.type() == DelimiterToken && token.delimiter() == '&' && m_context.cssNestingEnabled)
         selector = consumeNesting(range);
     else if (token.type() == LeftBracketToken)
         selector = consumeAttribute(range);
@@ -1185,8 +1185,8 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
                 // FIXME: We should build a new CSSParserSelector from this selector and resolve it
                 const_cast<CSSSelector*>(selector)->resolveNestingParentSelectors(*parentResolvedSelectorList);
             } else {
-                // It's top-level, the nesting parent selector should be replace by not(*)
-                const_cast<CSSSelector*>(selector)->replaceNestingParentByNotAll();
+                // It's top-level, the nesting parent selector should be replace by :scope
+                const_cast<CSSSelector*>(selector)->replaceNestingParentByPseudoClassScope();
             }
             auto parserSelector = makeUnique<CSSParserSelector>(*selector);
             result.append(WTFMove(parserSelector));

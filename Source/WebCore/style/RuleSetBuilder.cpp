@@ -217,12 +217,10 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
 
 void RuleSetBuilder::populateStyleRuleResolvedSelectorList(const StyleRuleWithNesting& rule)
 {
-    auto resolvedSelectorList = rule.selectorList();
-
-    // FIXME: handle top-level nesting selector
+    const CSSSelectorList* parentResolvedSelectorList = nullptr;
     if (m_styleRuleStack.size()) 
-        resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.selectorList(), m_styleRuleStack.last());
-
+        parentResolvedSelectorList =  m_styleRuleStack.last();
+    auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.selectorList(), parentResolvedSelectorList);
     rule.setResolvedSelectorList(WTFMove(resolvedSelectorList));    
 }
 
