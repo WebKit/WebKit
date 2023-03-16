@@ -51,10 +51,10 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    void start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo&);
+    void start(URL downloadURL, URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo&);
     void setDestinationURL(URL);
     void updateProgress(float);
-    void finish(URL);
+    void finish(URL); // Should be the same as the destination URL.
     void cancel();
     void fail(const WebCore::ResourceError&);
 
@@ -68,8 +68,9 @@ public:
 private:
     WebPageProxy& m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
-    URL m_destinationURL;
-    URL m_originatingPageURL;
+    URL m_destinationURL; // Where the download will be placed on disk.
+    URL m_downloadURL; // The URL that will be downloaded.
+    URL m_originatingPageURL; // The URL of the page that triggered the download.
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> m_qlPreviewController;
     RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;

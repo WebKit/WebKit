@@ -50,9 +50,7 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
 
 @interface ASVLaunchPreview (Staging_101981518)
-+ (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent completion:(void (^)(NSError *))handler;
-+ (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent websiteURL:(NSURL *)websiteURL completion:(void (^)(NSError *))handler;
-+ (void)launchPreviewApplicationWithURLs:(NSArray *)urls completion:(void (^)(NSError *))handler;
++ (void)beginPreviewApplicationWithURLs:(NSArray *)urls hash:(NSUInteger)hash is3DContent:(BOOL)is3DContent websiteURL:(NSURL *)websiteURL completion:(void (^)(NSError *))handler;
 @end
 #endif
 
@@ -254,7 +252,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 namespace WebKit {
 
-void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo& systemPreviewInfo)
+void SystemPreviewController::start(URL downloadURL, URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo& systemPreviewInfo)
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     UNUSED_PARAM(mimeType);
@@ -282,7 +280,8 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
 #endif
 
-    m_originatingPageURL = originatingPageURL;
+    m_downloadURL = WTFMove(downloadURL);
+    m_originatingPageURL = WTFMove(originatingPageURL);
 
     RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 }
@@ -293,11 +292,11 @@ void SystemPreviewController::setDestinationURL(URL url)
     url.removeFragmentIdentifier();
     NSURL *nsurl = (NSURL *)url;
     NSURL *originatingPageURL = (NSURL *)m_originatingPageURL;
-    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
+    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:hash:is3DContent:websiteURL:completion:)]) {
+        unsigned hashedURL = m_downloadURL.string().hash();
+        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] hash:hashedURL is3DContent:YES websiteURL:originatingPageURL completion:^(NSError *error) { }];
+    } else
         [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES websiteURL:originatingPageURL completion:^(NSError *error) { }];
-    else if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:completion:)])
-        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES completion:^(NSError *error) { }];
-
 #endif
     m_destinationURL = WTFMove(url);
 }
