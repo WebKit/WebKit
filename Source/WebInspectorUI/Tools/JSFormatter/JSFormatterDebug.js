@@ -114,7 +114,7 @@ JSFormatterDebug = class JSFormatterDebug
 
     _before(node)
     {
-        if (!node.parent)
+        if (!node.parent || !node.range)
             return;
 
         while (this._tokenIndex < this._tokensLength && this._tokens[this._tokenIndex].range[0] < node.range[0]) {
@@ -128,6 +128,9 @@ JSFormatterDebug = class JSFormatterDebug
 
     _after(node)
     {
+        if (!node.range)
+            return;
+        
         while (this._tokenIndex < this._tokensLength && this._tokens[this._tokenIndex].range[0] < node.range[1]) {
             let token = this._tokens[this._tokenIndex++];
             this._debug(node, token);

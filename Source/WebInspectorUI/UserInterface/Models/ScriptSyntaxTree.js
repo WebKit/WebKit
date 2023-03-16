@@ -324,6 +324,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             this._recurse(node.argument, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.BlockStatement:
+        case WI.ScriptSyntaxTree.NodeType.StaticBlock:
             this._recurseArray(node.body, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.BinaryExpression:
@@ -357,6 +358,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             this._recurse(node.body, callback, state);
             this._recurse(node.test, callback, state);
             break;
+        case WI.ScriptSyntaxTree.NodeType.ChainExpression:
         case WI.ScriptSyntaxTree.NodeType.ExpressionStatement:
             this._recurse(node.expression, callback, state);
             break;
@@ -485,11 +487,13 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
         case WI.ScriptSyntaxTree.NodeType.ExportAllDeclaration:
             this._recurse(node.source, callback, state);
+            this._recurseArray(node.assertions, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.ExportNamedDeclaration:
             this._recurse(node.declaration, callback, state);
             this._recurseArray(node.specifiers, callback, state);
             this._recurse(node.source, callback, state);
+            this._recurseArray(node.assertions, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration:
             this._recurse(node.declaration, callback, state);
@@ -498,12 +502,21 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             this._recurse(node.local, callback, state);
             this._recurse(node.exported, callback, state);
             break;
+        case WI.ScriptSyntaxTree.NodeType.ImportAttribute:
+            this._recurse(node.key, callback, state);
+            this._recurse(node.value, callback, state);
+            break;
         case WI.ScriptSyntaxTree.NodeType.ImportDeclaration:
             this._recurseArray(node.specifiers, callback, state);
             this._recurse(node.source, callback, state);
+            this._recurseArray(node.assertions, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier:
             this._recurse(node.local, callback, state);
+            break;
+        case WI.ScriptSyntaxTree.NodeType.ImportExpression:
+            this._recurse(node.source, callback, state);
+            this._recurse(node.attributes, callback, state);
             break;
         case WI.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier:
             this._recurse(node.local, callback, state);
@@ -517,7 +530,6 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         case WI.ScriptSyntaxTree.NodeType.DebuggerStatement:
         case WI.ScriptSyntaxTree.NodeType.EmptyStatement:
         case WI.ScriptSyntaxTree.NodeType.Identifier:
-        case WI.ScriptSyntaxTree.NodeType.Import:
         case WI.ScriptSyntaxTree.NodeType.Literal:
         case WI.ScriptSyntaxTree.NodeType.MetaProperty:
         case WI.ScriptSyntaxTree.NodeType.Super:
@@ -623,6 +635,12 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 type: WI.ScriptSyntaxTree.NodeType.CatchClause,
                 param: this._createInternalSyntaxTree(node.param),
                 body: this._createInternalSyntaxTree(node.body)
+            };
+            break;
+        case "ChainExpression":
+            result = {
+                type: WI.ScriptSyntaxTree.NodeType.ChainExpression,
+                expression: this._createInternalSyntaxTree(node.expression),
             };
             break;
         case "ClassBody":
@@ -814,6 +832,12 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 properties: node.properties.map(this._createInternalSyntaxTree, this)
             };
             break;
+        case "PrivateIdentifier":
+            result = {
+                type: WI.ScriptSyntaxTree.NodeType.PrivateIdentifier,
+                name: node.name,
+            };
+            break;
         case "Program":
             result = {
                 type: WI.ScriptSyntaxTree.NodeType.Program,
@@ -855,6 +879,12 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             result = {
                 type: WI.ScriptSyntaxTree.NodeType.SpreadElement,
                 argument: this._createInternalSyntaxTree(node.argument),
+            };
+            break;
+        case "StaticBlock":
+            result = {
+                type: WI.ScriptSyntaxTree.NodeType.StaticBlock,
+                body: node.body.map(this._createInternalSyntaxTree, this),
             };
             break;
         case "Super":
@@ -973,6 +1003,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             result = {
                 type: WI.ScriptSyntaxTree.NodeType.ExportAllDeclaration,
                 source: this._createInternalSyntaxTree(node.source),
+                assertions: node.assertions?.map(this._createInternalSyntaxTree, this) ?? [],
             };
             break;
         case "ExportNamedDeclaration":
@@ -981,6 +1012,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 declaration: this._createInternalSyntaxTree(node.declaration),
                 specifiers: node.specifiers.map(this._createInternalSyntaxTree, this),
                 source: this._createInternalSyntaxTree(node.source),
+                assertions: node.assertions?.map(this._createInternalSyntaxTree, this) ?? [],
             };
             break;
         case "ExportDefaultDeclaration":
@@ -996,9 +1028,18 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 exported: this._createInternalSyntaxTree(node.exported),
             };
             break;
-        case "Import":
+        case "ImportAttribute":
             result = {
-                type: WI.ScriptSyntaxTree.NodeType.Import,
+                type: WI.ScriptSyntaxTree.NodeType.ImportAttribute,
+                key: this._createInternalSyntaxTree(node.key),
+                value: this._createInternalSyntaxTree(node.value),
+            };
+            break;
+        case "ImportExpression":
+            result = {
+                type: WI.ScriptSyntaxTree.NodeType.ImportExpression,
+                source: this._createInternalSyntaxTree(node.source),
+                attributes: this._createInternalSyntaxTree(node.attributes),
             };
             break;
         case "ImportDeclaration":
@@ -1006,6 +1047,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 type: WI.ScriptSyntaxTree.NodeType.ImportDeclaration,
                 specifiers: node.specifiers.map(this._createInternalSyntaxTree, this),
                 source: this._createInternalSyntaxTree(node.source),
+                assertions: node.assertions?.map(this._createInternalSyntaxTree, this) ?? [],
             };
             break;
         case "ImportDefaultSpecifier":
@@ -1029,13 +1071,16 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
 
         default:
-            console.error("Unsupported Syntax Tree Node: " + node.type, node);
+            console.error("Unsupported Syntax Tree Node: " + node.type, JSON.stringify(node));
             return null;
         }
 
-        let {start, end} = node.loc;
-        result.startPosition = new WI.SourceCodePosition(start.line - 1, start.column);
-        result.endPosition = new WI.SourceCodePosition(end.line - 1, end.column);
+        console.assert(node.loc || node.type === "ChainExpression");
+        if (node.loc) {
+            let {start, end} = node.loc;
+            result.startPosition = new WI.SourceCodePosition(start.line - 1, start.column);
+            result.endPosition = new WI.SourceCodePosition(end.line - 1, end.column);
+        }
 
         result.range = node.range;
         // This is an object for which you can add fields to an AST node without worrying about polluting the syntax-related fields of the node.
@@ -1063,6 +1108,7 @@ WI.ScriptSyntaxTree.NodeType = {
     BreakStatement: Symbol("break-statement"),
     CallExpression: Symbol("call-expression"),
     CatchClause: Symbol("catch-clause"),
+    ChainExpression: Symbol("chain-expression"),
     ClassBody: Symbol("class-body"),
     ClassDeclaration: Symbol("class-declaration"),
     ClassExpression: Symbol("class-expression"),
@@ -1083,9 +1129,10 @@ WI.ScriptSyntaxTree.NodeType = {
     FunctionExpression: Symbol("function-expression"),
     Identifier: Symbol("identifier"),
     IfStatement: Symbol("if-statement"),
-    Import: Symbol("import"),
+    ImportAttribute: Symbol("import-attribute"),
     ImportDeclaration: Symbol("import-declaration"),
     ImportDefaultSpecifier: Symbol("import-default-specifier"),
+    ImportExpression: Symbol("import-expression"),
     ImportNamespaceSpecifier: Symbol("import-namespace-specifier"),
     ImportSpecifier: Symbol("import-specifier"),
     LabeledStatement: Symbol("labeled-statement"),
@@ -1097,12 +1144,14 @@ WI.ScriptSyntaxTree.NodeType = {
     NewExpression: Symbol("new-expression"),
     ObjectExpression: Symbol("object-expression"),
     ObjectPattern: Symbol("object-pattern"),
+    PrivateIdentifier: Symbol("private-identifier"),
     Program: Symbol("program"),
     Property: Symbol("property"),
     RestElement: Symbol("rest-element"),
     ReturnStatement: Symbol("return-statement"),
     SequenceExpression: Symbol("sequence-expression"),
     SpreadElement: Symbol("spread-element"),
+    StaticBlock: Symbol("static-block"),
     Super: Symbol("super"),
     SwitchCase: Symbol("switch-case"),
     SwitchStatement: Symbol("switch-statement"),

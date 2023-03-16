@@ -44,12 +44,14 @@ passed WithStatement
 passed YieldExpression
 passed ClassStatement, Super, MetaProperty
 passed Import
+passed ChainExpression
+passed PrivateIdentifier, StaticBlock
 passed SpreadElement
 passed AssignmentPattern
 passed ArrowFunctionExpression
 passed Async Functions
 passed AwaitExpression
-passed ImportDeclaration, ImportSpecifier
+passed ImportDeclaration, ImportSpecifier, ImportAttribute
 passed ImportDefaultSpecifier
 passed ImportNamespaceSpecifier
 passed ExportNamedDeclaration, ExportSpecifier

@@ -537,7 +537,7 @@ function test()
     InspectorTest.assert(node.body.body[1].expression.argument.type === WI.ScriptSyntaxTree.NodeType.ArrayExpression);
     InspectorTest.log("passed YieldExpression");
 
-    node = makeNode("class C { constructor() { super(); new.target; } }", false);
+    node = makeNode("class C extends Object { constructor() { super(); new.target; } }", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ClassDeclaration);
     InspectorTest.assert(node.body.type === WI.ScriptSyntaxTree.NodeType.ClassBody);
     InspectorTest.assert(node.body.body[0].type === WI.ScriptSyntaxTree.NodeType.MethodDefinition);
@@ -554,12 +554,58 @@ function test()
     InspectorTest.log("passed ClassStatement, Super, MetaProperty");
 
     node = makeNode("import('./Cocoa.js')", true);
-    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.CallExpression);
-    InspectorTest.assert(node.callee.type === WI.ScriptSyntaxTree.NodeType.Import);
-    InspectorTest.assert(node.arguments);
-    InspectorTest.assert(node.arguments.length === 1);
-    InspectorTest.assert(node.arguments[0].type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ImportExpression);
+    InspectorTest.assert(node.source);
+    InspectorTest.assert(node.source.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.source.value === "./Cocoa.js");
     InspectorTest.log("passed Import");
+
+    node = makeNode("foo?.bar?.baz", true);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ChainExpression);
+    InspectorTest.assert(node.expression.type === WI.ScriptSyntaxTree.NodeType.MemberExpression);
+    InspectorTest.assert(node.expression.object.type === WI.ScriptSyntaxTree.NodeType.MemberExpression);
+    InspectorTest.assert(node.expression.object.object.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.expression.object.object.name === "foo");
+    InspectorTest.assert(node.expression.object.property.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.expression.object.property.name === "bar");
+    InspectorTest.assert(node.expression.property.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.expression.property.name === "baz");
+    InspectorTest.log("passed ChainExpression");
+
+    node = makeNode("class ClassWithPrivate { publicField='🔓'; #privateField='🔐'; static { a = b; } publicMethod(anArgument) { } #privateMethod(someOtherArgument) { } }", false);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ClassDeclaration);
+    InspectorTest.assert(node.body.type === WI.ScriptSyntaxTree.NodeType.ClassBody);
+    InspectorTest.assert(node.body.body[0].type === WI.ScriptSyntaxTree.NodeType.Property);
+    InspectorTest.assert(node.body.body[0].key.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body.body[0].key.name === "publicField");
+    InspectorTest.assert(node.body.body[0].value.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.body.body[0].value.value === "🔓");
+    InspectorTest.assert(node.body.body[1].type === WI.ScriptSyntaxTree.NodeType.Property);
+    InspectorTest.assert(node.body.body[1].key.type === WI.ScriptSyntaxTree.NodeType.PrivateIdentifier);
+    InspectorTest.assert(node.body.body[1].key.name === "privateField");
+    InspectorTest.assert(node.body.body[1].value.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.body.body[1].value.value === "🔐");
+    InspectorTest.assert(node.body.body[2].type === WI.ScriptSyntaxTree.NodeType.StaticBlock);
+    InspectorTest.assert(node.body.body[2].body[0].type === WI.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.body.body[3].type === WI.ScriptSyntaxTree.NodeType.MethodDefinition);
+    InspectorTest.assert(node.body.body[3].key.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body.body[3].key.name === "publicMethod");
+    InspectorTest.assert(node.body.body[3].value.type === WI.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.body.body[3].value.params.length === 1);
+    InspectorTest.assert(node.body.body[3].value.params[0].type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body.body[3].value.params[0].name === "anArgument");
+    InspectorTest.assert(node.body.body[3].value.body.type === WI.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(node.body.body[3].value.body.body.length === 0);
+    InspectorTest.assert(node.body.body[4].type === WI.ScriptSyntaxTree.NodeType.MethodDefinition);
+    InspectorTest.assert(node.body.body[4].key.type === WI.ScriptSyntaxTree.NodeType.PrivateIdentifier);
+    InspectorTest.assert(node.body.body[4].key.name === "privateMethod");
+    InspectorTest.assert(node.body.body[4].value.type === WI.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.body.body[4].value.params.length === 1);
+    InspectorTest.assert(node.body.body[4].value.params[0].type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body.body[4].value.params[0].name === "someOtherArgument");
+    InspectorTest.assert(node.body.body[4].value.body.type === WI.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(node.body.body[4].value.body.body.length === 0);
+    InspectorTest.log("passed PrivateIdentifier, StaticBlock");
 
     node = makeNode("let n = { ...spread }", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.VariableDeclaration);
@@ -652,7 +698,7 @@ function test()
 
     // Modules
 
-    node = makeNodeForModule(`import {a,b as x,c} from "module.js"`);
+    node = makeNodeForModule(`import {a,b as x,c} from "module.js" assert { type: "json" }`);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ImportDeclaration);
     InspectorTest.assert(node.source.value === "module.js");
     InspectorTest.assert(node.specifiers.length === 3);
@@ -665,7 +711,13 @@ function test()
     InspectorTest.assert(node.specifiers[2].type === WI.ScriptSyntaxTree.NodeType.ImportSpecifier);
     InspectorTest.assert(node.specifiers[2].local.name === "c");
     InspectorTest.assert(node.specifiers[2].imported.name === "c");
-    InspectorTest.log("passed ImportDeclaration, ImportSpecifier");
+    InspectorTest.assert(node.assertions.length === 1);
+    InspectorTest.assert(node.assertions[0].type === WI.ScriptSyntaxTree.NodeType.ImportAttribute);
+    InspectorTest.assert(node.assertions[0].key.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.assertions[0].key.name === "type");
+    InspectorTest.assert(node.assertions[0].value.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.assertions[0].value.value === "json");
+    InspectorTest.log("passed ImportDeclaration, ImportSpecifier, ImportAttribute");
 
     node = makeNodeForModule(`import x from "module.js"`);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ImportDeclaration);
@@ -682,7 +734,7 @@ function test()
     InspectorTest.assert(node.specifiers[0].local.name === "A");
     InspectorTest.log("passed ImportNamespaceSpecifier");
 
-    node = makeNodeForModule(`export {a, b as x, c}`);
+    node = makeNodeForModule(`export {a, b as x, c} assert { type: "json" }`);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ExportNamedDeclaration);
     InspectorTest.assert(node.specifiers.length === 3);
     InspectorTest.assert(node.specifiers[0].type === WI.ScriptSyntaxTree.NodeType.ExportSpecifier);
@@ -694,6 +746,12 @@ function test()
     InspectorTest.assert(node.specifiers[2].type === WI.ScriptSyntaxTree.NodeType.ExportSpecifier);
     InspectorTest.assert(node.specifiers[2].local.name === "c");
     InspectorTest.assert(node.specifiers[2].exported.name === "c");
+    InspectorTest.assert(node.assertions.length === 1);
+    InspectorTest.assert(node.assertions[0].type === WI.ScriptSyntaxTree.NodeType.ImportAttribute);
+    InspectorTest.assert(node.assertions[0].key.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.assertions[0].key.name === "type");
+    InspectorTest.assert(node.assertions[0].value.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.assertions[0].value.value === "json");
     InspectorTest.log("passed ExportNamedDeclaration, ExportSpecifier");
 
     node = makeNodeForModule(`export default x`);
@@ -701,9 +759,15 @@ function test()
     InspectorTest.assert(node.declaration.name === "x");
     InspectorTest.log("passed ExportDefaultDeclaration");
 
-    node = makeNodeForModule(`export * from "module.js"`);
+    node = makeNodeForModule(`export * from "module.js" assert { type: "json" }`);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.ExportAllDeclaration);
     InspectorTest.assert(node.source.value === "module.js");
+    InspectorTest.assert(node.assertions.length === 1);
+    InspectorTest.assert(node.assertions[0].type === WI.ScriptSyntaxTree.NodeType.ImportAttribute);
+    InspectorTest.assert(node.assertions[0].key.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.assertions[0].key.name === "type");
+    InspectorTest.assert(node.assertions[0].value.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.assertions[0].value.value === "json");
     InspectorTest.log("passed ExportAllDeclaration");
 
 

@@ -19,7 +19,9 @@ PASS: logic-expressions.js
 PASS: new-expression.js
 PASS: numbers.js
 PASS: object-array-literal.js
+PASS: optional-chaining.js
 PASS: other-statements.js
+PASS: private-classes.js
 PASS: return-statement.js
 PASS: sample-jquery.js
 PASS: sample-normal-utilities.js

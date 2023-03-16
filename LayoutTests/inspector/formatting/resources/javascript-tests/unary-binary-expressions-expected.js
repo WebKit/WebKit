@@ -60,6 +60,11 @@ x <<= x;
 x **= x;
 x %= x;
 
+x |= x;
+x ||= x;
+x &&= x;
+x ??= x;
+
 void 0;
 void (0);
 void (0);
