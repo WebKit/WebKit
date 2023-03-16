@@ -55,20 +55,20 @@ static unsigned unitFlags = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCale
     int minute = [[jsNow invokeMethod:@"getMinutes" withArguments:@[]] toInt32];
     int second = [[jsNow invokeMethod:@"getSeconds" withArguments:@[]] toInt32];
 
-    checkResult(@"NSDate to JS Date", year == [components year]
-        && month == [components month]
-        && day == [components day]
-        && hour == [components hour]
-        && minute == [components minute]
-        && second == [components second]);
+    checkResult(@"NSDate to JS Date", year == components.year
+        && month == components.month
+        && day == components.day
+        && hour == components.hour
+        && minute == components.minute
+        && second == components.second);
 }
 
 + (void) JSDateToNSDateTest
 {
     JSContext *context = [[JSContext alloc] init];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"MMMM dd',' yyyy hh:mm:ss"];
-    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
+    formatter.dateFormat = @"MMMM dd',' yyyy hh:mm:ss";
+    formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
     NSDate *februaryFourth2014 = [formatter dateFromString:@"February 4, 2014 11:40:03"];
     NSDateComponents *components = [[NSCalendar currentCalendar] components:unitFlags fromDate:februaryFourth2014];
     // Months are 0-indexed for JavaScript Dates.
@@ -81,12 +81,12 @@ static unsigned unitFlags = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCale
     int minute = [[jsDate invokeMethod:@"getMinutes" withArguments:@[]] toInt32];
     int second = [[jsDate invokeMethod:@"getSeconds" withArguments:@[]] toInt32];
 
-    checkResult(@"JS Date to NSDate", year == [components year]
-        && month == [components month]
-        && day == [components day]
-        && hour == [components hour]
-        && minute == [components minute]
-        && second == [components second]);
+    checkResult(@"JS Date to NSDate", year == components.year
+        && month == components.month
+        && day == components.day
+        && hour == components.hour
+        && minute == components.minute
+        && second == components.second);
 }
 
 + (void) roundTripThroughJSDateTest
@@ -94,8 +94,8 @@ static unsigned unitFlags = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCale
     JSContext *context = [[JSContext alloc] init];
     [context evaluateScript:@"function jsReturnDate(date) { return date; }"];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"MMMM dd',' yyyy hh:mm:ss"];
-    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
+    formatter.dateFormat = @"MMMM dd',' yyyy hh:mm:ss";
+    formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
     NSDate *februaryFourth2014 = [formatter dateFromString:@"February 4, 2014 11:40:03"];
     NSDateComponents *components = [[NSCalendar currentCalendar] components:unitFlags fromDate:februaryFourth2014];
     
@@ -108,12 +108,12 @@ static unsigned unitFlags = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCale
     int minute = [[roundTripThroughJS invokeMethod:@"getMinutes" withArguments:@[]] toInt32];
     int second = [[roundTripThroughJS invokeMethod:@"getSeconds" withArguments:@[]] toInt32];
 
-    checkResult(@"JS date round trip", year == [components year]
-        && month == [components month]
-        && day == [components day]
-        && hour == [components hour]
-        && minute == [components minute]
-        && second == [components second]);
+    checkResult(@"JS date round trip", year == components.year
+        && month == components.month
+        && day == components.day
+        && hour == components.hour
+        && minute == components.minute
+        && second == components.second);
 }
 
 + (void) roundTripThroughObjCDateTest
@@ -134,7 +134,7 @@ static unsigned unitFlags = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCale
             && date.getMilliseconds() === result.getMilliseconds();\
     }"];
     
-    checkResult(@"ObjC date round trip", [[context[@"test"] callWithArguments:@[]] toBool]);
+    checkResult(@"ObjC date round trip", [context[@"test"] callWithArguments:@[]].toBool);
 }
 
 @end

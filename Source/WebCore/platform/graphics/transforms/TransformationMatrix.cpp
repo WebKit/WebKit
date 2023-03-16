@@ -68,7 +68,7 @@ namespace WebCore {
 typedef double Vector4[4];
 typedef double Vector3[3];
 
-const double SMALL_NUMBER = 1.e-8;
+constexpr double SMALL_NUMBER = 1.e-8;
 
 const TransformationMatrix TransformationMatrix::identity { };
 
@@ -218,9 +218,10 @@ static bool inverse(const TransformationMatrix::Matrix4& matrix, TransformationM
 
     // Scale the adjoint matrix to get the inverse
 
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
+    for (unsigned i = 0; i < 4; i++) {
+        for (unsigned j = 0; j < 4; j++)
             result[i][j] = result[i][j] / det;
+    }
 
     return true;
 }
@@ -233,9 +234,10 @@ static bool inverse(const TransformationMatrix::Matrix4& matrix, TransformationM
 // Transpose rotation portion of matrix a, return b
 static void transposeMatrix4(const TransformationMatrix::Matrix4& a, TransformationMatrix::Matrix4& b)
 {
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
+    for (unsigned i = 0; i < 4; i++) {
+        for (unsigned j = 0; j < 4; j++)
             b[i][j] = a[j][i];
+    }
 }
 
 // Multiply a homogeneous point by a matrix and return the transformed point
@@ -360,10 +362,11 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
     if (localMatrix[3][3] == 0)
         return false;
 
-    int i, j;
-    for (i = 0; i < 4; i++)
+    unsigned i, j;
+    for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++)
             localMatrix[i][j] /= localMatrix[3][3];
+    }
 
     // perspectiveMatrix is used to solve for perspective, but it also provides
     // an easy way to test for singularity of the upper 3x3 component.
@@ -683,7 +686,7 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
         // Using int max causes overflow when other code uses the projected point. To
         // represent infinity yet reduce the risk of overflow, we use a large but
         // not-too-large number here when clamping.
-        const int largeNumber = 100000000 / kFixedPointDenominator;
+        constexpr int largeNumber = 100000000 / kFixedPointDenominator;
         outX = copysign(largeNumber, outX);
         outY = copysign(largeNumber, outY);
         if (clamped)

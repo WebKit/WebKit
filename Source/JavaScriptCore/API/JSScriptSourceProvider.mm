@@ -33,17 +33,17 @@
 
 unsigned JSScriptSourceProvider::hash() const
 {
-    return [m_script.get() hash];
+    return m_script.get().hash;
 }
 
 StringView JSScriptSourceProvider::source() const
 {
-    return [m_script.get() source];
+    return m_script.get().source;
 }
 
 RefPtr<JSC::CachedBytecode> JSScriptSourceProvider::cachedBytecode() const
 {
-    return [m_script.get() cachedBytecode];
+    return m_script.get().cachedBytecode;
 }
 
 #endif // JSC_OBJC_API_ENABLED

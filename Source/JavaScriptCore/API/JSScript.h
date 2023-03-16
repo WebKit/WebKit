@@ -84,22 +84,22 @@ JSC_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 - (BOOL)cacheBytecodeWithError:(out NSError * _Nullable * _Nullable)error;
 
 /*!
- @method
+ @property
  @abstract Returns true when evaluating this JSScript will use the bytecode cache. Returns false otherwise.
  */
-- (BOOL)isUsingBytecodeCache;
+@property (nonatomic, getter=isUsingBytecodeCache, readonly) BOOL usingBytecodeCache;
 
 /*!
- @method
+ @property
  @abstract Returns the JSScriptType of this JSScript.
  */
-- (JSScriptType)type;
+@property (nonatomic, readonly) JSScriptType type;
 
 /*!
- @method
+ @property
  @abstract Returns the sourceURL of this JSScript.
  */
-- (NSURL *)sourceURL;
+@property (nonatomic, readonly, copy) NSURL *sourceURL;
 
 @end
 

@@ -85,7 +85,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     if (!value)
         return self;
 
-    JSC::JSGlobalObject* globalObject = toJS([value.context JSGlobalContextRef]);
+    JSC::JSGlobalObject* globalObject = toJS(value.context.JSGlobalContextRef);
     auto& owner = managedValueHandleOwner();
     JSC::Weak<JSC::JSGlobalObject> weak(globalObject, &owner, (__bridge void*)self);
     m_globalObject.swap(weak);
@@ -96,7 +96,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
     m_owners = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
 
-    JSC::JSValue jsValue = toJS(globalObject, [value JSValueRef]);
+    JSC::JSValue jsValue = toJS(globalObject, value.JSValueRef);
     if (jsValue.isObject())
         m_weakValue.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), owner, (__bridge void*)self);
     else if (jsValue.isString())
@@ -108,7 +108,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
 - (void)dealloc
 {
-    JSVirtualMachine *virtualMachine = [[[self value] context] virtualMachine];
+    JSVirtualMachine *virtualMachine = self.value.context.virtualMachine;
     if (virtualMachine) {
         auto copy = adoptNS([m_owners copy]);
         for (id owner in [copy keyEnumerator]) {

@@ -67,7 +67,7 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
         timestampCounterSet = nil;
 
     return {
-        [device argumentBuffersSupport],
+        device.argumentBuffersSupport,
         false, // To be filled in by the caller.
         timestampCounterSet,
         statisticCounterSet,

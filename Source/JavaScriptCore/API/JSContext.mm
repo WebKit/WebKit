@@ -63,9 +63,9 @@
 
 - (void)ensureWrapperMap
 {
-    if (!toJS([self JSGlobalContextRef])->wrapperMap()) {
+    if (!toJS(self.JSGlobalContextRef)->wrapperMap()) {
         // The map will be retained by the GlobalObject in initialization.
-        [[[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]] release];
+        [[[JSWrapperMap alloc] initWithGlobalContextRef:self.JSGlobalContextRef] release];
     }
 }
 
@@ -110,7 +110,7 @@
 {
     JSValueRef exceptionValue = nullptr;
     auto scriptJS = OpaqueJSString::tryCreate(script);
-    auto sourceURLJS = OpaqueJSString::tryCreate([sourceURL absoluteString]);
+    auto sourceURLJS = OpaqueJSString::tryCreate(sourceURL.absoluteString);
     JSValueRef result = JSEvaluateScript(m_context, scriptJS.get(), nullptr, sourceURLJS.get(), 0, &exceptionValue);
 
     if (exceptionValue)
@@ -126,7 +126,7 @@
 
     if (script.type == kJSScriptTypeProgram) {
         JSValueRef exceptionValue = nullptr;
-        JSC::SourceCode sourceCode = [script sourceCode];
+        JSC::SourceCode sourceCode = script.sourceCode;
         JSValueRef result = JSEvaluateScriptInternal(locker, m_context, nullptr, sourceCode, &exceptionValue);
 
         if (exceptionValue)
@@ -162,7 +162,7 @@
     }
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String([[script sourceURL] absoluteString])));
+    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String(script.sourceURL.absoluteString)));
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(globalObject, scope.exception()->value());
         scope.clearException();
@@ -329,12 +329,12 @@
 
 - (JSValue *)objectForKeyedSubscript:(id)key
 {
-    return [self globalObject][key];
+    return self.globalObject[key];
 }
 
 - (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key
 {
-    [self globalObject][key] = object;
+    self.globalObject[key] = object;
 }
 
 @end
@@ -400,7 +400,7 @@
 - (JSValue *)wrapperForObjCObject:(id)object
 {
     JSC::JSLockHolder locker(toJS(m_context));
-    return [[self wrapperMap] jsWrapperForObject:object inContext:self];
+    return [self.wrapperMap jsWrapperForObject:object inContext:self];
 }
 
 - (JSWrapperMap *)wrapperMap
@@ -411,7 +411,7 @@
 - (JSValue *)wrapperForJSObject:(JSValueRef)value
 {
     JSC::JSLockHolder locker(toJS(m_context));
-    return [[self wrapperMap] objcWrapperForJSValueRef:value inContext:self];
+    return [self.wrapperMap objcWrapperForJSValueRef:value inContext:self];
 }
 
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)globalContext

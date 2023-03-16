@@ -44,7 +44,7 @@ extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 @end
 
 @protocol TestClassBExports <JSExport>
-- (NSString *)name;
+@property (nonatomic, readonly, copy) NSString *name;
 @end
 
 @interface TestClassB : TestClassA <TestClassBExports>
@@ -58,7 +58,7 @@ extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 @end
 
 @protocol TestClassCExports <JSExport>
-- (NSString *)name;
+@property (nonatomic, readonly, copy) NSString *name;
 @end
 
 @interface TestClassC : TestClassB <TestClassCExports>
@@ -118,9 +118,9 @@ void runRegress141809()
             TestClassC* obj = [[TestClassC alloc] init];
             resultBeforeGC = [dumpPrototypes callWithArguments:@[obj]];
         }
-        
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
-        
+
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
+
         @autoreleasepool {
             TestClassC* obj = [[TestClassC alloc] init];
             JSValue* resultAfterGC = [dumpPrototypes callWithArguments:@[obj]];

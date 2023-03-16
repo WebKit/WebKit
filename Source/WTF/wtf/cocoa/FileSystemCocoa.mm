@@ -76,17 +76,17 @@ String createTemporaryZipArchive(const String& path)
         CString archivePath([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation);
         if (mkstemp(archivePath.mutableData()) == -1)
             return;
-        
-        NSDictionary *options = @{
-            (__bridge id)kBOMCopierOptionCreatePKZipKey : @YES,
-            (__bridge id)kBOMCopierOptionSequesterResourcesKey : @YES,
-            (__bridge id)kBOMCopierOptionKeepParentKey : @YES,
-            (__bridge id)kBOMCopierOptionCopyResourcesKey : @YES,
-        };
-        
+
+        CFTypeRef keys[] = { kBOMCopierOptionCreatePKZipKey, kBOMCopierOptionSequesterResourcesKey, kBOMCopierOptionKeepParentKey, kBOMCopierOptionCopyResourcesKey };
+        CFTypeRef values[] = { kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue };
+
+        CFDictionaryRef options = CFDictionaryCreate(kCFAllocatorDefault, keys, values, sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         BOMCopier copier = BOMCopierNew();
-        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), (__bridge CFDictionaryRef)options))
+
+        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), options))
             temporaryFile = String::fromUTF8(archivePath);
+        
+        CFRelease(options);
         BOMCopierFree(copier);
     }];
     
@@ -126,14 +126,14 @@ String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHand
 NSString *createTemporaryDirectory(NSString *directoryPrefix)
 {
     NSString *tempDirectory = NSTemporaryDirectory();
-    if (!tempDirectory || ![tempDirectory length])
+    if (!tempDirectory || !tempDirectory.length)
         return nil;
 
-    if (!directoryPrefix || ![directoryPrefix length])
+    if (!directoryPrefix || !directoryPrefix.length)
         return nil;
 
     NSString *tempDirectoryComponent = [directoryPrefix stringByAppendingString:@"-XXXXXXXX"];
-    const char* tempDirectoryCString = [[tempDirectory stringByAppendingPathComponent:tempDirectoryComponent] fileSystemRepresentation];
+    const char* tempDirectoryCString = [tempDirectory stringByAppendingPathComponent:tempDirectoryComponent].fileSystemRepresentation;
     if (!tempDirectoryCString)
         return nil;
 
@@ -204,7 +204,7 @@ bool isSafeToUseMemoryMapForPath(const String& path)
         LOG_ERROR("Unable to get path protection class");
         return false;
     }
-    if ([[attributes objectForKey:NSFileProtectionKey] isEqualToString:NSFileProtectionComplete]) {
+    if ([attributes[NSFileProtectionKey] isEqualToString:NSFileProtectionComplete]) {
         LOG_ERROR("Path protection class is NSFileProtectionComplete, so it is not safe to use memory map");
         return false;
     }
@@ -232,7 +232,7 @@ bool setExcludedFromBackup(const String& path, bool excluded)
         return false;
 
     NSError *error;
-    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:[NSNumber numberWithBool:excluded] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:@(excluded) forKey:NSURLIsExcludedFromBackupKey error:&error]) {
         LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", path.utf8().data(), error.localizedDescription);
         return false;
     }

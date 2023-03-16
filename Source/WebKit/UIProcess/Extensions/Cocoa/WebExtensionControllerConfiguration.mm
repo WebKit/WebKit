@@ -53,7 +53,7 @@ String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::opti
             return;
         }
 
-        String appDirectoryName = [NSBundle mainBundle].bundleIdentifier ?: [NSProcessInfo processInfo].processName;
+        String appDirectoryName = NSBundle.mainBundle.bundleIdentifier ?: NSProcessInfo.processInfo.processName;
         defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, appDirectoryName, "WebExtensions"_s, identifierPath });
     });
 

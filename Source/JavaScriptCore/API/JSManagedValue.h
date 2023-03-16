@@ -64,7 +64,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @abstract Create a JSManagedValue.
 @result The new JSManagedValue.
 */
-- (instancetype)initWithValue:(JSValue *)value;
+- (instancetype)initWithValue:(JSValue *)value NS_DESIGNATED_INITIALIZER;
 
 /*!
 @property
