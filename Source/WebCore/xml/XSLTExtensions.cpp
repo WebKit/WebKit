@@ -37,16 +37,31 @@
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinkLibxslt.h"
+
+static void xsltTransformErrorTrampoline(xsltTransformContextPtr context, xsltStylesheetPtr style, xmlNodePtr node, const char* message)
+{
+    static void (*xsltTransformErrorPointer)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        xsltTransformErrorPointer = reinterpret_cast<void (*)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...)>(dlsym(WebCore::libxsltLibrary(), "xsltTransformError"));
+    });
+    xsltTransformErrorPointer(context, style, node, "%s", message);
+}
+
+#define xsltTransformError xsltTransformErrorTrampoline
+
 #endif
 
 namespace WebCore {
 
-// FIXME: This code is taken from libexslt 1.1.11; should sync with newer versions.
+// FIXME: This code is taken from libexslt v1.1.35; should sync with newer versions.
 static void exsltNodeSetFunction(xmlXPathParserContextPtr ctxt, int nargs)
 {
+    xmlDocPtr fragment;
+    xsltTransformContextPtr tctxt = xsltXPathGetTransformContext(ctxt);
+    xmlNodePtr txt;
     xmlChar *strval;
-    xmlNodePtr retNode;
-    xmlXPathObjectPtr ret;
+    xmlXPathObjectPtr obj;
 
     if (nargs != 1) {
         xmlXPathSetArityError(ctxt);
@@ -58,19 +73,38 @@ static void exsltNodeSetFunction(xmlXPathParserContextPtr ctxt, int nargs)
         return;
     }
 
-    strval = xmlXPathPopString(ctxt);
-    retNode = xmlNewDocText(NULL, strval);
-    ret = xmlXPathNewValueTree(retNode);
-    
-    // FIXME: It might be helpful to push any errors from xmlXPathNewValueTree
-    // up to the Javascript Console.
-    if (ret != NULL) 
-        ret->type = XPATH_NODESET;
+    /*
+     * SPEC EXSLT:
+     * "You can also use this function to turn a string into a text
+     * node, which is helpful if you want to pass a string to a
+     * function that only accepts a node-set."
+     */
+    fragment = xsltCreateRVT(tctxt);
+    if (!fragment) {
+        xsltTransformError(tctxt, nullptr, tctxt->inst,
+            "WebCore::exsltNodeSetFunction: Failed to create a tree fragment.\n");
+        tctxt->state = XSLT_STATE_STOPPED;
+        return;
+    }
+    xsltRegisterLocalRVT(tctxt, fragment);
 
+    strval = xmlXPathPopString(ctxt);
+
+    txt = xmlNewDocText(fragment, strval);
+    xmlAddChild(reinterpret_cast<xmlNodePtr>(fragment), txt);
+    obj = xmlXPathNewNodeSet(txt);
+
+    // FIXME: It might be helpful to push any errors from xmlXPathNewNodeSet
+    // up to the Javascript Console.
+    if (!obj) {
+        xsltTransformError(tctxt, nullptr, tctxt->inst,
+            "WebCore::exsltNodeSetFunction: Failed to create a node set object.\n");
+        tctxt->state = XSLT_STATE_STOPPED;
+    }
     if (strval != NULL)
         xmlFree(strval);
 
-    valuePush(ctxt, ret);
+    valuePush(ctxt, obj);
 }
 
 void registerXSLTExtensions(xsltTransformContextPtr ctxt)

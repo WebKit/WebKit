@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,5 +63,9 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltComputeSortResult, xmlXPathO
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltEvalAttrValueTemplate, xmlChar*, (xsltTransformContextPtr ctxt, xmlNodePtr node, const xmlChar *name, const xmlChar *ns), (ctxt, node, name, ns))
 
 SOFT_LINK_VARIABLE_FOR_SOURCE(WebCore, libxslt, xsltMaxDepth, int);
+
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltCreateRVT, xmlDocPtr, (xsltTransformContextPtr ctxt), (ctxt))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltRegisterLocalRVT, int, (xsltTransformContextPtr ctxt, xmlDocPtr RVT), (ctxt, RVT))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, libxslt, xsltXPathGetTransformContext, xsltTransformContextPtr, (xmlXPathParserContextPtr ctxt), (ctxt))
 
 #endif // OS(DARWIN) && !PLATFORM(GTK)
