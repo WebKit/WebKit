@@ -1,8 +1,7 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -154,7 +153,7 @@ void AutoTableLayout::fullRecalc()
             groupLogicalWidth = column->style().logicalWidth();
         else {
             Length colLogicalWidth = column->style().logicalWidth();
-            if (colLogicalWidth.isCalculated() || colLogicalWidth.isAuto())
+            if (colLogicalWidth.isAuto())
                 colLogicalWidth = groupLogicalWidth;
             if ((colLogicalWidth.isFixed() || colLogicalWidth.isPercentOrCalculated()) && colLogicalWidth.isZero())
                 colLogicalWidth = Length();
