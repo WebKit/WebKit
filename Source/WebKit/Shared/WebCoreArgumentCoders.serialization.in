@@ -4170,6 +4170,11 @@ class WebCore::CaptureDevice {
     bool isEphemeral();
 };
 
+struct WebCore::CaptureDeviceWithCapabilities {
+    WebCore::CaptureDevice device;
+    WebCore::RealtimeMediaSourceCapabilities capabilities;
+};
+
 [Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
 
 class WebCore::RealtimeMediaSourceCapabilities {

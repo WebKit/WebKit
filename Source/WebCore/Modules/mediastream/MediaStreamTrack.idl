@@ -58,28 +58,6 @@ enum MediaStreamTrackState { "live", "ended" };
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-] dictionary MediaTrackCapabilities {
-    LongRange width;
-    LongRange height;
-    DoubleRange aspectRatio;
-    DoubleRange frameRate;
-    sequence<DOMString> facingMode;
-    DoubleRange volume;
-    LongRange sampleRate;
-    LongRange sampleSize;
-    sequence<boolean> echoCancellation;
-    // FIXME 169871: add latency
-    // FIXME 169871: add channelCount
-    DOMString deviceId;
-    DOMString groupId;
-    DOMString displaySurface;
-    DoubleRange focusDistance;
-    DoubleRange zoom;
-};
-
-[
-    Conditional=MEDIA_STREAM,
-    JSGenerateToJSObject,
 ] dictionary MediaTrackSettings {
     long width;
     long height;

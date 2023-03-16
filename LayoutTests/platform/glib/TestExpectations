@@ -1745,6 +1745,8 @@ webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
 
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getCapabilities.https.html [ Failure ]
+
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
 # because on sender side we need at least a complete GOP... So the tests time

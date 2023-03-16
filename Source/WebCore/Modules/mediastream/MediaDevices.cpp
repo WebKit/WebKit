@@ -35,11 +35,13 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioSession.h"
+#include "CaptureDeviceWithCapabilities.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSInputDeviceInfo.h"
 #include "JSMediaDeviceInfo.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -285,25 +287,7 @@ static inline bool checkSpeakerAccess(const Document& document)
         && isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::SpeakerSelection, document, LogFeaturePolicyFailure::No);
 }
 
-static inline MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceType type)
-{
-    switch (type) {
-    case CaptureDevice::DeviceType::Microphone:
-        return MediaDeviceInfo::Kind::Audioinput;
-    case CaptureDevice::DeviceType::Speaker:
-        return MediaDeviceInfo::Kind::Audiooutput;
-    case CaptureDevice::DeviceType::Camera:
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
-        return MediaDeviceInfo::Kind::Videoinput;
-    case CaptureDevice::DeviceType::SystemAudio:
-    case CaptureDevice::DeviceType::Unknown:
-        ASSERT_NOT_REACHED();
-    }
-    return MediaDeviceInfo::Kind::Audioinput;
-}
-
-void MediaDevices::exposeDevices(const Vector<CaptureDevice>& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts, EnumerateDevicesPromise&& promise)
+void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts, EnumerateDevicesPromise&& promise)
 {
     if (isContextStopped())
         return;
@@ -316,8 +300,9 @@ void MediaDevices::exposeDevices(const Vector<CaptureDevice>& newDevices, MediaD
 
     m_audioOutputDeviceIdToPersistentId.clear();
 
-    Vector<Ref<MediaDeviceInfo>> devices;
-    for (auto& newDevice : newDevices) {
+    Vector<std::variant<RefPtr<MediaDeviceInfo>, RefPtr<InputDeviceInfo>>> devices;
+    for (auto& newDeviceWithCapabilities : newDevices) {
+        auto& newDevice = newDeviceWithCapabilities.device;
         if (!canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
             continue;
         if (!canAccessCamera && newDevice.type() == CaptureDevice::DeviceType::Camera)
@@ -333,12 +318,13 @@ void MediaDevices::exposeDevices(const Vector<CaptureDevice>& newDevices, MediaD
             deviceId = center.hashStringWithSalt(newDevice.persistentId(), deviceIDHashSalts.persistentDeviceSalt);
         auto groupId = center.hashStringWithSalt(newDevice.groupId(), m_groupIdHashSalt);
 
-        if (newDevice.type() == CaptureDevice::DeviceType::Speaker)
+        if (newDevice.type() == CaptureDevice::DeviceType::Speaker) {
             m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
-
-        devices.append(MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), toMediaDeviceInfoKind(newDevice.type())));
+            devices.append(RefPtr<MediaDeviceInfo> { MediaDeviceInfo::create(newDevice.label(), WTFMove(deviceId), WTFMove(groupId), toMediaDeviceInfoKind(newDevice.type())) });
+        } else
+            devices.append(RefPtr<InputDeviceInfo> { InputDeviceInfo::create(WTFMove(newDeviceWithCapabilities), WTFMove(deviceId), WTFMove(groupId)) });
     }
-    promise.resolve(devices);
+    promise.resolve(WTFMove(devices));
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
@@ -359,10 +345,10 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         return;
     }
 
-    controller->enumerateMediaDevices(*document, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)](const auto& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
+    controller->enumerateMediaDevices(*document, [this, weakThis = WeakPtr { *this }, promise = WTFMove(promise)](auto&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts) mutable {
         if (!weakThis)
             return;
-        exposeDevices(newDevices, WTFMove(deviceIDHashSalts), WTFMove(promise));
+        exposeDevices(WTFMove(newDevices), WTFMove(deviceIDHashSalts), WTFMove(promise));
     });
 }
 

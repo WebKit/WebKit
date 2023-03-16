@@ -390,12 +390,14 @@ $(PROJECT_DIR)/Modules/mediasource/VideoPlaybackQuality.idl
 $(PROJECT_DIR)/Modules/mediasource/VideoTrack+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediastream/CanvasCaptureMediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/DoubleRange.idl
+$(PROJECT_DIR)/Modules/mediastream/InputDeviceInfo.idl
 $(PROJECT_DIR)/Modules/mediastream/LongRange.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaDeviceInfo.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaDevices.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStream.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/MediaTrackCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackConstraints.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackSupportedConstraints.idl
 $(PROJECT_DIR)/Modules/mediastream/Navigator+MediaDevices.idl

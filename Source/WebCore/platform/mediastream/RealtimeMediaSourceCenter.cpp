@@ -140,6 +140,23 @@ void RealtimeMediaSourceCenter::getMediaStreamDevices(CompletionHandler<void(Vec
     });
 }
 
+RealtimeMediaSourceCapabilities RealtimeMediaSourceCenter::getCapabilities(const CaptureDevice& device)
+{
+    if (device.type() == CaptureDevice::DeviceType::Camera) {
+        auto source = videoCaptureFactory().createVideoCaptureSource({ device },  { "fake"_s, "fake"_s }, nullptr, { });
+        if (!source)
+            return { };
+        return source.source()->capabilities();
+    }
+    if (device.type() == CaptureDevice::DeviceType::Microphone) {
+        auto source = audioCaptureFactory().createAudioCaptureSource({ device }, { "fake"_s, "fake"_s }, nullptr, { });
+        if (!source)
+            return { };
+        return source.source()->capabilities();
+    }
+    return { };
+}
+
 static void addStringToSHA1(SHA1& sha1, const String& string)
 {
     if (string.isEmpty())

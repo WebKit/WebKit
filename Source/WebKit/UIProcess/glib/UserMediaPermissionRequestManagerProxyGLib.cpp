@@ -22,6 +22,7 @@
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/CaptureDeviceWithCapabilities.h>
 #include <WebCore/UserMediaRequest.h>
 
 namespace WebKit {
@@ -37,9 +38,15 @@ void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestCon
     });
 }
 
-void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completionHandler)
+void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool /* revealIdsAndLabels */, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
 {
-    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(), WTFMove(completionHandler));
+    // FIXME: Set capabilities if revealIdsAndLabels is true.
+    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(), [completionHandler = WTFMove(completionHandler)](auto&& devices) mutable {
+        auto deviceWithCapabilities = map(devices, [](auto&& device) -> CaptureDeviceWithCapabilities {
+            return { WTFMove(device), { } };
+        });
+        completionHandler(WTFMove(deviceWithCapabilities));
+    });
 }
 
 } // namespace WebKit

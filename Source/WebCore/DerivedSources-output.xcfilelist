@@ -1581,6 +1581,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInnerHTML.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInnerHTML.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputDeviceInfo.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputDeviceInfo.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInputEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorAuditAccessibilityObject.cpp
@@ -1755,6 +1757,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackCapabilities.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackConstraints.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackConstraints.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackSupportedConstraints.cpp

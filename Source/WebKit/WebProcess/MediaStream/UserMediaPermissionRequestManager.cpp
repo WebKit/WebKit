@@ -139,7 +139,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaReques
     request->deny(reason, WTFMove(invalidConstraint));
 }
 
-void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, MediaDeviceHashSalts&&)>&& completionHandler)
+void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&)>&& completionHandler)
 {
     auto* frame = document.frame();
     if (!frame) {

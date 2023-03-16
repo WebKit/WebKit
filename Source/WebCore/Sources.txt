@@ -192,10 +192,12 @@ Modules/mediasource/SourceBufferList.cpp
 Modules/mediasource/VideoPlaybackQuality.cpp
 Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp
 Modules/mediastream/MediaDeviceInfo.cpp
+Modules/mediastream/InputDeviceInfo.cpp
 Modules/mediastream/MediaDevices.cpp
 Modules/mediastream/MediaStream.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackEvent.cpp
+Modules/mediastream/MediaTrackCapabilities.cpp
 Modules/mediastream/MediaTrackConstraints.cpp
 Modules/mediastream/NavigatorMediaDevices.cpp
 Modules/mediastream/OverconstrainedErrorEvent.cpp
@@ -3650,6 +3652,7 @@ JSImageBitmapRenderingContextSettings.cpp
 JSImageData.cpp
 JSImageDataSettings.cpp
 JSImageSmoothingQuality.cpp
+JSInputDeviceInfo.cpp
 JSInputEvent.cpp
 JSInspectorAuditAccessibilityObject.cpp
 JSInspectorAuditDOMObject.cpp
@@ -3724,6 +3727,7 @@ JSMediaStreamAudioSourceNode.cpp
 JSMediaStreamAudioSourceOptions.cpp
 JSMediaStreamTrack.cpp
 JSMediaStreamTrackEvent.cpp
+JSMediaTrackCapabilities.cpp
 JSMediaTrackConstraints.cpp
 JSMediaTrackSupportedConstraints.cpp
 JSMerchantValidationEvent.cpp

@@ -26,7 +26,6 @@
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-    SkipVTableValidation,
     Exposed=Window
 ] interface MediaDeviceInfo {
     readonly attribute DOMString deviceId;
@@ -35,8 +34,6 @@
     readonly attribute DOMString groupId;
     [Default] object toJSON();
 };
-
-// FIXME 169871: missing InputDeviceInfo
 
 enum MediaDeviceKind {
     "audioinput",
