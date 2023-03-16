@@ -135,9 +135,9 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
     }
 }
 
-static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)
+static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)
 {
-    // ubidi prefers non-preserved new lines as whitespace characters.
+    // ubidi prefers non-preserved new lines/tabs as space characters.
     if (TextUtil::shouldPreserveNewline(inlineTextBox))
         return paragraphContentBuilder.append(inlineTextBox.content());
 
@@ -146,16 +146,19 @@ static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& i
     auto needsUnicodeHandling = !textContent.is8Bit();
     size_t nonReplacedContentStartPosition = 0;
     for (size_t position = 0; position < contentLength;) {
+        // Note that because of proper code point boundary handling (see U16_NEXT), position is incremented in an unconventional way here.
         auto startPosition = position;
-        auto isNewLineCharacter = [&] {
+        auto isNewLineOrTabCharacter = [&] {
             if (needsUnicodeHandling) {
                 UChar32 character;
                 U16_NEXT(textContent.characters16(), position, contentLength, character);
-                return character == newlineCharacter;
+                return character == newlineCharacter || character == tabCharacter;
             }
-            return textContent[position++] == newlineCharacter;
+            auto isNewLineOrTab = textContent[position] == newlineCharacter || textContent[position] == tabCharacter;
+            ++position;
+            return isNewLineOrTab;
         };
-        if (!isNewLineCharacter())
+        if (!isNewLineOrTabCharacter())
             continue;
 
         if (nonReplacedContentStartPosition < startPosition)
@@ -241,7 +244,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
             if (lastInlineTextBox == &layoutBox)
                 return;
             inlineTextBoxOffset = paragraphContentBuilder.length();
-            replaceNonPreservedNewLineCharactersAndAppend(downcast<InlineTextBox>(layoutBox), paragraphContentBuilder);
+            replaceNonPreservedNewLineAndTabCharactersAndAppend(downcast<InlineTextBox>(layoutBox), paragraphContentBuilder);
             lastInlineTextBox = &layoutBox;
         };
 
