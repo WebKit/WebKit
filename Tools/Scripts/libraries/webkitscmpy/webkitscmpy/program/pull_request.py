@@ -91,6 +91,12 @@ class PullRequest(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
+            '--set-upstream', '--no-set-upstream',
+            dest='set_upstream', default=None,
+            help='Set the upstream of the local branch when pushing',
+            action=arguments.NoAction,
+        )
+        parser.add_argument(
             '--draft', dest='draft', action='store_true', default=None,
             help='Mark a pull request as a draft when creating it',
         )
@@ -527,11 +533,27 @@ class PullRequest(Command):
             if did_remove:
                 pr_issue.set_labels(labels)
 
+        set_upstream = (
+            args.set_upstream
+            if args.set_upstream is not None
+            else repository.config().get(
+                "webkitscmpy.set-upstream-on-push",
+                "false",
+            )
+            == "true"
+        )
+
         push_env = os.environ.copy()
-        push_env['VERBOSITY'] = str(args.verbose)
+        push_env["VERBOSITY"] = str(args.verbose)
 
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
-        if run([repository.executable(), 'push', '-f', target, repository.branch], cwd=repository.root_path, env=push_env).returncode:
+        if run(
+            [repository.executable(), "push", "-f"]
+            + (["-u"] if set_upstream else [])
+            + [target, repository.branch],
+            cwd=repository.root_path,
+            env=push_env,
+        ).returncode:
             sys.stderr.write("Failed to push '{}' to '{}' (alias of '{}')\n".format(repository.branch, target, repository.url(name=target)))
             sys.stderr.write("Your checkout may be mis-configured, try re-running 'git-webkit setup' or\n")
             sys.stderr.write("your checkout may not have permission to push to '{}'\n".format(repository.url(name=target)))
