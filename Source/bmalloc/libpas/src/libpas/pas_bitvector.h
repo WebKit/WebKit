@@ -48,7 +48,7 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_BITVECTOR_BIT_INDEX64(word_index) ((word_index) << 6)
 #define PAS_BITVECTOR_BIT_SHIFT(bit_index) ((bit_index) & 31)
 #define PAS_BITVECTOR_BIT_SHIFT64(bit_index) ((bit_index) & 63)
-#define PAS_BITVECTOR_BIT_MASK(bit_index) (1 << PAS_BITVECTOR_BIT_SHIFT(bit_index))
+#define PAS_BITVECTOR_BIT_MASK(bit_index) (((uint32_t)1) << PAS_BITVECTOR_BIT_SHIFT(bit_index))
 #define PAS_BITVECTOR_BIT_MASK64(bit_index) (((uint64_t)1) << PAS_BITVECTOR_BIT_SHIFT64(bit_index))
 
 /* Backward bitvectors are negatively indexed and big endian. That means, for example, that bit
