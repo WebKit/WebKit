@@ -1546,7 +1546,7 @@ webxr [ Skip ]
 [ Debug ] js/sort-with-side-effecting-comparisons.html [ Skip ]
 [ Debug ] js/stack-overflow-regexp.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
-[ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
 [ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow

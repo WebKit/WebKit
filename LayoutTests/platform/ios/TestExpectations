@@ -2746,7 +2746,6 @@ svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 svg/custom/acid3-test-77.html [ Failure ]
 
 # <rdar://problem/33381269> REGRESSION: Multiple Layout test from webgl/1.0.3/conformance are timing out.
-webgl/1.0.3/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip  ]
 webgl/1.0.3/conformance/ogles/GL/acos/acos_001_to_006.html [ Skip  ]
 webgl/1.0.3/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip  ]
 
