@@ -206,4 +206,8 @@ void SpeechRecognition::didEnd()
     queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().endEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+SpeechRecognition::~SpeechRecognition()
+{
+}
+
 } // namespace WebCore
