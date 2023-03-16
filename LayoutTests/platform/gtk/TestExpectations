@@ -807,21 +807,17 @@ fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
 # Service-workers tests that fail, time out or crash.
 
-# GTK ought to support async clipboard
-webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-basic.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-same-origin.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-write-basic.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-write-items-twice.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-write-text.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-text.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-write-images.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
+# GTK doesn't support multiple items in the clipboard
+# FIXME: add platform specific tests equivalent to these but using single item.
+editing/async-clipboard/clipboard-read-write-images.html [ Skip ]
+editing/async-clipboard/clipboard-write-basic.html [ Skip ]
+editing/async-clipboard/sanitize-when-reading-markup.html [ Skip ]
+
+# These tests are intended to exercise programmatic paste mechanism specific to Apple ports.
+editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
+editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
+editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ]
+editing/async-clipboard/clipboard-read-while-pasting.html [ Skip ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -1052,8 +1048,6 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/registration-clear-redundant-worker.html [ Crash ]
 webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.html [ Crash ]
-
-webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests

@@ -50,14 +50,18 @@ public:
 
     enum class Type { Clipboard, Primary };
     explicit Clipboard(Type);
+    ~Clipboard();
 
     Type type() const;
     void formats(CompletionHandler<void(Vector<String>&&)>&&);
     void readText(CompletionHandler<void(String&&)>&&);
     void readFilePaths(CompletionHandler<void(Vector<String>&&)>&&);
+    void readURL(CompletionHandler<void(String&& url, String&& title)>&&);
     void readBuffer(const char*, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&&);
-    void write(WebCore::SelectionData&&);
+    void write(WebCore::SelectionData&&, CompletionHandler<void(int64_t)>&&);
     void clear();
+
+    int64_t changeCount() const { return m_changeCount; }
 
 private:
 #if USE(GTK4)
@@ -66,6 +70,7 @@ private:
     GtkClipboard* m_clipboard { nullptr };
     WebFrameProxy* m_frameWritingToClipboard { nullptr };
 #endif
+    int64_t m_changeCount { 0 };
 };
 
 } // namespace WebKit

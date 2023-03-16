@@ -103,9 +103,7 @@ private:
         RefPtr<DeferredPromise> m_promise;
         unsigned m_pendingItemCount;
         std::unique_ptr<Pasteboard> m_pasteboard;
-#if PLATFORM(COCOA)
         int64_t m_changeCountAtStart { 0 };
-#endif
     };
 
     void didResolveOrReject(ItemWriter&);
