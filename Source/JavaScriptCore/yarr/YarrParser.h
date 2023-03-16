@@ -1103,6 +1103,36 @@ private:
         return ch;
     }
 
+    inline UChar32 consumeAndCheckIfValidClassSetCharacter()
+    {
+        UChar32 ch = consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>();
+
+        if (!ch) {
+            m_errorCode = ErrorCode::InvalidClassSetCharacter;
+            return -1;
+        }
+
+        if (isASCII(ch)) {
+            // Check if the character is part of ClassSetSyntaxCharacter.
+            // We leave handling of - and \ to the caller.
+            if (strchr("()[]{}/|)", ch)) {
+                m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                return -1;
+            }
+
+            // Check if the current character and the next are part of ClassSetReservedDoublePunctuator.
+            if (!atEndOfPattern()) {
+                UChar32 nextCh = peek();
+                if (ch == nextCh && strchr("&!#$%*+,.:;<=>?@^`~", ch)) {
+                    m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                    return -1;
+                }
+            }
+        }
+
+        return ch;
+    }
+
     /*
      * parseAtomEscape(), parseCharacterClassEscape(), parseClassSetEscape() and parseClassStringDisjunctionEscape():
      *
@@ -1185,14 +1215,9 @@ private:
         classSetConstructor.begin(tryConsume('^'));
 
         auto processCharacterNormally = [&] () {
-            UChar32 ch = consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>();
-
-            // Check if the character is part of ClassSetSyntaxCharacter, except the characters
-            // explicitly handled below or in classSetConstructor.atomPatternCharacter().
-            if ((isASCII(ch) && strchr("(){}/|)", ch)) || !ch) {
-                m_errorCode = ErrorCode::InvalidClassSetCharacter;
+            UChar32 ch = consumeAndCheckIfValidClassSetCharacter();
+            if (ch == -1)
                 return;
-            }
 
             classSetConstructor.atomPatternCharacter(ch);
         };
@@ -1295,8 +1320,20 @@ private:
                 stringDisjunctionDelegate.newAlternative();
                 break;
 
+            case '-':
+                consume();
+                m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                return;
+
             default:
-                stringDisjunctionDelegate.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>());
+                {
+                    UChar32 ch = consumeAndCheckIfValidClassSetCharacter();
+
+                    if (ch == -1)
+                        return;
+
+                    stringDisjunctionDelegate.atomPatternCharacter(ch);
+                }
             }
 
             if (hasError(m_errorCode))
