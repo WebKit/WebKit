@@ -138,10 +138,6 @@ WTF_EXTERN_C_END
 
 #else
 
-#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-typedef uint32_t IOSurfaceID;
-#endif
-
 typedef struct __IOSurfaceAccelerator *IOSurfaceAcceleratorRef;
 
 WTF_EXTERN_C_BEGIN
