@@ -2307,7 +2307,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
         return;
 
     m_areMemoryCacheClientCallsEnabled = enabled;
-    if (!enabled)
+    if (!enabled || !m_hasPendingMemoryCacheLoadNotifications)
         return;
 
     for (RefPtr frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -2316,6 +2316,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
             continue;
         localFrame->loader().tellClientAboutPastMemoryCacheLoads();
     }
+    m_hasPendingMemoryCacheLoadNotifications = false;
 }
 
 void Page::hiddenPageDOMTimerThrottlingStateChanged()

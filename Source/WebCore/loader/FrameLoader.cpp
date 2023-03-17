@@ -3835,6 +3835,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
         InspectorInstrumentation::didLoadResourceFromMemoryCache(*page, m_documentLoader.get(), &resource);
         m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource.resourceRequest());
         m_documentLoader->didTellClientAboutLoad(resource.url().string());
+        page->setHasPendingMemoryCacheLoadNotifications(true);
         return;
     }
 
