@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <WebCore/IntDegrees.h>
+
 namespace WebKit {
 
 typedef uint64_t DynamicViewportSizeUpdateID;
@@ -33,6 +35,20 @@ enum class DynamicViewportUpdateMode {
     NotResizing,
     ResizingWithAnimation,
     ResizingWithDocumentHidden,
+};
+
+struct DynamicViewportSizeUpdate {
+    WebCore::FloatSize viewLayoutSize;
+    WebCore::FloatSize minimumUnobscuredSize;
+    WebCore::FloatSize maximumUnobscuredSize;
+    WebCore::FloatRect exposedContentRect;
+    WebCore::FloatRect unobscuredRect;
+    WebCore::FloatRect unobscuredRectInScrollViewCoordinates;
+    WebCore::FloatBoxExtent unobscuredSafeAreaInsets;
+    double scale { 1 };
+    WebCore::IntDegrees deviceOrientation { 0 };
+    double minimumEffectiveDeviceWidth { 0 };
+    DynamicViewportSizeUpdateID identifier;
 };
 
 } // namespace WebKit

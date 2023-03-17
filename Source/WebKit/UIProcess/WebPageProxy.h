@@ -877,7 +877,7 @@ public:
 
     WebCore::FloatSize overrideScreenSize();
 
-    void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, WebCore::IntDegrees deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID);
+    void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
 
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
     void setDeviceOrientation(WebCore::IntDegrees);

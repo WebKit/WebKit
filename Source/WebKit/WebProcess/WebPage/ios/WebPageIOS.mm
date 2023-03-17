@@ -3627,7 +3627,7 @@ void WebPage::setOverrideViewportArguments(const std::optional<WebCore::Viewport
     m_page->setOverrideViewportArguments(arguments);
 }
 
-void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& targetUnobscuredSafeAreaInsets, double targetScale, IntDegrees deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
+void WebPage::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame)
@@ -3636,7 +3636,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     SetForScope dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
     // To handle those cases, we would need to redo this computation on every change until the next visible content rect update.
-    LOG_WITH_STREAM(VisibleRects, stream << "\nWebPage::dynamicViewportSizeUpdate - viewLayoutSize " << viewLayoutSize << " targetUnobscuredRect " << targetUnobscuredRect << " targetExposedContentRect " << targetExposedContentRect << " targetScale " << targetScale);
+    LOG_WITH_STREAM(VisibleRects, stream << "\nWebPage::dynamicViewportSizeUpdate - viewLayoutSize " << target.viewLayoutSize << " targetUnobscuredRect " << target.unobscuredRect << " targetExposedContentRect " << target.exposedContentRect << " targetScale " << target.scale);
 
     auto& frameView = *localMainFrame->view();
     IntSize oldContentSize = frameView.contentsSize();
@@ -3673,7 +3673,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage::dynamicViewportSizeUpdate setting view layout size to " << viewLayoutSize);
     bool viewportChanged = m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
-    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(viewLayoutSize, std::nullopt, minimumEffectiveDeviceWidth);
+    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(target.viewLayoutSize, std::nullopt, target.minimumEffectiveDeviceWidth);
     if (viewportChanged)
         viewportConfigurationChanged();
 
@@ -3682,45 +3682,45 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     if (setFixedLayoutSize(newLayoutSize))
         resetTextAutosizing();
 
-    setDefaultUnobscuredSize(maximumUnobscuredSize);
-    setMinimumUnobscuredSize(minimumUnobscuredSize);
-    setMaximumUnobscuredSize(maximumUnobscuredSize);
-    m_page->setUnobscuredSafeAreaInsets(targetUnobscuredSafeAreaInsets);
+    setDefaultUnobscuredSize(target.maximumUnobscuredSize);
+    setMinimumUnobscuredSize(target.minimumUnobscuredSize);
+    setMaximumUnobscuredSize(target.maximumUnobscuredSize);
+    m_page->setUnobscuredSafeAreaInsets(target.unobscuredSafeAreaInsets);
 
     frameView.updateLayoutAndStyleIfNeededRecursive();
 
     IntSize newContentSize = frameView.contentsSize();
 
     bool scaleToFitContent = (!shouldEnableViewportBehaviorsForResizableWindows() || !wasAtInitialScale) && m_userHasChangedPageScaleFactor;
-    double scale = scaleAfterViewportWidthChange(targetScale, scaleToFitContent, m_viewportConfiguration, targetUnobscuredRectInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
-    FloatRect newUnobscuredContentRect = targetUnobscuredRect;
-    FloatRect newExposedContentRect = targetExposedContentRect;
+    double scale = scaleAfterViewportWidthChange(target.scale, scaleToFitContent, m_viewportConfiguration, target.unobscuredRectInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
+    FloatRect newUnobscuredContentRect = target.unobscuredRect;
+    FloatRect newExposedContentRect = target.exposedContentRect;
 
-    bool scaleChanged = !scalesAreEssentiallyEqual(scale, targetScale);
+    bool scaleChanged = !scalesAreEssentiallyEqual(scale, target.scale);
     if (scaleChanged) {
         // The target scale the UI is using cannot be reached by the content. We need to compute new targets based
         // on the viewport constraint and report everything back to the UIProcess.
 
         // 1) Compute a new unobscured rect centered around the original one.
-        double scaleDifference = targetScale / scale;
-        double newUnobscuredRectWidth = targetUnobscuredRect.width() * scaleDifference;
-        double newUnobscuredRectHeight = targetUnobscuredRect.height() * scaleDifference;
+        double scaleDifference = target.scale / scale;
+        double newUnobscuredRectWidth = target.unobscuredRect.width() * scaleDifference;
+        double newUnobscuredRectHeight = target.unobscuredRect.height() * scaleDifference;
         double newUnobscuredRectX;
         double newUnobscuredRectY;
         if (shouldEnableViewportBehaviorsForResizableWindows()) {
             newUnobscuredRectX = oldUnobscuredContentRect.x();
             newUnobscuredRectY = oldUnobscuredContentRect.y();
         } else {
-            newUnobscuredRectX = targetUnobscuredRect.x() - (newUnobscuredRectWidth - targetUnobscuredRect.width()) / 2;
-            newUnobscuredRectY = targetUnobscuredRect.y() - (newUnobscuredRectHeight - targetUnobscuredRect.height()) / 2;
+            newUnobscuredRectX = target.unobscuredRect.x() - (newUnobscuredRectWidth - target.unobscuredRect.width()) / 2;
+            newUnobscuredRectY = target.unobscuredRect.y() - (newUnobscuredRectHeight - target.unobscuredRect.height()) / 2;
         }
         newUnobscuredContentRect = FloatRect(newUnobscuredRectX, newUnobscuredRectY, newUnobscuredRectWidth, newUnobscuredRectHeight);
 
         // 2) Extend our new unobscuredRect by the obscured margins to get a new exposed rect.
-        double obscuredTopMargin = (targetUnobscuredRect.y() - targetExposedContentRect.y()) * scaleDifference;
-        double obscuredLeftMargin = (targetUnobscuredRect.x() - targetExposedContentRect.x()) * scaleDifference;
-        double obscuredBottomMargin = (targetExposedContentRect.maxY() - targetUnobscuredRect.maxY()) * scaleDifference;
-        double obscuredRightMargin = (targetExposedContentRect.maxX() - targetUnobscuredRect.maxX()) * scaleDifference;
+        double obscuredTopMargin = (target.unobscuredRect.y() - target.exposedContentRect.y()) * scaleDifference;
+        double obscuredLeftMargin = (target.unobscuredRect.x() - target.exposedContentRect.x()) * scaleDifference;
+        double obscuredBottomMargin = (target.exposedContentRect.maxY() - target.unobscuredRect.maxY()) * scaleDifference;
+        double obscuredRightMargin = (target.exposedContentRect.maxX() - target.unobscuredRect.maxX()) * scaleDifference;
         newExposedContentRect = FloatRect(newUnobscuredRectX - obscuredLeftMargin,
                                           newUnobscuredRectY - obscuredTopMargin,
                                           newUnobscuredRectWidth + obscuredLeftMargin + obscuredRightMargin,
@@ -3748,7 +3748,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
                 FloatRect newBoundingBox = containingView.contentsToRootView(renderer->absoluteBoundingBoxRect(true));
                 newRelativeContentCenter = FloatPoint(newBoundingBox.x() + relativeHorizontalPositionInNodeAtCenter * newBoundingBox.width(), newBoundingBox.y() + relativeVerticalPositionInNodeAtCenter * newBoundingBox.height());
             } else
-                newRelativeContentCenter = relativeCenterAfterContentSizeChange(targetUnobscuredRect, oldContentSize, newContentSize);
+                newRelativeContentCenter = relativeCenterAfterContentSizeChange(target.unobscuredRect, oldContentSize, newContentSize);
 
             FloatPoint newUnobscuredContentRectCenter = newUnobscuredContentRect.center();
             FloatPoint positionDelta(newRelativeContentCenter.x() - newUnobscuredContentRectCenter.x(), newRelativeContentCenter.y() - newUnobscuredContentRectCenter.y());
@@ -3758,19 +3758,19 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
         // Make the top/bottom edges "sticky" within 1 pixel.
         if (!positionWasRestoredFromSizeUpdateHistory) {
-            if (targetUnobscuredRect.maxY() > oldContentSize.height() - 1) {
+            if (target.unobscuredRect.maxY() > oldContentSize.height() - 1) {
                 float bottomVerticalPosition = newContentSize.height() - newUnobscuredContentRect.height();
                 newUnobscuredContentRect.setY(bottomVerticalPosition);
                 newExposedContentRect.setY(bottomVerticalPosition);
             }
-            if (targetUnobscuredRect.y() < 1) {
+            if (target.unobscuredRect.y() < 1) {
                 newUnobscuredContentRect.setY(0);
                 newExposedContentRect.setY(0);
             }
 
-            bool likelyResponsiveDesignViewport = newLayoutSize.width() == viewLayoutSize.width() && scalesAreEssentiallyEqual(scale, 1);
+            bool likelyResponsiveDesignViewport = newLayoutSize.width() == target.viewLayoutSize.width() && scalesAreEssentiallyEqual(scale, 1);
             bool contentBleedsOutsideLayoutWidth = newContentSize.width() > newLayoutSize.width();
-            bool originalScrollPositionWasOnTheLeftEdge = targetUnobscuredRect.x() <= 0;
+            bool originalScrollPositionWasOnTheLeftEdge = target.unobscuredRect.x() <= 0;
             if (likelyResponsiveDesignViewport && contentBleedsOutsideLayoutWidth && originalScrollPositionWasOnTheLeftEdge) {
                 // This is a special heuristics for "responsive" design with odd layout. It is quite common for responsive design
                 // to have content "bleeding" outside of the minimal layout width, usually from an image or table larger than expected.
@@ -3819,8 +3819,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     frameView.setLayoutViewportOverrideRect(layoutViewportRect);
     frameView.layoutOrVisualViewportChanged();
 
-    frameView.setCustomSizeForResizeEvent(expandedIntSize(targetUnobscuredRectInScrollViewCoordinates.size()));
-    setDeviceOrientation(deviceOrientation);
+    frameView.setCustomSizeForResizeEvent(expandedIntSize(target.unobscuredRectInScrollViewCoordinates.size()));
+    setDeviceOrientation(target.deviceOrientation);
     frameView.setScrollOffset(roundedUnobscuredContentRectPosition);
 
     m_page->isolatedUpdateRendering();
@@ -3831,7 +3831,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     m_drawingArea->triggerRenderingUpdate();
 
-    m_pendingDynamicViewportSizeUpdateID = dynamicViewportSizeUpdateID;
+    m_pendingDynamicViewportSizeUpdateID = target.identifier;
 }
 
 void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileDocType)

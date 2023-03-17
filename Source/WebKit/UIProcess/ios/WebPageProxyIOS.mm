@@ -271,23 +271,21 @@ void WebPageProxy::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
     pageClient().scrollingNodeScrollDidEndScroll(nodeID);
 }
 
-void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, IntDegrees deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
+void WebPageProxy::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)
 {
     if (!hasRunningProcess())
         return;
 
     hideValidationMessage();
 
-    m_viewportConfigurationViewLayoutSize = viewLayoutSize;
-    m_defaultUnobscuredSize = maximumUnobscuredSize;
-    m_minimumUnobscuredSize = minimumUnobscuredSize;
-    m_maximumUnobscuredSize = maximumUnobscuredSize;
-    m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(viewLayoutSize,
-        minimumUnobscuredSize, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect,
-        targetUnobscuredRectInScrollViewCoordinates, unobscuredSafeAreaInsets,
-        targetScale, deviceOrientation, minimumEffectiveDeviceWidth, dynamicViewportSizeUpdateID), m_webPageID);
+    m_viewportConfigurationViewLayoutSize = target.viewLayoutSize;
+    m_defaultUnobscuredSize = target.maximumUnobscuredSize;
+    m_minimumUnobscuredSize = target.minimumUnobscuredSize;
+    m_maximumUnobscuredSize = target.maximumUnobscuredSize;
 
-    setDeviceOrientation(deviceOrientation);
+    m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(target), m_webPageID);
+
+    setDeviceOrientation(target.deviceOrientation);
 }
 
 void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)

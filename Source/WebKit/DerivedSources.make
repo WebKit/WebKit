@@ -493,6 +493,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/Gamepad/GamepadData.serialization.in \
 	Shared/GPUProcessConnectionParameters.serialization.in \
+	Shared/ios/DynamicViewportSizeUpdate.serialization.in \
 	Shared/ios/InteractionInformationAtPosition.serialization.in \
 	Shared/ios/WebAutocorrectionContext.serialization.in \
 	Shared/ios/WebAutocorrectionData.serialization.in \

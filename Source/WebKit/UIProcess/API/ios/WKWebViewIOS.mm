@@ -3717,7 +3717,7 @@ static bool isLockdownModeWarningNeeded()
     _perProcessState.lastSentDeviceOrientation = newOrientation;
     _perProcessState.lastSentMinimumEffectiveDeviceWidth = newMinimumEffectiveDeviceWidth;
 
-    _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMinimumUnobscuredSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID);
+    _page->dynamicViewportSizeUpdate({ newViewLayoutSize, newMinimumUnobscuredSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID });
     if (WebKit::DrawingAreaProxy* drawingArea = _page->drawingArea())
         drawingArea->setSize(WebCore::IntSize(newBounds.size));
 
