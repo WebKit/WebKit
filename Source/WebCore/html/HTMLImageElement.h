@@ -167,6 +167,8 @@ public:
     WEBCORE_EXPORT void setAllowsAnimation(std::optional<bool>);
 #endif
 
+    bool originClean(const SecurityOrigin&) const;
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
 

@@ -145,9 +145,7 @@ bool CanvasRenderingContext::taintsOrigin(const CachedImage* cachedImage)
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
 {
-    if (!element)
-        return false;
-    return taintsOrigin(element->cachedImage());
+    return m_canvas.originClean() && element && !element->originClean(*m_canvas.securityOrigin());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const SVGImageElement* element)

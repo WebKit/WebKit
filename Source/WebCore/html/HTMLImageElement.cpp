@@ -1023,4 +1023,30 @@ Ref<Element> HTMLImageElement::cloneElementWithoutAttributesAndChildren(Document
     return clone;
 }
 
+bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
+{
+    UNUSED_PARAM(origin);
+
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return true;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return true;
+
+    if (image->sourceURL().protocolIsData())
+        return true;
+
+    if (image->renderingTaintsOrigin())
+        return false;
+
+    if (cachedImage->isCORSCrossOrigin())
+        return false;
+
+    ASSERT(cachedImage->origin());
+    ASSERT(origin.toString() == cachedImage->origin()->toString());
+    return true;
+}
+
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<image id="image1" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/webcodecs/resources/image.py"></image>
+<image id="image2" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/webcodecs/resources/image.py" crossorigin=anonymous></image>
+<canvas id="canvas1" width=320px height=240px></canvas>
+<canvas id="canvas2" width=320px height=240px></canvas>
+<script>
+
+function makeOffscreenCanvas(width, height) {
+  let canvas = new OffscreenCanvas(width, height);
+  let ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+  ctx.fillRect(0, 0, width, height);
+  return new VideoFrame(canvas, { timestamp: 1 });
+}
+
+promise_test(t => {
+  return new Promise(resolve => window.onload = resolve);
+}, 'Wait for image laods');
+
+promise_test(async t => {
+  assert_throws_dom('SecurityError', _ => { new VideoFrame(image1, {timestamp: 0}); }, 'Tainted image');
+  const f = new VideoFrame(image2, {timestamp: 0});
+  f.close();
+}, 'Cross Origin images');
+
+promise_test(async t => {
+  canvas1.getContext('2d').drawImage(image1, 0, 0, 10, 10);
+  canvas2.getContext('2d').drawImage(image2, 0, 0, 10, 10);
+
+  assert_throws_dom('SecurityError', _ => { new VideoFrame(canvas1, {timestamp: 0}); }, 'Tainted image');
+  const f= new VideoFrame(canvas2, {timestamp: 0});
+  f.close();
+}, 'Cross Origin canvas');
+
+promise_test(async t => {
+  const off1 = new OffscreenCanvas(10, 10);
+  off1.getContext('2d').drawImage(image1, 0, 0, 10, 10);
+
+  const off2 = new OffscreenCanvas(10, 10);
+  off2.getContext('2d').drawImage(image2, 0, 0, 10, 10);
+
+  assert_throws_dom('SecurityError', _ => { new VideoFrame(off1, {timestamp: 0}); }, 'Tainted image');
+  const f = new VideoFrame(off2, {timestamp: 0});
+  f.close();
+}, "Cross origin OffscreenCanvas");
+
+promise_test(async t => {
+  const b1 = await createImageBitmap(image1);
+  const b2 = await createImageBitmap(image2);
+
+  assert_throws_dom('SecurityError', _ => { new VideoFrame(b1, {timestamp: 0}); }, 'Tainted image');
+  const f = new VideoFrame(b2, {timestamp: 0});
+  f.close();
+}, "Cross origin bitmaps");
+</script>
+</body>
+</html>
