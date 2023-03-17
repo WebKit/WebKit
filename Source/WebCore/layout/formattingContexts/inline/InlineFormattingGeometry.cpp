@@ -229,13 +229,13 @@ static std::optional<size_t> previousDisplayBoxIndex(const Box& outOfFlowBox, co
         return { };
     };
 
-    auto* canidateBox = outOfFlowBox.previousInFlowSibling();
-    if (!canidateBox)
-        canidateBox = outOfFlowBox.parent().isInlineBox() ? &outOfFlowBox.parent() : nullptr;
-    while (canidateBox) {
-        if (auto displayBoxIndex = previousDisplayBoxIndexOf(*canidateBox))
+    auto* candidateBox = outOfFlowBox.previousInFlowSibling();
+    if (!candidateBox)
+        candidateBox = outOfFlowBox.parent().isInlineBox() ? &outOfFlowBox.parent() : nullptr;
+    while (candidateBox) {
+        if (auto displayBoxIndex = previousDisplayBoxIndexOf(*candidateBox))
             return displayBoxIndex;
-        canidateBox = canidateBox->parent().isInlineBox() ? &canidateBox->parent() : nullptr;
+        candidateBox = candidateBox->parent().isInlineBox() ? &candidateBox->parent() : nullptr;
     }
     return { };
 }
@@ -250,13 +250,13 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
         return { };
     };
 
-    auto* canidateBox = outOfFlowBox.nextInFlowSibling();
-    if (!canidateBox)
-        canidateBox = outOfFlowBox.parent().isInlineBox() ? outOfFlowBox.parent().nextInFlowSibling() : nullptr;
-    while (canidateBox) {
-        if (auto displayBoxIndex = nextDisplayBoxIndexOf(*canidateBox))
+    auto* candidateBox = outOfFlowBox.nextInFlowSibling();
+    if (!candidateBox)
+        candidateBox = outOfFlowBox.parent().isInlineBox() ? outOfFlowBox.parent().nextInFlowSibling() : nullptr;
+    while (candidateBox) {
+        if (auto displayBoxIndex = nextDisplayBoxIndexOf(*candidateBox))
             return displayBoxIndex;
-        canidateBox = canidateBox->parent().isInlineBox() ? canidateBox->parent().nextInFlowSibling() : nullptr;
+        candidateBox = candidateBox->parent().isInlineBox() ? candidateBox->parent().nextInFlowSibling() : nullptr;
     }
     return { };
 }
