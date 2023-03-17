@@ -439,20 +439,11 @@ void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICase
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    static std::optional<VideoDecodingLimits> videoDecodingLimits;
-#ifdef VIDEO_DECODING_LIMIT
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        videoDecodingLimits = videoDecoderLimitsDefaults();
-        if (!videoDecodingLimits) {
-            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
-            ASSERT_NOT_REACHED();
-        }
-    });
-#endif
-
     MediaPlayer::SupportsType result = MediaPlayer::SupportsType::IsNotSupported;
     if (!parameters.isMediaSource)
+        return result;
+
+    if (!ensureGStreamerInitialized())
         return result;
 
     auto containerType = parameters.type.containerType();
@@ -475,6 +466,16 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     float height = parameters.type.parameter("height"_s).toFloat(&ok);
     if (!ok)
         height = 0;
+
+    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+#ifdef VIDEO_DECODING_LIMIT
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        videoDecodingLimits = videoDecoderLimitsDefaults();
+        if (!videoDecodingLimits)
+            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
+    });
+#endif
 
     if (videoDecodingLimits && (width > videoDecodingLimits->mediaMaxWidth || height > videoDecodingLimits->mediaMaxHeight))
         return result;
