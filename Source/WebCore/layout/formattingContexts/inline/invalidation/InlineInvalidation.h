@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InlineDamage.h"
 #include "InlineDisplayContent.h"
 #include "InlineFormattingState.h"
 #include <optional>
@@ -37,9 +38,9 @@ class RenderStyle;
 namespace Layout {
 
 class Box;
-class InlineDamage;
 class InlineTextBox;
 class InlineFormattingState;
+struct DamagedLine;
 
 class InlineInvalidation {
 public:
@@ -57,6 +58,8 @@ public:
     void horizontalConstraintChanged();
 
 private:
+    void updateInlineDamage(InlineDamage::Type, std::optional<DamagedLine>);
+
     InlineDamage& m_inlineDamage;
 
     const InlineItems& m_inlineItems;

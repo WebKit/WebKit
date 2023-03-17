@@ -555,7 +555,7 @@ std::optional<LayoutRect> LineLayout::layout()
     // FIXME: Partial layout should not rely on inline display content, but instead InlineFormattingState
     // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
     // layout in constructContent.
-    auto isPartialLayout = isDamaged() && m_lineDamage->contentPosition();
+    auto isPartialLayout = isDamaged() && m_lineDamage->start();
     if (!isPartialLayout) {
         m_lineDamage = { };
         clearInlineContent();
@@ -569,7 +569,7 @@ std::optional<LayoutRect> LineLayout::layout()
     auto inlineContentConstraints = [&]() -> Layout::ConstraintsForInlineContent {
         if (!isPartialLayout || !m_inlineContent)
             return *m_inlineContentConstraints;
-        auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
+        auto damagedLineIndex = m_lineDamage->start()->lineIndex;
         if (!damagedLineIndex)
             return *m_inlineContentConstraints;
         if (damagedLineIndex >= m_inlineContent->displayContent().lines.size()) {

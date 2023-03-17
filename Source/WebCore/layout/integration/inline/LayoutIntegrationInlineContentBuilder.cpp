@@ -59,9 +59,9 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
 {
     auto firstDamagedLineIndex = [&]() -> std::optional<size_t> {
         auto& displayContentFromPreviousLayout = inlineContent.displayContent();
-        if (!lineDamage || !lineDamage->contentPosition() || !displayContentFromPreviousLayout.lines.size())
+        if (!lineDamage || !lineDamage->start() || !displayContentFromPreviousLayout.lines.size())
             return { };
-        auto canidateLineIndex = lineDamage->contentPosition()->lineIndex;
+        auto canidateLineIndex = lineDamage->start()->lineIndex;
         if (canidateLineIndex >= displayContentFromPreviousLayout.lines.size()) {
             ASSERT_NOT_REACHED();
             return { };

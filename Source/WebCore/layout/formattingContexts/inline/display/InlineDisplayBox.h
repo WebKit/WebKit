@@ -254,5 +254,23 @@ inline FloatRect Box::visibleRectIgnoringBlockDirection(const Box& box, const Fl
     return visualRectIgnoringBlockDirection;
 }
 
+inline bool operator==(const Box::Text& a, const Box::Text& b)
+{
+    return a.start() == b.start()
+        && a.length() == b.length()
+        && a.renderedContent() == b.renderedContent();
+}
+
+inline bool operator==(const Box& a, const Box& b)
+{
+    return &a.layoutBox() == &b.layoutBox()
+        && a.style() == b.style()
+        && a.lineIndex() == b.lineIndex()
+        && a.bidiLevel() == b.bidiLevel()
+        && a.visualRectIgnoringBlockDirection() == b.visualRectIgnoringBlockDirection()
+        && a.inkOverflow() == b.inkOverflow()
+        && (!a.isTextOrSoftLineBreak() || (a.text() == b.text()));
+}
+
 }
 }

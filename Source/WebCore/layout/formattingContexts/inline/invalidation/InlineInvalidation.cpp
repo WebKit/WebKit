@@ -269,11 +269,20 @@ static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedC
     return leadingInlineItemPositionForDamage(damagedContent, inlineItems, displayBoxes);
 }
 
+void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::optional<DamagedLine> damagedLine)
+{
+    if (type == InlineDamage::Type::Invalid || !damagedLine)
+        return m_inlineDamage.reset();
+
+    m_inlineDamage.setDamageType(type);
+    m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
+}
+
 void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox, std::optional<size_t> offset)
 {
     if (m_displayBoxes.isEmpty()) {
         ASSERT_NOT_REACHED();
-        m_inlineDamage = { };
+        updateInlineDamage(InlineDamage::Type::Invalid, { });
         return;
     }
 
@@ -287,13 +296,7 @@ void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox,
         damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes);
     }
 
-    if (damagedLine) {
-        m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
-        m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
-        return;
-    }
-
-    m_inlineDamage = { };
+    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine);
 }
 
 void InlineInvalidation::textWillBeRemoved(UniqueRef<Box>&& inlineTextBox)
@@ -306,17 +309,12 @@ void InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTex
 {
     if (m_displayBoxes.isEmpty()) {
         ASSERT_NOT_REACHED();
-        m_inlineDamage = { };
+        updateInlineDamage(InlineDamage::Type::Invalid, { });
         return;
     }
 
-    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItems, m_displayBoxes)) {
-        m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
-        m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
-        return;
-    }
-
-    m_inlineDamage = { };
+    auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItems, m_displayBoxes);
+    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine);
 }
 
 static bool isSupportedInlineLevelBox(const Box& layoutBox)
@@ -328,35 +326,25 @@ void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
 {
     if (m_displayBoxes.isEmpty() || !isSupportedInlineLevelBox(layoutBox)) {
         ASSERT_NOT_REACHED();
-        m_inlineDamage = { };
+        updateInlineDamage(InlineDamage::Type::Invalid, { });
         return;
     }
 
-    if (auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes)) {
-        m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
-        m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
-        return;
-    }
-
-    m_inlineDamage = { };
+    auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes);
+    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine);
 }
 
 void InlineInvalidation::inlineLevelBoxWillBeRemoved(UniqueRef<Box>&& layoutBox)
 {
     if (m_displayBoxes.isEmpty() || !isSupportedInlineLevelBox(layoutBox)) {
         ASSERT_NOT_REACHED();
-        m_inlineDamage = { };
+        updateInlineDamage(InlineDamage::Type::Invalid, { });
         return;
     }
 
-    if (auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItems, m_displayBoxes)) {
-        m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
-        m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
-        m_inlineDamage.addDetachedBox(WTFMove(layoutBox));
-        return;
-    }
-
-    m_inlineDamage = { };
+    auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItems, m_displayBoxes);
+    m_inlineDamage.addDetachedBox(WTFMove(layoutBox));
+    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine);
 }
 
 void InlineInvalidation::horizontalConstraintChanged()
