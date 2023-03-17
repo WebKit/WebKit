@@ -25,6 +25,7 @@
 #include "AnimationFrameRate.h"
 #include "AppHighlightStorage.h"
 #include "ApplicationCacheStorage.h"
+#include "ArchiveResource.h"
 #include "AttachmentElementClient.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorCoordinatorClient.h"
@@ -95,6 +96,7 @@
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
+#include "MemoryCache.h"
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
@@ -151,6 +153,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "SubframeLoader.h"
+#include "SubresourceLoader.h"
 #include "TextIterator.h"
 #include "TextRecognitionResult.h"
 #include "TextResourceDecoder.h"
@@ -3741,6 +3744,19 @@ bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMain
     if (!url.protocolIsInHTTPFamily() && !url.protocolIs("ws"_s) && !url.protocolIs("wss"_s))
         return true;
     return m_allowedNetworkHosts->contains<StringViewHashTranslator>(url.host());
+}
+
+bool Page::hasLocalDataForURL(const URL& url)
+{
+    if (url.isLocalFile())
+        return true;
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    DocumentLoader* documentLoader = localMainFrame ? localMainFrame->loader().documentLoader() : nullptr;
+    if (documentLoader && documentLoader->subresource(MemoryCache::removeFragmentIdentifierIfNeeded(url)))
+        return true;
+
+    return false;
 }
 
 void Page::applicationWillResignActive()

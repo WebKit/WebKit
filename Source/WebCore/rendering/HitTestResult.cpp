@@ -374,6 +374,22 @@ IntRect HitTestResult::imageRect() const
     return imageNode->renderBox()->absoluteContentQuad().enclosingBoundingBox();
 }
 
+bool HitTestResult::hasEntireImage() const
+{
+    auto imageURL = absoluteImageURL();
+    if (imageURL.isEmpty() || imageRect().isEmpty())
+        return false;
+
+    auto* innerFrame = innerNodeFrame();
+    if (!innerFrame)
+        return false;
+
+    if (auto page = innerFrame->page())
+        return page->hasLocalDataForURL(imageURL);
+
+    return false;
+}
+
 URL HitTestResult::absoluteImageURL() const
 {
     auto imageNode = nodeForImageData();

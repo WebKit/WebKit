@@ -222,7 +222,6 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/MemoryCache.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/NotificationController.h>
@@ -5667,18 +5666,6 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
     // We can also have a non-null m_pendingProvisionalSandboxExtension if a new load is being started
     // (notably, if the current one fails because the new one cancels it). This extension is not cleared,
     // because it does not pertain to the failed load, and will be needed.
-}
-
-bool WebPage::hasLocalDataForURL(const URL& url)
-{
-    if (url.isLocalFile())
-        return true;
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    DocumentLoader* documentLoader = localMainFrame ? localMainFrame->loader().documentLoader() : nullptr;
-    if (documentLoader && documentLoader->subresource(MemoryCache::removeFragmentIdentifierIfNeeded(url)))
-        return true;
-
-    return false;
 }
 
 void WebPage::setCustomTextEncodingName(const String& encoding)

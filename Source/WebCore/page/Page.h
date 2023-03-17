@@ -915,6 +915,8 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     WEBCORE_EXPORT bool allowsLoadFromURL(const URL&, MainFrameMainResource) const;
+    WEBCORE_EXPORT bool hasLocalDataForURL(const URL&);
+
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }

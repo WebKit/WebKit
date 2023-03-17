@@ -240,7 +240,7 @@ void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *
     if (!delegate)
         return completionHandler(menu);
 
-    auto contextMenuElementInfo = API::ContextMenuElementInfoMac::create(data.webHitTestResultData().value(), data.qrCodePayloadString());
+    auto contextMenuElementInfo = API::ContextMenuElementInfoMac::create(data);
     if (m_uiDelegate->m_delegateMethods.webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:));
         [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() getContextMenuFromProposedMenu:menu forElement:wrapper(contextMenuElementInfo.get()) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (NSMenu *menu) mutable {

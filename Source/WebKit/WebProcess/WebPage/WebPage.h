@@ -940,8 +940,6 @@ public:
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
 #endif
 
-    bool hasLocalDataForURL(const URL&);
-
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
     class SandboxExtensionTracker {

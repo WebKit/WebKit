@@ -475,7 +475,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
-    return WebKit::toImpl(pageRef)->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
+    return WebKit::toImpl(pageRef)->corePage()->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
 }
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
