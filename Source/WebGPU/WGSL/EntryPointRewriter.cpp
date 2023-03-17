@@ -44,9 +44,9 @@ public:
 
 private:
     struct MemberOrParameter {
-        AST::Identifier m_name;
-        AST::TypeName::Ref m_type;
-        AST::Attribute::List m_attributes;
+        AST::Identifier name;
+        AST::TypeName::Ref type;
+        AST::Attribute::List attributes;
     };
 
     enum class IsBuiltin {
@@ -156,9 +156,9 @@ void EntryPointRewriter::constructInputStruct()
     for (auto& parameter : m_parameters) {
         structMembers.append(makeUniqueRef<AST::StructureMember>(
             SourceSpan::empty(),
-            WTFMove(parameter.m_name),
-            WTFMove(parameter.m_type),
-            WTFMove(parameter.m_attributes)
+            WTFMove(parameter.name),
+            WTFMove(parameter.type),
+            WTFMove(parameter.attributes)
         ));
     }
 
@@ -188,12 +188,12 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 {
     std::unique_ptr<AST::Expression> rhs;
     if (isBuiltin == IsBuiltin::Yes)
-        rhs = makeUnique<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.m_name));
+        rhs = makeUnique<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.name));
     else {
         rhs = makeUnique<AST::FieldAccessExpression>(
             SourceSpan::empty(),
             makeUniqueRef<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(m_structParameterName)),
-            AST::Identifier::make(data.m_name)
+            AST::Identifier::make(data.name)
         );
     }
 
@@ -203,9 +203,9 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
             makeUniqueRef<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
-                AST::Identifier::make(data.m_name),
+                AST::Identifier::make(data.name),
                 nullptr, // TODO: do we need a VariableQualifier?
-                data.m_type.copyRef(),
+                data.type.copyRef(),
                 WTFMove(rhs),
                 AST::Attribute::List { }
             )
@@ -213,7 +213,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
         return;
     }
 
-    path.append(data.m_name);
+    path.append(data.name);
     unsigned i = 0;
     UniqueRef<AST::Expression> lhs = makeUniqueRef<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(path[i++]));
     while (i < path.size()) {
@@ -233,20 +233,20 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 
 void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 {
-    if (auto* structType = std::get_if<Types::Struct>(data.m_type->resolvedType())) {
+    if (auto* structType = std::get_if<Types::Struct>(data.type->resolvedType())) {
         m_materializations.append(makeUniqueRef<AST::VariableStatement>(
             SourceSpan::empty(),
             makeUniqueRef<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
-                AST::Identifier::make(data.m_name),
+                AST::Identifier::make(data.name),
                 nullptr,
-                data.m_type.copyRef(),
+                data.type.copyRef(),
                 nullptr,
                 AST::Attribute::List { }
             )
         ));
-        path.append(data.m_name);
+        path.append(data.name);
         for (auto& member : structType->structure.members())
             visit(path, MemberOrParameter { member.name(), member.type(), member.attributes() });
         path.removeLast();
@@ -254,7 +254,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
     }
 
     bool isBuiltin = false;
-    for (auto& attribute : data.m_attributes) {
+    for (auto& attribute : data.attributes) {
         if (is<AST::BuiltinAttribute>(attribute)) {
             isBuiltin = true;
             break;
@@ -267,13 +267,13 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
             materialize(path, data, IsBuiltin::Yes);
 
         // builtin was hoisted from a struct into a parameter, we need to reconstruct the struct
-        // ${path}.${data.m_name} = ${data.name}
+        // ${path}.${data.name} = ${data.name}
         m_builtins.append(WTFMove(data));
         return;
     }
 
     // parameter was moved into a struct, so we need to reload it
-    // ${path}.${data.m_name} = ${struct}.${data.name}
+    // ${path}.${data.name} = ${struct}.${data.name}
     materialize(path, data, IsBuiltin::No);
     m_parameters.append(WTFMove(data));
 }
@@ -283,9 +283,9 @@ void EntryPointRewriter::appendBuiltins()
     for (auto& data : m_builtins) {
         m_function.parameters().append(makeUniqueRef<AST::Parameter>(
             SourceSpan::empty(),
-            AST::Identifier::make(data.m_name),
-            WTFMove(data.m_type),
-            WTFMove(data.m_attributes),
+            AST::Identifier::make(data.name),
+            WTFMove(data.type),
+            WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
         ));
     }
@@ -294,9 +294,9 @@ void EntryPointRewriter::appendBuiltins()
 void rewriteEntryPoints(CallGraph& callGraph, PrepareResult& result)
 {
     for (auto& entryPoint : callGraph.entrypoints()) {
-        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.m_function, entryPoint.m_stage);
+        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage);
         rewriter.rewrite();
-        auto addResult = result.entryPoints.add(entryPoint.m_function.name().id(), rewriter.takeEntryPointInformation());
+        auto addResult = result.entryPoints.add(entryPoint.function.name().id(), rewriter.takeEntryPointInformation());
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 }
