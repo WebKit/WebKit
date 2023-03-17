@@ -248,7 +248,7 @@ def parse_args(args):
             help="wrapper command to insert before invocations of "
                  "DumpRenderTree or WebKitTestRunner; option is split on whitespace before "
                  "running. (Example: --wrapper='valgrind --smc-check=all')"),
-        optparse.make_option("-i", "--ignore-tests", action="append", default=[],
+        optparse.make_option("-i", "--ignore-tests", "--exclude-tests", action="append", default=[],
             help="directories or test to ignore (may specify multiple times)"),
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
