@@ -175,7 +175,8 @@ void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node& root)
 
     auto& globalObject = mainWorldGlobalObject(*frame);
     JSLockHolder lock(&globalObject);
-    toJS(&globalObject, &globalObject, root);
+    ASSERT(!root.wrapper());
+    createWrapper(&globalObject, &globalObject, root);
 }
 
 } // namespace WebCore
