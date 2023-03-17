@@ -2670,6 +2670,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
 #endif
     }
 
+    if (!ensureGStreamerInitialized())
+        return result;
+
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     if (parameters.type.isEmpty())
         return result;
