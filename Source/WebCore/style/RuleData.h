@@ -48,8 +48,7 @@ public:
 
     const CSSSelector* selector() const
     { 
-        auto& selectorList = m_styleRule->resolvedSelectorList();
-        return selectorList.selectorAt(m_selectorIndex);
+        return m_styleRule->selectorList().selectorAt(m_selectorIndex);
     }
 
 #if ENABLE(CSS_SELECTOR_JIT)

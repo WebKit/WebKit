@@ -301,15 +301,6 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     return rules;
 }
 
-
-const CSSSelectorList& StyleRule::resolvedSelectorList() const
-{
-    if (isStyleRuleWithNesting())
-        return downcast<StyleRuleWithNesting>(*this).resolvedSelectorList();
-
-    return m_selectorList;
-}
-
 Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
 { 
     return adoptRef(* new StyleRuleWithNesting(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors), WTFMove(nestedRules)));
@@ -318,13 +309,9 @@ Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& pr
 StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
     : StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors))
     , m_nestedRules(WTFMove(nestedRules))
+    , m_originalSelectorList(selectorList())
 { 
     setType(StyleRuleType::StyleWithNesting);
-}
-
-void StyleRuleWithNesting::setResolvedSelectorList(CSSSelectorList&& selectorList) const
-{
-    m_resolvedSelectorList = WTFMove(selectorList);
 }
 
 StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)

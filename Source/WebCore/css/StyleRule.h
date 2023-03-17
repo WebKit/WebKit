@@ -158,15 +158,14 @@ public:
     static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
 
     const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
-    const CSSSelectorList& resolvedSelectorList() const { return m_resolvedSelectorList; }
-    void setResolvedSelectorList(CSSSelectorList&&) const;
+    const CSSSelectorList& originalSelectorList() const { return m_originalSelectorList; }
     StyleRuleWithNesting(const StyleRuleWithNesting&) = delete;
 
 private:
     StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
 
     Vector<Ref<StyleRuleBase>> m_nestedRules;
-    mutable CSSSelectorList m_resolvedSelectorList;
+    CSSSelectorList m_originalSelectorList;
 };
 
 class StyleRuleFontFace final : public StyleRuleBase {
