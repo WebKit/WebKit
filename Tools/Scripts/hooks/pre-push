@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.1'
+VERSION = '1.2'
 
 import io
 import os
@@ -330,7 +330,7 @@ def main(name, remote):
         return 1
 
     if prompt_for:
-        branches = sorted({[branch_for(commit) for commit in prompt_for]})
+        branches = sorted({branch_for(commit) for commit in prompt_for})
         expected_response = 'publicize {}'.format(
             branches[0] if len(branches) == 1
             else '{}, and {}'.format(', '.join(branches[:-1]), branches[-1]),
