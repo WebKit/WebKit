@@ -166,6 +166,20 @@ ADD_RESULTS({
                     }
                 }
             }
+        },
+        "fast": {
+            "attachment": {
+                "attachment-uti.html": {
+                    "expected": "PASS",
+                    "actual": "IMAGE",
+                    "reftest_type": ["=="]
+                },
+                "attachment-wrapping-action.html": {
+                    "expected": "PASS",
+                    "actual": "IMAGE",
+                    "reftest_type": ["!="]
+                }
+            }
         }
     },
     "skipped": 5367,
