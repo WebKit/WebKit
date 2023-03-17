@@ -170,6 +170,18 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             this.startEditingRuleSelector();
     }
 
+    startEditingFirstGroupingOrRuleSelector()
+    {
+        for (let groupingTextElement of this._groupingElements) {
+            if (groupingTextElement.associatedTextField) {
+                groupingTextElement.associatedTextField.startEditing();
+                return;
+            }
+        }
+
+        this.startEditingRuleSelector();
+    }
+
     startEditingRuleSelector()
     {
         if (!this._selectorElement) {
