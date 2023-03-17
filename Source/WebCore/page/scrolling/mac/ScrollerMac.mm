@@ -328,7 +328,6 @@ ScrollerMac::~ScrollerMac()
 
 void ScrollerMac::attach()
 {
-    Locker locker { m_pair.scrollerImpPairLock() };
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
 
     NSScrollerStyle newStyle = [m_pair.scrollerImpPair() scrollerStyle];

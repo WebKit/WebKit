@@ -87,7 +87,7 @@ private:
     NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
     NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
     
-    NSScrollerImpPair *scrollerImpPair() WTF_REQUIRES_LOCK(m_scrollerImpPairLock) { return m_scrollerImpPair.get(); }
+    NSScrollerImpPair *scrollerImpPair() { return m_scrollerImpPair.get(); }
     Lock& scrollerImpPairLock() WTF_RETURNS_LOCK(m_scrollerImpPairLock) { return m_scrollerImpPairLock; }
 
     WebCore::ScrollingTreeScrollingNode& m_scrollingNode;
