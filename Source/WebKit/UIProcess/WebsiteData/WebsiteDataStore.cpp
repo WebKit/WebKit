@@ -1781,6 +1781,15 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
 }
 #endif
 
+bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
+{
+    return WTF::anyOf(m_processes, [] (const WebProcessProxy& process) {
+        return WTF::anyOf(process.pages(), [](const auto& page) {
+            return page && page->preferences().blobRegistryTopOriginPartitioningEnabled();
+        });
+    });
+}
+
 void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
 {
     networkProcess().sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), 0);
@@ -1907,6 +1916,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     networkSessionParameters.shouldAcceptInsecureCertificatesForWebSockets = m_configuration->shouldAcceptInsecureCertificatesForWebSockets();
 #endif
+    networkSessionParameters.isBlobRegistryTopOriginPartitioningEnabled = isBlobRegistryPartitioningEnabled();
     networkSessionParameters.unifiedOriginStorageLevel = m_configuration->unifiedOriginStorageLevel();
     networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();
     networkSessionParameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();

@@ -551,6 +551,8 @@ private:
 
     void updateBackgroundResponsivenessTimer();
 
+    void updateBlobRegistryPartitioningState() const;
+
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
     // IPC::Connection::Client

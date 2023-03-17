@@ -177,6 +177,8 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 #endif
 
+    setBlobRegistryTopOriginPartitioningEnabled(parameters.isBlobRegistryTopOriginPartitioningEnabled);
+
 #if ENABLE(SERVICE_WORKER)
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     m_serviceWorkerInfo = ServiceWorkerInfo {
@@ -505,6 +507,12 @@ void NetworkSession::setPrivateClickMeasurementDebugMode(bool enabled)
 void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()
 {
     privateClickMeasurement().startTimerImmediatelyForTesting();
+}
+
+void NetworkSession::setBlobRegistryTopOriginPartitioningEnabled(bool enabled)
+{
+    RELEASE_LOG(Storage, "NetworkSession::setBlobRegistryTopOriginPartitioningEnabled as %" PUBLIC_LOG_STRING " for session %" PRIu64, enabled ? "enabled" : "disabled", m_sessionID.toUInt64());
+    m_blobRegistry.setPartitioningEnabled(enabled);
 }
 
 void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)

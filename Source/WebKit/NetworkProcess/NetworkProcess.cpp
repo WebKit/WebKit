@@ -1419,6 +1419,12 @@ void NetworkProcess::setPrivateClickMeasurementDebugMode(PAL::SessionID sessionI
         session->setPrivateClickMeasurementDebugMode(enabled);
 }
 
+void NetworkProcess::setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID sessionID, bool enabled) const
+{
+    if (auto* session = networkSession(sessionID))
+        session->setBlobRegistryTopOriginPartitioningEnabled(enabled);
+}
+
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
     LOG(Network, "(NetworkProcess) Preconnecting to URL %s (storedCredentialsPolicy %i)", url.string().utf8().data(), (int)storedCredentialsPolicy);

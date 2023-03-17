@@ -746,6 +746,17 @@ BeaconAPIEnabled:
     WebCore:
       default: false
 
+BlobRegistryTopOriginPartitioningEnabled:
+  type: bool
+  status: unstable
+  humanReadableName: "Partition Blob URL Registry"
+  humanReadableDescription: "Partition Blob URL Registry by Top-Level Origin"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 BlockIOKitInWebContentSandbox:
   type: bool
   status: internal
