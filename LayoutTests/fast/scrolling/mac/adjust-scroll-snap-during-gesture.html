@@ -49,6 +49,7 @@
             await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(20, 20);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
+            await UIHelper.renderingUpdate();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-20, 0, "changed", "none");
 
             await UIHelper.waitForEvent(scroller, 'scroll');
