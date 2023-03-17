@@ -277,4 +277,22 @@ bool RenderRubyRun::canBreakBefore(const LazyLineBreakIterator& iterator) const
     return rubyText->canBreakBefore(iterator);
 }
 
+std::pair<LayoutUnit, LayoutUnit> RenderRubyRun::annotationsAboveAndBelow() const
+{
+    auto* rubyText = this->rubyText();
+    if (!rubyText)
+        return { 0_lu, 0_lu };
+
+    auto firstLineBox = InlineIterator::firstLineBoxFor(*rubyText);
+    auto rubyTextTop = rubyText->logicalTop() + (firstLineBox ? LayoutUnit { firstLineBox->contentLogicalTop() } : 0_lu);
+    auto top = std::max(0_lu, -rubyTextTop);
+
+    auto lastLineBox = InlineIterator::lastLineBoxFor(*rubyText);
+    auto rubyTextBottom = rubyText->logicalTop() + (lastLineBox ? LayoutUnit { lastLineBox->contentLogicalBottom() } : rubyText->logicalHeight());
+    auto bottom = std::max(logicalHeight(), rubyTextBottom) - logicalHeight();
+
+    return { top, bottom };
+}
+
+
 } // namespace WebCore

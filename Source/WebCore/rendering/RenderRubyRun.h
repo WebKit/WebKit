@@ -69,7 +69,9 @@ public:
         m_secondToLastCharacter = secondToLast;
     }
     bool canBreakBefore(const LazyLineBreakIterator&) const;
-    
+
+    std::pair<LayoutUnit, LayoutUnit> annotationsAboveAndBelow() const;
+
     RenderPtr<RenderRubyBase> createRubyBase() const;
 
 private:

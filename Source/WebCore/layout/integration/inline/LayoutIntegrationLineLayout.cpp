@@ -62,6 +62,7 @@
 #include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderRubyRun.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTextControlMultiLine.h"
@@ -392,7 +393,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 #if ENABLE(ATTACHMENT_ELEMENT)
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
-            || is<RenderButton>(replacedOrInlineBlock)) {
+            || is<RenderButton>(replacedOrInlineBlock)
+            || is<RenderRubyRun>(replacedOrInlineBlock)) {
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
         }
@@ -413,6 +415,11 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 
     if (auto* shapeOutsideInfo = replacedOrInlineBlock.shapeOutsideInfo())
         layoutBox.setShape(&shapeOutsideInfo->computedShape());
+
+    if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(replacedOrInlineBlock)) {
+        auto [above, below] = rubyRun->annotationsAboveAndBelow();
+        layoutBox.setRubyAnnotationsAboveAndBelow(above, below);
+    }
 }
 
 void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)

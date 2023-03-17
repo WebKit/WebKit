@@ -143,7 +143,7 @@ static inline bool computeInkOverflowForInlineBox(const InlineLevelBox& inlineBo
     auto inflateWithAnnotation = [&] {
         if (!inlineBox.hasAnnotation())
             return;
-        inkOverflow.inflate(0.f, inlineBox.annotationAbove().value_or(0.f), 0.f, inlineBox.annotationUnder().value_or(0.f));
+        inkOverflow.inflate(0.f, inlineBox.annotationAbove().value_or(0.f), 0.f, inlineBox.annotationBelow().value_or(0.f));
         hasVisualOverflow = true;
     };
     inflateWithAnnotation();

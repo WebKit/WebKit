@@ -487,12 +487,12 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
     auto lineBoxBottom = lineBoxHeight;
     // At this point we have a properly aligned set of inline level boxes. Let's find out if annotation marks have enough space.
     auto adjustLineBoxHeightIfNeeded = [&] {
-        auto adjustLineBoxTopAndBottomForInlineBox = [&](const InlineLevelBox& inlineBox) {
-            ASSERT(inlineBox.isInlineBox());
-            auto inlineBoxTop = lineBox.inlineLevelBoxAbsoluteTop(inlineBox);
-            auto inlineBoxBottom = inlineBoxTop + inlineBox.logicalHeight();
+        auto adjustLineBoxTopAndBottomForInlineBox = [&](const InlineLevelBox& inlineLevelBox) {
+            ASSERT(inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineLevelBox());
+            auto inlineBoxTop = lineBox.inlineLevelBoxAbsoluteTop(inlineLevelBox);
+            auto inlineBoxBottom = inlineBoxTop + inlineLevelBox.logicalHeight();
 
-            switch (inlineBox.verticalAlign().type) {
+            switch (inlineLevelBox.verticalAlign().type) {
             case VerticalAlign::Baseline:
             case VerticalAlign::Middle:
             case VerticalAlign::BaselineMiddle:
@@ -502,14 +502,14 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
             case VerticalAlign::TextTop:
             case VerticalAlign::TextBottom:
             case VerticalAlign::Bottom:
-                if (auto aboveSpace = inlineBox.annotationAbove())
+                if (auto aboveSpace = inlineLevelBox.annotationAbove())
                     lineBoxTop = std::min(lineBoxTop, inlineBoxTop - *aboveSpace);
-                else if (auto underSpace = inlineBox.annotationUnder())
-                    lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + *underSpace);
+                if (auto belowSpace = inlineLevelBox.annotationBelow())
+                    lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + *belowSpace);
                 break;
             case VerticalAlign::Top: {
                 // FIXME: Check if horizontal vs. vertical writing mode should be taking into account.
-                auto annotationSpace = inlineBox.annotationAbove().value_or(0.f) + inlineBox.annotationUnder().value_or(0.f); 
+                auto annotationSpace = inlineLevelBox.annotationAbove().value_or(0.f) + inlineLevelBox.annotationBelow().value_or(0.f);
                 lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + annotationSpace);
                 break;
             }
@@ -521,7 +521,7 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
 
         adjustLineBoxTopAndBottomForInlineBox(lineBox.rootInlineBox());
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (inlineLevelBox.isInlineBox())
+            if (inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineLevelBox())
                 adjustLineBoxTopAndBottomForInlineBox(inlineLevelBox);
         }
 
@@ -550,7 +550,7 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
                     auto inlineBoxTop = adjustedLineBoxHeight - inlineLevelBox.ascent();
                     if (auto layoutBounds = inlineLevelBox.layoutBounds())
                         inlineBoxTop -= layoutBounds->descent;
-                    inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.annotationUnder().value_or(0.f));
+                    inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.annotationBelow().value_or(0.f));
                     break;
                 }
                 default:

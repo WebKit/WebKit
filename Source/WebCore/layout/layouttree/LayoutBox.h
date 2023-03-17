@@ -181,6 +181,9 @@ public:
     const Shape* shape() const;
     void setShape(RefPtr<const Shape>);
 
+    std::optional<std::pair<LayoutUnit, LayoutUnit>> rubyAnnotationsAboveAndBelow() const;
+    void setRubyAnnotationsAboveAndBelow(LayoutUnit above, LayoutUnit below);
+
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
@@ -205,6 +208,8 @@ private:
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
         RefPtr<const Shape> shape;
+        LayoutUnit rubyAnnotationAbove;
+        LayoutUnit rubyAnnotationBelow;
     };
 
     bool hasRareData() const { return m_hasRareData; }

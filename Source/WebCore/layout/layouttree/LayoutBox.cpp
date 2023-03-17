@@ -455,6 +455,25 @@ void Box::setShape(RefPtr<const Shape> shape)
     ensureRareData().shape = WTFMove(shape);
 }
 
+std::optional<std::pair<LayoutUnit, LayoutUnit>> Box::rubyAnnotationsAboveAndBelow() const
+{
+    if (!hasRareData())
+        return { };
+
+    auto& rareData = this->rareData();
+    if (!rareData.rubyAnnotationAbove && !rareData.rubyAnnotationBelow)
+        return { };
+
+    return std::pair { rareData.rubyAnnotationAbove, rareData.rubyAnnotationBelow };
+}
+
+void Box::setRubyAnnotationsAboveAndBelow(LayoutUnit above, LayoutUnit below)
+{
+    auto& rareData = ensureRareData();
+    rareData.rubyAnnotationAbove = above;
+    rareData.rubyAnnotationBelow = below;
+}
+
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
 {
     ASSERT(!m_cachedLayoutState);
