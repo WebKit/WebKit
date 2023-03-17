@@ -541,7 +541,7 @@ public:
             break;
         case Slice:
             // Masks have a different initial value for slices. Preserve the value of "0 fill" for backwards compatibility.
-            image.setImageSlices(type == BorderImage ? LengthBox(Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent)) : LengthBox());
+            image.setImageSlices(type == BorderImage ? LengthBox(Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent)) : LengthBox(LengthType::Fixed));
             image.setFill(type != BorderImage);
             break;
         case Width:
