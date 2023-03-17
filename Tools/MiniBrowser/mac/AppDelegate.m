@@ -227,6 +227,11 @@ static WKWebsiteDataStore *persistentDataStore(void)
     [controller loadHTMLString:@"<html><body></body></html>"];
 }
 
+- (void)didCreateBrowserWindowController:(BrowserWindowController *)controller
+{
+    [_browserWindowControllers addObject:controller];
+}
+
 - (void)browserWindowWillClose:(NSWindow *)window
 {
     [_browserWindowControllers removeObject:window.windowController];
