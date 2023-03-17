@@ -81,6 +81,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
     parsedManifest.icons = parseIcons(*manifest);
     parsedManifest.id = parseId(*manifest, parsedManifest.startURL);
+    parsedManifest.orientation = parseOrientation(*manifest);
 
     if (m_document)
         m_document->processApplicationManifest(parsedManifest);
@@ -160,6 +161,38 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid display mode."_s));
     return ApplicationManifest::Display::Browser;
+}
+
+WebCore::ScreenOrientationLockType ApplicationManifestParser::parseOrientation(const JSON::Object& manifest)
+{
+    auto value = manifest.getValue("orientation"_s);
+    if (!value)
+        return { };
+
+    auto stringValue = value->asString();
+    if (!stringValue) {
+        logManifestPropertyNotAString("orientation"_s);
+        return { };
+    }
+
+    static constexpr std::pair<ComparableLettersLiteral, WebCore::ScreenOrientationLockType> orientationValueMappings[] = {
+        { "any", WebCore::ScreenOrientationLockType::Any },
+        { "landscape", WebCore::ScreenOrientationLockType::Landscape },
+        { "landscape-primary", WebCore::ScreenOrientationLockType::LandscapePrimary },
+        { "landscape-secondary", WebCore::ScreenOrientationLockType::LandscapeSecondary },
+        { "natural", WebCore::ScreenOrientationLockType::Natural },
+        { "portrait", WebCore::ScreenOrientationLockType::Portrait },
+        { "portrait-primary", WebCore::ScreenOrientationLockType::PortraitPrimary },
+        { "portrait-secondary", WebCore::ScreenOrientationLockType::PortraitSecondary },
+    };
+
+    static SortedArrayMap orientationValues { orientationValueMappings };
+
+    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).stripWhiteSpace()))
+        return *orientationValue;
+
+    logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid orientation."_s));
+    return { };
 }
 
 String ApplicationManifestParser::parseName(const JSON::Object& manifest)

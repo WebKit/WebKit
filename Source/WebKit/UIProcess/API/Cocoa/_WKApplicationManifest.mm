@@ -137,7 +137,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
 
 @end
 
-    
+
 @implementation _WKApplicationManifest
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -154,6 +154,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
     URL scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
+    NSInteger orientation = [aDecoder decodeIntegerForKey:@"orientation"];
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
     WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
@@ -165,6 +166,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
         WTFMove(description),
         WTFMove(scopeURL),
         static_cast<WebCore::ApplicationManifest::Display>(display),
+        static_cast<WebCore::ScreenOrientationLockType>(orientation),
         WTFMove(startURL),
         WTFMove(manifestId),
         WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
@@ -193,6 +195,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     [aCoder encodeObject:self.applicationDescription forKey:@"description"];
     [aCoder encodeObject:self.scope forKey:@"scope"];
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().display) forKey:@"display"];
+    [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().orientation) forKey:@"orientation"];
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
     [aCoder encodeObject:self.manifestId forKey:@"manifestId"];
     [aCoder encodeObject:self.themeColor forKey:@"theme_color"];
@@ -258,6 +261,29 @@ static NSString *nullableNSString(const WTF::String& string)
         return _WKApplicationManifestDisplayModeFullScreen;
     }
 
+    ASSERT_NOT_REACHED();
+}
+
+- (_WKApplicationManifestOrientation)orientation
+{
+    switch (_applicationManifest->applicationManifest().orientation) {
+    case WebCore::ScreenOrientationLockType::Any:
+        return _WKApplicationManifestOrientationAny;
+    case WebCore::ScreenOrientationLockType::Natural:
+        return _WKApplicationManifestOrientationNatural;
+    case WebCore::ScreenOrientationLockType::Landscape:
+        return _WKApplicationManifestOrientationLandscape;
+    case WebCore::ScreenOrientationLockType::Portrait:
+        return _WKApplicationManifestOrientationPortrait;
+    case WebCore::ScreenOrientationLockType::PortraitPrimary:
+        return _WKApplicationManifestOrientationPortraitPrimary;
+    case WebCore::ScreenOrientationLockType::PortraitSecondary:
+        return _WKApplicationManifestOrientationPortraitSecondary;
+    case WebCore::ScreenOrientationLockType::LandscapePrimary:
+        return _WKApplicationManifestOrientationLandscapePrimary;
+    case WebCore::ScreenOrientationLockType::LandscapeSecondary:
+        return _WKApplicationManifestOrientationLandscapeSecondary;
+    }
     ASSERT_NOT_REACHED();
 }
 
@@ -328,6 +354,11 @@ static NSString *nullableNSString(const WTF::String& string)
 - (_WKApplicationManifestDisplayMode)displayMode
 {
     return _WKApplicationManifestDisplayModeBrowser;
+}
+
+- (_WKApplicationManifestOrientation)orientation
+{
+    return nil;
 }
 
 - (NSArray<_WKApplicationManifestIcon *> *)icons
