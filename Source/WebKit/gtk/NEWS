@@ -1,3 +1,20 @@
+================
+WebKitGTK 2.40.0
+================
+
+What's new in WebKitGTK 2.40.0?
+
+  - Enable the async clipboard API to make github work again.
+  - Make unmute work again.
+  - Apply basic font properties as font variation settings.
+  - Fix the remote inspector when using HTTP server.
+  - Fix the build with LTO enabled.
+  - Fix the build with jourland log disabled.
+  - Fix the build with media stream disabled.
+  - Fix clean build with GTK4.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Turkish.
+
 =================
 WebKitGTK 2.39.91
 =================
