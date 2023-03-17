@@ -66,7 +66,7 @@ public:
         };
         Vector<TextTrackInformation> textTracks;
     };
-    
+
     enum class ReceiveResult : uint8_t {
         Succeeded,
         AppendError,
@@ -83,11 +83,11 @@ public:
         ParsingFailed
     };
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
+    virtual void sourceBufferPrivateBufferedChanged() = 0;
     virtual void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;
-    virtual void sourceBufferPrivateBufferedDirtyChanged(bool) = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
 };

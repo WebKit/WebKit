@@ -75,13 +75,12 @@ public:
     bool isClosed() const;
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
-    void sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool);
 
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
     MediaTime duration() const final;
-    std::unique_ptr<PlatformTimeRanges> buffered() const final;
+    std::unique_ptr<PlatformTimeRanges> buffered() final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
@@ -137,6 +136,8 @@ protected:
 
     void scheduleEvent(const AtomString& eventName);
 
+    std::unique_ptr<PlatformTimeRanges> m_buffered;
+
 private:
     // ActiveDOMObject.
     void stop() final;
@@ -171,7 +172,6 @@ private:
     RefPtr<MediaSourcePrivate> m_private;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    std::unique_ptr<PlatformTimeRanges> m_buffered;
     std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     MediaTime m_duration;

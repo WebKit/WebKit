@@ -1353,12 +1353,10 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-void SourceBuffer::sourceBufferPrivateBufferedDirtyChanged(bool flag)
+void SourceBuffer::sourceBufferPrivateBufferedChanged()
 {
-    m_bufferedDirty = flag;
-    if (!isRemoved())
-        m_source->sourceBufferDidChangeBufferedDirty(*this, flag);
-    if (flag && isManaged())
+    setBufferedDirty(true);
+    if (isManaged())
         scheduleEvent(eventNames().bufferedchangeEvent);
 }
 

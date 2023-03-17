@@ -71,12 +71,6 @@ void SourceBufferPrivate::resetTimestampOffsetInTrackBuffers()
         trackBuffer->resetTimestampOffset();
 }
 
-void SourceBufferPrivate::setBufferedDirty(bool flag)
-{
-    if (m_client)
-        m_client->sourceBufferPrivateBufferedDirtyChanged(flag);
-}
-
 void SourceBufferPrivate::resetTrackBuffers()
 {
     for (auto& trackBuffer : m_trackBufferMap.values())
@@ -101,10 +95,13 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
         m_client->sourceBufferPrivateHighestPresentationTimestampChanged(m_highestPresentationTimestamp);
 }
 
-void SourceBufferPrivate::setBufferedRanges(const PlatformTimeRanges& timeRanges)
+void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges)
 {
-    m_buffered->ranges() = timeRanges;
-    setBufferedDirty(true);
+    if (m_buffered->ranges() == timeRanges)
+        return;
+    m_buffered->ranges() = WTFMove(timeRanges);
+    if (m_client)
+        m_client->sourceBufferPrivateBufferedChanged();
 }
 
 void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
@@ -149,7 +146,7 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
 
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
     //    then update the current value of this attribute to intersection ranges.
-    setBufferedRanges(intersectionRanges);
+    setBufferedRanges(WTFMove(intersectionRanges));
 }
 
 void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded, Function<void()>&& preAppendCompletedTask)
@@ -219,8 +216,8 @@ void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
     if (!shouldReportToClient)
         return;
 
-    updateBufferedFromTrackBuffers(true);
     updateHighestPresentationTimestamp();
+    updateBufferedFromTrackBuffers(true);
 
     if (m_client)
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
@@ -423,8 +420,6 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         
         if (!trackBuffer.removeCodedFrames(start, end, currentTime))
             continue;
-        
-        setBufferedDirty(true);
 
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
         // and less than the remove end timestamp, and HTMLMediaElement.readyState is greater than HAVE_METADATA, then set
@@ -995,7 +990,6 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
 
             erasedRanges.invert();
             trackBuffer.buffered().intersectWith(erasedRanges);
-            setBufferedDirty(true);
         }
 
         // 1.16 If spliced audio frame is set:
@@ -1073,7 +1067,6 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
 
         trackBuffer.addBufferedRange(presentationTimestamp, presentationEndTime);
         m_client->sourceBufferPrivateDidParseSample(frameDuration.toDouble());
-        setBufferedDirty(true);
 
         break;
     } while (true);
@@ -1112,6 +1105,7 @@ void SourceBufferPrivate::resetParserState()
 
 void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "isActive = ", isActive());
     if (isActive()) {
         evictFrames(maximumBufferSize, maximumBufferSize, currentTime, isEnded);
         return;
