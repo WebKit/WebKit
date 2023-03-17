@@ -65,7 +65,7 @@ add_action('wp_head', function() { ?>
             var creationTimeNodes = Array.prototype.slice.call(document.querySelectorAll("time.date"));
             for (var time of creationTimeNodes) {
                 var date = new Date(Date.parse(time.getAttribute("datetime")));
-                timestamp.textContent = date.toLocaleDateString("en", {
+                time.textContent = date.toLocaleDateString("en", {
                     "timeZoneName": "short",
                     "minute":       "2-digit",
                     "hour":         "2-digit",
