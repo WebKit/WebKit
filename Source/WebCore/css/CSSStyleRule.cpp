@@ -83,6 +83,9 @@ StylePropertyMap& CSSStyleRule::styleMap()
 
 String CSSStyleRule::generateSelectorText() const
 {
+    if (m_styleRule->isStyleRuleWithNesting())
+        return downcast<StyleRuleWithNesting>(m_styleRule.get()).originalSelectorList().selectorsText();
+
     return m_styleRule->selectorList().selectorsText();
 }
 
