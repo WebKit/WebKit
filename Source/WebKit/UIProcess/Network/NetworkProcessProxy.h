@@ -214,6 +214,8 @@ public:
 #endif
 
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
+
+    void setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID, bool);
     
     void synthesizeAppIsBackground(bool background);
 

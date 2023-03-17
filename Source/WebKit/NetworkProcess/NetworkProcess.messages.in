@@ -156,6 +156,8 @@ messages -> NetworkProcess LegacyReceiver {
 
     SetPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
 
+    SetBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID sessionID, bool enabled)
+
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
 
     RegisterURLSchemeAsSecure(String scheme)

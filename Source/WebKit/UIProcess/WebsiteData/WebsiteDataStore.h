@@ -170,6 +170,8 @@ public:
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;
 
+    bool isBlobRegistryPartitioningEnabled() const;
+
 #if PLATFORM(IOS_FAMILY)
     String resolvedCookieStorageDirectory();
     String resolvedContainerCachesWebContentDirectory();

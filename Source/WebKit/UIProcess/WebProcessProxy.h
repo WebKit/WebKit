@@ -540,6 +540,7 @@ private:
     void updateBackgroundResponsivenessTimer();
 
     void updateWebGPUEnabledStateInGPUProcess();
+    void updateBlobRegistryPartitioningState() const;
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
