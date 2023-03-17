@@ -708,10 +708,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         let matchesGrouping = false;
         for (let groupingElement of this._groupingElements) {
-            groupingElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            groupingElement.parentElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
-            if (groupingElement.textContent.includes(this._filterText)) {
-                groupingElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            // Check the parent element to also include the grouping type in the search.
+            if (groupingElement.parentElement.textContent.includes(this._filterText)) {
+                groupingElement.parentElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 matchesGrouping = true;
             }
         }
