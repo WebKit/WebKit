@@ -48,6 +48,7 @@ public:
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
+    bool isLoadedFromOpaqueSource() const { return m_cssValue->isLoadedFromOpaqueSource(); }
     Document* document() const;
     
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSStyleImageValue; }

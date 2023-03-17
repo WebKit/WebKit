@@ -120,30 +120,7 @@ bool CanvasRenderingContext::taintsOrigin(const CanvasBase* sourceCanvas)
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
 {
-    if (!element || !m_canvas.originClean())
-        return false;
-
-    auto* cachedImage = element->cachedImage();
-    if (!cachedImage)
-        return false;
-
-    RefPtr image = cachedImage->image();
-    if (!image)
-        return false;
-
-    if (image->sourceURL().protocolIsData())
-        return false;
-
-    if (image->renderingTaintsOrigin())
-        return true;
-
-    if (cachedImage->isCORSCrossOrigin())
-        return true;
-
-    ASSERT(m_canvas.securityOrigin());
-    ASSERT(cachedImage->origin());
-    ASSERT(m_canvas.securityOrigin()->toString() == cachedImage->origin()->toString());
-    return false;
+    return m_canvas.originClean() && element && !element->originClean(*m_canvas.securityOrigin());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
