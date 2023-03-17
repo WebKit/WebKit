@@ -9071,7 +9071,14 @@ bool Document::hitTest(const HitTestRequest& request, HitTestResult& result)
 bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
     Ref<Document> protectedThis(*this);
-    updateLayout();
+
+    // If hit testing can descend into child frames, then we should make sure those frames have an updated layout
+    // before proceeding
+    if (request.allowsAnyFrameContent())
+        view()->updateLayoutAndStyleIfNeededRecursive();
+    else
+        updateLayout();
+
     if (!renderView())
         return false;
 
