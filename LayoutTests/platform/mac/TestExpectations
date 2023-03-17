@@ -2799,3 +2799,8 @@ webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Cra
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
 
 http/tests/misc/heic-accept-header.html [ Pass ]
+
+webkit.org/b/254044 webxr [ Skip ]
+webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/254044 http/wpt/webxr [ Skip ]
+webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]
