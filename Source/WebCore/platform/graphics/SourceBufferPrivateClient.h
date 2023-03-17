@@ -68,7 +68,7 @@ public:
     };
     
     enum class ReceiveResult : uint8_t {
-        RecieveSucceeded,
+        Succeeded,
         AppendError,
         ClientDisconnected,
         BufferRemoved,
@@ -78,7 +78,7 @@ public:
     virtual void sourceBufferPrivateStreamEndedWithDecodeError() = 0;
     virtual void sourceBufferPrivateAppendError(bool decodeError) = 0;
     enum class AppendResult : uint8_t {
-        AppendSucceeded,
+        Succeeded,
         ReadStreamFailed,
         ParsingFailed
     };
@@ -112,7 +112,7 @@ struct LogArgument<WebCore::SourceBufferPrivateClient::ReceiveResult> {
 template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::ReceiveResult> {
     using values = EnumValues<
         WebCore::SourceBufferPrivateClient::ReceiveResult,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::RecieveSucceeded,
+        WebCore::SourceBufferPrivateClient::ReceiveResult::Succeeded,
         WebCore::SourceBufferPrivateClient::ReceiveResult::AppendError,
         WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected,
         WebCore::SourceBufferPrivateClient::ReceiveResult::BufferRemoved,
@@ -123,7 +123,7 @@ template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::ReceiveResult> 
 template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::AppendResult> {
     using values = EnumValues<
         WebCore::SourceBufferPrivateClient::AppendResult,
-        WebCore::SourceBufferPrivateClient::AppendResult::AppendSucceeded,
+        WebCore::SourceBufferPrivateClient::AppendResult::Succeeded,
         WebCore::SourceBufferPrivateClient::AppendResult::ReadStreamFailed,
         WebCore::SourceBufferPrivateClient::AppendResult::ParsingFailed
     >;

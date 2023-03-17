@@ -545,7 +545,7 @@ void SourceBuffer::appendBufferTimerFired()
     RefPtr<SharedBuffer> appendData = WTFMove(m_pendingAppendData);
     // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
     if (!appendData || !appendData->size()) {
-        sourceBufferPrivateAppendComplete(AppendResult::AppendSucceeded);
+        sourceBufferPrivateAppendComplete(AppendResult::Succeeded);
         return;
     }
 
@@ -575,7 +575,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    if (result != AppendResult::AppendSucceeded)
+    if (result != AppendResult::Succeeded)
         return;
 
     // 3. Set the updating attribute to false.
@@ -940,7 +940,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // (Note: Issue #155 adds this step after step 5:)
     // 6. Set  pending initialization segment for changeType flag  to false.
     m_pendingInitializationSegmentForChangeType = false;
-    completionHandler(ReceiveResult::RecieveSucceeded);
+    completionHandler(ReceiveResult::Succeeded);
 
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
     if (m_private->readyState() == MediaPlayer::ReadyState::HaveNothing) {

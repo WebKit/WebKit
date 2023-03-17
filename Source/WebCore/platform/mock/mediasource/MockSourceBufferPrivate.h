@@ -52,7 +52,6 @@ private:
     // SourceBufferPrivate overrides
     void append(Vector<uint8_t>&&) final;
     void abort() final;
-    void resetParserState() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;

@@ -123,7 +123,6 @@ private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
 
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC*, bool active);
-    void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivateAVFObjC*);
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC*, const SharedBuffer&);
 #endif

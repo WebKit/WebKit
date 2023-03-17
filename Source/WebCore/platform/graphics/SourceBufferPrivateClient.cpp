@@ -34,13 +34,13 @@ namespace WebCore {
 String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("RecieveSucceeded"),
+        MAKE_STATIC_STRING_IMPL("Succeeded"),
         MAKE_STATIC_STRING_IMPL("AppendError"),
         MAKE_STATIC_STRING_IMPL("ClientDisconnected"),
         MAKE_STATIC_STRING_IMPL("BufferRemoved"),
         MAKE_STATIC_STRING_IMPL("IPCError"),
     };
-    static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::RecieveSucceeded) == 0, "ReceiveResult::RecieveSucceeded is not 0 as expected");
+    static_assert(!static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::Succeeded), "ReceiveResult::Succeeded is not 0 as expected");
     static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::AppendError) == 1, "ReceiveResult::AppendError is not 1 as expected");
     static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::ClientDisconnected) == 2, "ReceiveResult::ClientDisconnected is not 2 as expected");
     static_assert(static_cast<size_t>(SourceBufferPrivateClient::ReceiveResult::BufferRemoved) == 3, "ReceiveResult::BufferRemoved is not 3 as expected");
