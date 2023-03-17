@@ -34,7 +34,7 @@ class InstallHooks(Command):
     name = 'install-hooks'
     help = 'Re-install all hooks from this repository into this checkout'
 
-    REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+)(@|://)(?P<host>[^:/]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
+    REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+://)?(?P<user>[^:@]+@)?(?P<host>[^:/@]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
     MODES = ('default', 'publish', 'no-radar')
 
     @classmethod
@@ -141,6 +141,7 @@ class InstallHooks(Command):
                     prefer_radar=bool(radar.Tracker.radarclient()),
                     default_pre_push_mode="'{}'".format(getattr(args, 'mode', cls.MODES[0])),
                     security_levels=security_levels,
+                    remote_re=cls.REMOTE_RE.pattern,
                 )
 
             target = os.path.join(repository.common_directory, 'hooks', hook)
