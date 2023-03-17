@@ -25,7 +25,7 @@
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = *;
 INFOPLIST_FILE = MediaFormatReaderPlugIn/Info.plist;
-PROFILE_GENERATE_OR_USE_CFLAGS_ENABLE_LLVM_PROFILE_GENERATION = ; // Disable PGO profile generation
+CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
 OTHER_LDFLAGS = $(inherited) -allowable_client MediaToolbox;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 PRODUCT_NAME = $(TARGET_NAME);

@@ -16549,7 +16549,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(WK_PROFILING_DATA_FOLDER_PATH)",
+				"$(WK_COMPRESSED_OPTIMIZATION_PROFILE_FILE)",
 				"$(SRCROOT)/../../Tools/Profiling/Empty.profdata",
 				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/copy-profiling-data.sh",
 			);
