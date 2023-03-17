@@ -9,10 +9,6 @@ if [ "${CLANG_USE_OPTIMIZATION_PROFILE}" = YES ]; then
         exit 1
     else
         echo "warning: ${SCRIPT_INPUT_FILE_0} failed to extract, falling back to stub profile data"
+        cp -vf "${SCRIPT_INPUT_FILE_1}" "${SCRIPT_OUTPUT_FILE_0}"
     fi
 fi
-
-# Copy stub data, even if CLANG_USE_OPTIMIZATION_PROFILE is off. The build
-# system needs something to be written to SCRIPT_INPUT_FILE_0 for it to skip
-# rerunning this task in subsequent builds.
-cp -vf "${SCRIPT_INPUT_FILE_1}" "${SCRIPT_OUTPUT_FILE_0}"
