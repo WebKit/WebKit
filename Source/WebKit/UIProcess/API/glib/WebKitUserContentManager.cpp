@@ -106,7 +106,11 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
             G_TYPE_FROM_CLASS(gObjectClass),
             static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED),
             0, nullptr, nullptr,
+#if ENABLE(2022_GLIB_API)
+            g_cclosure_marshal_VOID__OBJECT,
+#else
             g_cclosure_marshal_VOID__BOXED,
+#endif
             G_TYPE_NONE, 1,
 #if ENABLE(2022_GLIB_API)
             JSC_TYPE_VALUE);
