@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.0'
+VERSION = '1.1'
 
 import io
 import os
@@ -295,7 +295,7 @@ def main(name, remote):
             print_error("'{}' comes from an uncategorized remote, it's not safe to push it publically".format(commit))
             return 1
         # Security level of source exceeds security level of target
-        if categorization_class == 1 and security_level > (target_security_level or 0):
+        if categorization_class == 1 and (MAX_LEVEL if security_level is None else security_level) > (target_security_level or 0):
             print_error("'{}' comes from a more secure remote than '{}'".format(commit, name))
             if MODE == PUBLISH_MODE:
                 prompt_for.append(commit)
@@ -307,7 +307,7 @@ def main(name, remote):
             print_error("'{}' cherry-picks a change from an uncategorized remote, it's not safe to push it publically".format(commit))
             return 1
         # Security level of original of a cherry-pick exceeds security level of target
-        if categorization_class == 2 and security_level > (target_security_level or 0):
+        if categorization_class == 2 and (MAX_LEVEL if security_level is None else security_level) > (target_security_level or 0):
             print_error("'{}' cherry-picks a change from a more secure remote than '{}'".format(commit, name))
             if MODE == DEFAULT_MODE:
                 prompt_for.append(commit)
