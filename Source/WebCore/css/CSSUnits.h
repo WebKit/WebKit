@@ -49,11 +49,6 @@ enum class CSSUnitType : uint8_t {
     CSS_HZ,
     CSS_KHZ,
     CSS_DIMENSION,
-    CSS_STRING,
-    CSS_URI,
-    CSS_IDENT,
-    CSS_ATTR,
-    CSS_RGBCOLOR,
 
     CSS_VW,
     CSS_VH,
@@ -98,34 +93,22 @@ enum class CSSUnitType : uint8_t {
     CSS_LHS,
     CSS_RLHS,
 
-    CustomIdent,
-
     CSS_TURN,
     CSS_REMS,
     CSS_CHS,
     CSS_IC,
 
-    CSS_COUNTER_NAME,
-
     CSS_CALC,
     CSS_CALC_PERCENTAGE_WITH_NUMBER,
     CSS_CALC_PERCENTAGE_WITH_LENGTH,
 
-    CSS_FONT_FAMILY,
-
-    CSS_UNRESOLVED_COLOR,
-
-    CSS_PROPERTY_ID,
-    CSS_VALUE_ID,
-    
     // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
     // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
     // When the quirky value is used, if you're in quirks mode, the margin will collapse away
     // inside a table cell. This quirk is specified in the HTML spec but our impl is different.
     CSS_QUIRKY_EMS
-
-    // Note that CSSValue allocates 7 bits for m_primitiveUnitType, so there can be no value here > 127.
 };
+constexpr auto LastUnit = CSSUnitType::CSS_QUIRKY_EMS;
 
 enum class CSSUnitCategory : uint8_t {
     Number,

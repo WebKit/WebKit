@@ -4,101 +4,53 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
-Single value for -webkit-mask-box-image-source: image-set(url('#a'))
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single value for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(url(\'#a\'))') is "image-set(url(\"#a\") 1x)"
 
-Single value for -webkit-mask-box-image-source: -webkit-image-set(url('#a'))
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single value for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(url(\'#a\'))') is "image-set(url(\"#a\") 1x)"
 
-Multiple values for -webkit-mask-box-image-source: image-set(url('#a'), url('#b') 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Multiple values for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(url(\'#a\'), url(\'#b\') 2x)') is "image-set(url(\"#a\") 1x, url(\"#b\") 2x)"
 
-Multiple values for -webkit-mask-box-image-source: -webkit-image-set(url('#a'), url('#b') 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Multiple values for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(url(\'#a\'), url(\'#b\') 2x)') is "image-set(url(\"#a\") 1x, url(\"#b\") 2x)"
 
-Single value for -webkit-mask-box-image-source with gradient.: image-set(linear-gradient(green, white))
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single value for -webkit-mask-box-image-source with gradient.
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(linear-gradient(green, white))') is "image-set(linear-gradient(green, white) 1x)"
 
-Single value for -webkit-mask-box-image-source with gradient.: -webkit-image-set(linear-gradient(green, white))
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single value for -webkit-mask-box-image-source with gradient.
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(linear-gradient(green, white))') is "image-set(linear-gradient(green, white) 1x)"
 
-Multiple values for -webkit-mask-box-image-source with gradients: image-set(linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Multiple values for -webkit-mask-box-image-source with gradients
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x)') is "image-set(linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x)"
 
-Multiple values for -webkit-mask-box-image-source with gradients: -webkit-image-set(linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Multiple values for -webkit-mask-box-image-source with gradients
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x)') is "image-set(linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x)"
 
-Combined gradient and URL for -webkit-mask-box-image-source: image-set(url("#a"), linear-gradient(green, white) 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Combined gradient and URL for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(url("#a"), linear-gradient(green, white) 2x)') is "image-set(url(\"#a\") 1x, linear-gradient(green, white) 2x)"
 
-Combined gradient and URL for -webkit-mask-box-image-source: -webkit-image-set(url("#a"), linear-gradient(green, white) 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Combined gradient and URL for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(url("#a"), linear-gradient(green, white) 2x)') is "image-set(url(\"#a\") 1x, linear-gradient(green, white) 2x)"
 
-Single -webkit-cross-fade for -webkit-mask-box-image-source: image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%))
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single -webkit-cross-fade for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%))') is "image-set(-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 0.7) 1x)"
 
-Single -webkit-cross-fade for -webkit-mask-box-image-source: -webkit-image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%))
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single -webkit-cross-fade for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%))') is "image-set(-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 0.7) 1x)"
 
-Combined gradient and cross-fade for -webkit-mask-box-image-source: image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%), linear-gradient(green, white) 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Combined gradient and cross-fade for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%), linear-gradient(green, white) 2x)') is "image-set(-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 0.7) 1x, linear-gradient(green, white) 2x)"
 
-Combined gradient and cross-fade for -webkit-mask-box-image-source: -webkit-image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%), linear-gradient(green, white) 2x)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Combined gradient and cross-fade for -webkit-mask-box-image-source
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(-webkit-cross-fade(url("#a"), url("#b"), 70%), linear-gradient(green, white) 2x)') is "image-set(-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 0.7) 1x, linear-gradient(green, white) 2x)"
 
-Single value for -webkit-mask-box-image-source with gradient and dpi: image-set(linear-gradient(green, white) 192dpi)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single value for -webkit-mask-box-image-source with gradient and dpi
+PASS serializedRule('-webkit-mask-box-image-source', 'image-set(linear-gradient(green, white) 192dpi)') is "image-set(linear-gradient(green, white) 192dpi)"
 
-Single value for -webkit-mask-box-image-source with gradient and dpi: -webkit-image-set(linear-gradient(green, white) 192dpi)
-PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
-PASS Image Set rule serializes as expected.
+Single value for -webkit-mask-box-image-source with gradient and dpi
+PASS serializedRule('-webkit-mask-box-image-source', '-webkit-image-set(linear-gradient(green, white) 192dpi)') is "image-set(linear-gradient(green, white) 192dpi)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

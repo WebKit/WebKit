@@ -31,8 +31,8 @@
 #include "CSSParserToken.h"
 
 #include "CSSMarkup.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSUnits.h"
 #include "DeprecatedGlobalSettings.h"
 #include <limits.h>
 #include <wtf/HexNumber.h>

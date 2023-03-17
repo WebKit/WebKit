@@ -36,7 +36,7 @@
 namespace WebCore {
 
 CSSGridIntegerRepeatValue::CSSGridIntegerRepeatValue(size_t repetitions, CSSValueListBuilder builder)
-    : CSSValueContainingVector(GridIntegerRepeatClass, SpaceSeparator, WTFMove(builder))
+    : CSSValueContainingVector(Type::GridIntegerRepeat, SpaceSeparator, WTFMove(builder))
     , m_repetitions(repetitions)
 {
     ASSERT(repetitions);

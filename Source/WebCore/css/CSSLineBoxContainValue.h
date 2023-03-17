@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
 enum class LineBoxContain {
     Block           = 1 << 0,
     Inline          = 1 << 1,

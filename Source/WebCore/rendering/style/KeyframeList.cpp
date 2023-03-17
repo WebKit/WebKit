@@ -26,7 +26,6 @@
 #include "CSSAnimation.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
@@ -286,26 +285,30 @@ const HashSet<AnimatableProperty>& KeyframeList::propertiesSetToInherit() const
 void KeyframeList::updatePropertiesMetadata(const StyleProperties& properties)
 {
     for (auto propertyReference : properties) {
-        auto* cssValue = propertyReference.value();
-        if (!cssValue)
-            continue;
+        auto& value = *propertyReference.value();
 
-        if (!m_containsCSSVariableReferences && cssValue->hasVariableReferences())
+        if (!m_containsCSSVariableReferences && value.hasVariableReferences())
             m_containsCSSVariableReferences = true;
 
-        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(cssValue)) {
-            auto valueId = primitiveValue->valueID();
-            if (valueId == CSSValueInherit)
-                m_propertiesSetToInherit.add(propertyReference.id());
-            else if (valueId == CSSValueCurrentcolor)
-                m_propertiesSetToCurrentColor.add(propertyReference.id());
-            else if (!m_usesRelativeFontWeight && propertyReference.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
+        switch (value.valueID()) {
+        case CSSValueInherit:
+            m_propertiesSetToInherit.add(propertyReference.id());
+            break;
+        case CSSValueCurrentcolor:
+            m_propertiesSetToCurrentColor.add(propertyReference.id());
+            break;
+        case CSSValueBolder:
+        case CSSValueLighter:
+            if (propertyReference.id() == CSSPropertyFontWeight)
                 m_usesRelativeFontWeight = true;
-        } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
-            if (customPropertyValue->isInherit())
-                m_propertiesSetToInherit.add(customPropertyValue->name());
-            else if (customPropertyValue->isCurrentColor())
-                m_propertiesSetToCurrentColor.add(customPropertyValue->name());
+            break;
+        default:
+            if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(value)) {
+                if (customPropertyValue->isInherit())
+                    m_propertiesSetToInherit.add(customPropertyValue->name());
+                else if (customPropertyValue->isCurrentColor())
+                    m_propertiesSetToCurrentColor.add(customPropertyValue->name());
+            }
         }
     }
 }

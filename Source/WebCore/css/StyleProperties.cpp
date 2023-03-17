@@ -29,6 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Color.h"
@@ -108,7 +109,8 @@ std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) co
     auto value = getPropertyCSSValue(property);
     if (!value)
         return std::nullopt;
-    return value->isColor() ? value->color()
+    return value->isColor()
+        ? downcast<CSSResolvedColorValue>(*value).color()
         : CSSParser::parseColorWithoutContext(WebCore::serializeLonghandValue(property, *value));
 }
 

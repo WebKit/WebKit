@@ -40,7 +40,6 @@ namespace WebCore {
 
 class CSSFontFaceSource;
 class CSSFontSelector;
-class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
 class Document;
@@ -69,7 +68,7 @@ public:
     void setStretch(CSSValue&);
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
-    void setDisplay(CSSPrimitiveValue&);
+    void setDisplay(CSSValue&);
 
     String family() const;
     String style() const;

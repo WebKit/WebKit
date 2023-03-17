@@ -37,14 +37,17 @@
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSStyleImageValue.h"
 #include "CSSStyleValue.h"
 #include "CSSTokenizer.h"
 #include "CSSTransformListValue.h"
 #include "CSSTransformValue.h"
+#include "CSSURLValue.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
 #include "StylePropertiesInlines.h"
@@ -178,6 +181,14 @@ static bool mayConvertCSSValueListToSingleValue(std::optional<CSSPropertyID> pro
 
 ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue& cssValue, std::optional<CSSPropertyID> propertyID, Document* document)
 {
+    if (cssValue.isIdent())
+        return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(cssValue.cssText()));
+    if (cssValue.isCustomIdent()) {
+        // Per the specification, the CSSKeywordValue's value slot should be set to the serialization
+        // of the identifier. As a result, the identifier will be lowercase:
+        // https://drafts.css-houdini.org/css-typed-om-1/#reify-ident
+        return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(cssValue.cssText()));
+    }
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(cssValue)) {
         if (primitiveValue->isCalculated()) {
             auto* calcValue = primitiveValue->cssCalcValue();
@@ -264,11 +275,6 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmin(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_CQMAX:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmax(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_IDENT:
-            // Per the specification, the CSSKeywordValue's value slot should be set to the serialization
-            // of the identifier. As a result, the identifier will be lowercase:
-            // https://drafts.css-houdini.org/css-typed-om-1/#reify-ident
-            return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(primitiveValue->cssText()));
         default:
             break;
         }
@@ -308,11 +314,11 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
         if (transformValue.hasException())
             return transformValue.releaseException();
         return Ref<CSSStyleValue> { transformValue.releaseReturnValue() };
-    } else if (is<CSSValueList>(cssValue)) {
+    } else if (is<CSSValueList>(cssValue) || cssValue.isSubgridValue()) {
         // Reifying the first value in value list.
         // FIXME: Verify this is the expected behavior.
         // Refer to LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get.html
-        auto& valueList = downcast<CSSValueList>(cssValue);
+        auto& valueList = downcast<CSSValueContainingVector>(cssValue);
         if (!valueList.length())
             return Exception { TypeError, "The CSSValueList should not be empty."_s };
         if ((valueList.length() == 1 && mayConvertCSSValueListToSingleValue(propertyID)) || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
@@ -335,10 +341,10 @@ RefPtr<CSSStyleValue> CSSStyleValueFactory::constructStyleValueForCustomProperty
         return CSSUnitValue::create(numericValue.value, numericValue.unitType);
     }, [&](const StyleColor& colorValue) -> RefPtr<CSSStyleValue> {
         if (colorValue.isCurrentColor())
-            return CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueCurrentcolor));
+            return CSSKeywordValue::rectifyKeywordish(nameString(CSSValueCurrentcolor));
         return CSSStyleValue::create(CSSValuePool::singleton().createColorValue(colorValue.absoluteColor()));
     }, [&](const URL& urlValue) -> RefPtr<CSSStyleValue> {
-        return CSSStyleValue::create(CSSPrimitiveValue::createURI(urlValue.string()));
+        return CSSStyleValue::create(CSSURLValue::create(String { urlValue.string() }));
     }, [&](const String& identValue) -> RefPtr<CSSStyleValue> {
         return CSSKeywordValue::rectifyKeywordish(identValue);
     }, [&](const RefPtr<StyleImage>&) -> RefPtr<CSSStyleValue>  {

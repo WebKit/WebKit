@@ -64,13 +64,13 @@ public:
     bool isSpan() const { return m_type == SpanPosition; }
     bool isNamedGridArea() const { return m_type == NamedGridAreaPosition; }
 
-    WEBCORE_EXPORT void setExplicitPosition(int position, const String& namedGridLine);
+    WEBCORE_EXPORT void setExplicitPosition(int position, const AtomString& namedGridLine);
     void setAutoPosition();
-    WEBCORE_EXPORT void setSpanPosition(int position, const String& namedGridLine);
-    void setNamedGridArea(const String&);
+    WEBCORE_EXPORT void setSpanPosition(int position, const AtomString& namedGridLine);
+    void setNamedGridArea(const AtomString&);
 
     WEBCORE_EXPORT int integerPosition() const;
-    String namedGridLine() const;
+    AtomString namedGridLine() const;
     WEBCORE_EXPORT int spanPosition() const;
 
     bool operator==(const GridPosition& other) const;
@@ -91,7 +91,7 @@ private:
 
     GridPositionType m_type;
     int m_integerPosition;
-    String m_namedGridLine;
+    AtomString m_namedGridLine;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const GridPosition&);

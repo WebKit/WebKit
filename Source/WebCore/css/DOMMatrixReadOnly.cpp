@@ -28,6 +28,7 @@
 
 #include "CSSParser.h"
 #include "CSSToLengthConversionData.h"
+#include "CSSValueKeywords.h"
 #include "DOMMatrix.h"
 #include "DOMPoint.h"
 #include "MutableStyleProperties.h"
@@ -234,7 +235,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
     auto value = styleDeclaration->getPropertyCSSValue(CSSPropertyTransform);
 
     // Check for a "none" or empty transform. In these cases we can use the default identity matrix.
-    if (!value || (is<CSSPrimitiveValue>(*value) && value->valueID() == CSSValueNone))
+    if (!value || *value == CSSValueNone)
         return AbstractMatrix { };
 
     auto operations = transformsForValue(*value, { });

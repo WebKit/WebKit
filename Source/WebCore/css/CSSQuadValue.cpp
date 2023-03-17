@@ -28,13 +28,13 @@
 
 namespace WebCore {
 
-CSSQuadValue::CSSQuadValue(Quad quad)
-    : CSSValue(QuadClass)
+CSSQuadValue::CSSQuadValue(Quad&& quad)
+    : CSSValue(Type::Quad)
     , m_quad(WTFMove(quad))
 {
 }
 
-Ref<CSSQuadValue> CSSQuadValue::create(Quad quad)
+Ref<CSSQuadValue> CSSQuadValue::create(Quad&& quad)
 {
     return adoptRef(*new CSSQuadValue(WTFMove(quad)));
 }

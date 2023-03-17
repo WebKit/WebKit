@@ -22,7 +22,6 @@
 #include "CSSImageValue.h"
 
 #include "CSSMarkup.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -37,13 +36,13 @@
 namespace WebCore {
 
 CSSImageValue::CSSImageValue()
-    : CSSValue(ImageClass)
+    : CSSValue(Type::Image)
     , m_isInvalid(true)
 {
 }
 
 CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorType)
-    : CSSValue(ImageClass)
+    : CSSValue(Type::Image)
     , m_location(WTFMove(location))
     , m_initiatorType(WTFMove(initiatorType))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
@@ -133,12 +132,6 @@ String CSSImageValue::customCSSText() const
     if (m_isInvalid)
         return ""_s;
     return serializeURL(m_location.specifiedURLString);
-}
-
-Ref<DeprecatedCSSOMValue> CSSImageValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const
-{
-    // We expose CSSImageValues as URI primitive values in CSSOM to maintain old behavior.
-    return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::createURI(m_location.resolvedURL.string()), styleDeclaration);
 }
 
 bool CSSImageValue::knownToBeOpaque(const RenderElement& renderer) const

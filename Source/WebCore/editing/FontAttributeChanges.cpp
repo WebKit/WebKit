@@ -26,7 +26,9 @@
 #include "config.h"
 #include "FontAttributeChanges.h"
 
+#include "CSSFontFamilyValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSShadowValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"

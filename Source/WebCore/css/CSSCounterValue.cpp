@@ -32,15 +32,15 @@
 
 namespace WebCore {
 
-CSSCounterValue::CSSCounterValue(AtomString identifier, AtomString separator, CSSValueID listStyle)
-    : CSSValue(CounterClass)
+CSSCounterValue::CSSCounterValue(AtomString&& identifier, AtomString&& separator, CSSValueID listStyle)
+    : CSSValue(Type::Counter)
     , m_identifier(WTFMove(identifier))
     , m_separator(WTFMove(separator))
     , m_listStyle(listStyle)
 {
 }
 
-Ref<CSSCounterValue> CSSCounterValue::create(AtomString identifier, AtomString separator, CSSValueID listStyle)
+Ref<CSSCounterValue> CSSCounterValue::create(AtomString&& identifier, AtomString&& separator, CSSValueID listStyle)
 {
     return adoptRef(*new CSSCounterValue(WTFMove(identifier), WTFMove(separator), listStyle));
 }

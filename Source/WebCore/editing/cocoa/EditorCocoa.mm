@@ -28,7 +28,6 @@
 
 #import "ArchiveResource.h"
 #import "CSSValueList.h"
-#import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
 #import "DocumentFragment.h"

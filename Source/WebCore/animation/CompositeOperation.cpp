@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CompositeOperation.h"
 
-#include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 
@@ -34,9 +33,6 @@ namespace WebCore {
 
 std::optional<CompositeOperation> toCompositeOperation(const CSSValue& value)
 {
-    if (!is<CSSPrimitiveValue>(value))
-        return std::nullopt;
-
     switch (value.valueID()) {
     case CSSValueAdd:
         return CompositeOperation::Add;

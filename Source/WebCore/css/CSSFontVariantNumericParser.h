@@ -26,10 +26,8 @@
 #pragma once
 
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
-#include "CSSValuePool.h"
 
 namespace WebCore {
 
@@ -74,15 +72,16 @@ public:
         default:
             return ParseResult::UnknownValue;
         }
-        m_result.append(CSSPropertyParserHelpers::consumeIdent(range).releaseNonNull());
+        m_result.append(valueID);
+        range.consumeIncludingWhitespace();
         return ParseResult::ConsumedValue;
     }
 
     RefPtr<CSSValue> finalizeValue()
     {
         if (m_result.isEmpty())
-            return CSSPrimitiveValue::create(CSSValueNormal);
-        return CSSValueList::createSpaceSeparated(WTFMove(m_result));
+            return CSSIdentValue::create(CSSValueNormal);
+        return CSSValueList::createSpaceSeparated(m_result);
     }
 
 private:
@@ -91,7 +90,7 @@ private:
     bool m_sawNumericFractionValue = false;
     bool m_sawOrdinalValue = false;
     bool m_sawSlashedZeroValue = false;
-    CSSValueListBuilder m_result;
+    Vector<CSSValueID, 5> m_result;
 };
 
 } // namespace WebCore

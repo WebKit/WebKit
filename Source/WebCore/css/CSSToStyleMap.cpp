@@ -50,7 +50,7 @@ namespace WebCore {
 
 static bool treatAsInitialValue(const CSSValue& value, CSSPropertyID propertyID)
 {
-    switch (valueID(value)) {
+    switch (value.valueID()) {
     case CSSValueInitial:
         return true;
     case CSSValueUnset:
@@ -82,9 +82,6 @@ void CSSToStyleMap::mapFillAttachment(CSSPropertyID propertyID, FillLayer& layer
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
     switch (value.valueID()) {
     case CSSValueFixed:
         layer.setAttachment(FillAttachment::FixedBackground);
@@ -107,9 +104,6 @@ void CSSToStyleMap::mapFillClip(CSSPropertyID propertyID, FillLayer& layer, cons
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
     layer.setClip(fromCSSValue<FillBox>(value));
 }
 
@@ -119,9 +113,6 @@ void CSSToStyleMap::mapFillComposite(CSSPropertyID propertyID, FillLayer& layer,
         layer.setComposite(FillLayer::initialFillComposite(layer.type()));
         return;
     }
-
-    if (!is<CSSPrimitiveValue>(value))
-        return;
 
     layer.setComposite(fromCSSValue<CompositeOperator>(value));
 }
@@ -133,9 +124,6 @@ void CSSToStyleMap::mapFillBlendMode(CSSPropertyID propertyID, FillLayer& layer,
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
     layer.setBlendMode(fromCSSValue<BlendMode>(value));
 }
 
@@ -145,9 +133,6 @@ void CSSToStyleMap::mapFillOrigin(CSSPropertyID propertyID, FillLayer& layer, co
         layer.setOrigin(FillLayer::initialFillOrigin(layer.type()));
         return;
     }
-
-    if (!is<CSSPrimitiveValue>(value))
-        return;
 
     layer.setOrigin(fromCSSValue<FillBox>(value));
 }
@@ -180,11 +165,17 @@ void CSSToStyleMap::mapFillRepeat(CSSPropertyID propertyID, FillLayer& layer, co
 
 static inline bool convertToLengthSize(const CSSValue& value, CSSToLengthConversionData conversionData, LengthSize& size)
 {
+    auto convert = [&](const CSSValue& value) {
+        if (value == CSSValueAuto)
+            return Length(LengthType::Auto);
+        constexpr int conversions = FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion;
+        return downcast<CSSPrimitiveValue>(value).convertToLength<conversions>(conversionData);
+    };
     if (value.isPair()) {
-        size.width = downcast<CSSPrimitiveValue>(value.first()).convertToLength<AnyConversion>(conversionData);
-        size.height = downcast<CSSPrimitiveValue>(value.second()).convertToLength<AnyConversion>(conversionData);
+        size.width = convert(downcast<CSSValuePair>(value).first());
+        size.height = convert(downcast<CSSValuePair>(value).second());
     } else
-        size.width = downcast<CSSPrimitiveValue>(value).convertToLength<AnyConversion>(conversionData);
+        size.width = convert(value);
     return !size.width.isUndefined() && !size.height.isUndefined();
 }
 
@@ -222,13 +213,13 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
     Length length;
     if (value.isPair()) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
-        length = Style::BuilderConverter::convertLength(m_builderState, value.second());
+        length = Style::BuilderConverter::convertLength(m_builderState, downcast<CSSValuePair>(value).second());
     } else
         length = Style::BuilderConverter::convertPositionComponentX(m_builderState, value);
 
     layer.setXPosition(length);
     if (value.isPair())
-        layer.setBackgroundXOrigin(fromCSSValue<Edge>(value.first()));
+        layer.setBackgroundXOrigin(fromCSSValue<Edge>(downcast<CSSValuePair>(value).first()));
 }
 
 void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -241,13 +232,13 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
     Length length;
     if (value.isPair()) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
-        length = Style::BuilderConverter::convertLength(m_builderState, value.second());
+        length = Style::BuilderConverter::convertLength(m_builderState, downcast<CSSValuePair>(value).second());
     } else
         length = Style::BuilderConverter::convertPositionComponentY(m_builderState, value);
 
     layer.setYPosition(length);
     if (value.isPair())
-        layer.setBackgroundYOrigin(fromCSSValue<Edge>(value.first()));
+        layer.setBackgroundYOrigin(fromCSSValue<Edge>(downcast<CSSValuePair>(value).first()));
 }
 
 void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -257,9 +248,6 @@ void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, 
         layer.setMaskMode(maskMode);
         return;
     }
-
-    if (!is<CSSPrimitiveValue>(value))
-        return;
 
     switch (value.valueID()) {
     case CSSValueAlpha:
@@ -302,9 +290,6 @@ void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& valu
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
     switch (value.valueID()) {
     case CSSValueNormal:
         layer.setDirection(Animation::AnimationDirectionNormal);
@@ -344,9 +329,6 @@ void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
     switch (value.valueID()) {
     case CSSValueNone:
         layer.setFillMode(AnimationFillMode::None);
@@ -372,14 +354,10 @@ void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, const CSSVa
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueInfinite)
+    if (value == CSSValueInfinite)
         animation.setIterationCount(Animation::IterationCountInfinite);
     else
-        animation.setIterationCount(primitiveValue.floatValue());
+        animation.setIterationCount(downcast<CSSPrimitiveValue>(value).floatValue());
 }
 
 void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
@@ -389,14 +367,12 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueNone)
+    if (value == CSSValueNone)
         layer.setIsNoneAnimation(true);
+    else if (value.isCustomIdent())
+        layer.setName({ downcast<CSSCustomIdentValue>(value).string(), true }, m_builderState.styleScopeOrdinal());
     else
-        layer.setName({ primitiveValue.stringValue(), primitiveValue.isCustomIdent() }, m_builderState.styleScopeOrdinal());
+        layer.setName({ downcast<CSSStringValue>(value).string(), false }, m_builderState.styleScopeOrdinal());
 }
 
 void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)
@@ -406,11 +382,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& valu
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
-    AnimationPlayState playState = (value.valueID() == CSSValuePaused) ? AnimationPlayState::Paused : AnimationPlayState::Playing;
-    layer.setPlayState(playState);
+    layer.setPlayState(value == CSSValuePaused ? AnimationPlayState::Paused : AnimationPlayState::Playing);
 }
 
 void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& value)
@@ -420,26 +392,23 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(value))
-        return;
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAll) {
+    if (value == CSSValueAll) {
         animation.setProperty({ Animation::TransitionMode::All, CSSPropertyInvalid });
         return;
     }
-    if (primitiveValue.valueID() == CSSValueNone) {
+    if (value == CSSValueNone) {
         animation.setProperty({ Animation::TransitionMode::None, CSSPropertyInvalid });
         return;
     }
-    if (primitiveValue.propertyID() == CSSPropertyInvalid) {
-        auto stringValue = primitiveValue.stringValue();
+
+    if (value.isCustomIdent()) {
+        auto stringValue = downcast<CSSCustomIdentValue>(value).string();
         auto transitionMode = isCustomPropertyName(stringValue) ? Animation::TransitionMode::SingleProperty : Animation::TransitionMode::UnknownProperty;
         animation.setProperty({ transitionMode, AtomString { stringValue } });
         return;
     }
 
-    animation.setProperty({ Animation::TransitionMode::SingleProperty, primitiveValue.propertyID() });
+    animation.setProperty({ Animation::TransitionMode::SingleProperty, value.propertyID() });
 }
 
 void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
@@ -468,7 +437,7 @@ void CSSToStyleMap::mapNinePieceImage(const CSSValue* value, NinePieceImage& ima
     auto& borderImage = downcast<CSSValueList>(*value);
 
     for (auto& current : borderImage) {
-        if (current.isImage())
+        if (current.isInImageFamily())
             image.setImage(styleImage(current));
         else if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(current))
             mapNinePieceImageSlice(*imageSlice, image);
@@ -534,7 +503,7 @@ void CSSToStyleMap::mapNinePieceImageWidth(const CSSBorderImageWidthValue& value
 LengthBox CSSToStyleMap::mapNinePieceImageQuad(const CSSValue& value)
 {
     if (LIKELY(value.isQuad()))
-        return mapNinePieceImageQuad(value.quad());
+        return mapNinePieceImageQuad(downcast<CSSQuadValue>(value).quad());
 
     // Values coming from CSS Typed OM may not have been converted to a Quad yet.
     if (!is<CSSPrimitiveValue>(value))
@@ -547,9 +516,9 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(const CSSValue& value)
 
 Length CSSToStyleMap::mapNinePieceImageSide(const CSSValue& side)
 {
-    auto& value = downcast<CSSPrimitiveValue>(side);
-    if (value.valueID() == CSSValueAuto)
+    if (side == CSSValueAuto)
         return { };
+    auto& value = downcast<CSSPrimitiveValue>(side);
     if (value.isNumber())
         return { value.floatValue(), LengthType::Relative };
     if (value.isPercentage())
@@ -590,8 +559,8 @@ void CSSToStyleMap::mapNinePieceImageRepeat(const CSSValue& value, NinePieceImag
 {
     if (!value.isPair())
         return;
-    image.setHorizontalRule(fromCSSValue<NinePieceImageRule>(value.first()));
-    image.setVerticalRule(fromCSSValue<NinePieceImageRule>(value.second()));
+    image.setHorizontalRule(fromCSSValue<NinePieceImageRule>(downcast<CSSValuePair>(value).first()));
+    image.setVerticalRule(fromCSSValue<NinePieceImageRule>(downcast<CSSValuePair>(value).second()));
 }
 
 }

@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Element.h"
@@ -33,10 +32,13 @@
 namespace WebCore {
 
 class Attribute;
+class CSSStyleDeclaration;
 class MutableStyleProperties;
 class PropertySetCSSStyleDeclaration;
 class StyleProperties;
 class StylePropertyMap;
+
+enum class CSSUnitType : uint8_t;
 
 class StyledElement : public Element {
     WTF_MAKE_ISO_ALLOCATED(StyledElement);

@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+/**
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSFontPaletteValuesOverrideColorsValue.h"
+#pragma once
+
+#include "CSSValue.h"
 
 namespace WebCore {
 
-String CSSFontPaletteValuesOverrideColorsValue::customCSSText() const
+class CSSIdentValue : public CSSValue {
+public:
+    static Ref<CSSIdentValue> create(CSSPropertyID);
+    static Ref<CSSIdentValue> create(CSSValueID);
+    inline static CSSIdentValue& implicitInitialValue();
+
+    const AtomString& string() const;
+
+    String customCSSText() const;
+    bool equals(const CSSIdentValue& other) const { return this == &other; }
+};
+
+inline Ref<CSSIdentValue> CSSIdentValue::create(CSSPropertyID propertyID)
 {
-    return makeString(m_key->cssText(), " ", m_color->cssText());
+    return *reinterpret_cast<CSSIdentValue*>(typeScalar(Type::Ident) | IsPropertyIDBit | static_cast<uintptr_t>(propertyID) << IdentShift);
 }
 
-bool CSSFontPaletteValuesOverrideColorsValue::equals(const CSSFontPaletteValuesOverrideColorsValue& other) const
+inline Ref<CSSIdentValue> CSSIdentValue::create(CSSValueID valueID)
 {
-    return m_key->equals(other.key()) && m_color->equals(other.color());
+    return *reinterpret_cast<CSSIdentValue*>(valueIDScalar(valueID));
 }
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSIdentValue, isIdent())

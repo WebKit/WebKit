@@ -7941,7 +7941,7 @@
         "-webkit-line-grid": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "StringOrNoneAtom",
+                "converter": "CustomIdentOrNoneAtom",
                 "parser-grammar": "none | <custom-ident>"
             },
             "status": {

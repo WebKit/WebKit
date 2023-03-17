@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSCounterValue : public CSSValue {
 public:
-    static Ref<CSSCounterValue> create(AtomString identifier, AtomString separator, CSSValueID listStyle);
+    static Ref<CSSCounterValue> create(AtomString&& identifier, AtomString&& separator, CSSValueID listStyle);
 
     const AtomString& identifier() const { return m_identifier; }
     const AtomString& separator() const { return m_separator; }
@@ -42,7 +42,7 @@ public:
     bool equals(const CSSCounterValue&) const;
 
 private:
-    CSSCounterValue(AtomString identifier, AtomString separator, CSSValueID listStyle);
+    CSSCounterValue(AtomString&& identifier, AtomString&& separator, CSSValueID listStyle);
 
     AtomString m_identifier;
     AtomString m_separator;

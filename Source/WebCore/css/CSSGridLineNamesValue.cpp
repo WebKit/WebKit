@@ -51,7 +51,7 @@ String CSSGridLineNamesValue::customCSSText() const
 }
 
 CSSGridLineNamesValue::CSSGridLineNamesValue(Span<const String> names)
-    : CSSValue(GridLineNamesClass)
+    : CSSValue(Type::GridLineNames)
     , m_names(names.begin(), names.end())
 {
 }

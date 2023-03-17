@@ -31,7 +31,6 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
-#include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ElementInlines.h"

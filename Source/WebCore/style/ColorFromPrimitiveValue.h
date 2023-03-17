@@ -25,21 +25,20 @@
 
 #pragma once
 
-#include "Color.h"
-#include "StyleColor.h"
-
 namespace WebCore {
 
-class CSSPrimitiveValue;
+class CSSValue;
+class Color;
 class Document;
 class RenderStyle;
+class StyleColor;
 
 namespace Style {
 
 enum class ForVisitedLink : bool;
 
-StyleColor colorFromPrimitiveValue(const Document&, RenderStyle&, const CSSPrimitiveValue&, Style::ForVisitedLink);
-Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document&, RenderStyle&, const CSSPrimitiveValue&);
+StyleColor colorFromValue(const Document&, RenderStyle&, const CSSValue&, ForVisitedLink);
+Color colorFromValueWithResolvedCurrentColor(const Document&, RenderStyle&, const CSSValue&);
 
 } // namespace Style
 

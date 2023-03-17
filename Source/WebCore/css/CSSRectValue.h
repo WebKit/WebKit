@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CSSRectValue : public CSSValue {
 public:
-    static Ref<CSSRectValue> create(Rect);
+    static Ref<CSSRectValue> create(Rect&&);
 
     const Rect& rect() const { return m_rect; }
 
@@ -39,15 +39,10 @@ public:
     bool equals(const CSSRectValue&) const;
 
 private:
-    explicit CSSRectValue(Rect);
+    explicit CSSRectValue(Rect&&);
 
     Rect m_rect;
 };
-
-inline const Rect& CSSValue::rect() const
-{
-    return downcast<CSSRectValue>(*this).rect();
-}
 
 } // namespace WebCore
 

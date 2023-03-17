@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CSSQuadValue : public CSSValue {
 public:
-    static Ref<CSSQuadValue> create(Quad);
+    static Ref<CSSQuadValue> create(Quad&&);
 
     const Quad& quad() const { return m_quad; }
 
@@ -39,15 +39,10 @@ public:
     bool equals(const CSSQuadValue&) const;
 
 private:
-    explicit CSSQuadValue(Quad);
+    explicit CSSQuadValue(Quad&&);
 
     Quad m_quad;
 };
-
-inline const Quad& CSSValue::quad() const
-{
-    return downcast<CSSQuadValue>(*this).quad();
-}
 
 } // namespace WebCore
 

@@ -29,10 +29,14 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+enum class CSSUnitType : uint8_t;
+
+enum CSSPropertyID : uint16_t;
+enum CSSValueID : uint16_t;
 
 enum CSSParserTokenType {
     IdentToken = 0,

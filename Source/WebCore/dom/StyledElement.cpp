@@ -26,13 +26,13 @@
 
 #include "AttributeChangeInvalidation.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSIdentValue.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleSheet.h"
 #include "CSSUnparsedValue.h"
-#include "CSSValuePool.h"
 #include "CachedResource.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
@@ -189,14 +189,14 @@ void StyledElement::inlineStyleChanged()
     
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
 {
-    ensureMutableInlineStyle().setProperty(propertyID, CSSPrimitiveValue::create(identifier), important);
+    ensureMutableInlineStyle().setProperty(propertyID, CSSIdentValue::create(identifier), important);
     inlineStyleChanged();
     return true;
 }
 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSPropertyID identifier, bool important)
 {
-    ensureMutableInlineStyle().setProperty(propertyID, CSSPrimitiveValue::create(identifier), important);
+    ensureMutableInlineStyle().setProperty(propertyID, CSSIdentValue::create(identifier), important);
     inlineStyleChanged();
     return true;
 }
@@ -298,7 +298,7 @@ void StyledElement::rebuildPresentationalHintStyle()
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)
 {
-    style.setProperty(propertyID, CSSPrimitiveValue::create(identifier));
+    style.setProperty(propertyID, CSSIdentValue::create(identifier));
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, double value, CSSUnitType unit)

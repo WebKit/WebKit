@@ -30,7 +30,6 @@
 #include "markup.h"
 
 #include "ArchiveResource.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"

@@ -47,7 +47,7 @@ Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue,
 }
 
 CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    : CSSValue(CursorImageClass)
+    : CSSValue(Type::CursorImage)
     , m_originalURL(WTFMove(originalURL))
     , m_imageValue(WTFMove(imageValue))
     , m_hotSpot(hotSpot)
@@ -76,6 +76,11 @@ RefPtr<StyleImage> CSSCursorImageValue::createStyleImage(Style::BuilderState& st
     if (!styleImage)
         return nullptr;
     return StyleCursorImage::create(styleImage.releaseNonNull(), m_hotSpot, m_originalURL, m_loadedFromOpaqueSource);
+}
+
+bool CSSCursorImageValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+{
+    return m_imageValue->traverseSubresources(handler);
 }
 
 } // namespace WebCore

@@ -274,7 +274,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const Rende
 }
 
 CSSCalcValue::CSSCalcValue(Ref<CSSCalcExpressionNode>&& expression, bool shouldClampToNonNegative)
-    : CSSValue(CalculationClass)
+    : CSSValue(Type::Calculation)
     , m_expression(WTFMove(expression))
     , m_shouldClampToNonNegative(shouldClampToNonNegative)
 {

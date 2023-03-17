@@ -30,12 +30,12 @@
 #include "config.h"
 #include "StyleBuilder.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
-#include "CSSValuePool.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "HTMLElement.h"
@@ -262,7 +262,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
 
-    auto valueID = WebCore::valueID(valueToApply.get());
+    auto valueID = valueToApply->valueID();
 
     const CSSCustomPropertyValue* customPropertyValue = nullptr;
     const CSSRegisteredCustomProperty* registeredCustomProperty = nullptr;
@@ -390,7 +390,7 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
     // https://drafts.csswg.org/css-variables-2/#invalid-variables
     // ...as if the property’s value had been specified as the unset keyword.
     if (!variableValue || m_state.m_inUnitCycleProperties.get(propertyID))
-        return CSSPrimitiveValue::create(CSSValueUnset);
+        return CSSIdentValue::create(CSSValueUnset);
 
     return *variableValue;
 }

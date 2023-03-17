@@ -41,6 +41,7 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSReflectValue&) const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
 
 private:
     CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask);

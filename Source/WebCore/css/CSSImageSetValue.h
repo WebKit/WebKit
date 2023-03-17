@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSValueList.h"
+#include "CSSPrimitiveValue.h"
 
 namespace WebCore {
 
@@ -35,17 +35,25 @@ namespace Style {
 class BuilderState;
 }
 
-class CSSImageSetValue final : public CSSValueContainingVector {
+class CSSImageSetValue final : public CSSValue {
 public:
-    static Ref<CSSImageSetValue> create(CSSValueListBuilder);
+    struct Option {
+        Ref<CSSValue> image;
+        RefPtr<CSSPrimitiveValue> resolution;
+        String type;
+    };
+    static Ref<CSSImageSetValue> create(Span<Option>);
 
     String customCSSText() const;
-    bool equals(const CSSImageSetValue& other) const { return itemsEqual(other); }
+    bool equals(const CSSImageSetValue&) const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
-    explicit CSSImageSetValue(CSSValueListBuilder);
+    explicit CSSImageSetValue(Span<Option>);
+
+    FixedVector<Option> m_options;
 };
 
 } // namespace WebCore

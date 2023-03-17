@@ -116,7 +116,7 @@ public:
 
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
-        : CSSValue(CustomPropertyClass)
+        : CSSValue(Type::CustomProperty)
         , m_name(name)
         , m_value(WTFMove(value))
     {

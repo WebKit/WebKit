@@ -138,7 +138,7 @@ std::optional<FilterOperations> BuilderState::createFilterOperations(const CSSVa
     return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
 }
 
-bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)
+bool BuilderState::isColorDerivedFromElement(const CSSValue& value)
 {
     switch (value.valueID()) {
     case CSSValueInternalDocumentTextColor:
@@ -151,16 +151,16 @@ bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiv
     }
 }
 
-StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink) const
+StyleColor BuilderState::colorFromValue(const CSSValue& value, ForVisitedLink forVisitedLink) const
 {
     if (!element() || !element()->isLink())
         forVisitedLink = ForVisitedLink::No;
-    return { WebCore::Style::colorFromPrimitiveValue(document(), m_style, value, forVisitedLink) };
+    return { WebCore::Style::colorFromValue(document(), m_style, value, forVisitedLink) };
 }
 
-Color BuilderState::colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPrimitiveValue& value) const
+Color BuilderState::colorFromValueWithResolvedCurrentColor(const CSSValue& value) const
 {
-    return WebCore::Style::colorFromPrimitiveValueWithResolvedCurrentColor(document(), m_style, value);
+    return WebCore::Style::colorFromValueWithResolvedCurrentColor(document(), m_style, value);
 }
 
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)

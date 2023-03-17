@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
-    : CSSValue(ReflectClass)
+    : CSSValue(Type::Reflect)
     , m_direction(direction)
     , m_offset(WTFMove(offset))
     , m_mask(WTFMove(mask))
@@ -55,6 +55,11 @@ bool CSSReflectValue::equals(const CSSReflectValue& other) const
     return m_direction == other.m_direction
         && compareCSSValue(m_offset, other.m_offset)
         && compareCSSValuePtr(m_mask, other.m_mask);
+}
+
+bool CSSReflectValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+{
+    return m_mask && m_mask->traverseSubresources(handler);
 }
 
 } // namespace WebCore

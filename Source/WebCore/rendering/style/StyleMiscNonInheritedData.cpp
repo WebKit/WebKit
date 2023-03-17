@@ -35,6 +35,7 @@
 #include "StyleFlexibleBoxData.h"
 #include "StyleMultiColData.h"
 #include "StyleTransformData.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 

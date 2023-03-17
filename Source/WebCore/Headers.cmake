@@ -608,17 +608,22 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     crypto/SerializedCryptoKeyWrap.h
 
+    css/CSSAttrValue.h
     css/CSSConditionRule.h
+    css/CSSCounterNameValue.h
     css/CSSCounterStyle.h
     css/CSSCounterStyleDescriptors.h
     css/CSSCounterStyleRegistry.h
     css/CSSCounterStyleRule.h
     css/CSSCounterValue.h
+    css/CSSCustomIdentValue.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
+    css/CSSFontFamilyValue.h
     css/CSSFontPaletteValuesRule.h
     css/CSSGridIntegerRepeatValue.h
     css/CSSGroupingRule.h
+    css/CSSIdentValue.h
     css/CSSImportRule.h
     css/CSSLineBoxContainValue.h
     css/CSSMediaRule.h
@@ -629,18 +634,22 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSQuadValue.h
     css/CSSRectValue.h
     css/CSSRegisteredCustomProperty.h
+    css/CSSResolvedColorValue.h
     css/CSSRule.h
     css/CSSRuleList.h
     css/CSSSelector.h
     css/CSSSelectorList.h
+    css/CSSStringValue.h
     css/CSSStyleDeclaration.h
     css/CSSStyleRule.h
     css/CSSStyleSheet.h
     css/CSSSubgridValue.h
     css/CSSToLengthConversionData.h
     css/CSSTransformListValue.h
+    css/CSSURLValue.h
     css/CSSUnits.h
     css/CSSUnknownRule.h
+    css/CSSUnresolvedColorValue.h
     css/CSSValue.h
     css/CSSValueList.h
     css/CSSVariableData.h

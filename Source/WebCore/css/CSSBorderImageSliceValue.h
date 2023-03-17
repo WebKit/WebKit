@@ -30,25 +30,23 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
 class CSSBorderImageSliceValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageSliceValue> create(Quad, bool fill);
+    static Ref<CSSBorderImageSliceValue> create(NumericQuad&&, bool fill);
     ~CSSBorderImageSliceValue();
 
-    const Quad& slices() const { return m_slices; }
+    const NumericQuad& slices() const { return m_slices; }
     bool fill() const { return m_fill; }
 
     String customCSSText() const;
     bool equals(const CSSBorderImageSliceValue&) const;
 
 private:
-    CSSBorderImageSliceValue(Quad, bool fill);
+    CSSBorderImageSliceValue(NumericQuad&&, bool fill);
 
     // These four values are used to make "cuts" in the border image. They can be numbers
     // or percentages.
-    Quad m_slices;
+    NumericQuad m_slices;
     bool m_fill { false };
 };
 

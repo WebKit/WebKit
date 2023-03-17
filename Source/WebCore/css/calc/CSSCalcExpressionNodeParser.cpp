@@ -35,7 +35,9 @@
 #include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSUnits.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 

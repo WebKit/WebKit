@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include "CSSCustomPropertyValue.h"
-#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -30,13 +28,13 @@
 
 namespace WebCore {
 
-class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
-private:
-    using CustomPropertyValueMap = HashMap<AtomString, RefPtr<const CSSCustomPropertyValue>>;
+class CSSCustomPropertyValue;
 
+class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
 public:
-    static Ref<StyleCustomPropertyData> create() { return adoptRef(*new StyleCustomPropertyData); }
-    Ref<StyleCustomPropertyData> copy() const { return adoptRef(*new StyleCustomPropertyData(*this)); }
+    static Ref<StyleCustomPropertyData> create();
+    Ref<StyleCustomPropertyData> copy() const;
+    ~StyleCustomPropertyData();
 
     bool operator==(const StyleCustomPropertyData& other) const;
     bool operator!=(const StyleCustomPropertyData& other) const { return !(*this == other); }
@@ -50,11 +48,11 @@ public:
     AtomString findKeyAtIndex(unsigned) const;
 
 private:
-    StyleCustomPropertyData() = default;
+    StyleCustomPropertyData();
     StyleCustomPropertyData(const StyleCustomPropertyData&);
 
     RefPtr<const StyleCustomPropertyData> m_parentValues;
-    CustomPropertyValueMap m_ownValues;
+    HashMap<AtomString, RefPtr<const CSSCustomPropertyValue>> m_ownValues;
     unsigned m_ownValuesSizeExcludingOverriddenParentValues { 0 };
 };
 

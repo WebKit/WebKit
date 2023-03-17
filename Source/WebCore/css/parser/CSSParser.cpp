@@ -35,10 +35,10 @@
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSSelectorParser.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
-#include "CSSValuePool.h"
 #include "Document.h"
 #include "Element.h"
 #include "ImmutableStyleProperties.h"
@@ -94,7 +94,7 @@ static Color color(const RefPtr<CSSValue>& value)
 {
     if (!value || !value->isColor())
         return { };
-    return value->color();
+    return downcast<CSSResolvedColorValue>(*value).color();
 }
 
 Color CSSParser::parseColor(const String& string, const CSSParserContext& context)

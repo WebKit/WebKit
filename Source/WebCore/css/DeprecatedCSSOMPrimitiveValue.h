@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CSSParserIdioms.h"
-#include "CSSPrimitiveValue.h"
+#include "CSSValue.h"
 #include "DeprecatedCSSOMValue.h"
 
 namespace WebCore {
@@ -68,10 +68,7 @@ public:
         // Do not add new units here; this is deprecated and we shouldn't expose anything not in DOM Level 2 Style.
     };
 
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSSValue& value, CSSStyleDeclaration& owner)
-    {
-        return adoptRef(*new DeprecatedCSSOMPrimitiveValue(value, owner));
-    }
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSSValue&, CSSStyleDeclaration& owner);
 
     bool equals(const DeprecatedCSSOMPrimitiveValue& other) const { return m_value->equals(other.m_value); }
     String cssText() const { return m_value->cssText(); }
@@ -86,15 +83,10 @@ public:
     static ExceptionOr<void> setFloatValue(unsigned short, double) { return Exception { NoModificationAllowedError }; }
     static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
 
-    bool isCSSWideKeyword() const { return WebCore::isCSSWideKeyword(valueID(m_value.get())); }
-    static unsigned short cssValueType() { return CSS_PRIMITIVE_VALUE; }
+    bool isCSSWideKeyword() const { return WebCore::isCSSWideKeyword(m_value->valueID()); }
 
 private:
-    DeprecatedCSSOMPrimitiveValue(const CSSValue& value, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(ClassType::Primitive, owner)
-        , m_value(value)
-    {
-    }
+    DeprecatedCSSOMPrimitiveValue(const CSSValue&, CSSStyleDeclaration& owner);
 
     Ref<const CSSValue> m_value;
 };

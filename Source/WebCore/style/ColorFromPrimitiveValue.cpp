@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ColorFromPrimitiveValue.h"
 
-#include "CSSPrimitiveValue.h"
-#include "CSSUnresolvedColor.h"
+#include "CSSResolvedColorValue.h"
+#include "CSSUnresolvedColorValue.h"
 #include "Document.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
@@ -38,12 +38,12 @@ namespace WebCore {
 
 namespace Style {
 
-StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
+StyleColor colorFromValue(const Document& document, RenderStyle& style, const CSSValue& value, ForVisitedLink forVisitedLink)
 {
     if (value.isColor())
-        return value.color();
+        return downcast<CSSResolvedColorValue>(value).color();
     if (value.isUnresolvedColor())
-        return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);
+        return downcast<CSSUnresolvedColorValue>(value).color().createStyleColor(document, style, forVisitedLink);
 
     auto identifier = value.valueID();
     switch (identifier) {
@@ -62,17 +62,17 @@ StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style,
     }
 }
 
-Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value)
+Color colorFromValueWithResolvedCurrentColor(const Document& document, RenderStyle& style, const CSSValue& value)
 {
     // FIXME: 'currentcolor' should be resolved at use time to make it inherit correctly. https://bugs.webkit.org/show_bug.cgi?id=210005
-    if (StyleColor::isCurrentColor(value)) {
+    if (value == CSSValueCurrentcolor) {
         // Color is an inherited property so depending on it effectively makes the property inherited.
         style.setHasExplicitlyInheritedProperties();
         style.setDisallowsFastPathInheritance();
         return style.color();
     }
 
-    return colorFromPrimitiveValue(document, style, value, ForVisitedLink::No).absoluteColor();
+    return colorFromValue(document, style, value, ForVisitedLink::No).absoluteColor();
 }
 
 } // namespace Style

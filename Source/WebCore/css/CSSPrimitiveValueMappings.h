@@ -69,6 +69,11 @@ public:
         return fromCSSValue<TargetType>(m_value);
     }
 
+    operator const CSSValue&() const
+    {
+        return m_value;
+    }
+
     operator const CSSPrimitiveValue&() const
     {
         return downcast<CSSPrimitiveValue>(m_value);
@@ -1934,12 +1939,10 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 enum LengthConversion {
-    AnyConversion = ~0,
     FixedIntegerConversion = 1 << 0,
     FixedFloatConversion = 1 << 1,
-    AutoConversion = 1 << 2,
-    PercentConversion = 1 << 3,
-    CalculatedConversion = 1 << 4
+    PercentConversion = 1 << 2,
+    CalculatedConversion = 1 << 3
 };
 
 inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
@@ -1973,8 +1976,6 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLen
         return Length(computeLength<double>(conversionData), LengthType::Fixed);
     if ((supported & PercentConversion) && isPercentage())
         return Length(doubleValue(), LengthType::Percent);
-    if ((supported & AutoConversion) && valueID() == CSSValueAuto)
-        return Length(LengthType::Auto);
     if ((supported & CalculatedConversion) && isCalculated())
         return Length(cssCalcValue()->createCalculationValue(conversionData));
     return Length(LengthType::Undefined);
@@ -2048,6 +2049,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE VectorEffect
 #define FOR_EACH(CASE) CASE(None) CASE(NonScalingStroke)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
+#define TYPE MaskMode
+#define FOR_EACH(CASE) CASE(Alpha) CASE(Luminance) CASE(MatchSource)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

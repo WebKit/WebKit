@@ -353,7 +353,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCS
     if (clonedValue)
         return clonedValue.get();
 
-    auto wrapper = internalValue->createDeprecatedCSSOMWrapper(*this);
+    auto wrapper = DeprecatedCSSOMValue::create(*internalValue, *this);
     clonedValue = wrapper;
     return wrapper;
 }

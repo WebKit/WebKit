@@ -27,10 +27,11 @@
 #include "CSSCounterStyleDescriptors.h"
 
 #include "CSSCounterStyleRule.h"
+#include "CSSCustomIdentValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSStringValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
-
 #include <utility>
 
 namespace WebCore {
@@ -47,14 +48,14 @@ static CSSCounterStyleDescriptors::Ranges translateRangeFromStyleProperties(cons
     for (auto& rangeValue : *list) {
         if (!rangeValue.isPair())
             return { };
-        auto& low = downcast<CSSPrimitiveValue>(rangeValue.first());
-        auto& high = downcast<CSSPrimitiveValue>(rangeValue.second());
+        auto* low = dynamicDowncast<CSSPrimitiveValue>(downcast<CSSValuePair>(rangeValue).first());
+        auto* high = dynamicDowncast<CSSPrimitiveValue>(downcast<CSSValuePair>(rangeValue).second());
         int convertedLow { std::numeric_limits<int>::min() };
         int convertedHigh { std::numeric_limits<int>::max() };
-        if (low.isInteger())
-            convertedLow = low.intValue();
-        if (high.isInteger())
-            convertedHigh = high.intValue();
+        if (low)
+            convertedLow = low->intValue();
+        if (high)
+            convertedHigh = high->intValue();
         result.append({ convertedLow, convertedHigh });
     }
     return result;
@@ -62,11 +63,13 @@ static CSSCounterStyleDescriptors::Ranges translateRangeFromStyleProperties(cons
 
 static String symbolToString(const CSSValue* value)
 {
-    if (!value || !value->isPrimitiveValue())
+    if (!value)
         return { };
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    return primitiveValue.stringValue();
+    if (value->isString())
+        return downcast<CSSStringValue>(*value).string();
+    if (value->isCustomIdent())
+        return downcast<CSSCustomIdentValue>(*value).string();
+    return { };
 }
 
 static CSSCounterStyleDescriptors::AdditiveSymbols translateAdditiveSymbolsFromStyleProperties(const StyleProperties& properties)
@@ -166,14 +169,11 @@ static std::pair<CSSCounterStyleDescriptors::Name, int> extractDataFromSystemDes
     ASSERT(systemValue->isValueID() || systemValue->isPair());
     if (systemValue->isPair()) {
         // This value must be `fixed` or `extends`, both of which can or must have an additional component.
-        auto& secondValue = systemValue->second();
-        if (system == CSSCounterStyleDescriptors::System::Extends) {
-            ASSERT(secondValue.isCustomIdent());
-            result.first = AtomString { secondValue.isCustomIdent() ? secondValue.customIdent() : "decimal"_s };
-        } else if (system == CSSCounterStyleDescriptors::System::Fixed) {
-            ASSERT(secondValue.isInteger());
-            result.second = secondValue.isInteger() ? secondValue.integer() : 1;
-        }
+        auto& secondValue = downcast<CSSValuePair>(*systemValue).second();
+        if (system == CSSCounterStyleDescriptors::System::Extends)
+            result.first = AtomString { downcast<CSSCustomIdentValue>(secondValue).string() };
+        else if (system == CSSCounterStyleDescriptors::System::Fixed)
+            result.second = downcast<CSSPrimitiveValue>(secondValue).intValue();
     }
     return result;
 }

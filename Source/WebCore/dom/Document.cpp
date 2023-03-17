@@ -34,6 +34,7 @@
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
 #include "CSSAnimation.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSStyleDeclaration.h"

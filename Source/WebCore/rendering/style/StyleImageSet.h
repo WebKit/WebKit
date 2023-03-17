@@ -31,7 +31,7 @@ namespace WebCore {
 class StyleImageSet final : public StyleMultiImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleImageSet> create(Vector<ImageWithScale>&&, Vector<size_t>&&);
+    static Ref<StyleImageSet> create(Vector<ImageWithScale>&&);
     virtual ~StyleImageSet();
 
     bool operator==(const StyleImage& other) const;
@@ -40,7 +40,7 @@ public:
     ImageWithScale selectBestFitImage(const Document&) final;
 
 private:
-    explicit StyleImageSet(Vector<ImageWithScale>&&, Vector<size_t>&&);
+    explicit StyleImageSet(Vector<ImageWithScale>&&);
 
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
 
@@ -51,7 +51,7 @@ private:
     ImageWithScale m_bestFitImage;
     float m_deviceScaleFactor { 1 };
     Vector<ImageWithScale> m_images;
-    Vector<size_t> m_sortedIndices;
+    FixedVector<size_t> m_sortedIndices;
 };
 
 } // namespace WebCore

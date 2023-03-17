@@ -39,27 +39,22 @@ namespace WebCore {
 static bool styleImageIsCacheable(const CSSGradientColorStopList& stops)
 {
     for (auto& stop : stops) {
-        if (stop.color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.color))
+        if (stop.color && Style::BuilderState::isColorDerivedFromElement(*stop.color))
             return false;
     }
     return true;
 }
 
-static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
-{
-    if (!color)
-        return std::nullopt;
-
-    // FIXME: This should call state.colorFromPrimitiveValue(*color) instead, but doing so is
-    // blocked on fixing an issue where we don't respect ::first-line in StyleImage correctly.
-    // See https://webkit.org/b/247127.
-    return StyleColor { state.colorFromPrimitiveValueWithResolvedCurrentColor(*color) };
-}
-
 static decltype(auto) computeStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
 {
-    return stops.map([&] (auto& stop) -> StyleGradientImageStop {
-        return { computeStyleColor(stop.color, state), stop.position };
+    return stops.map([&](auto& stop) -> StyleGradientImageStop {
+        if (!stop.color)
+            return { std::nullopt, stop.position };
+
+        // FIXME: This should call state.colorFromValue(*color) instead, but doing so is
+        // blocked on fixing an issue where we don't respect ::first-line in StyleImage correctly.
+        // See https://webkit.org/b/247127.
+        return { { state.colorFromValueWithResolvedCurrentColor(*stop.color) }, stop.position };
     });
 }
 
@@ -503,7 +498,7 @@ static ASCIILiteral cssText(CSSRadialGradientValue::ExtentKeyword extent)
 
 static bool isCenterPosition(const CSSValue& value)
 {
-    if (isValueID(value, CSSValueCenter))
+    if (value == CSSValueCenter)
         return true;
     auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
     return number && number->doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;

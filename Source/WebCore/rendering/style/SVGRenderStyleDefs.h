@@ -125,7 +125,7 @@ enum class DominantBaseline : uint8_t {
     TextBeforeEdge
 };
 
-enum class VectorEffect : uint8_t {
+enum class VectorEffect : bool {
     None,
     NonScalingStroke
 };
@@ -136,7 +136,7 @@ enum class BufferedRendering : uint8_t {
     Static
 };
 
-enum class MaskType : uint8_t {
+enum class MaskType : bool {
     Luminance,
     Alpha
 };

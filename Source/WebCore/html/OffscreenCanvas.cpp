@@ -28,7 +28,6 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-#include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "Document.h"

@@ -58,7 +58,7 @@ namespace WebCore {
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontStretch(CSSParserTokenRange&);
 
 }
 
@@ -192,7 +192,7 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceFeatureSettings(const
     return parsedValue;
 }
 
-RefPtr<CSSPrimitiveValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(const String& string, ScriptExecutionContext& context)
+RefPtr<CSSIdentValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(const String& string, ScriptExecutionContext& context)
 {
     CSSParserContext parserContext(parserMode(context));
     CSSParserImpl parser(parserContext, string);
@@ -298,12 +298,12 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyleAngle(CSSParserTokenRange& rang
 
 RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode mode)
 {
-    auto keyword = CSSPropertyParserHelpers::consumeIdent<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
+    auto keyword = CSSPropertyParserHelpers::consumeIdentRaw<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
     if (!keyword)
         return nullptr;
 
-    if (keyword->valueID() != CSSValueOblique || range.atEnd())
-        return CSSFontStyleRangeValue::create(keyword.releaseNonNull());
+    if (keyword != CSSValueOblique || range.atEnd())
+        return CSSFontStyleRangeValue::create(keyword);
 
     auto rangeAfterAngles = range;
     auto firstAngle = consumeFontStyleAngle(rangeAfterAngles, mode);
@@ -321,19 +321,19 @@ RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode
     }
 
     range = rangeAfterAngles;
-    return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), angleList.releaseNonNull());
+    return CSSFontStyleRangeValue::create(CSSValueOblique, angleList.releaseNonNull());
 }
 
 #endif
 
 RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode)
 {
-    auto keyword = CSSPropertyParserHelpers::consumeIdent<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
+    auto keyword = CSSPropertyParserHelpers::consumeIdentRaw<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
     if (!keyword)
         return nullptr;
 
 #if ENABLE(VARIATION_FONTS)
-    if (keyword->valueID() == CSSValueOblique && !range.atEnd()) {
+    if (keyword == CSSValueOblique && !range.atEnd()) {
         if (auto angle = consumeFontStyleAngle(range, mode))
             return CSSFontStyleWithAngleValue::create(angle.releaseNonNull());
     }
@@ -341,10 +341,10 @@ RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode mode
     UNUSED_PARAM(mode);
 #endif
 
-    return keyword;
+    return CSSIdentValue::create(keyword);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range)
+static RefPtr<CSSIdentValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range)
 {
     return CSSPropertyParserHelpers::consumeIdent<CSSValueNormal, CSSValueBold>(range);
 }
@@ -377,14 +377,14 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange& range)
 
 #endif
 
-RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
+RefPtr<CSSIdentValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
 {
     if (auto valueID = CSSPropertyParserHelpers::consumeFontStretchKeywordValueRaw(range))
-        return CSSPrimitiveValue::create(*valueID);
+        return CSSIdentValue::create(valueID);
     return nullptr;
 }
 
-RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeFontStretch(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontStretchKeywordValue(range))
         return result;
@@ -596,7 +596,7 @@ RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange& range)
     return CSSPropertyParserHelpers::consumeCommaSeparatedListWithoutSingleValueOptimization(range, consumeFeatureTagValue);
 }
 
-RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange& range)
+RefPtr<CSSIdentValue> consumeFontFaceFontDisplay(CSSParserTokenRange& range)
 {
     return CSSPropertyParserHelpers::consumeIdent<CSSValueAuto, CSSValueBlock, CSSValueSwap, CSSValueFallback, CSSValueOptional>(range);
 }

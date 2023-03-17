@@ -28,7 +28,9 @@
 #include "config.h"
 #include "WorkerGlobalScope.h"
 
+#include "CSSFontFamilyValue.h"
 #include "CSSFontSelector.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CommonVM.h"

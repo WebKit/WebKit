@@ -62,7 +62,7 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
         systemKeyword = system->valueID();
     else if (system->isPair()) {
         // This value must be `fixed` or `extends`, both of which can or must have an additional component.
-        systemKeyword = system->first().valueID();
+        systemKeyword = downcast<CSSValuePair>(*system).first().valueID();
     }
     switch (systemKeyword) {
     case CSSValueCyclic:

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 CSSGridAutoRepeatValue::CSSGridAutoRepeatValue(bool isAutoFit, CSSValueListBuilder builder)
-    : CSSValueContainingVector(GridAutoRepeatClass, SpaceSeparator, WTFMove(builder))
+    : CSSValueContainingVector(Type::GridAutoRepeat, SpaceSeparator, WTFMove(builder))
     , m_isAutoFit(isAutoFit)
 {
 }

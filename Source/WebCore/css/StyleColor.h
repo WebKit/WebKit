@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "ColorInterpolationMethod.h"
@@ -96,8 +95,6 @@ public:
     static Color colorFromAbsoluteKeyword(CSSValueID);
 
     static bool isAbsoluteColorKeyword(CSSValueID);
-    static bool isCurrentColorKeyword(CSSValueID id) { return id == CSSValueCurrentcolor; }
-    static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
 
     WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
     static bool isDeprecatedSystemColorKeyword(CSSValueID);

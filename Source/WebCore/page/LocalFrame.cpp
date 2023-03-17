@@ -159,7 +159,6 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderCli
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
     ProcessWarming::initializeNames();
-    StaticCSSValuePool::init();
 
     if (ownerElement) {
         if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))

@@ -25,7 +25,6 @@
 #include "config.h"
 #include "ContainerQueryEvaluator.h"
 
-#include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueList.h"
 #include "ComposedTreeAncestorIterator.h"

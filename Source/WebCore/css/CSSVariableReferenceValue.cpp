@@ -45,7 +45,7 @@
 namespace WebCore {
 
 CSSVariableReferenceValue::CSSVariableReferenceValue(Ref<CSSVariableData>&& data, const CSSParserContext& context)
-    : CSSValue(VariableReferenceClass)
+    : CSSValue(Type::VariableReference)
     , m_data(WTFMove(data))
     , m_context(context)
 {

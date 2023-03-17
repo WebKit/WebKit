@@ -20,21 +20,30 @@
 #include "config.h"
 #include "CSSShadowValue.h"
 
-#include "CSSPrimitiveValue.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 // Used for text-shadow and box-shadow
-CSSShadowValue::CSSShadowValue(RefPtr<CSSPrimitiveValue>&& x, RefPtr<CSSPrimitiveValue>&& y, RefPtr<CSSPrimitiveValue>&& blur, RefPtr<CSSPrimitiveValue>&& spread, RefPtr<CSSPrimitiveValue>&& style, RefPtr<CSSPrimitiveValue>&& color)
-    : CSSValue(ShadowClass)
+CSSShadowValue::CSSShadowValue(RefPtr<CSSPrimitiveValue>&& x, RefPtr<CSSPrimitiveValue>&& y, RefPtr<CSSPrimitiveValue>&& blur, RefPtr<CSSPrimitiveValue>&& spread, bool styleIsInset, RefPtr<CSSValue>&& color)
+    : CSSValue(Type::Shadow)
     , x(WTFMove(x))
     , y(WTFMove(y))
     , blur(WTFMove(blur))
     , spread(WTFMove(spread))
-    , style(WTFMove(style))
+    , styleIsInset(styleIsInset)
     , color(WTFMove(color))
 {
+}
+
+Ref<CSSShadowValue> CSSShadowValue::create(RefPtr<CSSPrimitiveValue>&& x,
+    RefPtr<CSSPrimitiveValue>&& y,
+    RefPtr<CSSPrimitiveValue>&& blur,
+    RefPtr<CSSPrimitiveValue>&& spread,
+    bool styleIsInset,
+    RefPtr<CSSValue>&& color)
+{
+    return adoptRef(*new CSSShadowValue(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), styleIsInset, WTFMove(color)));
 }
 
 String CSSShadowValue::customCSSText() const
@@ -63,10 +72,10 @@ String CSSShadowValue::customCSSText() const
             text.append(' ');
         text.append(spread->cssText());
     }
-    if (style) {
+    if (styleIsInset) {
         if (!text.isEmpty())
             text.append(' ');
-        text.append(style->cssText());
+        text.append("inset"_s);
     }
 
     return text.toString();
@@ -79,7 +88,7 @@ bool CSSShadowValue::equals(const CSSShadowValue& other) const
         && compareCSSValuePtr(y, other.y)
         && compareCSSValuePtr(blur, other.blur)
         && compareCSSValuePtr(spread, other.spread)
-        && compareCSSValuePtr(style, other.style);
+        && styleIsInset == other.styleIsInset;
 }
 
 }

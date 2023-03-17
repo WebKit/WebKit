@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,11 @@
 #include "config.h"
 #include "StyleCustomPropertyData.h"
 
+#include "CSSCustomPropertyValue.h"
+
 namespace WebCore {
+
+StyleCustomPropertyData::StyleCustomPropertyData() = default;
 
 StyleCustomPropertyData::StyleCustomPropertyData(const StyleCustomPropertyData& other)
     : RefCounted()
@@ -43,6 +47,18 @@ StyleCustomPropertyData::StyleCustomPropertyData(const StyleCustomPropertyData& 
         m_ownValues = other.m_ownValues;
         m_ownValuesSizeExcludingOverriddenParentValues = other.m_ownValuesSizeExcludingOverriddenParentValues;
     }
+}
+
+StyleCustomPropertyData::~StyleCustomPropertyData() = default;
+
+Ref<StyleCustomPropertyData> StyleCustomPropertyData::create()
+{
+    return adoptRef(*new StyleCustomPropertyData);
+}
+
+Ref<StyleCustomPropertyData> StyleCustomPropertyData::copy() const
+{
+    return adoptRef(*new StyleCustomPropertyData(*this));
 }
 
 const CSSCustomPropertyValue* StyleCustomPropertyData::get(const AtomString& name) const

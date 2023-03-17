@@ -217,9 +217,7 @@ EvaluationResult evaluateIdentifierFeature(const Feature& feature, CSSValueID cu
 {
     if (!feature.rightComparison)
         return toEvaluationResult(currentValue != CSSValueNone && currentValue != CSSValueNoPreference);
-
-    auto& value = downcast<CSSPrimitiveValue>(*feature.rightComparison->value);
-    return toEvaluationResult(value.valueID() == currentValue);
+    return toEvaluationResult(*feature.rightComparison->value == currentValue);
 }
 
 }

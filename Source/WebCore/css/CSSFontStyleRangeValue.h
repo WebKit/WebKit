@@ -25,37 +25,22 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "CSSValue.h"
 #include "CSSValueList.h"
 
 namespace WebCore {
 
 class CSSFontStyleRangeValue final : public CSSValue {
 public:
-    static Ref<CSSFontStyleRangeValue> create(Ref<CSSPrimitiveValue>&& fontStyleValue)
-    {
-        return adoptRef(*new CSSFontStyleRangeValue(WTFMove(fontStyleValue), nullptr));
-    }
-    static Ref<CSSFontStyleRangeValue> create(Ref<CSSPrimitiveValue>&& fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
-    {
-        return adoptRef(*new CSSFontStyleRangeValue(WTFMove(fontStyleValue), WTFMove(obliqueValues)));
-    }
+    static Ref<CSSFontStyleRangeValue> create(CSSValueID fontStyleValue, RefPtr<CSSValueList>&& obliqueValues = nullptr);
 
-    String customCSSText() const;
-
-    bool equals(const CSSFontStyleRangeValue&) const;
-
-    Ref<CSSPrimitiveValue> fontStyleValue;
+    CSSValueID fontStyleValue;
     RefPtr<CSSValueList> obliqueValues;
 
+    String customCSSText() const;
+    bool equals(const CSSFontStyleRangeValue&) const;
+
 private:
-    CSSFontStyleRangeValue(Ref<CSSPrimitiveValue>&& fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
-        : CSSValue(FontStyleRangeClass)
-        , fontStyleValue(WTFMove(fontStyleValue))
-        , obliqueValues(WTFMove(obliqueValues))
-    {
-    }
+    CSSFontStyleRangeValue(CSSValueID fontStyleValue, RefPtr<CSSValueList>&& obliqueValues);
 };
 
 }

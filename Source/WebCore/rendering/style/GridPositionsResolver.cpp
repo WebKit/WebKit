@@ -379,9 +379,9 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
 
     // If the grid item has an automatic position and a grid span for a named line in a given dimension, instead treat the grid span as one.
     if (initialPosition.isAuto() && finalPosition.isSpan() && !finalPosition.namedGridLine().isNull())
-        finalPosition.setSpanPosition(1, String());
+        finalPosition.setSpanPosition(1, AtomString());
     if (finalPosition.isAuto() && initialPosition.isSpan() && !initialPosition.namedGridLine().isNull())
-        initialPosition.setSpanPosition(1, String());
+        initialPosition.setSpanPosition(1, AtomString());
 
     if (isIndefiniteSpan(initialPosition, finalPosition) && is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem).isSubgrid(direction)) {
         // Indefinite span for an item that is subgridded in this axis.
@@ -389,10 +389,10 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
 
         if (initialPosition.isAuto()) {
             // Set initial position to span <line names - 1>
-            initialPosition.setSpanPosition(std::max(1, lineCount - 1), emptyString());
+            initialPosition.setSpanPosition(std::max(1, lineCount - 1), emptyAtom());
         } else {
             // Set final position to span <line names - 1>
-            finalPosition.setSpanPosition(std::max(1, lineCount - 1), emptyString());
+            finalPosition.setSpanPosition(std::max(1, lineCount - 1), emptyAtom());
         }
     }
 }
