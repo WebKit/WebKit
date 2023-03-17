@@ -485,7 +485,7 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             if (!isSupportedRenderer(sibling))
                 return true;
         }
-        return false;
+        return !canUseForLineLayout(rootBlockContainer);
     };
     switch (typeOfChange) {
     case TypeOfChangeForInvalidation::NodeRemoval:
