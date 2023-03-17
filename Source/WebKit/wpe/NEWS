@@ -1,3 +1,19 @@
+=================
+WPE WebKit 2.40.0
+=================
+
+What's new in WPE WebKit 2.40.0?
+
+  - Apply basic font properties as font variation settings.
+  - Fix input elements with type=range not having default touch handlers.
+  - Fix unmuting of web views.
+  - Fix the remote inspector when using the HTTP server.
+  - Fix the build with -Wl,--as-needed.
+  - Fix the build with LTO enabled.
+  - Fix the build with the journald logging support disabled.
+  - Fix the build with media stream support disabled.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.39.91
 ==================
