@@ -119,7 +119,7 @@ private:
     DisplayCaptureFactory& defaultDisplayCaptureFactory();
 
     struct DeviceInfo {
-        unsigned fitnessScore;
+        double fitnessScore;
         CaptureDevice device;
     };
 

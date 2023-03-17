@@ -154,7 +154,7 @@ public:
     const AtomString& name() const { return m_name; }
     void setName(const AtomString& name) { m_name = name; }
 
-    unsigned fitnessScore() const { return m_fitnessScore; }
+    double fitnessScore() const { return m_fitnessScore; }
 
     WEBCORE_EXPORT void addObserver(Observer&);
     WEBCORE_EXPORT void removeObserver(Observer&);
