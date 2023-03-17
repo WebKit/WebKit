@@ -224,18 +224,37 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
 {
     ASSERT(!needsLayout());
 
-    startOverhang = 0;
-    endOverhang = 0;
+    std::tie(startOverhang, endOverhang) = startAndEndOverhang(firstLine);
+    if (!startOverhang && !endOverhang)
+        return;
 
-    RenderRubyBase* rubyBase = this->rubyBase();
-    RenderRubyText* rubyText = this->rubyText();
+    auto* rubyBase = this->rubyBase();
+
+    // We overhang a ruby only if the neighboring render object is a text.
+    // We can overhang the ruby by no more than half the width of the neighboring text
+    // and no more than half the font size.
+    if (!shouldOverhang(firstLine, startRenderer, *rubyBase))
+        startOverhang = 0;
+    if (!shouldOverhang(firstLine, endRenderer, *rubyBase))
+        endOverhang = 0;
+
+    if (startOverhang)
+        startOverhang = std::min(startOverhang, downcast<RenderText>(*startRenderer).minLogicalWidth());
+    if (endOverhang)
+        endOverhang = std::min(endOverhang, downcast<RenderText>(*endRenderer).minLogicalWidth());
+}
+
+std::pair<float, float> RenderRubyRun::startAndEndOverhang(bool forFirstLine) const
+{
+    auto* rubyBase = this->rubyBase();
+    auto* rubyText = this->rubyText();
 
     if (!rubyBase || !rubyText)
-        return;
+        return { 0_lu, 0_lu };
 
     auto firstLineBox = InlineIterator::firstLineBoxFor(*rubyBase);
     if (!firstLineBox)
-        return;
+        return { 0_lu, 0_lu };
 
     LayoutUnit logicalWidth = this->logicalWidth();
     float logicalLeftOverhang = std::numeric_limits<float>::max();
@@ -245,23 +264,13 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
         logicalRightOverhang = std::min<float>(logicalRightOverhang, logicalWidth - line->contentLogicalRight());
     }
 
-    startOverhang = style().isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
-    endOverhang = style().isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
+    auto startOverhang = style().isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
+    auto endOverhang = style().isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
 
-    if (!shouldOverhang(firstLine, startRenderer, *rubyBase))
-        startOverhang = 0;
-    if (!shouldOverhang(firstLine, endRenderer, *rubyBase))
-        endOverhang = 0;
-
-    // We overhang a ruby only if the neighboring render object is a text.
-    // We can overhang the ruby by no more than half the width of the neighboring text
-    // and no more than half the font size.
-    const RenderStyle& rubyTextStyle = firstLine ? rubyText->firstLineStyle() : rubyText->style();
+    const RenderStyle& rubyTextStyle = forFirstLine ? rubyText->firstLineStyle() : rubyText->style();
     float halfWidthOfFontSize = rubyTextStyle.computedFontPixelSize() / 2.;
-    if (startOverhang)
-        startOverhang = std::min(startOverhang, std::min(downcast<RenderText>(*startRenderer).minLogicalWidth(), halfWidthOfFontSize));
-    if (endOverhang)
-        endOverhang = std::min(endOverhang, std::min(downcast<RenderText>(*endRenderer).minLogicalWidth(), halfWidthOfFontSize));
+
+    return { std::min(startOverhang, halfWidthOfFontSize), std::min(endOverhang, halfWidthOfFontSize) };
 }
 
 void RenderRubyRun::updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator& iterator) const

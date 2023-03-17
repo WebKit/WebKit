@@ -51,6 +51,9 @@
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
+#define ALLOW_RUBY 0
+#define ALLOW_RUBY_BASE_AND_TEXT 0
+
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         reasons.add(AvoidanceReason::reason); \
@@ -337,9 +340,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     if (renderer.isSVGRootOrLegacySVGRoot())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
 
+#if !ALLOW_RUBY
     if (renderer.isRubyRun())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
+#endif
     if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
             // Floats where the block container specifies margin-tirm need IFC implementation (geometry adjustment)
@@ -364,8 +368,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     if (is<RenderInline>(renderer)) {
         if (renderer.isSVGInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+#if !ALLOW_RUBY
         if (renderer.isRubyInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+#endif
         auto styleReasons = canUseForStyle(renderer, includeReasons);
         if (styleReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
@@ -411,9 +417,10 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
+#if !ALLOW_RUBY || !ALLOW_RUBY_BASE_AND_TEXT
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
+#endif
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
         if (auto childReasons = canUseForChild(flow, child, includeReasons))

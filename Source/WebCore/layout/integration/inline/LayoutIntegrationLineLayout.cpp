@@ -417,8 +417,13 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
         layoutBox.setShape(&shapeOutsideInfo->computedShape());
 
     if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(replacedOrInlineBlock)) {
-        auto [above, below] = rubyRun->annotationsAboveAndBelow();
-        layoutBox.setRubyAnnotationsAboveAndBelow(above, below);
+        auto adjustments = makeUnique<Layout::RubyAdjustments>();
+
+        std::tie(adjustments->annotationAbove, adjustments->annotationBelow) = rubyRun->annotationsAboveAndBelow();
+        std::tie(adjustments->overhang.start, adjustments->overhang.end) = rubyRun->startAndEndOverhang(false);
+        std::tie(adjustments->firstLineOverhang.start, adjustments->firstLineOverhang.end) = rubyRun->startAndEndOverhang(true);
+
+        layoutBox.setRubyAdjustments(WTFMove(adjustments));
     }
 }
 
