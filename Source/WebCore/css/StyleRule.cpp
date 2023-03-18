@@ -301,6 +301,21 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     return rules;
 }
 
+StyleRuleWithNesting::~StyleRuleWithNesting() = default;
+
+Ref<StyleRuleWithNesting> StyleRuleWithNesting::copy() const
+{
+    return adoptRef(*new StyleRuleWithNesting(*this));
+}
+
+StyleRuleWithNesting::StyleRuleWithNesting(const StyleRuleWithNesting& other)
+    : StyleRule(other)
+    , m_nestedRules(other.m_nestedRules.map( [](auto& rule) { return rule->copy(); }))
+    , m_originalSelectorList(other.m_originalSelectorList)
+{
+
+}
+
 Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
 { 
     return adoptRef(* new StyleRuleWithNesting(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors), WTFMove(nestedRules)));

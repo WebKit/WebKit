@@ -171,7 +171,11 @@ String CSSStyleRule::cssText() const
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    m_styleRule = downcast<StyleRule>(rule);
+    if (m_styleRule->isStyleRuleWithNesting())
+        m_styleRule = downcast<StyleRuleWithNesting>(rule);
+    else
+        m_styleRule = downcast<StyleRule>(rule);
+
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
 }
