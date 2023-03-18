@@ -153,6 +153,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 #endif
 
     auto commitLayerAndScrollingTrees = [&] {
+        if (layerTreeTransaction.hasAnyLayerChanges())
+            ++m_countOfTransactionsWithNonEmptyLayerChanges;
+
         if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
             if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
                 m_webPageProxy.setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());

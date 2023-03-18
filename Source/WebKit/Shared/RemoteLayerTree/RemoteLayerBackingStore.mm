@@ -319,7 +319,20 @@ bool RemoteLayerBackingStore::needsDisplay() const
         return true;
     }
 
-    auto needsDisplayReason = collection->backingStoreNeedsDisplay(*this);
+    auto needsDisplayReason = [&]() {
+        if (size().isEmpty())
+            return BackingStoreNeedsDisplayReason::None;
+
+        auto frontBuffer = bufferForType(RemoteLayerBackingStore::BufferType::Front);
+        if (!frontBuffer)
+            return BackingStoreNeedsDisplayReason::NoFrontBuffer;
+
+        if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+            return BackingStoreNeedsDisplayReason::FrontBufferIsVolatile;
+
+        return hasEmptyDirtyRegion() ? BackingStoreNeedsDisplayReason::None : BackingStoreNeedsDisplayReason::HasDirtyRegion;
+    }();
+
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " size " << size() << " needsDisplay() - needs display reason: " << needsDisplayReason);
     return needsDisplayReason != BackingStoreNeedsDisplayReason::None;
 }
@@ -348,7 +361,7 @@ void RemoteLayerBackingStore::prepareToDisplay()
         return;
     }
 
-    ASSERT(collection->backingStoreNeedsDisplay(*this) != BackingStoreNeedsDisplayReason::None);
+    ASSERT(needsDisplay());
 
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
 
@@ -742,6 +755,18 @@ RefPtr<ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType bufferType
 void RemoteLayerBackingStore::Buffer::discard()
 {
     imageBuffer = nullptr;
+}
+
+TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStoreProperties& properties)
+{
+    ts.dumpProperty("front buffer", properties.frontBufferIdentifier());
+    ts.dumpProperty("back buffer", properties.backBufferIdentifier());
+    ts.dumpProperty("secondaryBack buffer", properties.secondaryBackBufferIdentifier());
+
+    ts.dumpProperty("is opaque", properties.isOpaque());
+    ts.dumpProperty("has buffer handle", !!properties.bufferHandle());
+
+    return ts;
 }
 
 TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement displayRequirement)

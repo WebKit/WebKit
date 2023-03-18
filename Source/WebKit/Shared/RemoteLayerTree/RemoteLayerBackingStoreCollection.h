@@ -44,7 +44,6 @@ class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
 
 enum class SwapBuffersDisplayRequirement : uint8_t;
-enum class BackingStoreNeedsDisplayReason : uint8_t;
 
 class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
@@ -59,8 +58,6 @@ public:
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
-
-    virtual BackingStoreNeedsDisplayReason backingStoreNeedsDisplay(const RemoteLayerBackingStore&) const;
 
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
     void paintReachableBackingStoreContents();

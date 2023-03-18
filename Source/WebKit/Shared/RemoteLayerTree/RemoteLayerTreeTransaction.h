@@ -245,6 +245,11 @@ public:
 #endif
 
     typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<LayerProperties>> LayerPropertiesMap;
+    
+    bool hasAnyLayerChanges() const
+    {
+        return m_changedLayerProperties.size() || m_changedLayers.size() || m_createdLayers.size() || m_destroyedLayerIDs.size() || m_layerIDsWithNewlyUnreachableBackingStore.size();
+    }
 
     Vector<LayerCreationProperties> createdLayers() const { return m_createdLayers; }
     Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayers() const { return m_destroyedLayerIDs; }

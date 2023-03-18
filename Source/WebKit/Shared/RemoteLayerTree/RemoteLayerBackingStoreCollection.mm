@@ -48,21 +48,6 @@ RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayer
 
 RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = default;
 
-BackingStoreNeedsDisplayReason RemoteLayerBackingStoreCollection::backingStoreNeedsDisplay(const RemoteLayerBackingStore& backingStore) const
-{
-    if (backingStore.size().isEmpty())
-        return BackingStoreNeedsDisplayReason::None;
-
-    auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
-    if (!frontBuffer)
-        return BackingStoreNeedsDisplayReason::NoFrontBuffer;
-
-    if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
-        return BackingStoreNeedsDisplayReason::FrontBufferIsVolatile;
-
-    return backingStore.hasEmptyDirtyRegion() ? BackingStoreNeedsDisplayReason::None : BackingStoreNeedsDisplayReason::HasDirtyRegion;
-}
-
 void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
     for (auto* backingStore : m_backingStoresNeedingDisplay) {

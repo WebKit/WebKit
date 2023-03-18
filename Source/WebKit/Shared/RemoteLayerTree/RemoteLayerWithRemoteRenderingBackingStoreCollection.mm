@@ -47,29 +47,6 @@ RemoteRenderingBackendProxy& RemoteLayerWithRemoteRenderingBackingStoreCollectio
     return layerTreeContext().ensureRemoteRenderingBackendProxy();
 }
 
-BackingStoreNeedsDisplayReason RemoteLayerWithRemoteRenderingBackingStoreCollection::backingStoreNeedsDisplay(const RemoteLayerBackingStore& backingStore) const
-{
-    if (backingStore.size().isEmpty())
-        return BackingStoreNeedsDisplayReason::None;
-
-    auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
-    if (!frontBuffer)
-        return BackingStoreNeedsDisplayReason::NoFrontBuffer;
-
-    if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
-        return BackingStoreNeedsDisplayReason::FrontBufferIsVolatile;
-
-    if (auto* backend = frontBuffer->ensureBackendCreated()) {
-        auto* sharing = backend->toBackendSharing();
-        if (is<ImageBufferBackendHandleSharing>(sharing)) {
-            if (!downcast<ImageBufferBackendHandleSharing>(*sharing).hasBackendHandle())
-                return BackingStoreNeedsDisplayReason::FrontBufferHasNoSharingHandle;
-        }
-    }
-
-    return backingStore.hasEmptyDirtyRegion() ? BackingStoreNeedsDisplayReason::None : BackingStoreNeedsDisplayReason::HasDirtyRegion;
-}
-
 void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
     Vector<RemoteRenderingBackendProxy::LayerPrepareBuffersData> prepareBuffersData;

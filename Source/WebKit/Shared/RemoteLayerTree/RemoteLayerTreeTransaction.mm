@@ -853,27 +853,6 @@ void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vec
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
-static const char* nameForBackingStoreType(RemoteLayerBackingStore::Type type)
-{
-    switch (type) {
-    case RemoteLayerBackingStore::Type::IOSurface:
-        return "IOSurface";
-    case RemoteLayerBackingStore::Type::Bitmap:
-        return "Bitmap";
-    }
-    return nullptr;
-}
-
-static TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
-{
-    ts << backingStore.size();
-    ts << " scale=" << backingStore.scale();
-    if (backingStore.isOpaque())
-        ts << " opaque";
-    ts << " " << nameForBackingStoreType(backingStore.type());
-    return ts;
-}
-
 static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerProperties)
 {
     if (changedLayerProperties.isEmpty())
@@ -982,8 +961,8 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & LayerChange::BackingStoreChanged) {
-            if (const RemoteLayerBackingStore* backingStore = layerProperties.backingStore.get())
-                ts.dumpProperty<const RemoteLayerBackingStore&>("backingStore", *backingStore);
+            if (auto* backingStoreProperties = layerProperties.backingStoreProperties.get())
+                ts.dumpProperty("backingStore", *backingStoreProperties);
             else
                 ts.dumpProperty("backingStore", "removed");
         }

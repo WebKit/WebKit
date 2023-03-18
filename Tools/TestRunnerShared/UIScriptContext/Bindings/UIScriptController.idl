@@ -383,4 +383,6 @@ interface UIScriptController {
 
     readonly attribute DOMString lastUndoLabel;
     readonly attribute DOMString firstRedoLabel;
+    
+    readonly attribute unsigned long countOfUpdatesWithLayerChanges;
 };

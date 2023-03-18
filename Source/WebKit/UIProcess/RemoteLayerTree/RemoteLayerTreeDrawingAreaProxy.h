@@ -69,6 +69,9 @@ public:
     void updateOverlayRegionIDs(const HashSet<WebCore::GraphicsLayer::PlatformLayerID> &overlayRegionIDs) { m_remoteLayerTreeHost->updateOverlayRegionIDs(overlayRegionIDs); }
 #endif
 
+    // For testing.
+    unsigned countOfTransactionsWithNonEmptyLayerChanges() const { return m_countOfTransactionsWithNonEmptyLayerChanges; }
+    
 protected:
     void updateDebugIndicatorPosition();
 
@@ -134,6 +137,8 @@ private:
     TransactionID m_transactionIDForPendingCACommit;
     TransactionID m_transactionIDForUnhidingContent;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
+    
+    unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
 
     Vector<Ref<WebProcessProxy>> m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver;
 };

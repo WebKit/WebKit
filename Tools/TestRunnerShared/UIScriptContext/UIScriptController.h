@@ -134,6 +134,7 @@ public:
     // Compositing
 
     virtual JSObjectRef propertiesOfLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
+    virtual unsigned long countOfUpdatesWithLayerChanges() const { notImplemented(); return 0; }
 
     // Scrolling
 

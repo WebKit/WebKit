@@ -229,7 +229,16 @@ public:
 
     void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
 
+    const std::optional<ImageBufferBackendHandle>& bufferHandle() const { return m_bufferHandle; };
+
+    std::optional<WebCore::RenderingResourceIdentifier> frontBufferIdentifier() const { return m_frontBufferIdentifier; }
+    std::optional<WebCore::RenderingResourceIdentifier> backBufferIdentifier() const { return m_backBufferIdentifier; }
+    std::optional<WebCore::RenderingResourceIdentifier> secondaryBackBufferIdentifier() const { return m_secondaryBackBufferIdentifier; }
+
+    bool isOpaque() const { return m_isOpaque; }
+
     static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
+
 private:
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
     RetainPtr<id> m_contentsBuffer;
@@ -247,5 +256,6 @@ private:
 
 WTF::TextStream& operator<<(WTF::TextStream&, SwapBuffersDisplayRequirement);
 WTF::TextStream& operator<<(WTF::TextStream&, BackingStoreNeedsDisplayReason);
+WTF::TextStream& operator<<(WTF::TextStream&, const RemoteLayerBackingStoreProperties&);
 
 } // namespace WebKit
