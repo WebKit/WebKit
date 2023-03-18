@@ -25,15 +25,14 @@
 
 #include "config.h"
 
-// FIXME: Re-enable this test once rdar://106726247 is resolved.
-#if 0
+#if OS(DARWIN)
 
 #include <sys/unistd.h>
 #include <wtf/darwin/WeakLinking.h>
 
 #if PLATFORM(IOS_FAMILY)
 
-asm(".linker_option \"-lTestWTFAlwaysMissing-iOS-v2\"");
+asm(".linker_option \"-lTestWTFAlwaysMissing-iOS\"");
 
 #else
 
