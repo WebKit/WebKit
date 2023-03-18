@@ -676,6 +676,9 @@ Move U:G:Ptr, D:G:Ptr
     Tmp, Addr as storePtr
     Tmp, Index as storePtr
     x86: Imm, Addr as storePtr
+    arm64: ZeroReg, Tmp
+    arm64: ZeroReg, Addr as storePtr
+    arm64: ZeroReg, Index as storePtr
 
 # This is for moving between spill slots.
 Move U:G:Ptr, D:G:Ptr, S:G:Ptr
