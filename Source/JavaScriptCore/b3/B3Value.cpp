@@ -720,6 +720,7 @@ Effects Value::effects() const
     case VectorMulSat:
     case VectorSwizzle:
     case VectorMulByElement:
+    case VectorShiftByVector:
         break;
     case Div:
     case UDiv:
@@ -965,6 +966,7 @@ ValueKey Value::key() const
     case VectorShr:
     case VectorMulSat:
     case VectorAvgRound:
+    case VectorShiftByVector:
         numChildrenForKind(kind(), 2);
         return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1));
     case VectorReplaceLane:

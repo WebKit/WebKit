@@ -3845,6 +3845,13 @@ private:
             return;
         }
 
+        case B3::VectorShiftByVector: {
+            ASSERT(isARM64());
+            SIMDValue* value = m_value->as<SIMDValue>();
+            append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value));
+            return;
+        }
+
         case B3::VectorSplat: {
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
@@ -3908,6 +3915,7 @@ private:
 
         case B3::VectorShr:
         case B3::VectorShl: {
+            ASSERT(!isARM64()); // In ARM64, they are macro.
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
 
@@ -3919,19 +3927,6 @@ private:
             Tmp shiftAmount = m_code.newTmp(B3::GP);
             Tmp shiftVector = m_code.newTmp(B3::FP);
 
-            if constexpr (isARM64()) {
-                append(And32, Arg::bitImm(mask), shift, shiftAmount);
-                if (value->opcode() == VectorShr) {
-                    // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to
-                    // left shift is negative, it's a right shift by the absolute value of that amount.
-                    append(Neg32, shiftAmount);
-                }
-                append(VectorSplatInt8, shiftAmount, shiftVector);
-                append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), v, shiftVector, tmp(value));
-
-                return;
-            }
-            
             if constexpr (isX86()) {
                 append(Move, shift, shiftAmount);
                 append(And32, Arg::imm(mask), shiftAmount);

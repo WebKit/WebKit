@@ -534,6 +534,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case VectorMulByElement:
         out.print("VectorMulByElement");
         return;
+    case VectorShiftByVector:
+        out.print("VectorShiftByVector");
+        return;
     case Upsilon:
         out.print("Upsilon");
         return;
