@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,33 @@
 
 namespace WebCore {
 
+// For performance reasons, we do not use virtual functions in this class.
+static_assert(!std::is_polymorphic_v<DeprecatedCSSOMValue>);
+
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValue::create(const CSSValue& value, CSSStyleDeclaration& styleDeclaration)
+{
+    // This function implements legacy wrapping; seemingly strange choices may be for compatibility with legacy code expecting it.
+    bool usePrimitiveWrapper = value.isAttr()
+        || value.isColor()
+        || value.isCounter()
+        || value.isCustomIdent()
+        || value.isFontFamily()
+        || value.isIdent()
+        || value.isImageValue()
+        || value.isPair()
+        || value.isPrimitiveValue()
+        || value.isString()
+        || value.isQuad()
+        || value.isRect()
+        || value.isURL()
+        || value.isUnresolvedColor();
+    if (usePrimitiveWrapper)
+        return DeprecatedCSSOMPrimitiveValue::create(value, styleDeclaration);
+    if (value.isValueList() || value.isTransformListValue())
+        return DeprecatedCSSOMValueList::create(downcast<CSSValueContainingVector>(value), styleDeclaration);
+    return DeprecatedCSSOMComplexValue::create(value, styleDeclaration);
+}
+
 void DeprecatedCSSOMValue::operator delete(DeprecatedCSSOMValue* value, std::destroying_delete_t)
 {
     auto destroyAndFree = [&](auto& value) {
@@ -57,7 +84,7 @@ unsigned short DeprecatedCSSOMValue::cssValueType() const
     case ClassType::Complex:
         return downcast<DeprecatedCSSOMComplexValue>(*this).cssValueType();
     case ClassType::Primitive:
-        return downcast<DeprecatedCSSOMPrimitiveValue>(*this).cssValueType();
+        return CSS_PRIMITIVE_VALUE;
     case ClassType::List:
         return CSS_VALUE_LIST;
     }
@@ -85,7 +112,7 @@ unsigned short DeprecatedCSSOMComplexValue::cssValueType() const
     constexpr unsigned short CSS_INITIAL = 4;
     constexpr unsigned short CSS_UNSET = 5;
     constexpr unsigned short CSS_REVERT = 6;
-    switch (valueID(m_value.get())) {
+    switch (m_value->valueID()) {
     case CSSValueInherit:
         return CSS_INHERIT;
     case CSSValueInitial:

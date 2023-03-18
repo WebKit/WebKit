@@ -49,7 +49,7 @@ public:
 
 private:
     CSSPendingSubstitutionValue(CSSPropertyID shorthandPropertyId, Ref<CSSVariableReferenceValue>&& shorthandValue)
-        : CSSValue(PendingSubstitutionValueClass)
+        : CSSValue(Type::PendingSubstitutionValue)
         , m_shorthandPropertyId(shorthandPropertyId)
         , m_shorthandValue(WTFMove(shorthandValue))
     {

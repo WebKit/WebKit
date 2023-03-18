@@ -26,42 +26,25 @@
 #pragma once
 
 #include "CSSPrimitiveValue.h"
-#include "CSSValue.h"
 
 namespace WebCore {
 
 class CSSOffsetRotateValue final : public CSSValue {
 public:
-    static Ref<CSSOffsetRotateValue> create(RefPtr<CSSPrimitiveValue>&& modifier, RefPtr<CSSPrimitiveValue>&& angle)
-    {
-        return adoptRef(*new CSSOffsetRotateValue(WTFMove(modifier), WTFMove(angle)));
-    }
+    static Ref<CSSOffsetRotateValue> create(CSSValueID modifier, RefPtr<CSSPrimitiveValue>&& angle);
 
-    String customCSSText() const;
-
-    CSSPrimitiveValue* modifier() const { return m_modifier.get(); }
+    CSSValueID modifier() const { return m_modifier; }
     CSSPrimitiveValue* angle() const { return m_angle.get(); }
 
     bool isInitialValue() const;
 
+    String customCSSText() const;
     bool equals(const CSSOffsetRotateValue&) const;
 
 private:
-    CSSOffsetRotateValue(RefPtr<CSSPrimitiveValue>&& modifier, RefPtr<CSSPrimitiveValue>&& angle)
-        : CSSValue(OffsetRotateClass)
-        , m_modifier(WTFMove(modifier))
-        , m_angle(WTFMove(angle))
-    {
-        ASSERT(m_modifier || m_angle);
+    CSSOffsetRotateValue(CSSValueID modifier, RefPtr<CSSPrimitiveValue>&& angle);
 
-        if (m_modifier)
-            ASSERT(m_modifier->isValueID());
-
-        if (m_angle)
-            ASSERT(m_angle->isAngle());
-    }
-
-    RefPtr<CSSPrimitiveValue> m_modifier;
+    CSSValueID m_modifier { };
     RefPtr<CSSPrimitiveValue> m_angle;
 };
 

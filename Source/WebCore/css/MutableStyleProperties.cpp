@@ -28,7 +28,6 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
-#include "CSSValuePool.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
@@ -228,7 +227,7 @@ bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSPropert
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
 {
     ASSERT(isLonghand(propertyID));
-    return setProperty(CSSProperty(propertyID, CSSPrimitiveValue::create(identifier), important));
+    return setProperty(CSSProperty(propertyID, CSSIdentValue::create(identifier), important));
 }
 
 bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context)

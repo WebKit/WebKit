@@ -9,41 +9,23 @@
 <script>
 description("Test the parsing of the image-set and -webkit-image-set functions.");
 
-function jsWrapperClass(node)
+function serializedRule(property, value)
 {
-    if (!node)
-        return "[null]";
-    var string = Object.prototype.toString.apply(node);
-    return string.substr(8, string.length - 9);
+    var div = document.createElement("div");
+    div.setAttribute("style", property + ": " + value);
+    document.body.appendChild(div);
+    var result = div.style.getPropertyValue(property);
+    document.body.removeChild(div);
+    return result;
 }
-
-function shouldBeType(expression, className)
-{
-    shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
-}
-
-// These have to be global for the test helpers to see them.
-var imageSetRule, serializedRule
 
 function testImageSetRule(description, property, rule, expectedSerialization)
 {
     ["image-set", "-webkit-image-set"].forEach((valueName) => {
         debug("");
-        debug(`${description}: ${valueName}(${rule})`);
+        debug(`${description}`);
+        shouldBeEqualToString("serializedRule('" + property + "', '" + valueName + "(" + rule.replace(/'/g, "\\'") + ")')", `image-set(${expectedSerialization})`);
 
-        var div = document.createElement("div");
-        div.setAttribute("style", property + ": " + valueName + "(" + rule + ")");
-        document.body.appendChild(div);
-
-        imageSetRule = div.style.getPropertyCSSValue(property);
-        shouldBeType("imageSetRule", "CSSValueList");
-
-        serializedRule = div.style.getPropertyValue(property);
-        expectTrue(serializedRule == `image-set(${expectedSerialization})`, "Image Set rule serializes as expected.");
-
-        document.body.removeChild(div);
     });
 }
 

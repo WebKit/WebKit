@@ -30,24 +30,29 @@
 
 namespace WebCore {
 
+CSSFontStyleRangeValue::CSSFontStyleRangeValue(CSSValueID fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
+    : CSSValue(Type::FontStyleRange)
+    , fontStyleValue(fontStyleValue)
+    , obliqueValues(WTFMove(obliqueValues))
+{
+}
+
+Ref<CSSFontStyleRangeValue> CSSFontStyleRangeValue::create(CSSValueID fontStyleValue, RefPtr<CSSValueList>&& obliqueValues)
+{
+    return adoptRef(*new CSSFontStyleRangeValue(fontStyleValue, WTFMove(obliqueValues)));
+}
+
 String CSSFontStyleRangeValue::customCSSText() const
 {
     if (!obliqueValues)
-        return fontStyleValue->cssText();
-
-    StringBuilder builder;
-    builder.append(fontStyleValue->cssText());
-    builder.append(' ');
-    builder.append(obliqueValues->cssText());
-    return builder.toString();
+        return nameString(fontStyleValue);
+    return makeString(nameLiteral(fontStyleValue), ' ', obliqueValues->cssText());
 }
 
 bool CSSFontStyleRangeValue::equals(const CSSFontStyleRangeValue& other) const
 {
-    if (!obliqueValues)
-        return fontStyleValue.get() == other.fontStyleValue.get();
-    return fontStyleValue.get() == other.fontStyleValue.get()
-        && *obliqueValues == *other.obliqueValues;
+    return fontStyleValue == other.fontStyleValue
+        && compareCSSValuePtr(obliqueValues, other.obliqueValues);
 }
 
 }

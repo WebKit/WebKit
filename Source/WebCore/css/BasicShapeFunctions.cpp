@@ -32,9 +32,9 @@
 
 #include "BasicShapes.h"
 #include "CSSBasicShapes.h"
+#include "CSSIdentValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePair.h"
-#include "CSSValuePool.h"
 #include "CalculationValue.h"
 #include "RenderStyle.h"
 #include "SVGPathByteStream.h"
@@ -44,26 +44,26 @@ namespace WebCore {
 static Ref<CSSValue> valueForCenterCoordinate(const RenderStyle& style, const BasicShapeCenterCoordinate& center, BoxOrient orientation)
 {
     if (center.direction() == BasicShapeCenterCoordinate::Direction::TopLeft)
-        return CSSPrimitiveValue::create(center.length(), style);
+        return CSSValue::create(center.length(), style);
 
     CSSValueID keyword = orientation == BoxOrient::Horizontal ? CSSValueRight : CSSValueBottom;
 
-    return CSSValuePair::create(CSSPrimitiveValue::create(keyword), CSSPrimitiveValue::create(center.length(), style));
+    return CSSValuePair::create(CSSIdentValue::create(keyword), CSSValue::create(center.length(), style));
 }
 
-static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& style, const BasicShapeRadius& radius)
+static Ref<CSSValue> basicShapeRadiusToCSSValue(const RenderStyle& style, const BasicShapeRadius& radius)
 {
     switch (radius.type()) {
     case BasicShapeRadius::Type::Value:
-        return CSSPrimitiveValue::create(radius.value(), style);
+        return CSSValue::create(radius.value(), style);
     case BasicShapeRadius::Type::ClosestSide:
-        return CSSPrimitiveValue::create(CSSValueClosestSide);
+        return CSSIdentValue::create(CSSValueClosestSide);
     case BasicShapeRadius::Type::FarthestSide:
-        return CSSPrimitiveValue::create(CSSValueFarthestSide);
+        return CSSIdentValue::create(CSSValueFarthestSide);
     }
 
     ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::create(CSSValueClosestSide);
+    return CSSIdentValue::create(CSSValueClosestSide);
 }
 
 static SVGPathByteStream copySVGPathByteStream(const SVGPathByteStream& source, SVGPathConversion conversion)
@@ -96,7 +96,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         auto& polygon = downcast<BasicShapePolygon>(basicShape);
         CSSValueListBuilder values;
         for (auto& value : polygon.values())
-            values.append(CSSPrimitiveValue::create(value, style));
+            values.append(CSSValue::create(value, style));
         return CSSPolygonValue::create(WTFMove(values), polygon.windRule());
     }
     case BasicShape::Type::Path: {
@@ -106,7 +106,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     }
     case BasicShape::Type::Inset: {
         auto createValue = [&](const Length& length) {
-            return CSSPrimitiveValue::create(length, style);
+            return CSSValue::create(length, style);
         };
         auto createPair = [&](const LengthSize& size) {
             return CSSValuePair::create(createValue(size.width), createValue(size.height));
@@ -126,7 +126,7 @@ static Length convertToLength(const CSSToLengthConversionData& conversionData, c
     return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
 }
 
-static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSValue* value)
+static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSValuePair* value)
 {
     if (!value)
         return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
@@ -143,8 +143,8 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthCon
     else if (value->isValueID())
         keyword = value->valueID();
     else if (value->isPair()) {
-        keyword = value->first().valueID();
-        offset = convertToLength(conversionData, value->second());
+        keyword = downcast<CSSValuePair>(*value).first().valueID();
+        offset = convertToLength(conversionData, downcast<CSSValuePair>(*value).second());
     } else
         offset = convertToLength(conversionData, *value);
 

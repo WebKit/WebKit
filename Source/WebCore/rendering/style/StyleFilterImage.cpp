@@ -29,7 +29,7 @@
 
 #include "CSSFilter.h"
 #include "CSSFilterImageValue.h"
-#include "CSSValuePool.h"
+#include "CSSIdentValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "ComputedStyleExtractor.h"
@@ -74,7 +74,7 @@ bool StyleFilterImage::equalInputImages(const StyleFilterImage& other) const
 
 Ref<CSSValue> StyleFilterImage::computedStyleValue(const RenderStyle& style) const
 {
-    return CSSFilterImageValue::create(m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone)), ComputedStyleExtractor::valueForFilter(style, m_filterOperations));
+    return CSSFilterImageValue::create(m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSIdentValue::create(CSSValueNone)), ComputedStyleExtractor::valueForFilter(style, m_filterOperations));
 }
 
 bool StyleFilterImage::isPending() const

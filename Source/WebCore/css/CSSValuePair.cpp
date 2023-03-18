@@ -1,5 +1,6 @@
-/*
+/**
  * Copyright (C) 2021 Tyler Wilcock <twilco.o@protonmail.com>.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +26,57 @@
 
 #include "config.h"
 #include "CSSValuePair.h"
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-CSSValuePair::CSSValuePair(Ref<CSSValue> first, Ref<CSSValue> second, IdenticalValueSerialization serialization)
-    : CSSValue(ValuePairClass)
-    , m_coalesceIdenticalValues(serialization != IdenticalValueSerialization::DoNotCoalesce)
+CSSValuePair::CSSValuePair(Ref<CSSValue>&& first, Ref<CSSValue>&& second, IdenticalValueSerialization serialization)
+    : CSSValue(Type::ValuePair)
     , m_first(WTFMove(first))
     , m_second(WTFMove(second))
 {
+    m_isNoncoalescing = serialization == IdenticalValueSerialization::DoNotCoalesce;
+
+    // One bit is used for the "has scalar in pointer" flag. There are 31 available for the scalar on 32-bit platforms. Check that we fit.
+    static_assert(SecondValueIDShift + IdentBits <= 31);
 }
 
-Ref<CSSValuePair> CSSValuePair::create(Ref<CSSValue> first, Ref<CSSValue> second)
+Ref<CSSValuePair> CSSValuePair::create(Ref<CSSValue>&& first, Ref<CSSValue>&& second)
 {
+    if (first->isValueID() && second->isValueID())
+        return create(first->valueID(), second->valueID());
     return adoptRef(*new CSSValuePair(WTFMove(first), WTFMove(second), IdenticalValueSerialization::Coalesce));
 }
 
-Ref<CSSValuePair> CSSValuePair::createNoncoalescing(Ref<CSSValue> first, Ref<CSSValue> second)
+Ref<CSSValuePair> CSSValuePair::createNoncoalescing(Ref<CSSValue>&& first, Ref<CSSValue>&& second)
 {
+    if (first->isValueID() && second->isValueID())
+        return *reinterpret_cast<CSSValuePair*>(typeScalar(Type::ValuePair) | IsNoncoalescingBit | static_cast<uintptr_t>(first->valueID()) << FirstValueIDShift | static_cast<uintptr_t>(second->valueID()) << SecondValueIDShift);
     return adoptRef(*new CSSValuePair(WTFMove(first), WTFMove(second), IdenticalValueSerialization::DoNotCoalesce));
 }
 
 String CSSValuePair::customCSSText() const
 {
-    String first = m_first->cssText();
-    String second = m_second->cssText();
-    if (m_coalesceIdenticalValues && first == second)
+    String first = this->first().cssText();
+    String second = this->second().cssText();
+    if (!isNoncoalescing() && first == second)
         return first;
-    return makeString(first, separatorCSSText(), second);
+    return makeString(first, ' ', second);
 }
 
 bool CSSValuePair::equals(const CSSValuePair& other) const
 {
-    return m_valueSeparator == other.m_valueSeparator
-        && m_coalesceIdenticalValues == other.m_coalesceIdenticalValues
-        && m_first->equals(other.m_first)
-        && m_second->equals(other.m_second);
+    if (this == &other)
+        return true;
+    if (eitherHasScalarInPointer(*this, other))
+        return false;
+    auto& a = *opaque(this);
+    auto& b = *opaque(&other);
+    return a.m_valueSeparator == b.m_valueSeparator
+        && a.m_isNoncoalescing == b.m_isNoncoalescing
+        && a.m_first->equals(b.m_first)
+        && a.m_second->equals(b.m_second);
 }
 
 } // namespace WebCore

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CSSFontVariationValue::CSSFontVariationValue(FontTag tag, float value)
-    : CSSValue(FontVariationClass)
+    : CSSValue(Type::FontVariation)
     , m_tag(tag)
     , m_value(value)
 {

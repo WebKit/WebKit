@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CSSLineBoxContainValue::CSSLineBoxContainValue(OptionSet<LineBoxContain> value)
-    : CSSValue(LineBoxContainClass)
+    : CSSValue(Type::LineBoxContain)
     , m_value(value)
 {
 }

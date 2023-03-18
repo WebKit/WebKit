@@ -27,7 +27,7 @@ namespace WebCore {
 
 class Animation;
 class CSSFunctionValue;
-class CSSPrimitiveValue;
+class CSSResolvedColorValue;
 class CSSValue;
 class CSSValueList;
 class Element;
@@ -70,7 +70,7 @@ public:
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyProperties(Span<const CSSPropertyID>);
     Ref<MutableStyleProperties> copyProperties();
-    RefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword();
+    String serializeFontSizePreferringKeyword();
     bool useFixedFontDefaultSize();
     bool propertyMatches(CSSPropertyID, const CSSValue*);
     bool propertyMatches(CSSPropertyID, CSSValueID);
@@ -78,7 +78,7 @@ public:
     enum class AdjustPixelValuesForComputedStyle : bool { No, Yes };
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
-    static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
+    static Ref<CSSResolvedColorValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
 
     static void addValueForAnimationPropertyToList(CSSValueListBuilder&, CSSPropertyID, const Animation*);
 
@@ -89,7 +89,7 @@ private:
     RenderElement* styledRenderer() const;
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID);
-    Ref<CSSValue> adjustSVGPaint(SVGPaintType, const String& url, Ref<CSSPrimitiveValue> color) const;
+    Ref<CSSValue> adjustSVGPaint(SVGPaintType, const String& url, Ref<CSSResolvedColorValue>&&) const;
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
     Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);

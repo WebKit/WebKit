@@ -26,37 +26,39 @@
 #include "config.h"
 #include "CSSOffsetRotateValue.h"
 
-#include "CSSValuePool.h"
-
 namespace WebCore {
+
+CSSOffsetRotateValue::CSSOffsetRotateValue(CSSValueID modifier, RefPtr<CSSPrimitiveValue>&& angle)
+    : CSSValue(Type::OffsetRotate)
+    , m_modifier(modifier)
+    , m_angle(WTFMove(angle))
+{
+    ASSERT(m_modifier || m_angle);
+    ASSERT(!m_angle || m_angle->isAngle());
+}
+
+Ref<CSSOffsetRotateValue> CSSOffsetRotateValue::create(CSSValueID modifier, RefPtr<CSSPrimitiveValue>&& angle)
+{
+    return adoptRef(*new CSSOffsetRotateValue(modifier, WTFMove(angle)));
+}
 
 String CSSOffsetRotateValue::customCSSText() const
 {
-    StringBuilder builder;
-
-    if (m_modifier)
-        builder.append(m_modifier->cssText());
-
-    if (m_angle) {
-        if (!builder.isEmpty())
-            builder.append(' ');
-
-        builder.append(m_angle->cssText());
-    }
-
-    return builder.toString();
+    if (!m_angle)
+        return nameString(m_modifier);
+    if (!m_modifier)
+        return m_angle->cssText();
+    return makeString(nameLiteral(m_modifier), ' ', m_angle->cssText());
 }
 
 bool CSSOffsetRotateValue::isInitialValue() const
 {
-    return m_modifier && m_modifier->valueID() == CSSValueAuto
-        && (!m_angle || m_angle->computeDegrees() == 0.0);
+    return m_modifier == CSSValueAuto && (!m_angle || m_angle->computeDegrees() == 0.0);
 }
 
 bool CSSOffsetRotateValue::equals(const CSSOffsetRotateValue& o) const
 {
-    return compareCSSValuePtr(m_modifier, o.m_modifier)
-        && compareCSSValuePtr(m_angle, o.m_angle);
+    return m_modifier == o.m_modifier && compareCSSValuePtr(m_angle, o.m_angle);
 }
 
 } // namespace WebCore

@@ -45,7 +45,7 @@ inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
     }
 }
 
-inline std::optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
+inline CSSValueID fontStretchKeyword(FontSelectionValue stretch)
 {
     if (stretch == ultraCondensedStretchValue())
         return CSSValueUltraCondensed;
@@ -65,7 +65,7 @@ inline std::optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
         return CSSValueExtraExpanded;
     if (stretch == ultraExpandedStretchValue())
         return CSSValueUltraExpanded;
-    return std::nullopt;
+    return CSSValueInvalid;
 }
 
 inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
@@ -94,13 +94,13 @@ inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
     }
 }
 
-inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
+inline CSSValueID fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
 {
     if (!style || style.value() == normalItalicValue())
         return CSSValueNormal;
     if (style.value() == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;
-    return std::nullopt;
+    return CSSValueInvalid;
 }
 
 }

@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
+class CSSIdentValue;
 class CSSPrimitiveValue;
 class CSSValue;
 class CSSValueList;
-class CSSValuePool;
 class Color;
 class ScriptExecutionContext;
 
@@ -51,17 +51,17 @@ public:
     static RefPtr<CSSValue> parseFontFaceStretch(const String&, ScriptExecutionContext&);
     static RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
     static RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSPrimitiveValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
+    static RefPtr<CSSIdentValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
 };
 
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&);
+RefPtr<CSSIdentValue> consumeFontStretchKeywordValue(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&);
+RefPtr<CSSIdentValue> consumeFontFaceFontDisplay(CSSParserTokenRange&);
 
 #if ENABLE(VARIATION_FONTS)
 RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode);

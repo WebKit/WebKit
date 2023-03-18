@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class CSSStyleDeclaration;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
 

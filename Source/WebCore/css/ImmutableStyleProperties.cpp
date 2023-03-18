@@ -36,20 +36,20 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
     : StyleProperties(mode, length)
 {
     auto* metadataArray = const_cast<StylePropertyMetadata*>(this->metadataArray());
-    auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    auto* valueArray = this->valueArray();
     for (unsigned i = 0; i < length; ++i) {
         metadataArray[i] = properties[i].metadata();
         auto* value = properties[i].value();
-        valueArray[i] = value;
+        valueArray[i] = reinterpret_cast<uintptr_t>(value);
         value->ref();
     }
 }
 
 ImmutableStyleProperties::~ImmutableStyleProperties()
 {
-    auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    auto* valueArray = this->valueArray();
     for (unsigned i = 0; i < m_arraySize; ++i)
-        valueArray[i]->deref();
+        reinterpret_cast<CSSValue*>(valueArray[i].get())->deref();
 }
 
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode mode)
@@ -75,7 +75,7 @@ int ImmutableStyleProperties::findCustomPropertyIndex(StringView propertyName) c
     for (int n = m_arraySize - 1 ; n >= 0; --n) {
         if (metadataArray()[n].m_propertyID == CSSPropertyCustom) {
             // We found a custom property. See if the name matches.
-            auto* value = valueArray()[n].get();
+            auto* value = reinterpret_cast<CSSValue*>(valueArray()[n].get());
             if (!value)
                 continue;
             if (downcast<CSSCustomPropertyValue>(*value).name() == propertyName)

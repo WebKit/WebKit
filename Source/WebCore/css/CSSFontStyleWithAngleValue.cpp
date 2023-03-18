@@ -29,7 +29,7 @@
 namespace WebCore {
 
 CSSFontStyleWithAngleValue::CSSFontStyleWithAngleValue(Ref<CSSPrimitiveValue>&& obliqueAngle)
-    : CSSValue(FontStyleWithAngleClass)
+    : CSSValue(Type::FontStyleWithAngle)
     , m_obliqueAngle(WTFMove(obliqueAngle))
 {
 }

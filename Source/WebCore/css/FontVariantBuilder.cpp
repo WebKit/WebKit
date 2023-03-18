@@ -28,7 +28,6 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
-#include "CSSValuePool.h"
 #include "TextFlags.h"
 
 namespace WebCore {
@@ -72,7 +71,7 @@ FontVariantLigaturesValues extractFontVariantLigatures(const CSSValue& value)
                 break;
             }
         }
-    } else if (is<CSSPrimitiveValue>(value)) {
+    } else {
         switch (value.valueID()) {
         case CSSValueNormal:
             break;
@@ -131,8 +130,8 @@ FontVariantNumericValues extractFontVariantNumeric(const CSSValue& value)
                 break;
             }
         }
-    } else if (is<CSSPrimitiveValue>(value))
-        ASSERT(value.valueID() == CSSValueNormal);
+    } else
+        ASSERT(value == CSSValueNormal);
 
     return FontVariantNumericValues(figure, spacing, fraction, ordinal, slashedZero);
 }
@@ -178,8 +177,8 @@ FontVariantEastAsianValues extractFontVariantEastAsian(const CSSValue& value)
                 break;
             }
         }
-    } else if (is<CSSPrimitiveValue>(value))
-        ASSERT(value.valueID() == CSSValueNormal);
+    } else
+        ASSERT(value == CSSValueNormal);
 
     return FontVariantEastAsianValues(variant, width, ruby);
 }

@@ -128,17 +128,6 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
     if (!transformValue.length())
         return nullptr;
 
-    bool haveNonPrimitiveValue = false;
-    for (unsigned j = 0; j < transformValue.length(); ++j) {
-        if (!is<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(j))) {
-            haveNonPrimitiveValue = true;
-            break;
-        }
-    }
-    if (haveNonPrimitiveValue)
-        return nullptr;
-
-    auto& firstValue = downcast<CSSPrimitiveValue>(transformValue[0]);
     auto doubleValue = [&](unsigned index) {
         return downcast<CSSPrimitiveValue>(transformValue[index]).doubleValue();
     };
@@ -150,9 +139,9 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         double sx = 1.0;
         double sy = 1.0;
         if (transformValue.name() == CSSValueScaleY)
-            sy = firstValue.doubleValueDividingBy100IfPercentage();
+            sy = downcast<CSSPrimitiveValue>(transformValue[0]).doubleValueDividingBy100IfPercentage();
         else {
-            sx = firstValue.doubleValueDividingBy100IfPercentage();
+            sx = downcast<CSSPrimitiveValue>(transformValue[0]).doubleValueDividingBy100IfPercentage();
             if (transformValue.name() != CSSValueScaleX) {
                 if (transformValue.length() > 1) {
                     auto& secondValue = downcast<CSSPrimitiveValue>(transformValue[1]);
@@ -170,11 +159,11 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         double sy = 1.0;
         double sz = 1.0;
         if (transformValue.name() == CSSValueScaleZ)
-            sz = firstValue.doubleValueDividingBy100IfPercentage();
+            sz = downcast<CSSPrimitiveValue>(transformValue[0]).doubleValueDividingBy100IfPercentage();
         else if (transformValue.name() == CSSValueScaleY)
-            sy = firstValue.doubleValueDividingBy100IfPercentage();
+            sy = downcast<CSSPrimitiveValue>(transformValue[0]).doubleValueDividingBy100IfPercentage();
         else {
-            sx = firstValue.doubleValueDividingBy100IfPercentage();
+            sx = downcast<CSSPrimitiveValue>(transformValue[0]).doubleValueDividingBy100IfPercentage();
             if (transformValue.name() != CSSValueScaleX) {
                 if (transformValue.length() > 2) {
                     auto& thirdValue = downcast<CSSPrimitiveValue>(transformValue[2]);
@@ -196,9 +185,9 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         Length tx = Length(0, LengthType::Fixed);
         Length ty = Length(0, LengthType::Fixed);
         if (transformValue.name() == CSSValueTranslateY)
-            ty = convertToFloatLength(&firstValue, conversionData);
+            ty = convertToFloatLength(&downcast<CSSPrimitiveValue>(transformValue[0]), conversionData);
         else {
-            tx = convertToFloatLength(&firstValue, conversionData);
+            tx = convertToFloatLength(&downcast<CSSPrimitiveValue>(transformValue[0]), conversionData);
             if (transformValue.name() != CSSValueTranslateX) {
                 if (transformValue.length() > 1) {
                     auto& secondValue = downcast<CSSPrimitiveValue>(transformValue[1]);
@@ -219,11 +208,11 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         Length ty = Length(0, LengthType::Fixed);
         Length tz = Length(0, LengthType::Fixed);
         if (transformValue.name() == CSSValueTranslateZ)
-            tz = convertToFloatLength(&firstValue, conversionData);
+            tz = convertToFloatLength(&downcast<CSSPrimitiveValue>(transformValue[0]), conversionData);
         else if (transformValue.name() == CSSValueTranslateY)
-            ty = convertToFloatLength(&firstValue, conversionData);
+            ty = convertToFloatLength(&downcast<CSSPrimitiveValue>(transformValue[0]), conversionData);
         else {
-            tx = convertToFloatLength(&firstValue, conversionData);
+            tx = convertToFloatLength(&downcast<CSSPrimitiveValue>(transformValue[0]), conversionData);
             if (transformValue.name() != CSSValueTranslateX) {
                 if (transformValue.length() > 2) {
                     auto& thirdValue = downcast<CSSPrimitiveValue>(transformValue[2]);
@@ -243,7 +232,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
     }
 
     case CSSValueRotate: {
-        double angle = firstValue.computeDegrees();
+        double angle = downcast<CSSPrimitiveValue>(transformValue[0]).computeDegrees();
         return RotateTransformOperation::create(0, 0, 1, angle, transformOperationType(transformValue.name()));
     }
 
@@ -253,7 +242,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         double x = 0;
         double y = 0;
         double z = 0;
-        double angle = firstValue.computeDegrees();
+        double angle = downcast<CSSPrimitiveValue>(transformValue[0]).computeDegrees();
         if (transformValue.name() == CSSValueRotateX)
             x = 1;
         else if (transformValue.name() == CSSValueRotateY)
@@ -275,7 +264,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
     case CSSValueSkewY: {
         double angleX = 0;
         double angleY = 0;
-        double angle = firstValue.computeDegrees();
+        double angle = downcast<CSSPrimitiveValue>(transformValue[0]).computeDegrees();
         if (transformValue.name() == CSSValueSkewY)
             angleY = angle;
         else {
@@ -311,20 +300,19 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
 
     case CSSValuePerspective: {
         std::optional<Length> perspectiveLength;
-        if (!firstValue.isValueID()) {
-            if (firstValue.isLength())
-                perspectiveLength = convertToFloatLength(&firstValue, conversionData);
+        if (transformValue[0] != CSSValueNone) {
+            if (downcast<CSSPrimitiveValue>(transformValue[0]).isLength())
+                perspectiveLength = convertToFloatLength(&downcast<CSSPrimitiveValue>(transformValue[0]), conversionData);
             else {
                 // This is a quirk that should go away when 3d transforms are finalized.
                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232669
                 // This does not deal properly with calc(), because we aren't passing conversionData here.
-                double doubleValue = firstValue.doubleValue();
+                double doubleValue = downcast<CSSPrimitiveValue>(transformValue[0]).doubleValue();
                 if (doubleValue < 0)
                     return nullptr;
                 perspectiveLength = Length(clampToPositiveInteger(doubleValue), LengthType::Fixed);
             }
-        } else
-            ASSERT(firstValue.valueID() == CSSValueNone);
+        }
 
         return PerspectiveTransformOperation::create(perspectiveLength);
     }
@@ -445,16 +433,14 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
         // The axis was specified using a vector.
         type = TransformOperation::Type::Rotate;
         for (unsigned i = 0; i < 3; ++i) {
-            auto* valueItem = valueList.itemWithoutBoundsCheck(i);
-            if (!is<CSSPrimitiveValue>(valueItem))
-                return nullptr;
+            auto numericValue = downcast<CSSPrimitiveValue>(valueList[i]).doubleValue();
             if (!i)
-                x = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+                x = numericValue;
             else if (i == 1)
-                y = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+                y = numericValue;
             else if (i == 2) {
                 type = TransformOperation::Type::Rotate3D;
-                z = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+                z = numericValue;
             }
         }
     }

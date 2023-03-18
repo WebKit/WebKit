@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(Quad slices, bool fill)
-    : CSSValue(BorderImageSliceClass)
+CSSBorderImageSliceValue::CSSBorderImageSliceValue(NumericQuad&& slices, bool fill)
+    : CSSValue(Type::BorderImageSlice)
     , m_slices(WTFMove(slices))
     , m_fill(fill)
 {
@@ -39,7 +39,7 @@ CSSBorderImageSliceValue::CSSBorderImageSliceValue(Quad slices, bool fill)
 
 CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(Quad slices, bool fill)
+Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(NumericQuad&& slices, bool fill)
 {
     return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slices), fill));
 }

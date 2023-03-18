@@ -27,6 +27,7 @@
 #include "CSSFontFaceSet.h"
 
 #include "CSSFontFaceSource.h"
+#include "CSSFontFamilyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
@@ -137,31 +138,14 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& f
     m_locallyInstalledFacesLookupTable.add(familyName, WTFMove(faces));
 }
 
-String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
+static const AtomString& familyNameFromValue(const CSSValue& value)
 {
     if (value.isFontFamily())
-        return value.stringValue();
+        return downcast<CSSFontFamilyValue>(value).string();
 
     // We need to use the raw text for all the generic family types, since @font-face is a way of actually
     // defining what font to use for those types.
-    switch (value.valueID()) {
-    case CSSValueSerif:
-        return serifFamily.get();
-    case CSSValueSansSerif:
-        return sansSerifFamily.get();
-    case CSSValueCursive:
-        return cursiveFamily.get();
-    case CSSValueFantasy:
-        return fantasyFamily.get();
-    case CSSValueMonospace:
-        return monospaceFamily.get();
-    case CSSValueWebkitPictograph:
-        return pictographFamily.get();
-    case CSSValueSystemUi:
-        return systemUiFamily.get();
-    default:
-        return { };
-    }
+    return CSSPropertyParserHelpers::genericFontFamily(value.valueID());
 }
 
 void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
@@ -174,7 +158,7 @@ void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
     }
 
     for (auto& item : *families) {
-        auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item)) };
+        auto& familyName = familyNameFromValue(item);
         if (familyName.isEmpty())
             continue;
 
@@ -222,7 +206,7 @@ void CSSFontFaceSet::add(CSSFontFace& face)
 void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const CSSValueList& familiesToSearchFor)
 {
     for (auto& item : familiesToSearchFor) {
-        String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item));
+        auto& familyName = familyNameFromValue(item);
         if (familyName.isEmpty())
             continue;
 
@@ -342,7 +326,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
 
     // Because this is a FontRaw, we know we should be able to dereference stretchSelectionValue as
     // consumeFontStretchKeywordValueRaw only returns results valid to pass to fontStretchValue.
-    auto stretchSelectionValue = fontStretchValue(font.stretch.value_or(CSSValueNormal));
+    auto stretchSelectionValue = fontStretchValue(font.stretch ? font.stretch : CSSValueNormal);
     ASSERT(stretchSelectionValue);
 
     auto styleKeyword = font.style ? font.style->style : CSSValueNormal;

@@ -28,13 +28,13 @@
 
 namespace WebCore {
 
-CSSRectValue::CSSRectValue(Rect rect)
-    : CSSValue(RectClass)
+CSSRectValue::CSSRectValue(Rect&& rect)
+    : CSSValue(Type::Rect)
     , m_rect(WTFMove(rect))
 {
 }
 
-Ref<CSSRectValue> CSSRectValue::create(Rect rect)
+Ref<CSSRectValue> CSSRectValue::create(Rect&& rect)
 {
     return adoptRef(*new CSSRectValue(WTFMove(rect)));
 }

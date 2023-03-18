@@ -316,7 +316,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
                 else
                     keyframeValue.addProperty(resolvedProperty);
             }
-            if (isValueID(*value, CSSValueRevert))
+            if (*value == CSSValueRevert)
                 hasRevert = true;
         }
     }

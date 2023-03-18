@@ -29,7 +29,6 @@
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
 #include <cmath>
 #include <wtf/text/StringBuilder.h>

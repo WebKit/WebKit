@@ -44,6 +44,7 @@ public:
     const URL& imageURL() const { return m_originalURL; }
     String customCSSText() const;
     bool equals(const CSSCursorImageValue&) const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 

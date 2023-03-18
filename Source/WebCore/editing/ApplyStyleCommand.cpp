@@ -29,7 +29,6 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
-#include "CSSValuePool.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"

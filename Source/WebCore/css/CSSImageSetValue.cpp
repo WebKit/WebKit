@@ -26,23 +26,21 @@
 #include "config.h"
 #include "CSSImageSetValue.h"
 
-#include "CSSImageSetOptionValue.h"
-#include "CSSImageValue.h"
-#include "CSSPrimitiveValue.h"
+#include "CSSMarkup.h"
 #include "StyleBuilderState.h"
 #include "StyleImageSet.h"
-#include <numeric>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-Ref<CSSImageSetValue> CSSImageSetValue::create(CSSValueListBuilder builder)
+Ref<CSSImageSetValue> CSSImageSetValue::create(Span<Option> options)
 {
-    return adoptRef(*new CSSImageSetValue(WTFMove(builder)));
+    return adoptRef(*new CSSImageSetValue(options));
 }
 
-CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(ImageSetClass, CommaSeparator, WTFMove(builder))
+CSSImageSetValue::CSSImageSetValue(Span<Option> options)
+    : CSSValue(Type::ImageSet)
+    , m_options(options.begin(), options.end())
 {
 }
 
@@ -50,39 +48,59 @@ String CSSImageSetValue::customCSSText() const
 {
     StringBuilder result;
     result.append("image-set("_s);
-    for (size_t i = 0; i < this->length(); ++i) {
+    for (size_t i = 0; i < m_options.size(); ++i) {
+        auto& option = m_options[i];
         if (i > 0)
             result.append(", "_s);
-        ASSERT(is<CSSImageSetOptionValue>(item(i)));
-        result.append(item(i)->cssText());
+        result.append(option.image->cssText());
+        if (option.resolution)
+            result.append(' ', option.resolution->cssText());
+        else
+            result.append(" 1x"_s);
+        if (!option.type.isNull()) {
+            result.append(" type("_s);
+            serializeString(option.type, result);
+            result.append(')');
+        }
     }
     result.append(')');
     return result.toString();
 }
 
+bool CSSImageSetValue::equals(const CSSImageSetValue& other) const
+{
+    auto size = m_options.size();
+    if (size != other.m_options.size())
+        return false;
+    for (size_t i = 0; i < size; ++i) {
+        auto& a = m_options[i];
+        auto& b = other.m_options[i];
+        if (!(compareCSSValue(a.image, b.image) && compareCSSValuePtr(a.resolution, b.resolution) && a.type == b.type))
+            return false;
+    }
+    return true;
+}
+
 RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state) const
 {
-    size_t length = this->length();
-
     Vector<ImageWithScale> images;
-    images.reserveInitialCapacity(length);
-
-    for (size_t i = 0; i < length; ++i) {
-        ASSERT(is<CSSImageSetOptionValue>(item(i)));
-        auto option = downcast<CSSImageSetOptionValue>(item(i));
-        images.uncheckedAppend(ImageWithScale { state.createStyleImage(option->image()), option->resolution()->floatValue(CSSUnitType::CSS_DPPX), option->type() });
+    images.reserveInitialCapacity(m_options.size());
+    for (auto& option : m_options) {
+        float scaleFactor = 1;
+        if (option.resolution)
+            scaleFactor = option.resolution->floatValue(CSSUnitType::CSS_DPPX);
+        images.uncheckedAppend({ state.createStyleImage(option.image), scaleFactor, option.type });
     }
+    return StyleImageSet::create(WTFMove(images));
+}
 
-    // Sort the images so that they are stored in order from lowest resolution to highest.
-    // We want to maintain the authored order for serialization so we create a sorted indexing vector.
-    Vector<size_t> sortedIndices(length);
-    std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
-
-    std::stable_sort(sortedIndices.begin(), sortedIndices.end(), [&images](size_t lhs, size_t rhs) {
-        return images[lhs].scaleFactor < images[rhs].scaleFactor;
-    });
-
-    return StyleImageSet::create(WTFMove(images), WTFMove(sortedIndices));
+bool CSSImageSetValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+{
+    for (auto& option : m_options) {
+        if (option.image->traverseSubresources(handler))
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

@@ -71,7 +71,7 @@ String CSSCustomPropertyValue::customCSSText() const
 {
     auto serializeSyntaxValue = [](const SyntaxValue& syntaxValue) -> String {
         return WTF::switchOn(syntaxValue, [&](const Length& value) {
-            return CSSPrimitiveValue::create(value, RenderStyle::defaultStyle())->cssText();
+            return CSSValue::create(value, RenderStyle::defaultStyle())->cssText();
         }, [&](const NumericSyntaxValue& value) {
             return CSSPrimitiveValue::create(value.value, value.unitType)->cssText();
         }, [&](const StyleColor& value) {

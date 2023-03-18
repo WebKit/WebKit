@@ -30,6 +30,7 @@
 #import "CSSComputedStyleDeclaration.h"
 #import "CSSParser.h"
 #import "CSSPrimitiveValue.h"
+#import "CSSResolvedColorValue.h"
 #import "CachedImage.h"
 #import "CharacterData.h"
 #import "ColorCocoa.h"
@@ -558,20 +559,16 @@ RefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& ele
 
 static bool stringFromCSSValue(CSSValue& value, String& result)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        // FIXME: Use isStringType(CSSUnitType)?
-        CSSUnitType primitiveType = downcast<CSSPrimitiveValue>(value).primitiveType();
-        if (primitiveType == CSSUnitType::CSS_STRING || primitiveType == CSSUnitType::CSS_URI
-            || primitiveType == CSSUnitType::CSS_IDENT || primitiveType == CSSUnitType::CSS_ATTR) {
-            String stringValue = value.cssText();
-            if (stringValue.length()) {
-                result = stringValue;
-                return true;
-            }
-        }
-    } else if (value.isValueList()) {
+    if (value.isIdent() || value.isValueList()) {
         result = value.cssText();
         return true;
+    }
+    if (value.isAttr() || value.isCustomIdent() || value.isString() || value.isURL()) {
+        String stringValue = value.cssText();
+        if (stringValue.length()) {
+            result = stringValue;
+            return true;
+        }
     }
     return false;
 }
@@ -594,7 +591,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         String result;
-        if (isValueID(*value, CSSValueInherit))
+        if (*value == CSSValueInherit)
             inherit = true;
         else if (stringFromCSSValue(*value, result))
             return result;
@@ -742,7 +739,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
             return true;
-        if (isValueID(*value, CSSValueInherit))
+        if (*value == CSSValueInherit)
             inherit = true;
     }
 
@@ -876,13 +873,13 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
 
     Element& element = downcast<Element>(node);
     if (auto value = computedStylePropertyForElement(element, propertyId); value && value->isColor())
-        return normalizedColor(value->color(), ignoreDefaultColor, element);
+        return normalizedColor(downcast<CSSResolvedColorValue>(*value).color(), ignoreDefaultColor, element);
 
     bool inherit = false;
     if (auto value = inlineStylePropertyForElement(element, propertyId)) {
         if (value->isColor())
-            return normalizedColor(value->color(), ignoreDefaultColor, element);
-        if (isValueID(*value, CSSValueInherit))
+            return normalizedColor(downcast<CSSResolvedColorValue>(*value).color(), ignoreDefaultColor, element);
+        if (*value == CSSValueInherit)
             inherit = true;
     }
 

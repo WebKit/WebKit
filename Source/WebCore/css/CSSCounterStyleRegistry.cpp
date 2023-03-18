@@ -28,7 +28,6 @@
 
 #include "CSSCounterStyle.h"
 #include "CSSCounterStyleRule.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
 
 namespace WebCore {

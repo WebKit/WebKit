@@ -33,22 +33,21 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePair.h"
-#include "CSSValuePool.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSCircleValue::CSSCircleValue(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
-    : CSSValue(CircleClass)
+CSSCircleValue::CSSCircleValue(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
+    : CSSValue(Type::Circle)
     , m_radius(WTFMove(radius))
     , m_centerX(WTFMove(centerX))
     , m_centerY(WTFMove(centerY))
 {
 }
 
-Ref<CSSCircleValue> CSSCircleValue::create(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
+Ref<CSSCircleValue> CSSCircleValue::create(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
 {
     return adoptRef(*new CSSCircleValue(WTFMove(radius), WTFMove(centerX), WTFMove(centerY)));
 }
@@ -81,24 +80,24 @@ static SerializablePositionOffset buildSerializablePositionOffset(CSSValue* offs
     else if (offset->isValueID())
         side = offset->valueID();
     else if (offset->isPair()) {
-        side = offset->first().valueID();
-        amount = &offset->second();
+        side = downcast<CSSValuePair>(*offset).first().valueID();
+        amount = &downcast<CSSValuePair>(*offset).second();
     } else
         amount = offset;
 
     if (!amount)
-        amount = CSSPrimitiveValue::create(Length(side == CSSValueCenter ? 50 : 0, LengthType::Percent));
+        amount = CSSPrimitiveValue::create(side == CSSValueCenter ? 50 : 0, CSSUnitType::CSS_PERCENTAGE);
     
     if (side == CSSValueCenter)
         side = defaultSide;
     else if ((side == CSSValueRight || side == CSSValueBottom) && is<CSSPrimitiveValue>(*amount) && downcast<CSSPrimitiveValue>(*amount).isPercentage()) {
         side = defaultSide;
-        amount = CSSPrimitiveValue::create(Length(100 - downcast<CSSPrimitiveValue>(*amount).floatValue(), LengthType::Percent));
+        amount = CSSPrimitiveValue::create(100 - downcast<CSSPrimitiveValue>(*amount).doubleValue(), CSSUnitType::CSS_PERCENTAGE);
     } else if (isZeroLength(*amount)) {
         if (side == CSSValueRight || side == CSSValueBottom)
-            amount = CSSPrimitiveValue::create(Length(100, LengthType::Percent));
+            amount = CSSPrimitiveValue::create(100, CSSUnitType::CSS_PERCENTAGE);
         else
-            amount = CSSPrimitiveValue::create(Length(0, LengthType::Percent));
+            amount = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PERCENTAGE);
         side = defaultSide;
     }
 
@@ -108,7 +107,7 @@ static SerializablePositionOffset buildSerializablePositionOffset(CSSValue* offs
 String CSSCircleValue::customCSSText() const
 {
     String radius;
-    if (m_radius && m_radius->valueID() != CSSValueClosestSide)
+    if (m_radius && *m_radius != CSSValueClosestSide)
         radius = m_radius->cssText();
 
     // FIXME: We should serialize without "at 50% 50%".
@@ -126,8 +125,8 @@ bool CSSCircleValue::equals(const CSSCircleValue& other) const
         && compareCSSValuePtr(m_radius, other.m_radius);
 }
 
-CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radiusY, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
-    : CSSValue(EllipseClass)
+CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
+    : CSSValue(Type::Ellipse)
     , m_radiusX(WTFMove(radiusX))
     , m_radiusY(WTFMove(radiusY))
     , m_centerX(WTFMove(centerX))
@@ -135,7 +134,7 @@ CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radi
 {
 }
 
-Ref<CSSEllipseValue> CSSEllipseValue::create(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radiusY, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
+Ref<CSSEllipseValue> CSSEllipseValue::create(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
 {
     return adoptRef(*new CSSEllipseValue(WTFMove(radiusX), WTFMove(radiusY), WTFMove(centerX), WTFMove(centerY)));
 }
@@ -170,8 +169,8 @@ String CSSEllipseValue::customCSSText() const
     String radiusY;
     if (m_radiusX) {
         ASSERT(m_radiusY);
-        bool radiusXClosestSide = m_radiusX->valueID() == CSSValueClosestSide;
-        bool radiusYClosestSide = m_radiusY->valueID() == CSSValueClosestSide;
+        bool radiusXClosestSide = *m_radiusX == CSSValueClosestSide;
+        bool radiusYClosestSide = *m_radiusY == CSSValueClosestSide;
         if (!radiusXClosestSide || !radiusYClosestSide) {
             radiusX = m_radiusX->cssText();
             radiusY = m_radiusY->cssText();
@@ -191,14 +190,14 @@ bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
         && compareCSSValuePtr(m_radiusY, other.m_radiusY);
 }
 
-CSSPathValue::CSSPathValue(SVGPathByteStream data, WindRule rule)
-    : CSSValue(PathClass)
+CSSPathValue::CSSPathValue(SVGPathByteStream&& data, WindRule rule)
+    : CSSValue(Type::Path)
     , m_pathData(WTFMove(data))
     , m_windRule(rule)
 {
 }
 
-Ref<CSSPathValue> CSSPathValue::create(SVGPathByteStream data, WindRule rule)
+Ref<CSSPathValue> CSSPathValue::create(SVGPathByteStream&& data, WindRule rule)
 {
     return adoptRef(*new CSSPathValue(WTFMove(data), rule));
 }
@@ -222,13 +221,13 @@ bool CSSPathValue::equals(const CSSPathValue& other) const
     return m_pathData == other.m_pathData && m_windRule == other.m_windRule;
 }
 
-CSSPolygonValue::CSSPolygonValue(CSSValueListBuilder values, WindRule rule)
-    : CSSValueContainingVector(PolygonClass, SpaceSeparator, WTFMove(values))
+CSSPolygonValue::CSSPolygonValue(CSSValueListBuilder&& values, WindRule rule)
+    : CSSValueContainingVector(Type::Polygon, SpaceSeparator, WTFMove(values))
     , m_windRule(rule)
 {
 }
 
-Ref<CSSPolygonValue> CSSPolygonValue::create(CSSValueListBuilder values, WindRule rule)
+Ref<CSSPolygonValue> CSSPolygonValue::create(CSSValueListBuilder&& values, WindRule rule)
 {
     return adoptRef(*new CSSPolygonValue(WTFMove(values), rule));
 }
@@ -252,8 +251,8 @@ bool CSSPolygonValue::equals(const CSSPolygonValue& other) const
     return m_windRule == other.m_windRule && itemsEqual(other);
 }
 
-CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
-    : CSSValue(InsetShapeClass)
+CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValuePair>&& topLeftRadius, RefPtr<CSSValuePair>&& topRightRadius, RefPtr<CSSValuePair>&& bottomRightRadius, RefPtr<CSSValuePair>&& bottomLeftRadius)
+    : CSSValue(Type::InsetShape)
     , m_top(WTFMove(top))
     , m_right(WTFMove(right))
     , m_bottom(WTFMove(bottom))
@@ -265,8 +264,8 @@ CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue> top, Ref<CSSValue> right, R
 {
 }
 
-Ref<CSSInsetShapeValue> CSSInsetShapeValue::create(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left,
-    RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+Ref<CSSInsetShapeValue> CSSInsetShapeValue::create(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left,
+    RefPtr<CSSValuePair>&& topLeftRadius, RefPtr<CSSValuePair>&& topRightRadius, RefPtr<CSSValuePair>&& bottomRightRadius, RefPtr<CSSValuePair>&& bottomLeftRadius)
 {
     return adoptRef(*new CSSInsetShapeValue(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left),
         WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
@@ -333,7 +332,7 @@ static String buildInsetString(const String& top, const String& right, const Str
     return result.toString();
 }
 
-static inline void updateCornerRadiusWidthAndHeight(const CSSValue* corner, String& width, String& height)
+static inline void updateCornerRadiusWidthAndHeight(const CSSValuePair* corner, String& width, String& height)
 {
     if (!corner)
         return;

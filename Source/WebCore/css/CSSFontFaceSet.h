@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
 class CSSSegmentedFontFace;
 class FontFaceSet;
 
@@ -106,8 +105,6 @@ private:
     void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) final;
 
     void ensureLocalFontFacesForFamilyRegistered(const AtomString&);
-
-    static String familyNameFromPrimitive(const CSSPrimitiveValue&);
 
     using FontSelectionKey = std::optional<FontSelectionRequest>;
     struct FontSelectionKeyHash {

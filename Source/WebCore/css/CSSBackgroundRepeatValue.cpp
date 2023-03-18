@@ -32,7 +32,7 @@
 namespace WebCore {
 
 CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID xValue, CSSValueID yValue)
-    : CSSValue(BackgroundRepeatClass)
+    : CSSValue(Type::BackgroundRepeat)
     , m_xValue(xValue)
     , m_yValue(yValue)
 {

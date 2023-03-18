@@ -30,11 +30,7 @@
 #include "config.h"
 #include "StylePropertyMapReadOnly.h"
 
-#include "CSSCustomPropertyValue.h"
-#include "CSSImageValue.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
-#include "CSSPropertyNames.h"
 #include "CSSStyleImageValue.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"

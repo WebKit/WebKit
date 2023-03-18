@@ -30,11 +30,9 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
 class CSSBorderImageWidthValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageWidthValue> create(Quad, bool overridesBorderWidths);
+    static Ref<CSSBorderImageWidthValue> create(Quad&&, bool overridesBorderWidths);
     ~CSSBorderImageWidthValue();
 
     const Quad& widths() const { return m_widths; }
@@ -44,7 +42,7 @@ public:
     bool equals(const CSSBorderImageWidthValue&) const;
 
 private:
-    CSSBorderImageWidthValue(Quad, bool overridesBorderWidths);
+    CSSBorderImageWidthValue(Quad&&, bool overridesBorderWidths);
 
     Quad m_widths;
     bool m_overridesBorderWidths { false };

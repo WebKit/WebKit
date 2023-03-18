@@ -30,7 +30,6 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImageValue.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleImageValue.h"

@@ -32,20 +32,24 @@
 
 #include "CSSAtRuleID.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSCustomIdentValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValuesRule.h"
-#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserObserver.h"
 #include "CSSParserObserverWrapper.h"
 #include "CSSParserSelector.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSSelectorParser.h"
+#include "CSSStringValue.h"
 #include "CSSStyleSheet.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
+#include "CSSValuePair.h"
 #include "CSSVariableParser.h"
 #include "ContainerQueryParser.h"
 #include "Document.h"
@@ -808,12 +812,11 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
 
     std::optional<FontPaletteIndex> basePalette;
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
-        const auto& primitiveValue = downcast<CSSPrimitiveValue>(*basePaletteValue);
-        if (primitiveValue.isInteger())
-            basePalette = FontPaletteIndex(primitiveValue.value<unsigned>());
-        else if (primitiveValue.valueID() == CSSValueLight)
+        if (is<CSSPrimitiveValue>(basePaletteValue.get()))
+            basePalette = FontPaletteIndex(downcast<CSSPrimitiveValue>(*basePaletteValue).value<unsigned>());
+        else if (*basePaletteValue == CSSValueLight)
             basePalette = FontPaletteIndex(FontPaletteIndex::Type::Light);
-        else if (primitiveValue.valueID() == CSSValueDark)
+        else if (*basePaletteValue == CSSValueDark)
             basePalette = FontPaletteIndex(FontPaletteIndex::Type::Dark);
     }
 
@@ -821,16 +824,16 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     if (auto overrideColorsValue = properties->getPropertyCSSValue(CSSPropertyOverrideColors)) {
         const auto& list = downcast<CSSValueList>(*overrideColorsValue);
         for (const auto& item : list) {
-            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item);
-            if (!pair.key().isInteger())
-                continue;
-            unsigned key = pair.key().value<unsigned>();
-            Color color = pair.color().isColor() ? pair.color().color() : StyleColor::colorFromKeyword(pair.color().valueID(), { });
-            overrideColors.append(std::make_pair(key, color));
+            auto& pair = downcast<CSSValuePair>(item);
+            unsigned key = downcast<CSSPrimitiveValue>(pair.first()).intValue();
+            Color color = pair.second().isColor()
+                ? downcast<CSSResolvedColorValue>(pair.second()).color()
+                : StyleColor::colorFromKeyword(pair.second().valueID(), { });
+            overrideColors.append(std::make_pair(key, WTFMove(color)));
         }
     }
 
-    return StyleRuleFontPaletteValues::create(AtomString { name->stringValue() }, fontFamily, WTFMove(basePalette), WTFMove(overrideColors));
+    return StyleRuleFontPaletteValues::create(AtomString { name->string() }, fontFamily, WTFMove(basePalette), WTFMove(overrideColors));
 }
 
 RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -1021,10 +1024,10 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
     for (auto& property : declarations) {
         switch (property.id()) {
         case CSSPropertySyntax:
-            propertyDescriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
+            propertyDescriptor.syntax = downcast<CSSStringValue>(*property.value()).string();
             continue;
         case CSSPropertyInherits:
-            propertyDescriptor.inherits = property.value()->valueID() == CSSValueTrue;
+            propertyDescriptor.inherits = *property.value() == CSSValueTrue;
             break;
         case CSSPropertyInitialValue:
             propertyDescriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).asVariableData();

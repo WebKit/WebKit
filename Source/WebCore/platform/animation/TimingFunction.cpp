@@ -27,7 +27,6 @@
 #include "TimingFunction.h"
 
 #include "CSSParserContext.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
 #include "MutableStyleProperties.h"
@@ -159,7 +158,7 @@ ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const Stri
 
 RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
+    if (value.isValueID()) {
         switch (value.valueID()) {
         case CSSValueLinear:
             return LinearTimingFunction::create();

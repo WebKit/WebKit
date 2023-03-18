@@ -38,7 +38,7 @@ namespace WebCore {
 std::optional<int> GridPosition::gMaxPositionForTesting;
 static const int kGridMaxPosition = 1000000;
 
-void GridPosition::setExplicitPosition(int position, const String& namedGridLine)
+void GridPosition::setExplicitPosition(int position, const AtomString& namedGridLine)
 {
     m_type = ExplicitPosition;
     setIntegerPosition(position);
@@ -54,14 +54,14 @@ void GridPosition::setAutoPosition()
 // 'span' values cannot be negative, yet we reuse the <integer> position which can
 // be. This means that we have to convert the span position to an integer, losing
 // some precision here. It shouldn't be an issue in practice though.
-void GridPosition::setSpanPosition(int position, const String& namedGridLine)
+void GridPosition::setSpanPosition(int position, const AtomString& namedGridLine)
 {
     m_type = SpanPosition;
     setIntegerPosition(position);
     m_namedGridLine = namedGridLine;
 }
 
-void GridPosition::setNamedGridArea(const String& namedGridArea)
+void GridPosition::setNamedGridArea(const AtomString& namedGridArea)
 {
     m_type = NamedGridAreaPosition;
     m_namedGridLine = namedGridArea;
@@ -73,7 +73,7 @@ int GridPosition::integerPosition() const
     return m_integerPosition;
 }
 
-String GridPosition::namedGridLine() const
+AtomString GridPosition::namedGridLine() const
 {
     ASSERT(type() == ExplicitPosition || type() == SpanPosition || type() == NamedGridAreaPosition);
     return m_namedGridLine;

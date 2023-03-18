@@ -30,8 +30,8 @@
 #include "config.h"
 #include "CSSKeywordValue.h"
 
+#include "CSSCustomIdentValue.h"
 #include "CSSMarkup.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -78,8 +78,8 @@ RefPtr<CSSValue> CSSKeywordValue::toCSSValue() const
 {
     auto keyword = cssValueKeywordID(m_value);
     if (keyword == CSSValueInvalid)
-        return CSSPrimitiveValue::createCustomIdent(m_value);
-    return CSSPrimitiveValue::create(keyword);
+        return CSSCustomIdentValue::create(AtomString { m_value });
+    return CSSIdentValue::create(keyword);
 }
 
 } // namespace WebCore

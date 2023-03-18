@@ -28,6 +28,7 @@
 
 #include "CSSFontFaceSource.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFontFamilyValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontSelector.h"
 #include "CSSFontStyleRangeValue.h"
@@ -162,26 +163,17 @@ FontFace* CSSFontFace::existingWrapper()
     return m_wrapper.get();
 }
 
-static FontSelectionRange calculateWeightRange(CSSValue& value)
+static FontSelectionRange calculateWeightRange(const CSSValue& value)
 {
     if (value.isValueList()) {
         auto& valueList = downcast<CSSValueList>(value);
         ASSERT(valueList.length() == 2);
-        if (valueList.length() != 2)
-            return { normalWeightValue(), normalWeightValue() };
-        ASSERT(valueList.item(0)->isPrimitiveValue());
-        ASSERT(valueList.item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        auto result0 = Style::BuilderConverter::convertFontWeightFromValue(value0);
-        auto result1 = Style::BuilderConverter::convertFontWeightFromValue(value1);
+        auto result0 = Style::BuilderConverter::convertFontWeightFromValue(valueList[0]);
+        auto result1 = Style::BuilderConverter::convertFontWeightFromValue(valueList[1]);
         return { result0, result1 };
     }
 
-    ASSERT(is<CSSPrimitiveValue>(value));
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = Style::BuilderConverter::convertFontWeightFromValue(primitiveValue);
-    return { result, result };
+    return FontSelectionRange { Style::BuilderConverter::convertFontWeightFromValue(value) };
 }
 
 void CSSFontFace::setWeight(CSSValue& weight)
@@ -199,26 +191,17 @@ void CSSFontFace::setWeight(CSSValue& weight)
     });
 }
 
-static FontSelectionRange calculateStretchRange(CSSValue& value)
+static FontSelectionRange calculateStretchRange(const CSSValue& value)
 {
     if (value.isValueList()) {
         auto& valueList = downcast<CSSValueList>(value);
         ASSERT(valueList.length() == 2);
-        if (valueList.length() != 2)
-            return { normalStretchValue(), normalStretchValue() };
-        ASSERT(valueList.item(0)->isPrimitiveValue());
-        ASSERT(valueList.item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        auto result0 = Style::BuilderConverter::convertFontStretchFromValue(value0);
-        auto result1 = Style::BuilderConverter::convertFontStretchFromValue(value1);
+        auto result0 = Style::BuilderConverter::convertFontStretchFromValue(valueList[0]);
+        auto result1 = Style::BuilderConverter::convertFontStretchFromValue(valueList[1]);
         return { result0, result1 };
     }
 
-    ASSERT(is<CSSPrimitiveValue>(value));
-    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = Style::BuilderConverter::convertFontStretchFromValue(primitiveValue);
-    return { result, result };
+    return FontSelectionRange { Style::BuilderConverter::convertFontStretchFromValue(value) };
 }
 
 void CSSFontFace::setStretch(CSSValue& style)
@@ -242,7 +225,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
         return FontSelectionRange { Style::BuilderConverter::convertFontStyleFromValue(value).value_or(normalItalicValue()) };
 
     auto& rangeValue = downcast<CSSFontStyleRangeValue>(value);
-    auto keyword = rangeValue.fontStyleValue->valueID();
+    auto keyword = rangeValue.fontStyleValue;
     if (!rangeValue.obliqueValues) {
         if (keyword == CSSValueNormal)
             return FontSelectionRange { normalItalicValue() };
@@ -299,8 +282,8 @@ void CSSFontFace::setUnicodeRange(CSSValueList& list)
 
 void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 {
-    // Can only call this with a primitive value of normal, or a value list containing font feature values.
-    ASSERT(is<CSSPrimitiveValue>(featureSettings) || is<CSSValueList>(featureSettings));
+    // Can only call this with a value of normal, or a value list containing font feature values.
+    ASSERT(featureSettings == CSSValueNormal || is<CSSValueList>(featureSettings));
 
     mutableProperties().setProperty(CSSPropertyFontFeatureSettings, &featureSettings);
 
@@ -324,7 +307,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     });
 }
 
-void CSSFontFace::setDisplay(CSSPrimitiveValue& loadingBehaviorValue)
+void CSSFontFace::setDisplay(CSSValue& loadingBehaviorValue)
 {
     mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
 
@@ -348,10 +331,10 @@ String CSSFontFace::family() const
     auto familyList = dynamicDowncast<CSSValueList>(family.get());
     if (!familyList)
         return { };
-    auto firstFamily = dynamicDowncast<CSSPrimitiveValue>(familyList->item(0));
+    auto firstFamily = familyList->item(0);
     if (!firstFamily || !firstFamily->isFontFamily())
         return { };
-    return firstFamily->stringValue();
+    return downcast<CSSFontFamilyValue>(*firstFamily).string();
 }
 
 String CSSFontFace::style() const

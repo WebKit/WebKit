@@ -20,17 +20,18 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "RectBase.h"
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
-class Quad final : public RectBase {
+class Quad : public RectBase {
 public:
-    Quad(Ref<CSSPrimitiveValue> value)
+    Quad(Ref<CSSValue>&& value)
         : RectBase(WTFMove(value))
     { }
-    Quad(Ref<CSSPrimitiveValue> top, Ref<CSSPrimitiveValue> right, Ref<CSSPrimitiveValue> bottom, Ref<CSSPrimitiveValue> left)
+    Quad(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left)
         : RectBase(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left))
     { }
 
@@ -49,6 +50,21 @@ public:
             return makeString(top, ' ', right);
         return top;
     }
+};
+
+class NumericQuad final : public Quad {
+public:
+    NumericQuad(Ref<CSSPrimitiveValue>&& value)
+        : Quad(WTFMove(value))
+    { }
+    NumericQuad(Ref<CSSPrimitiveValue>&& top, Ref<CSSPrimitiveValue>&& right, Ref<CSSPrimitiveValue>&& bottom, Ref<CSSPrimitiveValue>&& left)
+        : Quad(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left))
+    { }
+
+    const CSSPrimitiveValue& top() const { return downcast<CSSPrimitiveValue>(Quad::top()); }
+    const CSSPrimitiveValue& right() const { return downcast<CSSPrimitiveValue>(Quad::right()); }
+    const CSSPrimitiveValue& bottom() const { return downcast<CSSPrimitiveValue>(Quad::bottom()); }
+    const CSSPrimitiveValue& left() const { return downcast<CSSPrimitiveValue>(Quad::left()); }
 };
 
 } // namespace WebCore

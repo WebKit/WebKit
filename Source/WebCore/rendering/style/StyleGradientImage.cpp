@@ -28,6 +28,7 @@
 #include "StyleGradientImage.h"
 
 #include "CSSCalcValue.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValuePair.h"
 #include "CalculationValue.h"
@@ -132,7 +133,7 @@ bool StyleGradientImage::equals(const StyleGradientImage& other) const
         && m_stops == other.m_stops;
 }
 
-static inline RefPtr<CSSPrimitiveValue> computedStyleValueForColorStopColor(const std::optional<StyleColor>& color, const RenderStyle& style)
+static inline RefPtr<CSSResolvedColorValue> computedStyleValueForColorStopColor(const std::optional<StyleColor>& color, const RenderStyle& style)
 {
     if (!color)
         return nullptr;
@@ -675,30 +676,20 @@ static float positionFromValue(const CSSValue& initialValue, const CSSToLengthCo
     float sign = 1;
     float edgeDistance = isHorizontal ? size.width() : size.height();
 
-    const CSSPrimitiveValue* value;
-
     // In this case the center of the gradient is given relative to an edge in the
     // form of: [ top | bottom | right | left ] [ <percentage> | <length> ].
+    const CSSValue* value;
     if (initialValue.isPair()) {
-        auto originID = initialValue.first().valueID();
+        auto originID = downcast<CSSValuePair>(initialValue).first().valueID();
         if (originID == CSSValueRight || originID == CSSValueBottom) {
             // For right/bottom, the offset is relative to the far edge.
             origin = edgeDistance;
             sign = -1;
         }
-        value = &downcast<CSSPrimitiveValue>(initialValue.second());
+        value = &downcast<CSSValuePair>(initialValue).second();
     } else {
-        value = &downcast<CSSPrimitiveValue>(initialValue);
+        value = &initialValue;
     }
-
-    if (value->isNumber())
-        return origin + sign * value->floatValue() * conversionData.zoom();
-
-    if (value->isPercentage())
-        return origin + sign * value->floatValue() / 100 * edgeDistance;
-
-    if (value->isCalculatedPercentageWithLength())
-        return origin + sign * value->cssCalcValue()->createCalculationValue(conversionData)->evaluate(edgeDistance);
 
     switch (value->valueID()) {
     case CSSValueTop:
@@ -719,7 +710,18 @@ static float positionFromValue(const CSSValue& initialValue, const CSSToLengthCo
         break;
     }
 
-    return origin + sign * value->computeLength<float>(conversionData) * conversionData.style()->effectiveZoom();
+    auto& numericValue = downcast<CSSPrimitiveValue>(*value);
+
+    if (numericValue.isNumber())
+        return origin + sign * numericValue.floatValue() * conversionData.zoom();
+
+    if (numericValue.isPercentage())
+        return origin + sign * numericValue.floatValue() / 100 * edgeDistance;
+
+    if (numericValue.isCalculatedPercentageWithLength())
+        return origin + sign * numericValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(edgeDistance);
+
+    return origin + sign * numericValue.computeLength<float>(conversionData) * conversionData.style()->effectiveZoom();
 }
 
 // Resolve points/radii to front end values.

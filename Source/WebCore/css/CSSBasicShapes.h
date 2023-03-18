@@ -35,43 +35,48 @@
 
 namespace WebCore {
 
+class CSSValuePair;
+
 enum class WindRule : bool;
 
 class CSSInsetShapeValue : public CSSValue {
 public:
-    static Ref<CSSInsetShapeValue> create(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left,
-        RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius);
+    static Ref<CSSInsetShapeValue> create(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left,
+        RefPtr<CSSValuePair>&& topLeftRadius, RefPtr<CSSValuePair>&& topRightRadius,
+        RefPtr<CSSValuePair>&& bottomRightRadius, RefPtr<CSSValuePair>&& bottomLeftRadius);
 
     const CSSValue& top() const { return m_top; }
     const CSSValue& right() const { return m_right; }
     const CSSValue& bottom() const { return m_bottom; }
     const CSSValue& left() const { return m_left; }
 
-    const CSSValue* topLeftRadius() const { return m_topLeftRadius.get(); }
-    const CSSValue* topRightRadius() const { return m_topRightRadius.get(); }
-    const CSSValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
-    const CSSValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
+    const CSSValuePair* topLeftRadius() const { return m_topLeftRadius.get(); }
+    const CSSValuePair* topRightRadius() const { return m_topRightRadius.get(); }
+    const CSSValuePair* bottomRightRadius() const { return m_bottomRightRadius.get(); }
+    const CSSValuePair* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
 
     String customCSSText() const;
     bool equals(const CSSInsetShapeValue&) const;
 
 private:
-    CSSInsetShapeValue(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius);
+    CSSInsetShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left,
+        RefPtr<CSSValuePair>&& topLeftRadius, RefPtr<CSSValuePair>&& topRightRadius,
+        RefPtr<CSSValuePair>&& bottomRightRadius, RefPtr<CSSValuePair>&& bottomLeftRadius);
 
     Ref<CSSValue> m_top;
     Ref<CSSValue> m_right;
     Ref<CSSValue> m_bottom;
     Ref<CSSValue> m_left;
 
-    RefPtr<CSSValue> m_topLeftRadius;
-    RefPtr<CSSValue> m_topRightRadius;
-    RefPtr<CSSValue> m_bottomRightRadius;
-    RefPtr<CSSValue> m_bottomLeftRadius;
+    RefPtr<CSSValuePair> m_topLeftRadius;
+    RefPtr<CSSValuePair> m_topRightRadius;
+    RefPtr<CSSValuePair> m_bottomRightRadius;
+    RefPtr<CSSValuePair> m_bottomLeftRadius;
 };
 
 class CSSCircleValue : public CSSValue {
 public:
-    static Ref<CSSCircleValue> create(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY);
+    static Ref<CSSCircleValue> create(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
     const CSSValue* radius() const { return m_radius.get(); }
     const CSSValue* centerX() const { return m_centerX.get(); }
@@ -81,7 +86,7 @@ public:
     bool equals(const CSSCircleValue&) const;
 
 private:
-    CSSCircleValue(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY);
+    CSSCircleValue(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
     RefPtr<CSSValue> m_radius;
     RefPtr<CSSValue> m_centerX;
@@ -90,7 +95,7 @@ private:
 
 class CSSEllipseValue : public CSSValue {
 public:
-    static Ref<CSSEllipseValue> create(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radiusY, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY);
+    static Ref<CSSEllipseValue> create(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
     const CSSValue* radiusX() const { return m_radiusX.get(); }
     const CSSValue* radiusY() const { return m_radiusY.get(); }
@@ -101,7 +106,7 @@ public:
     bool equals(const CSSEllipseValue&) const;
 
 private:
-    CSSEllipseValue(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radiusY, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY);
+    CSSEllipseValue(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY);
 
     RefPtr<CSSValue> m_radiusX;
     RefPtr<CSSValue> m_radiusY;
@@ -111,7 +116,7 @@ private:
 
 class CSSPolygonValue : public CSSValueContainingVector {
 public:
-    static Ref<CSSPolygonValue> create(CSSValueListBuilder values, WindRule);
+    static Ref<CSSPolygonValue> create(CSSValueListBuilder&& values, WindRule);
 
     WindRule windRule() const { return m_windRule; }
 
@@ -119,14 +124,14 @@ public:
     bool equals(const CSSPolygonValue&) const;
 
 private:
-    explicit CSSPolygonValue(CSSValueListBuilder, WindRule);
+    explicit CSSPolygonValue(CSSValueListBuilder&&, WindRule);
 
     WindRule m_windRule { };
 };
 
 class CSSPathValue : public CSSValue {
 public:
-    static Ref<CSSPathValue> create(SVGPathByteStream, WindRule);
+    static Ref<CSSPathValue> create(SVGPathByteStream&&, WindRule);
 
     const SVGPathByteStream& pathData() const { return m_pathData; }
     WindRule windRule() const { return m_windRule; }
@@ -135,7 +140,7 @@ public:
     bool equals(const CSSPathValue&) const;
 
 private:
-    CSSPathValue(SVGPathByteStream, WindRule);
+    CSSPathValue(SVGPathByteStream&&, WindRule);
 
     SVGPathByteStream m_pathData;
     WindRule m_windRule { };

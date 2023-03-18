@@ -34,18 +34,18 @@ namespace WebCore {
 
 static void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix::Component& component)
 {
-    builder.append(component.color->customCSSText());
+    builder.append(component.color->cssText());
     if (component.percentage)
         builder.append(' ', component.percentage->customCSSText());
 }
 
 void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix& unresolved)
 {
-    builder.append("color-mix(in ");
+    builder.append("color-mix(in "_s);
     serializationForCSS(builder, unresolved.colorInterpolationMethod);
-    builder.append(", ");
+    builder.append(", "_s);
     serializationForCSS(builder, unresolved.mixComponents1);
-    builder.append(", ");
+    builder.append(", "_s);
     serializationForCSS(builder, unresolved.mixComponents2);
     builder.append(')');
 }
@@ -85,7 +85,7 @@ StyleColor createStyleColor(const CSSUnresolvedColorMix& unresolved, const Docum
 
     auto resolveComponent = [&](auto& component, auto& document, auto& style, auto forVisitedLink) -> StyleColorMix::Component {
         return {
-            colorFromPrimitiveValue(document, style, component.color.get(), forVisitedLink),
+            colorFromValue(document, style, component.color.get(), forVisitedLink),
             resolvePercentage(component.percentage)
         };
     };

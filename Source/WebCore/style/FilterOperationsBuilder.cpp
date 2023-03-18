@@ -29,6 +29,7 @@
 #include "CSSFunctionValue.h"
 #include "CSSShadowValue.h"
 #include "CSSToLengthConversionData.h"
+#include "CSSURLValue.h"
 #include "ColorFromPrimitiveValue.h"
 #include "Document.h"
 #include "RenderStyle.h"
@@ -76,24 +77,16 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
 {
     FilterOperations operations;
 
-    if (is<CSSPrimitiveValue>(inValue)) {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
-        if (primitiveValue.valueID() == CSSValueNone)
-            return operations;
-    }
+    if (inValue == CSSValueNone)
+        return operations;
 
     if (!is<CSSValueList>(inValue))
         return std::nullopt;
 
     for (auto& currentValue : downcast<CSSValueList>(inValue)) {
-        if (is<CSSPrimitiveValue>(currentValue)) {
-            auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue);
-            if (!primitiveValue.isURI())
-                continue;
-
-            auto filterURL = primitiveValue.stringValue();
-            auto fragment = document.completeURL(filterURL).fragmentIdentifier().toAtomString();
-            operations.operations().append(ReferenceFilterOperation::create(filterURL, WTFMove(fragment)));
+        if (auto* filterURL = dynamicDowncast<CSSURLValue>(currentValue)) {
+            auto fragment = document.completeURL(filterURL->string()).fragmentIdentifier().toAtomString();
+            operations.operations().append(ReferenceFilterOperation::create(filterURL->string(), WTFMove(fragment)));
             continue;
         }
 
@@ -102,23 +95,9 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
 
         auto& filterValue = downcast<CSSFunctionValue>(currentValue);
         auto operationType = filterOperationForType(filterValue.name());
-
-        // Check that all parameters are primitive values, with the
-        // exception of drop shadow which has a CSSShadowValue parameter.
         const CSSPrimitiveValue* firstValue = nullptr;
-        if (operationType != FilterOperation::Type::DropShadow) {
-            bool haveNonPrimitiveValue = false;
-            for (unsigned j = 0; j < filterValue.length(); ++j) {
-                if (!is<CSSPrimitiveValue>(*filterValue.itemWithoutBoundsCheck(j))) {
-                    haveNonPrimitiveValue = true;
-                    break;
-                }
-            }
-            if (haveNonPrimitiveValue)
-                continue;
-            if (filterValue.length())
-                firstValue = downcast<CSSPrimitiveValue>(filterValue.itemWithoutBoundsCheck(0));
-        }
+        if (operationType != FilterOperation::Type::DropShadow && filterValue.length())
+            firstValue = downcast<CSSPrimitiveValue>(filterValue.itemWithoutBoundsCheck(0));
 
         switch (operationType) {
         case FilterOperation::Type::Grayscale:
@@ -183,7 +162,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             int y = item.y->computeLength<int>(cssToLengthConversionData);
             IntPoint location(x, y);
             int blur = item.blur ? item.blur->computeLength<int>(cssToLengthConversionData) : 0;
-            auto color = item.color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, *item.color) : style.color();
+            auto color = item.color ? colorFromValueWithResolvedCurrentColor(document, style, *item.color) : style.color();
 
             operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;

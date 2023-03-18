@@ -46,10 +46,7 @@ class BuilderState;
 
 void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
-enum class ForVisitedLink : bool {
-    No,
-    Yes
-};
+enum class ForVisitedLink : bool { No, Yes };
 
 struct BuilderContext {
     Ref<const Document> document;
@@ -95,10 +92,10 @@ public:
     RefPtr<StyleImage> createStyleImage(const CSSValue&);
     std::optional<FilterOperations> createFilterOperations(const CSSValue&);
 
-    static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
-    StyleColor colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;
+    static bool isColorDerivedFromElement(const CSSValue&);
+    StyleColor colorFromValue(const CSSValue&, ForVisitedLink = ForVisitedLink::No) const;
     // FIXME: Remove. 'currentcolor' should be resolved at use time. All call sites are broken with inheritance.
-    Color colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPrimitiveValue&) const;
+    Color colorFromValueWithResolvedCurrentColor(const CSSValue&) const;
 
     const Vector<AtomString>& registeredContentAttributes() const { return m_registeredContentAttributes; }
     void registerContentAttribute(const AtomString& attributeLocalName);

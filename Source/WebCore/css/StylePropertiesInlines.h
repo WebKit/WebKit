@@ -101,7 +101,7 @@ inline String serializeLonghandValue(CSSPropertyID property, const CSSValue* val
 
 inline CSSValueID longhandValueID(CSSPropertyID property, const CSSValue& value)
 {
-    return value.isImplicitInitialValue() ? initialValueIDForLonghand(property) : valueID(value);
+    return value.isImplicitInitialValue() ? initialValueIDForLonghand(property) : value.valueID();
 }
 
 inline std::optional<CSSValueID> longhandValueID(CSSPropertyID property, const CSSValue* value)

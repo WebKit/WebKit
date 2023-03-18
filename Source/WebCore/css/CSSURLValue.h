@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+/**
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,53 +25,26 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
-#include "CachedResourceHandle.h"
-#include "ResourceLoaderOptions.h"
-#include <wtf/Function.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CachedFont;
-class FontLoadRequest;
-class SVGFontFaceElement;
-class ScriptExecutionContext;
-
-class CSSFontPaletteValuesOverrideColorsValue final : public CSSValue {
+class CSSURLValue : public CSSValue {
 public:
-    static Ref<CSSFontPaletteValuesOverrideColorsValue> create(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
-    {
-        return adoptRef(*new CSSFontPaletteValuesOverrideColorsValue(WTFMove(key), WTFMove(color)));
-    }
+    static Ref<CSSURLValue> create(String&&);
 
-    const CSSPrimitiveValue& key() const
-    {
-        return m_key.get();
-    }
-
-    const CSSPrimitiveValue& color() const
-    {
-        return m_color.get();
-    }
+    const String& string() const { return m_string; }
 
     String customCSSText() const;
-
-    bool equals(const CSSFontPaletteValuesOverrideColorsValue&) const;
+    bool equals(const CSSURLValue& other) const { return m_string == other.m_string; }
 
 private:
-    CSSFontPaletteValuesOverrideColorsValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
-        : CSSValue(FontPaletteValuesOverrideColorsClass)
-        , m_key(WTFMove(key))
-        , m_color(WTFMove(color))
-    {
-    }
+    explicit CSSURLValue(String&&);
 
-    Ref<CSSPrimitiveValue> m_key;
-    Ref<CSSPrimitiveValue> m_color;
+    String m_string;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontPaletteValuesOverrideColorsValue, isFontPaletteValuesOverrideColorsValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSURLValue, isURL())

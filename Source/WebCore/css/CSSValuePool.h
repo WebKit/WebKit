@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "ColorHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -33,35 +32,9 @@
 
 namespace WebCore {
 
+class CSSFontFamilyValue;
+class CSSResolvedColorValue;
 class CSSValueList;
-class CSSValuePool;
-
-class StaticCSSValuePool {
-    friend class CSSPrimitiveValue;
-    friend class CSSValuePool;
-    friend class LazyNeverDestroyed<StaticCSSValuePool>;
-
-public:
-    static void init();
-
-private:
-    StaticCSSValuePool();
-
-    LazyNeverDestroyed<CSSPrimitiveValue> m_implicitInitialValue;
-
-    LazyNeverDestroyed<CSSPrimitiveValue> m_transparentColor;
-    LazyNeverDestroyed<CSSPrimitiveValue> m_whiteColor;
-    LazyNeverDestroyed<CSSPrimitiveValue> m_blackColor;
-
-    static constexpr int maximumCacheableIntegerValue = 255;
-
-    LazyNeverDestroyed<CSSPrimitiveValue> m_pixelValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_percentValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_numberValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_identifierValues[numCSSValueKeywords];
-};
-
-WEBCORE_EXPORT extern LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
 
 class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
@@ -71,25 +44,14 @@ public:
     static CSSValuePool& singleton();
     void drain();
 
-    Ref<CSSPrimitiveValue> createColorValue(const Color&);
+    Ref<CSSResolvedColorValue> createColorValue(const Color&);
     RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
-    Ref<CSSPrimitiveValue> createFontFamilyValue(const AtomString&);
+    Ref<CSSFontFamilyValue> createFontFamilyValue(const AtomString&);
 
 private:
-    HashMap<Color, Ref<CSSPrimitiveValue>> m_colorValueCache;
+    HashMap<Color, Ref<CSSResolvedColorValue>> m_colorValueCache;
     HashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
-    HashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
+    HashMap<AtomString, Ref<CSSFontFamilyValue>> m_fontFamilyValueCache;
 };
-
-inline CSSPrimitiveValue& CSSPrimitiveValue::implicitInitialValue()
-{
-    return staticCSSValuePool->m_implicitInitialValue.get();
-}
-
-inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSValueID identifier)
-{
-    RELEASE_ASSERT(identifier < numCSSValueKeywords);
-    return staticCSSValuePool->m_identifierValues[identifier].get();
-}
 
 } // namespace WebCore

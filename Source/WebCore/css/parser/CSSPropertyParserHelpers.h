@@ -29,12 +29,9 @@
 
 #pragma once
 
-#include "CSSFunctionValue.h"
-#include "CSSParserContext.h"
+#include "CSSIdentValue.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSShadowValue.h"
-#include "CSSValuePool.h"
+#include "CSSValueList.h"
 #include "GridArea.h"
 #include "Length.h"
 #include "StyleColor.h"
@@ -45,13 +42,22 @@
 
 namespace WebCore {
 
+class CSSCustomIdentValue;
 class CSSGridLineNamesValue;
+class CSSPrimitiveValue;
+class CSSShadowValue;
+class CSSStringValue;
+class CSSURLValue;
+
+struct CSSParserContext;
+
+enum CSSParserMode : uint8_t;
+
+enum class BoxOrient : bool;
 
 namespace WebKitFontFamilyNames {
 enum class FamilyNamesIndex;
 }
-
-enum class BoxOrient : bool;
 
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
@@ -119,24 +125,24 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
 
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 
-std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
+CSSValueID consumeIdentRaw(CSSParserTokenRange&);
+RefPtr<CSSIdentValue> consumeIdent(CSSParserTokenRange&);
+RefPtr<CSSIdentValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID lower, CSSValueID upper);
 template<CSSValueID, CSSValueID...> bool identMatches(CSSValueID id);
-template<CSSValueID... allowedIdents> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
-template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
-template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&, Predicate&&, Args&&...);
-template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&, Predicate&&, Args&&...);
+template<CSSValueID... allowedIdents> CSSValueID consumeIdentRaw(CSSParserTokenRange&);
+template<CSSValueID... allowedIdents> RefPtr<CSSIdentValue> consumeIdent(CSSParserTokenRange&);
+template<typename Predicate, typename... Args> CSSValueID consumeIdentRaw(CSSParserTokenRange&, Predicate&&, Args&&...);
+template<typename Predicate, typename... Args> RefPtr<CSSIdentValue> consumeIdent(CSSParserTokenRange&, Predicate&&, Args&&...);
 
-RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
-RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
-RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
+RefPtr<CSSCustomIdentValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
+RefPtr<CSSCustomIdentValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
+RefPtr<CSSStringValue> consumeString(CSSParserTokenRange&);
 
 StringView consumeURLRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeURL(CSSParserTokenRange&);
+RefPtr<CSSURLValue> consumeURL(CSSParserTokenRange&);
 
 Color consumeColorWorkerSafe(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });
+RefPtr<CSSValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, bool acceptQuirkyColors = false, OptionSet<StyleColor::CSSColorType> = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System });
 
 enum class PositionSyntax {
     Position, // <position>
@@ -181,19 +187,20 @@ using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
 
 struct FontRaw {
     std::optional<FontStyleRaw> style;
-    std::optional<CSSValueID> variantCaps;
+    CSSValueID variantCaps { };
     std::optional<FontWeightRaw> weight;
-    std::optional<CSSValueID> stretch;
+    CSSValueID stretch { };
     FontSizeRaw size;
     std::optional<LineHeightRaw> lineHeight;
     Vector<FontFamilyRaw> family;
 };
 
-RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
-RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
+RefPtr<CSSCustomIdentValue> consumeCounterStyleName(CSSParserTokenRange&);
+AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode);
+AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&);
+RefPtr<CSSCustomIdentValue> consumeSingleContainerName(CSSParserTokenRange&);
 
-std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
+CSSValueID consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
 AtomString concatenateFamilyName(CSSParserTokenRange&);
 AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
 // https://drafts.csswg.org/css-fonts-4/#family-name-value
@@ -346,34 +353,34 @@ template<CSSValueID head, CSSValueID... tail> bool identMatches(CSSValueID id)
     return id == head || identMatches<tail...>(id);
 }
 
-template<CSSValueID... names> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
+template<CSSValueID... names> CSSValueID consumeIdentRaw(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
-        return std::nullopt;
+        return CSSValueInvalid;
     return range.consumeIncludingWhitespace().id();
 }
 
-template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
+template<CSSValueID... names> RefPtr<CSSIdentValue> consumeIdent(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
         return nullptr;
-    return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
+    return CSSIdentValue::create(range.consumeIncludingWhitespace().id());
 }
 
-template<typename Predicate, typename... Args> std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
+template<typename Predicate, typename... Args> CSSValueID consumeIdentRaw(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
 {
     if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
         range.consumeIncludingWhitespace();
         return keyword;
     }
-    return std::nullopt;
+    return CSSValueInvalid;
 }
 
-template<typename Predicate, typename... Args> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
+template<typename Predicate, typename... Args> RefPtr<CSSIdentValue> consumeIdent(CSSParserTokenRange& range, Predicate&& predicate, Args&&... args)
 {
     if (auto keyword = range.peek().id(); predicate(keyword, std::forward<Args>(args)...)) {
         range.consumeIncludingWhitespace();
-        return CSSPrimitiveValue::create(keyword);
+        return CSSIdentValue::create(keyword);
     }
     return nullptr;
 }

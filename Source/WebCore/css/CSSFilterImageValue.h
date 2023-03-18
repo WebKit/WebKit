@@ -50,6 +50,7 @@ public:
     bool equalInputImages(const CSSFilterImageValue&) const;
 
     String customCSSText() const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 

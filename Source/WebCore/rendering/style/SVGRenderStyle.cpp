@@ -28,7 +28,6 @@
 #include "config.h"
 #include "SVGRenderStyle.h"
 
-#include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "IntRect.h"
 #include "NodeRenderStyle.h"

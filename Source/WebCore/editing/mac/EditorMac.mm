@@ -30,6 +30,7 @@
 
 #import "Blob.h"
 #import "CSSPrimitiveValueMappings.h"
+#import "CSSResolvedColorValue.h"
 #import "CSSValuePool.h"
 #import "Color.h"
 #import "ColorCocoa.h"

@@ -27,6 +27,7 @@
 #include "ComputedStylePropertyMapReadOnly.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "Element.h"

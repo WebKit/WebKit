@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-CSSBorderImageWidthValue::CSSBorderImageWidthValue(Quad widths, bool overridesBorderWidths)
-    : CSSValue(BorderImageWidthClass)
+CSSBorderImageWidthValue::CSSBorderImageWidthValue(Quad&& widths, bool overridesBorderWidths)
+    : CSSValue(Type::BorderImageWidth)
     , m_widths(WTFMove(widths))
     , m_overridesBorderWidths(overridesBorderWidths)
 {
@@ -39,7 +39,7 @@ CSSBorderImageWidthValue::CSSBorderImageWidthValue(Quad widths, bool overridesBo
 
 CSSBorderImageWidthValue::~CSSBorderImageWidthValue() = default;
 
-Ref<CSSBorderImageWidthValue> CSSBorderImageWidthValue::create(Quad widths, bool overridesBorderWidths)
+Ref<CSSBorderImageWidthValue> CSSBorderImageWidthValue::create(Quad&& widths, bool overridesBorderWidths)
 {
     return adoptRef(*new CSSBorderImageWidthValue(WTFMove(widths), overridesBorderWidths));
 }

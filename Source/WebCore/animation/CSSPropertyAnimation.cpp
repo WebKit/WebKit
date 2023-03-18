@@ -32,7 +32,6 @@
 
 #include "AnimationUtilities.h"
 #include "CSSCustomPropertyValue.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CSSPropertyNames.h"
 #include "CSSRegisteredCustomProperty.h"

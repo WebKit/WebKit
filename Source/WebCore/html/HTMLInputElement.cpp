@@ -33,7 +33,6 @@
 #include "BeforeTextInsertedEvent.h"
 #include "CSSGradientValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ColorInputType.h"

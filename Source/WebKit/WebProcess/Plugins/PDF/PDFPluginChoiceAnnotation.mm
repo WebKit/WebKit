@@ -30,8 +30,8 @@
 
 #import "PDFLayerControllerSPI.h"
 #import <Quartz/Quartz.h>
-#import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
+#import <WebCore/CSSUnits.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/HTMLElement.h>

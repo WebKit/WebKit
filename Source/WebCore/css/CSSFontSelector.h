@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
 class CSSSegmentedFontFace;
 class CSSValueList;
 class CachedFont;

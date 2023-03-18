@@ -31,7 +31,6 @@
 #include "CSSFontFace.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontFeatureValuesRule.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSSegmentedFontFace.h"
 #include "CSSValueKeywords.h"
@@ -211,7 +210,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (featureSettings)
         fontFace->setFeatureSettings(*featureSettings);
     if (display)
-        fontFace->setDisplay(downcast<CSSPrimitiveValue>(*display));
+        fontFace->setDisplay(*display);
 
     CSSFontFace::appendSources(fontFace, srcList, m_context.get(), isInitiatingElementInUserAgentShadowTree);
 

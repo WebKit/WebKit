@@ -48,7 +48,7 @@ public:
 
 private:
     CSSCubicBezierTimingFunctionValue(double x1, double y1, double x2, double y2)
-        : CSSValue(CubicBezierTimingFunctionClass)
+        : CSSValue(Type::CubicBezierTimingFunction)
         , m_x1(x1)
         , m_y1(y1)
         , m_x2(x2)
@@ -78,7 +78,7 @@ public:
 
 private:
     CSSStepsTimingFunctionValue(int steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
-        : CSSValue(StepsTimingFunctionClass)
+        : CSSValue(Type::StepsTimingFunction)
         , m_steps(steps)
         , m_stepPosition(stepPosition)
     {
@@ -106,7 +106,7 @@ public:
 
 private:
     CSSSpringTimingFunctionValue(double mass, double stiffness, double damping, double initialVelocity)
-        : CSSValue(SpringTimingFunctionClass)
+        : CSSValue(Type::SpringTimingFunction)
         , m_mass(mass)
         , m_stiffness(stiffness)
         , m_damping(damping)

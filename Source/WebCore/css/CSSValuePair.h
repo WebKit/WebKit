@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Tyler Wilcock <twilco.o@protonmail.com>.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +26,64 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSIdentValue.h"
 
 namespace WebCore {
 
 class CSSValuePair : public CSSValue {
 public:
-    static Ref<CSSValuePair> create(Ref<CSSValue>, Ref<CSSValue>);
-    static Ref<CSSValuePair> createNoncoalescing(Ref<CSSValue>, Ref<CSSValue>);
+    static Ref<CSSValuePair> create(Ref<CSSValue>&&, Ref<CSSValue>&&);
+    static Ref<CSSValuePair> createNoncoalescing(Ref<CSSValue>&&, Ref<CSSValue>&&);
+    static Ref<CSSValuePair> create(CSSValueID, CSSValueID);
 
-    const CSSValue& first() const { return m_first; }
-    const CSSValue& second() const { return m_second; }
+    const CSSValue& first() const;
+    const CSSValue& second() const;
+    bool isNoncoalescing() const;
 
     String customCSSText() const;
     bool equals(const CSSValuePair&) const;
 
 private:
-    enum class IdenticalValueSerialization : bool { DoNotCoalesce, Coalesce };
-    CSSValuePair(Ref<CSSValue>, Ref<CSSValue>, IdenticalValueSerialization);
+    // Encode values in the scalar.
+    static constexpr uintptr_t IsNoncoalescingBit = 1 << PayloadShift;
+    static constexpr uint8_t FirstValueIDShift = PayloadShift + 1;
+    static constexpr uint8_t SecondValueIDShift = FirstValueIDShift + IdentBits;
 
-    // FIXME: Store coalesce bit in CSSValue to cut down on object size.
-    bool m_coalesceIdenticalValues { true };
+    enum class IdenticalValueSerialization : bool { DoNotCoalesce, Coalesce };
+    CSSValuePair(Ref<CSSValue>&&, Ref<CSSValue>&&, IdenticalValueSerialization);
+
     Ref<CSSValue> m_first;
     Ref<CSSValue> m_second;
 };
 
-inline const CSSValue& CSSValue::first() const
+inline const CSSValue& CSSValuePair::first() const
 {
-    return downcast<CSSValuePair>(*this).first();
+    if (hasScalarInPointer())
+        return CSSIdentValue::create(static_cast<CSSValueID>(scalar() >> FirstValueIDShift & IdentMask)).get();
+    return opaque(this)->m_first.get();
 }
 
-inline const CSSValue& CSSValue::second() const
+inline const CSSValue& CSSValuePair::second() const
 {
-    return downcast<CSSValuePair>(*this).second();
+    if (hasScalarInPointer())
+        return CSSIdentValue::create(static_cast<CSSValueID>(scalar() >> SecondValueIDShift)).get();
+    return opaque(this)->m_second.get();
+}
+
+inline bool CSSValuePair::isNoncoalescing() const
+{
+    if (hasScalarInPointer())
+        return scalar() & IsNoncoalescingBit;
+    return opaque(this)->m_isNoncoalescing;
+}
+
+inline Ref<CSSValuePair> CSSValuePair::create(CSSValueID first, CSSValueID second)
+{
+    ASSERT(first);
+    ASSERT(second);
+    return *reinterpret_cast<CSSValuePair*>(typeScalar(Type::ValuePair)
+        | static_cast<uintptr_t>(first) << FirstValueIDShift
+        | static_cast<uintptr_t>(second) << SecondValueIDShift);
 }
 
 } // namespace WebCore

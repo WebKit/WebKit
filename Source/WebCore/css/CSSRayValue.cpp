@@ -31,27 +31,29 @@
 
 namespace WebCore {
 
+CSSRayValue::CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining)
+    : CSSValue(Type::Ray)
+    , m_angle(WTFMove(angle))
+    , m_size(size)
+    , m_isContaining(isContaining)
+{
+    ASSERT(m_angle->isAngle());
+}
+
+Ref<CSSRayValue> CSSRayValue::create(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining)
+{
+    return adoptRef(*new CSSRayValue(WTFMove(angle), size, isContaining));
+}
+
 String CSSRayValue::customCSSText() const
 {
-    StringBuilder builder;
-
-    builder.append("ray(");
-    builder.append(m_angle->cssText());
-    builder.append(" ");
-    builder.append(m_size->cssText());
-
-    if (m_isContaining)
-        builder.append(" contain");
-
-    builder.append(")");
-
-    return builder.toString();
+    return makeString("ray("_s, m_angle->cssText(), ' ', nameLiteral(m_size), m_isContaining ? " contain"_s : ""_s, ')');
 }
 
 bool CSSRayValue::equals(const CSSRayValue& other) const
 {
     return compareCSSValue(m_angle, other.m_angle)
-        && compareCSSValue(m_size, other.m_size)
+        && m_size == other.m_size
         && m_isContaining == other.m_isContaining;
 }
 

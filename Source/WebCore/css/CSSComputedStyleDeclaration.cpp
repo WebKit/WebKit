@@ -29,7 +29,6 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelector.h"
-#include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComputedStyleExtractor.h"
 #include "DeprecatedCSSOMValue.h"
@@ -173,7 +172,7 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
         auto value = ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(AtomString { propertyName });
         if (!value)
             return nullptr;
-        return value->createDeprecatedCSSOMWrapper(*this);
+        return DeprecatedCSSOMValue::create(*value, *this);
     }
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
@@ -182,7 +181,7 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
     auto value = getPropertyCSSValue(propertyID);
     if (!value)
         return nullptr;
-    return value->createDeprecatedCSSOMWrapper(*this);
+    return DeprecatedCSSOMValue::create(*value, *this);
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)

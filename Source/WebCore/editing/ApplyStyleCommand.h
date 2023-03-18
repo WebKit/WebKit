@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
 class EditingStyle;
 class StyleChange;
 

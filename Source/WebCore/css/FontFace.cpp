@@ -28,6 +28,7 @@
 
 #include "AllowedFonts.h"
 #include "CSSFontFaceSource.h"
+#include "CSSFontFamilyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserWorkerSafe.h"

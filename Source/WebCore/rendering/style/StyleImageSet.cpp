@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005-2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Noam Rosenthal (noam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -25,27 +25,30 @@
 #include "config.h"
 #include "StyleImageSet.h"
 
-#include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
-#include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "MIMETypeRegistry.h"
-#include "Page.h"
 #include "StyleInvalidImage.h"
+#include <numeric>
 
 namespace WebCore {
 
-Ref<StyleImageSet> StyleImageSet::create(Vector<ImageWithScale>&& images, Vector<size_t>&& sortedIndices)
+Ref<StyleImageSet> StyleImageSet::create(Vector<ImageWithScale>&& images)
 {
-    ASSERT(images.size() == sortedIndices.size());
-    return adoptRef(*new StyleImageSet(WTFMove(images), WTFMove(sortedIndices)));
+    return adoptRef(*new StyleImageSet(WTFMove(images)));
 }
 
-StyleImageSet::StyleImageSet(Vector<ImageWithScale>&& images, Vector<size_t>&& sortedIndices)
+StyleImageSet::StyleImageSet(Vector<ImageWithScale>&& images)
     : StyleMultiImage { Type::ImageSet }
     , m_images { WTFMove(images) }
-    , m_sortedIndices { WTFMove(sortedIndices) }
+    , m_sortedIndices(m_images.size())
 {
+    // Sort the images so that they are stored in order from lowest resolution to highest.
+    // We want to maintain the authored order for serialization so we create a sorted indexing vector.
+    std::iota(m_sortedIndices.begin(), m_sortedIndices.end(), 0);
+    std::stable_sort(m_sortedIndices.begin(), m_sortedIndices.end(), [&](size_t a, size_t b) {
+        return m_images[a].scaleFactor < m_images[b].scaleFactor;
+    });
 }
 
 StyleImageSet::~StyleImageSet() = default;
@@ -62,13 +65,11 @@ bool StyleImageSet::equals(const StyleImageSet& other) const
 
 Ref<CSSValue> StyleImageSet::computedStyleValue(const RenderStyle& style) const
 {
-    CSSValueListBuilder builder;
-    builder.reserveInitialCapacity(m_images.size());
-
+    Vector<CSSImageSetValue::Option> options;
+    options.reserveInitialCapacity(m_images.size());
     for (auto& image : m_images)
-        builder.uncheckedAppend(CSSImageSetOptionValue::create(image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX), image.mimeType));
-
-    return CSSImageSetValue::create(WTFMove(builder));
+        options.uncheckedAppend({ image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX), image.mimeType });
+    return CSSImageSetValue::create(options);
 }
 
 ImageWithScale StyleImageSet::selectBestFitImage(const Document& document)
@@ -107,7 +108,7 @@ void StyleImageSet::updateDeviceScaleFactor(const Document& document)
     // FIXME: In the future, we want to take much more than deviceScaleFactor into acount here.
     // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
     // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
-    float deviceScaleFactor = document.page() ? document.page()->deviceScaleFactor() : 1;
+    float deviceScaleFactor = document.deviceScaleFactor();
     if (deviceScaleFactor == m_deviceScaleFactor)
         return;
     m_deviceScaleFactor = deviceScaleFactor;

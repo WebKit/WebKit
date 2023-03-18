@@ -24,6 +24,7 @@
 #include "HTMLHRElement.h"
 
 #include "CSSPropertyNames.h"
+#include "CSSResolvedColorValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "ElementInlines.h"

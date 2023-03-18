@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CSSFontVariantAlternatesValue::CSSFontVariantAlternatesValue(FontVariantAlternates&& alternates)
-    : CSSValue(FontVariantAlternatesClass)
+    : CSSValue(Type::FontVariantAlternates)
     , m_value(alternates)
 {
 }

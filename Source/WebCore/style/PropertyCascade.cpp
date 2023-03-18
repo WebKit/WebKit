@@ -29,7 +29,6 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSValuePool.h"
 #include "PaintWorkletGlobalScope.h"
 #include "PropertyAllowlist.h"
 #include "StyleBuilderGenerated.h"
@@ -206,7 +205,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             if (!current.isInherited()) {
                 // Inherited only mode is used after matched properties cache hit.
                 // A match with a value that is explicitly inherited should never have been cached.
-                ASSERT(!isValueID(current.value(), CSSValueInherit));
+                ASSERT(current.value() != CSSValueInherit);
                 continue;
             }
         } else if (m_includedProperties == IncludedProperties::AfterAnimation || m_includedProperties == IncludedProperties::AfterTransition) {

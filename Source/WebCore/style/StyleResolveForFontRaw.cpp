@@ -128,33 +128,33 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     }
     fontDescription.setFontStyleAxis((fontRaw.style && fontRaw.style->style == CSSValueItalic) ? FontStyleAxis::ital : FontStyleAxis::slnt);
 
-    if (fontRaw.variantCaps) {
-        switch (*fontRaw.variantCaps) {
-        case CSSValueNormal:
-            fontDescription.setVariantCaps(FontVariantCaps::Normal);
-            break;
-        case CSSValueSmallCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::Small);
-            break;
-        case CSSValueAllSmallCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::AllSmall);
-            break;
-        case CSSValuePetiteCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::Petite);
-            break;
-        case CSSValueAllPetiteCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::AllPetite);
-            break;
-        case CSSValueUnicase:
-            fontDescription.setVariantCaps(FontVariantCaps::Unicase);
-            break;
-        case CSSValueTitlingCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::Titling);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
+    switch (fontRaw.variantCaps) {
+    case CSSValueNormal:
+        fontDescription.setVariantCaps(FontVariantCaps::Normal);
+        break;
+    case CSSValueSmallCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::Small);
+        break;
+    case CSSValueAllSmallCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::AllSmall);
+        break;
+    case CSSValuePetiteCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::Petite);
+        break;
+    case CSSValueAllPetiteCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::AllPetite);
+        break;
+    case CSSValueUnicase:
+        fontDescription.setVariantCaps(FontVariantCaps::Unicase);
+        break;
+    case CSSValueTitlingCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::Titling);
+        break;
+    case CSSValueInvalid:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     if (fontRaw.weight) {

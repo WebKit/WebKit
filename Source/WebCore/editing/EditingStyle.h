@@ -42,7 +42,6 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
-class CSSPrimitiveValue;
 class CSSValue;
 class ComputedStyleExtractor;
 class Document;

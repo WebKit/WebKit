@@ -73,7 +73,7 @@ Color StyleColor::colorFromAbsoluteKeyword(CSSValueID keyword)
     return { };
 }
 
-Color StyleColor::colorFromKeyword(CSSValueID keyword , OptionSet<StyleColorOptions> options)
+Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<StyleColorOptions> options)
 {
     if (isAbsoluteColorKeyword(keyword))
         return colorFromAbsoluteKeyword(keyword);
@@ -115,7 +115,7 @@ bool StyleColor::isDeprecatedSystemColorKeyword(CSSValueID id)
 bool StyleColor::isColorKeyword(CSSValueID id, OptionSet<CSSColorType> allowedColorTypes)
 {
     return (allowedColorTypes.contains(CSSColorType::Absolute) && isAbsoluteColorKeyword(id))
-        || (allowedColorTypes.contains(CSSColorType::Current) && isCurrentColorKeyword(id))
+        || (allowedColorTypes.contains(CSSColorType::Current) && id == CSSValueCurrentcolor)
         || (allowedColorTypes.contains(CSSColorType::System) && isSystemColorKeyword(id));
 }
 

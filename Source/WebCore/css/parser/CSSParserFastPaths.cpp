@@ -527,7 +527,7 @@ static RefPtr<CSSValue> parseColor(StringView string, const CSSParserContext& co
     if (StyleColor::isColorKeyword(valueID)) {
         if (!isValueAllowedInMode(valueID, context.mode))
             return nullptr;
-        return CSSPrimitiveValue::create(valueID);
+        return CSSIdentValue::create(valueID);
     }
     if (auto color = parseNumericColor(string, context))
         return CSSValuePool::singleton().createColorValue(*color);
@@ -633,10 +633,10 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
         return nullptr;
 
     if (!parsingDescriptor && isCSSWideKeyword(valueID))
-        return CSSPrimitiveValue::create(valueID);
+        return CSSIdentValue::create(valueID);
 
     if (CSSParserFastPaths::isKeywordValidForStyleProperty(propertyId, valueID, context))
-        return CSSPrimitiveValue::create(valueID);
+        return CSSIdentValue::create(valueID);
     return nullptr;
 }
 
@@ -906,7 +906,7 @@ static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserCon
 {
     ASSERT(!string.isEmpty());
     if (cssValueKeywordID(string) == CSSValueAuto)
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return CSSIdentValue::create(CSSValueAuto);
     return parseColor(string, context);
 }
 

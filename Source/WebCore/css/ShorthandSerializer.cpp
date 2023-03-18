@@ -26,6 +26,7 @@
 #include "ShorthandSerializer.h"
 
 #include "CSSBorderImageWidthValue.h"
+#include "CSSCustomIdentValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSParserIdioms.h"
@@ -215,7 +216,7 @@ bool ShorthandSerializer::commonSerializationChecks(const StyleProperties& prope
         auto value = property.value();
 
         // Don't serialize if longhands have different CSS-wide keywords.
-        if (!isCSSWideKeyword(valueID(*value)) || value->isImplicitInitialValue()) {
+        if (!isCSSWideKeyword(value->valueID()) || value->isImplicitInitialValue()) {
             if (specialKeyword)
                 return true;
             allSpecialKeywords = false;
@@ -496,9 +497,9 @@ public:
 
     CSSValueID valueIDIncludingCustomIdent(unsigned index) const
     {
-        auto* value = dynamicDowncast<CSSPrimitiveValue>(m_values[index].get());
+        auto* value = m_values[index].get();
         if (value && value->isCustomIdent())
-            return cssValueKeywordID(value->stringValue());
+            return cssValueKeywordID(downcast<CSSCustomIdentValue>(*value).string());
         return valueID(index).value_or(CSSValueInvalid);
     }
 
@@ -745,7 +746,11 @@ String ShorthandSerializer::serializeBorderImage() const
         // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
         if (auto* width = dynamicDowncast<CSSBorderImageWidthValue>(longhand.value)) {
             auto& widths = width->widths();
-            bool overridesBorderWidths = m_shorthand.id() == CSSPropertyWebkitBorderImage && (widths.top().isLength() || widths.right().isLength() || widths.bottom().isLength() || widths.left().isLength());
+            auto isLength = [](const CSSValue& value) {
+                auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
+                return number && number->isLength();
+            };
+            bool overridesBorderWidths = m_shorthand.id() == CSSPropertyWebkitBorderImage && (isLength(widths.top()) || isLength(widths.right()) || isLength(widths.bottom()) || isLength(widths.left()));
             if (overridesBorderWidths != width->overridesBorderWidths())
                 return String();
             valueText = widths.cssText();
@@ -771,7 +776,7 @@ String ShorthandSerializer::serializeBorderRadius() const
     RefPtr<const CSSValue> horizontalRadii[4];
     RefPtr<const CSSValue> verticalRadii[4];
     for (unsigned i = 0; i < 4; ++i) {
-        auto& value = longhandValue(i);
+        auto& value = downcast<CSSValuePair>(longhandValue(i));
         horizontalRadii[i] = &value.first();
         verticalRadii[i] = &value.second();
     }
@@ -829,14 +834,14 @@ String ShorthandSerializer::serializeColumnBreak() const
     }
 }
 
-static std::optional<CSSValueID> fontStretchKeyword(double value)
+static CSSValueID fontStretchKeyword(double value)
 {
     // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
     float valueAsFloat = value;
     FontSelectionValue valueAsFontSelectionValue { valueAsFloat };
     float valueAsFloatAfterRoundTrip = valueAsFontSelectionValue;
     if (value != valueAsFloatAfterRoundTrip)
-        return std::nullopt;
+        return CSSValueInvalid;
     return fontStretchKeyword(valueAsFontSelectionValue);
 }
 
@@ -847,7 +852,7 @@ String ShorthandSerializer::serializeFont() const
     std::optional<CSSValueID> specialKeyword;
     bool allSpecialKeywords = true;
     for (auto& longhandValue : longhandValues()) {
-        auto keyword = valueID(longhandValue);
+        auto keyword = longhandValue.valueID();
         if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
             allSpecialKeywords = false;
         else {
@@ -881,14 +886,13 @@ String ShorthandSerializer::serializeFont() const
     // Font stretch values can only be serialized in the font shorthand as keywords, since percentages are also valid font sizes.
     // If a font stretch percentage can be expressed as a keyword, then do that.
     auto stretchKeyword = longhandValueID(stretchIndex);
-    if (stretchKeyword == CSSValueInvalid) {
+    if (!stretchKeyword) {
         auto& stretchValue = downcast<CSSPrimitiveValue>(longhandValue(stretchIndex));
         if (stretchValue.isCalculated() || !stretchValue.isPercentage())
             return String();
-        auto keyword = fontStretchKeyword(stretchValue.doubleValue());
-        if (!keyword)
+        stretchKeyword = fontStretchKeyword(stretchValue.doubleValue());
+        if (!stretchKeyword)
             return String();
-        stretchKeyword = *keyword;
     }
 
     bool includeStyle = !isLonghandInitialValue(styleIndex);
@@ -944,7 +948,7 @@ String ShorthandSerializer::serializeFontSynthesis() const
 String ShorthandSerializer::serializeFontVariant() const
 {
     for (auto& value : longhandValues()) {
-        if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID(value)))
+        if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID()))
             return String();
     }
     if (isLonghandValueNone(longhandIndex(0, CSSPropertyFontVariantLigatures))) {
@@ -960,25 +964,22 @@ String ShorthandSerializer::serializeFontVariant() const
 static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 {
     if (is<CSSValueList>(value)) {
-        auto& valueList = downcast<CSSValueList>(value);
-        if (valueList.size() != 1)
-            return false;
-        auto* item = valueList.item(0);
-        return item && isValueID(*item, id);
+        auto& list = downcast<CSSValueList>(value);
+        return list.size() == 1 && list[0] == id;
     }
-    return isValueID(value, id);
+    return value == id;
 }
 
 static bool gridAutoFlowContains(CSSValue& autoFlow, CSSValueID id)
 {
     if (is<CSSValueList>(autoFlow)) {
         for (auto& currentValue : downcast<CSSValueList>(autoFlow)) {
-            if (isValueID(currentValue, id))
+            if (currentValue == id)
                 return true;
         }
         return false;
     }
-    return isValueID(autoFlow, id);
+    return autoFlow == id;
 }
 
 String ShorthandSerializer::serializeGrid() const
@@ -1027,16 +1028,11 @@ String ShorthandSerializer::serializeGrid() const
     return makeString("auto-flow", dense, " ", serializeLonghandValue(autoRowsIndex), " / ", serializeLonghandValue(columnsIndex));
 }
 
-static bool isCustomIdentValue(const CSSValue& value)
+static bool canOmitTrailingGridAreaValue(const CSSValue& value, const CSSValue& trailing)
 {
-    return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isCustomIdent();
-}
-
-static bool canOmitTrailingGridAreaValue(CSSValue& value, CSSValue& trailing)
-{
-    if (isCustomIdentValue(value))
-        return isCustomIdentValue(trailing) && value.cssText() == trailing.cssText();
-    return isValueID(trailing, CSSValueAuto);
+    if (value.isCustomIdent())
+        return trailing.isCustomIdent() && downcast<CSSCustomIdentValue>(value).string() == downcast<CSSCustomIdentValue>(trailing).string();
+    return trailing == CSSValueAuto;
 }
 
 String ShorthandSerializer::serializeGridArea() const
@@ -1092,7 +1088,7 @@ String ShorthandSerializer::serializeGridTemplate() const
             result.append(lineNames->customCSSText());
         else {
             result.append('"', areasValue->stringForRow(row), '"');
-            if (!isValueID(currentValue, CSSValueAuto))
+            if (currentValue != CSSValueAuto)
                 result.append(' ', currentValue.cssText());
             row++;
         }

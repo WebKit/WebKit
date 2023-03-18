@@ -25,7 +25,7 @@
 #include "config.h"
 #include "ContainerQueryParser.h"
 
-#include "CSSPrimitiveValue.h"
+#include "CSSCustomIdentValue.h"
 #include "CSSPropertyParserHelpers.h"
 #include "ContainerQueryFeatures.h"
 
@@ -59,7 +59,7 @@ std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CS
         auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(range);
         if (!nameValue)
             return nullAtom();
-        return AtomString { nameValue->stringValue() };
+        return AtomString { nameValue->string() };
     };
 
     auto name = consumeName();

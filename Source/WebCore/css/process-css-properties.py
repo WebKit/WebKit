@@ -3301,9 +3301,9 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_color_property_value_setter(self, to, property, value):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
-        to.write(f"    builderState.style().{property.codegen_properties.setter}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::No));")
+        to.write(f"    builderState.style().{property.codegen_properties.setter}(builderState.colorFromValue({value}, ForVisitedLink::No));")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(builderState.colorFromPrimitiveValue({value}, ForVisitedLink::Yes));")
+        to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(builderState.colorFromValue({value}, ForVisitedLink::Yes));")
 
     # Animation property setters.
 
@@ -3516,7 +3516,7 @@ class GenerateStyleBuilderGenerated:
                 elif property.codegen_properties.conditional_converter:
                     return f"WTFMove(convertedValue.value())"
                 elif property.codegen_properties.color_property and not property.codegen_properties.visited_link_color_support:
-                    return f"builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), ForVisitedLink::No)"
+                    return f"builderState.colorFromValue(value, ForVisitedLink::No)"
                 else:
                     return "fromCSSValueDeducingType(value)"
 
@@ -3528,7 +3528,7 @@ class GenerateStyleBuilderGenerated:
                 to.write(f"}}")
 
             if property.codegen_properties.auto_functions:
-                to.write(f"if (value.valueID() == CSSValueAuto) {{")
+                to.write(f"if (value == CSSValueAuto) {{")
                 with to.indent():
                     to.write(f"builderState.style().setHasAuto{property.name_for_methods}();")
                     to.write(f"return;")
@@ -3936,10 +3936,13 @@ class GenerateCSSPropertyParsing:
             self.generation_context.generate_includes(
                 to=writer,
                 headers=[
+                    "CSSCustomIdentValue.h",
                     "CSSParserContext.h",
                     "CSSParserIdioms.h",
                     "CSSPropertyParser.h",
                     "CSSPropertyParserWorkerSafe.h",
+                    "CSSStringValue.h",
+                    "CSSURLValue.h",
                     "CSSValuePool.h",
                     "DeprecatedGlobalSettings.h",
                 ]
@@ -4511,7 +4514,7 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                         to.write(f"{default_string};")
 
                 to.write(f"{range_string}.consumeIncludingWhitespace();")
-                to.write(f"return CSSPrimitiveValue::create({return_expression.return_value});")
+                to.write(f"return CSSIdentValue::create({return_expression.return_value});")
 
         to.write(f"default:")
         with to.indent():

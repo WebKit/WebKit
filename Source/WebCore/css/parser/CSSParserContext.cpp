@@ -27,7 +27,6 @@
 #include "CSSParserContext.h"
 
 #include "CSSPropertyNames.h"
-#include "CSSValuePool.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Page.h"
@@ -64,8 +63,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         transformStyleOptimized3DEnabled = true;
 #endif
     }
-
-    StaticCSSValuePool::init();
 }
 
 CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, const String& charset)

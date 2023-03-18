@@ -43,7 +43,7 @@ class RenderStyle;
 
 struct CSSUnresolvedColorMix {
     struct Component {
-        Ref<CSSPrimitiveValue> color;
+        Ref<CSSValue> color;
         RefPtr<CSSPrimitiveValue> percentage;
     };
 

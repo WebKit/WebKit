@@ -31,8 +31,6 @@ namespace WebCore {
 
 class CachedImage;
 class CachedResourceLoader;
-class DeprecatedCSSOMValue;
-class CSSStyleDeclaration;
 class RenderElement;
 class StyleImage;
 
@@ -51,21 +49,15 @@ public:
     CachedImage* loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
     CachedImage* cachedImage() const { return m_cachedImage ? m_cachedImage.value().get() : nullptr; }
 
-    // Take care when using this, and read https://drafts.csswg.org/css-values/#relative-urls
+    // Take care when using the imageURL function, and read https://drafts.csswg.org/css-values/#relative-urls
     const URL& imageURL() const { return m_location.resolvedURL; }
-
     URL reresolvedURL(const Document&) const;
 
     String customCSSText() const;
-
-    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
-
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-
     bool equals(const CSSImageValue&) const;
 
     bool knownToBeOpaque(const RenderElement&) const;
-
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:

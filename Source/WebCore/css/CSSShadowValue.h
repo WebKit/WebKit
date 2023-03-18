@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSPrimitiveValue.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -34,11 +34,8 @@ public:
         RefPtr<CSSPrimitiveValue>&& y,
         RefPtr<CSSPrimitiveValue>&& blur,
         RefPtr<CSSPrimitiveValue>&& spread,
-        RefPtr<CSSPrimitiveValue>&& style,
-        RefPtr<CSSPrimitiveValue>&& color)
-    {
-        return adoptRef(*new CSSShadowValue(WTFMove(x), WTFMove(y), WTFMove(blur), WTFMove(spread), WTFMove(style), WTFMove(color)));
-    }
+        bool styleIsInset,
+        RefPtr<CSSValue>&& color);
 
     String customCSSText() const;
 
@@ -48,16 +45,16 @@ public:
     RefPtr<CSSPrimitiveValue> y;
     RefPtr<CSSPrimitiveValue> blur;
     RefPtr<CSSPrimitiveValue> spread;
-    RefPtr<CSSPrimitiveValue> style;
-    RefPtr<CSSPrimitiveValue> color;
+    bool styleIsInset { };
+    RefPtr<CSSValue> color;
 
 private:
     CSSShadowValue(RefPtr<CSSPrimitiveValue>&& x,
         RefPtr<CSSPrimitiveValue>&& y,
         RefPtr<CSSPrimitiveValue>&& blur,
         RefPtr<CSSPrimitiveValue>&& spread,
-        RefPtr<CSSPrimitiveValue>&& style,
-        RefPtr<CSSPrimitiveValue>&& color);
+        bool styleIsInset,
+        RefPtr<CSSValue>&& color);
 };
 
 } // namespace WebCore
