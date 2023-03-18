@@ -31,6 +31,26 @@
 
 namespace WebCore {
 
+bool ListStyleType::isCircle() const
+{
+    return type == Type::Circle || (type == Type::CounterStyle && identifier == nameLiteral(CSSValueCircle));
+}
+
+bool ListStyleType::isSquare() const
+{
+    return type == Type::Square || (type == Type::CounterStyle && identifier == nameLiteral(CSSValueSquare));
+}
+
+bool ListStyleType::isDisc() const
+{
+    return type == Type::Disc || (type == Type::CounterStyle && identifier == nameLiteral(CSSValueDisc));
+}
+
+bool ListStyleType::isDisclosureClosed() const
+{
+    return type == Type::DisclosureClosed || (type == Type::CounterStyle && identifier == nameLiteral(CSSValueDisclosureClosed));
+}
+
 TextStream& operator<<(TextStream& ts, ListStyleType::Type styleType)
 {
     return ts << nameLiteral(toCSSValueID(styleType)).characters();

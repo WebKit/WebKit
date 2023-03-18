@@ -33,6 +33,8 @@
 namespace WebCore {
 
 class StyleRuleCounterStyle;
+enum CSSValueID : uint16_t;
+
 using CounterStyleMap = HashMap<AtomString, RefPtr<CSSCounterStyle>>;
 
 class CSSCounterStyleRegistry {
@@ -58,5 +60,7 @@ private:
     CounterStyleMap m_authorCounterStyles;
     bool hasUnresolvedReferences { true };
 };
+
+bool isCounterStyleUnsupportedByUserAgent(CSSValueID);
 
 } // namespace WebCore

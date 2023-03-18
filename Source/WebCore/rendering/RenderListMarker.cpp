@@ -1568,7 +1568,7 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
         if (style().isLeftToRightDirection())
             textForRun = m_textWithSuffix;
         else {
-            if (style().listStyleType().type == ListStyleType::Type::DisclosureClosed)
+            if (style().listStyleType().isDisclosureClosed())
                 textForRun = { &blackLeftPointingSmallTriangle, 1 };
             else
                 textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
@@ -1629,18 +1629,18 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     context.setStrokeThickness(1.0f);
     context.setFillColor(color);
 
-    switch (style().listStyleType().type) {
-    case ListStyleType::Type::Disc:
+    auto listStyleType = style().listStyleType();
+    if (listStyleType.isDisc()) {
         context.fillEllipse(markerRect);
         return;
-    case ListStyleType::Type::Circle:
+    }
+    if (listStyleType.isCircle()) {
         context.strokeEllipse(markerRect);
         return;
-    case ListStyleType::Type::Square:
+    }
+    if (listStyleType.isSquare()) {
         context.fillRect(markerRect);
         return;
-    default:
-        break;
     }
     if (m_textWithSuffix.isEmpty())
         return;
@@ -1846,7 +1846,7 @@ void RenderListMarker::updateContent()
         m_textIsLeftToRightDirection = u_charDirection(m_textWithSuffix[0]) != U_RIGHT_TO_LEFT;
         break;
     case ListStyleType::Type::CounterStyle: {
-        auto* counter = counterStyle();
+        auto counter = counterStyle();
         ASSERT(counter);
         auto text = makeString(counter->prefix(), counter->text(m_listItem->value()));
         m_textWithSuffix = makeString(text, counter->suffix());
@@ -1879,17 +1879,10 @@ void RenderListMarker::computePreferredLogicalWidths()
     const FontCascade& font = style().fontCascade();
 
     LayoutUnit logicalWidth;
-    switch (style().listStyleType().type) {
-    case ListStyleType::Type::Circle:
-    case ListStyleType::Type::Disc:
-    case ListStyleType::Type::Square:
+    if (widthUsesMetricsOfPrimaryFont())
         logicalWidth = (font.metricsOfPrimaryFont().ascent() * 2 / 3 + 1) / 2 + 2;
-        break;
-    default:
-        if (!m_textWithSuffix.isEmpty())
+    else if (!m_textWithSuffix.isEmpty())
             logicalWidth = font.width(textRun());
-        break;
-    }
 
     m_minPreferredLogicalWidth = logicalWidth;
     m_maxPreferredLogicalWidth = logicalWidth;
@@ -1909,34 +1902,22 @@ void RenderListMarker::updateMargins()
     if (isInside()) {
         if (isImage())
             marginEnd = cMarkerPadding;
-        else
-            switch (style().listStyleType().type) {
-            case ListStyleType::Type::Disc:
-            case ListStyleType::Type::Circle:
-            case ListStyleType::Type::Square:
+        else if (widthUsesMetricsOfPrimaryFont()) {
                 marginStart = -1;
                 marginEnd = fontMetrics.ascent() - minPreferredLogicalWidth() + 1;
-                break;
-            default:
-                break;
         }
     } else if (isImage()) {
         marginStart = -minPreferredLogicalWidth() - cMarkerPadding;
         marginEnd = cMarkerPadding;
     } else {
         int offset = fontMetrics.ascent() * 2 / 3;
-        switch (style().listStyleType().type) {
-        case ListStyleType::Type::Disc:
-        case ListStyleType::Type::Circle:
-        case ListStyleType::Type::Square:
+        if (widthUsesMetricsOfPrimaryFont()) {
             marginStart = -offset - cMarkerPadding - 1;
             marginEnd = offset + cMarkerPadding + 1 - minPreferredLogicalWidth();
-            break;
-        case ListStyleType::Type::String:
+        } else if (style().listStyleType().type == ListStyleType::Type::String) {
             if (!m_textWithSuffix.isEmpty())
                 marginStart = -minPreferredLogicalWidth();
-            break;
-        default:
+        } else {
             if (!m_textWithSuffix.isEmpty()) {
                 marginStart = -minPreferredLogicalWidth() - offset / 2;
                 marginEnd = offset / 2;
@@ -1978,23 +1959,17 @@ FloatRect RenderListMarker::relativeMarkerRect()
         return FloatRect(0, 0, m_image->imageSize(this, style().effectiveZoom()).width(), m_image->imageSize(this, style().effectiveZoom()).height());
 
     FloatRect relativeRect;
-    switch (style().listStyleType().type) {
-    case ListStyleType::Type::Disc:
-    case ListStyleType::Type::Circle:
-    case ListStyleType::Type::Square: {
+    if (widthUsesMetricsOfPrimaryFont()) {
         // FIXME: Are these particular rounding rules necessary?
         const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
         int ascent = fontMetrics.ascent();
         int bulletWidth = (ascent * 2 / 3 + 1) / 2;
         relativeRect = FloatRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
-        break;
-    }
-    default:
+    } else {
         if (m_textWithSuffix.isEmpty())
             return FloatRect();
         auto& font = style().fontCascade();
         relativeRect = FloatRect(0, 0, font.width(textRun()), font.metricsOfPrimaryFont().height());
-        break;
     }
 
     if (!style().isHorizontalWritingMode()) {
@@ -2025,9 +2000,18 @@ StringView RenderListMarker::textWithoutSuffix() const
     return StringView { m_textWithSuffix }.left(m_textWithoutSuffixLength);
 }
 
-CSSCounterStyle* RenderListMarker::counterStyle() const
+RefPtr<CSSCounterStyle> RenderListMarker::counterStyle() const
 {
-    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleType().identifier).get();
+    auto listStyleType = style().listStyleType();
+    if (listStyleType.type != ListStyleType::Type::CounterStyle)
+        return nullptr;
+    return document().counterStyleRegistry().resolvedCounterStyle(listStyleType.identifier);
+}
+
+bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
+{
+    auto listType = style().listStyleType();
+    return listType.isCircle() || listType.isDisc() || listType.isSquare();
 }
 
 } // namespace WebCore

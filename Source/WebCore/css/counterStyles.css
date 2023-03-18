@@ -24,6 +24,8 @@
 
  /* https://www.w3.org/TR/css-counter-styles-3/#predefined-counters */
 
+/* Once a style is added here, make sure it is not listed at isCounterStyleUnsupportedByUserAgent() */
+
 @counter-style decimal {
     system: numeric;
     symbols: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9';
@@ -263,7 +265,8 @@
 
 @counter-style square {
     system: cyclic;
-    symbols: \25AA;
+    /* CSS specification calls for U+25FE BLACK MEDIUM SMALL SQUARE; we have been using U+25A0 BLACK SQUARE instead for a long time. */
+    symbols: \25A0;
     /* ▪ */
     suffix: " ";
 }
@@ -284,15 +287,16 @@
     /* ▸ */
 }
 
+/* cjk-earthly-branch and cjk-heavenly-stem are using 'alphabetic' system instead of 'fixed', as in the spec, for compatibility with legacy behavior and WPT tests (https://github.com/w3c/csswg-drafts/issues/8596). */
 @counter-style cjk-earthly-branch {
-    system: fixed;
+    system: alphabetic;
     symbols: "\5B50" "\4E11" "\5BC5" "\536F" "\8FB0" "\5DF3" "\5348" "\672A" "\7533" "\9149" "\620C" "\4EA5";
     /* 子 丑 寅 卯 辰 巳 午 未 申 酉 戌 亥 */
     suffix: "\3001";
 }
 
 @counter-style cjk-heavenly-stem {
-    system: fixed;
+    system: alphabetic;
     symbols: "\7532" "\4E59" "\4E19" "\4E01" "\620A" "\5DF1" "\5E9A" "\8F9B" "\58EC" "\7678";
     /* 甲 乙 丙 丁 戊 己 庚 辛 壬 癸 */
     suffix: "\3001";

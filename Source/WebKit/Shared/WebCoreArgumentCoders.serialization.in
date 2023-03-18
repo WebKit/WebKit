@@ -2823,9 +2823,14 @@ enum class WebCore::TextGranularity : uint8_t {
     DocumentBoundary
 };
 
+struct WebCore::ListStyleType {
+    WebCore::ListStyleType::Type type;
+    AtomString identifier;
+};
+
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
-    WebCore::ListStyleType::Type style
+    WebCore::ListStyleType styleType;
     int startingItemNumber
     bool ordered
 };

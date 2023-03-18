@@ -4898,25 +4898,16 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
 
 # Tests that fail because @counter-style is not implemented yet. Could skip the entire directory instead.
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html [ ImageOnlyFailure ]
 
 # More @counter-style failures due to not being implemented.
 imported/w3c/web-platform-tests/css/css-conditional/at-media-content-004.html [ ImageOnlyFailure ]
@@ -6289,10 +6280,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/nam
 # Missing support to counter-style at-rule in shadow scope rdar://103873418
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom.html [ ImageOnlyFailure ]
-
-# Missing allowing redefinition of predefined counter-styles rdar://106085436
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-attr-mapping.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-builtin.html [ ImageOnlyFailure ]
 
 # Missing counter-style integration with symbols() rdar://106084071
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function.html [ ImageOnlyFailure ]

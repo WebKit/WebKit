@@ -29,6 +29,7 @@
 #include "BasicShapeFunctions.h"
 #include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
+#include "CSSCounterStyleRegistry.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariationValue.h"
@@ -287,13 +288,18 @@ inline Length BuilderConverter::convertLengthSizing(const BuilderState& builderS
     }
 }
 
-inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState&, const CSSValue& value)
+inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isValueID())
+    if (primitiveValue.isValueID()) {
+        if (builderState.document().settings().cssCounterStyleAtRulesEnabled() && !isCounterStyleUnsupportedByUserAgent(primitiveValue.valueID()))
+            return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
         return { fromCSSValue<ListStyleType::Type>(primitiveValue), nullAtom() };
-    if (primitiveValue.isCustomIdent())
+    }
+    if (primitiveValue.isCustomIdent()) {
+        ASSERT(builderState.document().settings().cssCounterStyleAtRulesEnabled());
         return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
+    }
     return { ListStyleType::Type::String, makeAtomString(primitiveValue.stringValue()) };
 }
 

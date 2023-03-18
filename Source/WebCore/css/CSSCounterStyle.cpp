@@ -31,9 +31,12 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
+#include "RenderStyleConstants.h"
 #include <cmath>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -312,4 +315,4 @@ void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterSty
     if (!explicitlySetDescriptors().contains(CSSCounterStyleDescriptors::ExplicitlySetDescriptors::SpeakAs))
         setSpeakAs(extendedCounterStyle.speakAs());
 }
-}
+} // namespace WebCore

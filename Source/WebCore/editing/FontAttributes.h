@@ -30,6 +30,7 @@
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSTextList;
@@ -37,7 +38,7 @@ OBJC_CLASS NSTextList;
 namespace WebCore {
 
 struct TextList {
-    ListStyleType::Type style { ListStyleType::Type::None };
+    ListStyleType styleType { ListStyleType::Type::None, nullAtom() };
     int startingItemNumber { 0 };
     bool ordered { false };
 
