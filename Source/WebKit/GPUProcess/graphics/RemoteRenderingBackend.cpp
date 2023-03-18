@@ -439,7 +439,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
     auto backBuffer = fetchBuffer(inputData.bufferSet.back);
     auto secondaryBackBuffer = fetchBuffer(inputData.bufferSet.secondaryBack);
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::prepareBuffersForDisplay - front "
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: RemoteRenderingBackend::prepareBuffersForDisplay - front "
         << inputData.bufferSet.front << " (in-use " << (frontBuffer && frontBuffer->isInUse()) << ") "
         << inputData.bufferSet.back << " (in-use " << (backBuffer && backBuffer->isInUse()) << ") "
         << inputData.bufferSet.secondaryBack << " (in-use " << (secondaryBackBuffer && secondaryBackBuffer->isInUse()) << ") ");
@@ -485,7 +485,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
     } else
         needsFullDisplay = true;
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: prepareBuffersForDisplay - swapped from ["
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: prepareBuffersForDisplay - swapped from ["
         << inputData.bufferSet.front << ", " << inputData.bufferSet.back << ", " << inputData.bufferSet.secondaryBack << "] to ["
         << outputData.bufferSet.front << ", " << outputData.bufferSet.back << ", " << outputData.bufferSet.secondaryBack << "]");
 
@@ -494,7 +494,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
 
 void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<RenderingResourceIdentifier>& identifiers)
 {
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
 
     auto makeVolatile = [](ImageBuffer& imageBuffer) {
         imageBuffer.releaseGraphicsContext();
@@ -508,10 +508,10 @@ void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestI
             if (makeVolatile(*imageBuffer))
                 markedVolatileBufferIdentifiers.append(identifier);
         } else
-            LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << " failed to find ImageBuffer for identifier " << identifier);
+            LOG_WITH_STREAM(RemoteLayerBuffers, stream << " failed to find ImageBuffer for identifier " << identifier);
     }
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfacesVolatile - surfaces marked volatile " << markedVolatileBufferIdentifiers);
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: markSurfacesVolatile - surfaces marked volatile " << markedVolatileBufferIdentifiers);
 
     bool didMarkAllLayerAsVolatile = identifiers.size() == markedVolatileBufferIdentifiers.size();
     send(Messages::RemoteRenderingBackendProxy::DidMarkLayersAsVolatile(requestIdentifier, markedVolatileBufferIdentifiers, didMarkAllLayerAsVolatile), m_renderingBackendIdentifier);

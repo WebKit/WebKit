@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#include "PrepareBackingStoreBuffersData.h"
 
 #include "BufferIdentifierSet.h"
-#include "ImageBufferBackendHandle.h"
-#include "SwapBuffersDisplayRequirement.h"
-#include <WebCore/RenderingResourceIdentifier.h>
-
-namespace WTF {
-class TextStream;
-}
+#include "RemoteLayerBackingStore.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 
-struct PrepareBackingStoreBuffersInputData {
-    BufferIdentifierSet bufferSet;
-    bool supportsPartialRepaint { true };
-    bool hasEmptyDirtyRegion { true };
-};
+static TextStream& operator<<(TextStream& ts, const BufferIdentifierSet& identifierSet)
+{
+    ts << "front: " << identifierSet.front << " back: " << identifierSet.back << " secondaryBack: " << identifierSet.secondaryBack;
+    return ts;
+}
 
-struct PrepareBackingStoreBuffersOutputData {
-    BufferIdentifierSet bufferSet;
-    std::optional<ImageBufferBackendHandle> frontBufferHandle;
-    SwapBuffersDisplayRequirement displayRequirement { SwapBuffersDisplayRequirement::NeedsNoDisplay };
-};
+TextStream& operator<<(TextStream& ts, const PrepareBackingStoreBuffersInputData& inputData)
+{
+    ts << inputData.bufferSet << ", supportsPartialRepaint: " << inputData.supportsPartialRepaint << " hasEmptyDirtyRegion: " << inputData.hasEmptyDirtyRegion;
+    return ts;
+}
 
-WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersInputData&);
-WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersOutputData&);
+TextStream& operator<<(TextStream& ts, const PrepareBackingStoreBuffersOutputData& outputData)
+{
+    ts << outputData.bufferSet << ", has front buffer handle: " << !!outputData.frontBufferHandle << " displayRequirement: " << outputData.displayRequirement;
+    return ts;
+}
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

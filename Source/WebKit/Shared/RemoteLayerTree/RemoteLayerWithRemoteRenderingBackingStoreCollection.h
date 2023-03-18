@@ -44,7 +44,7 @@ private:
     
     RemoteRenderingBackendProxy& remoteRenderingBackendProxy();
 
-    bool backingStoreNeedsDisplay(const RemoteLayerBackingStore&) final;
+    BackingStoreNeedsDisplayReason backingStoreNeedsDisplay(const RemoteLayerBackingStore&) const final;
     void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&) final;
 
     bool collectBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior>, MonotonicTime now, Vector<WebCore::RenderingResourceIdentifier>&);

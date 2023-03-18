@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontCacheCoreText.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreText/CoreText.h>
 #include <variant>

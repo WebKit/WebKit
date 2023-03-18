@@ -2905,6 +2905,7 @@
 		0FC0856F187CE0A900780D86 /* messages.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = messages.py; path = webkit/messages.py; sourceTree = "<group>"; };
 		0FC08570187CE0A900780D86 /* model.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = model.py; path = webkit/model.py; sourceTree = "<group>"; };
 		0FC08571187CE0A900780D86 /* parser.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = parser.py; path = webkit/parser.py; sourceTree = "<group>"; };
+		0FC5FB6529C4ECEE001EDFE5 /* PrepareBackingStoreBuffersData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrepareBackingStoreBuffersData.cpp; sourceTree = "<group>"; };
 		0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageClientImplIOS.h; path = ios/PageClientImplIOS.h; sourceTree = "<group>"; };
 		0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PageClientImplIOS.mm; path = ios/PageClientImplIOS.mm; sourceTree = "<group>"; };
 		0FCB4E3818BBE044000FCFC9 /* WKActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKActionSheet.h; path = ios/WKActionSheet.h; sourceTree = "<group>"; };
@@ -10828,6 +10829,7 @@
 				727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */,
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
 				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,
+				0FC5FB6529C4ECEE001EDFE5 /* PrepareBackingStoreBuffersData.cpp */,
 				0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */,
 				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,
 				F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */,

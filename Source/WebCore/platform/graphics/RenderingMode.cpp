@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "RenderingMode.h"
 
-namespace WTF {
-class TextStream;
-}
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-enum class RenderingPurpose : uint8_t {
-    Unspecified,
-    Canvas,
-    DOM,
-    LayerBacking,
-    Snapshot,
-    ShareableSnapshot,
-    ShareableLocalSnapshot,
-    MediaPainting,
-};
+TextStream& operator<<(TextStream& ts, RenderingPurpose purpose)
+{
+    switch (purpose) {
+    case RenderingPurpose::Unspecified: ts << "Unspecified"; break;
+    case RenderingPurpose::Canvas: ts << "Canvas"; break;
+    case RenderingPurpose::DOM: ts << "DOM"; break;
+    case RenderingPurpose::LayerBacking: ts << "LayerBacking"; break;
+    case RenderingPurpose::Snapshot: ts << "Snapshot"; break;
+    case RenderingPurpose::ShareableSnapshot: ts << "ShareableSnapshot"; break;
+    case RenderingPurpose::ShareableLocalSnapshot: ts << "ShareableLocalSnapshot"; break;
+    case RenderingPurpose::MediaPainting: ts << "MediaPainting"; break;
+    }
+    return ts;
+}
 
-enum class RenderingMode : bool { Unaccelerated, Accelerated };
-enum class RenderingMethod : bool { Local, DisplayList };
+TextStream& operator<<(TextStream& ts, RenderingMode mode)
+{
+    switch (mode) {
+    case RenderingMode::Unaccelerated: ts << "Unaccelerated"; break;
+    case RenderingMode::Accelerated: ts << "Accelerated"; break;
+    }
+    return ts;
+}
 
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RenderingPurpose);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RenderingMode);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RenderingMethod);
+TextStream& operator<<(TextStream& ts, RenderingMethod method)
+{
+    switch (method) {
+    case RenderingMethod::Local: ts << "Local"; break;
+    case RenderingMethod::DisplayList: ts << "DisplayList"; break;
+    }
+
+    return ts;
+}
 
 } // namespace WebCore

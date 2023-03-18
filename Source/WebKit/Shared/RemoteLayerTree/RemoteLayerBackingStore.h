@@ -52,6 +52,14 @@ enum class SwapBuffersDisplayRequirement : uint8_t;
 using UseCGDisplayListImageCache = WebCore::ImageBufferCreationContext::UseCGDisplayListImageCache;
 #endif
 
+enum class BackingStoreNeedsDisplayReason : uint8_t {
+    None,
+    NoFrontBuffer,
+    FrontBufferIsVolatile,
+    FrontBufferHasNoSharingHandle,
+    HasDirtyRegion,
+};
+
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
@@ -236,5 +244,8 @@ private:
 
     bool m_isOpaque;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, SwapBuffersDisplayRequirement);
+WTF::TextStream& operator<<(WTF::TextStream&, BackingStoreNeedsDisplayReason);
 
 } // namespace WebKit

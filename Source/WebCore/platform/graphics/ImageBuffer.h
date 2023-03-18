@@ -36,6 +36,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Filter;
@@ -216,6 +220,8 @@ public:
     WEBCORE_EXPORT void setVolatilityState(VolatilityState);
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
+    WEBCORE_EXPORT virtual String debugDescription() const;
+
 protected:
     WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
@@ -252,5 +258,7 @@ inline OptionSet<ImageBufferOptions> bufferOptionsForRendingMode(RenderingMode r
         return { ImageBufferOptions::Accelerated };
     return { };
 }
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageBuffer&);
 
 } // namespace WebCore

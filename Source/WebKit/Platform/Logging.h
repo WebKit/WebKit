@@ -89,7 +89,7 @@ extern "C" {
     M(ProcessSwapping) \
     M(ProximityNetworking) \
     M(Push) \
-    M(RemoteRenderingBufferVolatility) \
+    M(RemoteLayerBuffers) \
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \
