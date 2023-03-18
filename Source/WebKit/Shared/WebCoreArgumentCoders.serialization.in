@@ -4921,3 +4921,44 @@ header: <WebCore/CaretAnimator.h>
     Alternate,
 };
 #endif
+
+[Nested] enum class WebCore::ProtectionSpace::ServerType : uint8_t {
+    HTTP,
+    HTTPS,
+    FTP,
+    FTPS,
+    ProxyHTTP,
+    ProxyHTTPS,
+    ProxyFTP,
+    ProxySOCKS
+};
+
+[Nested] enum class WebCore::ProtectionSpace::AuthenticationScheme : uint8_t {
+    Default,
+    HTTPBasic,
+    HTTPDigest,
+    HTMLForm,
+    NTLM,
+    Negotiate,
+    ClientCertificateRequested,
+    ServerTrustEvaluationRequested,
+    OAuth,
+#if USE(GLIB)
+    ClientCertificatePINRequested,
+#endif
+    Unknown
+};
+
+class WebCore::ProtectionSpace {
+    String host();
+    int port();
+    WebCore::ProtectionSpace::ServerType serverType();
+    String realm();
+    WebCore::ProtectionSpace::AuthenticationScheme authenticationScheme();
+#if USE(CURL)
+    WebCore::CertificateInfo certificateInfo();
+#endif
+#if PLATFORM(COCOA)
+    std::optional<WebCore::ProtectionSpace::PlatformData> getPlatformDataToSerialize();
+#endif
+};

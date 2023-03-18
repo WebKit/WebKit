@@ -137,17 +137,6 @@ bool ArgumentCoder<SoupNetworkProxySettings>::decode(Decoder& decoder, SoupNetwo
     return !settings.isEmpty();
 }
 
-void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder&, const ProtectionSpace&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder&, ProtectionSpace&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Credential& credential)
 {
     GRefPtr<GTlsCertificate> certificate = credential.certificate();

@@ -27,6 +27,7 @@
 #import "ProtectionSpaceCocoa.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 
 namespace WebCore {
 
@@ -93,6 +94,13 @@ ProtectionSpace::ProtectionSpace(NSURLProtectionSpace *space)
     : ProtectionSpace(space.host, space.port, type(space), space.realm, scheme(space))
 {
     m_nsSpace = space;
+}
+
+ProtectionSpace::ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme, std::optional<PlatformData> platformData)
+    : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
+{
+    if (platformData)
+        m_nsSpace = platformData->nsSpace;
 }
 
 NSURLProtectionSpace *ProtectionSpace::nsSpace() const
@@ -189,6 +197,14 @@ bool ProtectionSpace::receivesCredentialSecurely() const
 bool ProtectionSpace::encodingRequiresPlatformData(NSURLProtectionSpace *space)
 {
     return space.distinguishedNames || space.serverTrust;
+}
+
+std::optional<ProtectionSpace::PlatformData> ProtectionSpace::getPlatformDataToSerialize() const
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+    if (encodingRequiresPlatformData())
+        return PlatformData { nsSpace() };
+    return std::nullopt;
 }
 
 } // namespace WebCore
