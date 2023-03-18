@@ -80,14 +80,14 @@ public:
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext.get(); }
     EventTargetInterface eventTargetInterface() const final { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
-    ScriptExecutionContext& m_scriptExecutionContext;
+    WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;
     UtteranceCompletionHandler m_completionHandler;
 };
 
