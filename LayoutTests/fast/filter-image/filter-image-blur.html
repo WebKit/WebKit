@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-  <meta name="fuzzy" content="maxDifference=0-4; totalPixels=0-2196">
-  <style>
-    div {
-      width: 200px;
-      height: 100px;
-      background-image: filter(url(resources/svg-noblur.svg), blur(3px));
-    }
-  </style>
+    <meta name="fuzzy" content="maxDifference=0-10; totalPixels=0-500">
+    <style>
+        div {
+            position: absolute;
+            left: -22px;
+            top: -22px;
+            width: 260px;
+            height: 130px;
+            background-image: filter(url(resources/svg-noblur.svg), blur(3px));
+            clip-path: polygon(30px 30px, 230px 30px, 230px 130px, 30px 130px);
+        }
+    </style>
 </head>
 <body>
-<div>
-</div>
+    <div></div>
 </body>
 </html>

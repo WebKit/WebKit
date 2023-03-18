@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -130,7 +130,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto preferredFilterModes = renderer.page().preferredFilterRenderingModes();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, Filter::ClipOperation::Intersect, filterRegion, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;

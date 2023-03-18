@@ -2,7 +2,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,9 +36,9 @@ namespace WebCore {
 static constexpr unsigned maxTotalNumberFilterEffects = 100;
 static constexpr unsigned maxCountChildNodes = 200;
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
-    auto filter = adoptRef(*new SVGFilter(filterScale, clipOperation, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
+    auto filter = adoptRef(*new SVGFilter(filterScale, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
 
     auto expression = buildExpression(filterElement, filter, destinationContext);
     if (!expression)
@@ -56,8 +56,8 @@ RefPtr<SVGFilter> SVGFilter::create(const FloatRect& targetBoundingBox, SVGUnitT
     return adoptRef(*new SVGFilter(targetBoundingBox, primitiveUnits, WTFMove(expression)));
 }
 
-SVGFilter::SVGFilter(const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
-    : Filter(Filter::Type::SVGFilter, filterScale, clipOperation, filterRegion)
+SVGFilter::SVGFilter(const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+    : Filter(Filter::Type::SVGFilter, filterScale, filterRegion)
     , m_targetBoundingBox(targetBoundingBox)
     , m_primitiveUnits(primitiveUnits)
 {

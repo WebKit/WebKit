@@ -112,6 +112,12 @@ bool SVGFEMorphologyElement::isIdentity() const
     return !radiusX() && !radiusY();
 }
 
+IntOutsets SVGFEMorphologyElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
+{
+    auto radius = SVGFilter::calculateResolvedSize({ radiusX(), radiusY() }, targetBoundingBox, primitiveUnits);
+    return { radius.height(), radius.width(), radius.height(), radius.width() };
+}
+
 RefPtr<FilterEffect> SVGFEMorphologyElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     if (radiusX() < 0 || radiusY() < 0)

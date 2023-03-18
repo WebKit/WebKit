@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2100,7 +2100,6 @@ void ArgumentCoder<Filter>::encode(Encoder& encoder, const Filter& filter)
 
     encoder << filter.filterRenderingModes();
     encoder << filter.filterScale();
-    encoder << filter.clipOperation();
     encoder << filter.filterRegion();
 }
 
@@ -2144,11 +2143,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
     if (!filterScale)
         return std::nullopt;
 
-    std::optional<Filter::ClipOperation> clipOperation;
-    decoder >> clipOperation;
-    if (!clipOperation)
-        return std::nullopt;
-
     std::optional<FloatRect> filterRegion;
     decoder >> filterRegion;
     if (!filterRegion)
@@ -2156,7 +2150,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
 
     (*filter)->setFilterRenderingModes(*filterRenderingModes);
     (*filter)->setFilterScale(*filterScale);
-    (*filter)->setClipOperation(*clipOperation);
     (*filter)->setFilterRegion(*filterRegion);
 
     return filter;
