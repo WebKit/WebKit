@@ -44,8 +44,8 @@ HashMap<GlobalWindowIdentifier, DOMWindow*>& DOMWindow::allWindows()
 DOMWindow::DOMWindow(GlobalWindowIdentifier&& identifier)
     : m_identifier(WTFMove(identifier))
 {
-    ASSERT(!allWindows().contains(identifier));
-    allWindows().add(identifier, this);
+    ASSERT(!allWindows().contains(m_identifier));
+    allWindows().add(m_identifier, this);
 }
 
 DOMWindow::~DOMWindow()
