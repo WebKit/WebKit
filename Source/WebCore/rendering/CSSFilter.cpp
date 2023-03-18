@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,12 +42,12 @@
 
 namespace WebCore {
 
-RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    auto filter = adoptRef(*new CSSFilter(filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
+    auto filter = adoptRef(*new CSSFilter(filterScale, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 
     if (!filter->buildFilterFunctions(renderer, operations, preferredFilterRenderingModes, targetBoundingBox, destinationContext)) {
         LOG_WITH_STREAM(Filters, stream << "CSSFilter::create: failed to build filters " << operations);
@@ -65,8 +65,8 @@ RefPtr<CSSFilter> CSSFilter::create(Vector<Ref<FilterFunction>>&& functions)
     return adoptRef(new CSSFilter(WTFMove(functions)));
 }
 
-CSSFilter::CSSFilter(const FloatSize& filterScale, ClipOperation clipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
-    : Filter(Filter::Type::CSSFilter, filterScale, clipOperation)
+CSSFilter::CSSFilter(const FloatSize& filterScale, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin)
+    : Filter(Filter::Type::CSSFilter, filterScale)
     , m_hasFilterThatMovesPixels(hasFilterThatMovesPixels)
     , m_hasFilterThatShouldBeRestrictedBySecurityOrigin(hasFilterThatShouldBeRestrictedBySecurityOrigin)
 {
@@ -78,10 +78,10 @@ CSSFilter::CSSFilter(Vector<Ref<FilterFunction>>&& functions)
 {
 }
 
-static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation, Filter::ClipOperation clipOperation)
+static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation)
 {
     float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-    return FEGaussianBlur::create(stdDeviation, stdDeviation, clipOperation == Filter::ClipOperation::Unite ? EdgeModeType::None : EdgeModeType::Duplicate);
+    return FEGaussianBlur::create(stdDeviation, stdDeviation, EdgeModeType::None);
 }
 
 static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
@@ -217,7 +217,7 @@ static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const Referenc
 
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
 
-    return SVGFilter::create(*filterElement, preferredFilterRenderingModes, filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
+    return SVGFilter::create(*filterElement, preferredFilterRenderingModes, filter.filterScale(), filterRegion, targetBoundingBox, destinationContext);
 }
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
@@ -231,7 +231,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::Type::Blur:
-            function = createBlurEffect(downcast<BlurFilterOperation>(*operation), clipOperation());
+            function = createBlurEffect(downcast<BlurFilterOperation>(*operation));
             break;
 
         case FilterOperation::Type::Brightness:

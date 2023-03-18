@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,20 +44,20 @@ public:
 
     SVGFilterGraph(Ref<NodeType>&& sourceGraphic, Ref<NodeType>&& sourceAlpha)
     {
-        m_builtinNodes.add(SourceGraphic::effectName(), WTFMove(sourceGraphic));
-        m_builtinNodes.add(SourceAlpha::effectName(), WTFMove(sourceAlpha));
+        m_sourceNodes.add(SourceGraphic::effectName(), WTFMove(sourceGraphic));
+        m_sourceNodes.add(SourceAlpha::effectName(), WTFMove(sourceAlpha));
 
         setNodeInputs(*this->sourceAlpha(), NodeVector { *this->sourceGraphic() });
     }
 
     NodeType* sourceGraphic() const
     {
-        return m_builtinNodes.get(FilterEffect::sourceGraphicName());
+        return m_sourceNodes.get(FilterEffect::sourceGraphicName());
     }
 
     NodeType* sourceAlpha() const
     {
-        return m_builtinNodes.get(FilterEffect::sourceAlphaName());
+        return m_sourceNodes.get(FilterEffect::sourceAlphaName());
     }
 
     void addNamedNode(const AtomString& id, Ref<NodeType>&& node)
@@ -67,7 +67,7 @@ public:
             return;
         }
 
-        if (m_builtinNodes.contains(id))
+        if (m_sourceNodes.contains(id))
             return;
 
         m_lastNode = WTFMove(node);
@@ -83,8 +83,8 @@ public:
             return sourceGraphic();
         }
 
-        if (m_builtinNodes.contains(id))
-            return m_builtinNodes.get(id);
+        if (m_sourceNodes.contains(id))
+            return m_sourceNodes.get(id);
 
         return m_namedNodes.get(id);
     }
@@ -96,11 +96,10 @@ public:
         nodes.reserveInitialCapacity(names.size());
 
         for (auto& name : names) {
-            auto node = getNamedNode(name);
-            if (!node)
+            if (auto node = getNamedNode(name))
+                nodes.uncheckedAppend(node.releaseNonNull());
+            else if (!isSourceName(name))
                 return std::nullopt;
-
-            nodes.uncheckedAppend(node.releaseNonNull());
         }
 
         return nodes;
@@ -129,6 +128,11 @@ public:
     }
 
 private:
+    static bool isSourceName(const AtomString& id)
+    {
+        return id == SourceGraphic::effectName() || id == SourceAlpha::effectName();
+    }
+
     template<typename Callback>
     bool visit(NodeType& node, Vector<Ref<NodeType>>& stack, unsigned level, Callback callback)
     {
@@ -152,7 +156,7 @@ private:
         return true;
     }
 
-    HashMap<AtomString, Ref<NodeType>> m_builtinNodes;
+    HashMap<AtomString, Ref<NodeType>> m_sourceNodes;
     HashMap<AtomString, Ref<NodeType>> m_namedNodes;
     HashMap<Ref<NodeType>, NodeVector> m_nodeInputs;
     RefPtr<NodeType> m_lastNode;

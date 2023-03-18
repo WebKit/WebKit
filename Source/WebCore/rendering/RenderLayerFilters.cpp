@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,7 +147,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_filter || m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, Filter::ClipOperation::Unite, m_targetBoundingBox, context);
+        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, m_targetBoundingBox, context);
     }
 
     if (!m_filter)
@@ -184,7 +184,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     filter.setFilterRegion(m_filterRegion);
 
     if (!m_targetSwitcher || hasUpdatedBackingStore)
-        m_targetSwitcher = FilterTargetSwitcher::create(context, filter, filterRegion, DestinationColorSpace::SRGB());
+        m_targetSwitcher = FilterTargetSwitcher::create(context, filter, m_targetBoundingBox, DestinationColorSpace::SRGB());
 
     if (!m_targetSwitcher)
         return nullptr;

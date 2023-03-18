@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const Float
     auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
     auto sourceImageRect = FloatRect { { }, size };
 
-    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, Filter::ClipOperation::Intersect, sourceImageRect, NullGraphicsContext());
+    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
     if (!cssFilter)
         return &Image::nullImage();
 

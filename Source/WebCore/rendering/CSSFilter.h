@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ class RenderElement;
 class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
     WEBCORE_EXPORT static RefPtr<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
 
     const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
@@ -56,7 +56,7 @@ public:
     static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
 private:
-    CSSFilter(const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
+    CSSFilter(const FloatSize& filterScale, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
     CSSFilter(Vector<Ref<FilterFunction>>&&);
 
     bool buildFilterFunctions(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
