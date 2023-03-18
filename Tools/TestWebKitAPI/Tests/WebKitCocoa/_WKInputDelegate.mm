@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>
@@ -62,6 +63,14 @@ static bool willSubmitFormValuesCalled;
 
 - (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values userObject:(NSObject <NSSecureCoding> *)userObject submissionHandler:(void (^)(void))submissionHandler
 {
+    bool dictionaryIsAsExpected = [(NSDictionary *)userObject isEqualToDictionary:@{
+        @"NumberKey": @(24),
+        @"StringKey": @"StringValue",
+        @"ArrayKey": @[ @(123), @"Only 123 and this string should be serialized" ],
+        @"DictionaryKey": @{ @"NestedDictionaryKey": @{ @"NestedArrayKey": @[ @YES ] } },
+        @"DataKey": [NSData dataWithBytes:"def" length:3]
+    }];
+    EXPECT_TRUE(dictionaryIsAsExpected);
     EXPECT_EQ(values.count, 2u);
     EXPECT_STREQ([[values objectForKey:@"testname1"] UTF8String], "testvalue1");
     EXPECT_STREQ([[values objectForKey:@"testname2"] UTF8String], "testvalue2");
@@ -91,9 +100,9 @@ static bool willSubmitFormValuesCalled;
 TEST(WebKit, FormSubmission)
 {
     auto delegate = adoptNS([[InputDelegate alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleFormDelegatePlugInWithUserInfo"];
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
     [webView _setInputDelegate:delegate.get()];
     [webView loadHTMLString:@"<body onload='document.getElementById(\"formID\").submit()'><form id='formID' method='post' action='test:///formtarget'>"
         "<input type='text' name='testname1' value='testvalue1'/>"

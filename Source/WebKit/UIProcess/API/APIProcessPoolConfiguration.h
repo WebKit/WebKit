@@ -75,9 +75,6 @@ public:
     const WTF::String& injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
 
-    const Vector<WTF::String>& customClassesForParameterCoder() const { return m_customClassesForParameterCoder; }
-    void setCustomClassesForParameterCoder(Vector<WTF::String>&& classesForCoder) { m_customClassesForParameterCoder = WTFMove(classesForCoder); }
-
     const Vector<WTF::String>& cachePartitionedURLSchemes() { return m_cachePartitionedURLSchemes; }
     void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTFMove(cachePartitionedURLSchemes); }
 
@@ -169,7 +166,6 @@ public:
 
 private:
     WTF::String m_injectedBundlePath;
-    Vector<WTF::String> m_customClassesForParameterCoder;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     Vector<WTF::String> m_alwaysRevalidatedURLSchemes;
     Vector<WTF::String> m_additionalReadAccessAllowedPaths;

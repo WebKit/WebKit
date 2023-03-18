@@ -82,12 +82,11 @@ void WKContextConfigurationSetInjectedBundlePath(WKContextConfigurationRef confi
 
 WKArrayRef WKContextConfigurationCopyCustomClassesForParameterCoder(WKContextConfigurationRef configuration)
 {
-    return toAPI(&API::Array::createStringArray(toImpl(configuration)->customClassesForParameterCoder()).leakRef());
+    return toAPI(&API::Array::createStringArray(Vector<String>()).leakRef());
 }
 
 void WKContextConfigurationSetCustomClassesForParameterCoder(WKContextConfigurationRef configuration, WKArrayRef classesForCoder)
 {
-    toImpl(configuration)->setCustomClassesForParameterCoder(toImpl(classesForCoder)->toStringVector());
 }
 
 WKStringRef WKContextConfigurationCopyLocalStorageDirectory(WKContextConfigurationRef)

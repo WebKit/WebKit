@@ -3627,14 +3627,11 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
         void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy& sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, WTF::Function<void(void)>&& completionHandler) override
         {
-            if (userData && userData->type() != API::Object::Type::Data) {
-                ASSERT(!userData || userData->type() == API::Object::Type::Data);
-                m_webView->_page->process().connection()->markCurrentlyDispatchedMessageAsInvalid();
-                completionHandler();
+            auto webView = m_webView.get();
+            if (!webView)
                 return;
-            }
 
-            auto inputDelegate = m_webView->_inputDelegate.get();
+            auto inputDelegate = webView->_inputDelegate.get();
 
             if (![inputDelegate respondsToSelector:@selector(_webView:willSubmitFormValues:userObject:submissionHandler:)]) {
                 completionHandler();
@@ -3645,21 +3642,10 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
             for (const auto& pair : textFieldValues)
                 [valueMap setObject:pair.second forKey:pair.first];
 
-            NSObject <NSSecureCoding> *userObject = nil;
-            if (API::Data* data = static_cast<API::Data*>(userData)) {
-                auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
-                auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
-                unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-                @try {
-                    auto* allowedClasses = m_webView->_page->process().processPool().allowedClassesForParameterCoding();
-                    userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
-                } @catch (NSException *exception) {
-                    LOG_ERROR("Failed to decode user data: %@", exception);
-                }
-            }
+            auto userObject = userData ? userData->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>();
 
             auto checker = WebKit::CompletionHandlerCallChecker::create(inputDelegate.get(), @selector(_webView:willSubmitFormValues:userObject:submissionHandler:));
-            [inputDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] {
+            [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() userObject:userObject.get() submissionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] {
                 if (checker->completionHandlerHasBeenCalled())
                     return;
                 checker->didCallCompletionHandler();
@@ -3668,7 +3654,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         }
 
     private:
-        WKWebView *m_webView;
+        WeakObjCPtr<WKWebView> m_webView;
     };
 
     if (inputDelegate)

@@ -221,10 +221,6 @@ public:
     bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
-#if PLATFORM(COCOA)
-    NSSet *allowedClassesForParameterCoding() const;
-    void initializeClassesForParameterCoding();
-#endif
 
     DownloadProxy& download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
     DownloadProxy& resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart);
@@ -745,7 +741,6 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
-    mutable RetainPtr<NSSet> m_classesForParameterCoder;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

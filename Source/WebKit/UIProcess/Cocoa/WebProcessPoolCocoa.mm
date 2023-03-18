@@ -321,7 +321,6 @@ void WebProcessPool::initializeShouldCrashWhenCreatingWebProcess()
 void WebProcessPool::platformInitialize()
 {
     registerNotificationObservers();
-    initializeClassesForParameterCoding();
 
     if (s_didGlobalStaticInitialization)
         return;
@@ -1066,36 +1065,6 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 }
 
 #endif
-
-void WebProcessPool::initializeClassesForParameterCoding()
-{
-    const auto& customClasses = m_configuration->customClassesForParameterCoder();
-    if (customClasses.isEmpty())
-        return;
-
-    auto standardClasses = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class],
-        [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil];
-    
-    auto mutableSet = adoptNS([standardClasses mutableCopy]);
-
-    for (const auto& customClass : customClasses) {
-        auto className = customClass.utf8();
-        Class objectClass = objc_lookUpClass(className.data());
-        if (!objectClass) {
-            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className.data());
-            break;
-        }
-
-        [mutableSet.get() addObject:objectClass];
-    }
-
-    m_classesForParameterCoder = mutableSet;
-}
-
-NSSet *WebProcessPool::allowedClassesForParameterCoding() const
-{
-    return m_classesForParameterCoder.get();
-}
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)

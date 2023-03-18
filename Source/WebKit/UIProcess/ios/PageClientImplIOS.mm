@@ -610,22 +610,8 @@ void PageClientImpl::restorePageCenterAndScale(std::optional<WebCore::FloatPoint
 
 void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, API::Object* userData)
 {
-    MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);
-
-    NSObject <NSSecureCoding> *userObject = nil;
-    if (API::Data* data = static_cast<API::Data*>(userData)) {
-        auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
-        auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
-        unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-        @try {
-            auto* allowedClasses = m_webView.get()->_page->process().processPool().allowedClassesForParameterCoding();
-            userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
-        } @catch (NSException *exception) {
-            LOG_ERROR("Failed to decode user data: %@", exception);
-        }
-    }
-
-    [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject];
+    auto userObject = userData ? userData->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>();
+    [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject.get()];
 }
 
 void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
