@@ -101,7 +101,7 @@ public:
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
     ExceptionOr<void> changeType(const String&);
 
-    const TimeRanges& bufferedInternal() const { ASSERT(m_private->buffered()); return *m_private->buffered(); }
+    const PlatformTimeRanges& bufferedInternal() const { return m_private->buffered(); }
 
     void abortIfUpdating();
     void removedFromMediaSource();

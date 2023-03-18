@@ -508,7 +508,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
     MediaTime highestEndTime;
     for (auto& sourceBuffer : *m_sourceBuffers) {
         highestPresentationTimestamp = std::max(highestPresentationTimestamp, sourceBuffer->highestPresentationTimestamp());
-        highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().ranges().maximumBufferedTime());
+        highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().maximumBufferedTime());
     }
     if (highestPresentationTimestamp.isValid() && newDuration < highestPresentationTimestamp)
         return Exception { InvalidStateError };
@@ -586,7 +586,7 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         MediaTime maxEndTime;
         for (auto& sourceBuffer : *m_sourceBuffers) {
             if (auto length = sourceBuffer->bufferedInternal().length())
-                maxEndTime = std::max(sourceBuffer->bufferedInternal().ranges().end(length - 1), maxEndTime);
+                maxEndTime = std::max(sourceBuffer->bufferedInternal().end(length - 1), maxEndTime);
         }
         setDurationInternal(maxEndTime);
 
@@ -1069,7 +1069,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
     return WTF::map(*m_activeSourceBuffers, [](auto& sourceBuffer) {
-        return sourceBuffer->bufferedInternal().ranges();
+        return sourceBuffer->bufferedInternal();
     });
 }
 

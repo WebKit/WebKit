@@ -168,8 +168,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPriv
     if (!m_connectionToWebProcess)
         return;
 
-    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset()), m_identifier);
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, m_sourceBufferPrivate->buffered(), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset()), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
@@ -247,14 +246,14 @@ void RemoteSourceBufferProxy::startChangingType()
 void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&)>&& completionHandler)
 {
     m_sourceBufferPrivate->updateBufferedFromTrackBuffers(sourceIsEnded);
-    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+    auto buffered = m_sourceBufferPrivate->buffered();
     completionHandler(WTFMove(buffered));
 }
 
 void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
     m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+        auto buffered = m_sourceBufferPrivate->buffered();
         completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
     });
 }
@@ -262,7 +261,7 @@ void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const Me
 void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
     m_sourceBufferPrivate->evictCodedFrames(newDataSize, maximumBufferSize, currentTime, isEnded);
-    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+    auto buffered = m_sourceBufferPrivate->buffered();
     completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 
@@ -362,7 +361,7 @@ void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdenti
 void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
 {
     m_sourceBufferPrivate->memoryPressure(maximumBufferSize, currentTime, isEnded);
-    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+    auto buffered = m_sourceBufferPrivate->buffered();
     completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 

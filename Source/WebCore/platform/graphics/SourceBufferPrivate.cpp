@@ -58,11 +58,7 @@ static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 static const unsigned evictionAlgorithmInitialTimeChunk = 30000;
 static const unsigned evictionAlgorithmTimeChunkLowThreshold = 3000;
 
-SourceBufferPrivate::SourceBufferPrivate()
-    : m_buffered(TimeRanges::create())
-{
-}
-
+SourceBufferPrivate::SourceBufferPrivate() = default;
 SourceBufferPrivate::~SourceBufferPrivate() = default;
 
 void SourceBufferPrivate::resetTimestampOffsetInTrackBuffers()
@@ -97,9 +93,9 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
 
 void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges)
 {
-    if (m_buffered->ranges() == timeRanges)
+    if (m_buffered == timeRanges)
         return;
-    m_buffered->ranges() = WTFMove(timeRanges);
+    m_buffered = WTFMove(timeRanges);
     if (m_client)
         m_client->sourceBufferPrivateBufferedChanged();
 }
@@ -437,7 +433,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     updateHighestPresentationTimestamp();
 
-    LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
+    LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered).utf8().data());
 
     if (m_client)
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
@@ -930,8 +926,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
                 // NOTE: Searching from the end of the trackBuffer will be vastly more efficient if the search range is
                 // near the end of the buffered range. Use a linear-backwards search if the search range is within one
                 // frame duration of the end:
-                unsigned bufferedLength = trackBuffer.buffered().length();
-                if (!bufferedLength)
+                if (!trackBuffer.buffered().length())
                     break;
 
                 MediaTime highestBufferedTime = trackBuffer.maximumBufferedTime();
@@ -1118,8 +1113,6 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
 {
     auto isBufferFull = true;
 
-    const auto& buffered = m_buffered->ranges();
-
     // FIXME: All this is nice but we should take into account negative playback rate and begin from after current time
     // and be more conservative with before current time.
 
@@ -1129,7 +1122,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
         const auto maximumRangeEnd = std::min(currentTime - timeChunk, findPreviousSyncSamplePresentationTime(currentTime));
 
         do {
-            auto rangeStart = buffered.minimumBufferedTime();
+            auto rangeStart = m_buffered.minimumBufferedTime();
             auto rangeEnd = std::min(rangeStart + timeChunk, maximumRangeEnd);
 
             if (rangeStart >= rangeEnd)
@@ -1138,7 +1131,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
             removeCodedFrames(rangeStart, rangeEnd, currentTime, isEnded);
-            if (buffered.minimumBufferedTime() == rangeStart)
+            if (m_buffered.minimumBufferedTime() == rangeStart)
                 break; // Nothing evicted.
 
             isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
@@ -1156,17 +1149,17 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
         const auto minimumRangeStart = currentTime + timeChunk;
 
         do {
-            auto rangeEnd = buffered.maximumBufferedTime();
+            auto rangeEnd = m_buffered.maximumBufferedTime();
             auto rangeStart = std::max(minimumRangeStart, rangeEnd - timeChunk);
 
             if (rangeStart >= rangeEnd)
                 break;
 
             // Do not evict data from the time range that contains currentTime.
-            size_t currentTimeRange = buffered.find(currentTime);
-            size_t startTimeRange = buffered.find(rangeStart);
+            size_t currentTimeRange = m_buffered.find(currentTime);
+            size_t startTimeRange = m_buffered.find(rangeStart);
             if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
-                size_t endTimeRange = buffered.find(rangeEnd);
+                size_t endTimeRange = m_buffered.find(rangeEnd);
                 if (endTimeRange == currentTimeRange)
                     break;
             }
@@ -1174,7 +1167,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
             removeCodedFrames(rangeStart, rangeEnd, currentTime, isEnded);
-            if (buffered.maximumBufferedTime() == rangeEnd)
+            if (m_buffered.maximumBufferedTime() == rangeEnd)
                 break; // Nothing evicted.
 
             isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);

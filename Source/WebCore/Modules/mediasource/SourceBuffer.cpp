@@ -121,7 +121,7 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered() const
         return Exception { InvalidStateError };
 
     // 2. Return a new static normalized TimeRanges object for the media segments buffered.
-    return m_private->buffered()->copy();
+    return TimeRanges::create(m_private->buffered());
 }
 
 double SourceBuffer::timestampOffset() const
@@ -493,7 +493,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     if (isRemoved() || m_updating)
         return Exception { InvalidStateError };
 
-    DEBUG_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_private->buffered()->ranges());
+    DEBUG_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_private->buffered());
 
     // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 3.1. Set the readyState attribute of the parent media source to "open"
@@ -591,7 +591,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
     monitorBufferingRate();
     m_private->reenqueueMediaIfNeeded(m_source->currentTime());
 
-    DEBUG_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered()->ranges());
+    DEBUG_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)

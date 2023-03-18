@@ -107,7 +107,7 @@ public:
     WEBCORE_EXPORT void setClient(SourceBufferPrivateClient*);
     void setIsAttached(bool flag) { m_isAttached = flag; }
 
-    const TimeRanges* buffered() const { return m_buffered.get(); }
+    const PlatformTimeRanges& buffered() const { return m_buffered; }
 
     bool isBufferFullFor(uint64_t requiredSize, uint64_t maximumBufferSize);
 
@@ -212,7 +212,7 @@ private:
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
     bool m_isMediaSourceEnded { false };
-    RefPtr<TimeRanges> m_buffered;
+    PlatformTimeRanges m_buffered;
 };
 
 } // namespace WebCore
