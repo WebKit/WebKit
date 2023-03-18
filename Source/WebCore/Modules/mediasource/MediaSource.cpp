@@ -516,10 +516,10 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 
     // 5. Update duration to new duration.
     m_duration = newDuration;
-    ALWAYS_LOG(LOGIDENTIFIER, duration);
+    ALWAYS_LOG(LOGIDENTIFIER, newDuration);
 
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    m_private->durationChanged(duration);
+    m_private->durationChanged(newDuration);
 
     return { };
 }

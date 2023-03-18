@@ -97,9 +97,9 @@ std::unique_ptr<PlatformTimeRanges> MockMediaSourcePrivate::buffered()
     return nullptr;
 }
 
-void MockMediaSourcePrivate::durationChanged(const MediaTime&)
+void MockMediaSourcePrivate::durationChanged(const MediaTime& duration)
 {
-    m_player.updateDuration(duration());
+    m_player.updateDuration(duration);
 }
 
 void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
