@@ -99,7 +99,6 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_get_scope:
         return;
 
-    USES(OpCreateArgumentsButterflyExcludingThis, target)
     USES(OpToThis, srcDst)
     USES(OpCheckTdz, targetVirtualRegister)
     USES(OpIdentityWithProfile, srcDst)
@@ -546,7 +545,6 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpCreateDirectArguments, dst)
     DEFS(OpCreateScopedArguments, dst)
     DEFS(OpCreateClonedArguments, dst)
-    DEFS(OpCreateArgumentsButterflyExcludingThis, dst)
     DEFS(OpDelById, dst)
     DEFS(OpDelByVal, dst)
     DEFS(OpUnsigned, dst)

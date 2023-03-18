@@ -290,8 +290,6 @@ FOR_EACH_SIMPLE_BUILTIN_TYPE(CHECK_FEATURE_FLAG_TYPE)
 FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CHECK_FEATURE_FLAG_TYPE)
 FOR_EACH_LAZY_BUILTIN_TYPE(CHECK_FEATURE_FLAG_TYPE)
 
-static JSC_DECLARE_HOST_FUNCTION(makeBoundFunction);
-static JSC_DECLARE_HOST_FUNCTION(hasOwnLengthProperty);
 static JSC_DECLARE_HOST_FUNCTION(createPrivateSymbol);
 static JSC_DECLARE_HOST_FUNCTION(jsonParse);
 static JSC_DECLARE_HOST_FUNCTION(jsonStringify);
@@ -345,51 +343,6 @@ static JSValue createConsoleProperty(VM& vm, JSObject* object)
 {
     JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
     return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, constructEmptyObject(global)));
-}
-
-JSC_DEFINE_HOST_FUNCTION(makeBoundFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* target = asObject(callFrame->uncheckedArgument(0));
-    JSObject* flattenedTarget = target;
-    JSValue boundThis = callFrame->uncheckedArgument(1);
-    JSValue boundArgs = callFrame->uncheckedArgument(2);
-    JSImmutableButterfly* butterfly = boundArgs.isCell() ? jsCast<JSImmutableButterfly*>(boundArgs) : nullptr;
-    double length = callFrame->uncheckedArgument(3).asNumber();
-    JSString* nameString = asString(callFrame->uncheckedArgument(4));
-
-    // Unwrap JSBoundFunction by configuring butterfly and target. The larger Butterfly is already allocated for that purpose.
-    if (target->inherits<JSBoundFunction>()) {
-        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
-        if (boundFunction->canCloneBoundArgs()) {
-            boundThis = boundFunction->boundThis();
-            flattenedTarget = boundFunction->flattenedTargetFunction();
-            if (!butterfly && boundFunction->boundArgs())
-                butterfly = boundFunction->boundArgs();
-        }
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, flattenedTarget, boundThis, butterfly, length, nameString)));
-}
-
-JSC_DEFINE_HOST_FUNCTION(hasOwnLengthProperty, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* target = asObject(callFrame->uncheckedArgument(0));
-    JSFunction* function = jsDynamicCast<JSFunction*>(target);
-    if (function && function->canAssumeNameAndLengthAreOriginal(vm)) {
-#if ASSERT_ENABLED
-        bool result = target->hasOwnProperty(globalObject, vm.propertyNames->length);
-        RETURN_IF_EXCEPTION(scope, { });
-        ASSERT(result);
-#endif
-        return JSValue::encode(jsBoolean(true));
-    }
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(target->hasOwnProperty(globalObject, vm.propertyNames->length))));
 }
 
 // FIXME: use a bytecode or intrinsic for creating a private symbol.
@@ -1636,14 +1589,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::stringSplitFast)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "stringSplitFast"_s, stringProtoFuncSplitFast, ImplementationVisibility::Private));
-        });
-
-    // Function prototype helpers.
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::makeBoundFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 5, "makeBoundFunction"_s, makeBoundFunction, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasOwnLengthProperty)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "hasOwnLengthProperty"_s, hasOwnLengthProperty, ImplementationVisibility::Private));
         });
 
     // Proxy helpers.

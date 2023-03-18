@@ -36,6 +36,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionPrototype);
 const ClassInfo FunctionPrototype::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncToString);
+static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncBind);
 static JSC_DECLARE_HOST_FUNCTION(callFunctionPrototype);
 
 static JSC_DECLARE_CUSTOM_GETTER(argumentsGetter);
@@ -65,7 +66,7 @@ void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObje
 
     *applyFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().applyPublicName(), functionPrototypeApplyCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
     *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->bind, functionPrototypeBindCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->bind, functionProtoFuncBind, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->arguments, CustomGetterSetter::create(vm, argumentsGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->caller, CustomGetterSetter::create(vm, callerGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
@@ -100,6 +101,98 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     }
 
     return throwVMTypeError(globalObject, scope);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (UNLIKELY(!thisValue.isCallable()))
+        return throwVMTypeError(globalObject, scope, "|this| is not a function inside Function.prototype.bind"_s);
+    JSObject* target = asObject(thisValue);
+
+    JSValue boundThis = callFrame->argument(0);
+    unsigned argumentCount = callFrame->argumentCount();
+    unsigned numBoundArgs = 0;
+    JSImmutableButterfly* butterfly = nullptr;
+    if (argumentCount > 1) {
+        numBoundArgs = argumentCount - 1;
+        CheckedInt32 totalCount = argumentCount - 1;
+        int32_t additionalCount = 0;
+        JSImmutableButterfly* boundArgs = nullptr;
+        if (target->inherits<JSBoundFunction>()) {
+            JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
+            if (boundFunction->canCloneBoundArgs()) {
+                boundArgs = boundFunction->boundArgs();
+                additionalCount = boundArgs ? boundArgs->length() : 0;
+                totalCount += additionalCount;
+                if (UNLIKELY(totalCount.hasOverflowed())) {
+                    throwOutOfMemoryError(globalObject, scope);
+                    return { };
+                }
+            }
+        }
+
+        butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), totalCount.value());
+        if (UNLIKELY(!butterfly)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+        if (additionalCount) {
+            ASSERT(boundArgs);
+            for (int32_t index = 0; index < additionalCount; ++index)
+                butterfly->setIndex(vm, index, boundArgs->get(index));
+        }
+        for (int32_t index = 0; index < static_cast<int32_t>(argumentCount - 1); ++index)
+            butterfly->setIndex(vm, index + additionalCount, callFrame->uncheckedArgument(index + 1));
+    }
+
+    double length = 0;
+    JSString* name = nullptr;
+    JSFunction* function = jsDynamicCast<JSFunction*>(target);
+    if (LIKELY(function && function->canAssumeNameAndLengthAreOriginal(vm))) {
+        length = function->originalLength(vm);
+        if (length > numBoundArgs)
+            length -= numBoundArgs;
+        else
+            length = 0;
+    } else {
+        bool found = target->hasOwnProperty(globalObject, vm.propertyNames->length);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (found) {
+            JSValue lengthValue = target->get(globalObject, vm.propertyNames->length);
+            RETURN_IF_EXCEPTION(scope, { });
+            length = lengthValue.toIntegerOrInfinity(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (length > numBoundArgs)
+                length -= numBoundArgs;
+            else
+                length = 0;
+        }
+        JSValue nameValue = target->get(globalObject, vm.propertyNames->name);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (nameValue.isString())
+            name = asString(nameValue);
+        else
+            name = jsEmptyString(vm);
+    }
+
+    JSObject* flattenedTarget = target;
+
+    // Unwrap JSBoundFunction by configuring butterfly and target. The larger Butterfly is already allocated for that purpose.
+    if (target->inherits<JSBoundFunction>()) {
+        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
+        if (boundFunction->canCloneBoundArgs()) {
+            boundThis = boundFunction->boundThis();
+            flattenedTarget = boundFunction->flattenedTargetFunction();
+            if (!butterfly && boundFunction->boundArgs())
+                butterfly = boundFunction->boundArgs();
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, flattenedTarget, boundThis, butterfly, length, name)));
 }
 
 // https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#isallowedreceiverfunctionforcallerandargumentsfunc-expectedrealm (except step 3)

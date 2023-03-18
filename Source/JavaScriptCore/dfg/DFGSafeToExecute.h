@@ -618,7 +618,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
-    case CreateArgumentsButterflyExcludingThis:
     case PutToArguments:
     case NewFunction:
     case NewGeneratorFunction:

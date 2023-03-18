@@ -3015,7 +3015,6 @@ private:
         case FilterCheckPrivateBrandStatus:
         case FilterSetPrivateBrandStatus:
         case InvalidationPoint:
-        case CreateArgumentsButterflyExcludingThis:
         case GetWebAssemblyInstanceExports:
             break;
 #else // not ASSERT_ENABLED

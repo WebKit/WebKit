@@ -123,18 +123,89 @@ inline bool JSFunction::hasReifiedName() const
     return false;
 }
 
+inline double JSFunction::originalLength(VM& vm)
+{
+    if (inherits<JSBoundFunction>())
+        return jsCast<JSBoundFunction*>(this)->length(vm);
+    if (inherits<JSRemoteFunction>())
+        return jsCast<JSRemoteFunction*>(this)->length(vm);
+    ASSERT(!isHostFunction());
+    return jsExecutable()->parameterCount();
+}
+
+template<typename... StringTypes>
+ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, const char* messagePrefix, StringTypes... strings)
+{
+    String name = tryMakeString(strings...);
+    if (UNLIKELY(!name)) {
+        throwOutOfMemoryError(globalObject, throwScope, makeString(messagePrefix, "name is too long"_s));
+        return String();
+    }
+    return name;
+}
+
+inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (this->inherits<JSBoundFunction>()) {
+        JSString* nameMayBeNull = jsCast<JSBoundFunction*>(this)->nameMayBeNull();
+        if (nameMayBeNull)
+            RELEASE_AND_RETURN(scope, jsString(globalObject, vm.smallStrings.boundPrefixString(), nameMayBeNull));
+        return jsEmptyString(vm);
+    }
+
+    if (this->inherits<JSRemoteFunction>()) {
+        JSString* nameMayBeNull = jsCast<JSRemoteFunction*>(this)->nameMayBeNull();
+        if (nameMayBeNull)
+            return nameMayBeNull;
+        return jsEmptyString(vm);
+    }
+
+    ASSERT(!isHostFunction());
+    const Identifier& ecmaName = jsExecutable()->ecmaName();
+    String name;
+    // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
+    // When the ident is "*default*", we need to set "default" for the ecma name.
+    // This "*default*" name is never shown to users.
+    if (ecmaName == vm.propertyNames->starDefaultPrivateName)
+        name = vm.propertyNames->defaultKeyword.string();
+    else
+        name = ecmaName.string();
+
+    if (globalObject->needsSiteSpecificQuirks()) {
+        auto illegalCharMatcher = [] (UChar ch) -> bool {
+            return ch == ' ' || ch == '|';
+        };
+        if (name.find(illegalCharMatcher) != notFound)
+            name = String();
+    }
+
+    if (jsExecutable()->isGetter()) {
+        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Getter ", "get ", name);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else if (jsExecutable()->isSetter()) {
+        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Setter ", "set ", name);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return jsString(vm, WTFMove(name));
+}
+
 inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
 {
-    // JSRemoteFunction never has a 'name' field, return true
-    // to avoid allocating a FunctionRareData.
-    if (isHostFunction())
-        return false;
+    if (isHostFunction()) {
+        // Bound functions are not eagerly generating name and length.
+        // Thus, we can use FunctionRareData's tracking. This is useful to optimize func.bind().bind() case.
+        if (!inherits<JSBoundFunction>())
+            return false;
+    }
     FunctionRareData* rareData = this->rareData();
     if (!rareData)
         return true;
-    if (rareData->hasModifiedNameForNonHostFunction())
+    if (rareData->hasModifiedNameForBoundOrNonHostFunction())
         return false;
-    if (rareData->hasModifiedLengthForNonHostFunction())
+    if (rareData->hasModifiedLengthForBoundOrNonHostFunction())
         return false;
     return true;
 }

@@ -5384,11 +5384,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CreateArgumentsButterflyExcludingThis: {
-        compileCreateArgumentsButterflyExcludingThis(node);
-        break;
-    }
-
     case CreateRest: {
         compileCreateRest(node);
         break;

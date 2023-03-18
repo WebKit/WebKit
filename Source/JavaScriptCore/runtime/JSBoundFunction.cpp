@@ -26,8 +26,11 @@
 #include "config.h"
 #include "JSBoundFunction.h"
 
+#include "DeferTermination.h"
 #include "ExecutableBaseInlines.h"
+#include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "VMTrapsInlines.h"
 
 namespace JSC {
 
@@ -159,9 +162,12 @@ JSC_DEFINE_HOST_FUNCTION(hasInstanceBoundFunction, (JSGlobalObject* globalObject
 inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
+    JSFunction* targetJSFunction = jsDynamicCast<JSFunction*>(targetFunction);
+    if (LIKELY(targetJSFunction && targetJSFunction->getPrototypeDirect() == globalObject->functionPrototype()))
+        return globalObject->boundFunctionStructure();
+
     JSValue prototype = targetFunction->getPrototype(vm, globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSFunction* targetJSFunction = jsDynamicCast<JSFunction*>(targetFunction);
 
     // We only cache the structure of the bound function if the bindee is a JSFunction since there
     // isn't any good place to put the structure on Internal Functions.
@@ -246,6 +252,44 @@ void JSBoundFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+}
+
+JSString* JSBoundFunction::nameSlow(VM& vm)
+{
+    JSGlobalObject* globalObject = this->globalObject();
+    DeferTerminationForAWhile deferScope(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    unsigned nestingCount = 0;
+    JSObject* cursor = m_targetFunction.get();
+    JSString* terminal = nullptr;
+    while (true) {
+        ASSERT(cursor->inherits<JSFunction>()); // If this is not JSFunction, we eagerly materialized the name.
+        if (!cursor->inherits<JSBoundFunction>()) {
+            terminal = jsCast<JSFunction*>(cursor)->originalName(globalObject);
+            if (UNLIKELY(scope.exception())) {
+                scope.clearException();
+                terminal = jsEmptyString(vm);
+            }
+            break;
+        }
+        ++nestingCount;
+        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(cursor);
+        terminal = boundFunction->nameMayBeNull();
+        if (terminal)
+            break;
+        cursor = boundFunction->targetFunction();
+    }
+    for (unsigned i = 0; i < nestingCount; ++i) {
+        terminal = jsString(globalObject, vm.smallStrings.boundPrefixString(), terminal);
+        if (UNLIKELY(scope.exception())) {
+            scope.clearException();
+            terminal = jsEmptyString(vm);
+            break;
+        }
+    }
+    m_nameMayBeNull.set(vm, this, terminal);
+    return terminal;
 }
 
 template<typename Visitor>

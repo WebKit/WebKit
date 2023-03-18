@@ -588,7 +588,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
-    case CreateArgumentsButterflyExcludingThis:
         read(Stack);
         read(HeapObjectCount);
         write(HeapObjectCount);

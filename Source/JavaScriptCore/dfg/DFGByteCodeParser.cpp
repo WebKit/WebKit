@@ -8666,13 +8666,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_cloned_arguments);
         }
 
-        case op_create_arguments_butterfly_excluding_this: {
-            auto bytecode = currentInstruction->as<OpCreateArgumentsButterflyExcludingThis>();
-            noticeArgumentsUse();
-            set(bytecode.m_dst, addToGraph(CreateArgumentsButterflyExcludingThis, Edge(get(bytecode.m_target), CellUse)));
-            NEXT_OPCODE(op_create_arguments_butterfly_excluding_this);
-        }
-            
         case op_get_from_arguments: {
             auto bytecode = currentInstruction->as<OpGetFromArguments>();
             set(bytecode.m_dst,
