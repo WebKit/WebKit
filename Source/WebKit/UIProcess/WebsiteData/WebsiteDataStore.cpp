@@ -1920,6 +1920,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.unifiedOriginStorageLevel = m_configuration->unifiedOriginStorageLevel();
     networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();
     networkSessionParameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
+    networkSessionParameters.originQuotaRatio = originQuotaRatio();
     networkSessionParameters.localStorageDirectory = resolvedLocalStorageDirectory();
     createHandleFromResolvedPathIfPossible(networkSessionParameters.localStorageDirectory, networkSessionParameters.localStorageDirectoryExtensionHandle);
     networkSessionParameters.indexedDBDirectory = resolvedIndexedDBDatabaseDirectory();

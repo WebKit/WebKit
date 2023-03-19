@@ -713,6 +713,15 @@ std::optional<uint64_t> volumeFreeSpace(const String& path)
         return std::nullopt;
     return spaceInfo.available;
 }
+
+std::optional<uint64_t> volumeCapacity(const String& path)
+{
+    std::error_code ec;
+    auto spaceInfo = std::filesystem::space(toStdFileSystemPath(path), ec);
+    if (ec)
+        return std::nullopt;
+    return spaceInfo.capacity;
+}
 #endif
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)

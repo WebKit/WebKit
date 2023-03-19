@@ -82,6 +82,19 @@ static bool usePersistentCredentialStorage = false;
 }
 @end
 
+@interface WKWebsiteDataStoreMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation WKWebsiteDataStoreMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    receivedScriptMessage = true;
+    lastScriptMessage = message;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 
@@ -696,6 +709,45 @@ TEST(WKWebsiteDataStore, DataStoreForEmptyIdentifier)
         hasException = true;
     }
     EXPECT_TRUE(hasException);
+}
+
+TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatio)
+{
+    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    EXPECT_NULL([websiteDataStoreConfiguration.get() originQuotaRatio]);
+    // 1 GB disk has 1 byte quota.
+    auto ratioNumber = [NSNumber numberWithFloat:0.000000001];
+    [websiteDataStoreConfiguration.get() setOriginQuotaRatio:ratioNumber];
+    EXPECT_TRUE([[websiteDataStoreConfiguration.get() originQuotaRatio] isEqualToNumber:ratioNumber]);
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSString *htmlString = @"<script> \
+        var messageSent = false; \
+        function sendMessage(message) { \
+            if (messageSent) return; \
+            messageSent = true; \
+            window.webkit.messageHandlers.testHandler.postMessage(message); \
+        }; \
+        indexedDB.deleteDatabase('testRatio'); \
+        var request = indexedDB.open('testRatio'); \
+        request.onupgradeneeded = function(event) { \
+            db = event.target.result; \
+            os = db.createObjectStore('os'); \
+            const item = new Array(100000).join('x');\
+            os.put(item, 'key').onerror = function(event) { sendMessage(event.target.error.name); }; \
+        }; \
+        request.onsuccess = function() { sendMessage('Unexpected success'); }; \
+        request.onerror = function(event) { sendMessage(event.target.error.name); }; \
+    </script>";
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"QuotaExceededError", [lastScriptMessage body]);
 }
 
 } // namespace TestWebKitAPI
