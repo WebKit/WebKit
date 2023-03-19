@@ -465,7 +465,13 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
 bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout& lineLayout, TypeOfChangeForInvalidation typeOfChange)
 {
     auto isSupportedRenderer = [](auto& renderer) {
-        return is<RenderText>(renderer) || is<RenderLineBreak>(renderer);
+        if (is<RenderText>(renderer))
+            return true;
+        if (is<RenderLineBreak>(renderer)) {
+            // FIXME: Remove after webkit.org/b/254090 is fixed.
+            return !renderer.style().hasOutOfFlowPosition();
+        }
+        return false;
     };
     if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
         return true;
@@ -482,7 +488,7 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
 
     auto rootHasNonSupportedRenderer = [&] {
         for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
-            if (!isSupportedRenderer(sibling))
+            if (!isSupportedRenderer(*sibling))
                 return true;
         }
         return !canUseForLineLayout(rootBlockContainer);
