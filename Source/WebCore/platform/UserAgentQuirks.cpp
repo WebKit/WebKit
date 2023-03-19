@@ -66,6 +66,10 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
     if (baseDomain == "soundcloud.com"_s)
         return true;
 
+    // Seeking in fullscreen Youtube is broken.
+    if (baseDomain == "youtube.com"_s)
+        return true;
+
     return false;
 }
 
