@@ -39,6 +39,7 @@
 #include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include "WasmB3IRGenerator.h"
+#include "WasmBBQDisassembler.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
@@ -1310,6 +1311,11 @@ public:
 
         if ((Options::verboseBBQJITAllocation()))
             dataLogLn("BBQ\tUsing GPR set: ", m_gprSet, "\n   \tFPR set: ", m_fprSet);
+
+        if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::BBQMode))) {
+            m_disassembler = makeUnique<BBQDisassembler>();
+            m_disassembler->setStartOfCode(m_jit.label());
+        }
 
         CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
         ASSERT(callInfo.params.size() == m_functionSignature->argumentCount());
@@ -6943,6 +6949,9 @@ public:
         LOG_DEDENT();
         LOG_INSTRUCTION("End");
 
+        if (UNLIKELY(m_disassembler))
+            m_disassembler->setEndOfOpcode(m_jit.label());
+
         for (const auto& latePath : m_latePaths)
             latePath->run(*this, m_jit);
 
@@ -7360,6 +7369,8 @@ public:
     ALWAYS_INLINE void willParseOpcode()
     {
         m_pcToCodeOriginMapBuilder.appendItem(m_jit.label(), CodeOrigin(BytecodeIndex(m_parser->currentOpcodeStartingOffset())));
+        if (UNLIKELY(m_disassembler))
+            m_disassembler->setOpcode(m_jit.label(), m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
     }
 
     ALWAYS_INLINE void didParseOpcode()
@@ -8411,6 +8422,12 @@ public:
     void dump(const ControlStack&, const Stack*) { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { }
+
+    void finalize()
+    {
+        if (UNLIKELY(m_disassembler))
+            m_disassembler->setEndOfCode(m_jit.label());
+    }
 #undef BBQ_STUB
 #undef BBQ_CONTROL_STUB
 
@@ -8429,6 +8446,11 @@ public:
         if (m_pcToCodeOriginMapBuilder.didBuildMapping())
             return Box<PCToCodeOriginMapBuilder>::create(WTFMove(m_pcToCodeOriginMapBuilder));
         return nullptr;
+    }
+
+    std::unique_ptr<BBQDisassembler> takeDisassembler()
+    {
+        return WTFMove(m_disassembler);
     }
 
 private:
@@ -9365,6 +9387,7 @@ private:
     Vector<CCallHelpers::Label> m_catchEntrypoints;
 
     PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
+    std::unique_ptr<BBQDisassembler> m_disassembler;
 };
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
@@ -9381,13 +9404,15 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
     FunctionParser<BBQJIT> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
-    result->exceptionHandlers = irGenerator.takeExceptionHandlers();
-    compilationContext.catchEntrypoints = irGenerator.takeCatchEntrypoints();
-
     if (irGenerator.hasLoops())
         result->bbqSharedLoopEntrypoint = irGenerator.addLoopOSREntrypoint();
 
+    irGenerator.finalize();
+
+    result->exceptionHandlers = irGenerator.takeExceptionHandlers();
+    compilationContext.catchEntrypoints = irGenerator.takeCatchEntrypoints();
     compilationContext.pcToCodeOriginMapBuilder = irGenerator.takePCToCodeOriginMapBuilder();
+    compilationContext.bbqDisassembler = irGenerator.takeDisassembler();
 
     return result;
 }

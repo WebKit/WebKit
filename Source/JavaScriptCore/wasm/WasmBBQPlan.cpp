@@ -102,7 +102,11 @@ bool BBQPlan::prepareImpl()
 bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
 {
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::BBQMode))) {
-        if (!Options::useSinglePassBBQJIT()) {
+        dataLogF("Generated BBQ code for WebAssembly BBQ function[%i] %s name %s\n", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
+        if (Options::useSinglePassBBQJIT()) {
+            if (context.bbqDisassembler)
+                context.bbqDisassembler->dump(linkBuffer);
+        } else {
             auto* disassembler = context.procedure->code().disassembler();
 
             const char* b3Prefix = "b3    ";
@@ -119,11 +123,10 @@ bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
                 }
             });
 
-            dataLogLn("Generated BBQ code for WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
             disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);
-            linkBuffer.didAlreadyDisassemble();
-            return true;
         }
+        linkBuffer.didAlreadyDisassemble();
+        return true;
     }
     return false;
 }

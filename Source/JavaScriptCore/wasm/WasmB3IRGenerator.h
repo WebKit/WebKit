@@ -33,6 +33,7 @@
 #include "JITCompilation.h"
 #include "JITOpaqueByproducts.h"
 #include "PCToCodeOriginMap.h"
+#include "WasmBBQDisassembler.h"
 #include "WasmCompilationMode.h"
 #include "WasmJS.h"
 #include "WasmMemory.h"
@@ -55,6 +56,7 @@ struct CompilationContext {
     std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
     std::unique_ptr<OpaqueByproducts> wasmEntrypointByproducts;
     std::unique_ptr<B3::Procedure> procedure;
+    std::unique_ptr<BBQDisassembler> bbqDisassembler;
     Box<PCToCodeOriginMap> pcToCodeOriginMap;
     Box<PCToCodeOriginMapBuilder> pcToCodeOriginMapBuilder;
     Vector<CCallHelpers::Label> catchEntrypoints;

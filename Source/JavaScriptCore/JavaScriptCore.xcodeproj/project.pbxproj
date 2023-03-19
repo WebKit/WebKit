@@ -1139,7 +1139,6 @@
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FA2AE01CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		554C418729B14CA5003C9F71 /* WebAssemblyGCObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 554C418529B14CA5003C9F71 /* WebAssemblyGCObjectBase.cpp */; };
 		554C418829B14CA5003C9F71 /* WebAssemblyGCObjectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 554C418629B14CA5003C9F71 /* WebAssemblyGCObjectBase.h */; };
 		55579D9028DD641000153DAE /* WebAssemblyArrayPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 55579D8D28DD640F00153DAE /* WebAssemblyArrayPrototype.h */; };
 		55579D9128DD641000153DAE /* WebAssemblyArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 55579D8E28DD641000153DAE /* WebAssemblyArrayConstructor.h */; };
@@ -1870,6 +1869,7 @@
 		E307178E24C7829D00DF0644 /* IntlLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */; };
 		E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D5FB18F20744BF1005DDF64 /* IntlPluralRules.cpp */; };
 		E308A80E294D39340044A109 /* WasmLLIntBuiltin.h in Headers */ = {isa = PBXBuildFile; fileRef = E308A80D294D39330044A109 /* WasmLLIntBuiltin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E30D06B829C6C3EE0014CCE7 /* WasmBBQDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = E30D06B729C6C3E80014CCE7 /* WasmBBQDisassembler.h */; };
 		E30D903A28B77F28008B2CDC /* ProxyObjectAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = E30D903828B77F28008B2CDC /* ProxyObjectAccessCase.h */; };
 		E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A4E26DE2E4700DA4915 /* TemporalTimeZonePrototype.h */; };
 		E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */; };
@@ -5352,6 +5352,8 @@
 		E307178124C7824700DF0644 /* IntlSegmenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmenter.h; sourceTree = "<group>"; };
 		E307178224C7824700DF0644 /* IntlSegmenterConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmenterConstructor.cpp; sourceTree = "<group>"; };
 		E308A80D294D39330044A109 /* WasmLLIntBuiltin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmLLIntBuiltin.h; sourceTree = "<group>"; };
+		E30D06B629C6C3E80014CCE7 /* WasmBBQDisassembler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBBQDisassembler.cpp; sourceTree = "<group>"; };
+		E30D06B729C6C3E80014CCE7 /* WasmBBQDisassembler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmBBQDisassembler.h; sourceTree = "<group>"; };
 		E30D903728B77F27008B2CDC /* ProxyObjectAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyObjectAccessCase.cpp; sourceTree = "<group>"; };
 		E30D903828B77F28008B2CDC /* ProxyObjectAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyObjectAccessCase.h; sourceTree = "<group>"; };
 		E30E8A4C26DE2E4700DA4915 /* TemporalTimeZonePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalTimeZonePrototype.cpp; sourceTree = "<group>"; };
@@ -7500,6 +7502,8 @@
 				467DC2ED2906EE3600726988 /* WasmAirIRGeneratorBase.h */,
 				53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */,
 				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
+				E30D06B629C6C3E80014CCE7 /* WasmBBQDisassembler.cpp */,
+				E30D06B729C6C3E80014CCE7 /* WasmBBQDisassembler.h */,
 				FED5FA3329A0859C00798A7F /* WasmBBQJIT.cpp */,
 				FED5FA3229A0859C00798A7F /* WasmBBQJIT.h */,
 				53CA73071EA533D80076049D /* WasmBBQPlan.cpp */,
@@ -11412,6 +11416,7 @@
 				52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */,
 				467DC2F02906EE3600726988 /* WasmAirIRGeneratorBase.h in Headers */,
 				53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */,
+				E30D06B829C6C3EE0014CCE7 /* WasmBBQDisassembler.h in Headers */,
 				FED5FA3429A0859C00798A7F /* WasmBBQJIT.h in Headers */,
 				53CA730A1EA533D80076049D /* WasmBBQPlan.h in Headers */,
 				AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */,
