@@ -22,7 +22,7 @@
 #include "DOMWrapperWorld.h"
 
 #include "CommonVM.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
 #include "WebCoreJSClientData.h"
 #include "WindowProxy.h"
 #include <wtf/MainThread.h>

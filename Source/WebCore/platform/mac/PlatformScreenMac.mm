@@ -29,8 +29,8 @@
 #if PLATFORM(MAC)
 
 #import "FloatRect.h"
-#import "FrameView.h"
 #import "HostWindow.h"
+#import "LocalFrameView.h"
 #import "ScreenProperties.h"
 #import <ColorSync/ColorSync.h>
 #import <pal/cocoa/OpenGLSoftLinkCocoa.h>

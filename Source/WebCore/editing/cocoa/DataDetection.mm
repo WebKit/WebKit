@@ -38,13 +38,13 @@
 #import "ElementAncestorIteratorInlines.h"
 #import "ElementRareData.h"
 #import "ElementTraversal.h"
-#import "FrameView.h"
 #import "HTMLAnchorElement.h"
 #import "HTMLDivElement.h"
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
 #import "ImageOverlay.h"
+#import "LocalFrameView.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -145,7 +145,7 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
 
         contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
     } else {
-        Frame* frame = node->document().frame();
+        auto* frame = node->document().frame();
         if (!frame)
             return { };
 

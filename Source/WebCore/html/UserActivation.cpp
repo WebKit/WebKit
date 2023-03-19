@@ -25,7 +25,7 @@
 #include "config.h"
 #include "UserActivation.h"
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "Navigator.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -50,7 +50,7 @@ Navigator* UserActivation::navigator()
     return m_navigator.get();
 }
 
-DOMWindow* UserActivation::window() const
+LocalDOMWindow* UserActivation::window() const
 {
     return m_navigator ? m_navigator->window() : nullptr;
 }

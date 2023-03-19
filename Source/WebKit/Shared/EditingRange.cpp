@@ -26,14 +26,14 @@
 #include "config.h"
 #include "EditingRange.h"
 
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisibleUnits.h>
 
 namespace WebKit {
 
-std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
+std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::LocalFrame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
 {
     ASSERT(editingRange.location != notFound);
     WebCore::CharacterRange range { editingRange.location, editingRange.length };
@@ -61,7 +61,7 @@ std::optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame,
     return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
 }
 
-EditingRange EditingRange::fromRange(WebCore::Frame& frame, const std::optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+EditingRange EditingRange::fromRange(WebCore::LocalFrame& frame, const std::optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
 {
     ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
 

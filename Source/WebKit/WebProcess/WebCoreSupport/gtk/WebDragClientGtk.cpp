@@ -62,7 +62,7 @@ void WebDragClient::didConcludeEditDrag()
 {
 }
 
-void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame&)
+void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, LocalFrame&)
 {
     auto& dragImage = item.image;
     RefPtr<ShareableBitmap> bitmap = convertCairoSurfaceToShareableBitmap(dragImage.get().get());

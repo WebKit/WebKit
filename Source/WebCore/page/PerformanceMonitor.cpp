@@ -30,7 +30,7 @@
 #include "ChromeClient.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PerformanceLogging.h"

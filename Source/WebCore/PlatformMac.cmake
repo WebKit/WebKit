@@ -437,8 +437,6 @@ list(APPEND WebCore_SOURCES
     rendering/RenderThemeCocoa.mm
     rendering/RenderThemeMac.mm
     rendering/TextAutoSizing.cpp
-
-    xml/SoftLinkLibxslt.cpp
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS

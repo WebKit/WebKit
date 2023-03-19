@@ -470,6 +470,20 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGPageZ
 
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
 
+TEST(ContextMenuTests, ContextMenuElementInfoHasEntireImage)
+{
+    CGFloat iconWidth = 215;
+    CGFloat iconHeight = 174;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, iconWidth * 2, iconHeight * 2)]);
+    [webView synchronouslyLoadHTMLString:@"<img src='icon.png'></img>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(iconWidth, iconHeight)];
+    EXPECT_TRUE(elementInfo.hasEntireImage);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(10, 10)];
+    EXPECT_FALSE(elementInfo.hasEntireImage);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

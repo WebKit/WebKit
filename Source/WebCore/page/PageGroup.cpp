@@ -29,7 +29,7 @@
 #include "BackForwardCache.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "StorageNamespace.h"
 #include <JavaScriptCore/HeapInlines.h>

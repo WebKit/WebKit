@@ -35,10 +35,6 @@
 #include <X11/extensions/Xdamage.h>
 #endif
 
-#if USE(GLX)
-#include <epoxy/glx.h>
-#endif
-
 namespace WebCore {
 
 static inline Display* sharedDisplay()
@@ -71,20 +67,6 @@ template<> void XUniqueResource<XResource::Window>::deleteXResource(unsigned lon
     if (resource)
         XDestroyWindow(sharedDisplay(), resource);
 }
-
-#if USE(GLX)
-template<> void XUniqueResource<XResource::GLXPbuffer>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        glXDestroyPbuffer(sharedDisplay(), resource);
-}
-
-template<> void XUniqueResource<XResource::GLXPixmap>::deleteXResource(unsigned long resource)
-{
-    if (resource)
-        glXDestroyGLXPixmap(sharedDisplay(), resource);
-}
-#endif // USE(GLX)
 
 } // namespace WebCore
 

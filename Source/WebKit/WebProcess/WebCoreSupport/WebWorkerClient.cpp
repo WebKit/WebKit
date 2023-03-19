@@ -31,6 +31,7 @@
 #include "RemoteRenderingBackendProxy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/Page.h>
 
 #if ENABLE(WEBGL) && ENABLE(GPU_PROCESS)
 #include "RemoteGraphicsContextGLProxy.h"

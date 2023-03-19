@@ -29,12 +29,12 @@
 #include "Document.h"
 #include "Element.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameView.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageTransitionEvent.h"
@@ -85,7 +85,7 @@ static void firePageShowEvent(Page& page)
     if (!localMainFrame)
         return;
 
-    Vector<Ref<Frame>> childFrames;
+    Vector<Ref<LocalFrame>> childFrames;
     for (auto* child = localMainFrame->tree().traverseNextInPostOrder(CanWrap::Yes); child; child = child->tree().traverseNextInPostOrder(CanWrap::No)) {
         auto* localChild = downcast<LocalFrame>(child);
         if (!localChild)
@@ -151,7 +151,7 @@ void CachedPage::restore(Page& page)
         localMainFrame->selection().suppressScrolling();
 
         bool hadProhibitsScrolling = false;
-        FrameView* frameView = localMainFrame->view();
+        auto* frameView = localMainFrame->view();
         if (frameView) {
             hadProhibitsScrolling = frameView->prohibitsScrolling();
             frameView->setProhibitsScrolling(true);
@@ -176,7 +176,7 @@ void CachedPage::restore(Page& page)
 #endif
 
     if (m_needsUpdateContentsSize) {
-        if (FrameView* frameView = localMainFrame->view())
+        if (auto* frameView = localMainFrame->view())
             frameView->updateContentsSize();
     }
 

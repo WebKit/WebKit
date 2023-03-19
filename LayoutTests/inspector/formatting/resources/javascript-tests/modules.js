@@ -10,6 +10,7 @@ import a,{a}from"module";
 import a,{a as A}from"module";
 import x,*as A from"module";
 import*as A from"module";
+import{a}from"module"assert{type:"json"} ;
 
 export{x};
 export let x;
@@ -37,3 +38,5 @@ export default function*(){}
 export default function*f(){}
 export default class{}
 export default class X{}
+export{x}assert{type:"json"} ;
+export*from"module"assert{type:"json"} ;

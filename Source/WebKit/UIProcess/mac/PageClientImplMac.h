@@ -82,6 +82,8 @@ private:
     WebCore::DestinationColorSpace colorSpace() override;
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
     CALayer *acceleratedCompositingRootLayer() const override;
+    CALayer *headerBannerLayer() const override;
+    CALayer *footerBannerLayer() const override;
 
     void processDidExit() override;
     void processWillSwap() override;

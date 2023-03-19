@@ -75,7 +75,7 @@ namespace WebCore {
                 if (fabs (x2) < epsilon)
                     return t2;
                 d2 = sampleCurveDerivativeX(t2);
-                if (fabs(d2) < 1e-6)
+                if (std::abs(d2) < 1e-6)
                     break;
                 t2 = t2 - x2 / d2;
             }
@@ -92,7 +92,7 @@ namespace WebCore {
 
             while (t0 < t1) {
                 x2 = sampleCurveX(t2);
-                if (fabs(x2 - x) < epsilon)
+                if (std::abs(x2 - x) < epsilon)
                     return t2;
                 if (x > x2)
                     t0 = t2;

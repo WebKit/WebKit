@@ -27,9 +27,9 @@
 #include "PageDOMDebuggerAgent.h"
 
 #include "Element.h"
-#include "Frame.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "LocalFrame.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -146,7 +146,7 @@ void PageDOMDebuggerAgent::mainFrameNavigated()
         m_pauseOnAllAnimationFramesBreakpoint->resetHitCount();
 }
 
-void PageDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
+void PageDOMDebuggerAgent::frameDocumentUpdated(LocalFrame& frame)
 {
     if (!frame.isMainFrame())
         return;

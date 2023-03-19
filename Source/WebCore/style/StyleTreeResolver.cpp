@@ -29,7 +29,6 @@
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
-#include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
@@ -38,6 +37,7 @@
 #include "HTMLProgressElement.h"
 #include "HTMLSlotElement.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
@@ -1013,9 +1013,9 @@ static Vector<Function<void ()>>& postResolutionCallbackQueue()
     return vector;
 }
 
-static Vector<RefPtr<Frame>>& memoryCacheClientCallsResumeQueue()
+static Vector<RefPtr<LocalFrame>>& memoryCacheClientCallsResumeQueue()
 {
-    static NeverDestroyed<Vector<RefPtr<Frame>>> vector;
+    static NeverDestroyed<Vector<RefPtr<LocalFrame>>> vector;
     return vector;
 }
 

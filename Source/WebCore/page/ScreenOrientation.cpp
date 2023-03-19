@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScreenOrientation.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Element.h"
@@ -35,6 +34,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FullscreenManager.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 

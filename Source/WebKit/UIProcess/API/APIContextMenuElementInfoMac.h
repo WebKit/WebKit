@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #include "APIObject.h"
+#include "ContextMenuContextData.h"
 #include "WebHitTestResultData.h"
 
 namespace API {
@@ -40,15 +41,18 @@ public:
     }
 
     const WebKit::WebHitTestResultData& hitTestResultData() const { return m_hitTestResultData; }
-    const WTF::String& qrCodePayloadString() const { return m_qrCodePayloadString; };
+    const WTF::String& qrCodePayloadString() const { return m_qrCodePayloadString; }
+    bool hasEntireImage() const { return m_hasEntireImage; }
 
 private:
-    ContextMenuElementInfoMac(const WebKit::WebHitTestResultData& hitTestResultData, const WTF::String& qrCodePayloadString)
-        : m_hitTestResultData(hitTestResultData)
-        , m_qrCodePayloadString(qrCodePayloadString) { }
+    ContextMenuElementInfoMac(const WebKit::ContextMenuContextData& data)
+        : m_hitTestResultData(data.webHitTestResultData().value())
+        , m_qrCodePayloadString(data.qrCodePayloadString())
+        , m_hasEntireImage(data.hasEntireImage()) { }
 
     WebKit::WebHitTestResultData m_hitTestResultData;
     WTF::String m_qrCodePayloadString;
+    bool m_hasEntireImage;
 };
 
 } // namespace API

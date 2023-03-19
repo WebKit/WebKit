@@ -1509,8 +1509,31 @@ private:
                     }
                     break;
 
-                // FIXME: Add cases for 48 and 56, but that would translate to SExt32(SExt8) or
-                // SExt32(SExt16), which we don't currently lower efficiently.
+                case 48:
+                    if (m_value->type() == Int64) {
+                        // Turn this: SShr(Shl(value, 48), 48)
+                        // Into this: SExt16To64(Trunc(value))
+                        replaceWithNewValue(
+                            m_proc.add<Value>(
+                                SExt16To64, m_value->origin(),
+                                m_insertionSet.insert<Value>(
+                                    m_index, Trunc, m_value->origin(),
+                                    m_value->child(0)->child(0))));
+                    }
+                    break;
+
+                case 56:
+                    if (m_value->type() == Int64) {
+                        // Turn this: SShr(Shl(value, 56), 56)
+                        // Into this: SExt8To64(Trunc(value))
+                        replaceWithNewValue(
+                            m_proc.add<Value>(
+                                SExt8To64, m_value->origin(),
+                                m_insertionSet.insert<Value>(
+                                    m_index, Trunc, m_value->origin(),
+                                    m_value->child(0)->child(0))));
+                    }
+                    break;
 
                 default:
                     break;
@@ -1823,6 +1846,96 @@ private:
             }
             break;
 
+        case SExt8To64:
+            // Turn this: SExt8To64(constant)
+            // Into this: static_cast<int8_t>(constant)
+            if (m_value->child(0)->hasInt32()) {
+                int64_t result = static_cast<int8_t>(m_value->child(0)->asInt32());
+                replaceWithNewValue(m_proc.addIntConstant(m_value, result));
+                break;
+            }
+
+            // Turn this: SExt8To64(SExt8(value))
+            //   or this: SExt8To64(SExt16(value))
+            // Into this: SExt8To64(value)
+            if (m_value->child(0)->opcode() == SExt8 || m_value->child(0)->opcode() == SExt16) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+            }
+
+            if (m_value->child(0)->opcode() == BitAnd && m_value->child(0)->child(1)->hasInt32()) {
+                Value* input = m_value->child(0)->child(0);
+                int32_t mask = m_value->child(0)->child(1)->asInt32();
+
+                // Turn this: SExt8To64(BitAnd(input, mask)) where (mask & 0xff) == 0xff
+                // Into this: SExt8To64(input)
+                if ((mask & 0xff) == 0xff) {
+                    m_value->child(0) = input;
+                    m_changed = true;
+                    break;
+                }
+
+                // Turn this: SExt8To64(BitAnd(input, mask)) where (mask & 0x80) == 0
+                // Into this: ZExt32(BitAnd(input, const & 0x7f))
+                if (!(mask & 0x80)) {
+                    replaceWithNew<Value>(ZExt32, m_value->origin(),
+                        m_proc.add<Value>(
+                            BitAnd, m_value->origin(), input,
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), mask & 0x7f)));
+                    break;
+                }
+            }
+            break;
+
+        case SExt16To64:
+            // Turn this: SExt16To64(constant)
+            // Into this: static_cast<int16_t>(constant)
+            if (m_value->child(0)->hasInt32()) {
+                int64_t result = static_cast<int16_t>(m_value->child(0)->asInt32());
+                replaceWithNewValue(m_proc.addIntConstant(m_value, result));
+                break;
+            }
+
+            // Turn this: SExt16To64(SExt16(value))
+            // Into this: SExt16To64(value)
+            if (m_value->child(0)->opcode() == SExt16) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+            }
+
+            // Turn this: SExt16To64(SExt8(value))
+            // Into this: SExt8To64(value)
+            if (m_value->child(0)->opcode() == SExt8) {
+                replaceWithNew<Value>(SExt8To64, m_value->origin(), m_value->child(0));
+                break;
+            }
+
+            if (m_value->child(0)->opcode() == BitAnd && m_value->child(0)->child(1)->hasInt32()) {
+                Value* input = m_value->child(0)->child(0);
+                int32_t mask = m_value->child(0)->child(1)->asInt32();
+
+                // Turn this: SExt16To64(BitAnd(input, mask)) where (mask & 0xffff) == 0xffff
+                // Into this: SExt16To64(input)
+                if ((mask & 0xffff) == 0xffff) {
+                    m_value->child(0) = input;
+                    m_changed = true;
+                    break;
+                }
+
+                // Turn this: SExt16To64(BitAnd(input, mask)) where (mask & 0x8000) == 0
+                // Into this: ZExt32(BitAnd(input, const & 0x7fff))
+                if (!(mask & 0x8000)) {
+                    replaceWithNew<Value>(ZExt32, m_value->origin(),
+                        m_proc.add<Value>(
+                            BitAnd, m_value->origin(), input,
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), mask & 0x7fff)));
+                    break;
+                }
+            }
+            break;
+
         case SExt32:
             // Turn this: SExt32(constant)
             // Into this: static_cast<int64_t>(constant)
@@ -1835,9 +1948,21 @@ private:
             // Into this: ZExt32(BitAnd(input, mask))
             if (m_value->child(0)->opcode() == BitAnd && m_value->child(0)->child(1)->hasInt32()
                 && !(m_value->child(0)->child(1)->asInt32() & 0x80000000)) {
-                replaceWithNewValue(
-                    m_proc.add<Value>(
-                        ZExt32, m_value->origin(), m_value->child(0)));
+                replaceWithNew<Value>(ZExt32, m_value->origin(), m_value->child(0));
+                break;
+            }
+
+            // Turn this: SExt32(SExt8(value))
+            // Into this: SExt8To64(value)
+            if (m_value->child(0)->opcode() == SExt8) {
+                replaceWithNew<Value>(SExt8To64, m_value->origin(), m_value->child(0)->child(0));
+                break;
+            }
+
+            // Turn this: SExt32(SExt16(value))
+            // Into this: SExt16To64(value)
+            if (m_value->child(0)->opcode() == SExt16) {
+                replaceWithNew<Value>(SExt16To64, m_value->origin(), m_value->child(0)->child(0));
                 break;
             }
             break;
@@ -1867,6 +1992,20 @@ private:
             // Into this: value
             if (m_value->child(0)->opcode() == SExt32 || m_value->child(0)->opcode() == ZExt32) {
                 replaceWithIdentity(m_value->child(0)->child(0));
+                break;
+            }
+
+            // Turn this: Trunc(SExt8To64(value))
+            // Into this: SExt8(value)
+            if (m_value->child(0)->opcode() == SExt8To64) {
+                replaceWithNew<Value>(SExt8, m_value->origin(), m_value->child(0)->child(0));
+                break;
+            }
+
+            // Turn this: Trunc(SExt16To64(value))
+            // Into this: SExt16(value)
+            if (m_value->child(0)->opcode() == SExt16To64) {
+                replaceWithNew<Value>(SExt16, m_value->origin(), m_value->child(0)->child(0));
                 break;
             }
 
@@ -2740,6 +2879,76 @@ private:
             break;
         }
 
+        case VectorSplat: {
+            SIMDValue* value = m_value->as<SIMDValue>();
+            v128_t constant { };
+            switch (value->simdLane()) {
+            case SIMDLane::i8x16: {
+                if (value->child(0)->hasInt32()) {
+                    uint8_t value = static_cast<uint8_t>(bitwise_cast<uint32_t>(m_value->child(0)->asInt32()));
+                    for (unsigned i = 0; i < 16; ++i)
+                        constant.u8x16[i] = value;
+                    replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, constant));
+                    break;
+                }
+                break;
+            }
+            case SIMDLane::i16x8: {
+                if (value->child(0)->hasInt32()) {
+                    uint16_t value = static_cast<uint16_t>(bitwise_cast<uint32_t>(m_value->child(0)->asInt32()));
+                    for (unsigned i = 0; i < 8; ++i)
+                        constant.u16x8[i] = value;
+                    replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, constant));
+                    break;
+                }
+                break;
+            }
+            case SIMDLane::i32x4: {
+                if (value->child(0)->hasInt32()) {
+                    uint32_t value = bitwise_cast<uint32_t>(m_value->child(0)->asInt32());
+                    for (unsigned i = 0; i < 4; ++i)
+                        constant.u32x4[i] = value;
+                    replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, constant));
+                    break;
+                }
+                break;
+            }
+            case SIMDLane::i64x2: {
+                if (value->child(0)->hasInt64()) {
+                    uint64_t value = bitwise_cast<uint64_t>(m_value->child(0)->asInt64());
+                    for (unsigned i = 0; i < 2; ++i)
+                        constant.u64x2[i] = value;
+                    replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, constant));
+                    break;
+                }
+                break;
+            }
+            case SIMDLane::f32x4: {
+                if (value->child(0)->hasFloat()) {
+                    float value = m_value->child(0)->asFloat();
+                    for (unsigned i = 0; i < 4; ++i)
+                        constant.f32x4[i] = value;
+                    replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, constant));
+                    break;
+                }
+                break;
+            }
+            case SIMDLane::f64x2: {
+                if (value->child(0)->hasDouble()) {
+                    double value = m_value->child(0)->asDouble();
+                    for (unsigned i = 0; i < 2; ++i)
+                        constant.f64x2[i] = value;
+                    replaceWithNewValue(m_proc.addConstant(m_value->origin(), B3::V128, constant));
+                    break;
+                }
+                break;
+            }
+            default:
+                break;
+            }
+            break;
+        }
+
         default:
             break;
         }
@@ -3123,8 +3332,10 @@ private:
                 rangeFor(value->child(1), timeToLive - 1), value->type());
 
         case SExt8:
+        case SExt8To64:
             return rangeFor(value->child(0), timeToLive - 1).sExt<int8_t>();
         case SExt16:
+        case SExt16To64:
             return rangeFor(value->child(0), timeToLive - 1).sExt<int16_t>();
         case SExt32:
             return rangeFor(value->child(0), timeToLive - 1).sExt<int32_t>();

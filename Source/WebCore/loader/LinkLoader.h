@@ -54,6 +54,7 @@ struct LinkLoadParameters {
     String imageSizes;
     String nonce;
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
+    RequestPriority fetchPriorityHint { RequestPriority::Auto };
 };
 
 class LinkLoader : public CachedResourceClient {

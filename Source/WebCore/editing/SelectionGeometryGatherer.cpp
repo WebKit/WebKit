@@ -30,8 +30,8 @@
 
 #include "Editor.h"
 #include "EditorClient.h"
-#include "Frame.h"
 #include "ImageOverlayController.h"
+#include "LocalFrame.h"
 #include "RenderView.h"
 #include "ServicesOverlayController.h"
 

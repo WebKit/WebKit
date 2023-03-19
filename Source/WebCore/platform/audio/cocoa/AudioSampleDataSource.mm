@@ -158,7 +158,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
     if (m_converterInputOffset)
         ringBufferIndexToWrite += m_converterInputOffset;
 
-    if (m_expectedNextPushedSampleTimeValue && abs((float)m_expectedNextPushedSampleTimeValue - (float)ringBufferIndexToWrite) <= 1)
+    if (m_expectedNextPushedSampleTimeValue && std::abs((float)m_expectedNextPushedSampleTimeValue - (float)ringBufferIndexToWrite) <= 1)
         ringBufferIndexToWrite = m_expectedNextPushedSampleTimeValue;
 
     m_expectedNextPushedSampleTimeValue = ringBufferIndexToWrite + sampleCount;

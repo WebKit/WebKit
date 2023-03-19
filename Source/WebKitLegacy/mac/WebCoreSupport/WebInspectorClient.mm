@@ -46,9 +46,9 @@
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
 #import <WebCore/CertificateInfo.h>
-#import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/Settings.h>
@@ -126,7 +126,7 @@ void WebInspectorClient::bringFrontendToFront()
     m_frontendClient->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(Frame*)
+void WebInspectorClient::didResizeMainFrame(LocalFrame*)
 {
     if (m_frontendClient)
         m_frontendClient->attachAvailabilityChanged(canAttach());

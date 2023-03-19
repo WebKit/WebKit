@@ -65,8 +65,6 @@
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/FullscreenManager.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLInputElement.h>
@@ -77,6 +75,8 @@
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/ModalContainerTypes.h>
 #import <WebCore/NavigationAction.h>
 #import <WebCore/NotImplemented.h>
@@ -237,11 +237,11 @@ void WebChromeClient::focusedElementChanged(Element* element)
     CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(inputElement.document().frame()));
 }
 
-void WebChromeClient::focusedFrameChanged(Frame*)
+void WebChromeClient::focusedFrameChanged(LocalFrame*)
 {
 }
 
-Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& features, const NavigationAction&)
+Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& features, const NavigationAction&)
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
@@ -455,7 +455,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
     return [[m_webView UIDelegate] respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)];
 }
 
-bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
+bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, LocalFrame& frame)
 {
     return CallUIDelegateReturningBoolean(true, m_webView, @selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:), message, kit(&frame));
 }
@@ -480,7 +480,7 @@ void WebChromeClient::closeWindow()
     [m_webView _closeWindow];
 }
 
-void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& message)
+void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& message)
 {
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:);
@@ -497,7 +497,7 @@ void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& message)
     }
 }
 
-bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
+bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& message)
 {
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:);
@@ -512,7 +512,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
     return NO;
 }
 
-bool WebChromeClient::runJavaScriptPrompt(Frame& frame, const String& prompt, const String& defaultText, String& result)
+bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& prompt, const String& defaultText, String& result)
 {
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:);
@@ -590,7 +590,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
     return 0;
 }
 
-void WebChromeClient::contentsSizeChanged(Frame&, const IntSize&) const
+void WebChromeClient::contentsSizeChanged(LocalFrame&, const IntSize&) const
 {
 }
 
@@ -641,7 +641,7 @@ void WebChromeClient::setToolTip(const String& toolTip)
         [(WebHTMLView *)documentView _setToolTip:toolTip];
 }
 
-void WebChromeClient::print(Frame& frame, const StringWithDirection&)
+void WebChromeClient::print(LocalFrame& frame, const StringWithDirection&)
 {
     WebFrame *webFrame = kit(&frame);
     if ([[m_webView UIDelegate] respondsToSelector:@selector(webView:printFrame:)])
@@ -650,7 +650,7 @@ void WebChromeClient::print(Frame& frame, const StringWithDirection&)
         CallUIDelegate(m_webView, @selector(webView:printFrameView:), [webFrame frameView]);
 }
 
-void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& databaseName, DatabaseDetails)
+void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& databaseName, DatabaseDetails)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -740,7 +740,7 @@ void WebChromeClient::requestPointerUnlock()
 }
 #endif
 
-void WebChromeClient::runOpenPanel(Frame&, FileChooser& chooser)
+void WebChromeClient::runOpenPanel(LocalFrame&, FileChooser& chooser)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     BOOL allowMultipleFiles = chooser.settings().allowsMultipleFiles;
@@ -891,7 +891,7 @@ bool WebChromeClient::shouldPaintEntireContents() const
 #endif
 }
 
-void WebChromeClient::attachRootGraphicsLayer(Frame& frame, GraphicsLayer* graphicsLayer)
+void WebChromeClient::attachRootGraphicsLayer(LocalFrame& frame, GraphicsLayer* graphicsLayer)
 {
 #if !PLATFORM(MAC)
     UNUSED_PARAM(frame);

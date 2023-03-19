@@ -30,9 +30,9 @@
 #include "NavigationAction.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HistoryItem.h"
+#include "LocalFrame.h"
 #include "MouseEvent.h"
 
 namespace WebCore {

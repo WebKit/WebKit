@@ -29,7 +29,7 @@
 #pragma once
 
 #include "JSDOMConvertInterface.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
 #include "WindowProxy.h"
 #include <JavaScriptCore/JSProxy.h>
 
@@ -39,8 +39,8 @@ class Debugger;
 
 namespace WebCore {
 
-class AbstractDOMWindow;
-class AbstractFrame;
+class DOMWindow;
+class Frame;
 
 class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSProxy {
 public:
@@ -50,18 +50,18 @@ public:
 
     template<typename CellType, JSC::SubspaceAccess> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm) { return subspaceForImpl(vm); }
 
-    static JSWindowProxy& create(JSC::VM&, AbstractDOMWindow&, DOMWrapperWorld&);
+    static JSWindowProxy& create(JSC::VM&, DOMWindow&, DOMWrapperWorld&);
 
     DECLARE_INFO;
 
     JSDOMGlobalObject* window() const { return static_cast<JSDOMGlobalObject*>(target()); }
 
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
-    void setWindow(AbstractDOMWindow&);
+    void setWindow(DOMWindow&);
 
     WindowProxy* windowProxy() const;
 
-    AbstractDOMWindow& wrapped() const;
+    DOMWindow& wrapped() const;
     static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
@@ -70,14 +70,14 @@ public:
 
 private:
     JSWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
-    void finishCreation(JSC::VM&, AbstractDOMWindow&);
+    void finishCreation(JSC::VM&, DOMWindow&);
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     Ref<DOMWrapperWorld> m_world;
 };
 
 // JSWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
-// It is, however, strongly owned by AbstractFrame via its WindowProxy, so we can get one from a WindowProxy.
+// It is, however, strongly owned by Frame via its WindowProxy, so we can get one from a WindowProxy.
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, WindowProxy&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(lexicalGlobalObject, *windowProxy) : JSC::jsNull(); }
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WindowProxy& windowProxy) { return toJS(lexicalGlobalObject, windowProxy); }

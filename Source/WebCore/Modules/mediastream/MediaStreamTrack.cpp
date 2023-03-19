@@ -34,10 +34,10 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSOverconstrainedError.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
 #include "MediaStream.h"
@@ -278,95 +278,17 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.groupId = settings.groupId();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
+    if (settings.supportsZoom())
+        result.zoom = settings.zoom();
 
     // FIXME: shouldn't this include logicalSurface?
 
     return result;
 }
 
-static DoubleRange capabilityDoubleRange(const CapabilityValueOrRange& value)
-{
-    DoubleRange range;
-    switch (value.type()) {
-    case CapabilityValueOrRange::Double:
-        range.min = value.value().asDouble;
-        range.max = range.min;
-        break;
-    case CapabilityValueOrRange::DoubleRange:
-        range.min = value.rangeMin().asDouble;
-        range.max = value.rangeMax().asDouble;
-        break;
-    case CapabilityValueOrRange::Undefined:
-    case CapabilityValueOrRange::ULong:
-    case CapabilityValueOrRange::ULongRange:
-        ASSERT_NOT_REACHED();
-    }
-    return range;
-}
-
-static LongRange capabilityIntRange(const CapabilityValueOrRange& value)
-{
-    LongRange range;
-    switch (value.type()) {
-    case CapabilityValueOrRange::ULong:
-        range.min = value.value().asInt;
-        range.max = range.min;
-        break;
-    case CapabilityValueOrRange::ULongRange:
-        range.min = value.rangeMin().asInt;
-        range.max = value.rangeMax().asInt;
-        break;
-    case CapabilityValueOrRange::Undefined:
-    case CapabilityValueOrRange::Double:
-    case CapabilityValueOrRange::DoubleRange:
-        ASSERT_NOT_REACHED();
-    }
-    return range;
-}
-
-static Vector<String> capabilityStringVector(const Vector<VideoFacingMode>& modes)
-{
-    return modes.map([](auto& mode) {
-        return RealtimeMediaSourceSettings::facingMode(mode);
-    });
-}
-
-static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::EchoCancellation cancellation)
-{
-    Vector<bool> result;
-    result.reserveInitialCapacity(2);
-    result.uncheckedAppend(true);
-    if (cancellation == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite)
-        result.uncheckedAppend(false);
-    return result;
-}
-
 MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
 {
-    auto capabilities = m_private->capabilities();
-    TrackCapabilities result;
-    if (capabilities.supportsWidth())
-        result.width = capabilityIntRange(capabilities.width());
-    if (capabilities.supportsHeight())
-        result.height = capabilityIntRange(capabilities.height());
-    if (capabilities.supportsAspectRatio())
-        result.aspectRatio = capabilityDoubleRange(capabilities.aspectRatio());
-    if (capabilities.supportsFrameRate())
-        result.frameRate = capabilityDoubleRange(capabilities.frameRate());
-    if (capabilities.supportsFacingMode())
-        result.facingMode = capabilityStringVector(capabilities.facingMode());
-    if (capabilities.supportsVolume())
-        result.volume = capabilityDoubleRange(capabilities.volume());
-    if (capabilities.supportsSampleRate())
-        result.sampleRate = capabilityIntRange(capabilities.sampleRate());
-    if (capabilities.supportsSampleSize())
-        result.sampleSize = capabilityIntRange(capabilities.sampleSize());
-    if (capabilities.supportsEchoCancellation())
-        result.echoCancellation = capabilityBooleanVector(capabilities.echoCancellation());
-    if (capabilities.supportsDeviceId())
-        result.deviceId = capabilities.deviceId();
-    if (capabilities.supportsGroupId())
-        result.groupId = capabilities.groupId();
+    auto result = toMediaTrackCapabilities(m_private->capabilities());
 
     auto settings = m_private->settings();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)

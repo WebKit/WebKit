@@ -238,7 +238,7 @@ static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
     // a calculation that combines a percentage and a number.
     if (length.isPercent())
         return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    if (length.isAuto() || length.isFixed())
+    if (length.isFixed())
         return CSSPrimitiveValue::create(length.value());
 
     // Calculating the actual length currently in use would require most of the code from RenderBoxModelObject::paintNinePieceImage.
@@ -3241,11 +3241,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyListStylePosition:
         return createConvertingToCSSValueID(style.listStylePosition());
     case CSSPropertyListStyleType:
-        if (style.listStyleType() == ListStyleType::String)
-            return CSSPrimitiveValue::create(style.listStyleStringValue());
-        if (style.listStyleType() == ListStyleType::CustomCounterStyle)
-            return CSSPrimitiveValue::createCustomIdent(style.listStyleStringValue());
-        return createConvertingToCSSValueID(style.listStyleType());
+        if (style.listStyleType().type == ListStyleType::Type::String)
+            return CSSPrimitiveValue::create(style.listStyleType().identifier);
+        if (style.listStyleType().type == ListStyleType::Type::CounterStyle)
+            return CSSPrimitiveValue::createCustomIdent(style.listStyleType().identifier);
+        return createConvertingToCSSValueID(style.listStyleType().type);
     case CSSPropertyWebkitLocale:
         if (style.specifiedLocale().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);

@@ -47,6 +47,9 @@ private:
     bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
     void hasNodeWithAnimatedScrollChanged(bool) override;
 
+    void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
+
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 

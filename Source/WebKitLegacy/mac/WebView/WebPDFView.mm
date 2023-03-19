@@ -52,13 +52,13 @@
 #import <WebCore/DataTransfer.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FormState.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Range.h>

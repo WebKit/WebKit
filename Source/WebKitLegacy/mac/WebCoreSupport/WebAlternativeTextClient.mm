@@ -37,7 +37,7 @@ WebAlternativeTextClient::WebAlternativeTextClient(WebView* webView)
 WebAlternativeTextClient::~WebAlternativeTextClient()
 {
 #if USE(AUTOCORRECTION_PANEL)
-    dismissAlternative(ReasonForDismissingAlternativeTextIgnored);
+    dismissAlternative(ReasonForDismissingAlternativeText::Ignored);
 #endif
 }
 

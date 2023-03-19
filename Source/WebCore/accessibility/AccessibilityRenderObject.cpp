@@ -44,7 +44,6 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "GeometryUtilities.h"
@@ -72,6 +71,7 @@
 #include "Image.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -680,7 +680,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         }
 
         if (nodeDocument && textRange) {
-            if (Frame* frame = nodeDocument->frame()) {
+            if (auto* frame = nodeDocument->frame()) {
                 // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
                 if (frame->document() != nodeDocument)
                     return { };
@@ -897,7 +897,7 @@ Path AccessibilityRenderObject::elementPath() const
         bool needsPath = false;
         IntRect unionRect = rects[0];
         for (size_t i = 1; i < rects.size(); ++i) {
-            needsPath = abs(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
+            needsPath = std::abs(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
                 && (rightToLeftText ? rects[i].x() - unionRect.x() > xTolerance
                     : unionRect.x() - rects[i].x() > xTolerance); // And this rect is to right/left of all previous rects.
 
@@ -1829,7 +1829,7 @@ bool AccessibilityRenderObject::setValue(const String& string)
     
     // We should use the editor's insertText to mimic typing into the field.
     // Also only do this when the field is in editing mode.
-    if (Frame* frame = renderer.document().frame()) {
+    if (auto* frame = renderer.document().frame()) {
         Editor& editor = frame->editor();
         if (element.shouldUseInputMethod()) {
             editor.clearText();
@@ -1942,12 +1942,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
     return result;
 }
 
-FrameView* AccessibilityRenderObject::documentFrameView() const 
+LocalFrameView* AccessibilityRenderObject::documentFrameView() const 
 { 
     if (!m_renderer)
         return nullptr;
 
-    // this is the RenderObject's Document's Frame's FrameView 
+    // this is the RenderObject's Document's Frame's LocalFrameView
     return &m_renderer->view().frameView();
 }
 
@@ -2167,8 +2167,8 @@ bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const 
     
     VisibleSelection newSelection = VisibleSelection(range.start, range.end);
     if (Document* newSelectionDocument = newSelection.base().document()) {
-        if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
-            Frame* frame = this->frame();
+        if (RefPtr newSelectionFrame = newSelectionDocument->frame()) {
+            auto* frame = this->frame();
             if (!frame || (newSelectionFrame != frame && newSelectionDocument != frame->document()))
                 return true;
         }
@@ -2272,7 +2272,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         return VisiblePosition();
 
 #if PLATFORM(MAC)
-    FrameView* frameView = &renderView->frameView();
+    auto* frameView = &renderView->frameView();
 #endif
 
     Node* innerNode = nullptr;
@@ -2305,8 +2305,8 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             break;
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        Widget* widget = downcast<RenderWidget>(*renderer).widget();
-        auto* frameView = dynamicDowncast<FrameView>(widget);
+        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             break;
         auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
@@ -2318,7 +2318,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 
         renderView = document->renderView();
 #if PLATFORM(MAC)
-        frameView = downcast<FrameView>(widget);
+        frameView = downcast<LocalFrameView>(widget);
 #endif
     }
     
@@ -2883,7 +2883,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     if (!is<SVGImage>(image))
         return nullptr;
 
-    FrameView* frameView = downcast<SVGImage>(*image).frameView();
+    auto* frameView = downcast<SVGImage>(*image).frameView();
     if (!frameView)
         return nullptr;
 
@@ -2945,7 +2945,7 @@ void AccessibilityRenderObject::addAttachmentChildren()
     if (!isAttachment())
         return;
 
-    // FrameView's need to be inserted into the AX hierarchy when encountered.
+    // LocalFrameView's need to be inserted into the AX hierarchy when encountered.
     Widget* widget = widgetForAttachmentView();
     if (!widget || !widget->isFrameView())
         return;

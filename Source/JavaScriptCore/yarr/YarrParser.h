@@ -305,14 +305,26 @@ private:
      * to perform the parsing of escape characters in character sets.
      */
     class ClassSetParserDelegate {
+    private:
+        struct NestingState {
+        public:
+            NestingState(CharacterClassSetOp setOp, bool inverted)
+                : m_setOp(setOp)
+                , m_inverted(inverted)
+            { }
+
+            CharacterClassSetOp m_setOp;
+            bool m_inverted;
+        };
+
     public:
         ClassSetParserDelegate(Delegate& delegate, ErrorCode& err)
             : m_delegate(delegate)
             , m_errorCode(err)
-            , m_state(CharacterClassConstructionState::Empty)
+            , m_state(ClassSetConstructionState::Empty)
             , m_setOp(CharacterClassSetOp::Default)
             , m_inverted(false)
-            , m_classNestingLevel(0)
+            , m_processingEscape(false)
             , m_character(0)
         {
         }
@@ -330,20 +342,25 @@ private:
 
         void nestedClassBegin()
         {
-            ++m_classNestingLevel;
             m_delegate.atomCharacterClassPushNested();
+            nestedParseState.append(NestingState(m_setOp, m_inverted));
+            m_setOp = CharacterClassSetOp::Default;
+            m_inverted = false;
         }
 
-        bool doneAfterCharacterClassEnd()
+        bool nestedClassEnd()
         {
             flushCachedCharacterIfNeeded();
 
-            if (!m_classNestingLevel) {
+            if (nestedParseState.isEmpty()) {
                 end();
                 return true;
             }
 
-            --m_classNestingLevel;
+            NestingState lastState = nestedParseState.takeLast();
+            m_setOp = lastState.m_setOp;
+            m_inverted = lastState.m_inverted;
+
             m_delegate.atomCharacterClassPopNested();
             return false;
         }
@@ -360,6 +377,14 @@ private:
             m_delegate.atomCharacterClassSetOp(m_setOp);
         }
 
+        void switchFromDefaultOpToUnionOpIfNeeded()
+        {
+            if (m_setOp == CharacterClassSetOp::Default) {
+                m_setOp = CharacterClassSetOp::Union;
+                m_delegate.atomCharacterClassSetOp(m_setOp);
+            }
+        }
+
         void setSubtractOp()
         {
             if (m_setOp != CharacterClassSetOp::Default && m_setOp != CharacterClassSetOp::Subtraction) {
@@ -370,6 +395,7 @@ private:
             flushCachedCharacterIfNeeded();
             m_setOp = CharacterClassSetOp::Subtraction;
             m_delegate.atomCharacterClassSetOp(m_setOp);
+            m_state = ClassSetConstructionState::Empty;
         }
 
         void setIntersectionOp()
@@ -382,14 +408,61 @@ private:
             flushCachedCharacterIfNeeded();
             m_setOp = CharacterClassSetOp::Intersection;
             m_delegate.atomCharacterClassSetOp(m_setOp);
+            m_state = ClassSetConstructionState::Empty;
         }
 
         void flushCachedCharacterIfNeeded()
         {
-            if (m_state == CharacterClassConstructionState::CachedCharacter) {
+            if (m_state == ClassSetConstructionState::CachedCharacter) {
                 m_delegate.atomCharacterClassAtom(m_character);
-                m_state = CharacterClassConstructionState::Empty;
+                m_state = ClassSetConstructionState::Empty;
             }
+        }
+
+        void afterOperand()
+        {
+            if (m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union)
+                return;
+
+            flushCachedCharacterIfNeeded();
+
+            if (m_state != ClassSetConstructionState::Empty && m_state != ClassSetConstructionState::AfterCharacterClass) {
+                m_errorCode = ErrorCode::InvalidClassSetOperation;
+                return;
+            }
+
+            m_state = ClassSetConstructionState::AfterSetOperand;
+        }
+
+        bool canTakeSetOperand()
+        {
+            bool unionOpActive = m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union;
+
+            switch (m_state) {
+            case ClassSetConstructionState::Empty:
+                return true;
+
+            case ClassSetConstructionState::CachedCharacter:
+                if (!unionOpActive)
+                    return false;
+
+                flushCachedCharacterIfNeeded();
+                return true;
+
+            case ClassSetConstructionState::CachedCharacterHyphen:
+            case ClassSetConstructionState::AfterCharacterClassHyphen:
+            case ClassSetConstructionState::AfterCharacterClass:
+            case ClassSetConstructionState::AfterSetRange:
+            case ClassSetConstructionState::AfterSetOperand:
+                return unionOpActive;
+            }
+
+            return false;
+        }
+
+        void setProcessingEscape()
+        {
+            m_processingEscape = true;
         }
 
         /*
@@ -401,10 +474,14 @@ private:
          * mode we will allow a hypen to be treated as indicating a range (i.e. /[a-z]/
          * is different to /[a\-z]/).
          */
-        void atomPatternCharacter(UChar32 ch, bool hyphenIsRange = false)
+        void atomPatternCharacter(UChar32 ch)
         {
+            bool unionOpActive = m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union;
+            bool processingEscape = m_processingEscape;
+            m_processingEscape = false;
+
             switch (m_state) {
-            case CharacterClassConstructionState::AfterCharacterClass:
+            case ClassSetConstructionState::AfterCharacterClass:
                 // Following a built-in character class we need look out for a hyphen.
                 // We're looking for invalid ranges, such as /[\d-x]/ or /[\d-\d]/.
                 // If we see a hyphen following a character class then unlike usual
@@ -413,41 +490,65 @@ private:
                 // another character or character class will result in syntax error.
                 // A hypen following a character class is itself valid, but only at
                 // the end of a regex.
-                if (hyphenIsRange && ch == '-') {
+                if (unionOpActive && ch == '-') {
                     m_delegate.atomCharacterClassAtom('-');
-                    m_state = CharacterClassConstructionState::AfterCharacterClassHyphen;
+                    m_state = ClassSetConstructionState::AfterCharacterClassHyphen;
                     return;
                 }
-                // Otherwise just fall through - cached character so treat this as CharacterClassConstructionState::Empty.
+                // Otherwise just fall through - cached character so treat this as ClassSetConstructionState::Empty.
                 FALLTHROUGH;
 
-            case CharacterClassConstructionState::Empty:
+            case ClassSetConstructionState::AfterSetRange:
+                switchFromDefaultOpToUnionOpIfNeeded();
+
+                // Continue processing the current character.
+                FALLTHROUGH;
+
+            case ClassSetConstructionState::Empty:
+                if (!processingEscape && ch == '-') {
+                    m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                    return;
+                }
+
                 m_character = ch;
-                m_state = CharacterClassConstructionState::CachedCharacter;
+                m_state = ClassSetConstructionState::CachedCharacter;
                 return;
 
-            case CharacterClassConstructionState::CachedCharacter:
-                if (hyphenIsRange && ch == '-')
-                    m_state = CharacterClassConstructionState::CachedCharacterHyphen;
+            case ClassSetConstructionState::CachedCharacter:
+                if (!unionOpActive) {
+                    m_errorCode = ErrorCode::InvalidClassSetOperation;
+                    return;
+                }
+
+                if (ch == '-')
+                    m_state = ClassSetConstructionState::CachedCharacterHyphen;
                 else {
                     m_delegate.atomCharacterClassAtom(m_character);
+                    switchFromDefaultOpToUnionOpIfNeeded();
                     m_character = ch;
                 }
                 return;
 
-            case CharacterClassConstructionState::CachedCharacterHyphen:
+            case ClassSetConstructionState::CachedCharacterHyphen:
                 if (ch < m_character) {
                     m_errorCode = ErrorCode::CharacterClassRangeOutOfOrder;
                     return;
                 }
+
                 m_delegate.atomCharacterClassRange(m_character, ch);
-                m_state = CharacterClassConstructionState::Empty;
+                switchFromDefaultOpToUnionOpIfNeeded();
+                m_state = ClassSetConstructionState::AfterSetRange;
                 return;
 
                 // If we hit this case, we have an invalid range like /[\d-a]/.
                 // See coment in atomBuiltInCharacterClass() below.
-            case CharacterClassConstructionState::AfterCharacterClassHyphen:
+            case ClassSetConstructionState::AfterCharacterClassHyphen:
                 m_errorCode = ErrorCode::CharacterClassRangeInvalid;
+                return;
+
+                // The only thing valid at this point is s repeat of the current operator.
+            case ClassSetConstructionState::AfterSetOperand:
+                m_errorCode = ErrorCode::InvalidClassSetOperation;
                 return;
             }
         }
@@ -459,19 +560,36 @@ private:
          */
         void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert)
         {
+            bool unionOpActive = m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union;
+
             switch (m_state) {
-            case CharacterClassConstructionState::CachedCharacter:
+            case ClassSetConstructionState::CachedCharacter:
+                if (!unionOpActive) {
+                    m_errorCode = ErrorCode::InvalidClassSetOperation;
+                    return;
+                }
+
                 // Flush the currently cached character, then fall through.
                 m_delegate.atomCharacterClassAtom(m_character);
+
+                // Yes, we really want to fall through to the AfterSetRange case to switch from Default to Union op
+                // and then handle the built in class by falling through again.
                 FALLTHROUGH;
-            case CharacterClassConstructionState::Empty:
-            case CharacterClassConstructionState::AfterCharacterClass:
+
+            case ClassSetConstructionState::AfterSetRange:
+                switchFromDefaultOpToUnionOpIfNeeded();
+
+                // Continue processing the current character.
+                FALLTHROUGH;
+
+            case ClassSetConstructionState::Empty:
+            case ClassSetConstructionState::AfterCharacterClass:
                 if ((invert || m_inverted) && characterClassMayContainStrings(classID)) {
                     m_errorCode = ErrorCode::NegatedClassSetMayContainStrings;
                     return;
                 }
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
-                m_state = CharacterClassConstructionState::AfterCharacterClass;
+                m_state = ClassSetConstructionState::AfterCharacterClass;
                 return;
 
                 // If we hit either of these cases, we have an invalid range that
@@ -482,12 +600,17 @@ private:
                 // e.g. /[\d-a-z]/ is treated as /[\d\-a\-z]/.
                 // See usages of CharacterRangeOrUnion abstract op in
                 // https://tc39.es/ecma262/#sec-regular-expression-patterns-semantics
-            case CharacterClassConstructionState::CachedCharacterHyphen:
+            case ClassSetConstructionState::CachedCharacterHyphen:
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
                 FALLTHROUGH;
-            case CharacterClassConstructionState::AfterCharacterClassHyphen:
+            case ClassSetConstructionState::AfterCharacterClassHyphen:
                 m_errorCode = ErrorCode::CharacterClassRangeInvalid;
+                return;
+
+                // The only thing valid at this point is s repeat of the current operator.
+            case ClassSetConstructionState::AfterSetOperand:
+                m_errorCode = ErrorCode::InvalidClassSetOperation;
                 return;
             }
         }
@@ -499,9 +622,9 @@ private:
          */
         void end()
         {
-            if (m_state == CharacterClassConstructionState::CachedCharacter)
+            if (m_state == ClassSetConstructionState::CachedCharacter)
                 m_delegate.atomCharacterClassAtom(m_character);
-            else if (m_state == CharacterClassConstructionState::CachedCharacterHyphen) {
+            else if (m_state == ClassSetConstructionState::CachedCharacterHyphen) {
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
             }
@@ -520,18 +643,21 @@ private:
     private:
         Delegate& m_delegate;
         ErrorCode& m_errorCode;
-        enum class CharacterClassConstructionState {
+        enum class ClassSetConstructionState {
             Empty,
             CachedCharacter,
             CachedCharacterHyphen,
             AfterCharacterClass,
             AfterCharacterClassHyphen,
+            AfterSetRange,
+            AfterSetOperand,
         };
-        CharacterClassConstructionState m_state;
+        ClassSetConstructionState m_state;
         CharacterClassSetOp m_setOp;
         bool m_inverted;
-        unsigned m_classNestingLevel;
+        bool m_processingEscape;
         UChar32 m_character;
+        Vector<NestingState> nestedParseState;
     };
 
     /*
@@ -595,12 +721,15 @@ private:
     {
     }
 
-    // The handling of IdentityEscapes is different depending on the unicode flag.
+    // The handling of IdentityEscapes is different depending on which unicode flag if any is active.
     // For Unicode patterns, IdentityEscapes only include SyntaxCharacters or '/'.
+    // For UnicodeSet patterns, adds to the UnicodePatterns IdentityEscapes
+    // ClassSetReservedPunctionation which includes &-!#%,:;<=>@`~
     // For non-unicode patterns, most any character can be escaped.
     bool isIdentityEscapeAnError(int ch)
     {
-        if (isEitherUnicodeCompilation() && (!strchr("^$\\.*+?()[]{}|/", ch) || !ch)) {
+        if (isEitherUnicodeCompilation()
+            && ((isASCII(ch) && !strchr(isUnicodeCompilation() ? "^$\\.*+?()[]{}|/" : "^$\\.*+?()[]{}|/&-!#%,:;<=>@`~" , ch)) || !ch)) {
             m_errorCode = ErrorCode::InvalidIdentityEscape;
             return true;
         }
@@ -974,6 +1103,36 @@ private:
         return ch;
     }
 
+    inline UChar32 consumeAndCheckIfValidClassSetCharacter()
+    {
+        UChar32 ch = consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>();
+
+        if (!ch) {
+            m_errorCode = ErrorCode::InvalidClassSetCharacter;
+            return -1;
+        }
+
+        if (isASCII(ch)) {
+            // Check if the character is part of ClassSetSyntaxCharacter.
+            // We leave handling of - and \ to the caller.
+            if (strchr("()[]{}/|)", ch)) {
+                m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                return -1;
+            }
+
+            // Check if the current character and the next are part of ClassSetReservedDoublePunctuator.
+            if (!atEndOfPattern()) {
+                UChar32 nextCh = peek();
+                if (ch == nextCh && strchr("&!#$%*+,.:;<=>?@^`~", ch)) {
+                    m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                    return -1;
+                }
+            }
+        }
+
+        return ch;
+    }
+
     /*
      * parseAtomEscape(), parseCharacterClassEscape(), parseClassSetEscape() and parseClassStringDisjunctionEscape():
      *
@@ -989,9 +1148,9 @@ private:
         parseEscape<ParseEscapeMode::CharacterClass>(delegate);
     }
 
-    void parseClassSetEscape(ClassSetParserDelegate& delegate)
+    TokenType parseClassSetEscape(ClassSetParserDelegate& delegate)
     {
-        parseEscape<ParseEscapeMode::CharacterClass>(delegate);
+        return parseEscape<ParseEscapeMode::CharacterClass>(delegate);
     }
 
     void parseClassStringDisjunctionEscape(ClassStringDisjunctionParserDelegate& delegate)
@@ -1056,14 +1215,18 @@ private:
         classSetConstructor.begin(tryConsume('^'));
 
         auto processCharacterNormally = [&] () {
-            classSetConstructor.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>(), true);
+            UChar32 ch = consumeAndCheckIfValidClassSetCharacter();
+            if (ch == -1)
+                return;
+
+            classSetConstructor.atomPatternCharacter(ch);
         };
 
         while (!atEndOfPattern()) {
             switch (peek()) {
             case ']':
                 consume();
-                if (classSetConstructor.doneAfterCharacterClassEnd())
+                if (classSetConstructor.nestedClassEnd())
                     return;
                 break;
 
@@ -1074,7 +1237,14 @@ private:
             }
 
             case '\\':
+                if (!classSetConstructor.canTakeSetOperand()) {
+                    m_errorCode = ErrorCode::InvalidClassSetOperation;
+                    return;
+                }
+
+                classSetConstructor.setProcessingEscape();
                 parseClassSetEscape(classSetConstructor);
+                classSetConstructor.afterOperand();
                 break;
 
             case '-': {
@@ -1095,6 +1265,10 @@ private:
                 consume();
                 if (peek() == '&') {
                     consume();
+                    if (peek() == '&') {
+                        m_errorCode = ErrorCode::InvalidClassSetOperation;
+                        return;
+                    }
                     classSetConstructor.setIntersectionOp();
                     break;
                 }
@@ -1146,8 +1320,20 @@ private:
                 stringDisjunctionDelegate.newAlternative();
                 break;
 
+            case '-':
+                consume();
+                m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                return;
+
             default:
-                stringDisjunctionDelegate.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>());
+                {
+                    UChar32 ch = consumeAndCheckIfValidClassSetCharacter();
+
+                    if (ch == -1)
+                        return;
+
+                    stringDisjunctionDelegate.atomPatternCharacter(ch);
+                }
             }
 
             if (hasError(m_errorCode))

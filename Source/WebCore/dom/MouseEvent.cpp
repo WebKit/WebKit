@@ -24,13 +24,13 @@
 #include "MouseEvent.h"
 
 #include "EventNames.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLIFrameElement.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSEventTarget.h"
 #include "JSEventTargetCustom.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "PlatformMouseEvent.h"
 #include "RuntimeApplicationChecks.h"
 #include <JavaScriptCore/CallFrame.h>

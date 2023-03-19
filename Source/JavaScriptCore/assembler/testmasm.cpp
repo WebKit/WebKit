@@ -110,6 +110,36 @@ static Vector<int32_t> int32Operands()
     };
 }
 
+static UNUSED_FUNCTION Vector<int16_t> int16Operands()
+{
+    return Vector<int16_t> {
+        0,
+        1,
+        -1,
+        42,
+        -42,
+        std::numeric_limits<int16_t>::max(),
+        std::numeric_limits<int16_t>::min(),
+        static_cast<int16_t>(std::numeric_limits<uint16_t>::max()),
+        static_cast<int16_t>(std::numeric_limits<uint16_t>::min())
+    };
+}
+
+static UNUSED_FUNCTION Vector<int8_t> int8Operands()
+{
+    return Vector<int8_t> {
+        0,
+        1,
+        -1,
+        42,
+        -42,
+        std::numeric_limits<int8_t>::max(),
+        std::numeric_limits<int8_t>::min(),
+        static_cast<int8_t>(std::numeric_limits<uint8_t>::max()),
+        static_cast<int8_t>(std::numeric_limits<uint8_t>::min())
+    };
+}
+
 #if CPU(X86_64) || CPU(ARM64)
 static Vector<int64_t> int64Operands()
 {
@@ -3772,6 +3802,36 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
     testMoveConditionallyFloatingPointSameArg(condition, testCode, arg1, floatOperands(), selectionA, selectionB);
 }
 
+void testSignExtend8To64()
+{
+    auto code = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.signExtend8To64(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int8Operands()) {
+        int64_t expectedResult = static_cast<int64_t>(a);
+        CHECK_EQ(invoke<int64_t>(code, a), expectedResult);
+    }
+}
+
+void testSignExtend16To64()
+{
+    auto code = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.signExtend16To64(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int16Operands()) {
+        int64_t expectedResult = static_cast<int64_t>(a);
+        CHECK_EQ(invoke<int64_t>(code, a), expectedResult);
+    }
+}
+
 #endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
 #if CPU(ARM64)
@@ -5927,6 +5987,9 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyFloat3SameArg);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyDoubleSameArg);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyFloatSameArg);
+
+    RUN(testSignExtend8To64());
+    RUN(testSignExtend16To64());
 #endif
 
     RUN(testProbeReadsArgumentRegisters());

@@ -29,8 +29,8 @@
 
 #include "ContentSecurityPolicyDirectiveNames.h"
 #include "Document.h"
-#include "Frame.h"
 #include "HTTPParsers.h"
+#include "LocalFrame.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
 #include <wtf/text/StringParsingBuffer.h>
@@ -99,7 +99,7 @@ static inline URL urlFromOrigin(const SecurityOrigin& origin)
     return { URL { }, origin.toString() };
 }
 
-static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Frame& frame)
+static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const LocalFrame& frame)
 {
     if (!directive)
         return true;
@@ -343,7 +343,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestor(const Frame& frame) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestor(const LocalFrame& frame) const
 {
     if (checkFrameAncestors(m_frameAncestors.get(), frame))
         return nullptr;

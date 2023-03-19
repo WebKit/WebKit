@@ -42,6 +42,19 @@ class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
 
+struct RubyAdjustments {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    LayoutUnit annotationAbove;
+    LayoutUnit annotationBelow;
+    struct Overhang {
+        LayoutUnit start;
+        LayoutUnit end;
+    };
+    Overhang firstLineOverhang;
+    Overhang overhang;
+};
+
 class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
@@ -179,6 +192,9 @@ public:
     const Shape* shape() const;
     void setShape(RefPtr<const Shape>);
 
+    const RubyAdjustments* rubyAdjustments() const;
+    void setRubyAdjustments(std::unique_ptr<RubyAdjustments>);
+
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
@@ -203,6 +219,7 @@ private:
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
         RefPtr<const Shape> shape;
+        std::unique_ptr<RubyAdjustments> rubyAdjustments;
     };
 
     bool hasRareData() const { return m_hasRareData; }

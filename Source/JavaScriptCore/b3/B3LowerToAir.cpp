@@ -753,6 +753,18 @@ private:
         return Arg::zeroReg();
     }
 
+    Arg immOrTmpOrZeroReg(Value* value)
+    {
+        if (Arg result = imm(value)) {
+            if (isARM64()) {
+                if (!result.value())
+                    return zeroReg();
+            }
+            return result;
+        }
+        return tmp(value);
+    }
+
     Arg immOrTmp(Value* value)
     {
         if (Arg result = imm(value))
@@ -773,6 +785,51 @@ private:
         const auto& tmps = tmpsForTuple(value);
         for (unsigned i = 0; i < tuple.size(); ++i)
             func(tmps[i], tuple[i], i);
+    }
+
+    template<typename Functor>
+    void forEachImmOrTmpOrZeroReg(Value* value, const Functor& func)
+    {
+        ASSERT(value->type() != Void);
+        if (!value->type().isTuple()) {
+            func(immOrTmpOrZeroReg(value), value->type(), 0);
+            return;
+        }
+
+        const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
+        const auto& tmps = tmpsForTuple(value);
+        for (unsigned i = 0; i < tuple.size(); ++i)
+            func(tmps[i], tuple[i], i);
+    }
+
+    void moveToTmp(Air::Opcode opcode, Air::Arg source, Air::Tmp dest)
+    {
+        switch (opcode) {
+        case Air::Move:
+            break;
+        case Air::MoveFloat:
+            if (source.isZeroReg()) {
+                append(Air::MoveZeroToFloat, dest);
+                return;
+            }
+            break;
+        case Air::MoveDouble:
+            if (source.isZeroReg()) {
+                append(Air::MoveZeroToDouble, dest);
+                return;
+            }
+            break;
+        case Air::MoveVector:
+            if (source.isZeroReg()) {
+                append(Air::MoveZeroToVector, dest);
+                return;
+            }
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        append(opcode, source, dest);
     }
 
     // By convention, we use Oops to mean "I don't know".
@@ -1504,16 +1561,18 @@ private:
                 break;
             case ValueRep::SomeRegisterWithClobber: {
                 Tmp dstTmp = m_code.newTmp(value.value()->resultBank());
-                append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), dstTmp);
+                moveToTmp(relaxedMoveForType(value.value()->type()), immOrTmpOrZeroReg(value.value()), dstTmp);
                 arg = dstTmp;
                 break;
             }
             case ValueRep::LateRegister:
-            case ValueRep::Register:
+            case ValueRep::Register: {
                 stackmap->earlyClobbered().remove(value.rep().reg());
-                arg = Tmp(value.rep().reg());
-                append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), arg);
+                Tmp dstTmp = Tmp(value.rep().reg());
+                moveToTmp(relaxedMoveForType(value.value()->type()), immOrTmpOrZeroReg(value.value()), dstTmp);
+                arg = dstTmp;
                 break;
+            }
             case ValueRep::StackArgument:
                 arg = Arg::callArg(value.rep().offsetFromSP());
                 append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
@@ -2474,7 +2533,7 @@ private:
         }
         
         if (isX86()) {
-            append(relaxedMoveForType(atomic->accessType()), immOrTmp(atomic->child(0)), m_eax);
+            moveToTmp(relaxedMoveForType(atomic->accessType()), immOrTmpOrZeroReg(atomic->child(0)), m_eax);
             if (returnsOldValue) {
                 appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), m_eax, newValueTmp, address);
                 append(relaxedMoveForType(atomic->accessType()), m_eax, valueResultTmp);
@@ -3845,6 +3904,13 @@ private:
             return;
         }
 
+        case B3::VectorShiftByVector: {
+            ASSERT(isARM64());
+            SIMDValue* value = m_value->as<SIMDValue>();
+            append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value));
+            return;
+        }
+
         case B3::VectorSplat: {
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
@@ -3908,6 +3974,7 @@ private:
 
         case B3::VectorShr:
         case B3::VectorShl: {
+            ASSERT(!isARM64()); // In ARM64, they are macro.
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
 
@@ -3919,19 +3986,6 @@ private:
             Tmp shiftAmount = m_code.newTmp(B3::GP);
             Tmp shiftVector = m_code.newTmp(B3::FP);
 
-            if constexpr (isARM64()) {
-                append(And32, Arg::bitImm(mask), shift, shiftAmount);
-                if (value->opcode() == VectorShr) {
-                    // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to
-                    // left shift is negative, it's a right shift by the absolute value of that amount.
-                    append(Neg32, shiftAmount);
-                }
-                append(VectorSplatInt8, shiftAmount, shiftVector);
-                append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), v, shiftVector, tmp(value));
-
-                return;
-            }
-            
             if constexpr (isX86()) {
                 append(Move, shift, shiftAmount);
                 append(And32, Arg::imm(mask), shiftAmount);
@@ -4232,16 +4286,23 @@ private:
             return;
         }
 
+        case SExt8To64: {
+            appendUnOp<SignExtend8To64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
+        case SExt16To64: {
+            appendUnOp<SignExtend16To64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
         case ZExt32: {
             appendUnOp<Move32, Air::Oops>(m_value->child(0));
             return;
         }
 
         case SExt32: {
-            // FIXME: We should have support for movsbq/movswq
-            // https://bugs.webkit.org/show_bug.cgi?id=152232
-            
-            appendUnOp<SignExtend32ToPtr, Air::Oops>(m_value->child(0));
+            appendUnOp<SignExtend32To64, Air::Oops>(m_value->child(0));
             return;
         }
 
@@ -4659,7 +4720,7 @@ private:
             Value* value = m_value->child(0);
             Value* phi = m_value->as<UpsilonValue>()->phi();
             if (value->type().isNumeric()) {
-                append(relaxedMoveForType(value->type()), immOrTmp(value), m_phiToTmp[phi]);
+                moveToTmp(relaxedMoveForType(value->type()), immOrTmpOrZeroReg(value), m_phiToTmp[phi]);
                 return;
             }
 
@@ -4695,8 +4756,8 @@ private:
         case Set: {
             Value* value = m_value->child(0);
             const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
-            forEachImmOrTmp(value, [&] (Arg immOrTmp, Type type, unsigned index) {
-                append(relaxedMoveForType(type), immOrTmp, variableTmps[index]);
+            forEachImmOrTmpOrZeroReg(value, [&] (Arg immOrTmpOrZeroReg, Type type, unsigned index) {
+                moveToTmp(relaxedMoveForType(type), immOrTmpOrZeroReg, variableTmps[index]);
             });
             return;
         }
@@ -4864,11 +4925,11 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Int32:
-                append(Move, immOrTmp(value), returnValueGPR);
+                moveToTmp(Move, immOrTmpOrZeroReg(value), returnValueGPR);
                 append(Ret32, returnValueGPR);
                 break;
             case Int64:
-                append(Move, immOrTmp(value), returnValueGPR);
+                moveToTmp(Move, immOrTmpOrZeroReg(value), returnValueGPR);
                 append(Ret64, returnValueGPR);
                 break;
             case Float:

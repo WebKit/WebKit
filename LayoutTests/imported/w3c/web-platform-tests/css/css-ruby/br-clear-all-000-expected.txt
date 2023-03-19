@@ -1,0 +1,6 @@
+The yellow box should encompass its contents and also the cyan float, due to clearance. The yellow box has bottom padding, and the blue ruby annotation box is allowed to overflow into the padding area. In this case the blue box isn't tall enough to even get past the float, though.
+
+
+
+PASS #container 1
+

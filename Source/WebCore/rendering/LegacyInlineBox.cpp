@@ -21,11 +21,11 @@
 #include "LegacyInlineBox.h"
 
 #include "FontMetrics.h"
-#include "Frame.h"
 #include "HitTestResult.h"
 #include "LegacyEllipsisBox.h"
 #include "LegacyInlineFlowBox.h"
 #include "LegacyRootInlineBox.h"
+#include "LocalFrame.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
 #include <wtf/IsoMallocInlines.h>

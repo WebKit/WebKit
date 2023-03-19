@@ -92,11 +92,11 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/FrameView.h> // FIXME: Move LayoutViewportConstraint to its own file and stop including this.
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
+#include <WebCore/LocalFrameView.h> // FIXME: Move LayoutViewportConstraint to its own file and stop including this.
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
@@ -869,7 +869,7 @@ public:
 
     void resendLastVisibleContentRects();
 
-    WebCore::FloatRect computeLayoutViewportRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentLayoutViewportRect, double displayedContentScale, WebCore::FrameView::LayoutViewportConstraint = WebCore::FrameView::LayoutViewportConstraint::Unconstrained) const;
+    WebCore::FloatRect computeLayoutViewportRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentLayoutViewportRect, double displayedContentScale, WebCore::LocalFrameView::LayoutViewportConstraint = WebCore::LocalFrameView::LayoutViewportConstraint::Unconstrained) const;
 
     WebCore::FloatRect unconstrainedLayoutViewportRect() const;
 
@@ -880,11 +880,11 @@ public:
 
     WebCore::FloatSize overrideScreenSize();
 
-    void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID);
+    void dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate&);
 
     void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
-    void setDeviceOrientation(int32_t);
-    int32_t deviceOrientation() const { return m_deviceOrientation; }
+    void setDeviceOrientation(WebCore::IntDegrees);
+    WebCore::IntDegrees deviceOrientation() const { return m_deviceOrientation; }
     void setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>&);
     void willCommitLayerTree(TransactionID);
 
@@ -1000,6 +1000,13 @@ public:
 
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
     CALayer *acceleratedCompositingRootLayer() const;
+
+#if PLATFORM(MAC)
+    CALayer *headerBannerLayer() const;
+    CALayer *footerBannerLayer() const;
+    int headerBannerHeight() const;
+    int footerBannerHeight() const;
+#endif
 
     void setTextAsync(const String&);
 
@@ -1672,8 +1679,8 @@ public:
     void handleAcceptedCandidate(WebCore::TextCheckingResult);
     void didHandleAcceptedCandidate();
 
-    void setHeaderBannerHeightForTesting(int);
-    void setFooterBannerHeightForTesting(int);
+    void setHeaderBannerHeight(int);
+    void setFooterBannerHeight(int);
 
     void didEndMagnificationGesture();
 #endif
@@ -1955,7 +1962,7 @@ public:
 #endif
 
     using TextManipulationItemCallback = WTF::Function<void(const Vector<WebCore::TextManipulationItem>&)>;
-    void startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>&, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
+    void startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>&, bool includeSubframes, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
     void didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>&);
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, WTF::Function<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&&);
 
@@ -1967,7 +1974,7 @@ public:
 
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
 
-    void setOrientationForMediaCapture(uint64_t);
+    void setOrientationForMediaCapture(WebCore::IntDegrees);
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
@@ -2379,7 +2386,7 @@ private:
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
 #endif
     void requestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
-    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, WebCore::MediaDeviceHashSalts&&)>&&);
+    void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
     void beginMonitoringCaptureDevices();
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -2570,9 +2577,9 @@ private:
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(CompletionHandler<void(bool)>&&);
     void showCorrectionPanel(WebCore::AlternativeTextType panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
-    void dismissCorrectionPanel(int32_t reason);
-    void dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&&);
-    void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
+    void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText);
+    void dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText, CompletionHandler<void(String)>&&);
+    void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString);
 
     void setEditableElementIsFocused(bool);
 
@@ -2887,7 +2894,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<WebCore::InputMode> m_pendingInputModeChange;
-    int32_t m_deviceOrientation { 0 };
+    WebCore::IntDegrees m_deviceOrientation { 0 };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };

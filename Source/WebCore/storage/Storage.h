@@ -25,18 +25,18 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
+#include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
 
 class StorageArea;
 
-class Storage final : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
+class Storage final : public ScriptWrappable, public RefCounted<Storage>, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Storage);
 public:
-    static Ref<Storage> create(DOMWindow&, Ref<StorageArea>&&);
+    static Ref<Storage> create(LocalDOMWindow&, Ref<StorageArea>&&);
     ~Storage();
 
     unsigned length() const;
@@ -54,7 +54,7 @@ public:
     StorageArea& area() const { return m_storageArea.get(); }
 
 private:
-    Storage(DOMWindow&, Ref<StorageArea>&&);
+    Storage(LocalDOMWindow&, Ref<StorageArea>&&);
 
     const Ref<StorageArea> m_storageArea;
 };

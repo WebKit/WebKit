@@ -527,6 +527,63 @@ TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifier)
     EXPECT_FALSE([fileManager fileExistsAtPath:generalStorageDirectory.get().path]);
 }
 
+TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierRemoveCredentials)
+{
+    // FIXME: we should use persistent credential for test after rdar://100722784 is in build.
+    usePersistentCredentialStorage = false;
+    done = false;
+    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    pid_t networkProcessIdentifier;
+    @autoreleasepool {
+        auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+        [websiteDataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^{
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        HTTPServer server(HTTPServer::respondWithChallengeThenOK);
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:websiteDataStore.get()];
+        auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+            EXPECT_EQ((int)dataRecords.count, 1);
+            for (WKWebsiteDataRecord *record in dataRecords)
+                EXPECT_WK_STREQ([record displayName], @"127.0.0.1");
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        networkProcessIdentifier = [websiteDataStore.get() _networkProcessIdentifier];
+        EXPECT_NE(networkProcessIdentifier, 0);
+    }
+
+    // Wait until network process exits so we are sure website data files are not in use during removal.
+    while (!kill(networkProcessIdentifier, 0))
+        TestWebKitAPI::Util::spinRunLoop();
+
+    [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
+        done = true;
+        EXPECT_NULL(error);
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        int credentialCount = dataRecords.count;
+        EXPECT_EQ(credentialCount, 0);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WKWebsiteDataStore, RemoveDataStoreWithIdentifierErrorWhenInUse)
 {
     auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);

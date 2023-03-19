@@ -199,8 +199,6 @@ OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWh
     if (!scrollingTree)
         return { };
 
-    auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
-
     // Replicate the hack in EventDispatcher::internalWheelEvent(). We could pass rubberBandableEdges all the way through the
     // WebProcess and back via the ScrollingTree, but we only ever need to consult it here.
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began)
@@ -211,6 +209,12 @@ OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWh
 
 WheelEventHandlingResult RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
+    auto scrollingTree = this->scrollingTree();
+    if (!scrollingTree)
+        return WheelEventHandlingResult::unhandled();
+
+    auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
+
     auto platformWheelEvent = platform(wheelEvent);
     auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
     if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling))
@@ -341,13 +345,17 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->displayDidRefresh(displayID);
-#endif
-
     auto scrollingTree = this->scrollingTree();
     if (!scrollingTree)
         return;
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    {
+        // Make sure the lock is held for the handleSyntheticWheelEvent callback.
+        auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
+        m_momentumEventDispatcher->displayDidRefresh(displayID);
+    }
+#endif
 
     scrollingTree->displayDidRefresh(displayID);
     scrollingTree->applyLayerPositions();

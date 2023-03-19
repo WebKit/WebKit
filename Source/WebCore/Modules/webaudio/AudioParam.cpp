@@ -143,7 +143,7 @@ bool AudioParam::smooth()
         m_smoothedValue += (m_value - m_smoothedValue) * SmoothingConstant;
 
         // If we get close enough then snap to actual value.
-        if (fabs(m_smoothedValue - m_value) < SnapThreshold) // FIXME: the threshold needs to be adjustable depending on range - but this is OK general purpose value.
+        if (std::abs(m_smoothedValue - m_value) < SnapThreshold) // FIXME: the threshold needs to be adjustable depending on range - but this is OK general purpose value.
             m_smoothedValue = m_value;
     }
 

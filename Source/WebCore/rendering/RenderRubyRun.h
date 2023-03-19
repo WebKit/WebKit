@@ -59,6 +59,7 @@ public:
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
     void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const;
+    std::pair<float, float> startAndEndOverhang(bool forFirstLine) const;
 
     static RenderPtr<RenderRubyRun> staticCreateRubyRun(const RenderObject* parentRuby);
     
@@ -69,7 +70,9 @@ public:
         m_secondToLastCharacter = secondToLast;
     }
     bool canBreakBefore(const LazyLineBreakIterator&) const;
-    
+
+    std::pair<LayoutUnit, LayoutUnit> annotationsAboveAndBelow() const;
+
     RenderPtr<RenderRubyBase> createRubyBase() const;
 
 private:

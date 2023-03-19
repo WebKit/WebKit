@@ -253,7 +253,7 @@ bool defaultShouldEnableScreenOrientationAPI()
 bool defaultPeerConnectionEnabledAvailable()
 {
     // This helper function avoid an expensive header include in WebPreferences.h
-    return WebRTCProvider::webRTCAvailable();
+    return WebCore::WebRTCProvider::webRTCAvailable();
 }
 #endif
 

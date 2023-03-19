@@ -30,6 +30,7 @@
 #include "AST.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
+#include "CallGraph.h"
 #include "WGSLShaderModule.h"
 
 #include <wtf/SortedArrayMap.h>
@@ -41,9 +42,9 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder)
+    FunctionDefinitionWriter(CallGraph& callGraph, StringBuilder& stringBuilder)
         : m_stringBuilder(stringBuilder)
-        , m_shaderModule(shaderModule)
+        , m_callGraph(callGraph)
     {
     }
 
@@ -51,7 +52,7 @@ public:
 
     using AST::Visitor::visit;
 
-    void visit(ShaderModule&) override;
+    void write();
 
     void visit(AST::Attribute&) override;
     void visit(AST::BuiltinAttribute&) override;
@@ -92,16 +93,19 @@ public:
 
 private:
     StringBuilder& m_stringBuilder;
-    ShaderModule& m_shaderModule;
+    CallGraph& m_callGraph;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
     std::optional<AST::StageAttribute::Stage> m_entryPointStage;
     std::optional<String> m_suffix;
 };
 
-void FunctionDefinitionWriter::visit(ShaderModule& shaderModule)
+void FunctionDefinitionWriter::write()
 {
-    AST::Visitor::visit(shaderModule);
+    for (auto& structure : m_callGraph.ast().structures())
+        visit(structure);
+    for (auto& entryPoint : m_callGraph.entrypoints())
+        visit(entryPoint.function);
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
@@ -239,7 +243,7 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
     unsigned bufferIndex = group.group();
     if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
-        auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage;
+        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
     m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
@@ -553,13 +557,10 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
     m_stringBuilder.append(";\n");
 }
 
-RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& module)
+void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)
 {
-    FunctionDefinitionWriter functionDefinitionWriter(module, stringBuilder);
-    functionDefinitionWriter.visit(module);
-
-    // FIXME: return the actual entry points
-    return { String(""_s), String(""_s) };
+    FunctionDefinitionWriter functionDefinitionWriter(callGraph, stringBuilder);
+    functionDefinitionWriter.write();
 }
 
 } // namespace Metal

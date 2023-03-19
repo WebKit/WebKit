@@ -575,4 +575,17 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
     return nullptr;
 }
 
+String ImageBuffer::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode();
+    return stream.release();
+}
+
+TextStream& operator<<(TextStream& ts, const ImageBuffer& imageBuffer)
+{
+    ts << imageBuffer.debugDescription();
+    return ts;
+}
+
 } // namespace WebCore

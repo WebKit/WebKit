@@ -31,7 +31,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "ReplaceSelectionCommand.h"
 #include "SetSelectionCommand.h"
 #include "StaticRange.h"

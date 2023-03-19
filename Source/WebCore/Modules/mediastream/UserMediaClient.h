@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class CaptureDevice;
+struct CaptureDeviceWithCapabilities;
 class Document;
 class Page;
 class UserMediaRequest;
@@ -52,7 +52,7 @@ public:
     virtual void requestUserMediaAccess(UserMediaRequest&) = 0;
     virtual void cancelUserMediaAccessRequest(UserMediaRequest&) = 0;
 
-    using EnumerateDevicesCallback = CompletionHandler<void(const Vector<CaptureDevice>&, MediaDeviceHashSalts&&)>;
+    using EnumerateDevicesCallback = CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&)>;
     virtual void enumerateMediaDevices(Document&, EnumerateDevicesCallback&&) = 0;
 
     enum DeviceChangeObserverTokenType { };

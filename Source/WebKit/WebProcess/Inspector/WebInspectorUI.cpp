@@ -39,6 +39,7 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendHost.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

@@ -7,6 +7,7 @@ PASS a[href] -> link.
 PASS article -> article.
 PASS aside -> complementary.
 PASS button -> button.
+PASS code -> code.
 PASS del -> deletion.
 PASS dfn -> definition.
 PASS dl -> .
@@ -104,6 +105,7 @@ PASS div[role="blockquote"] -> blockquote.
 PASS div[role="button"] -> button.
 PASS div[role="caption"] -> caption.
 PASS div[role="checkbox"] -> checkbox.
+PASS div[role="code"] -> code.
 PASS div[role="combobox"] -> combobox.
 PASS div[role="complementary"] -> complementary.
 PASS div[role="contentinfo"] -> contentinfo.

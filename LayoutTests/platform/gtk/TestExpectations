@@ -598,13 +598,13 @@ webkit.org/b/251107 webgl/2.0.0/conformance2/textures/video/tex-2d-srgb8-rgb-uns
 webkit.org/b/251107 webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Failure Timeout ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/buffer-uninitialized.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/element-array-buffer-delete-recreate.html [ Pass Failure Timeout ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/index-validation-copies-indices.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/index-validation.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/index-validation-large-buffer.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/index-validation-verifies-too-many-indices.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/buffers/index-validation-with-resized-buffer.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/buffer-uninitialized.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/element-array-buffer-delete-recreate.html [ Pass Failure Timeout ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-copies-indices.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-large-buffer.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-verifies-too-many-indices.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-with-resized-buffer.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Pass Timeout ]
 webkit.org/b/251107 webgl/2.0.0/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/extensions/oes-texture-float.html [ Pass Failure ]
@@ -849,21 +849,17 @@ fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
 # Service-workers tests that fail, time out or crash.
 
-# GTK ought to support async clipboard
-webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-basic.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-same-origin.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-write-basic.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-write-items-twice.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-write-text.html [ Timeout ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-text.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/clipboard-read-write-images.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
+# GTK doesn't support multiple items in the clipboard
+# FIXME: add platform specific tests equivalent to these but using single item.
+editing/async-clipboard/clipboard-read-write-images.html [ Skip ]
+editing/async-clipboard/clipboard-write-basic.html [ Skip ]
+editing/async-clipboard/sanitize-when-reading-markup.html [ Skip ]
+
+# These tests are intended to exercise programmatic paste mechanism specific to Apple ports.
+editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
+editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
+editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ]
+editing/async-clipboard/clipboard-read-while-pasting.html [ Skip ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -890,6 +886,8 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 
 # The test directly sends Cocoa events
 swipe/pushState-programmatic-back-while-swiping-crash.html [ Skip ]
+swipe/swipe-back-with-passive-wheel-listener.html [ Skip ]
+swipe/swipe-back-with-active-wheel-listener.html [ Skip ]
 
 # GTK port doesn't suport datalist in range elements
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ Skip ]
@@ -1067,8 +1065,6 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/registration-clear-redundant-worker.html [ Crash ]
 webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.html [ Crash ]
-
-webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests

@@ -531,22 +531,26 @@ void Recorder::drawControlPart(ControlPart& part, const FloatRoundedRect& border
 
 void Recorder::clip(const FloatRect& rect)
 {
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
     recordClip(rect);
 }
 
 void Recorder::clipOut(const FloatRect& rect)
 {
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     recordClipOut(rect);
 }
 
 void Recorder::clipOut(const Path& path)
 {
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     recordClipOutToPath(path);
 }
 
 void Recorder::clipPath(const Path& path, WindRule windRule)
 {
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     currentState().clipBounds.intersect(currentState().ctm.mapRect(path.fastBoundingRect()));
     recordClipPath(path, windRule);
 }
@@ -563,6 +567,8 @@ IntRect Recorder::clipBounds() const
 
 void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(destRect));
     recordResourceUse(imageBuffer);
     recordClipToImageBuffer(imageBuffer, destRect);
 }
@@ -580,11 +586,13 @@ void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destinat
         return;
     }
     ASSERT(player.identifier());
+    appendStateChangeItemIfNecessary();
     recordPaintFrameForMedia(player, destination);
 }
 
 void Recorder::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
+    appendStateChangeItemIfNecessary();
     recordPaintVideoFrame(frame, destination, shouldDiscardAlpha);
 }
 #endif

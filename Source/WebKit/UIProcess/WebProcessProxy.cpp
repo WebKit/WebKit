@@ -717,6 +717,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
+    updateBlobRegistryPartitioningState();
 }
 
 void WebProcessProxy::markIsNoLongerInPrewarmedPool()
@@ -747,6 +748,8 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
+
+    updateBlobRegistryPartitioningState();
 
     maybeShutDown();
 }
@@ -1847,6 +1850,13 @@ void WebProcessProxy::didExceedCPULimit()
 void WebProcessProxy::updateBackgroundResponsivenessTimer()
 {
     m_backgroundResponsivenessTimer.updateState();
+}
+
+void WebProcessProxy::updateBlobRegistryPartitioningState() const
+{
+    auto* dataStore = websiteDataStore();
+    if (auto* networkProcess = dataStore ? dataStore->networkProcessIfExists() : nullptr)
+        networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
 }
 
 #if !PLATFORM(COCOA)

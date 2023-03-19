@@ -403,14 +403,14 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         break;
     case GST_WEBRTC_STATS_LOCAL_CANDIDATE:
     case GST_WEBRTC_STATS_REMOTE_CANDIDATE:
-        if (webkitGstCheckVersion(1, 21, 0)) {
+        if (webkitGstCheckVersion(1, 22, 0)) {
             RTCStatsReport::IceCandidateStats stats;
             fillRTCCandidateStats(stats, statsType, structure);
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidateStats>>(stats.id, WTFMove(stats));
         }
         break;
     case GST_WEBRTC_STATS_CANDIDATE_PAIR:
-        if (webkitGstCheckVersion(1, 21, 0)) {
+        if (webkitGstCheckVersion(1, 22, 0)) {
             RTCStatsReport::IceCandidatePairStats stats;
             fillRTCCandidatePairStats(stats, structure);
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::IceCandidatePairStats>>(stats.id, WTFMove(stats));

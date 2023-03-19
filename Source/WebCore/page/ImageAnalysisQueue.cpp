@@ -30,10 +30,10 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLImageElement.h"
 #include "ImageOverlay.h"
+#include "LocalFrameView.h"
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "TextRecognitionOptions.h"

@@ -67,6 +67,9 @@ from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
+# Prevent unit-tests from talking to live bugzilla server
+BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
+
 def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.logs = logs
     step.results = results
@@ -2816,7 +2819,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests', '--enable-core-dumps-nolimit']
                         )
             + 0,
         )
@@ -2835,7 +2838,7 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests', '--enable-core-dumps-nolimit']
                         )
             + 2
         )
@@ -3605,12 +3608,13 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
     ENV = dict(
         GIT_COMMITTER_NAME='EWS',
         GIT_COMMITTER_EMAIL='ews@webkit.org',
-        GIT_USER=None,
-        GIT_PASSWORD=None,
+        GIT_USER='webkit-commit-queue',
+        GIT_PASSWORD='password',
     )
 
     def setUp(self):
         self.longMessage = True
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -6100,7 +6104,12 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['git', 'fetch', 'origin', '--prune']) +
             ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
-            0,
+            0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS)
         return self.runStep()
@@ -6156,7 +6165,12 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['git', 'fetch',  'origin', '--prune']) +
             ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
-            2,
+            2, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0,
         )
         self.expectOutcome(result=FAILURE)
         return self.runStep()
@@ -6724,11 +6738,16 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
-    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
+    ENV = dict(
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+        GIT_USER='webkit-commit-queue',
+        GIT_PASSWORD='password',
+    )
 
     def setUp(self):
         self.longMessage = True
         Contributors.load = mock_load_contributors
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):

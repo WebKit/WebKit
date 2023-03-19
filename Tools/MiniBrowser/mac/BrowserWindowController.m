@@ -324,8 +324,11 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
     NSRect contentFrame = [self.window convertRectToScreen:self.mainContentView.bounds];
 
     CGRect frame = coreGraphicsScreenRectForAppKitScreenRect(contentFrame);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGImageRef imageRef = CGWindowListCreateImage(frame, kCGWindowListOptionIncludingWindow, (CGWindowID)[self.window windowNumber], kCGWindowImageBoundsIgnoreFraming);
-    
+#pragma clang diagnostic pop
+
     if (!imageRef)
         return nil;
     

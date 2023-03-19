@@ -150,8 +150,8 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect
 
     // Factor in the destination context's scale to generate at the best resolution
     AffineTransform destContextCTM = destContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    double xScale = fabs(destContextCTM.xScale());
-    double yScale = fabs(destContextCTM.yScale());
+    double xScale = std::abs(destContextCTM.xScale());
+    double yScale = std::abs(destContextCTM.yScale());
     AffineTransform adjustedPatternCTM = patternTransform;
     adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
     adjustedSrcRect.scale(xScale, yScale);

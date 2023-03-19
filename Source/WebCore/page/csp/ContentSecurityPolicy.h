@@ -57,8 +57,8 @@ class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicySource;
 class DOMStringList;
 class Element;
-class Frame;
 class JSWindowProxy;
+class LocalFrame;
 class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -121,7 +121,7 @@ public:
 
     bool allowPluginType(const String& type, const String& typeAttribute, const URL&, bool overrideContentSecurityPolicy = false) const;
 
-    bool allowFrameAncestors(const Frame&, const URL&, bool overrideContentSecurityPolicy = false) const;
+    bool allowFrameAncestors(const LocalFrame&, const URL&, bool overrideContentSecurityPolicy = false) const;
     WEBCORE_EXPORT bool allowFrameAncestors(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins, const URL&, bool overrideContentSecurityPolicy = false) const;
     WEBCORE_EXPORT bool overridesXFrameOptions() const;
 

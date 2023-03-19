@@ -1,5 +1,3 @@
-//@ requireOptions("--maximumWasmCalleeSizeForInlining=0")
-// FIXME: inlining should support printing inlined frames
 import Builder from '../Builder.js'
 import * as assert from '../assert.js'
 

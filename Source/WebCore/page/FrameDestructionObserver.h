@@ -29,22 +29,22 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 
 class FrameDestructionObserver {
 public:
-    WEBCORE_EXPORT explicit FrameDestructionObserver(Frame*);
+    WEBCORE_EXPORT explicit FrameDestructionObserver(LocalFrame*);
 
     WEBCORE_EXPORT virtual void frameDestroyed();
     WEBCORE_EXPORT virtual void willDetachPage();
 
-    inline Frame* frame() const; // Defined in FrameDestructionObserverInlines.h.
+    inline LocalFrame* frame() const; // Defined in FrameDestructionObserverInlines.h.
 
 protected:
     WEBCORE_EXPORT virtual ~FrameDestructionObserver();
-    WEBCORE_EXPORT void observeFrame(Frame*);
+    WEBCORE_EXPORT void observeFrame(LocalFrame*);
 
-    WeakPtr<Frame> m_frame;
+    WeakPtr<LocalFrame> m_frame;
 };
 
 } // namespace WebCore

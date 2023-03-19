@@ -136,7 +136,7 @@ static RetainPtr<NSMutableArray>& savedMouseEvents()
 
 #if !PLATFORM(IOS_FAMILY)
 @interface WebView (WebViewInternalForTesting)
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 #endif
 
@@ -1279,7 +1279,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 - (void)monitorWheelEventsWithOptions:(WebScriptObject*)options
 {
 #if PLATFORM(MAC)
-    WebCore::Frame* frame = [[mainFrame webView] _mainCoreFrame];
+    auto* frame = [[mainFrame webView] _mainCoreFrame];
     if (!frame)
         return;
 
@@ -1310,7 +1310,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     if (!jsCallbackFunction)
         return;
 
-    WebCore::Frame* frame = [[mainFrame webView] _mainCoreFrame];
+    auto* frame = [[mainFrame webView] _mainCoreFrame];
     if (!frame)
         return;
 

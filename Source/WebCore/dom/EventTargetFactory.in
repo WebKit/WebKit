@@ -13,7 +13,6 @@ Clipboard
 DedicatedWorkerGlobalScope
 DOMApplicationCache
 DOMAudioSession conditional=DOM_AUDIO_SESSION
-DOMWindow
 EventSource
 FileReader
 FontFaceSet
@@ -22,6 +21,7 @@ IDBDatabase
 IDBOpenDBRequest
 IDBRequest
 IDBTransaction
+LocalDOMWindow
 ManagedMediaSource conditional=MANAGED_MEDIA_SOURCE
 ManagedSourceBuffer conditional=MANAGED_MEDIA_SOURCE
 MediaController conditional=VIDEO

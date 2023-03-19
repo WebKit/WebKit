@@ -366,6 +366,7 @@ struct AirIRGeneratorBase {
     //                               addRefIsNull (in derived classes)
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -509,6 +510,8 @@ struct AirIRGeneratorBase {
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<Derived>* parser) { m_parser = parser; };
+    ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { }
 
@@ -1234,6 +1237,12 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefAsNonNull(ExpressionType
     result = self().tmpForType(Type { TypeKind::Ref, reference.type().index });
     self().emitMoveWithoutTypeCheck(reference, result);
     return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addRefEq(ExpressionType ref0, ExpressionType ref1, ExpressionType& result) -> PartialResult
+{
+    return addI64Eq(ref0, ref1, result);
 }
 
 template <typename Derived, typename ExpressionType>
@@ -2725,7 +2734,21 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind cas
     switch (static_cast<TypeKind>(heapType)) {
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
-        // Casts to funcref/externref cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+    case Wasm::TypeKind::Eqref:
+    case Wasm::TypeKind::Anyref:
+        // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+        break;
+    case Wasm::TypeKind::Nullref:
+        // Casts to any bottom type should always fail.
+        if (castKind == CastKind::Cast) {
+            B3::PatchpointValue* throwException = addPatchpoint(B3::Void);
+            throwException->setGenerator(castFailure);
+            emitPatchpoint(throwException, ExpressionType());
+        } else {
+            append(Jump);
+            m_currentBlock->setSuccessors(falseBlock);
+            m_currentBlock = m_code.addBlock();
+        }
         break;
     case Wasm::TypeKind::I31ref:
         emitCheckOrBranchForCast(castKind, [&]() {
@@ -4787,14 +4810,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI32GtU(ExpressionType arg0,
 }
 
 template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64ExtendSI32(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    append(SignExtend32ToPtr, arg0, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addI32Extend8S(ExpressionType arg0, ExpressionType& result) -> PartialResult
 {
     result = self().g32();
@@ -4807,38 +4822,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI32Extend16S(ExpressionType
 {
     result = self().g32();
     append(SignExtend16To32, arg0, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Extend8S(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    auto temp = self().g32();
-    append(Move32, arg0, temp);
-    append(SignExtend8To32, temp, temp);
-    append(SignExtend32ToPtr, temp, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Extend16S(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    auto temp = self().g32();
-    append(Move32, arg0, temp);
-    append(SignExtend16To32, temp, temp);
-    append(SignExtend32ToPtr, temp, result);
-    return { };
-}
-
-template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Extend32S(ExpressionType arg0, ExpressionType& result) -> PartialResult
-{
-    result = self().g64();
-    auto temp = self().g32();
-    append(Move32, arg0, temp);
-    append(SignExtend32ToPtr, temp, result);
     return { };
 }
 

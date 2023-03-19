@@ -44,13 +44,13 @@
 #import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSLock.h>
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PlatformWheelEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
@@ -92,7 +92,7 @@ using namespace JSC;
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
-    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](Frame& subframe) -> bool {
+    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](LocalFrame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
     })]);
 
@@ -155,7 +155,7 @@ using namespace JSC;
 
 - (WebFrame *)webFrame
 {
-    Frame* frame = core(self)->frame();
+    auto* frame = core(self)->frame();
     if (!frame)
         return nil;
     return kit(frame);

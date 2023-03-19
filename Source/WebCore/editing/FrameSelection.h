@@ -42,9 +42,9 @@
 namespace WebCore {
 
 class CharacterData;
-class Frame;
 class GraphicsContext;
 class HTMLFormElement;
+class LocalFrame;
 class MutableStyleProperties;
 class RenderBlock;
 class RenderObject;
@@ -92,7 +92,7 @@ public:
     DragCaretController();
 
     RenderBlock* caretRenderer() const;
-    void paintDragCaret(Frame*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
+    void paintDragCaret(LocalFrame*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
     WEBCORE_EXPORT bool isContentRichlyEditable() const;

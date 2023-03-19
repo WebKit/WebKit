@@ -115,6 +115,7 @@ struct NetworkSessionCreationParameters {
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     bool shouldAcceptInsecureCertificatesForWebSockets { false };
 #endif
+    bool isBlobRegistryTopOriginPartitioningEnabled { false };
 
     UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Basic };
     uint64_t perOriginStorageQuota;

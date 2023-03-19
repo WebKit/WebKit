@@ -1157,6 +1157,20 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateMediaStreamAVFObjC::videoFra
     return metadata;
 }
 
+LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() const
+{
+    return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->hostingContextID() : 0;
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+{
+    if (!m_sampleBufferDisplayLayer)
+        return;
+    CGRect bounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
+    bounds.size = size;
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(bounds, m_videoRotation, fence);
+}
+
 }
 
 #endif

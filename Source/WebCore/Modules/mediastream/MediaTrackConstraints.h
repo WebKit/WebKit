@@ -75,6 +75,7 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainDOMString> groupId;
     std::optional<ConstrainDOMString> displaySurface;
     std::optional<ConstrainBoolean> logicalSurface;
+    std::optional<ConstrainDouble> zoom;
 };
 
 struct MediaTrackConstraints : MediaTrackConstraintSet {

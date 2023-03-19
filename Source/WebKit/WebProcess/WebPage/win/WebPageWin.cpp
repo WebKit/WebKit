@@ -37,9 +37,9 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -64,7 +64,7 @@ void WebPage::platformDetach()
 {
 }
 
-void WebPage::getPlatformEditorState(Frame&, EditorState&) const
+void WebPage::getPlatformEditorState(LocalFrame&, EditorState&) const
 {
 }
 

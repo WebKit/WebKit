@@ -248,7 +248,7 @@ def parse_args(args):
             help="wrapper command to insert before invocations of "
                  "DumpRenderTree or WebKitTestRunner; option is split on whitespace before "
                  "running. (Example: --wrapper='valgrind --smc-check=all')"),
-        optparse.make_option("-i", "--ignore-tests", action="append", default=[],
+        optparse.make_option("-i", "--ignore-tests", "--exclude-tests", action="append", default=[],
             help="directories or test to ignore (may specify multiple times)"),
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
@@ -309,6 +309,7 @@ def parse_args(args):
         optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                  '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
+        optparse.make_option('--enable-core-dumps-nolimit', action='store_true', default=False, help='Enable core dumps for the test run (runs the equivalent of "ulimit -c unlimited" before starting the tests).'),
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
         optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
         optparse.make_option("--allowed-host", type="string", action="append", default=[], help="If specified, tests are allowed to make requests to the specified hostname."),
@@ -490,16 +491,20 @@ def _set_up_derived_options(port, options):
     if options.platform in ["gtk", "wpe"]:
         options.webkit_test_runner = True
 
-    # Don't maintain render tree dump results for Apple Windows port.
-    if port.port_name == "win":
-        options.ignore_render_tree_dump_results = True
-
 def run(port, options, args, logging_stream):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
 
     try:
         printer = printing.Printer(port, options, logging_stream, logger=logger)
+
+        if options.enable_core_dumps_nolimit:
+            try:
+                import resource
+                resource.setrlimit(resource.RLIMIT_CORE, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+                _log.debug('Enabled coredumps for test run')
+            except (ModuleNotFoundError, ValueError, OSError) as e:
+                _log.error('Failed to enable coredumps: %s' % str(e))
 
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)

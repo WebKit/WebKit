@@ -32,7 +32,6 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "EventSender.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -43,6 +42,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacyRenderSVGImage.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "RenderImage.h"
@@ -107,7 +107,7 @@ static ImageEventSender& loadEventSender()
 
 static inline bool pageIsBeingDismissed(Document& document)
 {
-    Frame* frame = document.frame();
+    auto* frame = document.frame();
     return frame && frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None;
 }
 
@@ -194,6 +194,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         if (isImageElement) {
             auto& imageElement = downcast<HTMLImageElement>(element());
             options.referrerPolicy = imageElement.referrerPolicy();
+            options.fetchPriorityHint = imageElement.fetchPriorityHint();
             if (imageElement.usesSrcsetOrPicture())
                 options.initiator = Initiator::Imageset;
         }

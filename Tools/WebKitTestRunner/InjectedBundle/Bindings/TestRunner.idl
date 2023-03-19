@@ -220,6 +220,11 @@ interface TestRunner {
     undefined pauseBackgroundFetch(DOMString identifier);
     undefined resumeBackgroundFetch(DOMString identifier);
     undefined simulateClickBackgroundFetch(DOMString identifier);
+    undefined setBackgroundFetchPermission(boolean value);
+    DOMString lastAddedBackgroundFetchIdentifier();
+    DOMString lastRemovedBackgroundFetchIdentifier();
+    DOMString lastUpdatedBackgroundFetchIdentifier();
+    DOMString backgroundFetchState(DOMString identifier);
 
     // Geolocation
     undefined setGeolocationPermission(boolean value);
@@ -260,10 +265,6 @@ interface TestRunner {
     undefined setAuthenticationPassword(DOMString password);
 
     undefined setAllowsAnySSLCertificate(boolean value);
-    undefined setBackgroundFetchPermission(boolean value);
-    DOMString lastAddedBackgroundFetchIdentifier();
-    DOMString lastRemovedBackgroundFetchIdentifier();
-    DOMString lastUpdatedBackgroundFetchIdentifier();
 
     undefined setShouldSwapToEphemeralSessionOnNextNavigation(boolean value);
     undefined setShouldSwapToDefaultSessionOnNextNavigation(boolean value);

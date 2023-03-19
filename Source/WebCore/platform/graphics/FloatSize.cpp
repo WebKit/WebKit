@@ -47,7 +47,7 @@ FloatSize FloatSize::constrainedBetween(const FloatSize& min, const FloatSize& m
 
 bool FloatSize::isZero() const
 {
-    return fabs(m_width) < std::numeric_limits<float>::epsilon() && fabs(m_height) < std::numeric_limits<float>::epsilon();
+    return std::abs(m_width) < std::numeric_limits<float>::epsilon() && std::abs(m_height) < std::numeric_limits<float>::epsilon();
 }
 
 bool FloatSize::isExpressibleAsIntSize() const

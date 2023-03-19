@@ -30,7 +30,6 @@
 #include "EventTrackingRegions.h"
 #include "FilterRenderingMode.h"
 #include "FindOptions.h"
-#include "Frame.h"
 #include "FrameLoaderTypes.h"
 #include "IntRectHash.h"
 #include "KeyboardScrollingAnimator.h"
@@ -38,6 +37,7 @@
 #include "LayoutRect.h"
 #include "LengthBox.h"
 #include "LoadSchedulingMode.h"
+#include "LocalFrame.h"
 #include "MediaProducer.h"
 #include "MediaSessionGroupIdentifier.h"
 #include "Pagination.h"
@@ -309,8 +309,8 @@ public:
 
     EditorClient& editorClient() { return m_editorClient.get(); }
 
-    AbstractFrame& mainFrame() { return m_mainFrame.get(); }
-    const AbstractFrame& mainFrame() const { return m_mainFrame.get(); }
+    Frame& mainFrame() { return m_mainFrame.get(); }
+    const Frame& mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -393,8 +393,8 @@ public:
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
-    void progressEstimateChanged(Frame&) const;
-    void progressFinished(Frame&) const;
+    void progressEstimateChanged(LocalFrame&) const;
+    void progressFinished(LocalFrame&) const;
     BackForwardController& backForward() const { return *m_backForwardController; }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
@@ -707,6 +707,7 @@ public:
 
     WEBCORE_EXPORT void setMemoryCacheClientCallsEnabled(bool);
     bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
+    void setHasPendingMemoryCacheLoadNotifications(bool hasPendingMemoryCacheLoadNotifications) { m_hasPendingMemoryCacheLoadNotifications = hasPendingMemoryCacheLoadNotifications; }
 
     // Don't allow more than a certain number of frames in a page.
     // This seems like a reasonable upper bound, and otherwise mutually
@@ -915,6 +916,8 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     WEBCORE_EXPORT bool allowsLoadFromURL(const URL&, MainFrameMainResource) const;
+    WEBCORE_EXPORT bool hasLocalDataForURL(const URL&);
+
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
@@ -952,8 +955,8 @@ public:
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
-    static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
-    void forEachFrame(const Function<void(Frame&)>&);
+    static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
+    void forEachFrame(const Function<void(LocalFrame&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
     const HashSet<String>& maskedURLSchemes() const { return m_maskedURLSchemes; }
@@ -1094,7 +1097,7 @@ private:
     const std::unique_ptr<ProgressTracker> m_progress;
 
     const std::unique_ptr<BackForwardController> m_backForwardController;
-    Ref<AbstractFrame> m_mainFrame;
+    Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 
@@ -1133,6 +1136,7 @@ private:
 
     bool m_inLowQualityInterpolationMode { false };
     bool m_areMemoryCacheClientCallsEnabled { true };
+    bool m_hasPendingMemoryCacheLoadNotifications { false };
     float m_mediaVolume { 1 };
     MediaProducerMutedStateFlags m_mutedState;
 
@@ -1395,7 +1399,7 @@ inline PageGroup& Page::group()
     return *m_group;
 }
 
-inline Page* AbstractFrame::page() const
+inline Page* Frame::page() const
 {
     return m_page.get();
 }

@@ -2844,7 +2844,7 @@ public:
     static void cacheFlush(void* code, size_t size)
     {
 #if OS(DARWIN)
-        sys_cache_control(kCacheFunctionPrepareForExecution, code, size);
+        sys_icache_invalidate(code, size);
 #elif OS(LINUX)
         size_t page = pageSize();
         uintptr_t current = reinterpret_cast<uintptr_t>(code);

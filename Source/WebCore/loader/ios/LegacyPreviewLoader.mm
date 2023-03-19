@@ -29,10 +29,10 @@
 #if USE(QUICK_LOOK)
 
 #import "DocumentLoader.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "LegacyPreviewLoaderClient.h"
+#import "LocalFrame.h"
 #import "Logging.h"
 #import "PreviewConverter.h"
 #import "QuickLook.h"

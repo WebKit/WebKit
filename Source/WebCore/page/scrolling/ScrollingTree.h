@@ -138,9 +138,9 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual void scrollingTreeNodeWillStartPanGesture(ScrollingNodeID) { }
+#endif
     virtual void scrollingTreeNodeWillStartScroll(ScrollingNodeID) { }
     virtual void scrollingTreeNodeDidEndScroll(ScrollingNodeID) { }
-#endif
 
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegions::EventType, IntPoint);
 
@@ -223,6 +223,8 @@ public:
     WEBCORE_EXPORT bool hasPendingScrollUpdates();
 
     virtual void removePendingScrollAnimationForNode(ScrollingNodeID) { }
+
+    WEBCORE_EXPORT float mainFrameTopContentInset() const;
 
     WEBCORE_EXPORT FloatPoint mainFrameScrollPosition() const;
 

@@ -28,8 +28,8 @@
 #include "StorageAreaSync.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
-#include <WebCore/DOMWindow.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalDOMWindow.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -124,7 +124,7 @@ String StorageAreaImpl::item(const String& key)
     return m_storageMap.getItem(key);
 }
 
-void StorageAreaImpl::setItem(Frame& sourceFrame, const String& key, const String& value, bool& quotaException)
+void StorageAreaImpl::setItem(LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException)
 {
     ASSERT(!m_isShutdown);
     ASSERT(!value.isNull());
@@ -144,7 +144,7 @@ void StorageAreaImpl::setItem(Frame& sourceFrame, const String& key, const Strin
     dispatchStorageEvent(key, oldValue, value, sourceFrame);
 }
 
-void StorageAreaImpl::removeItem(Frame& sourceFrame, const String& key)
+void StorageAreaImpl::removeItem(LocalFrame& sourceFrame, const String& key)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -160,7 +160,7 @@ void StorageAreaImpl::removeItem(Frame& sourceFrame, const String& key)
     dispatchStorageEvent(key, oldValue, String(), sourceFrame);
 }
 
-void StorageAreaImpl::clear(Frame& sourceFrame)
+void StorageAreaImpl::clear(LocalFrame& sourceFrame)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -272,7 +272,7 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     }
 }
 
-void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame& sourceFrame)
+void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, LocalFrame& sourceFrame)
 {
     auto* page = sourceFrame.page();
     if (!page)

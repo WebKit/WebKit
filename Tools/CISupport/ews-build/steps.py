@@ -822,13 +822,15 @@ class FetchBranches(steps.ShellSequence, ShellMixin):
         super().__init__(timeout=5 * 60, logEnviron=False, **kwargs)
 
     def run(self):
-        self.commands = [util.ShellArg(command=['git', 'fetch', DEFAULT_REMOTE, '--prune'], logname='stdio')]
+        self.commands = [
+            util.ShellArg(command=['git', 'fetch', DEFAULT_REMOTE, '--prune'], logname='stdio'),
+            util.ShellArg(command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'], logname='stdio'),
+        ]
 
         project = self.getProperty('project', GITHUB_PROJECTS[0])
         remote = self.getProperty('remote', DEFAULT_REMOTE)
         if remote != DEFAULT_REMOTE:
             for command in [
-                ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
                 self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
                 ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
                 ['git', 'fetch', remote, '--prune'],
@@ -3297,6 +3299,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                 self.setCommand(self.command + ['--exit-after-n-failures', '{}'.format(self.EXIT_AFTER_FAILURES)])
             self.setCommand(self.command + ['--skip-failing-tests'])
 
+        if platform in ['gtk', 'wpe']:
+            self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
+
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
 
@@ -4023,6 +4028,8 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
 
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
+        # On the repeat steps we don't enable coredump generation (makes the run much slower if there are crashes)
+        self.setCommand([arg for arg in self.command if arg != '--enable-core-dumps-nolimit'])
         first_results_failing_tests = set(self.getProperty('first_run_failures', []))
         self.setCommand(self.command + ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST] + sorted(first_results_failing_tests))
 
@@ -4082,6 +4089,8 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
 
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
+        # On the repeat steps we don't enable coredump generation (makes the run much slower if there are crashes)
+        self.setCommand([arg for arg in self.command if arg != '--enable-core-dumps-nolimit'])
         with_change_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
         first_run_failures = set(self.getProperty('first_run_failures', []))
         with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)
@@ -5591,7 +5600,6 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
     description = ['canonicalize-commit']
     descriptionDone = ['Canonicalize Commit']
     haltOnFailure = True
-    env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
 
     def __init__(self, rebase_enabled=True, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
@@ -5633,6 +5641,13 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
             '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='{committer_name}';GIT_COMMITTER_EMAIL='{committer_email}'",
             f'HEAD...HEAD~1',
         ])
+
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        self.env = dict(
+            GIT_USER=username,
+            GIT_PASSWORD=access_token,
+            FILTER_BRANCH_SQUELCH_WARNING='1',
+        )
 
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))

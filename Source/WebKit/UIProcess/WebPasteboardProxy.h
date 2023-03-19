@@ -133,6 +133,7 @@ private:
     void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&);
     void clearClipboard(const String& pasteboardName);
+    void getPasteboardChangeCount(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
 
     WebFrameProxy* m_primarySelectionOwner { nullptr };
 #endif // PLATFORM(GTK)

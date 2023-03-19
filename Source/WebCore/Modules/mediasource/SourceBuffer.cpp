@@ -121,7 +121,7 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered() const
         return Exception { InvalidStateError };
 
     // 2. Return a new static normalized TimeRanges object for the media segments buffered.
-    return m_private->buffered()->copy();
+    return TimeRanges::create(m_private->buffered());
 }
 
 double SourceBuffer::timestampOffset() const
@@ -493,7 +493,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     if (isRemoved() || m_updating)
         return Exception { InvalidStateError };
 
-    DEBUG_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_private->buffered()->ranges());
+    DEBUG_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_private->buffered());
 
     // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 3.1. Set the readyState attribute of the parent media source to "open"
@@ -545,7 +545,7 @@ void SourceBuffer::appendBufferTimerFired()
     RefPtr<SharedBuffer> appendData = WTFMove(m_pendingAppendData);
     // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
     if (!appendData || !appendData->size()) {
-        sourceBufferPrivateAppendComplete(AppendResult::AppendSucceeded);
+        sourceBufferPrivateAppendComplete(AppendResult::Succeeded);
         return;
     }
 
@@ -575,7 +575,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    if (result != AppendResult::AppendSucceeded)
+    if (result != AppendResult::Succeeded)
         return;
 
     // 3. Set the updating attribute to false.
@@ -591,7 +591,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
     monitorBufferingRate();
     m_private->reenqueueMediaIfNeeded(m_source->currentTime());
 
-    DEBUG_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered()->ranges());
+    DEBUG_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
@@ -940,7 +940,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // (Note: Issue #155 adds this step after step 5:)
     // 6. Set  pending initialization segment for changeType flag  to false.
     m_pendingInitializationSegmentForChangeType = false;
-    completionHandler(ReceiveResult::RecieveSucceeded);
+    completionHandler(ReceiveResult::Succeeded);
 
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
     if (m_private->readyState() == MediaPlayer::ReadyState::HaveNothing) {
@@ -1353,12 +1353,10 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-void SourceBuffer::sourceBufferPrivateBufferedDirtyChanged(bool flag)
+void SourceBuffer::sourceBufferPrivateBufferedChanged()
 {
-    m_bufferedDirty = flag;
-    if (!isRemoved())
-        m_source->sourceBufferDidChangeBufferedDirty(*this, flag);
-    if (flag && isManaged())
+    setBufferedDirty(true);
+    if (isManaged())
         scheduleEvent(eventNames().bufferedchangeEvent);
 }
 

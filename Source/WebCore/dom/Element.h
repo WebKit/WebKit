@@ -62,12 +62,12 @@ class ElementData;
 class ElementRareData;
 class FormAssociatedCustomElement;
 class FormListedElement;
-class Frame;
 class HTMLDocument;
 class IntSize;
 class JSCustomElementInterface;
 class KeyframeEffectStack;
 class KeyboardEvent;
+class LocalFrame;
 class Locale;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
@@ -758,7 +758,7 @@ protected:
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:
-    Frame* documentFrameWithNonNullView() const;
+    LocalFrame* documentFrameWithNonNullView() const;
     void hideNonceSlow();
 
     bool isTextNode() const;
@@ -875,6 +875,8 @@ private:
 
     bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
     bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
+
+    void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;

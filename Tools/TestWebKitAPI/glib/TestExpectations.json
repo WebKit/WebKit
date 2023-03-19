@@ -97,7 +97,8 @@
         "subtests": {
             "/webkit/WebKitWebProcessExtension/document-loaded-signal": {
                 "expected": {
-                    "wpe@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/219980"}
+                    "wpe@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/219980"},
+                    "gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}
                 }
             },
             "/webkit/WebKitWebProcessExtension/form-submission-steps": {
@@ -108,6 +109,15 @@
                     "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},
                     "wpe": {"status": ["FAIL", "TIMEOUT", "PASS", "CRASH"], "bug": ["webkit.org/b/211336", "webkit.org/b/219980"]}
                 }
+            },
+            "/webkit/WebKitWebProcessExtension/dom-document-title": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebProcessExtension/dom-input-element-is-user-edited": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebProcessExtension/form-controls-associated-signal": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
             }
         }
     },
@@ -118,6 +128,9 @@
             },
             "/webkit/WebKitWebsiteData/storage": {
                 "expected": { "wpe": {"status": ["PASS", "FAIL"]}}
+            },
+            "/webkit/WebKitWebsiteData/cache": {
+                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/254002"}}
             }
         }
     },
@@ -144,6 +157,12 @@
                         "gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"},
                         "wpe": {"status": ["TIMEOUT", "PASS"]}
                 }
+            },
+            "/webkit/WebKitWebView/is-web-process-responsive": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebView/terminate-unresponsive-web-process": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
             }
         }
     },
@@ -206,6 +225,33 @@
             },
             "WebKit.OnDeviceChangeCrash": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214805"}}
+            },
+            "WebKit.PrivateBrowsingPushStateNoHistoryCallback": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
+            },
+            "WebKit.OnDeviceChangeCrash": {
+                "expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/254002"}}
+            },
+            "WebKit.GeolocationWatchMultiprocess": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "WebKit.GeolocationTransitionToLowAccuracy": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "WebKit.PendingAPIRequestURL": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "WebKit.DOMWindowExtensionCrashOnReload": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            }
+        }
+    },
+    "TestWebKitUserContentManager": {
+        "subtests": {
+            "WebKit.MouseMoveAfterCrash": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/254002"}
+                }
             }
         }
     },
@@ -375,5 +421,39 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
             }
         }
+    },
+    "TestWebExtensions": {
+        "subtests": {
+            "/webkit/WebKitWebExtension/isolated-world": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebExtension/user-messages": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebExtension/form-controls-associated-signal": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebView/web-process-crashed": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            }
+        }
+    },
+    "TestDownloads": {
+        "subtests": {
+            "/webkit/Downloads/local-file-error": {
+                "expected": {"gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/Downloads/remote-file-error": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            }
+        }
+    },
+    "TestMultiprocess": {
+        "subtests": {
+            "/webkit/WebKitWebContext/process-per-web-view": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            }
+        }
+
     }
 }

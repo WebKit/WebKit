@@ -26,9 +26,9 @@
 
 #include "CSSHelper.h"
 #include "FontMetrics.h"
-#include "Frame.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LengthFunctions.h"
+#include "LocalFrame.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"

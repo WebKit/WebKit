@@ -315,13 +315,26 @@ bool RemoteLayerBackingStore::needsDisplay() const
     }
 
     if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer)) {
-        LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " needsDisplay() - delegates display");
+        LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " needsDisplay() - delegates display");
         return true;
     }
 
-    bool needsDisplay = collection->backingStoreNeedsDisplay(*this);
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " size " << size() << " needsDisplay() - needsDisplay " << needsDisplay);
-    return needsDisplay;
+    auto needsDisplayReason = [&]() {
+        if (size().isEmpty())
+            return BackingStoreNeedsDisplayReason::None;
+
+        auto frontBuffer = bufferForType(RemoteLayerBackingStore::BufferType::Front);
+        if (!frontBuffer)
+            return BackingStoreNeedsDisplayReason::NoFrontBuffer;
+
+        if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+            return BackingStoreNeedsDisplayReason::FrontBufferIsVolatile;
+
+        return hasEmptyDirtyRegion() ? BackingStoreNeedsDisplayReason::None : BackingStoreNeedsDisplayReason::HasDirtyRegion;
+    }();
+
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " size " << size() << " needsDisplay() - needs display reason: " << needsDisplayReason);
+    return needsDisplayReason != BackingStoreNeedsDisplayReason::None;
 }
 
 bool RemoteLayerBackingStore::performDelegatedLayerDisplay()
@@ -348,9 +361,9 @@ void RemoteLayerBackingStore::prepareToDisplay()
         return;
     }
 
-    ASSERT(collection->backingStoreNeedsDisplay(*this));
+    ASSERT(needsDisplay());
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
 
     if (performDelegatedLayerDisplay())
         return;
@@ -400,18 +413,6 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
 #endif
 }
 
-#if !LOG_DISABLED
-static TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement result)
-{
-    switch (result) {
-    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"; break;
-    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"; break;
-    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"; break;
-    }
-    return ts;
-}
-#endif
-
 SwapBuffersDisplayRequirement RemoteLayerBackingStore::prepareBuffers()
 {
     ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
@@ -435,7 +436,7 @@ SwapBuffersDisplayRequirement RemoteLayerBackingStore::prepareBuffers()
     if (!hasFrontBuffer() || result == SetNonVolatileResult::Empty)
         displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareBuffers() - " << displayRequirement);
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareBuffers() - " << displayRequirement);
     return displayRequirement;
 }
 
@@ -446,7 +447,7 @@ void RemoteLayerBackingStore::paintContents()
         return;
     }
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " paintContents() - has dirty region " << !hasEmptyDirtyRegion());
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " paintContents() - has dirty region " << !hasEmptyDirtyRegion());
     if (hasEmptyDirtyRegion())
         return;
 
@@ -641,7 +642,7 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
             [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
         } else
-            layer.opaque = m_parameters.isOpaque;
+            layer.opaque = m_isOpaque;
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];
         return;
     }
@@ -686,7 +687,6 @@ void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode&
 
 Vector<std::unique_ptr<ThreadSafeImageBufferFlusher>> RemoteLayerBackingStore::takePendingFlushers()
 {
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " takePendingFlushers()");
     return std::exchange(m_frontBufferFlushers, { });
 }
 
@@ -755,6 +755,42 @@ RefPtr<ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType bufferType
 void RemoteLayerBackingStore::Buffer::discard()
 {
     imageBuffer = nullptr;
+}
+
+TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStoreProperties& properties)
+{
+    ts.dumpProperty("front buffer", properties.frontBufferIdentifier());
+    ts.dumpProperty("back buffer", properties.backBufferIdentifier());
+    ts.dumpProperty("secondaryBack buffer", properties.secondaryBackBufferIdentifier());
+
+    ts.dumpProperty("is opaque", properties.isOpaque());
+    ts.dumpProperty("has buffer handle", !!properties.bufferHandle());
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement displayRequirement)
+{
+    switch (displayRequirement) {
+    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"; break;
+    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"; break;
+    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"; break;
+    }
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, BackingStoreNeedsDisplayReason reason)
+{
+    switch (reason) {
+    case BackingStoreNeedsDisplayReason::None: ts << "none"; break;
+    case BackingStoreNeedsDisplayReason::NoFrontBuffer: ts << "no front buffer"; break;
+    case BackingStoreNeedsDisplayReason::FrontBufferIsVolatile: ts << "volatile front buffer"; break;
+    case BackingStoreNeedsDisplayReason::FrontBufferHasNoSharingHandle: ts << "no front buffer sharing handle"; break;
+    case BackingStoreNeedsDisplayReason::HasDirtyRegion: ts << "has dirty region"; break;
+    }
+
+    return ts;
 }
 
 } // namespace WebKit

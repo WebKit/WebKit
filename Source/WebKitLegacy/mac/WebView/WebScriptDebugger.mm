@@ -37,9 +37,9 @@
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/SourceProvider.h>
 #import <JavaScriptCore/StrongInlines.h>
-#import <WebCore/DOMWindow.h>
-#import <WebCore/Frame.h>
-#import <WebCore/JSDOMWindow.h>
+#import <WebCore/JSLocalDOMWindow.h>
+#import <WebCore/LocalDOMWindow.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ScriptController.h>
 #import <wtf/URL.h>
 
@@ -57,7 +57,7 @@ static NSString *toNSString(JSC::SourceProvider* sourceProvider)
 
 static WebFrame *toWebFrame(JSC::JSGlobalObject* globalObject)
 {
-    WebCore::JSDOMWindow* window = static_cast<WebCore::JSDOMWindow*>(globalObject);
+    auto* window = static_cast<WebCore::JSLocalDOMWindow*>(globalObject);
     return kit(window->wrapped().frame());
 }
 

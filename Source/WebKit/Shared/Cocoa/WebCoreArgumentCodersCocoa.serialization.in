@@ -49,3 +49,7 @@ struct WebCore::MediaRecorderPrivateOptions {
     std::optional<unsigned> bitsPerSecond;
 };
 #endif // ENABLE(MEDIA_RECORDER)
+
+[Nested] class WebCore::ProtectionSpace::PlatformData {
+    RetainPtr<NSURLProtectionSpace> nsSpace;
+};

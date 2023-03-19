@@ -38,6 +38,7 @@
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
+#import "WebPageInlines.h"
 #import "WebPageProxyMessages.h"
 #import "WebPreferencesKeys.h"
 #import "WebPreferencesStore.h"
@@ -46,10 +47,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
 #import <WebCore/DestinationColorSpace.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/RenderView.h>
@@ -481,7 +482,7 @@ void TiledCoreAnimationDrawingArea::setViewExposedRect(std::optional<FloatRect> 
 {
     m_viewExposedRect = viewExposedRect;
 
-    if (FrameView* frameView = m_webPage.mainFrameView())
+    if (auto* frameView = m_webPage.mainFrameView())
         frameView->setViewExposedRect(m_viewExposedRect);
 }
 
@@ -506,7 +507,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     if (!m_webPage.minimumSizeForAutoLayout().width() || m_webPage.autoSizingShouldExpandToViewHeight() || (!m_webPage.sizeToContentAutoSizeMaximumSize().width() && !m_webPage.sizeToContentAutoSizeMaximumSize().height()))
         m_webPage.setSize(size);
 
-    FrameView* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.mainFrameView();
 
     if (m_webPage.autoSizingShouldExpandToViewHeight() && frameView)
         frameView->setAutoSizeFixedMinimumHeight(viewSize.height());
@@ -637,7 +638,7 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
     }
 }
 
-bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const FrameView& frameView) const
+bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
     return (localFrame && localFrame->isMainFrame())
@@ -662,14 +663,14 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() co
     return shadowLayer->platformCALayer();
 }
     
-static FloatPoint shadowLayerPositionForFrame(FrameView& frameView, FloatPoint origin)
+static FloatPoint shadowLayerPositionForFrame(LocalFrameView& frameView, FloatPoint origin)
 {
     // FIXME: correct for b-t documents?
     FloatPoint position = frameView.positionForRootContentLayer();
     return position + origin.expandedTo(FloatPoint());
 }
 
-static FloatRect shadowLayerBoundsForFrame(FrameView& frameView, float transientScale)
+static FloatRect shadowLayerBoundsForFrame(LocalFrameView& frameView, float transientScale)
 {
     FloatRect clipLayerFrame(frameView.renderView()->documentRect());
     FloatRect shadowLayerFrame = clipLayerFrame;
@@ -697,7 +698,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
     zoomLayer->setPosition(FloatPoint3D());
     
     if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom()) {
-        FrameView& frameView = *m_webPage.mainFrameView();
+        auto& frameView = *m_webPage.mainFrameView();
         shadowLayer->setBounds(shadowLayerBoundsForFrame(frameView, scale));
         shadowLayer->setPosition(shadowLayerPositionForFrame(frameView, origin));
     }
@@ -722,7 +723,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
 {
     scale *= m_webPage.viewScaleFactor();
 
-    FrameView& frameView = *m_webPage.mainFrameView();
+    auto& frameView = *m_webPage.mainFrameView();
     FloatRect visibleContentRect = frameView.visibleContentRectIncludingScrollbars();
 
     FloatPoint constrainedOrigin = visibleContentRect.location();
@@ -801,7 +802,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     finalTransform.scale(scale);
     layerForTransientZoom()->setTransform(finalTransform);
     
-    FrameView& frameView = *m_webPage.mainFrameView();
+    auto& frameView = *m_webPage.mainFrameView();
 
     if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom()) {
         shadowLayer->setBounds(shadowLayerBoundsForFrame(frameView, 1));

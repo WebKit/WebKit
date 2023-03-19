@@ -1482,6 +1482,32 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->setInspectorAttachmentView(newView);
 }
 
+- (void)_setHeaderBannerLayer:(CALayer *)headerBannerLayer
+{
+    if (headerBannerLayer)
+        [headerBannerLayer setContentsScale:_page->pageScaleFactor()];
+
+    _impl->setHeaderBannerLayer(headerBannerLayer);
+}
+
+- (CALayer *)_headerBannerLayer
+{
+    return _impl->headerBannerLayer();
+}
+
+- (void)_setFooterBannerLayer:(CALayer *)footerBannerLayer
+{
+    if (footerBannerLayer)
+        [footerBannerLayer setContentsScale:_page->pageScaleFactor()];
+
+    _impl->setFooterBannerLayer(footerBannerLayer);
+}
+
+- (CALayer *)_footerBannerLayer
+{
+    return _impl->footerBannerLayer();
+}
+
 - (void)_setThumbnailView:(_WKThumbnailView *)thumbnailView
 {
     _impl->setThumbnailView(thumbnailView);

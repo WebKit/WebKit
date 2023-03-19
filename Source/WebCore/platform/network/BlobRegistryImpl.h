@@ -83,6 +83,7 @@ public:
     Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&) const;
 
     void setFileDirectory(String&&);
+    void setPartitioningEnabled(bool enabled) { m_isPartitioningEnabled = enabled; }
 
 private:
     void addBlobData(const String& url, RefPtr<BlobData>&&);
@@ -91,6 +92,7 @@ private:
     HashCountedSet<String> m_blobReferences;
     MemoryCompactRobinHoodHashMap<String, RefPtr<BlobData>> m_blobs;
     String m_fileDirectory;
+    bool m_isPartitioningEnabled { false };
 };
 
 inline void BlobRegistryImpl::setFileDirectory(String&& filePath)

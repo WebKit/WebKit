@@ -60,9 +60,9 @@ class EmptyChromeClient : public ChromeClient {
     void takeFocus(FocusDirection) final { }
 
     void focusedElementChanged(Element*) final { }
-    void focusedFrameChanged(Frame*) final { }
+    void focusedFrameChanged(LocalFrame*) final { }
 
-    Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
+    Page* createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
     void show() final { }
 
     bool canRunModal() const final { return false; }
@@ -86,13 +86,13 @@ class EmptyChromeClient : public ChromeClient {
     void addMessageWithArgumentsToConsole(MessageSource, MessageLevel, const String&, Span<const String>, unsigned, unsigned, const String&) final { }
 
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
-    bool runBeforeUnloadConfirmPanel(const String&, Frame&) final { return true; }
+    bool runBeforeUnloadConfirmPanel(const String&, LocalFrame&) final { return true; }
 
     void closeWindow() final { }
 
-    void runJavaScriptAlert(Frame&, const String&) final { }
-    bool runJavaScriptConfirm(Frame&, const String&) final { return false; }
-    bool runJavaScriptPrompt(Frame&, const String&, const String&, String&) final { return false; }
+    void runJavaScriptAlert(LocalFrame&, const String&) final { }
+    bool runJavaScriptConfirm(LocalFrame&, const String&) final { return false; }
+    bool runJavaScriptPrompt(LocalFrame&, const String&, const String&, String&) final { return false; }
 
     bool selectItemWritingDirectionIsNatural() final { return false; }
     bool selectItemAlignmentFollowsMenuWritingDirection() final { return false; }
@@ -121,14 +121,14 @@ class EmptyChromeClient : public ChromeClient {
     void didFinishLoadingImageForElement(HTMLImageElement&) final { }
 
     PlatformPageClient platformPageClient() const final { return 0; }
-    void contentsSizeChanged(Frame&, const IntSize&) const final { }
+    void contentsSizeChanged(LocalFrame&, const IntSize&) const final { }
     void intrinsicContentsSizeChanged(const IntSize&) const final { }
 
     void mouseDidMoveOverElement(const HitTestResult&, unsigned, const String&, TextDirection) final { }
 
-    void print(Frame&, const StringWithDirection&) final { }
+    void print(LocalFrame&, const StringWithDirection&) final { }
 
-    void exceededDatabaseQuota(Frame&, const String&, DatabaseDetails) final { }
+    void exceededDatabaseQuota(LocalFrame&, const String&, DatabaseDetails) final { }
 
     void reachedMaxAppCacheSize(int64_t) final { }
     void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) final { }
@@ -154,7 +154,7 @@ class EmptyChromeClient : public ChromeClient {
 
     DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
 
-    void runOpenPanel(Frame&, FileChooser&) final;
+    void runOpenPanel(LocalFrame&, FileChooser&) final;
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
 
@@ -167,7 +167,7 @@ class EmptyChromeClient : public ChromeClient {
     void scrollContainingScrollViewsToRevealRect(const IntRect&) const final { }
     void scrollMainFrameToRevealRect(const IntRect&) const final { }
 
-    void attachRootGraphicsLayer(Frame&, GraphicsLayer*) final { }
+    void attachRootGraphicsLayer(LocalFrame&, GraphicsLayer*) final { }
     void attachViewOverlayGraphicsLayer(GraphicsLayer*) final { }
     void setNeedsOneShotDrawingSynchronization() final { }
     void triggerRenderingUpdate() final { }
@@ -184,9 +184,9 @@ class EmptyChromeClient : public ChromeClient {
 
 #if PLATFORM(IOS_FAMILY)
     void didReceiveMobileDocType(bool) final { }
-    void setNeedsScrollNotifications(Frame&, bool) final { }
-    void didFinishContentChangeObserving(Frame&, WKContentChange) final { }
-    void notifyRevealedSelectionByScrollingFrame(Frame&) final { }
+    void setNeedsScrollNotifications(LocalFrame&, bool) final { }
+    void didFinishContentChangeObserving(LocalFrame&, WKContentChange) final { }
+    void notifyRevealedSelectionByScrollingFrame(LocalFrame&) final { }
     void didLayout(LayoutType) final { }
     void didStartOverflowScroll() final { }
     void didEndOverflowScroll() final { }
@@ -204,7 +204,7 @@ class EmptyChromeClient : public ChromeClient {
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ORIENTATION_EVENTS)
-    int deviceOrientation() const final { return 0; }
+    IntDegrees deviceOrientation() const final { return 0; }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -215,7 +215,7 @@ class EmptyChromeClient : public ChromeClient {
     
     bool isEmptyChromeClient() const final { return true; }
 
-    void didAssociateFormControls(const Vector<RefPtr<Element>>&, Frame&) final { }
+    void didAssociateFormControls(const Vector<RefPtr<Element>>&, LocalFrame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }

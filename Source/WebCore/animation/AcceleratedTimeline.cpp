@@ -28,8 +28,8 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "DOMWindow.h"
 #include "Document.h"
+#include "LocalDOMWindow.h"
 #include "Page.h"
 #include "Performance.h"
 #include "RenderElement.h"

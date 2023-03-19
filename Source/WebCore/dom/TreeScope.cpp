@@ -30,10 +30,7 @@
 #include "Attr.h"
 #include "CSSStyleSheet.h"
 #include "CSSStyleSheetObservableArray.h"
-#include "DOMWindow.h"
 #include "FocusController.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
@@ -42,6 +39,9 @@
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
 #include "JSObservableArray.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeRareData.h"
 #include "Page.h"
 #include "PointerLockController.h"
@@ -67,8 +67,7 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
-    , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
-    , m_adoptedStyleSheets(CSSStyleSheetObservableArray::create(shadowRoot))
+    , m_idTargetObserverRegistry(makeUniqueRef<IdTargetObserverRegistry>())
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -77,16 +76,12 @@ TreeScope::TreeScope(Document& document)
     : m_rootNode(document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
-    , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
-    , m_adoptedStyleSheets(CSSStyleSheetObservableArray::create(document))
+    , m_idTargetObserverRegistry(makeUniqueRef<IdTargetObserverRegistry>())
 {
     document.setTreeScope(*this);
 }
 
-TreeScope::~TreeScope()
-{
-    m_adoptedStyleSheets->willDestroyTreeScope();
-}
+TreeScope::~TreeScope() = default;
 
 void TreeScope::destroyTreeScopeData()
 {
@@ -473,7 +468,7 @@ Element* TreeScope::findAnchor(StringView name)
     return nullptr;
 }
 
-static Element* focusedFrameOwnerElement(AbstractFrame* focusedFrame, Frame* currentFrame)
+static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)
 {
     for (; focusedFrame; focusedFrame = focusedFrame->tree().parent()) {
         if (focusedFrame->tree().parent() == currentFrame)
@@ -553,19 +548,28 @@ RadioButtonGroups& TreeScope::radioButtonGroups()
     return *m_radioButtonGroups;
 }
 
-const Vector<RefPtr<CSSStyleSheet>>& TreeScope::adoptedStyleSheets() const
+CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
 {
-    return m_adoptedStyleSheets->sheets();
+    if (UNLIKELY(!m_adoptedStyleSheets))
+        m_adoptedStyleSheets = CSSStyleSheetObservableArray::create(m_rootNode);
+    return *m_adoptedStyleSheets;
+}
+
+Span<const RefPtr<CSSStyleSheet>> TreeScope::adoptedStyleSheets() const
+{
+    return m_adoptedStyleSheets ? m_adoptedStyleSheets->sheets().span() : Span<const RefPtr<CSSStyleSheet>> { };
 }
 
 JSC::JSValue TreeScope::adoptedStyleSheetWrapper(JSDOMGlobalObject& lexicalGlobalObject)
 {
-    return JSC::JSObservableArray::create(&lexicalGlobalObject, m_adoptedStyleSheets.copyRef());
+    return JSC::JSObservableArray::create(&lexicalGlobalObject, ensureAdoptedStyleSheets());
 }
 
 ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&& sheets)
 {
-    return m_adoptedStyleSheets->setSheets(WTFMove(sheets));
+    if (!m_adoptedStyleSheets && sheets.isEmpty())
+        return { };
+    return ensureAdoptedStyleSheets().setSheets(WTFMove(sheets));
 }
 
 } // namespace WebCore

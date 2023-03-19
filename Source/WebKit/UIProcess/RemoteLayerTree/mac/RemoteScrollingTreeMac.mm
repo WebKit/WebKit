@@ -70,6 +70,20 @@ void RemoteScrollingTreeMac::displayDidRefresh(PlatformDisplayID)
     serviceScrollAnimations(MonotonicTime::now()); // FIXME: Share timestamp with the rest of the update.
 }
 
+void RemoteScrollingTreeMac::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
+{
+    RunLoop::main().dispatch([this, nodeID] {
+        RemoteScrollingTree::scrollingTreeNodeWillStartScroll(nodeID);
+    });
+}
+
+void RemoteScrollingTreeMac::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
+{
+    RunLoop::main().dispatch([this, nodeID] {
+        RemoteScrollingTree::scrollingTreeNodeDidEndScroll(nodeID);
+    });
+}
+
 Ref<ScrollingTreeNode> RemoteScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
@@ -323,7 +337,7 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
 
     RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
 
-    auto rootContentsLayerPosition = FrameView::positionForRootContentLayer(rootScrollingNode->currentScrollPosition(), rootScrollingNode->scrollOrigin(), rootScrollingNode->topContentInset(), rootScrollingNode->headerHeight());
+    auto rootContentsLayerPosition = LocalFrameView::positionForRootContentLayer(rootScrollingNode->currentScrollPosition(), rootScrollingNode->scrollOrigin(), rootScrollingNode->topContentInset(), rootScrollingNode->headerHeight());
     auto pointInContentsLayer = point;
     pointInContentsLayer.moveBy(rootContentsLayerPosition);
 

@@ -30,9 +30,9 @@
 #include "ApplyStyleCommand.h"
 #include "Element.h"
 #include "ElementName.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
+#include "LocalFrame.h"
 #include "MutableStyleProperties.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>

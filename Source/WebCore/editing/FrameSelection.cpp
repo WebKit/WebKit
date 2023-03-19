@@ -30,7 +30,6 @@
 #include "CaretAnimator.h"
 #include "CharacterData.h"
 #include "ColorBlending.h"
-#include "DOMWindow.h"
 #include "DeleteSelectionCommand.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
@@ -42,9 +41,7 @@
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFormElement.h"
@@ -57,6 +54,9 @@
 #include "ImageOverlay.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MutableStyleProperties.h"
 #include "Page.h"
@@ -364,7 +364,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at FrameSelection::setSelection
     // if document->frame() == m_document->frame() we can get into an infinite loop
     if (Document* newSelectionDocument = newSelection.base().document()) {
-        if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
+        if (RefPtr newSelectionFrame = newSelectionDocument->frame()) {
             if (m_document && newSelectionFrame != m_document->frame() && newSelectionDocument != m_document) {
                 newSelectionDocument->selection().setSelection(newSelection, options, AXTextStateChangeIntent(), align, granularity);
                 // It's possible that during the above set selection, this FrameSelection has been modified by
@@ -1782,7 +1782,7 @@ bool FrameSelection::recomputeCaretRect()
     if (!m_document)
         return false;
 
-    FrameView* v = m_document->view();
+    auto* v = m_document->view();
     if (!v)
         return false;
 
@@ -2358,7 +2358,7 @@ void FrameSelection::setFocusedElementIfNeeded()
         CheckedRef(m_document->page()->focusController())->setFocusedElement(nullptr, *m_document->frame());
 }
 
-void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
@@ -2519,7 +2519,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     // FIXME: This code only handles scrolling the startContainer's layer, but
     // the selection rect could intersect more than just that.
     // See <rdar://problem/4799899>.
-    FrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
+    LocalFrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
     updateAppearance();
 
 #if PLATFORM(IOS_FAMILY)
@@ -2672,7 +2672,7 @@ UChar FrameSelection::characterInRelationToCaretSelection(int amount) const
 {
     auto position = m_selection.visibleStart();
     if (amount < 0) {
-        int count = abs(amount);
+        int count = std::abs(amount);
         for (int i = 0; i < count; i++)
             position = position.previous();
         return position.characterBefore();
@@ -2857,7 +2857,7 @@ std::optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlte
     FrameSelection frameSelection;
     frameSelection.setSelection(m_selection);
     SelectionDirection direction = amount > 0 ? SelectionDirection::Forward : SelectionDirection::Backward;
-    for (int i = 0; i < abs(amount); i++)
+    for (int i = 0; i < std::abs(amount); i++)
         frameSelection.modify(alteration, direction, TextGranularity::CharacterGranularity);
     return frameSelection.selection().toNormalizedRange();
 }

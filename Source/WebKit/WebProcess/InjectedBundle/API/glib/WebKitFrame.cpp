@@ -26,9 +26,9 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/JSNode.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/ScriptController.h>
 #include <jsc/JSCContextPrivate.h>
 #include <wtf/glib/WTFGType.h>
@@ -104,7 +104,7 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
 {
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
     auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
-    JSDOMWindow* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
+    auto* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
     return elements.map([&jsContext, globalObject](auto& element) -> GRefPtr<JSCValue> {
         JSValueRef jsValue = nullptr;
         {
@@ -307,7 +307,7 @@ JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* 
 
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
     auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
-    JSDOMWindow* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
+    auto* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
     JSValueRef jsValue = nullptr;
     {
         JSC::JSLockHolder lock(globalObject);

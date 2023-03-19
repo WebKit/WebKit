@@ -34,18 +34,18 @@
 #include "BlobRegistry.h"
 #include "ContentFilter.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FormState.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "ThreadableBlobRegistry.h"
 #include "URLKeepingBlobAlive.h"
@@ -84,7 +84,7 @@ static bool shouldExecuteJavaScriptURLSynchronously(const URL& url)
     return url == "javascript:''"_s || url == "javascript:\"\""_s;
 }
 
-FrameLoader::PolicyChecker::PolicyChecker(Frame& frame)
+FrameLoader::PolicyChecker::PolicyChecker(LocalFrame& frame)
     : m_frame(frame)
     , m_delegateIsDecidingNavigationPolicy(false)
     , m_delegateIsHandlingUnimplementablePolicy(false)
@@ -179,7 +179,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
 
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilterUnblockHandler.canHandleRequest(request)) {
-        RefPtr<Frame> frame { &m_frame };
+        Ref frame { m_frame };
         m_contentFilterUnblockHandler.requestUnblockAsync([frame](bool unblocked) {
             if (unblocked)
                 frame->loader().reload();
@@ -267,7 +267,7 @@ void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigat
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxPopups))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
-    if (!DOMWindow::allowPopUp(m_frame))
+    if (!LocalDOMWindow::allowPopUp(m_frame))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *m_frame.document());

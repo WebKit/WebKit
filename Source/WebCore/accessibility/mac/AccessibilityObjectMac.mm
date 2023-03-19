@@ -32,9 +32,9 @@
 #import "Editor.h"
 #import "ElementAncestorIteratorInlines.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "HTMLFieldSetElement.h"
 #import "HTMLInputElement.h"
+#import "LocalFrameView.h"
 #import "LocalizedStrings.h"
 #import "RenderObject.h"
 #import "Settings.h"
@@ -105,7 +105,7 @@ bool AccessibilityObject::fileUploadButtonReturnsValueInTitle() const
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
-    // FrameView attachments are now handled by AccessibilityScrollView, 
+    // LocalFrameView attachments are now handled by AccessibilityScrollView,
     // so if this is the attachment, it should be ignored.
     Widget* widget = nullptr;
     if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
@@ -189,13 +189,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     
 bool AccessibilityObject::caretBrowsingEnabled() const
 {
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
     return frame && frame->settings().caretBrowsingEnabled();
 }
 
 void AccessibilityObject::setCaretBrowsingEnabled(bool on)
 {
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return;
     frame->settings().setCaretBrowsingEnabled(on);
@@ -413,24 +413,22 @@ String AccessibilityObject::subrolePlatformString() const
         break;
     }
 
-    if (isStyleFormatGroup()) {
-        using namespace HTMLNames;
-        auto tag = tagName();
-        if (tag == kbdTag)
-            return "AXKeyboardInputStyleGroup"_s;
-        if (tag == codeTag)
-            return "AXCodeStyleGroup"_s;
-        if (tag == preTag)
-            return "AXPreformattedStyleGroup"_s;
-        if (tag == sampTag)
-            return "AXSampleStyleGroup"_s;
-        if (tag == varTag)
-            return "AXVariableStyleGroup"_s;
-        if (tag == citeTag)
-            return "AXCiteStyleGroup"_s;
-        ASSERT_NOT_REACHED();
-        return String();
-    }
+    if (isCode())
+        return "AXCodeStyleGroup"_s;
+
+    using namespace HTMLNames;
+    auto tag = tagName();
+    if (tag == kbdTag)
+        return "AXKeyboardInputStyleGroup"_s;
+    if (tag == preTag)
+        return "AXPreformattedStyleGroup"_s;
+    if (tag == sampTag)
+        return "AXSampleStyleGroup"_s;
+    if (tag == varTag)
+        return "AXVariableStyleGroup"_s;
+    if (tag == citeTag)
+        return "AXCiteStyleGroup"_s;
+    ASSERT_WITH_MESSAGE(!isStyleFormatGroup(), "Should've been able to compute a subrole for style format group object");
 
     return String();
 }
@@ -699,8 +697,10 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         return;
 
     id wrapper = object->wrapper();
-    if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object->isAttachment() && [wrapper attachmentView])
-        wrapper = [wrapper attachmentView];
+    if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object->isAttachment()) {
+        if (id attachmentView = [wrapper attachmentView])
+            wrapper = [wrapper attachmentView];
+    }
 
     if (auto axElement = adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)))
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
@@ -821,6 +821,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::ComboBox, NSAccessibilityComboBoxRole },
         { AccessibilityRole::SplitGroup, NSAccessibilitySplitGroupRole },
         { AccessibilityRole::Splitter, NSAccessibilitySplitterRole },
+        { AccessibilityRole::Code, NSAccessibilityGroupRole },
         { AccessibilityRole::ColorWell, NSAccessibilityColorWellRole },
         { AccessibilityRole::GrowArea, NSAccessibilityGrowAreaRole },
         { AccessibilityRole::Sheet, NSAccessibilitySheetRole },

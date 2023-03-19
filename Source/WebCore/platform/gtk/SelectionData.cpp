@@ -120,6 +120,7 @@ void SelectionData::clearAllExceptFilenames()
     clearURL();
     clearImage();
     clearCustomData();
+    clearBuffers();
 
     m_canSmartReplace = false;
 }

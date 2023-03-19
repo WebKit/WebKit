@@ -31,8 +31,8 @@
 #include "FontDescription.h"
 #include "FontInterrogation.h"
 #include "FontMetricsNormalization.h"
-
 #include <optional>
+#include <pal/spi/cf/CoreTextSPI.h>
 
 namespace WebCore {
 

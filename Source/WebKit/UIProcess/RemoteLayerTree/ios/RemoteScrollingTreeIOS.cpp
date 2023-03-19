@@ -52,18 +52,6 @@ void RemoteScrollingTreeIOS::scrollingTreeNodeWillStartPanGesture(ScrollingNodeI
         m_scrollingCoordinatorProxy->scrollingTreeNodeWillStartPanGesture(nodeID);
 }
 
-void RemoteScrollingTreeIOS::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
-{
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeWillStartScroll(nodeID);
-}
-
-void RemoteScrollingTreeIOS::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
-{
-    if (m_scrollingCoordinatorProxy)
-        m_scrollingCoordinatorProxy->scrollingTreeNodeDidEndScroll(nodeID);
-}
-
 Ref<ScrollingTreeNode> RemoteScrollingTreeIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {

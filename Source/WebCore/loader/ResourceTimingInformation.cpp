@@ -27,12 +27,12 @@
 #include "ResourceTimingInformation.h"
 
 #include "CachedResource.h"
-#include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Performance.h"
 #include "ResourceTiming.h"
 
@@ -83,7 +83,7 @@ void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
     m_initiatorMap.remove(&resource);
 }
 
-void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorType, Frame* frame)
+void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorType, LocalFrame* frame)
 {
     ASSERT(resource.get());
 

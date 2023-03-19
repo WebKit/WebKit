@@ -38,12 +38,12 @@
 #import <WebCore/DragController.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ElementInlines.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserver.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PagePasteboardContext.h>
@@ -66,7 +66,7 @@ using DragImage = NSImage *;
 using DragImage = CGImageRef;
 #endif
 
-static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
+static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, LocalFrame& frame)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
     if (!localMainFrame)
@@ -90,7 +90,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, LocalFrame& frame)
 {
     auto& image = dragItem.image;
 
@@ -130,7 +130,7 @@ static WebCore::CachedImage* cachedImage(Element& element)
     return image;
 }
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     ASSERT(pasteboardName == String(NSPasteboardNameDrag));
 
@@ -187,7 +187,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
 #else
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);

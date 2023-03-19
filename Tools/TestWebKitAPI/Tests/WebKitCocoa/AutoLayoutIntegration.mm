@@ -184,7 +184,7 @@ TEST(WebKit, AutoLayoutIntegration)
     // the intrinsic size change callback.
     [webView _setShouldExpandContentToViewHeightForAutoLayout:YES];
     // 100px _is_the_expected_ height because we intentionally report stale value to avoid unstable layout.
-    // See FrameView::autoSizeIfEnabled().
+    // See LocalFrameView::autoSizeIfEnabled().
     [webView load:@"<div class='large'></div>" withWidth:50 expectingContentSize:NSMakeSize(100, 100) resettingWidth:NO];
     [webView evaluateJavaScript:@"window.innerHeight" completionHandler:^(id value, NSError *error) {
         EXPECT_TRUE([value isKindOfClass:[NSNumber class]]);

@@ -31,7 +31,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGDocument);
 
-SVGDocument::SVGDocument(Frame* frame, const Settings& settings, const URL& url)
+SVGDocument::SVGDocument(LocalFrame* frame, const Settings& settings, const URL& url)
     : XMLDocument(frame, settings, url, { DocumentClass::SVG })
 {
 }

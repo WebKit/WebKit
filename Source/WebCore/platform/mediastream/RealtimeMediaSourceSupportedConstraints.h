@@ -51,6 +51,8 @@ enum class MediaConstraintType : uint8_t {
     GroupId,
     DisplaySurface,
     LogicalSurface,
+    FocusDistance,
+    Zoom,
 };
 
 class RealtimeMediaSourceSupportedConstraints {
@@ -59,7 +61,7 @@ public:
     {
     }
     
-    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface)
+    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface, bool supportsFocusDistance, bool supportsZoom)
         : m_supportsWidth(supportsWidth)
         , m_supportsHeight(supportsHeight)
         , m_supportsAspectRatio(supportsAspectRatio)
@@ -73,6 +75,8 @@ public:
         , m_supportsGroupId(supportsGroupId)
         , m_supportsDisplaySurface(supportsDisplaySurface)
         , m_supportsLogicalSurface(supportsLogicalSurface)
+        , m_supportsFocusDistance(supportsFocusDistance)
+        , m_supportsZoom(supportsZoom)
     {
     }
 
@@ -117,6 +121,12 @@ public:
 
     bool supportsConstraint(MediaConstraintType) const;
 
+    bool supportsFocusDistance() const { return m_supportsFocusDistance; }
+    void setSupportsFocusDistance(bool value) { m_supportsFocusDistance = value; }
+
+    bool supportsZoom() const { return m_supportsZoom; }
+    void setSupportsZoom(bool value) { m_supportsZoom = value; }
+
 private:
     bool m_supportsWidth { false };
     bool m_supportsHeight { false };
@@ -131,6 +141,8 @@ private:
     bool m_supportsGroupId { false };
     bool m_supportsDisplaySurface { false };
     bool m_supportsLogicalSurface { false };
+    bool m_supportsFocusDistance { false };
+    bool m_supportsZoom { false };
 };
 
 } // namespace WebCore

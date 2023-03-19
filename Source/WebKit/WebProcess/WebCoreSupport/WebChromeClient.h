@@ -71,13 +71,13 @@ private:
     void takeFocus(WebCore::FocusDirection) final;
 
     void focusedElementChanged(WebCore::Element*) final;
-    void focusedFrameChanged(WebCore::Frame*) final;
+    void focusedFrameChanged(WebCore::LocalFrame*) final;
 
     // The Frame pointer provides the ChromeClient with context about which
     // Frame wants to create the new Page.  Also, the newly created window
     // should not be shown to the user until the ChromeClient of the newly
     // created Page has its show method called.
-    WebCore::Page* createWindow(WebCore::Frame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    WebCore::Page* createWindow(WebCore::LocalFrame&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
     
     bool canRunModal() const final;
@@ -103,13 +103,13 @@ private:
     void addMessageWithArgumentsToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, Span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID) final;
     
     bool canRunBeforeUnloadConfirmPanel() final;
-    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame&) final;
+    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::LocalFrame&) final;
     
     void closeWindow() final;
     
-    void runJavaScriptAlert(WebCore::Frame&, const String&) final;
-    bool runJavaScriptConfirm(WebCore::Frame&, const String&) final;
-    bool runJavaScriptPrompt(WebCore::Frame&, const String& message, const String& defaultValue, String& result) final;
+    void runJavaScriptAlert(WebCore::LocalFrame&, const String&) final;
+    bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) final;
+    bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) final;
     void setStatusbarText(const String&) final;
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
@@ -134,7 +134,7 @@ private:
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
     PlatformPageClient platformPageClient() const final;
-    void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;
+    void contentsSizeChanged(WebCore::LocalFrame&, const WebCore::IntSize&) const final;
     void intrinsicContentsSizeChanged(const WebCore::IntSize&) const final;
 
     void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final; // Currently only Mac has a non empty implementation.
@@ -145,9 +145,9 @@ private:
 
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags, const String& toolTip, WebCore::TextDirection) final;
 
-    void print(WebCore::Frame&, const WebCore::StringWithDirection&) final;
+    void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
 
-    void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final { }
+    void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final { }
 
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
     void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t spaceNeeded) final;
@@ -171,9 +171,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     void didReceiveMobileDocType(bool) final;
-    void setNeedsScrollNotifications(WebCore::Frame&, bool) final;
-    void didFinishContentChangeObserving(WebCore::Frame&, WKContentChange) final;
-    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame&) final;
+    void setNeedsScrollNotifications(WebCore::LocalFrame&, bool) final;
+    void didFinishContentChangeObserving(WebCore::LocalFrame&, WKContentChange) final;
+    void notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&) final;
     bool isStopping() final;
 
     void didLayout(LayoutType = NormalLayout) final;
@@ -199,10 +199,10 @@ private:
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-    int deviceOrientation() const final;
+    WebCore::IntDegrees deviceOrientation() const final;
 #endif
 
-    void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
+    void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) final;
     void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&) final;
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
@@ -218,7 +218,7 @@ private:
     void requestPointerUnlock() final;
 #endif
 
-    void didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>&, WebCore::Frame&) final;
+    void didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>&, WebCore::LocalFrame&) final;
     bool shouldNotifyOnFormChanges() final;
 
     bool selectItemWritingDirectionIsNatural() final;
@@ -227,7 +227,7 @@ private:
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const final;
-    void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void attachRootGraphicsLayer(WebCore::LocalFrame&, WebCore::GraphicsLayer*) final;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     bool shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const final;
@@ -358,7 +358,7 @@ private:
     void didAddHeaderLayer(WebCore::GraphicsLayer&) final;
     void didAddFooterLayer(WebCore::GraphicsLayer&) final;
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const final;
+    bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const final;
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void isAnyAnimationAllowedToPlayDidChange(bool /* anyAnimationCanPlay */) final;
@@ -414,14 +414,14 @@ private:
 
     void didInvalidateDocumentMarkerRects() final;
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::Frame&, WTF::CompletionHandler<void(bool)>&&) final;
-    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::Frame&, WebCore::StorageAccessScope, WTF::CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&) final;
+#if ENABLE(TRACKING_PREVENTION)
+    void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::LocalFrame&, WTF::CompletionHandler<void(bool)>&&) final;
+    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::LocalFrame&, WebCore::StorageAccessScope, WTF::CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&) final;
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const final;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::Frame&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&) final;
+    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::LocalFrame&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&) final;
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) final;

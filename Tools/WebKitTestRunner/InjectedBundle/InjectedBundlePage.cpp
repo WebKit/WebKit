@@ -55,11 +55,8 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #if USE(CF)
-#include <wtf/text/cf/StringConcatenateCF.h>
-#endif
-
-#if USE(CF) && !PLATFORM(WIN)
 #include "WebArchiveDumpSupport.h"
+#include <wtf/text/cf/StringConcatenateCF.h>
 #endif
 
 using namespace std;
@@ -669,7 +666,7 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
 {
     double x = numericWindowProperty(frame, "pageXOffset");
     double y = numericWindowProperty(frame, "pageYOffset");
-    if (fabs(x) <= 0.00000001 && fabs(y) <= 0.00000001)
+    if (std::abs(x) <= 0.00000001 && std::abs(y) <= 0.00000001)
         return;
     if (shouldIncludeFrameName)
         stringBuilder.append("frame '", adoptWK(WKBundleFrameCopyName(frame)).get(), "' ");
@@ -747,7 +744,7 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-#if USE(CF) && !PLATFORM(WIN)
+#if USE(CF)
     auto wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     auto cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
     stringBuilder.append(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()).get());

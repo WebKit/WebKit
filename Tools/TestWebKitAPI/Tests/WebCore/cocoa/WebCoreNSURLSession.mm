@@ -29,8 +29,8 @@
 
 #import "Utilities.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageConfiguration.h>
 #import <WebCore/Document.h>
@@ -99,7 +99,7 @@ static NSURL *resourceURL = [[NSBundle mainBundle] URLForResource:@"test" withEx
 using namespace WebCore;
 
 @interface WebView (WebViewInternalForTesting)
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 
 namespace TestWebKitAPI {
@@ -107,7 +107,7 @@ namespace TestWebKitAPI {
 class WebCoreNSURLSessionTest : public testing::Test {
 public:
     RetainPtr<WebView> view;
-    Frame* frame { nullptr };
+    LocalFrame* frame { nullptr };
     RetainPtr<TestNSURLSessionDataDelegate> delegate;
     RefPtr<MediaResourceLoader> loader;
     RefPtr<HTMLMediaElement> mediaElement;

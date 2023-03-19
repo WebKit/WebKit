@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that Array.concat() behaves correctly with an observable array returned by adoptedStyleSheets.");
+
+let a = new CSSStyleSheet;
+let b = new CSSStyleSheet;
+let c = new CSSStyleSheet;
+document.adoptedStyleSheets.push(b);
+document.adoptedStyleSheets.push(c);
+shouldBe("document.adoptedStyleSheets.length", "2");
+
+let newArray = [a].concat(document.adoptedStyleSheets);
+shouldBe("newArray.length", "3");
+shouldBe("document.adoptedStyleSheets.length", "2");
+shouldBe("newArray[0]", "a");
+shouldBe("newArray[1]", "b");
+shouldBe("newArray[2]", "c");
+</script>
+</body>
+</html>

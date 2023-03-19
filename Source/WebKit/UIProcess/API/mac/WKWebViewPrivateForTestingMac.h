@@ -48,8 +48,6 @@
 - (void)_insertText:(id)string replacementRange:(NSRange)replacementRange;
 - (NSRect)_candidateRect;
 
-- (void)_setHeaderBannerHeight:(int)height;
-- (void)_setFooterBannerHeight:(int)height;
 - (NSSet<NSView *> *)_pdfHUDs;
 
 - (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;

@@ -585,7 +585,7 @@ void Biquad::getFrequencyResponse(unsigned nFrequencies, const float* frequency,
             std::complex<double> numerator = b0 + (b1 + b2 * z) * z;
             std::complex<double> denominator = std::complex<double>(1, 0) + (a1 + a2 * z) * z;
             std::complex<double> response = numerator / denominator;
-            magResponse[k] = static_cast<float>(abs(response));
+            magResponse[k] = static_cast<float>(std::abs(response));
             phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
         }
     }
@@ -602,7 +602,7 @@ static double repeatedRootResponse(double n, double c1, double c2, double r, dou
     // This helps with finding a nuemrical solution because this
     // approximately linearizes the response for large n.
 
-    return (n - 2) * std::log(r) + std::log(std::fabs(c1 * (n + 1) * r * r + c2)) - logEPS;
+    return (n - 2) * std::log(r) + std::log(std::abs(c1 * (n + 1) * r * r + c2)) - logEPS;
 }
 
 
@@ -637,7 +637,7 @@ static double rootFinder(double low, double high, double logEPS, double c1, doub
     int iteration;
     for (iteration = 0; iteration < maxIterations; ++iteration) {
         root = (fLow * high - fHigh * low) / (fLow - fHigh);
-        if (fabs(high - low) < accuracyThreshold * std::fabs(high + low))
+        if (std::abs(high - low) < accuracyThreshold * std::abs(high + low))
             break;
         double fr = repeatedRootResponse(root, c1, c2, r, logEPS);
 
@@ -794,7 +794,7 @@ double Biquad::tailFrame(size_t coefIndex, double maxFrame)
         // Compute the real roots so that r1 has the largest magnitude.
         double rplus = (-a1 + std::sqrt(discrim)) / 2;
         double rminus = (-a1 - std::sqrt(discrim)) / 2;
-        double r1 = std::fabs(rplus) >= std::fabs(rminus) ? rplus : rminus;
+        double r1 = std::abs(rplus) >= std::abs(rminus) ? rplus : rminus;
         // Use the fact that a2 = r1*r2
         double r2 = a2 / r1;
 
@@ -809,7 +809,7 @@ double Biquad::tailFrame(size_t coefIndex, double maxFrame)
         // It's possible for maxTailAmplitude to be greater than c1 + c2.
         // This may produce a negative tail frame. Just clamp the tail
         // frame to 0.
-        double tailFrame = clampTo(1 + std::log(maxTailAmplitude / (std::fabs(c1) + std::fabs(c2))) / std::log(std::fabs(r1)), 0);
+        double tailFrame = clampTo(1 + std::log(maxTailAmplitude / (std::abs(c1) + std::abs(c2))) / std::log(std::abs(r1)), 0);
 
         ASSERT(std::isfinite(tailFrame));
         return tailFrame;

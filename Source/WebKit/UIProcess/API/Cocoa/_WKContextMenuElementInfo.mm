@@ -63,6 +63,11 @@
     return nsStringNilIfEmpty(qrCodePayloadString);
 }
 
+- (BOOL)hasEntireImage
+{
+    return _contextMenuElementInfoMac->hasEntireImage();
+}
+
 // MARK: WKObject protocol implementation
 
 - (API::Object&)_apiObject

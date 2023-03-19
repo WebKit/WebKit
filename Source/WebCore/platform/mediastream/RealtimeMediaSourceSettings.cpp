@@ -122,6 +122,9 @@ String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<Realtim
         case RealtimeMediaSourceSettings::LogicalSurface:
             builder.append("LogicalSurface");
             break;
+        case RealtimeMediaSourceSettings::Zoom:
+            builder.append("Zoom");
+            break;
         }
     }
     builder.append(" ]");
@@ -161,6 +164,8 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
         difference.add(RealtimeMediaSourceSettings::DisplaySurface);
     if (logicalSurface() != that.logicalSurface())
         difference.add(RealtimeMediaSourceSettings::LogicalSurface);
+    if (zoom() != that.zoom())
+        difference.add(RealtimeMediaSourceSettings::Zoom);
 
     return difference;
 }

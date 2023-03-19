@@ -62,7 +62,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageOverlayController.h>
@@ -249,7 +249,7 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
     if (!localMainFrame)
         return 0;
     
-    WebCore::Frame& core = *localMainFrame;
+    auto& core = *localMainFrame;
     if (!core.document())
         return 0;
     
@@ -308,7 +308,7 @@ bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
     if (!localMainFrame)
         return false;
 
-    WebCore::Frame& core = *localMainFrame;
+    auto& core = *localMainFrame;
     if (!core.document())
         return false;
 
@@ -475,7 +475,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
-    return WebKit::toImpl(pageRef)->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
+    return WebKit::toImpl(pageRef)->corePage()->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
 }
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)

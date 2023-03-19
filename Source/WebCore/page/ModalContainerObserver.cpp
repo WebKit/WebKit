@@ -35,8 +35,6 @@
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
@@ -44,6 +42,8 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "ModalContainerTypes.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
@@ -181,7 +181,7 @@ void ModalContainerObserver::searchForModalContainerOnBehalfOfFrameOwnerIfNeeded
         updateModalContainerIfNeeded(*view);
 }
 
-void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
+void ModalContainerObserver::updateModalContainerIfNeeded(const LocalFrameView& view)
 {
     if (container())
         return;

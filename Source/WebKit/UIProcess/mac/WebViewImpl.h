@@ -473,6 +473,11 @@ public:
     void setThumbnailView(_WKThumbnailView *);
     _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
 
+    void setHeaderBannerLayer(CALayer *);
+    CALayer *headerBannerLayer() const { return m_headerBannerLayer.get(); }
+    void setFooterBannerLayer(CALayer *);
+    CALayer *footerBannerLayer() const { return m_footerBannerLayer.get(); }
+
     void setInspectorAttachmentView(NSView *);
     NSView *inspectorAttachmentView();
     
@@ -865,6 +870,9 @@ private:
 
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<NSView> m_layerHostingView;
+
+    RetainPtr<CALayer> m_headerBannerLayer;
+    RetainPtr<CALayer> m_footerBannerLayer;
 
     _WKThumbnailView *m_thumbnailView { nullptr };
 

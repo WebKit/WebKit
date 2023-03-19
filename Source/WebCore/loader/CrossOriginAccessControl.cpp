@@ -82,7 +82,7 @@ void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& sec
     request.setHTTPOrigin(securityOrigin.toString());
 }
 
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin, const String& referrer)
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin, const String& referrer, bool includeFetchMetadata)
 {
     ResourceRequest preflightRequest(request.url());
     static const double platformDefaultTimeout = 0;
@@ -120,6 +120,21 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
         }
         if (!headerBuffer.isEmpty())
             preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestHeaders, headerBuffer.toString());
+    }
+
+    if (includeFetchMetadata) {
+        auto requestOrigin = SecurityOrigin::create(request.url());
+        if (requestOrigin->isPotentiallyTrustworthy()) {
+            preflightRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchMode, "cors"_s);
+            preflightRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchDest, "empty"_s);
+
+            if (securityOrigin.isSameOriginAs(requestOrigin))
+                preflightRequest.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-origin"_s);
+            else if (securityOrigin.isSameSiteAs(requestOrigin))
+                preflightRequest.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-site"_s);
+            else
+                preflightRequest.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "cross-site"_s);
+        }
     }
 
     return preflightRequest;

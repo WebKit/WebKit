@@ -2343,7 +2343,7 @@ const RenderStyle& LegacyLineLayout::style() const
     return m_flow.style();
 }
 
-const FrameViewLayoutContext& LegacyLineLayout::layoutContext() const
+const LocalFrameViewLayoutContext& LegacyLineLayout::layoutContext() const
 {
     return m_flow.view().frameView().layoutContext();
 }

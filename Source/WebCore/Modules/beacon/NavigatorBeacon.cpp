@@ -30,9 +30,9 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTTPParsers.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
 #include <wtf/URL.h>

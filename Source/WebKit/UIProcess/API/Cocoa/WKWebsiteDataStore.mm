@@ -360,11 +360,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!identifier)
         [NSException raise:NSInvalidArgumentException format:@"Identifier is nil"];
 
-    auto uuid = UUID(identifier);
-    if (!uuid.isValid())
-        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", uuid.toString().utf8().data()];
+    auto uuid = UUID::fromNSUUID(identifier);
+    if (!uuid || !uuid->isValid())
+        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().data()];
 
-    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(uuid));
+    return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(*uuid));
 }
 
 + (void)removeDataStoreForIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError *))completionHandler
@@ -453,7 +453,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return completionHandler([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:@"Identifier is nil" }]);
 
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    WebKit::WebsiteDataStore::removeDataStoreWithIdentifier(UUID(identifier), [completionHandlerCopy](const String& errorString) {
+    auto uuid = UUID::fromNSUUID(identifier);
+    if (!uuid)
+        return completionHandler([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:@"Identifier is invalid" }]);
+
+    WebKit::WebsiteDataStore::removeDataStoreWithIdentifier(*uuid, [completionHandlerCopy](const String& errorString) {
         if (errorString.isEmpty())
             return completionHandlerCopy(nil);
 

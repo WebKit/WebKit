@@ -30,8 +30,8 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "EditorClient.h"
-#include "Frame.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "Range.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
@@ -336,7 +336,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                 if (checkGrammar)
                     checkingTypes.add(TextCheckingType::Grammar);
                 VisibleSelection currentSelection;
-                if (Frame* frame = paragraphRange.start.document().frame())
+                if (auto* frame = paragraphRange.start.document().frame())
                     currentSelection = frame->selection().selection();
                 checkTextOfParagraph(*m_client.textChecker(), paragraphString, checkingTypes, results, currentSelection);
 
@@ -594,7 +594,7 @@ void checkTextOfParagraph(TextCheckerClient& client, StringView text, OptionSet<
 #endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
-bool unifiedTextCheckerEnabled(const Frame* frame)
+bool unifiedTextCheckerEnabled(const LocalFrame* frame)
 {
     if (!frame)
         return false;

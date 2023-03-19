@@ -27,11 +27,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
-#include "Frame.h"
 #include "HTMLIFrameElement.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "MediaKeySystemRequest.h"
 #include "Page.h"
 

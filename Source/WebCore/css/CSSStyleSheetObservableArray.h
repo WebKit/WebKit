@@ -31,23 +31,17 @@
 
 namespace WebCore {
 
-class Document;
-class ShadowRoot;
-class TreeScope;
+class ContainerNode;
 
 class CSSStyleSheetObservableArray : public JSC::ObservableArray {
 public:
-    static Ref<CSSStyleSheetObservableArray> create(Document&);
-    static Ref<CSSStyleSheetObservableArray> create(ShadowRoot&);
+    static Ref<CSSStyleSheetObservableArray> create(ContainerNode& treeScope);
 
     ExceptionOr<void> setSheets(Vector<RefPtr<CSSStyleSheet>>&&);
     const Vector<RefPtr<CSSStyleSheet>>& sheets() const { return m_sheets; }
 
-    void willDestroyTreeScope();
-
 private:
-    explicit CSSStyleSheetObservableArray(Document&);
-    explicit CSSStyleSheetObservableArray(ShadowRoot&);
+    explicit CSSStyleSheetObservableArray(ContainerNode& treeScope);
 
     std::optional<Exception> shouldThrowWhenAddingSheet(const CSSStyleSheet&) const;
 
@@ -60,9 +54,9 @@ private:
     TreeScope* treeScope() const;
 
     void didAddSheet(CSSStyleSheet&);
-    void willRemoveSheet(CSSStyleSheet&, CSSStyleSheet::IsTreeScopeBeingDestroyed);
+    void willRemoveSheet(CSSStyleSheet&);
 
-    std::variant<WeakPtr<Document, WeakPtrImplWithEventTargetData>, WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData>, std::nullptr_t> m_treeScope;
+    WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_treeScope;
     Vector<RefPtr<CSSStyleSheet>> m_sheets;
 };
 

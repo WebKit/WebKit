@@ -1862,6 +1862,16 @@ public:
         m_assembler.sxth<32>(dest, src);
     }
 
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.uxth<64>(dest, src);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sxth<64>(dest, src);
+    }
+
     void load8(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<8>(dest, address.base, address.offset))
@@ -1937,6 +1947,16 @@ public:
     void signExtend8To32(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtb<32>(dest, src);
+    }
+
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.uxtb<64>(dest, src);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sxtb<64>(dest, src);
     }
 
     void store64(RegisterID src, Address address)
@@ -3181,26 +3201,40 @@ public:
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         move(reg1, getCachedDataTempRegisterIDAndInvalidate());
         move(reg2, reg1);
         move(dataTempRegister, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         moveDouble(reg1, fpTempRegister);
         moveDouble(reg2, reg1);
         moveDouble(fpTempRegister, reg2);
     }
 
-    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         move(TrustedImm64(imm.m_value), dest);
     }
 
-    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    void signExtend32To64(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtw(dest, src);
+    }
+
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        signExtend32To64(imm, dest);
+    }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        signExtend32To64(src, dest);
     }
 
     void zeroExtend32ToWord(RegisterID src, RegisterID dest)
@@ -4974,6 +5008,11 @@ public:
 
     void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
+        if (!lane.m_value) {
+            if (src != dest)
+                moveDouble(src, dest);
+            return;
+        }
         m_assembler.dupElement(dest, src, simdLane, lane.m_value);
     }
 

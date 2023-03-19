@@ -30,9 +30,9 @@
 
 #import "WebFrame.h"
 #import "WebPage.h"
-#import <WebCore/Frame.h>
 #import <WebCore/IntPoint.h>
-#import <WebCore/FrameView.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/WAKAppKitStubs.h>
 

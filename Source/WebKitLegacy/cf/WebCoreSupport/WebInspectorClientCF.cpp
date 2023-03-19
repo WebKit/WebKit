@@ -26,8 +26,8 @@
 #include "WebInspectorClient.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebCore/Frame.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/cf/TypeCastsCF.h>

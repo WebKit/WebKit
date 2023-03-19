@@ -16,7 +16,7 @@ This test ensures elements with CSS display: contents have the correct role.
     Button
 
 <code class="testcase" id="code"></code>
-    TextGroup
+    Code
 
 <del class="testcase" id="del"></del>
     Deletion

@@ -32,6 +32,7 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/IntDegrees.h>
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/Timer.h>
@@ -156,7 +157,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
     void setUseSCContentSharingPicker(bool);
-    void setOrientationForMediaCapture(uint64_t orientation);
+    void setOrientationForMediaCapture(WebCore::IntDegrees);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
@@ -209,7 +210,7 @@ private:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
-    uint64_t m_orientation { 0 };
+    WebCore::IntDegrees m_orientation { 0 };
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_libWebRTCCodecsQueue;

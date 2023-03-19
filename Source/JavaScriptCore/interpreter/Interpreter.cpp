@@ -480,7 +480,7 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
 {
     ASSERT(codeBlock);
 #if ENABLE(DFG_JIT)
-    ASSERT(!visitor->isInlinedFrame());
+    ASSERT(!visitor->isInlinedDFGFrame());
 #endif
 
     CallFrame* callFrame = visitor->callFrame();

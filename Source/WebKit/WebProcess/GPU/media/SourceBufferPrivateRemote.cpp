@@ -188,7 +188,7 @@ void SourceBufferPrivateRemote::updateBufferedFromTrackBuffers(bool sourceIsEnde
         return;
 
     auto [buffered] = sendResult.takeReply();
-    setBufferedRanges(buffered);
+    setBufferedRanges(WTFMove(buffered));
 }
 
 void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&& completionHandler)
@@ -198,8 +198,8 @@ void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const 
 
     m_gpuProcessConnection->connection().sendWithAsyncReply(
         Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime, isEnded), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& buffered, uint64_t totalTrackBufferSizeInBytes) mutable {
-            setBufferedRanges(buffered);
             m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
+            setBufferedRanges(WTFMove(buffered));
             completionHandler();
         },
         m_remoteSourceBufferIdentifier);
@@ -211,8 +211,11 @@ void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t 
         return;
 
     auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime, isEnded), m_remoteSourceBufferIdentifier);
-    if (sendResult)
-        std::tie(m_totalTrackBufferSizeInBytes) = sendResult.takeReply();
+    if (sendResult) {
+        PlatformTimeRanges buffered;
+        std::tie(buffered, m_totalTrackBufferSizeInBytes) = sendResult.takeReply();
+        setBufferedRanges(WTFMove(buffered));
+    }
 }
 
 void SourceBufferPrivateRemote::addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&)
@@ -417,10 +420,10 @@ void SourceBufferPrivateRemote::sourceBufferPrivateAppendError(bool decodeError)
         m_client->sourceBufferPrivateAppendError(decodeError);
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, const PlatformTimeRanges& buffered, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
+void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, PlatformTimeRanges&& buffered, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
 {
-    setBufferedRanges(buffered);
     m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
+    setBufferedRanges(WTFMove(buffered));
     if (m_client) {
         setTimestampOffset(timestampOffset);
         m_client->sourceBufferPrivateAppendComplete(appendResult);
@@ -453,12 +456,6 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidDropSample()
         m_client->sourceBufferPrivateDidDropSample();
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateBufferedDirtyChanged(bool dirty)
-{
-    if (m_client)
-        m_client->sourceBufferPrivateBufferedDirtyChanged(dirty);
-}
-
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
     if (m_client)
@@ -483,8 +480,8 @@ void SourceBufferPrivateRemote::memoryPressure(uint64_t maximumBufferSize, const
 
     m_gpuProcessConnection->connection().sendWithAsyncReply(
         Messages::RemoteSourceBufferProxy::MemoryPressure(maximumBufferSize, currentTime, isEnded), [this, protectedThis = Ref { *this }](auto&& buffer, uint64_t totalTrackBufferSizeInBytes) mutable {
-            setBufferedRanges(WTFMove(buffer));
             m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
+            setBufferedRanges(WTFMove(buffer));
         },
         m_remoteSourceBufferIdentifier);
 }

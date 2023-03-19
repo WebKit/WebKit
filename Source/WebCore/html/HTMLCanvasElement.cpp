@@ -38,7 +38,6 @@
 #include "Document.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GPU.h"
 #include "GPUBasedCanvasRenderingContext.h"
@@ -56,6 +55,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSNodeCustomInlines.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "Navigator.h"
@@ -86,7 +86,7 @@
 #endif
 
 #if ENABLE(WEBXR)
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "Navigator.h"
 #include "NavigatorWebXR.h"
 #include "WebXRSystem.h"
@@ -176,7 +176,7 @@ void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomStri
 
 RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return createRenderer<RenderHTMLCanvas>(*this, WTFMove(style));
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
@@ -305,7 +305,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isWebGPUType(contextId)) {
         GPU* gpu = nullptr;
         if (auto* window = document().domWindow()) {
-            // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
+            // FIXME: Should we be instead getting this through jsDynamicCast<JSLocalDOMWindow*>(state)->wrapped().navigator().gpu()?
             gpu = window->navigator().gpu();
         }
         auto context = createContextWebGPU(contextId, gpu);

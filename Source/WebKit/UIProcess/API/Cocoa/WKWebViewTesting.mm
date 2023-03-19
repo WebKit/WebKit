@@ -31,6 +31,7 @@
 #import "MediaSessionCoordinatorProxyPrivate.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "PrintInfo.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
@@ -209,6 +210,14 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
 {
+}
+
+- (unsigned long)_countOfUpdatesWithLayerChanges
+{
+    if (auto* drawingAreaProxy = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
+        return drawingAreaProxy->countOfTransactionsWithNonEmptyLayerChanges();
+
+    return 0;
 }
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock

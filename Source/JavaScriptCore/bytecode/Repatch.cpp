@@ -1284,19 +1284,21 @@ static InlineCacheAction tryCacheInBy(
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
         
-        if (!base->structure()->propertyAccessesAreCacheable() || (!wasFound && !base->structure()->propertyAccessesAreCacheableForAbsence()))
-            return GiveUpOnCache;
-        
-        if (wasFound) {
-            if (!slot.isCacheable())
-                return GiveUpOnCache;
-        }
-        
+        RefPtr<AccessCase> newCase;
         Structure* structure = base->structure();
         
         RefPtr<PolyProtoAccessChain> prototypeAccessChain;
         ObjectPropertyConditionSet conditionSet;
-        if (wasFound) {
+        if ((kind == InByKind::ById || kind == InByKind::ByVal) && !propertyName.isPrivateName() && base->inherits<ProxyObject>()) {
+            propertyName.ensureIsCell(vm);
+            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectHas, propertyName);
+        } else if (wasFound) {
+            if (!structure->propertyAccessesAreCacheable())
+                return GiveUpOnCache;
+
+            if (!slot.isCacheable())
+                return GiveUpOnCache;
+
             InlineCacheAction action = actionForCell(vm, base);
             if (action != AttemptToCache)
                 return action;
@@ -1339,6 +1341,9 @@ static InlineCacheAction tryCacheInBy(
                 }
             }
         } else {
+            if (!structure->propertyAccessesAreCacheable() || !structure->propertyAccessesAreCacheableForAbsence())
+                return GiveUpOnCache;
+
             auto cacheStatus = prepareChainForCaching(globalObject, base, propertyName.uid(), nullptr);
             if (!cacheStatus)
                 return GiveUpOnCache;
@@ -1358,8 +1363,8 @@ static InlineCacheAction tryCacheInBy(
 
         LOG_IC((ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, slot.slotBase() == base));
 
-        Ref<AccessCase> newCase = AccessCase::create(
-            vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
+        if (!newCase)
+            newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
 

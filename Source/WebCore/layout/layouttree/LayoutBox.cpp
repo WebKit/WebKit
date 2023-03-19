@@ -455,6 +455,18 @@ void Box::setShape(RefPtr<const Shape> shape)
     ensureRareData().shape = WTFMove(shape);
 }
 
+const RubyAdjustments* Box::rubyAdjustments() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData().rubyAdjustments.get();
+}
+
+void Box::setRubyAdjustments(std::unique_ptr<RubyAdjustments> rubyAdjustments)
+{
+    ensureRareData().rubyAdjustments = WTFMove(rubyAdjustments);
+}
+
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
 {
     ASSERT(!m_cachedLayoutState);

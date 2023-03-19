@@ -148,7 +148,7 @@ enum class TapHandlingResult : uint8_t;
 
 - (void)_setOpaqueInternal:(BOOL)opaque;
 - (NSString *)_contentSizeCategory;
-- (void)_dispatchSetDeviceOrientation:(int32_t)deviceOrientation;
+- (void)_dispatchSetDeviceOrientation:(WebCore::IntDegrees)deviceOrientation;
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
 
@@ -180,7 +180,7 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) UIEdgeInsets _computedObscuredInset;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
-@property (nonatomic, readonly) int32_t _deviceOrientation;
+@property (nonatomic, readonly) WebCore::IntDegrees _deviceOrientation;
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;

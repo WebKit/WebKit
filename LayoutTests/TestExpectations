@@ -91,7 +91,7 @@ editing/pasteboard/dom-paste [ Skip ]
 editing/pasteboard/mac [ Skip ]
 fast/media/ios [ Skip ]
 fast/dom/Range/mac [ Skip ]
-remote-layer-tree/ios [ Skip ]
+remote-layer-tree [ Skip ]
 inspector/page/setScreenSizeOverride.html [ Skip ]
 interaction-region [ Skip ]
 
@@ -3801,7 +3801,6 @@ webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
 webkit.org/b/214893 [ Debug ] webgl/2.0.0/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 
 # webkit.org/b/208211 Additional inconsitencies between Intel bots and AMD machine
-webgl/2.0.0/conformance/buffers/buffer-uninitialized.html [ Pass Failure ]
 webgl/2.0.0/conformance/extensions/angle-instanced-arrays.html [ Pass Failure ]
 webgl/2.0.0/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/clipping-wide-points.html [ Pass Failure ]
@@ -3921,6 +3920,10 @@ webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/1.0.x/conformance/programs/program-test.html [ Pass ]
 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass ]
 
+webgl/1.0.x/conformance/attribs [ Pass ]
+webgl/1.0.x/conformance/buffers [ Pass ]
+
+
 # Debug builds on slower machines run close to the time out especially with GPUP enabled
 webkit.org/b/238691 [ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Slow ]
 
@@ -3959,21 +3962,27 @@ webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ 
 webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass ]
 webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass ]
+webgl/2.0.y/conformance/attribs [ Pass ]
+webgl/2.0.y/conformance/buffers [ Pass ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
 fast/canvas/webgl/invalid-passed-params.html [ Skip ]
+webgl/1.0.3/conformance/attribs [ Skip ]
+webgl/1.0.3/conformance/buffers [ Skip ]
 webgl/1.0.3/conformance/context/constants-and-properties.html  [ Skip ]
 webgl/1.0.3/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
 webgl/1.0.3/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/1.0.3/conformance/programs/program-test.html [ Skip ]
 webgl/1.0.3/conformance/reading/read-pixels-test.html [ Skip ]
+webgl/2.0.0/conformance/attribs [ Skip ]
+webgl/2.0.0/conformance/buffers [ Skip ]
 webgl/2.0.0/conformance/context/constants-and-properties.html  [ Skip ]
-webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Skip ]
 webgl/2.0.0/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
 webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/2.0.0/conformance/programs/program-test.html [ Skip ]
 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Skip ]
+webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Skip ]
 
 
 # https://github.com/KhronosGroup/WebGL/issues/3341
@@ -4881,25 +4890,16 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
 
 # Tests that fail because @counter-style is not implemented yet. Could skip the entire directory instead.
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-invalid.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html [ ImageOnlyFailure ]
 
 # More @counter-style failures due to not being implemented.
 imported/w3c/web-platform-tests/css/css-conditional/at-media-content-004.html [ ImageOnlyFailure ]
@@ -6210,9 +6210,7 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noop
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_parent [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_top [ Skip ]
 
-# CSS nesting unsupported yet
 imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]
 
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
@@ -6275,12 +6273,66 @@ imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/nam
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom.html [ ImageOnlyFailure ]
 
-# Missing allowing redefinition of predefined counter-styles rdar://106085436
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-attr-mapping.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/redefine-builtin.html [ ImageOnlyFailure ]
-
 # Missing counter-style integration with symbols() rdar://106084071
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function.html [ ImageOnlyFailure ]
+
+# Newly imported ruby WPTs
+imported/w3c/web-platform-tests/css/css-ruby/abs-in-ruby-base-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/abs-in-ruby-base.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/block-ruby-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/block-ruby-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/block-ruby-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-base-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-text-container-float.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/improperly-contained-annotation-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/intra-base-white-space-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/nested-ruby-pairing-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/rb-display-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/rbc-rtc-basic-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/root-block-ruby.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/root-ruby.xhtml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/rt-display-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-align-001a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-align-002a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-annotation-pairing-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-base-container-float.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-box-generation-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-box-generation-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-box-generation-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-box-generation-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-box-generation-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-box-model-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-float-handling-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-inlinize-blocks-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-intrinsic-isize-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-intrinsic-isize-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-justification-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-lang-specific-style-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-text-collapse.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
 # WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772)
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-additive.html [ ImageOnlyFailure ]

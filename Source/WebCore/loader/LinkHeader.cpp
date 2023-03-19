@@ -160,7 +160,9 @@ static LinkHeader::LinkParameterName parameterNameFromString(StringView name)
     if (equalLettersIgnoringASCIICase(name, "nonce"_s))
         return LinkHeader::LinkParameterNonce;
     if (equalLettersIgnoringASCIICase(name, "referrerpolicy"_s))
-        return LinkHeader::LinkParameterReferrerPolicy;  
+        return LinkHeader::LinkParameterReferrerPolicy;
+    if (equalLettersIgnoringASCIICase(name, "fetchpriority"_s))
+        return LinkHeader::LinkParameterFetchPriority;
     return LinkHeader::LinkParameterUnknown;
 }
 
@@ -289,6 +291,9 @@ void LinkHeader::setValue(LinkParameterName name, String&& value)
         break;
     case LinkParameterReferrerPolicy:
         m_referrerPolicy = WTFMove(value);
+        break;
+    case LinkParameterFetchPriority:
+        m_fetchPriorityHint = WTFMove(value);
         break;
     case LinkParameterTitle:
     case LinkParameterRev:

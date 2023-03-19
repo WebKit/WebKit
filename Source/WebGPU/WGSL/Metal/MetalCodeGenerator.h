@@ -29,12 +29,12 @@
 
 namespace WGSL {
 
-class ShaderModule;
+class CallGraph;
 
 namespace Metal {
 
 // Can't fail. Any failure checks need to be done earlier, in the backend-agnostic part of the compiler.
-String generateMetalCode(ShaderModule&);
+String generateMetalCode(CallGraph&);
 
 } // namespace Metal
 } // namespace WGSL

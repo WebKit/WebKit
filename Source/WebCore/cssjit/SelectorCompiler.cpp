@@ -35,6 +35,7 @@
 #include "DOMJITHelpers.h"
 #include "Element.h"
 #include "ElementData.h"
+#include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "FunctionCall.h"
 #include "HTMLDocument.h"

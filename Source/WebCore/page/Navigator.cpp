@@ -32,13 +32,13 @@
 #include "DOMPluginArray.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "GPU.h"
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
@@ -61,9 +61,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Navigator);
 
-Navigator::Navigator(ScriptExecutionContext* context, DOMWindow& window)
+Navigator::Navigator(ScriptExecutionContext* context, LocalDOMWindow& window)
     : NavigatorBase(context)
-    , DOMWindowProperty(&window)
+    , LocalDOMWindowProperty(&window)
 {
 }
 

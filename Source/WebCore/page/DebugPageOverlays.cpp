@@ -30,11 +30,11 @@
 #include "Cursor.h"
 #include "ElementIterator.h"
 #include "FloatRoundedRect.h"
-#include "FrameView.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InteractionRegion.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PageOverlay.h"
 #include "PageOverlayController.h"
@@ -72,7 +72,7 @@ private:
     void didMoveToPage(PageOverlay&, Page*) final;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    void didScrollFrame(PageOverlay&, Frame&) override;
+    void didScrollFrame(PageOverlay&, LocalFrame&) override;
 
 protected:
     // Returns true if the region changed.
@@ -114,7 +114,7 @@ bool MouseWheelRegionOverlay::updateRegion()
 #else
     auto region = makeUnique<Region>();
     
-    for (const AbstractFrame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -682,7 +682,7 @@ bool RegionOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
     return false;
 }
 
-void RegionOverlay::didScrollFrame(PageOverlay&, Frame&)
+void RegionOverlay::didScrollFrame(PageOverlay&, LocalFrame&)
 {
 }
 
@@ -749,7 +749,7 @@ void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
     visualizer = nullptr;
 }
 
-void DebugPageOverlays::regionChanged(Frame& frame, RegionType regionType)
+void DebugPageOverlays::regionChanged(LocalFrame& frame, RegionType regionType)
 {
     auto* page = frame.page();
     if (!page)

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PerformanceMark.h"
 
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "LocalDOMWindow.h"
 #include "MessagePort.h"
 #include "Performance.h"
 #include "PerformanceMarkOptions.h"

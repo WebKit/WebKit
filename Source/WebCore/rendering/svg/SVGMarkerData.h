@@ -92,7 +92,7 @@ private:
             return narrowPrecisionToFloat(outAngle);
         case MidMarker:
             // WK193015: Prevent bugs due to angles being non-continuous.
-            if (fabs(inAngle - outAngle) > 180)
+            if (std::abs(inAngle - outAngle) > 180)
                 inAngle += 360;
             return narrowPrecisionToFloat((inAngle + outAngle) / 2);
         case EndMarker:

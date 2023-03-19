@@ -40,8 +40,8 @@
 #import <WebCore/Color.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/Quirks.h>

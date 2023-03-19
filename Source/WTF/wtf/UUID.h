@@ -61,7 +61,7 @@ public:
     
 #ifdef __OBJC__
     WTF_EXPORT_PRIVATE operator NSUUID *() const;
-    WTF_EXPORT_PRIVATE UUID(NSUUID *);
+    WTF_EXPORT_PRIVATE static std::optional<UUID> fromNSUUID(NSUUID *);
 #endif
 
     static std::optional<UUID> parse(StringView);

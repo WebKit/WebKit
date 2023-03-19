@@ -33,8 +33,8 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TranslationContextMenuInfo.h>
@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebContextMenuClient::lookUpInDictionary(Frame* frame)
+void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
     m_page->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
@@ -63,7 +63,7 @@ void WebContextMenuClient::stopSpeaking()
     m_page->stopSpeaking();
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
 {
     String searchString = frame->editor().selectedText().stripWhiteSpace();
     m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
@@ -78,8 +78,8 @@ void WebContextMenuClient::searchWithSpotlight()
     if (!localMainFrame)
         return;
 
-    LocalFrame* selectionFrame = [&] () -> LocalFrame* {
-        for (AbstractFrame* selectionFrame = localMainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
+    auto* selectionFrame = [&] () -> LocalFrame* {
+        for (Frame* selectionFrame = localMainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(selectionFrame);
             if (!localFrame)
                 continue;

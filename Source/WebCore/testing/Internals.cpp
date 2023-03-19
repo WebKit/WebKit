@@ -63,7 +63,6 @@
 #include "DOMRectList.h"
 #include "DOMStringList.h"
 #include "DOMURL.h"
-#include "DOMWindow.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DisabledAdaptations.h"
@@ -88,9 +87,7 @@
 #include "FloatQuad.h"
 #include "FontCache.h"
 #include "FormController.h"
-#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCObservation.h"
 #include "GridPosition.h"
@@ -132,6 +129,9 @@
 #include "JSImageData.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "Location.h"
 #include "MallocStatistics.h"
@@ -292,7 +292,7 @@
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
-#include "DOMWindowSpeechSynthesis.h"
+#include "LocalDOMWindowSpeechSynthesis.h"
 #include "PlatformSpeechSynthesizerMock.h"
 #include "SpeechSynthesis.h"
 #endif
@@ -410,7 +410,7 @@ using namespace HTMLNames;
 
 class InspectorStubFrontend final : public InspectorFrontendClientLocal, public FrontendChannel {
 public:
-    InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow);
+    InspectorStubFrontend(Page& inspectedPage, RefPtr<LocalDOMWindow>&& frontendWindow);
     virtual ~InspectorStubFrontend();
 
 private:
@@ -436,10 +436,10 @@ private:
     void sendMessageToFrontend(const String& message) final;
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
-    RefPtr<DOMWindow> m_frontendWindow;
+    RefPtr<LocalDOMWindow> m_frontendWindow;
 };
 
-InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<DOMWindow>&& frontendWindow)
+InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<LocalDOMWindow>&& frontendWindow)
     : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), makeUnique<InspectorFrontendClientLocal::Settings>())
     , m_frontendWindow(frontendWindow.copyRef())
 {
@@ -554,7 +554,7 @@ void Internals::resetToConsistentState(Page& page)
 
     page.setCompositingPolicyOverride(WebCore::CompositingPolicy::Normal);
 
-    FrameView* mainFrameView = localMainFrame->view();
+    auto* mainFrameView = localMainFrame->view();
     if (mainFrameView) {
         page.setHeaderHeight(0);
         page.setFooterHeight(0);
@@ -654,7 +654,7 @@ void Internals::resetToConsistentState(Page& page)
 
     CanvasBase::setMaxPixelMemoryForTesting(std::nullopt);
     CanvasBase::setMaxCanvasAreaForTesting(std::nullopt);
-    DOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
+    LocalDOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
 #if PLATFORM(IOS)
     WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
@@ -729,7 +729,7 @@ Document* Internals::contextDocument() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-Frame* Internals::frame() const
+LocalFrame* Internals::frame() const
 {
     if (!contextDocument())
         return nullptr;
@@ -986,6 +986,34 @@ void Internals::setOverrideResourceLoadPriority(ResourceLoadPriority priority)
 void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
 {
     frame()->loader().setStrictRawResourceValidationPolicyDisabledForTesting(disabled);
+}
+
+static Internals::ResourceLoadPriority toInternalsResourceLoadPriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityVeryLow;
+    case ResourceLoadPriority::Low:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityLow;
+    case ResourceLoadPriority::Medium:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityMedium;
+    case ResourceLoadPriority::High:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityHigh;
+    case ResourceLoadPriority::VeryHigh:
+        return Internals::ResourceLoadPriority::ResourceLoadPriorityVeryHigh;
+    }
+    ASSERT_NOT_REACHED();
+    return Internals::ResourceLoadPriority::ResourceLoadPriorityLow;
+}
+
+std::optional<Internals::ResourceLoadPriority> Internals::getResourcePriority(const String& url)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return std::nullopt;
+    if (auto* resource = document->cachedResourceLoader().cachedResource(url))
+        return toInternalsResourceLoadPriority(resource->loadPriority());
+    return std::nullopt;
 }
 
 bool Internals::isFetchObjectContextStopped(const FetchObject& object)
@@ -1246,7 +1274,7 @@ ExceptionOr<void> Internals::suspendAnimations() const
         return Exception { InvalidAccessError };
 
     document->ensureTimelinesController().suspendAnimations();
-    for (AbstractFrame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1264,7 +1292,7 @@ ExceptionOr<void> Internals::resumeAnimations() const
         return Exception { InvalidAccessError };
 
     document->ensureTimelinesController().resumeAnimations();
-    for (AbstractFrame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1530,7 +1558,7 @@ void Internals::enableMockSpeechSynthesizer()
     auto document = contextDocument();
     if (!document || !document->domWindow())
         return;
-    auto synthesis = DOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow());
+    auto synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow());
     if (!synthesis)
         return;
 
@@ -1989,7 +2017,7 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
         if (!localFrame)
             return Exception { InvalidAccessError };
 
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView || !frameView->isScrollable())
             return Exception { InvalidAccessError };
 
@@ -2255,7 +2283,7 @@ Vector<String> Internals::recentSearches(const HTMLInputElement& element)
 
 ExceptionOr<void> Internals::scrollElementToRect(Element& element, int x, int y, int w, int h)
 {
-    FrameView* frameView = element.document().view();
+    auto* frameView = element.document().view();
     if (!frameView)
         return Exception { InvalidAccessError };
     frameView->scrollElementToRect(element, { x, y, w, h });
@@ -2498,9 +2526,9 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     if (!document.frame() || !document.frame()->view())
         return Exception { InvalidAccessError };
 
-    Frame* frame = document.frame();
-    FrameView* frameView = document.view();
-    RenderView* renderView = document.renderView();
+    auto* frame = document.frame();
+    auto* frameView = document.view();
+    auto* renderView = document.renderView();
     if (!renderView)
         return nullptr;
 
@@ -2601,7 +2629,7 @@ String Internals::parserMetaData(JSC::JSValue code)
 void Internals::updateEditorUINowIfScheduled()
 {
     if (Document* document = contextDocument()) {
-        if (Frame* frame = document->frame())
+        if (LocalFrame* frame = document->frame())
             frame->editor().updateEditorUINowIfScheduled();
     }
 }
@@ -2957,7 +2985,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(inspectedPage->mainFrame());
     auto* window = localMainFrame ? localMainFrame->document()->domWindow() : nullptr;
     auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
-    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
+    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<LocalDOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;
 }
 
@@ -2992,11 +3020,11 @@ unsigned Internals::numberOfScrollableAreas()
         return 0;
 
     unsigned count = 0;
-    Frame* frame = document->frame();
+    LocalFrame* frame = document->frame();
     if (frame->view()->scrollableAreas())
         count += frame->view()->scrollableAreas()->computeSize();
 
-    for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
         if (!localChild)
             continue;
@@ -5535,9 +5563,9 @@ ExceptionOr<bool> Internals::hasSameEventLoopAs(WindowProxy& proxy)
         return Exception { InvalidStateError };
 
     auto& proxyFrame = *proxy.frame();
-    if (!is<Frame>(proxyFrame))
+    if (!is<LocalFrame>(proxyFrame))
         return false;
-    RefPtr<ScriptExecutionContext> proxyContext = downcast<Frame>(proxyFrame).document();
+    RefPtr<ScriptExecutionContext> proxyContext = downcast<LocalFrame>(proxyFrame).document();
     if (!proxyContext)
         return Exception { InvalidStateError };
 
@@ -6385,7 +6413,7 @@ void Internals::setMaximumIntervalForUserGestureForwardingForFetch(double interv
 
 void Internals::setTransientActivationDuration(double seconds)
 {
-    DOMWindow::overrideTransientActivationDurationForTesting(Seconds { seconds });
+    LocalDOMWindow::overrideTransientActivationDurationForTesting(Seconds { seconds });
 }
 
 void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
@@ -6522,7 +6550,7 @@ bool Internals::hasSandboxUnixSyscallAccess(const String& process, unsigned sysc
 #endif
 }
 
-String Internals::windowLocationHost(DOMWindow& window)
+String Internals::windowLocationHost(LocalDOMWindow& window)
 {
     return window.location().host();
 }

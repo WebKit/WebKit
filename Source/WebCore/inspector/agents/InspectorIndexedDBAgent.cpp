@@ -34,13 +34,11 @@
 
 #include "AddEventListenerOptions.h"
 #include "DOMStringList.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "Frame.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBCursorWithValue.h"
@@ -56,7 +54,9 @@
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindowCustom.h"
+#include "JSLocalDOMWindowCustom.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -536,7 +536,7 @@ Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::disable()
     return { };
 }
 
-static Protocol::ErrorStringOr<Document*> documentFromFrame(Frame* frame)
+static Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFrame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
     if (!document)
@@ -547,7 +547,7 @@ static Protocol::ErrorStringOr<Document*> documentFromFrame(Frame* frame)
 
 static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 {
-    DOMWindow* domWindow = document->domWindow();
+    auto* domWindow = document->domWindow();
     if (!domWindow)
         return makeUnexpected("Missing window for given document"_s);
 
@@ -558,7 +558,7 @@ static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* doc
     return idbFactory;
 }
 
-static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(Frame* frame, Document*& out_document, IDBFactory*& out_idbFactory, BackendDispatcher::CallbackBase& callback)
+static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(LocalFrame* frame, Document*& outDocument, IDBFactory*& outIDBFactory, BackendDispatcher::CallbackBase& callback)
 {
     Protocol::ErrorStringOr<Document*> document = documentFromFrame(frame);
     if (!document.has_value()) {
@@ -572,8 +572,8 @@ static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(Frame* frame, Documen
         return false;
     }
     
-    out_document = document.value();
-    out_idbFactory = idbFactory.value();
+    outDocument = document.value();
+    outIDBFactory = idbFactory.value();
     return true;
 }
     

@@ -39,13 +39,13 @@ namespace WebCore {
 class AccessibilitySVGRoot;
 class AXObjectCache;
 class Element;
-class FrameView;
 class HTMLAreaElement;
 class HTMLElement;
 class HTMLLabelElement;
 class HTMLMapElement;
 class IntPoint;
 class IntSize;
+class LocalFrameView;
 class Node;
 class RenderTextControl;
 class RenderView;
@@ -126,7 +126,7 @@ public:
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
     AccessibilityChildrenVector documentLinks() override;
-    FrameView* documentFrameView() const override;
+    LocalFrameView* documentFrameView() const override;
 
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;

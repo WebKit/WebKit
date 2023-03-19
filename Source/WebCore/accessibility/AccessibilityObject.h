@@ -203,7 +203,6 @@ public:
     virtual bool isSpinButtonPart() const { return false; }
     virtual bool isIncrementor() const { return false; }
     bool isMockObject() const override { return false; }
-    virtual bool isMediaControlLabel() const { return false; }
     virtual bool isMediaObject() const { return false; }
     bool isTextControl() const override;
     bool isARIATextControl() const;
@@ -403,6 +402,7 @@ public:
     // Returns an array of strings and AXObject wrappers corresponding to the
     // textruns and replacement nodes included in the given range.
     RetainPtr<NSArray> contentForRange(const SimpleRange&, SpellCheck = SpellCheck::No) const;
+    RetainPtr<NSAttributedString> attributedStringForRange(const SimpleRange&, SpellCheck) const;
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck = SpellCheck::No) const override;
 #endif
     virtual String ariaLabeledByAttribute() const { return String(); }
@@ -466,9 +466,9 @@ public:
 #endif
     Page* page() const override;
     Document* document() const override;
-    FrameView* documentFrameView() const override;
-    Frame* frame() const;
-    Frame* mainFrame() const;
+    LocalFrameView* documentFrameView() const override;
+    LocalFrame* frame() const;
+    LocalFrame* mainFrame() const;
     Document* topDocument() const;
     ScrollView* scrollView() const override { return nullptr; }
     String language() const override;

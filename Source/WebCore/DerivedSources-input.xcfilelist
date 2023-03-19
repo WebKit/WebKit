@@ -390,12 +390,14 @@ $(PROJECT_DIR)/Modules/mediasource/VideoPlaybackQuality.idl
 $(PROJECT_DIR)/Modules/mediasource/VideoTrack+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediastream/CanvasCaptureMediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/DoubleRange.idl
+$(PROJECT_DIR)/Modules/mediastream/InputDeviceInfo.idl
 $(PROJECT_DIR)/Modules/mediastream/LongRange.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaDeviceInfo.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaDevices.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStream.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/MediaTrackCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackConstraints.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackSupportedConstraints.idl
 $(PROJECT_DIR)/Modules/mediastream/Navigator+MediaDevices.idl
@@ -634,6 +636,7 @@ $(PROJECT_DIR)/Modules/screen-wake-lock/WakeLock.idl
 $(PROJECT_DIR)/Modules/screen-wake-lock/WakeLockSentinel.idl
 $(PROJECT_DIR)/Modules/screen-wake-lock/WakeLockType.idl
 $(PROJECT_DIR)/Modules/speech/DOMWindow+SpeechSynthesis.idl
+$(PROJECT_DIR)/Modules/speech/LocalDOMWindow+SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognition.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionAlternative.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionErrorCode.idl
@@ -818,6 +821,7 @@ $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl
 $(PROJECT_DIR)/Modules/webdatabase/DOMWindow+WebDatabase.idl
 $(PROJECT_DIR)/Modules/webdatabase/Database.idl
 $(PROJECT_DIR)/Modules/webdatabase/DatabaseCallback.idl
+$(PROJECT_DIR)/Modules/webdatabase/LocalDOMWindow+WebDatabase.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLError.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLResultSet.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLResultSetRowList.idl
@@ -1490,6 +1494,15 @@ $(PROJECT_DIR)/page/History.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
 $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+CSSOM.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+CSSOMView.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+Compat.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+DeviceMotion.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+DeviceOrientation.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+RequestIdleCallback.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+Selection.idl
+$(PROJECT_DIR)/page/LocalDOMWindow+VisualViewport.idl
+$(PROJECT_DIR)/page/LocalDOMWindow.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
 $(PROJECT_DIR)/page/Navigator+UserActivation.idl

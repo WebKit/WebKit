@@ -1263,12 +1263,12 @@ RefPtr<Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildObjectForStyl
 
 RefPtr<Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObjectForStyleSheetInfo()
 {
-    CSSStyleSheet* styleSheet = pageStyleSheet();
+    auto* styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
-    Document* document = styleSheet->ownerDocument();
-    Frame* frame = document ? document->frame() : nullptr;
+    auto* document = styleSheet->ownerDocument();
+    auto* frame = document ? document->frame() : nullptr;
     return Protocol::CSS::CSSStyleSheetHeader::create()
         .setStyleSheetId(id())
         .setOrigin(m_origin)

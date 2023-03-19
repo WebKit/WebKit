@@ -84,13 +84,17 @@ void ManagedMediaSource::endStreaming()
 
 bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 {
+    ASSERT(m_buffered, "Should always been called after updateBufferedIfNeeded");
+    if (!m_buffered)
+        return false;
+
     if (ranges.length() < 1)
         return true;
 
     ASSERT(ranges.length() == 1);
 
-    auto bufferedRanges = buffered();
-    if (!bufferedRanges || !bufferedRanges->length())
+    auto bufferedRanges = makeUnique<PlatformTimeRanges>(*m_buffered);
+    if (!bufferedRanges->length())
         return false;
     bufferedRanges->intersectWith(ranges);
 

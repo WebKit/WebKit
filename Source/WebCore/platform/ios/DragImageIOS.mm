@@ -33,11 +33,11 @@
 #import "FloatRoundedRect.h"
 #import "FontCascade.h"
 #import "FontPlatformData.h"
-#import "Frame.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
 #import "Image.h"
+#import "LocalFrame.h"
 #import "NotImplemented.h"
 #import "Page.h"
 #import "Range.h"
@@ -179,7 +179,7 @@ constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorO
     TextIndicatorOption::ComputeEstimatedBackgroundColor
 };
 
-DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData& indicatorData, bool forceBlackText)
+DragImageRef createDragImageForSelection(LocalFrame& frame, TextIndicatorData& indicatorData, bool forceBlackText)
 {
     if (auto document = frame.document())
         document->updateLayout();
@@ -220,7 +220,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
     return image;
 }
 
-DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, bool forceBlackText)
+DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
 {
     if (auto document = frame.document())
         document->updateLayout();
@@ -287,7 +287,7 @@ RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientation)
     return nullptr;
 }
 
-DragImageRef createDragImageForRange(Frame&, const SimpleRange&, bool)
+DragImageRef createDragImageForRange(LocalFrame&, const SimpleRange&, bool)
 {
     return nullptr;
 }

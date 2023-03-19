@@ -37,8 +37,8 @@
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ExceptionCode.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/Page.h>
 #include <WebCore/WebSocketChannel.h>

@@ -139,7 +139,7 @@ private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
-    RefPtr<Frame> frameForCurrentScale() const;
+    RefPtr<LocalFrame> frameForCurrentScale() const;
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
     SVGViewElement* findViewAnchor(StringView fragmentIdentifier) const;

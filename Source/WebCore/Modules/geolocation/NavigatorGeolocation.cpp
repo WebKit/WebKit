@@ -26,10 +26,10 @@
 
 #include "NavigatorGeolocation.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "Geolocation.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 
 namespace WebCore {

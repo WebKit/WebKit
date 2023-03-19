@@ -47,7 +47,7 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
-class Frame;
+class LocalFrame;
 
 #if ENABLE(WEBGL)
 class InspectorShaderProgram;
@@ -90,7 +90,7 @@ public:
     void canvasDestroyed(CanvasBase&) final;
 
     // InspectorInstrumentation
-    void frameNavigated(Frame&);
+    void frameNavigated(LocalFrame&);
     void didChangeCSSCanvasClientNodes(CanvasBase&);
     void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     void didChangeCanvasMemory(CanvasRenderingContext&);

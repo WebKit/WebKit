@@ -35,12 +35,10 @@
 #include "BackForwardController.h"
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "FormState.h"
 #include "FormSubmission.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderStateMachine.h"
@@ -48,6 +46,8 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "NavigationDisabler.h"
 #include "Page.h"
@@ -89,11 +89,11 @@ public:
     }
     virtual ~ScheduledNavigation() = default;
 
-    virtual void fire(Frame&) = 0;
+    virtual void fire(LocalFrame&) = 0;
 
-    virtual bool shouldStartTimer(Frame&) { return true; }
-    virtual void didStartTimer(Frame&, Timer&) { }
-    virtual void didStopTimer(Frame&, NewLoadInProgress) { }
+    virtual bool shouldStartTimer(LocalFrame&) { return true; }
+    virtual void didStartTimer(LocalFrame&, Timer&) { }
+    virtual void didStopTimer(LocalFrame&, NewLoadInProgress) { }
     virtual bool targetIsCurrentFrame() const { return true; }
 
     double delay() const { return m_delay; }
@@ -130,18 +130,18 @@ protected:
     {
     }
 
-    void didStartTimer(Frame& frame, Timer& timer) override
+    void didStartTimer(LocalFrame& frame, Timer& timer) override
     {
         if (m_haveToldClient)
             return;
         m_haveToldClient = true;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
-        Ref<Frame> protectedFrame(frame);
+        Ref protectedFrame { frame };
         frame.loader().clientRedirected(URL(m_url), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
-    void didStopTimer(Frame& frame, NewLoadInProgress newLoadInProgress) override
+    void didStopTimer(LocalFrame& frame, NewLoadInProgress newLoadInProgress) override
     {
         if (!m_haveToldClient)
             return;
@@ -177,12 +177,12 @@ public:
         clearUserGesture();
     }
 
-    bool shouldStartTimer(Frame& frame) override
+    bool shouldStartTimer(LocalFrame& frame) override
     {
         return frame.loader().allAncestorsAreComplete();
     }
 
-    void fire(Frame& frame) override
+    void fire(LocalFrame& frame) override
     {
         if (m_isMetaRefresh == IsMetaRefresh::Yes) {
             if (auto document = frame.document(); document && document->isSandboxed(SandboxAutomaticFeatures)) {
@@ -224,7 +224,7 @@ public:
             m_completionHandler();
     }
 
-    void fire(Frame& frame) override
+    void fire(LocalFrame& frame) override
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
@@ -251,7 +251,7 @@ public:
     {
     }
 
-    void fire(Frame& frame) override
+    void fire(LocalFrame& frame) override
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
@@ -273,7 +273,7 @@ public:
     {
     }
 
-    void fire(Frame& frame) override
+    void fire(LocalFrame& frame) override
     {
         // If the destination HistoryItem is no longer in the back/forward list, then we don't proceed.
         if (!frame.page()->backForward().containsItem(m_historyItem))
@@ -305,7 +305,7 @@ public:
     {
     }
 
-    void fire(Frame& frame) final
+    void fire(LocalFrame& frame) final
     {
         if (m_submission->wasCancelled())
             return;
@@ -330,7 +330,7 @@ public:
         frame.loader().loadFrameRequest(WTFMove(frameLoadRequest), m_submission->event(), m_submission->takeState());
     }
 
-    void didStartTimer(Frame& frame, Timer& timer) final
+    void didStartTimer(LocalFrame& frame, Timer& timer) final
     {
         if (m_haveToldClient)
             return;
@@ -340,7 +340,7 @@ public:
         frame.loader().clientRedirected(m_submission->requestURL(), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
-    void didStopTimer(Frame& frame, NewLoadInProgress newLoadInProgress) final
+    void didStopTimer(LocalFrame& frame, NewLoadInProgress newLoadInProgress) final
     {
         if (!m_haveToldClient)
             return;
@@ -375,7 +375,7 @@ public:
     {
     }
 
-    void fire(Frame& frame) override
+    void fire(LocalFrame& frame) override
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
@@ -397,7 +397,7 @@ private:
     Document& m_originDocument;
 };
 
-NavigationScheduler::NavigationScheduler(Frame& frame)
+NavigationScheduler::NavigationScheduler(LocalFrame& frame)
     : m_frame(frame)
     , m_timer(*this, &NavigationScheduler::timerFired)
 {
@@ -453,7 +453,7 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
     }
 }
 
-LockBackForwardList NavigationScheduler::mustLockBackForwardList(Frame& targetFrame)
+LockBackForwardList NavigationScheduler::mustLockBackForwardList(LocalFrame& targetFrame)
 {
     // Non-user navigation before the page has finished firing onload should not create a new back/forward item.
     // See https://webkit.org/b/42861 for the original motivation for this.    
@@ -591,7 +591,7 @@ void NavigationScheduler::timerFired()
         return;
     }
 
-    Ref<Frame> protect(m_frame);
+    Ref protectedFrame { m_frame };
 
     std::unique_ptr<ScheduledNavigation> redirect = std::exchange(m_redirect, nullptr);
     LOG(History, "NavigationScheduler %p timerFired - firing redirect %p", this, redirect.get());
@@ -604,7 +604,7 @@ void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect
 {
     ASSERT(m_frame.page());
 
-    Ref<Frame> protect(m_frame);
+    Ref protectedFrame { m_frame };
 
     // If a redirect was scheduled during a load, then stop the current load.
     // Otherwise when the current load transitions from a provisional to a 

@@ -35,16 +35,16 @@
 #include "Blob.h"
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MixedContentChecker.h"
@@ -306,7 +306,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     if (is<Document>(context)) {
         Document& document = downcast<Document>(context);
-        RefPtr<Frame> frame = document.frame();
+        RefPtr frame = document.frame();
         // FIXME: make the mixed content check equivalent to the non-document mixed content check currently in WorkerThreadableWebSocketChannel::Bridge::connect()
         if (!frame || !MixedContentChecker::canRunInsecureContent(*frame, document.securityOrigin(), m_url)) {
             failAsynchronously();

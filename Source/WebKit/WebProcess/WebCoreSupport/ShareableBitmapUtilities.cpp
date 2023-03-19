@@ -28,12 +28,12 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/CachedImage.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderVideo.h>

@@ -29,8 +29,8 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "Touch.h"
 #include "TouchList.h"
 #include "WindowProxy.h"
@@ -39,9 +39,9 @@ namespace WebCore {
 
 Ref<Touch> DocumentTouch::createTouch(Document& document, RefPtr<WindowProxy>&& window, EventTarget* target, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force)
 {
-    Frame* frame;
-    if (window && is<Frame>(window->frame()))
-        frame = downcast<Frame>(window->frame());
+    LocalFrame* frame;
+    if (window && is<LocalFrame>(window->frame()))
+        frame = downcast<LocalFrame>(window->frame());
     else
         frame = document.frame();
 

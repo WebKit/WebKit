@@ -174,7 +174,7 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     size_t n = magnitudeBuffer().size();
     for (size_t i = 0; i < n; ++i) {
         std::complex<double> c(realP[i], imagP[i]);
-        double scalarMagnitude = abs(c) * magnitudeScale;        
+        double scalarMagnitude = std::abs(c) * magnitudeScale;        
         destination[i] = static_cast<float>(k * destination[i] + (1 - k) * scalarMagnitude);
     }
 

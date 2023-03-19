@@ -181,7 +181,7 @@ public:
         SVGLengthContext lengthContext(&targetElement);
         auto fromLength = SVGLengthValue(m_lengthMode, from);
         auto toLength = SVGLengthValue(m_lengthMode, to);
-        return fabsf(toLength.value(lengthContext) - fromLength.value(lengthContext));
+        return std::abs(toLength.value(lengthContext) - fromLength.value(lengthContext));
     }
 
 private:

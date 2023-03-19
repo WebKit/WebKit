@@ -36,7 +36,7 @@ class ApplicationCacheFrontendDispatcher;
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Page;
 
 class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::ApplicationCacheBackendDispatcherHandler {
@@ -58,7 +58,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::ApplicationCache::ApplicationCache>> getApplicationCacheForFrame(const Inspector::Protocol::Network::FrameId&);
 
     // InspectorInstrumentation
-    void updateApplicationCacheStatus(Frame*);
+    void updateApplicationCacheStatus(LocalFrame*);
     void networkStateChanged();
 
 private:

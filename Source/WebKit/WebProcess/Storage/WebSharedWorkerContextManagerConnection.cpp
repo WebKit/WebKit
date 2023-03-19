@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WebSharedWorkerContextManagerConnection.h"
 
+#include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "RemoteWebLockRegistry.h"
 #include "RemoteWorkerFrameLoaderClient.h"
+#include "RemoteWorkerInitializationData.h"
 #include "RemoteWorkerLibWebRTCProvider.h"
 #include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"

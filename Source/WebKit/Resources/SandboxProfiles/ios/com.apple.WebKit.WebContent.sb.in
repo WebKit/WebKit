@@ -305,11 +305,8 @@
     )
 
 #if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
-    (with-filter
-        (require-all
-            (require-not (state-flag "EnableExperimentalSandbox"))
-            (require-not (state-flag "EnableExperimentalSandboxWithProbability")))
-        (allow mach-lookup (global-name "com.apple.CARenderServer")))
+    (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+        (allow mach-lookup (with report) (with telemetry-backtrace) (global-name "com.apple.CARenderServer")))
 #endif
 
     ; UIKit-required IOKit nodes.
@@ -879,12 +876,12 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection "IOGPU")))
-#endif
 
 (deny iokit-open-user-client
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+#endif
 
 (deny iokit-open-user-client (with no-report)
     (iokit-user-client-class "AppleJPEGDriverUserClient"))

@@ -29,9 +29,9 @@
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
-#import <WebCore/DOMWindow.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LocalDOMWindow.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/UIEvent.h>
 #import <WebCore/WebScriptObjectPrivate.h>

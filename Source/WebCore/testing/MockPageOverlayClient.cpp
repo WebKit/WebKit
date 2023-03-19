@@ -27,9 +27,9 @@
 #include "MockPageOverlayClient.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
@@ -112,7 +112,7 @@ bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouse
     return false;
 }
 
-void MockPageOverlayClient::didScrollFrame(PageOverlay&, Frame&)
+void MockPageOverlayClient::didScrollFrame(PageOverlay&, LocalFrame&)
 {
 }
 

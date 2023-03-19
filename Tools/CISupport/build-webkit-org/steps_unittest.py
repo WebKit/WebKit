@@ -927,6 +927,64 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=EXCEPTION, state_string='layout-tests (exception)')
         return self.runStep()
 
+    def test_gtk_parameters(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'GTK-Linux-64-bit-Release-Tests')
+        self.setProperty('buildnumber', '103')
+        self.setProperty('workername', 'gtk103')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'GTK-Linux-64-bit-Release-Tests',
+                         '--build-number', '103', '--buildbot-worker', 'gtk103',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--gtk', '--results-directory', 'layout-test-results',
+                         '--debug-rwt-logging', '--enable-core-dumps-nolimit'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_wpe_parameters(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'WPE-Linux-64-bit-Release-Tests')
+        self.setProperty('buildnumber', '103')
+        self.setProperty('workername', 'wpe103')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'WPE-Linux-64-bit-Release-Tests',
+                         '--build-number', '103', '--buildbot-worker', 'wpe103',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--wpe', '--results-directory', 'layout-test-results',
+                         '--debug-rwt-logging', '--enable-core-dumps-nolimit'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
 
 class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

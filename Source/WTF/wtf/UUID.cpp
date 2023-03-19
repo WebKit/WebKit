@@ -124,7 +124,7 @@ std::optional<UUID> UUID::parse(StringView value)
     uint64_t low = (*fourthValue << 48) | *fifthValue;
 
     auto result = (static_cast<UInt128>(high) << 64) | low;
-    if (result == deletedValue)
+    if (result == deletedValue || result == emptyValue)
         return { };
 
     return UUID(result);

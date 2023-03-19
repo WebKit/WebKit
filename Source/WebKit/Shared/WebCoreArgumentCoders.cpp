@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,7 +110,6 @@
 #include <WebCore/PointLightSource.h>
 #include <WebCore/ProgressBarPart.h>
 #include <WebCore/PromisedAttachmentInfo.h>
-#include <WebCore/ProtectionSpace.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/Region.h>
 #include <WebCore/RegistrableDomain.h>
@@ -393,53 +392,6 @@ bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
     }
 
     return false;
-}
-
-void ArgumentCoder<ProtectionSpace>::encode(Encoder& encoder, const ProtectionSpace& space)
-{
-    if (space.encodingRequiresPlatformData()) {
-        encoder << true;
-        encodePlatformData(encoder, space);
-        return;
-    }
-
-    encoder << false;
-    encoder << space.host() << space.port() << space.realm();
-    encoder << space.authenticationScheme();
-    encoder << space.serverType();
-}
-
-bool ArgumentCoder<ProtectionSpace>::decode(Decoder& decoder, ProtectionSpace& space)
-{
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
-        return false;
-
-    if (hasPlatformData)
-        return decodePlatformData(decoder, space);
-
-    String host;
-    if (!decoder.decode(host))
-        return false;
-
-    int port;
-    if (!decoder.decode(port))
-        return false;
-
-    String realm;
-    if (!decoder.decode(realm))
-        return false;
-    
-    ProtectionSpace::AuthenticationScheme authenticationScheme;
-    if (!decoder.decode(authenticationScheme))
-        return false;
-
-    ProtectionSpace::ServerType serverType;
-    if (!decoder.decode(serverType))
-        return false;
-
-    space = ProtectionSpace(host, port, serverType, realm, authenticationScheme);
-    return true;
 }
 
 void ArgumentCoder<Credential>::encode(Encoder& encoder, const Credential& credential)
@@ -2148,7 +2100,6 @@ void ArgumentCoder<Filter>::encode(Encoder& encoder, const Filter& filter)
 
     encoder << filter.filterRenderingModes();
     encoder << filter.filterScale();
-    encoder << filter.clipOperation();
     encoder << filter.filterRegion();
 }
 
@@ -2192,11 +2143,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
     if (!filterScale)
         return std::nullopt;
 
-    std::optional<Filter::ClipOperation> clipOperation;
-    decoder >> clipOperation;
-    if (!clipOperation)
-        return std::nullopt;
-
     std::optional<FloatRect> filterRegion;
     decoder >> filterRegion;
     if (!filterRegion)
@@ -2204,7 +2150,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
 
     (*filter)->setFilterRenderingModes(*filterRenderingModes);
     (*filter)->setFilterScale(*filterScale);
-    (*filter)->setClipOperation(*clipOperation);
     (*filter)->setFilterRegion(*filterRegion);
 
     return filter;

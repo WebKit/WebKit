@@ -33,13 +33,13 @@
 #include "DocumentType.h"
 #include "ElementInlines.h"
 #include "Event.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
@@ -89,7 +89,6 @@ Ref<Range> Range::create(Document& ownerDocument)
 Range::~Range()
 {
     ASSERT(!m_isAssociatedWithSelection);
-
     m_ownerDocument->detachRange(*this);
 
 #ifndef NDEBUG
@@ -1085,7 +1084,7 @@ void Range::updateFromSelection(const SimpleRange& value)
     m_isAssociatedWithSelection = true;
 }
 
-DOMWindow* Range::window() const
+LocalDOMWindow* Range::window() const
 {
     return m_isAssociatedWithSelection ? m_ownerDocument->domWindow() : nullptr;
 }

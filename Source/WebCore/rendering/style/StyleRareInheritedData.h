@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Length.h"
+#include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
@@ -76,7 +77,6 @@ public:
     float textStrokeWidth;
 
     RefPtr<StyleImage> listStyleImage;
-    AtomString listStyleStringValue;
 
     StyleColor textStrokeColor;
     StyleColor textFillColor;
@@ -211,6 +211,8 @@ public:
 #endif
     TextSpacingTrim textSpacingTrim;
     TextAutospace textAutospace;
+
+    ListStyleType listStyleType;
 
 private:
     StyleRareInheritedData();

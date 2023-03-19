@@ -26,7 +26,7 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectInterface.h"
 #include "Document.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "RenderLayer.h"
 
 namespace WebCore {

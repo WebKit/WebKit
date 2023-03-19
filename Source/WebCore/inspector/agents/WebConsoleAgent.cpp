@@ -28,10 +28,10 @@
 #include "WebConsoleAgent.h"
 
 #include "CommandLineAPIHost.h"
-#include "DOMWindow.h"
 #include "InspectorNetworkAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "JSExecState.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
@@ -59,7 +59,7 @@ WebConsoleAgent::WebConsoleAgent(WebAgentContext& context)
 {
 }
 
-void WebConsoleAgent::frameWindowDiscarded(DOMWindow& window)
+void WebConsoleAgent::frameWindowDiscarded(LocalDOMWindow& window)
 {
     if (auto* document = window.document()) {
         for (auto& message : m_consoleMessages) {

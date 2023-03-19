@@ -53,7 +53,12 @@
 #endif
 
 #ifdef __cplusplus
+#include <chrono>
+#include <functional>
 #include <list>
+#include <memory>
+#include <mutex>
+#include <string>
 #include <typeinfo>
 #endif
 

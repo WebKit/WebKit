@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Camera track zoom</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <canvas id='canvas'></canvas>
+    <video controls autoplay width=640px height=480px playsInline id='video'></video>
+    <script>
+function getPixels(startX, startY, grabbedWidth, grabbedHeight)
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    return canvas.getContext('2d').getImageData(startX, startY, grabbedWidth, grabbedHeight).data;
+ }
+
+function isVideoGray(startX, startY, grabbedWidth, grabbedHeight)
+{
+    const data = getPixels(startX, startY, grabbedWidth, grabbedHeight);
+    for (var cptr = 0; cptr < grabbedWidth * grabbedHeight; ++cptr) {
+        // Approximatively gray pixels.
+        if (data[4 * cptr] < 100 || data[4 * cptr] > 150 || data[4 * cptr + 1] < 100 || data[4 * cptr + 1] > 150 || data[4 * cptr + 2] < 100 || data[4 * cptr + 2] > 150)
+            return false;
+    }
+    return true;
+}
+
+function isVideoRed(startX, startY, grabbedWidth, grabbedHeight)
+{
+    const data = getPixels(startX, startY, grabbedWidth, grabbedHeight);
+    for (var cptr = 0; cptr < grabbedWidth * grabbedHeight; ++cptr) {
+        // Approximatively red pixels.
+        if (data[4 * cptr] < 220 || data[4 * cptr + 1] > 30 || data[4 * cptr + 2] > 30)
+            return false;
+    }
+    return true;
+}
+var stream;
+promise_test(async (t) => {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640 } });
+
+    assert_equals(stream.getVideoTracks()[0].getSettings().zoom, undefined, "settings");
+    assert_equals(stream.getVideoTracks()[0].getCapabilities().zoom, undefined, "capabilities");
+
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, facingMode: "environment" } });
+
+    assert_equals(stream.getVideoTracks()[0].getSettings().zoom, 1, "settings2");
+    assert_equals(stream.getVideoTracks()[0].getCapabilities().zoom.min, 1, "min2");
+    assert_equals(stream.getVideoTracks()[0].getCapabilities().zoom.max, 4, "max2");
+
+    video.srcObject = stream;
+    await video.play();
+
+    assert_true(isVideoGray(10, 10, 15, 15), "isVideoBlack");
+
+    await stream.getVideoTracks()[0].applyConstraints({ zoom : 3 });
+    assert_equals(stream.getVideoTracks()[0].getSettings().zoom, 3, "settings");
+
+    let counter = 0;
+    while (!isVideoRed(10, 10, 15, 15) && ++counter < 100)
+         await new Promise(resolve => setTimeout(resolve, 10));
+
+    assert_less_than(counter, 10);
+}, "getUserMedia track and zoom");
+    </script>
+</body>
+</html>

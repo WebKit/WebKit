@@ -24,9 +24,9 @@
 #include "CommonAtomStrings.h"
 #include "ElementTraversal.h"
 #include "GraphicsContext.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "LengthBox.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-PrintContext::PrintContext(Frame* frame)
+PrintContext::PrintContext(LocalFrame* frame)
     : FrameDestructionObserver(frame)
 {
 }
@@ -293,7 +293,7 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     if (!box)
         return -1;
 
-    Frame* frame = element->document().frame();
+    auto* frame = element->document().frame();
     FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
     PrintContext printContext(frame);
     printContext.begin(pageRect.width(), pageRect.height());
@@ -346,12 +346,12 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
     }
 }
 
-String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pageNumber)
+String PrintContext::pageProperty(LocalFrame* frame, const char* propertyName, int pageNumber)
 {
     ASSERT(frame);
     ASSERT(frame->document());
 
-    Ref<Frame> protectedFrame(*frame);
+    Ref protectedFrame { *frame };
 
     auto& document = *frame->document();
     PrintContext printContext(frame);
@@ -377,12 +377,12 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     return makeString("pageProperty() unimplemented for: ", propertyName);
 }
 
-bool PrintContext::isPageBoxVisible(Frame* frame, int pageNumber)
+bool PrintContext::isPageBoxVisible(LocalFrame* frame, int pageNumber)
 {
     return frame->document()->isPageBoxVisible(pageNumber);
 }
 
-String PrintContext::pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+String PrintContext::pageSizeAndMarginsInPixels(LocalFrame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     IntSize pageSize(width, height);
     frame->document()->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);
@@ -390,7 +390,7 @@ String PrintContext::pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, in
     return makeString('(', pageSize.width(), ", ", pageSize.height(), ") ", marginTop, ' ', marginRight, ' ', marginBottom, ' ', marginLeft);
 }
 
-bool PrintContext::beginAndComputePageRectsWithPageSize(Frame& frame, const FloatSize& pageSizeInPixels)
+bool PrintContext::beginAndComputePageRectsWithPageSize(LocalFrame& frame, const FloatSize& pageSizeInPixels)
 {
     if (!frame.document() || !frame.view() || !frame.document()->renderView())
         return false;
@@ -406,9 +406,9 @@ bool PrintContext::beginAndComputePageRectsWithPageSize(Frame& frame, const Floa
     return true;
 }
 
-int PrintContext::numberOfPages(Frame& frame, const FloatSize& pageSizeInPixels)
+int PrintContext::numberOfPages(LocalFrame& frame, const FloatSize& pageSizeInPixels)
 {
-    Ref<Frame> protectedFrame(frame);
+    Ref protectedFrame { frame };
 
     PrintContext printContext(&frame);
     if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
@@ -417,9 +417,9 @@ int PrintContext::numberOfPages(Frame& frame, const FloatSize& pageSizeInPixels)
     return printContext.pageCount();
 }
 
-void PrintContext::spoolAllPagesWithBoundaries(Frame& frame, GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
+void PrintContext::spoolAllPagesWithBoundaries(LocalFrame& frame, GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
 {
-    Ref<Frame> protectedFrame(frame);
+    Ref protectedFrame { frame };
 
     PrintContext printContext(&frame);
     if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))

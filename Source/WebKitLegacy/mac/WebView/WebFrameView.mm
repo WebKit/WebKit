@@ -55,9 +55,9 @@
 #import <WebCore/BackForwardController.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -128,7 +128,7 @@ enum {
     return [[self _scrollView] verticalLineScroll];
 }
 
-- (NakedPtr<WebCore::Frame>)_web_frame
+- (NakedPtr<WebCore::LocalFrame>)_web_frame
 {
     return core(_private->webFrame);
 }
@@ -412,15 +412,15 @@ enum {
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    WebCore::Frame *frame = core([self webFrame]);
-    if (WebCore::FrameView *view = frame? frame->view() : 0)
+    WebCore::LocalFrame *frame = core([self webFrame]);
+    if (auto* view = frame? frame->view() : 0)
         view->setCanHaveScrollbars(flag);
 }
 
 - (BOOL)allowsScrolling
 {
-    WebCore::Frame *frame = core([self webFrame]);
-    if (WebCore::FrameView *view = frame? frame->view() : 0)
+    auto* frame = core([self webFrame]);
+    if (auto* view = frame? frame->view() : 0)
         return view->canHaveScrollbars();
     return YES;
 }

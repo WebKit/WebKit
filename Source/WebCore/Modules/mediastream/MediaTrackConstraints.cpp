@@ -173,6 +173,7 @@ static MediaTrackConstraintSetMap convertToInternalForm(ConstraintSetType setTyp
     set(result, setType, "groupId"_s, MediaConstraintType::GroupId, constraintSet.groupId);
     set(result, setType, "displaySurface"_s, MediaConstraintType::DisplaySurface, constraintSet.displaySurface);
     set(result, setType, "logicalSurface"_s, MediaConstraintType::LogicalSurface, constraintSet.logicalSurface);
+    set(result, setType, "zoom"_s, MediaConstraintType::Zoom, constraintSet.zoom);
     return result;
 }
 

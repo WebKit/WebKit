@@ -1130,13 +1130,8 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
 
 bool MediaPlayerPrivateGStreamer::isMuted() const
 {
-    if (!m_volumeElement)
-        return false;
-
-    gboolean isMuted;
-    g_object_get(m_volumeElement.get(), "mute", &isMuted, nullptr);
-    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", boolForPrinting(isMuted));
-    return isMuted;
+    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", boolForPrinting(m_isMuted));
+    return m_isMuted;
 }
 
 void MediaPlayerPrivateGStreamer::commitLoad()
@@ -1635,11 +1630,13 @@ MediaPlayer::ReadyState MediaPlayerPrivateGStreamer::readyState() const
 
 void MediaPlayerPrivateGStreamer::setMuted(bool shouldMute)
 {
+    GST_DEBUG_OBJECT(pipeline(), "Attempting to set muted state to %s", boolForPrinting(shouldMute));
+
     if (!m_volumeElement || shouldMute == isMuted())
         return;
 
     GST_INFO_OBJECT(pipeline(), "Setting muted state to %s", boolForPrinting(shouldMute));
-    g_object_set(m_volumeElement.get(), "mute", shouldMute, nullptr);
+    g_object_set(m_volumeElement.get(), "mute", static_cast<gboolean>(shouldMute), nullptr);
     configureMediaStreamAudioTracks();
 }
 
@@ -1648,10 +1645,16 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfMute()
     if (!m_player || !m_volumeElement)
         return;
 
-    gboolean muted;
-    g_object_get(m_volumeElement.get(), "mute", &muted, nullptr);
-    GST_DEBUG_OBJECT(pipeline(), "Notifying player of new mute value: %s", boolForPrinting(muted));
-    m_player->muteChanged(static_cast<bool>(muted));
+    gboolean value;
+    bool isMuted;
+    g_object_get(m_volumeElement.get(), "mute", &value, nullptr);
+    isMuted = value;
+    if (isMuted == m_isMuted)
+        return;
+
+    m_isMuted = isMuted;
+    GST_DEBUG_OBJECT(pipeline(), "Notifying player of new mute value: %s", boolForPrinting(isMuted));
+    m_player->muteChanged(m_isMuted);
 }
 
 void MediaPlayerPrivateGStreamer::muteChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1812,6 +1815,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         if (!m_isLegacyPlaybin && currentState == GST_STATE_PAUSED && newState == GST_STATE_PLAYING)
             playbin3SendSelectStreamsIfAppropriate();
         updateStates();
+        checkPlayingConsistency();
 
         break;
     }
@@ -1902,7 +1906,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             }
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
             if (gst_structure_get(structure, "read-position", G_TYPE_UINT64, &m_networkReadPosition, "size", G_TYPE_UINT64, &m_httpResponseTotalSize, nullptr))
-                GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
+                GST_LOG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
         } else if (gst_structure_has_name(structure, "GstCacheDownloadComplete")) {
             GST_INFO_OBJECT(pipeline(), "Stream is fully downloaded, stopping monitoring downloading progress.");
             m_fillTimer.stop();
@@ -2115,7 +2119,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 
 void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
 {
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC)
+#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
     configureElementPlatformQuirks(element);
 #endif
 
@@ -2158,7 +2162,7 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
         g_object_set(G_OBJECT(element), "high-watermark", 0.10, nullptr);
 }
 
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC)
+#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
 void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* element)
 {
     GST_DEBUG_OBJECT(pipeline(), "Element set-up for %s", GST_ELEMENT_NAME(element));
@@ -2175,6 +2179,12 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
 #if PLATFORM(BROADCOM)
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
+#if ENABLE(MEDIA_STREAM)
+    if (!m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency")) {
+        GST_DEBUG_OBJECT(pipeline(), "Set 'low_latency' in brcmpcmsink");
+        g_object_set(element, "low_latency", TRUE, "low_latency_max_queued_ms", 60, nullptr);
+    }
+#endif
 #endif
 
 #if USE(WESTEROS_SINK)
@@ -2212,6 +2222,13 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
         defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(westerosSinkCaps), defaultCaps.leakRef()));
         g_object_set(element, "caps", defaultCaps.get(), NULL);
         GST_INFO_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
+    }
+#endif
+
+#if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
+    if (!m_streamPrivate && g_object_class_find_property(G_OBJECT_GET_CLASS(element), "media-tunnel")) {
+        GST_INFO_OBJECT(pipeline(), "Enable 'immediate-output' in rtkaudiosink");
+        g_object_set(element, "media-tunnel", FALSE, "audio-service", TRUE, "lowdelay-sync-mode", TRUE, nullptr);
     }
 #endif
 }
@@ -2653,6 +2670,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
 #endif
     }
 
+    if (!ensureGStreamerInitialized())
+        return result;
+
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     if (parameters.type.isEmpty())
         return result;
@@ -2660,6 +2680,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
     // This player doesn't support pictures rendering.
     if (parameters.type.raw().startsWith("image"_s))
         return result;
+
+    registerWebKitGStreamerElements();
 
     auto& gstRegistryScanner = GStreamerRegistryScanner::singleton();
     result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
@@ -2820,7 +2842,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         player->handleStreamCollectionMessage(message);
     }), this);
 
-    g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
+    g_object_set(m_pipeline.get(), "mute", static_cast<gboolean>(m_player->muted()), nullptr);
 
     g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "element-setup", G_CALLBACK(+[](GstBin*, GstElement* element, MediaPlayerPrivateGStreamer* player) {
         player->configureElement(element);
@@ -4006,8 +4028,9 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
     } else
         GST_DEBUG_OBJECT(pipeline(), "Not setting stream volume, trusting system one");
 
-    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", toString(m_player->muted()).utf8().data());
-    g_object_set(m_volumeElement.get(), "mute", m_player->muted(), nullptr);
+    m_isMuted = m_player->muted();
+    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", boolForPrinting(m_isMuted));
+    g_object_set(m_volumeElement.get(), "mute", static_cast<gboolean>(m_isMuted), nullptr);
 
     g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);
     g_signal_connect_swapped(m_volumeElement.get(), "notify::mute", G_CALLBACK(muteChangedCallback), this);
@@ -4262,6 +4285,41 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadat
     metadata.expectedDisplayTime = metadata.presentationTime;
 
     return metadata;
+}
+
+static bool areAllSinksPlayingForBin(GstBin* bin)
+{
+    for (auto* element : GstIteratorAdaptor<GstElement>(GUniquePtr<GstIterator>(gst_bin_iterate_sinks(bin)))) {
+        if (GST_IS_BIN(element) && !areAllSinksPlayingForBin(GST_BIN_CAST(element)))
+            return false;
+
+        GstState state, pending;
+        gst_element_get_state(element, &state, &pending, 0);
+        if (state != GST_STATE_PLAYING && pending != GST_STATE_PLAYING)
+            return false;
+    }
+    return true;
+}
+
+void MediaPlayerPrivateGStreamer::checkPlayingConsistency()
+{
+    if (!pipeline())
+        return;
+
+    GstState state, pending;
+    gst_element_get_state(pipeline(), &state, &pending, 0);
+    if (state == GST_STATE_PLAYING && pending == GST_STATE_VOID_PENDING) {
+        if (!areAllSinksPlayingForBin(GST_BIN(pipeline()))) {
+            if (!m_didTryToRecoverPlayingState) {
+                GST_WARNING_OBJECT(pipeline(), "Playbin is in PLAYING state but some sinks aren't, trying to recover.");
+                ASSERT_NOT_REACHED_WITH_MESSAGE("Playbin is in PLAYING state but some sinks aren't. This should not happen.");
+                m_didTryToRecoverPlayingState = true;
+                gst_element_set_state(pipeline(), GST_STATE_PAUSED);
+                gst_element_set_state(pipeline(), GST_STATE_PLAYING);
+            }
+        } else
+            m_didTryToRecoverPlayingState = false;
+    }
 }
 
 }

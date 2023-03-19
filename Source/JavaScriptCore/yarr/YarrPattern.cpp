@@ -156,6 +156,9 @@ public:
 
     void putChar(UChar32 ch)
     {
+        if (!isUnionSetOp())
+            return putCharNonUnion(ch);
+
         if (!m_isCaseInsensitive) {
             addSorted(ch);
             return;
@@ -177,6 +180,57 @@ public:
             addSorted(ch);
         else
             putUnicodeIgnoreCase(ch, info);
+    }
+
+    void putCharNonUnion(UChar32 ch)
+    {
+        Vector<UChar32> asciiMatches;
+        Vector<UChar32> unicodeMatches;
+        Vector<CharacterRange> emptyRanges;
+
+        auto addChar = [&] (UChar32 ch) {
+            if (isASCII(ch))
+                asciiMatches.append(ch);
+            else
+                unicodeMatches.append(ch);
+        };
+
+        auto performOp = [&] () {
+            performSetOpWithMatches(asciiMatches, emptyRanges, unicodeMatches, emptyRanges);
+        };
+
+        if (!m_isCaseInsensitive) {
+            addChar(ch);
+            performOp();
+            return;
+        }
+
+        if (m_canonicalMode == CanonicalMode::UCS2 && isASCII(ch)) {
+            // Handle ASCII cases.
+            if (isASCIIAlpha(ch)) {
+                addChar(toASCIIUpper(ch));
+                addChar(toASCIILower(ch));
+            } else
+                addChar(ch);
+            performOp();
+            return;
+        }
+
+        // Add multiple matches, if necessary.
+        const CanonicalizationRange* info = canonicalRangeInfoFor(ch, m_canonicalMode);
+        if (info->type == CanonicalizeUnique)
+            addChar(ch);
+        else {
+            if (info->type == CanonicalizeSet) {
+                for (const UChar32* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
+                    addChar(ch);
+            } else {
+                addChar(ch);
+                addChar(getCanonicalPair(info, ch));
+            }
+        }
+
+        performOp();
     }
 
     void putUnicodeIgnoreCase(UChar32 ch, const CanonicalizationRange* info)
@@ -859,6 +913,8 @@ private:
     {
         return m_anyCharacter;
     }
+
+    bool isUnionSetOp() { return m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union; }
 
     bool m_isCaseInsensitive : 1;
     bool m_anyCharacter : 1;

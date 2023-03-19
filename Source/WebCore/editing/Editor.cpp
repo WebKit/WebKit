@@ -57,10 +57,8 @@
 #include "File.h"
 #include "FocusController.h"
 #include "FontAttributes.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
@@ -81,6 +79,8 @@
 #include "InsertListCommand.h"
 #include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "ModifySelectionListLevel.h"
 #include "NodeList.h"
@@ -3373,7 +3373,7 @@ void Editor::handleAlternativeTextUIResult(const String& correction)
 
 void Editor::dismissCorrectionPanelAsIgnored()
 {
-    m_alternativeTextController->dismiss(ReasonForDismissingAlternativeTextIgnored);
+    m_alternativeTextController->dismiss(ReasonForDismissingAlternativeText::Ignored);
 }
 
 void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, OptionSet<FrameSelection::SetSelectionOption> options)
@@ -3685,7 +3685,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
     return resultRange.collapsed() ? std::nullopt : std::make_optional(resultRange);
 }
 
-static bool isFrameInRange(Frame& frame, const SimpleRange& range)
+static bool isFrameInRange(LocalFrame& frame, const SimpleRange& range)
 {
     for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
         if (&ownerElement->document() == &range.start.document())
@@ -4126,7 +4126,10 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
     for (auto iterator = enclosingLists.rbegin(); iterator != enclosingLists.rend(); ++iterator) {
         auto& list = iterator->get();
         bool ordered = is<HTMLOListElement>(list);
-        textLists.uncheckedAppend({ list.renderer()->style().listStyleType(), ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
+        if (!list.renderer())
+            continue;
+        auto style = list.renderer()->style().listStyleType();
+        textLists.uncheckedAppend({ style, ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
     }
 
     return textLists;
@@ -4326,6 +4329,9 @@ void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toI
 
 void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
+    if (attachment.isImageOnly())
+        return;
+
     auto identifier = attachment.uniqueIdentifier();
     if (identifier.isEmpty())
         return;

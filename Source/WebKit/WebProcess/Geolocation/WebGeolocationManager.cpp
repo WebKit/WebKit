@@ -30,11 +30,11 @@
 #include "WebGeolocationManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
 #include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
 #include <WebCore/GeolocationPositionData.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {

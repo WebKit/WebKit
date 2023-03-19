@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "AbstractFrame.h"
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "ReferrerPolicy.h"
 #include "SecurityContext.h"
@@ -37,11 +37,11 @@ class HTMLFrameOwnerElement : public HTMLElement {
 public:
     virtual ~HTMLFrameOwnerElement();
 
-    AbstractFrame* contentFrame() const { return m_contentFrame.get(); }
+    Frame* contentFrame() const { return m_contentFrame.get(); }
     WEBCORE_EXPORT WindowProxy* contentWindow() const;
     WEBCORE_EXPORT Document* contentDocument() const;
 
-    WEBCORE_EXPORT void setContentFrame(AbstractFrame&);
+    WEBCORE_EXPORT void setContentFrame(Frame&);
     void clearContentFrame();
 
     void disconnectContentFrame();
@@ -76,7 +76,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isFrameOwnerElement() const final { return true; }
 
-    WeakPtr<AbstractFrame> m_contentFrame;
+    WeakPtr<Frame> m_contentFrame;
     SandboxFlags m_sandboxFlags { SandboxNone };
 };
 
@@ -107,7 +107,7 @@ private:
     ContainerNode* m_root;
 };
 
-inline HTMLFrameOwnerElement* AbstractFrame::ownerElement() const
+inline HTMLFrameOwnerElement* Frame::ownerElement() const
 {
     return m_ownerElement.get();
 }

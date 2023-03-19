@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
+#include "LocalDOMWindowProperty.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,9 +45,9 @@ class VisibleSelection;
 
 struct SimpleRange;
 
-class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
+class DOMSelection : public RefCounted<DOMSelection>, public LocalDOMWindowProperty {
 public:
-    static Ref<DOMSelection> create(DOMWindow&);
+    static Ref<DOMSelection> create(LocalDOMWindow&);
 
     RefPtr<Node> baseNode() const;
     RefPtr<Node> extentNode() const;
@@ -88,10 +88,10 @@ public:
     void empty();
 
 private:
-    explicit DOMSelection(DOMWindow&);
+    explicit DOMSelection(LocalDOMWindow&);
 
-    // FIXME: Change DOMWindowProperty::frame to return RefPtr and then delete this.
-    RefPtr<Frame> frame() const;
+    // FIXME: Change LocalDOMWindowProperty::frame to return RefPtr and then delete this.
+    RefPtr<LocalFrame> frame() const;
     std::optional<SimpleRange> range() const;
 
     Position anchorPosition() const;

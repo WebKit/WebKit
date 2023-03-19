@@ -1221,11 +1221,6 @@ private:
             break;
         }
 
-        case CreateArgumentsButterflyExcludingThis: {
-            setPrediction(SpecCellOther);
-            break;
-        }
-            
         case FiatInt52: {
             RELEASE_ASSERT(enableInt52());
             setPrediction(SpecInt52Any);

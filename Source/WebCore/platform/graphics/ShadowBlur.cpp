@@ -451,8 +451,8 @@ std::optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundi
 
     // Set the origin as the top left corner of the scratch image, or, in case there's a clipped
     // out region, set the origin accordingly to the full bounding rect's top-left corner.
-    float translationX = -shadowedRect.x() + inflation.width() - fabsf(clippedOut.width());
-    float translationY = -shadowedRect.y() + inflation.height() - fabsf(clippedOut.height());
+    float translationX = -shadowedRect.x() + inflation.width() - std::abs(clippedOut.width());
+    float translationY = -shadowedRect.y() + inflation.height() - std::abs(clippedOut.height());
     calculatedLayerImageProperties.layerContextTranslation = FloatSize(translationX, translationY);
 
     return calculatedLayerImageProperties;

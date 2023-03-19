@@ -37,7 +37,6 @@
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
-#include "Frame.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
@@ -45,6 +44,7 @@
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeList.h"
+#include "LocalFrame.h"
 #include "MutableStyleProperties.h"
 #include "Page.h"
 #include "PlaybackDirection.h"
@@ -517,7 +517,7 @@ void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
         unbindAnimation(animationId);
 }
 
-void InspectorAnimationAgent::frameNavigated(Frame& frame)
+void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
 {
     if (frame.isMainFrame()) {
         reset();

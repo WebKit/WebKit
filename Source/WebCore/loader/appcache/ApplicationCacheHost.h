@@ -45,7 +45,7 @@ class ApplicationCacheStorage;
 class SharedBuffer;
 class DOMApplicationCache;
 class DocumentLoader;
-class Frame;
+class LocalFrame;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
@@ -118,7 +118,7 @@ public:
     void setDOMApplicationCache(DOMApplicationCache*);
     void notifyDOMApplicationCache(const AtomString& eventType, int progressTotal, int progressDone);
 
-    void stopLoadingInFrame(Frame&);
+    void stopLoadingInFrame(LocalFrame&);
 
     void stopDeferringEvents(); // Also raises the events that have been queued up.
 

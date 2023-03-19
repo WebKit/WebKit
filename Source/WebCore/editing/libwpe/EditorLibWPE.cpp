@@ -29,8 +29,8 @@
 #if USE(LIBWPE)
 
 #include "DocumentFragment.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "Settings.h"
@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pasteboard, Frame& frame, const SimpleRange& range, bool allowPlainText, bool& chosePlainText)
+static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pasteboard, LocalFrame& frame, const SimpleRange& range, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 

@@ -32,7 +32,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include "Supplementable.h"
 
 namespace WebCore {
@@ -40,10 +40,10 @@ namespace WebCore {
 class MediaDevices;
 class Navigator;
 
-class NavigatorMediaDevices : public Supplement<Navigator>, public DOMWindowProperty {
+class NavigatorMediaDevices : public Supplement<Navigator>, public LocalDOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NavigatorMediaDevices(DOMWindow*);
+    explicit NavigatorMediaDevices(LocalDOMWindow*);
     virtual ~NavigatorMediaDevices();
     static NavigatorMediaDevices* from(Navigator*);
 

@@ -38,8 +38,8 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "ExtensionStyleSheets.h"
-#include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "ResourceLoadInfo.h"
 #include "ScriptController.h"
@@ -351,15 +351,8 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
         request.setAllowCookies(false);
 
     if (results.summary.madeHTTPS) {
-        const URL& originalURL = request.url();
-        ASSERT(originalURL.protocolIs("http"_s));
-        ASSERT(!originalURL.port() || WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
-
-        URL newURL = originalURL;
-        newURL.setProtocol("https"_s);
-        if (originalURL.port())
-            newURL.setPort(WTF::defaultPortForProtocol("https"_s).value());
-        request.setURL(newURL);
+        ASSERT(!request.url().port() || WTF::isDefaultPortForProtocol(request.url().port().value(), request.url().protocol()));
+        request.upgradeToHTTPS();
     }
 
     for (auto& action : results.summary.modifyHeadersActions)

@@ -29,39 +29,39 @@
 #pragma once
 
 #include "DOMStringList.h"
-#include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
+#include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 
-class Location final : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
+class Location final : public ScriptWrappable, public RefCounted<Location>, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Location);
 public:
-    static Ref<Location> create(DOMWindow& window) { return adoptRef(*new Location(window)); }
+    static Ref<Location> create(LocalDOMWindow& window) { return adoptRef(*new Location(window)); }
 
-    ExceptionOr<void> setHref(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setHref(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String href() const;
 
-    ExceptionOr<void> assign(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
-    ExceptionOr<void> replace(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
-    void reload(DOMWindow& activeWindow);
+    ExceptionOr<void> assign(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String&);
+    ExceptionOr<void> replace(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String&);
+    void reload(LocalDOMWindow& activeWindow);
 
-    ExceptionOr<void> setProtocol(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setProtocol(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String protocol() const;
-    ExceptionOr<void> setHost(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setHost(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     WEBCORE_EXPORT String host() const;
-    ExceptionOr<void> setHostname(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setHostname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String hostname() const;
-    ExceptionOr<void> setPort(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setPort(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String port() const;
-    ExceptionOr<void> setPathname(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setPathname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String pathname() const;
-    ExceptionOr<void> setSearch(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setSearch(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String search() const;
-    ExceptionOr<void> setHash(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setHash(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
     String hash() const;
     String origin() const;
 
@@ -70,9 +70,9 @@ public:
     Ref<DOMStringList> ancestorOrigins() const;
 
 private:
-    explicit Location(DOMWindow&);
+    explicit Location(LocalDOMWindow&);
 
-    ExceptionOr<void> setLocation(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
 
     const URL& url() const;
 };

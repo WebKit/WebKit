@@ -31,18 +31,18 @@
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "DocumentSVG.h"
 #include "EditorClient.h"
-#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -341,7 +341,7 @@ RenderBox* SVGImage::embeddedContentBox() const
     return downcast<RenderBox>(rootElement->renderer());
 }
 
-FrameView* SVGImage::frameView() const
+LocalFrameView* SVGImage::frameView() const
 {
     if (!m_page)
         return nullptr;
@@ -488,8 +488,8 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         if (!localMainFrame)
             return EncodedDataStatus::Unknown;
 
-        Frame& frame = *localMainFrame;
-        frame.setView(FrameView::create(frame));
+        LocalFrame& frame = *localMainFrame;
+        frame.setView(LocalFrameView::create(frame));
         frame.init();
         FrameLoader& loader = frame.loader();
         loader.forceSandboxFlags(SandboxAll);

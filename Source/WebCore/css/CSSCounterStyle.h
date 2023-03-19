@@ -76,6 +76,7 @@ public:
     bool isExtendsUnresolved() { return m_isExtendedUnresolved; };
     bool isExtendsSystem() const { return system() == CSSCounterStyleDescriptors::System::Extends; }
     void extendAndResolve(const CSSCounterStyle&);
+
 private:
     CSSCounterStyle(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
 

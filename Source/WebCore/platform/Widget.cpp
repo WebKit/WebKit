@@ -26,8 +26,8 @@
 #include "config.h"
 #include "Widget.h"
 
-#include "FrameView.h"
 #include "IntRect.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include <wtf/Assertions.h>
 
@@ -55,13 +55,13 @@ void Widget::setParent(ScrollView* view)
         setParentVisible(true);
 }
 
-FrameView* Widget::root() const
+LocalFrameView* Widget::root() const
 {
     const Widget* top = this;
     while (top->parent())
         top = top->parent();
-    if (is<FrameView>(*top))
-        return const_cast<FrameView*>(downcast<FrameView>(top));
+    if (is<LocalFrameView>(*top))
+        return const_cast<LocalFrameView*>(downcast<LocalFrameView>(top));
     return nullptr;
 }
     

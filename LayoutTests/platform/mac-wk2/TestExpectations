@@ -23,6 +23,8 @@ imported/w3c/web-platform-tests/web-share [ Pass ]
 [ BigSur+ ] media/modern-media-controls/overflow-support [ Pass ]
 http/tests/media/modern-media-controls/overflow-support [ Pass ]
 [ BigSur+ ] media/modern-media-controls/tracks-support [ Pass ]
+remote-layer-tree [ Pass ]
+remote-layer-tree/ios [ Skip ]
 scrollingcoordinator [ Pass ]
 scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
@@ -1666,15 +1668,11 @@ webkit.org/b/239574 [ Monterey Release ] webanimations/frame-rate/animation-fram
 
 webkit.org/b/195635 [ arm64 ] scrollingcoordinator/mac/multiple-fixed.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
-
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
 webkit.org/b/240821 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Failure Timeout ]
-
-webkit.org/b/240830 [ Monterey ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer-offsets.html [ Pass Timeout ]
 
 webkit.org/b/240927 [ BigSur Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
@@ -1773,7 +1771,6 @@ webkit.org/b/252866 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-c
 [ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
 [ BigSur+ ] fast/mediastream/mediastreamtrack-video-clone.html [ Pass Failure ]
 [ BigSur+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-[ BigSur+ ] fast/scrolling/mac/keyboard-scrolling-with-mouse-scroll.html [ Pass Failure ]
 [ BigSur+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 [ Bigsur+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
@@ -1821,6 +1818,8 @@ webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-timer-query.html [ Skip
 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
+
+webkit.org/b/254001 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Failure Pass Timeout ]
 
 webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
 

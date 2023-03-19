@@ -315,6 +315,7 @@ protected:
     template <typename TrackPrivateType> void notifyPlayerOfTrack();
 
     void ensureAudioSourceProvider();
+    void checkPlayingConsistency();
 
     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags);
     void invalidateCachedPosition() const;
@@ -487,7 +488,7 @@ private:
     void configureDepayloader(GstElement*);
     void configureVideoDecoder(GstElement*);
     void configureElement(GstElement*);
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC)
+#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
     void configureElementPlatformQuirks(GstElement*);
 #endif
 
@@ -547,6 +548,7 @@ private:
     RefPtr<MediaStreamPrivate> m_streamPrivate;
 #endif
 
+    bool m_isMuted { false };
     bool m_visible { false };
 
     // playbin3 only:
@@ -607,6 +609,8 @@ private:
     GRefPtr<GstStreamCollection> m_streamCollection;
 
     AbortableTaskQueue m_sinkTaskQueue;
+
+    bool m_didTryToRecoverPlayingState { false };
 };
 
 }

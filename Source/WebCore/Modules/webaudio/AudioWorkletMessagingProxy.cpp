@@ -36,7 +36,7 @@
 #include "BaseAudioContext.h"
 #include "CacheStorageConnection.h"
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "Settings.h"
 #include "WebRTCProvider.h"

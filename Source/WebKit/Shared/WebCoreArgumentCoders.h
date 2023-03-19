@@ -134,7 +134,6 @@ class NotificationResources;
 class PasteboardCustomData;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
-class ProtectionSpace;
 class Region;
 class Report;
 class ReportBody;
@@ -241,13 +240,6 @@ template<> struct ArgumentCoder<WebCore::ViewportArguments> {
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(Encoder&, const WebCore::Length&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Length&);
-};
-
-template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
-    static void encode(Encoder&, const WebCore::ProtectionSpace&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ProtectionSpace&);
-    static void encodePlatformData(Encoder&, const WebCore::ProtectionSpace&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ProtectionSpace&);
 };
 
 template<> struct ArgumentCoder<WebCore::Credential> {

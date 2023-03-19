@@ -62,6 +62,7 @@ enum class SourceBufferAppendMode : uint8_t {
 
 class SourceBufferPrivate
     : public RefCounted<SourceBufferPrivate>
+    , public CanMakeWeakPtr<SourceBufferPrivate>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif
@@ -73,7 +74,8 @@ public:
     virtual void setActive(bool) = 0;
     WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
     virtual void abort() = 0;
-    virtual void resetParserState() = 0;
+    // Overrides must call the base class.
+    virtual void resetParserState();
     virtual void removedFromMediaSource() = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
@@ -105,7 +107,7 @@ public:
     WEBCORE_EXPORT void setClient(SourceBufferPrivateClient*);
     void setIsAttached(bool flag) { m_isAttached = flag; }
 
-    const TimeRanges* buffered() const { return m_buffered.get(); }
+    const PlatformTimeRanges& buffered() const { return m_buffered; }
 
     bool isBufferFullFor(uint64_t requiredSize, uint64_t maximumBufferSize);
 
@@ -150,14 +152,18 @@ protected:
     virtual void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) { }
     virtual void clearMinimumUpcomingPresentationTime(const AtomString&) { }
 
+    bool processingInitializationSegment() const { return m_processingInitializationSegment; }
+
+    WEBCORE_EXPORT virtual void didReceiveSampleForTrackId(uint64_t, Ref<MediaSample>&&);
+
     void reenqueSamples(const AtomString& trackID);
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
-    WEBCORE_EXPORT void setBufferedRanges(const PlatformTimeRanges&);
+    WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&);
     void provideMediaData(const AtomString& trackID);
 
     // Must be called once all samples have been processed.
-    WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, bool isEnded);
+    WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, bool isEnded, Function<void()>&& = [] { });
 
     WeakPtr<SourceBufferPrivateClient> m_client;
 
@@ -171,6 +177,14 @@ private:
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
     MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
     bool evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded);
+    void processPendingSamples();
+
+    struct AppendCompletedArguments {
+        bool parsingSucceeded { false };
+        bool isEnded { false };
+        Function<void()> preTask;
+    };
+    std::optional<AppendCompletedArguments> m_appendCompletedPending;
 
     bool m_isAttached { false };
     bool m_hasAudio { false };
@@ -185,6 +199,10 @@ private:
     bool m_pendingInitializationSegmentForChangeType { false };
     bool m_didReceiveSampleErrored { false };
 
+    bool m_processingInitializationSegment { false };
+    Vector<std::pair<uint64_t, Ref<MediaSample>>> m_pendingMediaSamples;
+    bool m_hasPendingAppendCompleted { false };
+
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };
     MediaTime m_appendWindowEnd { MediaTime::positiveInfiniteTime() };
@@ -194,7 +212,7 @@ private:
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
     bool m_isMediaSourceEnded { false };
-    RefPtr<TimeRanges> m_buffered;
+    PlatformTimeRanges m_buffered;
 };
 
 } // namespace WebCore

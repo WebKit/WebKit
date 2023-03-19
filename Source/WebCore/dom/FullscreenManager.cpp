@@ -30,15 +30,15 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "HTMLDialogElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PopoverData.h"
@@ -231,7 +231,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
 
         // A descendant browsing context's document has a non-empty fullscreen element stack.
         bool descendentHasNonEmptyStack = false;
-        for (AbstractFrame* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
+        for (auto* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(descendant);
             if (!localFrame)
                 continue;
@@ -415,7 +415,7 @@ void FullscreenManager::finishExitFullscreen(Document& currentDocument, ExitMode
 
     // Let descendantDocs be an ordered set consisting of doc’s descendant browsing contexts' active documents whose fullscreen element is non-null, if any, in tree order.
     Deque<Ref<Document>> descendantDocuments;
-    for (AbstractFrame* descendant = currentDocument.frame() ? currentDocument.frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
+    for (auto* descendant = currentDocument.frame() ? currentDocument.frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(descendant);
         if (!localFrame || !localFrame->document())
             continue;

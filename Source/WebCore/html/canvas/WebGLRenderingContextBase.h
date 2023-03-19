@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -446,7 +446,7 @@ public:
 
     void removeSharedObject(WebGLSharedObject&);
     void removeContextObject(WebGLContextObject&);
-    
+
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
     bool isContextUnrecoverablyLost() const;
@@ -580,7 +580,7 @@ protected:
     RefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, const char* functionName);
 
 #if ENABLE(VIDEO)
-    RefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, const char* functionName);
+    RefPtr<Image> videoFrameToImage(HTMLVideoElement&, BackingStoreCopy, const char* functionName);
 #endif
 
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
@@ -622,14 +622,14 @@ protected:
     RefPtr<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;
 
     void setBoundVertexArrayObject(const AbstractLocker&, WebGLVertexArrayObjectBase*);
-    
+
     class VertexAttribValue {
     public:
         VertexAttribValue()
         {
             initValue();
         }
-        
+
         void initValue()
         {
             type = GraphicsContextGL::FLOAT;
@@ -638,7 +638,7 @@ protected:
             fValue[2] = 0.0f;
             fValue[3] = 1.0f;
         }
-        
+
         GCGLenum type;
         union {
             GCGLfloat fValue[4];
@@ -831,6 +831,9 @@ protected:
 #if ENABLE(VIDEO)
         SourceHTMLVideoElement,
 #endif
+#if ENABLE(WEB_CODECS)
+        SourceWebCodecsVideoFrame,
+#endif
         // WebGL 2.0.
         SourceUnpackBuffer,
     };
@@ -845,93 +848,20 @@ protected:
         NullNotReachable
     };
 
-    template <typename T> IntRect getTextureSourceSize(T* textureSource)
-    {
-        return IntRect(0, 0, textureSource->width(), textureSource->height());
-    }
-    template <typename T> bool validateTexImageSubRectangle(const char* functionName,
-        TexImageFunctionID functionID,
-        T* image,
-        const IntRect& subRect,
-        GCGLsizei depth,
-        GCGLint unpackImageHeight,
-        bool* selectingSubRectangle)
-    {
-        ASSERT(functionName);
-        ASSERT(selectingSubRectangle);
-        if (!image) {
-            // Probably indicates a failure to allocate the image.
-            synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
-            return false;
-        }
+    bool validateTexImageSubRectangle(TexImageFunctionID, const IntRect& imageSize, const IntRect& subRect, GCGLsizei depth, GCGLint unpackImageHeight, bool* selectingSubRectangle);
 
-        int imageWidth = static_cast<int>(image->width());
-        int imageHeight = static_cast<int>(image->height());
-        *selectingSubRectangle = !(!subRect.x() && !subRect.y() && subRect.width() == imageWidth && subRect.height() == imageHeight);
-        // If the source image rect selects anything except the entire
-        // contents of the image, assert that we're running WebGL 2.0,
-        // since this should never happen for WebGL 1.0 (even though
-        // the code could support it). If the image is null, that will
-        // be signaled as an error later.
-        ASSERT(!*selectingSubRectangle || isWebGL2());
-
-        if (!subRect.isValid() || subRect.x() < 0 || subRect.y() < 0
-            || subRect.maxX() > imageWidth || subRect.maxY() > imageHeight
-            || subRect.width() < 0 || subRect.height() < 0) {
-            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName,
-                "source sub-rectangle specified via pixel unpack parameters is invalid");
-            return false;
-        }
-
-        if (functionID == TexImageFunctionID::TexImage3D || functionID == TexImageFunctionID::TexSubImage3D) {
-            ASSERT(unpackImageHeight >= 0);
-
-            if (depth < 1) {
-                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName,
-                    "Can't define a 3D texture with depth < 1");
-                return false;
-            }
-
-            // According to the WebGL 2.0 spec, specifying depth > 1 means
-            // to select multiple rectangles stacked vertically.
-            Checked<GCGLint, RecordOverflow> maxYAccessed;
-            if (unpackImageHeight)
-                maxYAccessed = unpackImageHeight;
-            else
-                maxYAccessed = subRect.height();
-            maxYAccessed *= depth - 1;
-            maxYAccessed += subRect.height();
-            maxYAccessed += subRect.y();
-
-            if (maxYAccessed.hasOverflowed()) {
-                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName,
-                    "Out-of-range parameters passed for 3D texture upload");
-                return false;
-            }
-
-            if (maxYAccessed > imageHeight) {
-                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName,
-                    "Not enough data supplied to upload to a 3D texture with depth > 1");
-                return false;
-            }
-        } else {
-            ASSERT(depth >= 1);
-            ASSERT(!unpackImageHeight);
-        }
-        return true;
-    }
     IntRect sentinelEmptyRect();
     IntRect safeGetImageSize(Image*);
     IntRect getImageDataSize(ImageData*);
-    IntRect getTexImageSourceSize(TexImageSource&);
 
     ExceptionOr<void> texImageSourceHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&&);
-    // Helper function for tex(Sub)Image2D && texSubImage3D.
     void texImageArrayBufferViewHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition, GCGLuint srcOffset);
     void texImageImpl(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect&, GCGLsizei depth, GCGLint unpackImageHeight);
     void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels);
     void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels);
-    static const char* getTexImageFunctionName(TexImageFunctionID);
+    static const char* texImageFunctionName(TexImageFunctionID);
+    static TexImageFunctionType texImageFunctionType(TexImageFunctionID);
+
     using PixelStoreParams = GraphicsContextGL::PixelStoreParams;
     virtual PixelStoreParams getPackPixelStoreParams() const;
     virtual PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const;
@@ -953,7 +883,7 @@ protected:
     RefPtr<WebGLTexture> validateTextureBinding(const char* functionName, GCGLenum target);
 
     // Wrapper function for validateTexture2D(3D)Binding, used in texImageSourceHelper.
-    virtual RefPtr<WebGLTexture> validateTexImageBinding(const char*, TexImageFunctionID, GCGLenum);
+    virtual RefPtr<WebGLTexture> validateTexImageBinding(TexImageFunctionID, GCGLenum);
 
     // Helper function to check texture 2D target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
@@ -966,7 +896,7 @@ protected:
     // Helper function to check input internalformat/format/type for functions
     // Tex{Sub}Image taking TexImageSource source data. Generates GL error and
     // returns false if parameters are invalid.
-    bool validateTexImageSourceFormatAndType(const char* functionName, TexImageFunctionType, GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    bool validateTexImageSourceFormatAndType(TexImageFunctionID, GCGLenum internalformat, GCGLenum format, GCGLenum type);
 
     // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
@@ -983,13 +913,12 @@ protected:
 
     // Helper function for tex{Sub}Image{2|3}D to check if the input format/type/level/target/width/height/depth/border/xoffset/yoffset/zoffset are valid.
     // Otherwise, it would return quickly without doing other work.
-    bool validateTexFunc(const char* functionName, TexImageFunctionType, TexFuncValidationSourceType, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width,
+    bool validateTexFunc(TexImageFunctionID, TexFuncValidationSourceType, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width,
         GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset);
 
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncParameters(const char* functionName,
-        TexImageFunctionType,
+    bool validateTexFuncParameters(TexImageFunctionID,
         TexFuncValidationSourceType,
         GCGLenum target, GCGLint level,
         GCGLenum internalformat,
@@ -1069,12 +998,12 @@ protected:
     virtual WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage);
 
     // Helper function for tex{Sub}Image2D to make sure image is ready.
-    ExceptionOr<bool> validateHTMLImageElement(const char* functionName, HTMLImageElement*);
-    ExceptionOr<bool> validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement*);
+    ExceptionOr<bool> validateHTMLImageElement(const char* functionName, HTMLImageElement&);
+    ExceptionOr<bool> validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement&);
 #if ENABLE(VIDEO)
-    ExceptionOr<bool> validateHTMLVideoElement(const char* functionName, HTMLVideoElement*);
+    ExceptionOr<bool> validateHTMLVideoElement(const char* functionName, HTMLVideoElement&);
 #endif
-    ExceptionOr<bool> validateImageBitmap(const char* functionName, ImageBitmap*);
+    ExceptionOr<bool> validateImageBitmap(const char* functionName, ImageBitmap&);
 
     // Helper functions for vertexAttribNf{v}.
     void vertexAttribfImpl(const char* functionName, GCGLuint index, GCGLsizei expectedSize, GCGLfloat, GCGLfloat, GCGLfloat, GCGLfloat);
@@ -1146,6 +1075,17 @@ private:
     void checkForContextLossHandling();
 
     void activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState) override;
+
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, ImageBitmap& source);
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, ImageData& source);
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLImageElement& source);
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLCanvasElement& source);
+#if ENABLE(VIDEO)
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLVideoElement& source);
+#endif
+#if ENABLE(WEB_CODECS)
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, WebCodecsVideoFrame& source);
+#endif
 
     WebGLStateTracker::Token m_trackerToken;
     Timer m_checkForContextLossHandlingTimer;

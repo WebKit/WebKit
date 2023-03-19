@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2074,11 +2074,11 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<JSSetIterator*, 4> setIteratorStack;
     Vector<JSValue, 4> mapIteratorValueStack;
     Vector<WalkerState, 16> stateStack;
-    WalkerState lexicalGlobalObject = StateUnknown;
+    WalkerState state = StateUnknown;
     JSValue inValue = in;
     auto scope = DECLARE_THROW_SCOPE(vm);
     while (1) {
-        switch (lexicalGlobalObject) {
+        switch (state) {
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(isArray(inValue));
@@ -2309,7 +2309,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
         if (stateStack.isEmpty())
             break;
 
-        lexicalGlobalObject = stateStack.last();
+        state = stateStack.last();
         stateStack.removeLast();
     }
     if (m_failed)
@@ -4291,11 +4291,11 @@ DeserializationResult CloneDeserializer::deserialize()
     Vector<JSMap*, 4> mapStack;
     Vector<JSSet*, 4> setStack;
     Vector<WalkerState, 16> stateStack;
-    WalkerState lexicalGlobalObject = StateUnknown;
+    WalkerState state = StateUnknown;
     JSValue outValue;
 
     while (1) {
-        switch (lexicalGlobalObject) {
+        switch (state) {
         arrayStartState:
         case ArrayStartState: {
             uint32_t length;
@@ -4451,7 +4451,7 @@ DeserializationResult CloneDeserializer::deserialize()
         if (stateStack.isEmpty())
             break;
 
-        lexicalGlobalObject = stateStack.last();
+        state = stateStack.last();
         stateStack.removeLast();
     }
     ASSERT(outValue);

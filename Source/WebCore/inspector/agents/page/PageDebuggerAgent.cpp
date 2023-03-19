@@ -35,11 +35,11 @@
 #include "CachedResource.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindowCustom.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageDebugger.h"
@@ -158,7 +158,7 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& e
     return injectedScript;
 }
 
-void PageDebuggerAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
+void PageDebuggerAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
     if (!frame.isMainFrame() || &world != &mainThreadNormalWorld())
         return;

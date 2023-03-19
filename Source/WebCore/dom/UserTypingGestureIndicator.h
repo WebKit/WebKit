@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Node;
 
 class UserTypingGestureIndicator {
@@ -39,7 +39,7 @@ public:
     WEBCORE_EXPORT static bool processingUserTypingGesture();
     WEBCORE_EXPORT static Node* focusedElementAtGestureStart();
 
-    WEBCORE_EXPORT explicit UserTypingGestureIndicator(Frame&);
+    WEBCORE_EXPORT explicit UserTypingGestureIndicator(LocalFrame&);
     WEBCORE_EXPORT ~UserTypingGestureIndicator();
 
 private:

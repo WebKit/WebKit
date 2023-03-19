@@ -36,22 +36,22 @@
 
 namespace WebCore {
 
-class Frame;
-class JSDOMWindow;
 class DOMWrapperWorld;
+class JSLocalDOMWindow;
+class LocalFrame;
 
 class ScriptCachedFrameData {
     WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ScriptCachedFrameData(Frame&);
+    explicit ScriptCachedFrameData(LocalFrame&);
     ~ScriptCachedFrameData();
 
-    void restore(Frame&);
+    void restore(LocalFrame&);
     void clear();
 
 private:
-    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow>> JSDOMWindowSet;
-    JSDOMWindowSet m_windows;
+    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSLocalDOMWindow>> JSLocalDOMWindowSet;
+    JSLocalDOMWindowSet m_windows;
 };
 
 } // namespace WebCore

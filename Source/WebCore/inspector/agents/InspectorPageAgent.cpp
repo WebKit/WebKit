@@ -41,11 +41,9 @@
 #include "DocumentLoader.h"
 #include "ElementInlines.h"
 #include "ForcedAccessibilityValue.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameSnapshotting.h"
-#include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
@@ -54,6 +52,8 @@
 #include "InspectorNetworkAgent.h"
 #include "InspectorOverlay.h"
 #include "InstrumentingAgents.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -100,7 +100,7 @@ static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& tex
     return false;
 }
 
-bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
+bool InspectorPageAgent::mainResourceContent(LocalFrame* frame, bool withBase64Encode, String* result)
 {
     RefPtr<FragmentedSharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
@@ -123,7 +123,7 @@ bool InspectorPageAgent::dataContent(const uint8_t* data, unsigned size, const S
     return decodeBuffer(data, size, textEncodingName, result);
 }
 
-Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(Frame* frame)
+Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(LocalFrame* frame)
 {
     Vector<CachedResource*> result;
 
@@ -152,7 +152,7 @@ Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(Frame* frame
     return result;
 }
 
-void InspectorPageAgent::resourceContent(Protocol::ErrorString& errorString, Frame* frame, const URL& url, String* result, bool* base64Encoded)
+void InspectorPageAgent::resourceContent(Protocol::ErrorString& errorString, LocalFrame* frame, const URL& url, String* result, bool* base64Encoded)
 {
     DocumentLoader* loader = assertDocumentLoader(errorString, frame);
     if (!loader)
@@ -199,7 +199,7 @@ String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResourc
     return String();
 }
 
-CachedResource* InspectorPageAgent::cachedResource(const Frame* frame, const URL& url)
+CachedResource* InspectorPageAgent::cachedResource(const LocalFrame* frame, const URL& url)
 {
     if (url.isNull())
         return nullptr;
@@ -305,9 +305,9 @@ Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJSON(const Ca
     return resourceTypeJSON(inspectorResourceType(cachedResource));
 }
 
-Frame* InspectorPageAgent::findFrameWithSecurityOrigin(Page& page, const String& originRawString)
+LocalFrame* InspectorPageAgent::findFrameWithSecurityOrigin(Page& page, const String& originRawString)
 {
-    for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -317,7 +317,7 @@ Frame* InspectorPageAgent::findFrameWithSecurityOrigin(Page& page, const String&
     return nullptr;
 }
 
-DocumentLoader* InspectorPageAgent::assertDocumentLoader(Protocol::ErrorString& errorString, Frame* frame)
+DocumentLoader* InspectorPageAgent::assertDocumentLoader(Protocol::ErrorString& errorString, LocalFrame* frame)
 {
     FrameLoader& frameLoader = frame->loader();
     DocumentLoader* documentLoader = frameLoader.documentLoader();
@@ -603,7 +603,7 @@ static Ref<JSON::ArrayOf<Protocol::Page::Cookie>> buildArrayForCookies(ListHashS
     return cookies;
 }
 
-static Vector<URL> allResourcesURLsForFrame(Frame* frame)
+static Vector<URL> allResourcesURLsForFrame(LocalFrame* frame)
 {
     Vector<URL> result;
 
@@ -619,7 +619,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> InspectorPag
 {
     ListHashSet<Cookie> allRawCookies;
 
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -730,7 +730,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& 
     if (!cookie)
         return makeUnexpected(errorString);
 
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -749,7 +749,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON::Object>&& 
 Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const String& cookieName, const String& url)
 {
     URL parsedURL({ }, url);
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -775,7 +775,7 @@ Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorP
 {
     Protocol::ErrorString errorString;
 
-    Frame* frame = assertFrame(errorString, frameId);
+    auto* frame = assertFrame(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -808,7 +808,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>>
         }
     }
 
-    Frame* frame = assertFrame(errorString, frameId);
+    auto* frame = assertFrame(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -854,7 +854,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> Inspec
     auto searchStringType = (isRegex && *isRegex) ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
     auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive && *caseSensitive, searchStringType);
 
-    for (AbstractFrame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -906,12 +906,12 @@ void InspectorPageAgent::loadEventFired()
     m_frontendDispatcher->loadEventFired(timestamp());
 }
 
-void InspectorPageAgent::frameNavigated(Frame& frame)
+void InspectorPageAgent::frameNavigated(LocalFrame& frame)
 {
     m_frontendDispatcher->frameNavigated(buildObjectForFrame(&frame));
 }
 
-void InspectorPageAgent::frameDetached(Frame& frame)
+void InspectorPageAgent::frameDetached(LocalFrame& frame)
 {
     auto identifier = m_frameToIdentifier.take(&frame);
     if (identifier.isNull())
@@ -920,12 +920,12 @@ void InspectorPageAgent::frameDetached(Frame& frame)
     m_identifierToFrame.remove(identifier);
 }
 
-Frame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
+LocalFrame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
 {
     return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId).get();
 }
 
-String InspectorPageAgent::frameId(Frame* frame)
+String InspectorPageAgent::frameId(LocalFrame* frame)
 {
     if (!frame)
         return emptyString();
@@ -945,9 +945,9 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
     }).iterator->value;
 }
 
-Frame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
+LocalFrame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
-    Frame* frame = frameForId(frameId);
+    auto* frame = frameForId(frameId);
     if (!frame)
         errorString = "Missing frame for given frameId"_s;
     return frame;
@@ -958,22 +958,22 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
     m_loaderToIdentifier.remove(&loader);
 }
 
-void InspectorPageAgent::frameStartedLoading(Frame& frame)
+void InspectorPageAgent::frameStartedLoading(LocalFrame& frame)
 {
     m_frontendDispatcher->frameStartedLoading(frameId(&frame));
 }
 
-void InspectorPageAgent::frameStoppedLoading(Frame& frame)
+void InspectorPageAgent::frameStoppedLoading(LocalFrame& frame)
 {
     m_frontendDispatcher->frameStoppedLoading(frameId(&frame));
 }
 
-void InspectorPageAgent::frameScheduledNavigation(Frame& frame, Seconds delay)
+void InspectorPageAgent::frameScheduledNavigation(LocalFrame& frame, Seconds delay)
 {
     m_frontendDispatcher->frameScheduledNavigation(frameId(&frame), delay.value());
 }
 
-void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
+void InspectorPageAgent::frameClearedScheduledNavigation(LocalFrame& frame)
 {
     m_frontendDispatcher->frameClearedScheduledNavigation(frameId(&frame));
 }
@@ -1032,7 +1032,7 @@ void InspectorPageAgent::defaultAppearanceDidChange()
 }
 #endif
 
-void InspectorPageAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
+void InspectorPageAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
     if (&world != &mainThreadNormalWorld())
         return;
@@ -1049,7 +1049,7 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
         return;
 
     LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
-    FrameView* view = renderer.document().view();
+    auto* view = renderer.document().view();
 
     LayoutRect rootRect = absoluteRect;
     auto* localFrame = dynamicDowncast<LocalFrame>(view->frame());
@@ -1088,7 +1088,7 @@ void InspectorPageAgent::didRecalculateStyle()
     m_overlay->update();
 }
 
-Ref<Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
+Ref<Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(LocalFrame* frame)
 {
     ASSERT_ARG(frame, frame);
 
@@ -1111,7 +1111,7 @@ Ref<Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
     return frameObject;
 }
 
-Ref<Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
+Ref<Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(LocalFrame* frame)
 {
     ASSERT_ARG(frame, frame);
 
@@ -1142,7 +1142,7 @@ Ref<Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTr
     }
 
     RefPtr<JSON::ArrayOf<Protocol::Page::FrameResourceTree>> childrenArray;
-    for (AbstractFrame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!childrenArray) {
             childrenArray = JSON::ArrayOf<Protocol::Page::FrameResourceTree>::create();
             result->setChildFrames(*childrenArray);

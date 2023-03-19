@@ -367,7 +367,7 @@ void GPUProcess::setUseSCContentSharingPicker(bool use)
 #endif
 }
 
-void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
+void GPUProcess::setOrientationForMediaCapture(IntDegrees orientation)
 {
     m_orientation = orientation;
     for (auto& connection : m_webProcessConnections.values())

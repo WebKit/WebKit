@@ -270,6 +270,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -370,6 +371,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
+    ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals();
 
     void setParser(FunctionParser<LLIntGenerator>* parser) { m_parser = parser; };
@@ -712,6 +715,9 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -749,6 +755,9 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -816,6 +825,9 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -879,6 +891,9 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -1477,6 +1492,11 @@ auto LLIntGenerator::addRefAsNonNull(ExpressionType reference, ExpressionType& r
     WasmRefAsNonNull::emit(this, result, reference);
 
     return { };
+}
+
+auto LLIntGenerator::addRefEq(ExpressionType ref0, ExpressionType ref1, ExpressionType& result) -> PartialResult
+{
+    return addI64Eq(ref0, ref1, result);
 }
 
 auto LLIntGenerator::addTableGet(unsigned tableIndex, ExpressionType index, ExpressionType& result) -> PartialResult

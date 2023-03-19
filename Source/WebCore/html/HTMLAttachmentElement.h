@@ -126,9 +126,11 @@ private:
 
     RefPtr<HTMLAttachmentElement> m_innerLegacyAttachment;
     RefPtr<HTMLElement> m_containerElement;
+    RefPtr<HTMLElement> m_informationBlock;
     RefPtr<HTMLElement> m_actionTextElement;
     RefPtr<HTMLElement> m_titleElement;
     RefPtr<HTMLElement> m_subtitleElement;
+    RefPtr<HTMLElement> m_saveArea;
     RefPtr<HTMLElement> m_saveButton;
     mutable RefPtr<DOMRectReadOnly> m_saveButtonClientRect;
 

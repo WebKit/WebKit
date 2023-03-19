@@ -1,0 +1,8 @@
+
+PASS all scripts must be fetched by the preload scanner
+PASS script-async-initial-load
+PASS script-async-initial-load 1
+PASS script-async-initial-load 2
+PASS script-async-initial-load 3
+PASS script-async-initial-load 4
+

@@ -38,23 +38,11 @@ using Lines = Vector<Line>;
 struct Content {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    void clear()
-    {
-        lines.clear();
-        boxes.clear();
-    }
-
-    void set(Content&& newContent)
-    {
-        lines = WTFMove(newContent.lines);
-        boxes = WTFMove(newContent.boxes);
-    }
-
-    void append(Content&& newContent)
-    {
-        lines.appendVector(WTFMove(newContent.lines));
-        boxes.appendVector(WTFMove(newContent.boxes));
-    }
+    void clear();
+    void set(Content&& newContent);
+    void append(Content&& newContent);
+    void insert(Content&& newContent, size_t lineIndex, size_t boxIndex);
+    void remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes);
 
     Lines lines;
     Boxes boxes;

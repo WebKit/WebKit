@@ -34,11 +34,12 @@
 #include "UpdateInfo.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageInlines.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Region.h>
@@ -508,7 +509,7 @@ void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
     if (!m_transientZoom) {
-        FrameView& frameView = *m_webPage.mainFrameView();
+        auto& frameView = *m_webPage.mainFrameView();
         FloatRect unobscuredContentRect = frameView.unobscuredContentRectIncludingScrollbars();
 
         m_transientZoom = true;

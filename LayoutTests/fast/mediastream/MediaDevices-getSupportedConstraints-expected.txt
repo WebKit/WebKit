@@ -19,6 +19,7 @@ PASS supportedConstraints.sampleRate is false
 PASS supportedConstraints.sampleSize is false
 PASS supportedConstraints.volume is true
 PASS supportedConstraints.width is true
+PASS supportedConstraints.zoom is true
 
 PASS successfullyParsed is true
 

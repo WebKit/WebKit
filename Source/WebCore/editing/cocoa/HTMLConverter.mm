@@ -44,7 +44,6 @@
 #import "ElementTraversal.h"
 #import "File.h"
 #import "FontCascade.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLElement.h"
@@ -59,6 +58,7 @@
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
+#import "LocalFrame.h"
 #import "RenderImage.h"
 #import "RenderText.h"
 #import "StyleProperties.h"
@@ -947,9 +947,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         fontSize = defaultFontSize;
     if (fontSize < minimumFontSize)
         fontSize = minimumFontSize;
-    if (fabs(floor(2.0 * fontSize + 0.5) / 2.0 - fontSize) < 0.05)
+    if (std::abs(floor(2.0 * fontSize + 0.5) / 2.0 - fontSize) < 0.05)
         fontSize = floor(2.0 * fontSize + 0.5) / 2;
-    else if (fabs(floor(10.0 * fontSize + 0.5) / 10.0 - fontSize) < 0.005)
+    else if (std::abs(floor(10.0 * fontSize + 0.5) / 10.0 - fontSize) < 0.005)
         fontSize = floor(10.0 * fontSize + 0.5) / 10;
 
     if (fontSize <= 0.0)
@@ -1025,7 +1025,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             [attrs setObject:@0.0 forKey:NSKernAttributeName];
         else {
             double kernVal = letterSpacing.length() ? letterSpacing.toDouble() : 0.0;
-            if (fabs(kernVal - 0) < FLT_EPSILON)
+            if (std::abs(kernVal - 0) < FLT_EPSILON)
                 [attrs setObject:@0.0 forKey:NSKernAttributeName]; // auto and normal, the other possible values, are both "kerning enabled"
             else
                 [attrs setObject:@(kernVal) forKey:NSKernAttributeName];
@@ -1265,7 +1265,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     BOOL retval = NO;
     BOOL notFound = NO;
     RetainPtr<NSFileWrapper> fileWrapper;
-    Frame* frame = element.document().frame();
+    auto* frame = element.document().frame();
     DocumentLoader *dataSource = frame->loader().frameHasLoaded() ? frame->loader().documentLoader() : 0;
     BOOL ignoreOrientation = YES;
 

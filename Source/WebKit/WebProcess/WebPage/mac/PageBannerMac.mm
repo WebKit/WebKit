@@ -29,8 +29,9 @@
 #if PLATFORM(MAC)
 
 #import "WebPage.h"
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/LocalFrameView.h>
+#import <WebCore/Page.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -128,7 +129,7 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
     if (m_isHidden)
         return false;
 
-    FrameView* frameView = m_webPage->mainFrameView();
+    auto* frameView = m_webPage->mainFrameView();
     if (!frameView)
         return false;
 

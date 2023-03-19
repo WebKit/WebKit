@@ -59,11 +59,12 @@ BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, const Strin
         m_records.uncheckedAppend(Record::create(*this, WTFMove(request), index++));
 }
 
-BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
+BackgroundFetch::BackgroundFetch(SWServerRegistration& registration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
     : m_identifier(WTFMove(identifier))
     , m_options(WTFMove(options))
     , m_registrationKey(registration.key())
     , m_registrationIdentifier(registration.identifier())
+    , m_pausedFlag(pausedFlag)
     , m_store(WTFMove(store))
     , m_notificationCallback(WTFMove(notificationCallback))
     , m_origin { m_registrationKey.topOrigin(), SecurityOriginData::fromURL(m_registrationKey.scope()) }
@@ -93,6 +94,30 @@ void BackgroundFetch::match(const RetrieveRecordsOptions& options, MatchBackgrou
     callback(WTFMove(records));
 }
 
+void BackgroundFetch::pause()
+{
+    if (m_pausedFlag)
+        return;
+
+    m_pausedFlag = true;
+    for (auto& record : m_records)
+        record->pause();
+
+    doStore([](auto) { });
+}
+
+void BackgroundFetch::resume(const CreateLoaderCallback& createLoaderCallback)
+{
+    if (!m_pausedFlag)
+        return;
+
+    m_pausedFlag = false;
+    for (auto& record : m_records)
+        record->complete(createLoaderCallback);
+
+    doStore([](auto) { });
+}
+
 bool BackgroundFetch::abort()
 {
     if (m_abortFlag)
@@ -115,7 +140,7 @@ void BackgroundFetch::perform(const CreateLoaderCallback& createLoaderCallback)
         record->complete(createLoaderCallback);
 }
 
-void BackgroundFetch::storeResponse(size_t index, ResourceResponse&& response)
+void BackgroundFetch::storeResponse(size_t index, bool shouldClearResponseBody, ResourceResponse&& response)
 {
     UNUSED_PARAM(index);
     ASSERT(index < m_records.size());
@@ -123,10 +148,16 @@ void BackgroundFetch::storeResponse(size_t index, ResourceResponse&& response)
         updateBackgroundFetchStatus(BackgroundFetchResult::Failure, BackgroundFetchFailureReason::BadStatus);
         return;
     }
+    if (shouldClearResponseBody) {
+        ASSERT(m_currentDownloadSize >= m_records[index]->responseDataSize());
+        m_currentDownloadSize -= m_records[index]->responseDataSize();
+        m_records[index]->clearResponseDataSize();
+    }
+
     doStore([weakThis = WeakPtr { *this }](auto result) {
         if (weakThis)
             weakThis->handleStoreResult(result);
-    });
+    }, shouldClearResponseBody ? std::make_optional(index) : std::nullopt);
 }
 
 void BackgroundFetch::storeResponseBodyChunk(size_t index, const SharedBuffer& data)
@@ -194,6 +225,14 @@ void BackgroundFetch::updateBackgroundFetchStatus(BackgroundFetchResult result, 
     m_notificationCallback(*this);
 }
 
+void BackgroundFetch::setRecords(Vector<Ref<Record>>&& records)
+{
+    ASSERT(!m_currentDownloadSize);
+    m_records = WTFMove(records);
+    for (auto& record : m_records)
+        m_currentDownloadSize += record->responseDataSize();
+}
+
 void BackgroundFetch::unsetRecordsAvailableFlag()
 {
     if (!m_recordsAvailableFlag)
@@ -238,10 +277,18 @@ BackgroundFetchRecordInformation BackgroundFetch::Record::information() const
 void BackgroundFetch::Record::complete(const CreateLoaderCallback& createLoaderCallback)
 {
     ASSERT(!m_loader);
-    // FIXME: Handle Range headers
-    m_loader = createLoaderCallback(*this, m_request, m_fetch->m_origin);
+
+    m_loader = createLoaderCallback(*this, m_request, m_responseDataSize, m_fetch->m_origin);
     if (!m_loader)
         abort();
+}
+
+void BackgroundFetch::Record::pause()
+{
+    if (!m_loader)
+        return;
+    m_loader->abort();
+    m_loader = nullptr;
 }
 
 void BackgroundFetch::Record::abort()
@@ -271,14 +318,59 @@ void BackgroundFetch::Record::didSendData(uint64_t size)
         m_fetch->didSendData(size);
 }
 
+// https://wicg.github.io/background-fetch/#extract-content-range-values
+static ParsedContentRange extractContentRangeValues(const ResourceResponse& response)
+{
+    return ParsedContentRange(response.httpHeaderField(HTTPHeaderName::ContentRange));
+}
+
+// https://wicg.github.io/background-fetch/#validate-a-partial-response
+static bool validatePartialResponse(size_t rangeStart, const ResourceResponse& partialResponse, const ResourceResponse& previousResponse)
+{
+    auto parsedContentRange = extractContentRangeValues(partialResponse);
+    if (!parsedContentRange.isValid())
+        return false;
+
+    if (static_cast<size_t>(parsedContentRange.firstBytePosition()) != rangeStart)
+        return false;
+
+    auto previousETag = previousResponse.httpHeaderField(HTTPHeaderName::ETag);
+    if (!previousETag.isEmpty() && previousETag != partialResponse.httpHeaderField(HTTPHeaderName::ETag))
+        return false;
+
+    auto previousLastMotified = previousResponse.httpHeaderField(HTTPHeaderName::LastModified);
+    if (!previousLastMotified.isEmpty() && previousLastMotified != partialResponse.httpHeaderField(HTTPHeaderName::LastModified))
+        return false;
+
+    if (previousResponse.httpStatusCode() == 206) {
+        auto parsedPreviousContentRange = extractContentRangeValues(previousResponse);
+        if (!parsedPreviousContentRange.isValid())
+            return false;
+        if (parsedPreviousContentRange.instanceLength() != ParsedContentRange::unknownLength && parsedPreviousContentRange.instanceLength() != parsedContentRange.instanceLength())
+            return false;
+    }
+    return true;
+}
+
 void BackgroundFetch::Record::didReceiveResponse(ResourceResponse&& response)
 {
-    m_response = response;
+    bool shouldClearResponseBody = false;
+    if (response.httpStatusCode() == 206) {
+        if (!validatePartialResponse(m_responseDataSize, response, m_response)) {
+            didFinish(ResourceError { String { }, 0, response.url(), "Validation of partial response failed"_s, ResourceError::Type::AccessControl });
+            return;
+        }
+    } else if (m_responseDataSize)
+        shouldClearResponseBody = true;
+
+    if (!m_responseDataSize || response.httpStatusCode() != 206)
+        m_response = response;
+
     auto callbacks = std::exchange(m_responseCallbacks, { });
     for (auto& callback : callbacks)
         callback(ResourceResponse { m_response });
     if (m_fetch)
-        m_fetch->storeResponse(m_index, WTFMove(response));
+        m_fetch->storeResponse(m_index, shouldClearResponseBody, WTFMove(response));
 }
 
 void BackgroundFetch::Record::didReceiveResponseBodyChunk(const SharedBuffer& data)
@@ -369,7 +461,7 @@ void BackgroundFetch::Record::retrieveRecordResponseBody(BackgroundFetchStore& s
     });
 }
 
-void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&& callback)
+void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&& callback, std::optional<size_t> responseBodyIndexToClear)
 {
     WTF::Persistence::Encoder encoder;
     encoder << backgroundFetchCurrentVersion;
@@ -379,6 +471,8 @@ void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::Store
     encoder << m_options.downloadTotal;
     encoder << m_options.title;
     encoder << m_options.icons;
+
+    encoder << m_pausedFlag;
 
     encoder << (uint64_t)m_records.size();
     for (auto& record : m_records) {
@@ -392,7 +486,7 @@ void BackgroundFetch::doStore(CompletionHandler<void(BackgroundFetchStore::Store
         encoder << record->isCompleted();
     }
 
-    m_store->storeFetch(m_registrationKey, m_identifier, m_options.downloadTotal, m_uploadTotal, { encoder.buffer(), encoder.bufferSize() }, WTFMove(callback));
+    m_store->storeFetch(m_registrationKey, m_identifier, m_options.downloadTotal, m_uploadTotal, responseBodyIndexToClear, { encoder.buffer(), encoder.bufferSize() }, WTFMove(callback));
 }
 
 std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uint8_t> data, SWServer& server, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
@@ -441,9 +535,13 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(Span<const uin
     std::optional<Vector<ImageResource>> icons;
     decoder >> icons;
 
-    BackgroundFetchOptions options { WTFMove(*icons), WTFMove(*title), *downloadTotal };
+    std::optional<bool> pausedFlag;
+    decoder >> pausedFlag;
+    if (!pausedFlag)
+        return nullptr;
 
-    auto fetch = makeUnique<BackgroundFetch>(*registration, WTFMove(*identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback));
+    BackgroundFetchOptions options { WTFMove(*icons), WTFMove(*title), *downloadTotal };
+    auto fetch = makeUnique<BackgroundFetch>(*registration, WTFMove(*identifier), WTFMove(options), WTFMove(store), WTFMove(notificationCallback), *pausedFlag);
 
     std::optional<uint64_t> recordSize;
     decoder >> recordSize;

@@ -29,6 +29,7 @@
 #if HAVE(PASSKIT_DEFERRED_PAYMENTS)
 
 #import <WebCore/ApplePayDeferredPaymentRequest.h>
+#import <WebCore/PaymentSummaryItems.h>
 #import <wtf/RetainPtr.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>

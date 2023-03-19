@@ -102,7 +102,7 @@ class Comment;
 class ConstantPropertyMap;
 class DOMImplementation;
 class DOMSelection;
-class DOMWindow;
+class LocalDOMWindow;
 class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
@@ -130,9 +130,7 @@ class FloatRect;
 class FontFaceSet;
 class FontLoadRequest;
 class FormController;
-class Frame;
 class FrameSelection;
-class FrameView;
 class FullscreenManager;
 class GPUCanvasContext;
 class HTMLAllCollection;
@@ -165,6 +163,8 @@ class LayoutPoint;
 class LayoutRect;
 class LazyLoadImageObserver;
 class LiveNodeList;
+class LocalFrame;
+class LocalFrameView;
 class Locale;
 class Location;
 class MediaCanStartListener;
@@ -380,7 +380,7 @@ public:
     using EventTarget::WeakPtrImplType;
 
     inline static Ref<Document> create(const Settings&, const URL&);
-    static Ref<Document> createNonRenderedPlaceholder(Frame&, const URL&);
+    static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);
 
     virtual ~Document();
@@ -622,7 +622,7 @@ public:
     Vector<AtomString> formElementsState() const;
     void setStateForNewFormElements(const Vector<AtomString>&);
 
-    WEBCORE_EXPORT FrameView* view() const; // Can be null.
+    WEBCORE_EXPORT LocalFrameView* view() const; // Can be null.
     inline Page* page() const; // Defined in Page.h
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
@@ -715,7 +715,7 @@ public:
     
     WEBCORE_EXPORT DocumentLoader* loader() const;
 
-    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> openForBindings(DOMWindow& activeWindow, DOMWindow& firstDOMWindow, const String& url, const AtomString& name, const String& features);
+    WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstDOMWindow, const String& url, const AtomString& name, const String& features);
     WEBCORE_EXPORT ExceptionOr<Document&> openForBindings(Document* entryDocument, const String&, const String&);
 
     // FIXME: We should rename this at some point and give back the name 'open' to the HTML specified ones.
@@ -782,7 +782,7 @@ public:
     WEBCORE_EXPORT void setRTCNetworkManager(Ref<RTCNetworkManager>&&);
 #endif
 
-    bool canNavigate(Frame* targetFrame, const URL& destinationURL = URL());
+    bool canNavigate(LocalFrame* targetFrame, const URL& destinationURL = URL());
 
     bool usesStyleBasedEditability() const;
     void setHasElementUsingStyleBasedEditability();
@@ -871,7 +871,7 @@ public:
 
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Element*);
-    Element* cssTarget() const;
+    inline Element* cssTarget() const; // Defined in ElementInlines.h.
 
     WEBCORE_EXPORT void scheduleFullStyleRebuild();
     void scheduleStyleRecalc();
@@ -920,8 +920,8 @@ public:
     void createDOMWindow();
     void takeDOMWindowFrom(Document&);
 
-    DOMWindow* domWindow() const { return m_domWindow.get(); }
-    // In DOM Level 2, the Document's DOMWindow is called the defaultView.
+    LocalDOMWindow* domWindow() const { return m_domWindow.get(); }
+    // In DOM Level 2, the Document's LocalDOMWindow is called the defaultView.
     WEBCORE_EXPORT WindowProxy* windowProxy() const;
 
     inline bool hasBrowsingContext() const; // Defined in DocumentInlines.h.
@@ -932,7 +932,7 @@ public:
     OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
     void setParserContentPolicy(OptionSet<ParserContentPolicy> policy) { m_parserContentPolicy = policy; }
 
-    // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
+    // Helper functions for forwarding LocalDOMWindow event related tasks to the LocalDOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value, DOMWrapperWorld&);
     WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
@@ -1236,7 +1236,7 @@ public:
 
     void removeAllEventListeners() final;
 
-    WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
+    const SVGDocumentExtensions* svgExtensions() { return m_svgExtensions.get(); }
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
 
     void initSecurityContext();
@@ -1578,7 +1578,7 @@ public:
 
     ConstantPropertyMap& constantProperties() const { return *m_constantPropertyMap; }
 
-    void orientationChanged(int orientation);
+    void orientationChanged(IntDegrees orientation);
     OrientationNotifier& orientationNotifier() { return m_orientationNotifier; }
 
     WEBCORE_EXPORT const AtomString& bgColor() const;
@@ -1777,7 +1777,7 @@ public:
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
+    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
@@ -1876,8 +1876,8 @@ private:
     void invalidateDOMCookieCache();
     void didLoadResourceSynchronously(const URL&) final;
 
-    bool canNavigateInternal(Frame& targetFrame);
-    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
+    bool canNavigateInternal(LocalFrame& targetFrame);
+    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL);
 
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;
@@ -1905,12 +1905,13 @@ private:
     void updateSleepDisablerIfNeeded();
 
     RefPtr<ResizeObserver> ensureResizeObserverForContainIntrinsicSize();
+    void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;
 
-    RefPtr<DOMWindow> m_domWindow;
+    RefPtr<LocalDOMWindow> m_domWindow;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
     OptionSet<ParserContentPolicy> m_parserContentPolicy;
 
@@ -1958,7 +1959,7 @@ private:
     mutable String m_uniqueIdentifier;
 
     HashSet<NodeIterator*> m_nodeIterators;
-    HashSet<Range*> m_ranges;
+    WeakHashSet<Range> m_ranges;
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;

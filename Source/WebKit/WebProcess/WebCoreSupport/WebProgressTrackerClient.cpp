@@ -28,7 +28,7 @@
 
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/ProgressTracker.h>
 
@@ -40,7 +40,7 @@ WebProgressTrackerClient::WebProgressTrackerClient(WebPage& webPage)
 {
 }
 
-void WebProgressTrackerClient::progressStarted(Frame& originatingProgressFrame)
+void WebProgressTrackerClient::progressStarted(LocalFrame& originatingProgressFrame)
 {
     if (!originatingProgressFrame.isMainFrame())
         return;
@@ -49,7 +49,7 @@ void WebProgressTrackerClient::progressStarted(Frame& originatingProgressFrame)
     m_webPage.send(Messages::WebPageProxy::DidStartProgress());
 }
 
-void WebProgressTrackerClient::progressEstimateChanged(Frame& originatingProgressFrame)
+void WebProgressTrackerClient::progressEstimateChanged(LocalFrame& originatingProgressFrame)
 {
     if (!originatingProgressFrame.isMainFrame())
         return;
@@ -58,7 +58,7 @@ void WebProgressTrackerClient::progressEstimateChanged(Frame& originatingProgres
     m_webPage.send(Messages::WebPageProxy::DidChangeProgress(progress));
 }
 
-void WebProgressTrackerClient::progressFinished(Frame& originatingProgressFrame)
+void WebProgressTrackerClient::progressFinished(LocalFrame& originatingProgressFrame)
 {
     if (!originatingProgressFrame.isMainFrame())
         return;

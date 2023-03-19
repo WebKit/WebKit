@@ -29,15 +29,11 @@
 
 namespace WGSL {
 
-class ShaderModule;
+class CallGraph;
 
 namespace Metal {
 
-struct RenderMetalFunctionEntryPoints {
-    String mangledVertexEntryPointName;
-    String mangledFragmentEntryPointName;
-};
-RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder&, ShaderModule&);
+void emitMetalFunctions(StringBuilder&, CallGraph&);
 
 } // namespace Metal
 } // namespace WGSL

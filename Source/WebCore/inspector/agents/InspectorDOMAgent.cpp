@@ -54,7 +54,6 @@
 #include "DOMEditor.h"
 #include "DOMException.h"
 #include "DOMPatchSupport.h"
-#include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "Editing.h"
@@ -62,9 +61,7 @@
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -85,9 +82,12 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSDOMBindingSecurity.h"
-#include "JSDOMWindowCustom.h"
 #include "JSEventListener.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "JSNode.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -351,7 +351,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
 Vector<Document*> InspectorDOMAgent::documents()
 {
     Vector<Document*> result;
-    for (AbstractFrame* frame = m_document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = m_document->frame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2147,7 +2147,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
         .release();
     if (is<Node>(eventTarget))
         value->setNodeId(pushNodePathToFrontend(&downcast<Node>(eventTarget)));
-    else if (is<DOMWindow>(eventTarget))
+    else if (is<LocalDOMWindow>(eventTarget))
         value->setOnWindow(true);
     if (!scriptID.isNull()) {
         auto location = Protocol::Debugger::Location::create()
@@ -2808,7 +2808,7 @@ void InspectorDOMAgent::didChangeCustomElementState(Element& element)
     m_frontendDispatcher->customElementStateChanged(elementId, customElementState(element));
 }
 
-void InspectorDOMAgent::frameDocumentUpdated(Frame& frame)
+void InspectorDOMAgent::frameDocumentUpdated(LocalFrame& frame)
 {
     Document* document = frame.document();
     if (!document)

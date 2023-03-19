@@ -174,7 +174,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
         Vector<Frame> stackRightNow;
         StackVisitor::visit(
             callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
-                if (visitor->isInlinedFrame())
+                if (visitor->isInlinedDFGFrame())
                     return IterationStatus::Continue;
                 if (visitor->isWasmFrame()) {
                     // FIXME: Make shadow chicken work with Wasm.
@@ -295,7 +295,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
     Vector<Frame> toPush;
     StackVisitor::visit(
         callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
-            if (visitor->isInlinedFrame()) {
+            if (visitor->isInlinedDFGFrame()) {
                 // FIXME: Handle inlining.
                 // https://bugs.webkit.org/show_bug.cgi?id=155686
                 return IterationStatus::Continue;

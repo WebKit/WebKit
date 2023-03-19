@@ -289,12 +289,12 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
             // Update cross-fade value from local.
             m_crossfadeX = x;
 
-            if (m_crossfadeIncr > 0 && fabs(m_crossfadeX - 1) < m_crossfadeIncr) {
+            if (m_crossfadeIncr > 0 && std::abs(m_crossfadeX - 1) < m_crossfadeIncr) {
                 // We've fully made the crossfade transition from 1 -> 2.
                 m_crossfadeSelection = CrossfadeSelection2;
                 m_crossfadeX = 1;
                 m_crossfadeIncr = 0;
-            } else if (m_crossfadeIncr < 0 && fabs(m_crossfadeX) < -m_crossfadeIncr) {
+            } else if (m_crossfadeIncr < 0 && std::abs(m_crossfadeX) < -m_crossfadeIncr) {
                 // We've fully made the crossfade transition from 2 -> 1.
                 m_crossfadeSelection = CrossfadeSelection1;
                 m_crossfadeX = 0;

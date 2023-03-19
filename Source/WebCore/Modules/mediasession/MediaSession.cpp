@@ -28,13 +28,13 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "DOMWindow.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaPositionState.h"
 #include "JSMediaSessionAction.h"
 #include "JSMediaSessionPlaybackState.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "MediaMetadata.h"
 #include "MediaSessionCoordinator.h"

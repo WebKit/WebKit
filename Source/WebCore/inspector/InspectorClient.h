@@ -36,8 +36,8 @@ class FrontendChannel;
 namespace WebCore {
 
 class FloatRect;
-class Frame;
 class InspectorController;
+class LocalFrame;
 class Page;
 
 class InspectorClient {
@@ -49,7 +49,7 @@ public:
 
     virtual Inspector::FrontendChannel* openLocalFrontend(InspectorController*) = 0;
     virtual void bringFrontendToFront() = 0;
-    virtual void didResizeMainFrame(Frame*) { }
+    virtual void didResizeMainFrame(LocalFrame*) { }
 
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;

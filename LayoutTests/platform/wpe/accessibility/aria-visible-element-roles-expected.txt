@@ -94,6 +94,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <code hidden="" aria-hidden="false" id="code"></code>
     AXRole: AXSection
+    computedRoleString: code
 
 <dt hidden="" aria-hidden="false" id="dt"></dt>
     AXRole: AXDescriptionTerm

@@ -29,19 +29,19 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
@@ -205,7 +205,7 @@ void ImageDocumentParser::finish()
     document().finishedParsing();
 }
 
-ImageDocument::ImageDocument(Frame& frame, const URL& url)
+ImageDocument::ImageDocument(LocalFrame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::Image })
     , m_imageElement(nullptr)
     , m_imageSizeIsKnown(false)
@@ -260,7 +260,7 @@ void ImageDocument::createDocumentStructure()
         processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
-        if (RefPtr<DOMWindow> window = this->domWindow())
+        if (RefPtr window = this->domWindow())
             window->addEventListener(eventNames().resizeEvent, listener.copyRef(), false);
         imageElement->addEventListener(eventNames().clickEvent, WTFMove(listener), false);
 #endif
@@ -303,7 +303,7 @@ float ImageDocument::scale()
     if (!m_imageElement)
         return 1;
 
-    RefPtr<FrameView> view = this->view();
+    RefPtr view = this->view();
     if (!view)
         return 1;
 
@@ -352,7 +352,7 @@ bool ImageDocument::imageFitsInWindow()
     if (!m_imageElement)
         return true;
 
-    RefPtr<FrameView> view = this->view();
+    RefPtr view = this->view();
     if (!view)
         return true;
 

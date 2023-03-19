@@ -54,7 +54,7 @@ public:
     Type* abstractFloatType() const { return m_abstractFloat; }
     Type* f32Type() const { return m_f32; }
 
-    Type* structType(const AST::Identifier& name);
+    Type* structType(AST::Structure&);
     Type* arrayType(Type*, std::optional<unsigned>);
     Type* vectorType(Type*, uint8_t);
     Type* matrixType(Type*, uint8_t columns, uint8_t rows);

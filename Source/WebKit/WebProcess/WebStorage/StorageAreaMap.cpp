@@ -34,10 +34,12 @@
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/EventNames.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalDOMWindow.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Storage.h>
@@ -79,7 +81,7 @@ String StorageAreaMap::item(const String& key)
     return ensureMap().getItem(key);
 }
 
-void StorageAreaMap::setItem(Frame& sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException)
+void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException)
 {
     auto& map = ensureMap();
     ASSERT(!map.isShared());
@@ -108,7 +110,7 @@ void StorageAreaMap::setItem(Frame& sourceFrame, StorageAreaImpl* sourceArea, co
     connection.sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, value, sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
-void StorageAreaMap::removeItem(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea, const String& key)
+void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, const String& key)
 {
     auto& map = ensureMap();
     ASSERT(!map.isShared());
@@ -133,7 +135,7 @@ void StorageAreaMap::removeItem(WebCore::Frame& sourceFrame, StorageAreaImpl* so
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
-void StorageAreaMap::clear(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea)
+void StorageAreaMap::clear(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea)
 {
     ensureMap().clear();
     m_pendingValueChanges.clear();

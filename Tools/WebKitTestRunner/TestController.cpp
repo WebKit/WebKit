@@ -1454,6 +1454,10 @@ WKRetainPtr<WKStringRef> TestController::lastUpdatedBackgroundFetchIdentifier() 
     return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
 }
 
+WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef)
+{
+    return { };
+}
 #endif
 
 WKURLRef TestController::createTestURL(const char* pathOrURL)

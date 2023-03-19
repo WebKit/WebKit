@@ -25,7 +25,7 @@
  
 #pragma once
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include <wtf/URL.h>
 #include "ScriptCachedFrameData.h"
 #include <wtf/RefPtr.h>
@@ -37,7 +37,7 @@ class CachedFrame;
 class CachedFramePlatformData;
 class Document;
 class DocumentLoader;
-class FrameView;
+class LocalFrameView;
 class Node;
 enum class HasInsecureContent : bool;
 enum class UsedLegacyTLS : bool;
@@ -48,19 +48,19 @@ public:
     void restore();
 
     Document* document() const { return m_document.get(); }
-    FrameView* view() const { return m_view.get(); }
+    LocalFrameView* view() const { return m_view.get(); }
     const URL& url() const { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
-    CachedFrameBase(Frame&);
+    CachedFrameBase(LocalFrame&);
     ~CachedFrameBase();
 
     void pruneDetachedChildFrames();
 
     RefPtr<Document> m_document;
     RefPtr<DocumentLoader> m_documentLoader;
-    RefPtr<FrameView> m_view;
+    RefPtr<LocalFrameView> m_view;
     URL m_url;
     std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
@@ -72,7 +72,7 @@ protected:
 class CachedFrame : private CachedFrameBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit CachedFrame(Frame&);
+    explicit CachedFrame(LocalFrame&);
 
     void open();
     void clear();

@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteDOMWindow);
 
 RemoteDOMWindow::RemoteDOMWindow(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
-    : AbstractDOMWindow(WTFMove(identifier))
+    : DOMWindow(WTFMove(identifier))
     , m_frame(frame)
 {
 }
@@ -66,7 +66,7 @@ bool RemoteDOMWindow::closed() const
     return !m_frame;
 }
 
-void RemoteDOMWindow::focus(DOMWindow& incumbentWindow)
+void RemoteDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
     UNUSED_PARAM(incumbentWindow);
     // FIXME: Implemented this.
@@ -113,7 +113,7 @@ WindowProxy* RemoteDOMWindow::parent() const
     return &m_frame->windowProxy();
 }
 
-void RemoteDOMWindow::postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)
+void RemoteDOMWindow::postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)
 {
     UNUSED_PARAM(incumbentWindow);
     UNUSED_PARAM(message);

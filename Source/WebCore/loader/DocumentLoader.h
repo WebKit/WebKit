@@ -81,9 +81,9 @@ class ContentFilter;
 class SharedBuffer;
 struct CustomHeaderFields;
 class FormState;
-class Frame;
 class FrameLoader;
 class IconLoader;
+class LocalFrame;
 class Page;
 class PreviewConverter;
 class ResourceLoader;
@@ -182,7 +182,7 @@ public:
 
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
-    void attachToFrame(Frame&);
+    void attachToFrame(LocalFrame&);
 
     WEBCORE_EXPORT virtual void detachFromFrame();
 

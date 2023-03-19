@@ -39,9 +39,9 @@
 namespace WebCore {
 
 class FloatRect;
-class Frame;
 class IntRect;
 class ImageBuffer;
+class LocalFrame;
 class Node;
 
 enum class SnapshotFlags : uint8_t {
@@ -61,11 +61,11 @@ struct SnapshotOptions {
     DestinationColorSpace colorSpace;
 };
 
-WEBCORE_EXPORT RefPtr<ImageBuffer> snapshotFrameRect(Frame&, const IntRect&, SnapshotOptions&&);
-RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame&, const IntRect&, const Vector<FloatRect>& clipRects, SnapshotOptions&&);
-RefPtr<ImageBuffer> snapshotNode(Frame&, Node&, SnapshotOptions&&);
-WEBCORE_EXPORT RefPtr<ImageBuffer> snapshotSelection(Frame&, SnapshotOptions&&);
+WEBCORE_EXPORT RefPtr<ImageBuffer> snapshotFrameRect(LocalFrame&, const IntRect&, SnapshotOptions&&);
+RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame&, const IntRect&, const Vector<FloatRect>& clipRects, SnapshotOptions&&);
+RefPtr<ImageBuffer> snapshotNode(LocalFrame&, Node&, SnapshotOptions&&);
+WEBCORE_EXPORT RefPtr<ImageBuffer> snapshotSelection(LocalFrame&, SnapshotOptions&&);
 
-Color estimatedBackgroundColorForRange(const SimpleRange&, const Frame&);
+Color estimatedBackgroundColorForRange(const SimpleRange&, const LocalFrame&);
 
 } // namespace WebCore

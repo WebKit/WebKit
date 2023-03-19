@@ -95,11 +95,9 @@ static bool isDescriptiveText(AccessibilityTextSource textSource)
 
 String AccessibilityObject::descriptionAttributeValue() const
 {
-    // Static text objects should not have a description. Its content is communicated in its AXValue.
-    // One exception is the media control labels that have a value and a description. Those are set programatically.
-    if (roleValue() == AccessibilityRole::StaticText && !isMediaControlLabel())
+    if (!shouldComputeDescriptionAttributeValue())
         return { };
-    
+
     Vector<AccessibilityText> textOrder;
     accessibilityText(textOrder);
     
@@ -146,12 +144,8 @@ String AccessibilityObject::descriptionAttributeValue() const
 
 String AccessibilityObject::titleAttributeValue() const
 {
-    // Static text objects should not have a title. Its content is communicated in its AXValue.
-    if (roleValue() == AccessibilityRole::StaticText)
-        return String();
-
     // Meter elements should communicate their content via AXValueDescription.
-    if (isMeter())
+    if (!shouldComputeTitleAttributeValue() || isMeter())
         return { };
 
     // Summary element should use its text node as AXTitle.
@@ -356,12 +350,14 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForTextMarker
 #else
     auto range = textMarkerRange.simpleRange();
 #endif
-    if (!range)
-        return nil;
+    return range ? attributedStringForRange(*range, spellCheck) : nil;
+}
 
+RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(const SimpleRange& range, SpellCheck spellCheck) const
+{
     auto result = adoptNS([[NSMutableAttributedString alloc] init]);
 
-    auto contents = contentForRange(*range, spellCheck);
+    auto contents = contentForRange(range, spellCheck);
     for (id content in contents.get()) {
         auto item = retainPtr(content);
         if ([item isKindOfClass:[WebAccessibilityObjectWrapper class]]) {

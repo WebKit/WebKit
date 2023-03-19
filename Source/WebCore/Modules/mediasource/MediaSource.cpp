@@ -178,8 +178,9 @@ MediaTime MediaSource::currentTime() const
     return m_mediaElement ? m_mediaElement->currentMediaTime() : MediaTime::zeroTime();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
+std::unique_ptr<PlatformTimeRanges> MediaSource::buffered()
 {
+    updateBufferedIfNeeded();
     return makeUnique<PlatformTimeRanges>(*m_buffered);
 }
 
@@ -507,7 +508,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
     MediaTime highestEndTime;
     for (auto& sourceBuffer : *m_sourceBuffers) {
         highestPresentationTimestamp = std::max(highestPresentationTimestamp, sourceBuffer->highestPresentationTimestamp());
-        highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().ranges().maximumBufferedTime());
+        highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().maximumBufferedTime());
     }
     if (highestPresentationTimestamp.isValid() && newDuration < highestPresentationTimestamp)
         return Exception { InvalidStateError };
@@ -519,10 +520,10 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 
     // 5. Update duration to new duration.
     m_duration = newDuration;
-    ALWAYS_LOG(LOGIDENTIFIER, duration);
+    ALWAYS_LOG(LOGIDENTIFIER, newDuration);
 
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    m_private->durationChanged(duration);
+    m_private->durationChanged(newDuration);
 
     return { };
 }
@@ -585,7 +586,7 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         MediaTime maxEndTime;
         for (auto& sourceBuffer : *m_sourceBuffers) {
             if (auto length = sourceBuffer->bufferedInternal().length())
-                maxEndTime = std::max(sourceBuffer->bufferedInternal().ranges().end(length - 1), maxEndTime);
+                maxEndTime = std::max(sourceBuffer->bufferedInternal().end(length - 1), maxEndTime);
         }
         setDurationInternal(maxEndTime);
 
@@ -991,11 +992,6 @@ void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
     regenerateActiveSourceBuffers();
 }
 
-void MediaSource::sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool)
-{
-    updateBufferedIfNeeded();
-}
-
 bool MediaSource::attachToElement(HTMLMediaElement& element)
 {
     if (m_mediaElement)
@@ -1055,6 +1051,11 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 
     if (oldState == ReadyState::Open && newState == ReadyState::Ended) {
         scheduleEvent(eventNames().sourceendedEvent);
+        // We need to force the recalculation of the buffered range as its value depends
+        // on the readyState.
+        // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
+        // It will be recalculated when read again.
+        m_buffered = nullptr;
         monitorSourceBuffers();
         return;
     }
@@ -1068,7 +1069,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
     return WTF::map(*m_activeSourceBuffers, [](auto& sourceBuffer) {
-        return sourceBuffer->bufferedInternal().ranges();
+        return sourceBuffer->bufferedInternal();
     });
 }
 
@@ -1191,9 +1192,6 @@ void MediaSource::updateBufferedIfNeeded()
         // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
         m_buffered->intersectWith(sourceRanges);
     }
-
-    if (m_private)
-        m_private->bufferedChanged(*m_buffered);
 }
 
 #if !RELEASE_LOG_DISABLED

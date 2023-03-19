@@ -32,7 +32,6 @@
 #include "Element.h"
 #include "FTPDirectoryDocument.h"
 #include "FragmentScriptingPermission.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLDocument.h"
@@ -40,6 +39,7 @@
 #include "HTMLTitleElement.h"
 #include "Image.h"
 #include "ImageDocument.h"
+#include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "MediaDocument.h"
 #include "MediaPlayer.h"
@@ -146,7 +146,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
+Ref<Document> DOMImplementation::createDocument(const String& contentType, LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,

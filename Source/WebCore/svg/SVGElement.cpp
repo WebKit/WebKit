@@ -288,10 +288,10 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-    ContainerNode* node = parentOrShadowHostNode();
+    auto* node = parentNode();
     while (node) {
-        if (is<SVGSVGElement>(*node))
-            return downcast<SVGSVGElement>(node);
+        if (auto* svg = dynamicDowncast<SVGSVGElement>(*node))
+            return svg;
 
         node = node->parentOrShadowHostNode();
     }
@@ -303,7 +303,7 @@ SVGElement* SVGElement::viewportElement() const
 {
     // This function needs shadow tree support - as RenderSVGContainer uses this function
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
-    ContainerNode* node = parentOrShadowHostNode();
+    auto* node = parentNode();
     while (node) {
         if (is<SVGSVGElement>(*node) || is<SVGImageElement>(*node) || node->hasTagName(SVGNames::symbolTag))
             return downcast<SVGElement>(node);

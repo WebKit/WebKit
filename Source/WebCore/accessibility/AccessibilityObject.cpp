@@ -50,7 +50,6 @@
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "HTMLBodyElement.h"
@@ -64,6 +63,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
@@ -364,7 +364,7 @@ bool AccessibilityObject::hasMisspelling() const
     if (!node())
         return false;
     
-    Frame* frame = node()->document().frame();
+    auto* frame = node()->document().frame();
     if (!frame)
         return false;
     
@@ -399,7 +399,7 @@ std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRan
     if (!node)
         return std::nullopt;
 
-    Frame* frame = node->document().frame();
+    auto* frame = node->document().frame();
     if (!frame)
         return std::nullopt;
 
@@ -563,7 +563,7 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
     // Find the next descendant of this attachment object so search can continue through frames.
     if (object->isAttachment()) {
         Widget* widget = object->widgetForAttachmentView();
-        auto* frameView = dynamicDowncast<FrameView>(widget);
+        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return;
         auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
@@ -691,7 +691,7 @@ static std::optional<SimpleRange> rangeClosestToRange(const SimpleRange& referen
 
 std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
 {
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return std::nullopt;
     
@@ -980,7 +980,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     if (operation.textRanges.isEmpty())
         return result;
 
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return result;
 
@@ -1138,8 +1138,8 @@ bool AccessibilityObject::press()
     Element* actionElem = actionElement();
     if (!actionElem)
         return false;
-    if (Frame* f = actionElem->document().frame())
-        f->loader().resetMultipleFormSubmissionProtection();
+    if (auto* frame = actionElem->document().frame())
+        frame->loader().resetMultipleFormSubmissionProtection();
     
     // Hit test at this location to determine if there is a sub-node element that should act
     // as the target of the action.
@@ -1190,19 +1190,19 @@ bool AccessibilityObject::dispatchTouchEvent()
     return false;
 }
 
-Frame* AccessibilityObject::frame() const
+LocalFrame* AccessibilityObject::frame() const
 {
     Node* node = this->node();
     return node ? node->document().frame() : nullptr;
 }
 
-Frame* AccessibilityObject::mainFrame() const
+LocalFrame* AccessibilityObject::mainFrame() const
 {
-    Document* document = topDocument();
+    auto* document = topDocument();
     if (!document)
         return nullptr;
     
-    Frame* frame = document->frame();
+    auto* frame = document->frame();
     if (!frame)
         return nullptr;
     
@@ -1852,7 +1852,7 @@ RemoteAXObjectRef AccessibilityObject::remoteParentObject() const
 
 Document* AccessibilityObject::document() const
 {
-    FrameView* frameView = documentFrameView();
+    auto* frameView = documentFrameView();
     if (!frameView)
         return nullptr;
 
@@ -1871,7 +1871,7 @@ Page* AccessibilityObject::page() const
     return document->page();
 }
 
-FrameView* AccessibilityObject::documentFrameView() const 
+LocalFrameView* AccessibilityObject::documentFrameView() const 
 { 
     const AccessibilityObject* object = this;
     while (object && !object->isAccessibilityRenderObject()) 
@@ -2377,6 +2377,7 @@ static void initializeRoleMap()
         { "blockquote"_s, AccessibilityRole::Blockquote },
         { "button"_s, AccessibilityRole::Button },
         { "caption"_s, AccessibilityRole::Caption },
+        { "code"_s, AccessibilityRole::Code },
         { "checkbox"_s, AccessibilityRole::CheckBox },
         { "complementary"_s, AccessibilityRole::LandmarkComplementary },
         { "contentinfo"_s, AccessibilityRole::LandmarkContentInfo },
@@ -3362,7 +3363,7 @@ void AccessibilityObject::scrollToMakeVisible(const ScrollRectToVisibleOptions& 
         parentObject()->scrollToMakeVisible();
 
     if (auto* renderer = this->renderer())
-        FrameView::scrollRectToVisible(boundingBoxRect(), *renderer, false, options);
+        LocalFrameView::scrollRectToVisible(boundingBoxRect(), *renderer, false, options);
 }
 
 void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocus) const
@@ -3800,13 +3801,13 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
 #if PLATFORM(COCOA)
 bool AccessibilityObject::preventKeyboardDOMEventDispatch() const
 {
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
     return frame && frame->settings().preventKeyboardDOMEventDispatch();
 }
 
 void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 {
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
     if (!frame)
         return;
     frame->settings().setPreventKeyboardDOMEventDispatch(on);
@@ -3853,6 +3854,9 @@ AtomString AccessibilityObject::tagName() const
 
 bool AccessibilityObject::isStyleFormatGroup() const
 {
+    if (isCode())
+        return true;
+
     Node* node = this->node();
     if (!node)
         return false;

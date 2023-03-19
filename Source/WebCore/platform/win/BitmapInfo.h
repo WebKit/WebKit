@@ -50,8 +50,8 @@ struct BitmapInfo : public BITMAPINFO {
 
     bool is16bit() const { return bmiHeader.biBitCount == 16; }
     bool is32bit() const { return bmiHeader.biBitCount == 32; }
-    unsigned width() const { return abs(bmiHeader.biWidth); }
-    unsigned height() const { return abs(bmiHeader.biHeight); }
+    unsigned width() const { return std::abs(bmiHeader.biWidth); }
+    unsigned height() const { return std::abs(bmiHeader.biHeight); }
     IntSize size() const { return IntSize(width(), height()); }
     unsigned bytesPerLine() const { return (width() * bmiHeader.biBitCount + 7) / 8; }
     unsigned paddedBytesPerLine() const { return (bytesPerLine() + 3) & ~0x3; }

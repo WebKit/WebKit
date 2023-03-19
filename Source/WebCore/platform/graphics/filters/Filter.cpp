@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,9 @@
 
 namespace WebCore {
 
-Filter::Filter(Filter::Type filterType, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion)
+Filter::Filter(Filter::Type filterType, const FloatSize& filterScale, const FloatRect& filterRegion)
     : FilterFunction(filterType)
     , m_filterScale(filterScale)
-    , m_clipOperation(clipOperation)
     , m_filterRegion(filterRegion)
 {
 }
@@ -67,7 +66,7 @@ FloatRect Filter::maxEffectRect(const FloatRect& primitiveSubregion) const
 FloatRect Filter::clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const
 {
     auto maxEffectRect = this->maxEffectRect(primitiveSubregion);
-    return m_clipOperation == ClipOperation::Intersect ? intersection(imageRect, maxEffectRect) : unionRect(imageRect, maxEffectRect);
+    return intersection(imageRect, maxEffectRect);
 }
 
 bool Filter::clampFilterRegionIfNeeded()

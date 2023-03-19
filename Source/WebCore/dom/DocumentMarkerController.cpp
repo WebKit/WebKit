@@ -29,7 +29,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderBlockFlow.h"
@@ -144,7 +144,7 @@ void DocumentMarkerController::invalidateRectsForMarkersInNode(Node& node)
 
 static void updateMainFrameLayoutIfNeeded(Document& document)
 {
-    Frame* frame = document.frame();
+    auto* frame = document.frame();
     if (!frame)
         return;
 
@@ -152,7 +152,7 @@ static void updateMainFrameLayoutIfNeeded(Document& document)
     if (!localFrame)
         return;
 
-    FrameView* mainFrameView = localFrame->view();
+    auto* mainFrameView = localFrame->view();
     if (!mainFrameView)
         return;
 
@@ -187,10 +187,10 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
         return result;
     ASSERT(!m_markers.isEmpty());
 
-    RefPtr<Frame> frame = m_document.frame();
+    RefPtr frame = m_document.frame();
     if (!frame)
         return result;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return result;
 

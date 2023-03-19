@@ -29,7 +29,6 @@
 #include "AllowedFonts.h"
 #include "Attr.h"
 #include "DOMTokenList.h"
-#include "DOMWindow.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -45,6 +44,7 @@
 #include "HTMLVideoElement.h"
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
+#include "LocalDOMWindow.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
 #include "PlatformMouseEvent.h"
@@ -837,7 +837,7 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
 bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType, const EventListener& eventListener)
 {
     auto eventTargetIsRoot = [](const EventTarget& eventTarget) {
-        if (is<DOMWindow>(eventTarget))
+        if (is<LocalDOMWindow>(eventTarget))
             return true;
 
         if (is<Node>(eventTarget)) {
@@ -873,8 +873,8 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
 
         // For SmoothScroll.js
         // Matches Blink intervention in https://chromium.googlesource.com/chromium/src/+/b6b13c9cfe64d52a4168d9d8d1ad9bb8f0b46a2a%5E%21/
-        if (is<DOMWindow>(eventTarget)) {
-            auto* document = downcast<DOMWindow>(eventTarget).document();
+        if (is<LocalDOMWindow>(eventTarget)) {
+            auto* document = downcast<LocalDOMWindow>(eventTarget).document();
             if (!document || !document->quirks().needsQuirks())
                 return false;
 
@@ -1172,8 +1172,8 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             auto proxy = proxyOrException.releaseReturnValue();
 
             auto* abstractFrame = proxy->frame();
-            if (abstractFrame && is<Frame>(*abstractFrame)) {
-                auto& frame = downcast<Frame>(*abstractFrame);
+            if (abstractFrame && is<LocalFrame>(*abstractFrame)) {
+                auto& frame = downcast<LocalFrame>(*abstractFrame);
                 auto world = ScriptController::createWorld("kinjaComQuirkWorld"_s, ScriptController::WorldType::User);
                 frame.addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
                 return Quirks::StorageAccessResult::ShouldCancelEvent;
@@ -1208,8 +1208,8 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
                         return;
                     auto proxy = proxyOrException.releaseReturnValue();
                     auto* abstractFrame = proxy->frame();
-                    if (is<Frame>(abstractFrame)) {
-                        auto* frame = downcast<Frame>(abstractFrame);
+                    if (is<LocalFrame>(abstractFrame)) {
+                        auto* frame = downcast<LocalFrame>(abstractFrame);
                         auto world = ScriptController::createWorld("bbcRadioPlayerWorld"_s, ScriptController::WorldType::User);
                         frame->addUserScriptAwaitingNotification(world.get(), BBCUserScript);
                         return;

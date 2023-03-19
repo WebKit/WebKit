@@ -386,6 +386,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setOverrideCachePolicy(CachePolicy policy);
     undefined setOverrideResourceLoadPriority(ResourceLoadPriority priority);
     undefined setStrictRawResourceValidationPolicyDisabled(boolean disabled);
+    ResourceLoadPriority? getResourcePriority(DOMString url);
 
     boolean isFetchObjectContextStopped(FetchObject object);
 
@@ -1049,7 +1050,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
     boolean hasSameEventLoopAs(WindowProxy windowProxy);
 
-    DOMString windowLocationHost(DOMWindow window);
+    DOMString windowLocationHost(LocalDOMWindow window);
 
     undefined markContextAsInsecure();
 

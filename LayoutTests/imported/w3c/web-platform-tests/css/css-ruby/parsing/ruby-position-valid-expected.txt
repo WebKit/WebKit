@@ -1,0 +1,5 @@
+
+FAIL e.style['ruby-position'] = "over" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['ruby-position'] = "under" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['ruby-position'] = "inter-character" should set the property value assert_not_equals: property should be set got disallowed value ""
+

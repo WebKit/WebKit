@@ -1,0 +1,12 @@
+
+PASS fetch() with URL and request_init whose priority is "high" must be fetched with high load priority
+PASS fetch() with URL and request_init whose priority is "auto" must have no effect on resource load priority
+PASS fetch() with URL and request_init whose priority is missing must have no effect on resource load priority
+PASS fetch() with URL and request_init whose priority is "low" must be fetched with low resource load priority
+PASS fetch() with Request whose priority is "low" and request_init whose priority is "high" must have no effect on resource load priority
+PASS fetch() with Request whose priority is "high" and request_init whose priority is "low" must be fetched with low resource load priority
+PASS fetch() with Request whose priority is "high" and no request_init must be fetched with high resource load priority
+PASS fetch() with Request whose priority is "auto" and no request_init must have no effect on resource load priority
+PASS fetch() with Request whose priority is missing and no request_init must have no effect on resource load priority
+PASS fetch() with Request whose priority is "low" and no request_init must be fetched with low resource load priority
+

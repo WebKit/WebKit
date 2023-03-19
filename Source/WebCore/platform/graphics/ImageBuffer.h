@@ -29,11 +29,16 @@
 
 #include "ImageBufferAllocator.h"
 #include "ImageBufferBackend.h"
+#include "ProcessIdentity.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
@@ -63,6 +68,7 @@ struct ImageBufferCreationContext {
     enum class UseCGDisplayListImageCache : bool { No, Yes };
     UseCGDisplayListImageCache useCGDisplayListImageCache;
 #endif
+    WebCore::ProcessIdentity resourceOwner;
 
     ImageBufferCreationContext(GraphicsClient* client = nullptr
 #if HAVE(IOSURFACE)
@@ -72,6 +78,7 @@ struct ImageBufferCreationContext {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
 #endif
+        , WebCore::ProcessIdentity resourceOwner = { }
     )
         : graphicsClient(client)
 #if HAVE(IOSURFACE)
@@ -81,6 +88,7 @@ struct ImageBufferCreationContext {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         , useCGDisplayListImageCache(useCGDisplayListImageCache)
 #endif
+        , resourceOwner(resourceOwner)
     { }
 };
 
@@ -212,6 +220,8 @@ public:
     WEBCORE_EXPORT void setVolatilityState(VolatilityState);
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
+    WEBCORE_EXPORT virtual String debugDescription() const;
+
 protected:
     WEBCORE_EXPORT ImageBuffer(const ImageBufferBackend::Parameters&, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
@@ -248,5 +258,7 @@ inline OptionSet<ImageBufferOptions> bufferOptionsForRendingMode(RenderingMode r
         return { ImageBufferOptions::Accelerated };
     return { };
 }
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageBuffer&);
 
 } // namespace WebCore

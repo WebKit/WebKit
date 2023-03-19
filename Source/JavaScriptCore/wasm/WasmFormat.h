@@ -127,6 +127,47 @@ inline bool isFuncref(Type type)
     return type.kind == TypeKind::Funcref;
 }
 
+inline bool isEqref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Eqref);
+}
+
+inline bool isAnyref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Anyref);
+}
+
+inline bool isNullref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullref);
+}
+
+inline bool isInternalref(Type type)
+{
+    if (!Options::useWebAssemblyGC() || !isRefType(type) || !typeIndexIsType(type.index))
+        return false;
+    if (typeIndexIsType(type.index)) {
+        switch (static_cast<TypeKind>(type.index)) {
+        case TypeKind::I31ref:
+        case TypeKind::Arrayref:
+        case TypeKind::Structref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
+            return true;
+        default:
+            return false;
+        }
+    }
+    return !TypeInformation::get(type.index).expand().is<FunctionSignature>();
+}
+
 inline bool isI31ref(Type type)
 {
     if (!Options::useWebAssemblyGC())
@@ -160,6 +201,18 @@ inline Type externrefType()
     if (Options::useWebAssemblyTypedFunctionReferences())
         return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
     return Types::Externref;
+}
+
+inline Type eqrefType()
+{
+    ASSERT(Options::useWebAssemblyGC());
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Eqref) };
+}
+
+inline Type anyrefType()
+{
+    ASSERT(Options::useWebAssemblyGC());
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Anyref) };
 }
 
 inline bool isRefWithTypeIndex(Type type)
@@ -220,21 +273,30 @@ inline bool isSubtype(Type sub, Type parent)
         return false;
 
     if (isRefWithTypeIndex(sub)) {
-        if (TypeInformation::get(sub.index).expand().is<ArrayType>() && isArrayref(parent))
-            return true;
-
-        if (TypeInformation::get(sub.index).expand().is<StructType>() && isStructref(parent))
-            return true;
-
-        if (TypeInformation::get(sub.index).expand().is<FunctionSignature>() && isFuncref(parent))
-            return true;
-
         if (isRefWithTypeIndex(parent))
             return isSubtypeIndex(sub.index, parent.index);
+
+        if ((isAnyref(parent) || isEqref(parent)))
+            return !TypeInformation::get(sub.index).expand().is<FunctionSignature>();
+
+        if (isArrayref(parent))
+            return TypeInformation::get(sub.index).expand().is<ArrayType>();
+
+        if (isStructref(parent))
+            return TypeInformation::get(sub.index).expand().is<StructType>();
+
+        if (isFuncref(parent))
+            return TypeInformation::get(sub.index).expand().is<FunctionSignature>();
     }
 
-    if (sub.isRef() && parent.isRefNull() && sub.index == parent.index)
+    if ((isAnyref(parent) || isEqref(parent)) && (isI31ref(sub) || isStructref(sub) || isArrayref(sub)))
         return true;
+
+    if (isNullref(sub))
+        return isInternalref(parent);
+
+    if (sub.isRef() && parent.isRefNull())
+        return sub.index == parent.index;
 
     return sub == parent;
 }
@@ -257,6 +319,9 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     case TypeKind::I31ref:
     case TypeKind::Arrayref:
     case TypeKind::Structref:
+    case TypeKind::Eqref:
+    case TypeKind::Anyref:
+    case TypeKind::Nullref:
         return Options::useWebAssemblyGC();
     default:
         break;

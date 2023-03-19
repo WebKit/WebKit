@@ -41,6 +41,7 @@
 #include "LengthPoint.h"
 #include "LengthSize.h"
 #include "LineClampValue.h"
+#include "ListStyleType.h"
 #include "NinePieceImage.h"
 #include "OffsetRotation.h"
 #include "Pagination.h"
@@ -495,8 +496,7 @@ public:
     EmptyCell emptyCells() const { return static_cast<EmptyCell>(m_inheritedFlags.emptyCells); }
     CaptionSide captionSide() const { return static_cast<CaptionSide>(m_inheritedFlags.captionSide); }
 
-    const AtomString& listStyleStringValue() const { return m_rareInheritedData->listStyleStringValue; }
-    ListStyleType listStyleType() const { return static_cast<ListStyleType>(m_inheritedFlags.listStyleType); }
+    ListStyleType listStyleType() const { return m_rareInheritedData->listStyleType; }
     StyleImage* listStyleImage() const;
     ListStylePosition listStylePosition() const { return static_cast<ListStylePosition>(m_inheritedFlags.listStylePosition); }
     bool isFixedTableLayout() const { return tableLayout() == TableLayoutType::Fixed && (logicalWidth().isSpecified() || logicalWidth().isFitContent() || logicalWidth().isMinContent()); }
@@ -1183,8 +1183,7 @@ public:
 
     void setEffectiveSkipsContent(bool effectiveSkipsContent) { SET_VAR(m_rareInheritedData, effectiveSkipsContent, effectiveSkipsContent); }
 
-    void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
-    void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
+    void setListStyleType(ListStyleType value) { SET_VAR(m_rareInheritedData, listStyleType, value); }
     void setListStyleImage(RefPtr<StyleImage>&&);
     void setListStylePosition(ListStylePosition v) { m_inheritedFlags.listStylePosition = static_cast<unsigned>(v); }
     void resetMargin() { SET_NESTED_VAR(m_nonInheritedData, surroundData, margin, LengthBox(LengthType::Fixed)); }
@@ -1715,8 +1714,7 @@ public:
     static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, LengthType::Percent), Length(50.0f, LengthType::Percent)); }
     static EmptyCell initialEmptyCells() { return EmptyCell::Show; }
     static ListStylePosition initialListStylePosition() { return ListStylePosition::Outside; }
-    static const AtomString& initialListStyleStringValue() { return nullAtom(); }
-    static ListStyleType initialListStyleType() { return ListStyleType::Disc; }
+    static ListStyleType initialListStyleType() { return { ListStyleType::Type::Disc, nullAtom() }; }
     static OptionSet<TextTransform> initialTextTransform() { return OptionSet<TextTransform> { }; }
     static Visibility initialVisibility() { return Visibility::Visible; }
     static WhiteSpace initialWhiteSpace() { return WhiteSpace::Normal; }
@@ -2113,7 +2111,6 @@ private:
 
         unsigned emptyCells : 1; // EmptyCell
         unsigned captionSide : 2; // CaptionSide
-        unsigned listStyleType : 7; // ListStyleType
         unsigned listStylePosition : 1; // ListStylePosition
         unsigned visibility : 2; // Visibility
         unsigned textAlign : 4; // TextAlignMode
@@ -2275,7 +2272,6 @@ inline bool RenderStyle::InheritedFlags::operator==(const InheritedFlags& other)
 {
     return emptyCells == other.emptyCells
         && captionSide == other.captionSide
-        && listStyleType == other.listStyleType
         && listStylePosition == other.listStylePosition
         && visibility == other.visibility
         && textAlign == other.textAlign

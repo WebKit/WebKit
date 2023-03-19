@@ -62,6 +62,7 @@
 #include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderRubyRun.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTextControlMultiLine.h"
@@ -380,7 +381,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     auto hasNonSyntheticBaseline = [&] {
         if (is<RenderListMarker>(replacedOrInlineBlock))
             return !downcast<RenderListMarker>(replacedOrInlineBlock).isImage();
-        if (is<RenderReplaced>(replacedOrInlineBlock)
+
+        if ((is<RenderReplaced>(replacedOrInlineBlock) && replacedOrInlineBlock.style().display() == DisplayType::Inline)
             || is<RenderListBox>(replacedOrInlineBlock)
             || is<RenderSlider>(replacedOrInlineBlock)
             || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
@@ -391,10 +393,13 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 #if ENABLE(ATTACHMENT_ELEMENT)
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
-            || is<RenderButton>(replacedOrInlineBlock)) {
+            || is<RenderButton>(replacedOrInlineBlock)
+            || is<RenderRubyRun>(replacedOrInlineBlock)) {
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
         }
+        if (!is<RenderBlockFlow>(replacedOrInlineBlock))
+            return false;
         auto& blockFlow = downcast<RenderBlockFlow>(replacedOrInlineBlock);
         auto hasAppareance = blockFlow.style().hasEffectiveAppearance() && !blockFlow.theme().isControlContainer(blockFlow.style().effectiveAppearance());
         return hasAppareance || !blockFlow.childrenInline() || blockFlow.hasLines() || blockFlow.hasLineIfEmpty();
@@ -410,6 +415,16 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 
     if (auto* shapeOutsideInfo = replacedOrInlineBlock.shapeOutsideInfo())
         layoutBox.setShape(&shapeOutsideInfo->computedShape());
+
+    if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(replacedOrInlineBlock)) {
+        auto adjustments = makeUnique<Layout::RubyAdjustments>();
+
+        std::tie(adjustments->annotationAbove, adjustments->annotationBelow) = rubyRun->annotationsAboveAndBelow();
+        std::tie(adjustments->overhang.start, adjustments->overhang.end) = rubyRun->startAndEndOverhang(false);
+        std::tie(adjustments->firstLineOverhang.start, adjustments->firstLineOverhang.end) = rubyRun->startAndEndOverhang(true);
+
+        layoutBox.setRubyAdjustments(WTFMove(adjustments));
+    }
 }
 
 void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)
@@ -545,7 +560,7 @@ std::optional<LayoutRect> LineLayout::layout()
     // FIXME: Partial layout should not rely on inline display content, but instead InlineFormattingState
     // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
     // layout in constructContent.
-    auto isPartialLayout = isDamaged() && m_lineDamage->contentPosition();
+    auto isPartialLayout = isDamaged() && m_lineDamage->start();
     if (!isPartialLayout) {
         m_lineDamage = { };
         clearInlineContent();
@@ -559,7 +574,7 @@ std::optional<LayoutRect> LineLayout::layout()
     auto inlineContentConstraints = [&]() -> Layout::ConstraintsForInlineContent {
         if (!isPartialLayout || !m_inlineContent)
             return *m_inlineContentConstraints;
-        auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
+        auto damagedLineIndex = m_lineDamage->start()->lineIndex;
         if (!damagedLineIndex)
             return *m_inlineContentConstraints;
         if (damagedLineIndex >= m_inlineContent->displayContent().lines.size()) {
@@ -571,8 +586,8 @@ std::optional<LayoutRect> LineLayout::layout()
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     };
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
-    auto newDisplayContent = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
-    auto repaintRect = LayoutRect { constructContent(WTFMove(newDisplayContent)) };
+    auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
+    auto repaintRect = LayoutRect { constructContent(WTFMove(layoutResult)) };
 
     auto adjustments = adjustContent();
 
@@ -583,65 +598,13 @@ std::optional<LayoutRect> LineLayout::layout()
     return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
 }
 
-FloatRect LineLayout::constructContent(InlineDisplay::Content&& newDisplayContent)
+FloatRect LineLayout::constructContent(Layout::InlineLayoutResult&& layoutResult)
 {
-    auto damagedRect = FloatRect { };
-    auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lastLineIndex) {
-        ASSERT(firstLineIndex <= lastLineIndex);
-        ASSERT(m_inlineContent && m_inlineContent->displayContent().lines.size() > lastLineIndex);
-        auto& lines = m_inlineContent->displayContent().lines;
-        for (auto index = firstLineIndex; index <= lastLineIndex; ++index)
-            damagedRect.unite(lines[index].inkOverflow());
-    };
+    auto damagedRect = InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(layoutResult), ensureInlineContent(), m_lineDamage.get());
 
-    auto destroyDamagedContent = [&] {
-        if (!m_inlineContent || !m_lineDamage)
-            return;
-        m_inlineContent->releaseCaches();
-        if (!m_lineDamage->contentPosition())
-            return;
-        auto& displayContentFromPreviousLayout = m_inlineContent->displayContent();
-        auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
-        if (damagedLineIndex >= displayContentFromPreviousLayout.lines.size()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        if (!damagedLineIndex) {
-            adjustDamagedRectWithLineRange(0, displayContentFromPreviousLayout.lines.size() - 1);
-            displayContentFromPreviousLayout.clear();
-            return;
-        }
-        auto firstDamagedLineIndex = damagedLineIndex;
-        auto lastDamagedLineIndex = displayContentFromPreviousLayout.lines.size() - 1;
-        ASSERT(firstDamagedLineIndex <= lastDamagedLineIndex);
-        auto& damagedLine = displayContentFromPreviousLayout.lines[damagedLineIndex];
-        auto numberOfDamagedBoxes = [&] {
-            size_t boxCount = 0;
-            for (auto index = firstDamagedLineIndex; index <= lastDamagedLineIndex; ++index)
-                boxCount += displayContentFromPreviousLayout.lines[index].boxCount();
-            ASSERT(boxCount);
-            return boxCount;
-        };
-
-        adjustDamagedRectWithLineRange(firstDamagedLineIndex, lastDamagedLineIndex);
-        displayContentFromPreviousLayout.boxes.remove(damagedLine.firstBoxIndex(), numberOfDamagedBoxes());
-        displayContentFromPreviousLayout.lines.remove(firstDamagedLineIndex, lastDamagedLineIndex - firstDamagedLineIndex + 1);
-    };
-    destroyDamagedContent();
-
-    auto constructFreshlyLaidOutContent = [&] {
-        if (newDisplayContent.lines.isEmpty())
-            return;
-
-        InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(newDisplayContent), ensureInlineContent());
-        if (!m_inlineContent->displayContent().lines.isEmpty())
-            adjustDamagedRectWithLineRange(!m_lineDamage || !m_lineDamage->contentPosition() ? 0 : m_lineDamage->contentPosition()->lineIndex, m_inlineContent->displayContent().lines.size() - 1);
-
-        m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
-        m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
-        m_inlineContent->shrinkToFit();
-    };
-    constructFreshlyLaidOutContent();
+    m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
+    m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
+    m_inlineContent->shrinkToFit();
 
     m_inlineFormattingState.resetNestedListMarkerOffsets();
     m_inlineFormattingState.shrinkToFit();
@@ -1242,10 +1205,10 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
         return;
     }
 
-    auto& childLayoutBox = m_boxTree.insert(parent, child);
+    auto& childLayoutBox = m_boxTree.insert(parent, child, child.previousSibling());
     if (is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent().boxes };
-        invalidation.textInserted();
+        invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox));
         return;
     }
 
@@ -1294,7 +1257,7 @@ void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent().boxes };
     auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
     if (delta >= 0) {
-        invalidation.textInserted(&inlineTextBox, offset);
+        invalidation.textInserted(inlineTextBox, offset);
         return;
     }
     invalidation.textWillBeRemoved(inlineTextBox, offset);

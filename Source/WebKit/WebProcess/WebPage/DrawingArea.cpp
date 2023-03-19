@@ -27,11 +27,12 @@
 #include "DrawingArea.h"
 
 #include "DrawingAreaMessages.h"
+#include "Logging.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/DisplayRefreshMonitor.h>
-#include <WebCore/FrameView.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/TiledBacking.h>

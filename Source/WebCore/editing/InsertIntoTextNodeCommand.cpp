@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "EditorClient.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "RenderText.h"
 #include "Settings.h"
 #include "Text.h"

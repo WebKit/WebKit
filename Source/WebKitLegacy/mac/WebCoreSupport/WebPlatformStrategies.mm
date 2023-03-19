@@ -32,7 +32,7 @@
 #import <WebCore/BlobRegistryImpl.h>
 #import <WebCore/CDMFactory.h>
 #import <WebCore/Color.h>
-#import <WebCore/Frame.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/MediaStrategy.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PasteboardItemInfo.h>

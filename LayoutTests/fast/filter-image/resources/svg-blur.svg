@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200">
 <defs>
 <filter id="blur">
-<feGaussianBlur stdDeviation="3" edgeMode="duplicate" color-interpolation-filters="sRGB"/>
+<feGaussianBlur stdDeviation="3" edgeMode="none" color-interpolation-filters="sRGB"/>
 </filter>
 </defs>
 <g filter="url(#blur)">

@@ -50,7 +50,6 @@
 #include "ElementRareData.h"
 #include "EmptyClients.h"
 #include "File.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
@@ -64,6 +63,7 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
+#include "LocalFrame.h"
 #include "MarkupAccumulator.h"
 #include "MutableStyleProperties.h"
 #include "NodeList.h"
@@ -198,8 +198,8 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     if (!localMainFrame)
         return page; 
 
-    Frame& frame = *localMainFrame;
-    frame.setView(FrameView::create(frame, IntSize { 800, 600 }));
+    LocalFrame& frame = *localMainFrame;
+    frame.setView(LocalFrameView::create(frame, IntSize { 800, 600 }));
     frame.init();
 
     FrameLoader& loader = frame.loader();

@@ -629,6 +629,16 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
     return m_impl->acceleratedCompositingRootLayer();
 }
 
+CALayer *PageClientImpl::headerBannerLayer() const
+{
+    return m_impl->headerBannerLayer();
+}
+
+CALayer *PageClientImpl::footerBannerLayer() const
+{
+    return m_impl->footerBannerLayer();
+}
+
 RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&)
 {
     return m_impl->takeViewSnapshot();

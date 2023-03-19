@@ -524,10 +524,16 @@ void ScrollingTree::clearLatchedNode()
     m_latchingController.clearLatchedNode();
 }
 
+float ScrollingTree::mainFrameTopContentInset() const
+{
+    Locker locker { m_treeStateLock };
+    return m_rootNode ? m_rootNode->topContentInset() : 0;
+}
+
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
 {
     Locker locker { m_treeStateLock };
-    return m_rootNode->currentScrollPosition();
+    return m_rootNode ? m_rootNode->currentScrollPosition() : FloatPoint { };
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
@@ -635,10 +641,13 @@ void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool 
 {
     ASSERT(nodeID);
     Locker locker { m_treeStateLock };
-    if (isScrolling)
+    if (isScrolling) {
         m_treeState.nodesWithActiveUserScrolls.add(nodeID);
-    else
+        scrollingTreeNodeWillStartScroll(nodeID);
+    } else {
         m_treeState.nodesWithActiveUserScrolls.remove(nodeID);
+        scrollingTreeNodeDidEndScroll(nodeID);
+    }
 }
 
 void ScrollingTree::clearNodesWithUserScrollInProgress()

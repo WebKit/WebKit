@@ -291,6 +291,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::Footnote:
         return Atspi::Role::Footnote;
     case AccessibilityRole::ApplicationTextGroup:
+    case AccessibilityRole::Code:
     case AccessibilityRole::Div:
     case AccessibilityRole::Pre:
     case AccessibilityRole::SVGText:

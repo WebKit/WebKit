@@ -78,7 +78,7 @@ public:
 
     virtual Type type() const = 0;
 
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     WEBCORE_EXPORT GLContext* sharingGLContext();
     void clearSharingGLContext();
 #endif
@@ -128,7 +128,7 @@ protected:
     EGLDisplay m_eglDisplay;
 #endif
 
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     std::unique_ptr<GLContext> m_sharingGLContext;
 #endif
 

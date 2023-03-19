@@ -37,7 +37,6 @@
 #include "ExceptionOr.h"
 #include "MediaStreamRequest.h"
 #include "RealtimeMediaSource.h"
-#include "RealtimeMediaSourceFactory.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -80,6 +79,7 @@ public:
     void createMediaStream(Ref<const Logger>&&, NewMediaStreamHandler&&, MediaDeviceHashSalts&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT void getMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&&);
+    WEBCORE_EXPORT RealtimeMediaSourceCapabilities getCapabilities(const CaptureDevice&);
 
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
@@ -118,7 +118,7 @@ private:
     DisplayCaptureFactory& defaultDisplayCaptureFactory();
 
     struct DeviceInfo {
-        unsigned fitnessScore;
+        double fitnessScore;
         CaptureDevice device;
     };
 

@@ -30,8 +30,8 @@
 #include "WebInspector.h"
 #include "WebPage.h"
 #include <WebCore/Animation.h>
-#include <WebCore/Frame.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
@@ -101,7 +101,7 @@ void WebInspectorClient::bringFrontendToFront()
         m_page->inspector()->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(Frame*)
+void WebInspectorClient::didResizeMainFrame(LocalFrame*)
 {
     if (m_page->inspector())
         m_page->inspector()->updateDockingAvailability();

@@ -46,7 +46,6 @@
 #include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
@@ -57,6 +56,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSExecState.h"
 #include "JSInspectorFrontendHost.h"
+#include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "Node.h"
 #include "Page.h"
@@ -814,7 +814,7 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
     if (!frame)
         return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
 
-    Ref<Frame> protectedFrame(*frame);
+    Ref protectedFrame(*frame);
 
     JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
     if (!frameGlobalObject)

@@ -428,8 +428,8 @@ void EventTarget::invalidateEventListenerRegions()
     auto* document = [&]() -> Document* {
         if (is<Document>(*this))
             return &downcast<Document>(*this);
-        if (is<DOMWindow>(*this))
-            return downcast<DOMWindow>(*this).document();
+        if (is<LocalDOMWindow>(*this))
+            return downcast<LocalDOMWindow>(*this).document();
         return nullptr;
     }();
 

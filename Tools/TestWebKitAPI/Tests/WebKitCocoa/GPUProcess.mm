@@ -219,6 +219,9 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
 
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -235,6 +238,9 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
 
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -251,6 +257,9 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
 
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessaryMediaFeatureDetection)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -355,10 +364,10 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
         do {
             TestWebKitAPI::Util::runFor(0.1_s);
             currentTime = [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].currentTime"] doubleValue];
-            if (fabs(currentTime - initialTime) > 0.01)
+            if (std::abs(currentTime - initialTime) > 0.01)
                 break;
         } while (timeout++ < 100);
-        return fabs(currentTime - initialTime) > 0.01;
+        return std::abs(currentTime - initialTime) > 0.01;
     };
     EXPECT_TRUE(ensureIsPlaying());
 
@@ -589,6 +598,9 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
 
 static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPageSynchronously, Function<void(WKWebViewConfiguration *)>&& updateConfiguration = [](WKWebViewConfiguration *) { })
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -758,6 +770,9 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
 
 TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioNonRenderingAudioContext)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));

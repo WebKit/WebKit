@@ -155,25 +155,25 @@ PASS MediaDeviceInfo interface: attribute kind
 PASS MediaDeviceInfo interface: attribute label
 PASS MediaDeviceInfo interface: attribute groupId
 PASS MediaDeviceInfo interface: operation toJSON()
-FAIL InputDeviceInfo interface: existence and properties of interface object assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo interface object length assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo interface object name assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo interface: existence and properties of interface prototype object assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo interface: operation getCapabilities() assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL InputDeviceInfo must be primary interface of audioinput assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL Stringification of audioinput assert_class_string: class string of audioinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
-FAIL InputDeviceInfo interface: audioinput must inherit property "getCapabilities()" with the proper type assert_inherits: property "getCapabilities" not found in prototype chain
+PASS InputDeviceInfo interface: existence and properties of interface object
+PASS InputDeviceInfo interface object length
+PASS InputDeviceInfo interface object name
+PASS InputDeviceInfo interface: existence and properties of interface prototype object
+PASS InputDeviceInfo interface: existence and properties of interface prototype object's "constructor" property
+PASS InputDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property
+PASS InputDeviceInfo interface: operation getCapabilities()
+PASS InputDeviceInfo must be primary interface of audioinput
+PASS Stringification of audioinput
+PASS InputDeviceInfo interface: audioinput must inherit property "getCapabilities()" with the proper type
 PASS MediaDeviceInfo interface: audioinput must inherit property "deviceId" with the proper type
 PASS MediaDeviceInfo interface: audioinput must inherit property "kind" with the proper type
 PASS MediaDeviceInfo interface: audioinput must inherit property "label" with the proper type
 PASS MediaDeviceInfo interface: audioinput must inherit property "groupId" with the proper type
 PASS MediaDeviceInfo interface: audioinput must inherit property "toJSON()" with the proper type
 PASS MediaDeviceInfo interface: default toJSON operation on audioinput
-FAIL InputDeviceInfo must be primary interface of videoinput assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
-FAIL Stringification of videoinput assert_class_string: class string of videoinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
-FAIL InputDeviceInfo interface: videoinput must inherit property "getCapabilities()" with the proper type assert_inherits: property "getCapabilities" not found in prototype chain
+PASS InputDeviceInfo must be primary interface of videoinput
+PASS Stringification of videoinput
+PASS InputDeviceInfo interface: videoinput must inherit property "getCapabilities()" with the proper type
 PASS MediaDeviceInfo interface: videoinput must inherit property "deviceId" with the proper type
 PASS MediaDeviceInfo interface: videoinput must inherit property "kind" with the proper type
 PASS MediaDeviceInfo interface: videoinput must inherit property "label" with the proper type

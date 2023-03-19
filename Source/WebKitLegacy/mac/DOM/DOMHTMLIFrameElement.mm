@@ -28,12 +28,12 @@
 #import "DOMAbstractViewInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMNodeInternal.h"
-#import <WebCore/DOMWindow.h>
-#import <WebCore/Document.h>
 #import "ExceptionHandlers.h"
+#import <WebCore/Document.h>
 #import <WebCore/HTMLIFrameElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/JSExecState.h>
+#import <WebCore/LocalDOMWindow.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>

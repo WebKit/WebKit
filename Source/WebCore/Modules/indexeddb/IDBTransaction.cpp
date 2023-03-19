@@ -28,7 +28,6 @@
 
 #include "DOMException.h"
 #include "DOMStringList.h"
-#include "DOMWindow.h"
 #include "Event.h"
 #include "EventDispatcher.h"
 #include "EventLoop.h"
@@ -47,6 +46,7 @@
 #include "IDBResultData.h"
 #include "IDBValue.h"
 #include "JSDOMWindowBase.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"

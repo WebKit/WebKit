@@ -35,10 +35,10 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageOverlay.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PathUtilities.h>
@@ -52,7 +52,7 @@ const int cornerRadius = 3;
 const int totalHorizontalMargin = 1;
 const int totalVerticalMargin = 1;
 
-static OptionSet<TextIndicatorOption> findTextIndicatorOptions(const Frame& frame)
+static OptionSet<TextIndicatorOption> findTextIndicatorOptions(const LocalFrame& frame)
 {
     OptionSet<TextIndicatorOption> options { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, TextIndicatorOption::DoNotClipToVisibleRect };
     if (auto selectedRange = frame.selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
@@ -90,7 +90,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     context.drawImage(*indicatorImage, overlay.bounds());
 }
 
-bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
+bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
     if (m_findIndicatorOverlay) {
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
@@ -142,7 +142,7 @@ void FindController::resetMatchIndex()
 
 static void setSelectionChangeUpdatesEnabledInAllFrames(WebPage& page, bool enabled)
 {
-    for (AbstractFrame* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
+    for (auto* coreFrame = page.mainFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(coreFrame);
         if (!localFrame)
             continue;

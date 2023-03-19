@@ -249,11 +249,11 @@ private:
     void postAsyncNotification(NSString *notificationName, PermissionsSet&);
     void postAsyncNotification(NSString *notificationName, MatchPatternSet&);
 
-    void removePermissions(PermissionsMap&, PermissionsSet&, NSString *notificationName);
-    void removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, NSString *notificationName);
+    void removePermissions(PermissionsMap&, PermissionsSet&, WallTime& nextExpirationDate, NSString *notificationName);
+    void removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, WallTime& nextExpirationDate, NSString *notificationName);
 
-    PermissionsMap& removeExpired(PermissionsMap&, NSString *notificationName = nil);
-    PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, NSString *notificationName = nil);
+    PermissionsMap& removeExpired(PermissionsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
+    PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
 
     WKWebViewConfiguration *webViewConfiguration();
 
@@ -323,8 +323,14 @@ private:
     PermissionsMap m_grantedPermissions;
     PermissionsMap m_deniedPermissions;
 
+    WallTime m_nextGrantedPermissionsExpirationDate { WallTime::nan() };
+    WallTime m_nextDeniedPermissionsExpirationDate { WallTime::nan() };
+
     PermissionMatchPatternsMap m_grantedPermissionMatchPatterns;
     PermissionMatchPatternsMap m_deniedPermissionMatchPatterns;
+
+    WallTime m_nextGrantedPermissionMatchPatternsExpirationDate { WallTime::nan() };
+    WallTime m_nextDeniedPermissionMatchPatternsExpirationDate { WallTime::nan() };
 
     ListHashSet<URL> m_cachedPermissionURLs;
     HashMap<URL, PermissionState> m_cachedPermissionStates;

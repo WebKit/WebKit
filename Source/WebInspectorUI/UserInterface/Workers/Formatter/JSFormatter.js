@@ -36,7 +36,8 @@ JSFormatter = class JSFormatter
         let tree = (function() {
             try {
                 return esprima.parse(sourceText, {attachComment: true, range: true, tokens: true, sourceType});
-            } catch {
+            } catch(error) {
+                console.error(`Failed to parse source text of type "${sourceType}".`, error);
                 return null;
             }
         })();
@@ -161,7 +162,7 @@ JSFormatter = class JSFormatter
 
     _before(node)
     {
-        if (!node.parent)
+        if (!node.parent || !node.range)
             return;
 
         // Handle the tokens before this node, so in the context of our parent node.
@@ -177,6 +178,9 @@ JSFormatter = class JSFormatter
 
     _after(node)
     {
+        if (!node.range)
+            return;
+
         // Handle any other tokens inside of this node before exiting.
         while (this._tokenIndex < this._tokensLength && this._tokens[this._tokenIndex].range[0] < node.range[1]) {
             let token = this._tokens[this._tokenIndex++];
@@ -225,7 +229,7 @@ JSFormatter = class JSFormatter
         }
 
         // Most identifiers just pass through, but a few are special.
-        if (nodeType === "Identifier") {
+        if (nodeType === "Identifier" || nodeType === "PrivateIdentifier") {
             builder.appendToken(tokenValue, tokenOffset);
             if (tokenValue === "async" && node.parent.type === "Property" && node.parent.value.async && token.range[1] !== node.range[1])
                 builder.appendSpace();
@@ -307,7 +311,7 @@ JSFormatter = class JSFormatter
             return;
         }
 
-        if (nodeType === "BlockStatement") {
+        if (nodeType === "BlockStatement" || node.type === "StaticBlock") {
             if (tokenValue === "{") {
                 // Class methods we put the opening brace on its own line.
                 if (node.parent && node.parent.parent && node.parent.parent.type === "MethodDefinition" && node.body.length) {
@@ -330,7 +334,7 @@ JSFormatter = class JSFormatter
                 builder.appendToken(tokenValue, tokenOffset);
                 return;
             }
-            console.warn("Unexpected BlockStatement token", token);
+            console.warn("Unexpected BlockStatement or StaticBlock token", token);
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }
@@ -444,7 +448,7 @@ JSFormatter = class JSFormatter
             }
             if (tokenType === "Punctuator") {
                 if (tokenValue === "*") {
-                    builder.removeLastWhitespace();
+                    builder.tryRemoveLastWhitespace();
                     builder.appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
@@ -707,17 +711,23 @@ JSFormatter = class JSFormatter
         }
 
         if (nodeType === "Property") {
-            console.assert(tokenValue === ":" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async" || tokenValue === "*" || tokenValue === "[" || tokenValue === "]" || tokenValue === "(" || tokenValue === ")", token);
+            const tokenValuesRequiringTrailingWhitespace = [":", "static", "get", "set", "async", "="];
+            console.assert([...tokenValuesRequiringTrailingWhitespace, "*", "[", "]", "(", ")", "#"].includes(tokenValue), token);
+            if (tokenValue === "=")
+                builder.appendSpace();
+
             builder.appendToken(tokenValue, tokenOffset);
-            if (tokenValue === ":" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async")
+
+            if (tokenValuesRequiringTrailingWhitespace.includes(tokenValue))
                 builder.appendSpace();
             return;
         }
 
         if (nodeType === "MethodDefinition") {
-            console.assert(tokenValue === "static" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async" || tokenValue === "*" || tokenValue === "[" || tokenValue === "]" || tokenValue === "(" || tokenValue === ")", token);
+            const tokenValuesRequiringTrailingWhitespace = ["static", "get", "set", "async"];
+            console.assert([...tokenValuesRequiringTrailingWhitespace, "*", "[", "]", "(", ")", "#"].includes(tokenValue), token);
             builder.appendToken(tokenValue, tokenOffset);
-            if (tokenValue === "static" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async")
+            if (tokenValuesRequiringTrailingWhitespace.includes(tokenValue))
                 builder.appendSpace();
             return;
         }
@@ -822,7 +832,7 @@ JSFormatter = class JSFormatter
         }
 
         if (nodeType === "ImportDeclaration" || nodeType === "ExportNamedDeclaration") {
-            if (tokenValue === "}" || (tokenType === "Identifier" && tokenValue === "from"))
+            if (tokenValue === "}" || (tokenType === "Identifier" && (tokenValue === "from" || tokenValue === "assert")))
                 builder.appendSpace();
             builder.appendToken(tokenValue, tokenOffset);
             if (tokenValue !== "}")
@@ -831,7 +841,7 @@ JSFormatter = class JSFormatter
         }
 
         if (nodeType === "ExportSpecifier" || nodeType === "ImportSpecifier") {
-            if (tokenType === "Identifier" && tokenValue === "as")
+            if (tokenType === "Identifier" && (tokenValue === "as" || tokenValue === "assert"))
                 builder.appendSpace();
             builder.appendToken(tokenValue, tokenOffset);
             builder.appendSpace();
@@ -839,8 +849,10 @@ JSFormatter = class JSFormatter
         }
 
         if (nodeType === "ExportAllDeclaration" || nodeType === "ExportDefaultDeclaration" || nodeType === "ImportDefaultSpecifier" || nodeType === "ImportNamespaceSpecifier") {
+            if (tokenValue === "}" || (tokenType === "Identifier" && tokenValue === "assert"))
+                builder.appendSpace();
             builder.appendToken(tokenValue, tokenOffset);
-            if (tokenValue !== "(" && tokenValue !== ")")
+            if (tokenValue !== "(" && tokenValue !== ")" && tokenValue !== "}")
                 builder.appendSpace();
             return;
         }
@@ -848,14 +860,16 @@ JSFormatter = class JSFormatter
         // Include these here so we get only get warnings about unhandled nodes.
         if (nodeType === "ExpressionStatement"
             || nodeType === "SpreadElement"
+            || nodeType === "ImportAttribute"
+            || nodeType === "ImportExpression"
             || nodeType === "Super"
-            || nodeType === "Import"
             || nodeType === "MetaProperty"
             || nodeType === "RestElement"
             || nodeType === "TemplateElement"
             || nodeType === "TemplateLiteral"
             || nodeType === "DebuggerStatement"
-            || nodeType === "AssignmentPattern") {
+            || nodeType === "AssignmentPattern"
+            || nodeType === "ChainExpression") {
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }
@@ -875,7 +889,7 @@ JSFormatter = class JSFormatter
         if (node.__autoDedent)
             this._builder.dedent();
 
-        if (node.type === "BlockStatement") {
+        if (node.type === "BlockStatement" || node.type === "StaticBlock") {
             if (node.parent) {
                 // Newline after if(){}
                 if (node.parent.type === "IfStatement" && (!node.parent.alternate || node.parent.consequent !== node)) {
@@ -913,7 +927,7 @@ JSFormatter = class JSFormatter
                     return;
                 }
                 // Newline after anonymous block inside a block or program.
-                if (node.parent.type === "BlockStatement" || node.parent.type === "Program") {
+                if (node.parent.type === "BlockStatement" || node.parent.type === "StaticBlock" || node.parent.type === "Program") {
                     this._appendNewline(node);
                     return;
                 }

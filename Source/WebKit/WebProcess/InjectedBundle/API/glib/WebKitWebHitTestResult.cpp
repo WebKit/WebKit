@@ -27,9 +27,9 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/JSNode.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Node.h>
 #include <WebCore/ScriptController.h>
 #include <glib/gi18n-lib.h>
@@ -422,7 +422,7 @@ JSCValue* webkit_web_hit_test_result_get_js_node(WebKitWebHitTestResult* webHitT
         world = webkit_script_world_get_default();
 
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
-    JSDOMWindow* globalObject = frame->script().globalObject(wkWorld->coreWorld());
+    auto* globalObject = frame->script().globalObject(wkWorld->coreWorld());
     auto jsContext = jscContextGetOrCreate(toGlobalRef(globalObject));
     JSValueRef jsValue = nullptr;
     {

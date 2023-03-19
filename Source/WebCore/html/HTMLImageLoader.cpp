@@ -24,7 +24,6 @@
 
 #include "CachedImage.h"
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -32,6 +31,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLVideoElement.h"
+#include "LocalDOMWindow.h"
 #include "Settings.h"
 
 #include "JSDOMWindowBase.h"

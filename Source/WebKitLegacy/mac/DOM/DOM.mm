@@ -41,7 +41,6 @@
 #import <WebCore/DragImage.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCascade.h>
-#import <WebCore/Frame.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLLinkElement.h>
 #import <WebCore/HTMLNames.h>
@@ -50,6 +49,7 @@
 #import <WebCore/Image.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/NodeFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
@@ -287,7 +287,7 @@ Class kitClass(Node* impl)
 
 id <DOMEventTarget> kit(EventTarget* target)
 {
-    // We don't have Objective-C bindings for XMLHttpRequest, DOMWindow, and other non-Node targets.
+    // We don't have Objective-C bindings for XMLHttpRequest, LocalDOMWindow, and other non-Node targets.
     return is<Node>(target) ? kit(downcast<Node>(target)) : nil;
 }
 
@@ -681,8 +681,8 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 - (BOOL)_mediaQueryMatchesForOrientation:(int)orientation
 {
-    Document& document = static_cast<HTMLLinkElement*>(core(self))->document();
-    FrameView* frameView = document.frame() ? document.frame()->view() : 0;
+    auto& document = static_cast<HTMLLinkElement*>(core(self))->document();
+    auto* frameView = document.frame() ? document.frame()->view() : 0;
     if (!frameView)
         return false;
     int layoutWidth = frameView->layoutWidth();

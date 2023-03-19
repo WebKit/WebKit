@@ -32,6 +32,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
 #include <WebCore/DisplayUpdate.h>

@@ -100,7 +100,7 @@ bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds elapsedTime)
         m_offset = m_upper;
     }
 
-    if (fabs(m_velocity) < 1 || (lastTime > 0_s && fabs(m_offset - lastOffset) < 1)) {
+    if (std::abs(m_velocity) < 1 || (lastTime > 0_s && std::abs(m_offset - lastOffset) < 1)) {
         m_offset = round(m_offset);
         m_velocity = 0;
     }

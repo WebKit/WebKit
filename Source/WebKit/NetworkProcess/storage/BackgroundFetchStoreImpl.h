@@ -62,7 +62,7 @@ private:
     void initializeFetches(const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
     void clearFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, CompletionHandler<void()>&&) final;
     void clearAllFetches(const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
-    void storeFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) final;
+    void storeFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) final;
     void storeFetchResponseBodyChunk(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&) final;
     void retrieveResponseBody(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) final;
 

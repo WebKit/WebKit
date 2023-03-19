@@ -1,4 +1,12 @@
 
-FAIL Same-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
-FAIL Cross-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Same-site fetch with preflight
+PASS Cross-site fetch with preflight
+PASS Same-site fetch with preflight: sec-fetch-dest
+PASS Same-site fetch with preflight: sec-fetch-mode
+PASS Same-site fetch with preflight: sec-fetch-site
+PASS Same-site fetch with preflight: sec-fetch-user
+PASS Cross-site fetch with preflight: sec-fetch-dest
+PASS Cross-site fetch with preflight: sec-fetch-mode
+PASS Cross-site fetch with preflight: sec-fetch-site
+PASS Cross-site fetch with preflight: sec-fetch-user
 

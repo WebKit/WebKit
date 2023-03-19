@@ -93,6 +93,7 @@ public:
         case VectorMulSat:
         case VectorSwizzle:
         case VectorMulByElement:
+        case VectorShiftByVector:
         case VectorDotProduct:
             return true;
         default:

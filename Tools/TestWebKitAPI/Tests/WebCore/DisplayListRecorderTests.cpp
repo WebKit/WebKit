@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "Test.h"
+#include "WebCoreTestUtilities.h"
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/DisplayListDrawingContext.h>
 #include <WebCore/GraphicsContext.h>
@@ -57,6 +58,26 @@ static RefPtr<WebCore::ImageBuffer> createReferenceTarget()
     WebCore::FloatSize logicalSize { testContextWidth, testContextHeight };
     float scale = 1;
     return WebCore::ImageBuffer::create(logicalSize, WebCore::RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+}
+
+static WebCore::Path createTestPath()
+{
+    WebCore::Path p;
+    p.addLineTo({ 8, 9 });
+    p.addLineTo({ 9, 0 });
+    p.closeSubpath();
+    return p;
+}
+
+static Ref<WebCore::ImageBuffer> createTestImageBuffer()
+{
+    auto colorSpace = WebCore::DestinationColorSpace::SRGB();
+    auto pixelFormat = WebCore::PixelFormat::BGRA8;
+    WebCore::FloatSize logicalSize { 3, 7 };
+    float scale = 1;
+    auto result = WebCore::ImageBuffer::create(logicalSize, WebCore::RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    RELEASE_ASSERT(result);
+    return result.releaseNonNull();
 }
 
 namespace {
@@ -109,7 +130,6 @@ void forBoth(WebCore::GraphicsContext& a, WebCore::GraphicsContext& b, F&& func)
     MACRO(shouldSubpixelQuantizeFonts) \
     MACRO(shadowsIgnoreTransforms) \
     MACRO(drawLuminanceMask) \
-    MACRO(clipBounds) \
     MACRO(isInTransparencyLayer) \
     MACRO(scaleFactor)
 
@@ -125,6 +145,9 @@ static testing::AssertionResult checkEqualState(WebCore::GraphicsContext& a, Web
         return testing::AssertionFailure() << "State " #STATE " does not match.";
     FOR_EVERY_GRAPHICS_CONTEXT_STATE(CHECK_STATE);
 #undef CHECK_STATE
+    if (a.clipBounds() != b.clipBounds()) {
+        return testing::AssertionFailure() << "GraphicsContext::clipBounds() does not match. Expected:" << a.clipBounds() << " got: " << b.clipBounds();
+    }
     return testing::AssertionSuccess();
 }
 
@@ -255,7 +278,101 @@ struct DrawSystemImage {
     }
 };
 
-using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave, ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage>;
+struct ChangeAntialiasBeforeClipRect {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldAntialias(false);
+        c.clip({ 0,0, 9.f, 7.7f });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 0))
+(clip
+  (rect at (0,0) size 9x7.70)))DL"_s;
+    }
+};
+
+struct ChangeAntialiasBeforeClipOutRect {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldAntialias(false);
+        c.clipOut({ 0,0, 9.f, 7.7f });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 0))
+(clip-out
+  (rect at (0,0) size 9x7.70)))DL"_s;
+    }
+};
+
+struct ChangeAntialiasBeforeClipOutPath {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldAntialias(false);
+        c.clipOut(createTestPath());
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 0))
+(clip-out-to-path
+  (path move to (0,0), add line to (8,9), add line to (9,0), close subpath)))DL"_s;
+    }
+};
+
+struct ChangeAntialiasBeforeClipPath {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldAntialias(false);
+        c.clipPath(createTestPath(), WebCore::WindRule::NonZero);
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 0))
+(clip-path
+  (path move to (0,0), add line to (8,9), add line to (9,0), close subpath)
+  (wind-rule NON-ZERO)))DL"_s;
+    }
+};
+
+struct ChangeAntialiasBeforeClipToImageBuffer {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.setShouldAntialias(false);
+        c.clipToImageBuffer(createTestImageBuffer().get(), { 0, 1, 77, 99 });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(set-state
+  (change-flags [should-antialias])
+  (should-antialias 0))
+(clip-to-image-buffer
+  (dest-rect at (0,1) size 77x99)))DL"_s;
+    }
+};
+
+using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
+    ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
+    ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
+    ChangeAntialiasBeforeClipToImageBuffer>;
 
 }
 

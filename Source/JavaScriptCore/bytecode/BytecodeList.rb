@@ -1194,12 +1194,6 @@ op :create_cloned_arguments,
         dst: VirtualRegister,
     }
 
-op :create_arguments_butterfly_excluding_this,
-    args: {
-        dst: VirtualRegister,
-        target: VirtualRegister,
-    }
-
 op :new_promise,
     args: {
         dst: VirtualRegister,

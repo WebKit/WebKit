@@ -39,7 +39,6 @@
 #import "EditorClient.h"
 #import "ElementInlines.h"
 #import "File.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "HTMLAnchorElement.h"
@@ -51,6 +50,7 @@
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
 #import "LegacyWebArchive.h"
+#import "LocalFrame.h"
 #import "MIMETypeRegistry.h"
 #import "Page.h"
 #import "PublicURLManager.h"
@@ -89,7 +89,7 @@ namespace WebCore {
 
 #if PLATFORM(MACCATALYST)
 
-static FragmentAndResources createFragment(Frame&, NSAttributedString *)
+static FragmentAndResources createFragment(LocalFrame&, NSAttributedString *)
 {
     return { };
 }
@@ -133,7 +133,7 @@ static NSDictionary *attributesForAttributedStringConversion()
     };
 }
 
-static FragmentAndResources createFragment(Frame& frame, NSAttributedString *string)
+static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString *string)
 {
     FragmentAndResources result;
     Document& document = *frame.document();
@@ -159,7 +159,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
 #else
 
 // FIXME: Do we really need to keep this legacy code path around for watchOS and tvOS?
-static FragmentAndResources createFragment(Frame& frame, NSAttributedString *string)
+static FragmentAndResources createFragment(LocalFrame& frame, NSAttributedString *string)
 {
     FragmentAndResources result;
     _WebCreateFragment(*frame.document(), string, result);
@@ -170,7 +170,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
 
 class DeferredLoadingScope {
 public:
-    DeferredLoadingScope(Frame& frame)
+    DeferredLoadingScope(LocalFrame& frame)
         : m_frame(frame)
         , m_cachedResourceLoader(frame.document()->cachedResourceLoader())
     {
@@ -194,7 +194,7 @@ public:
     }
 
 private:
-    Ref<Frame> m_frame;
+    Ref<LocalFrame> m_frame;
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     bool m_didEnabledDeferredLoading { false };
     bool m_didDisableImage { false };
@@ -234,7 +234,7 @@ static bool contentTypeIsSuitableForInlineImageRepresentation(const String& cont
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeFromContentType(contentType));
 }
 
-static bool supportsClientSideAttachmentData(const Frame& frame)
+static bool supportsClientSideAttachmentData(const LocalFrame& frame)
 {
     if (auto* client = frame.editor().client())
         return client->supportsClientSideAttachmentData();
@@ -244,7 +244,7 @@ static bool supportsClientSideAttachmentData(const Frame& frame)
 
 #endif
 
-static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Document& document, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType, PresentationSize preferredSize)
+static Ref<DocumentFragment> createFragmentForImageAttachment(LocalFrame& frame, Document& document, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType, PresentationSize preferredSize)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -278,7 +278,7 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
 #endif
 }
 
-static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fragment, const Vector<Ref<ArchiveResource>>& subresources)
+static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragment& fragment, const Vector<Ref<ArchiveResource>>& subresources)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     struct AttachmentInsertionInfo {
@@ -383,7 +383,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
 #endif
 }
 
-RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string)
+RefPtr<DocumentFragment> createFragmentAndAddResources(LocalFrame& frame, NSAttributedString *string)
 {
     if (!frame.page() || !frame.document())
         return nullptr;
@@ -444,7 +444,7 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     return MarkupAndArchive { String::fromUTF8(mainResource->data().makeContiguous()->data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
-static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto page = createPageForSanitizingWebContent();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
@@ -709,7 +709,7 @@ static String typeForAttachmentElement(const String& contentType)
     return mimeType.isEmpty() ? contentType : mimeType;
 }
 
-static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, PresentationSize preferredSize, const String& explicitContentType)
+static Ref<HTMLElement> attachmentForFilePath(LocalFrame& frame, const String& path, PresentationSize preferredSize, const String& explicitContentType)
 {
     Ref document = *frame.document();
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
@@ -756,7 +756,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return attachment;
 }
 
-static Ref<HTMLElement> attachmentForData(Frame& frame, FragmentedSharedBuffer& buffer, const String& contentType, const AtomString& name, PresentationSize preferredSize)
+static Ref<HTMLElement> attachmentForData(LocalFrame& frame, FragmentedSharedBuffer& buffer, const String& contentType, const AtomString& name, PresentationSize preferredSize)
 {
     Ref document = *frame.document();
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);

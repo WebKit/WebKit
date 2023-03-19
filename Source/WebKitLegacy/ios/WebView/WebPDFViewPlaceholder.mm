@@ -35,10 +35,10 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FormState.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebKitLegacy/WebDataSourcePrivate.h>
 #import <WebKitLegacy/WebFramePrivate.h>
@@ -466,7 +466,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         MonotonicTime::now(), nullptr, 1, { }, { }, 0, 0, { }, 0, 0, nullptr, 0, 0, MouseEvent::IsSimulated::Yes);
 
     // Call to the frame loader because this is where our security checks are made.
-    Frame* frame = core([_dataSource webFrame]);
+    auto* frame = core([_dataSource webFrame]);
     FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, InitiatedByMainFrame::Unknown };
 frameLoadRequest.setReferrerPolicy(ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.ptr(), nullptr);

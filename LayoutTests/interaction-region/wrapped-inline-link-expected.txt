@@ -16,7 +16,19 @@ Line
 
       (interaction regions [
         (interaction
-            (rect (-3,-3) width=36 height=85)
+            (rect (-3,-3) width=36 height=25)
+)
+        (borderRadius 0.00),
+        (interaction
+            (rect (-3,17) width=36 height=25)
+)
+        (borderRadius 0.00),
+        (interaction
+            (rect (-3,37) width=36 height=25)
+)
+        (borderRadius 0.00),
+        (interaction
+            (rect (-3,57) width=36 height=25)
 )
         (borderRadius 0.00)])
       )

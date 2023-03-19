@@ -75,8 +75,8 @@ protected:
     void runWithDowncast(const Func&) const;
 
 private:
-    CompilationMode m_compilationMode;
-    IndexOrName m_indexOrName;
+    const CompilationMode m_compilationMode;
+    const IndexOrName m_indexOrName;
 
 protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
@@ -165,9 +165,20 @@ private:
 
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
+
+struct WasmCodeOrigin {
+    unsigned firstInlineCSI;
+    unsigned lastInlineCSI;
+    unsigned functionIndex;
+    unsigned moduleIndex;
+};
+
 class OptimizingJITCallee : public JITCallee {
 public:
     const StackMap& stackmap(CallSiteIndex) const;
+
+    void addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation&, uint32_t functionIndex);
+    IndexOrName getOrigin(unsigned csi, unsigned depth, bool& isInlined) const;
 
 protected:
     OptimizingJITCallee(Wasm::CompilationMode mode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
@@ -188,6 +199,8 @@ private:
     void linkExceptionHandlers(Vector<UnlinkedHandlerInfo>, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>);
 
     StackMaps m_stackmaps;
+    Vector<WasmCodeOrigin, 0> codeOrigins;
+    Vector<Ref<NameSection>, 0> nameSections;
 };
 
 class OMGCallee final : public OptimizingJITCallee {

@@ -36,15 +36,15 @@
 #import "DragController.h"
 #import "Editor.h"
 #import "FocusController.h"
-#import "Frame.h"
 #import "FrameLoader.h"
-#import "FrameView.h"
 #import "HTMLBodyElement.h"
 #import "HTMLDocument.h"
 #import "HTMLFrameSetElement.h"
 #import "HTMLHtmlElement.h"
 #import "HTMLIFrameElement.h"
 #import "KeyboardEvent.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "MouseEventWithHitTestResults.h"
 #import "Page.h"
@@ -337,7 +337,7 @@ NSView *EventHandler::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    FrameView* topFrameView = m_frame.view();
+    auto* topFrameView = m_frame.view();
     NSView *topView = topFrameView ? topFrameView->platformWidget() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         m_mouseDownView = nil;
@@ -385,7 +385,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     return true;
 }
     
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -483,7 +483,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
     NSView* nodeView = widget.platformWidget();
     if (!nodeView) {
         // WebKit2 code path.
-        auto* frameView = dynamicDowncast<FrameView>(widget);
+        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return false;
         auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
@@ -520,7 +520,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
 
 void EventHandler::mouseDown(NSEvent *event, NSEvent *correspondingPressureEvent)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -537,7 +537,7 @@ void EventHandler::mouseDown(NSEvent *event, NSEvent *correspondingPressureEvent
 
 void EventHandler::mouseDragged(NSEvent *event, NSEvent *correspondingPressureEvent)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -551,7 +551,7 @@ void EventHandler::mouseDragged(NSEvent *event, NSEvent *correspondingPressureEv
 
 void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -588,7 +588,7 @@ void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
  */
 void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 {
-    FrameView* view = m_frame.view();
+    auto* view = m_frame.view();
     if (!view)
         return;
 
@@ -685,9 +685,9 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event, NSEvent* corr
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static bool frameHasPlatformWidget(const Frame& frame)
+static bool frameHasPlatformWidget(const LocalFrame& frame)
 {
-    if (FrameView* frameView = frame.view()) {
+    if (auto* frameView = frame.view()) {
         if (frameView->platformWidget())
             return true;
     }
@@ -695,7 +695,7 @@ static bool frameHasPlatformWidget(const Frame& frame)
     return false;
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -706,7 +706,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -722,7 +722,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -907,12 +907,12 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
     }
 #endif
 
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     if (!m_frame.page())
         return false;
 
-    FrameView* view = m_frame.view();
+    auto* view = m_frame.view();
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     if (!view)
         return false;
@@ -950,7 +950,7 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
     if (!m_frame.page())
         return;
 
-    FrameView* view = m_frame.view();
+    auto* view = m_frame.view();
     if (!view)
         return;
 

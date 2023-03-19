@@ -39,7 +39,7 @@
 OBJC_CLASS CALayer;
 
 namespace WebCore {
-class FrameView;
+class LocalFrameView;
 class PlatformCALayer;
 class RunLoopObserver;
 class TiledBacking;
@@ -83,7 +83,7 @@ private:
 
     void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&) override;
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
 

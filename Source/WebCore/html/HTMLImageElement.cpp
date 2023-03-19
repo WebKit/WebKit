@@ -34,7 +34,6 @@
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLDocument.h"
@@ -47,6 +46,7 @@
 #include "HTMLSrcsetParser.h"
 #include "JSRequestPriority.h"
 #include "LazyLoadImageObserver.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaQueryEvaluator.h"
@@ -706,12 +706,15 @@ void HTMLImageElement::setDecoding(AtomString&& decodingMode)
 String HTMLImageElement::decoding() const
 {
     switch (decodingMode()) {
+    case DecodingMode::Auto:
+        break;
+    case DecodingMode::SynchronousThumbnail:
+        ASSERT_NOT_REACHED();
+        break;
     case DecodingMode::Synchronous:
         return "sync"_s;
     case DecodingMode::Asynchronous:
         return "async"_s;
-    case DecodingMode::Auto:
-        break;
     }
     return autoAtom();
 }
@@ -1028,7 +1031,12 @@ void HTMLImageElement::setFetchPriorityForBindings(const AtomString& value)
 
 String HTMLImageElement::fetchPriorityForBindings() const
 {
-    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
+    return convertEnumerationToString(fetchPriorityHint());
+}
+
+RequestPriority HTMLImageElement::fetchPriorityHint() const
+{
+    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
 }
 
 }

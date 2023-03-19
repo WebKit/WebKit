@@ -87,7 +87,6 @@ public:
 
 class SourceBufferPrivateAVFObjC final
     : public SourceBufferPrivate
-    , public CanMakeWeakPtr<SourceBufferPrivateAVFObjC>
 {
 public:
     static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*, Ref<SourceBufferParser>&&);
@@ -159,6 +158,7 @@ private:
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
 
     // SourceBufferPrivate overrides
+    void didReceiveSampleForTrackId(uint64_t, Ref<MediaSample>&&) final;
     void append(Ref<SharedBuffer>&&) final;
     void abort() final;
     void resetParserState() final;
@@ -180,6 +180,7 @@ private:
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
 
+    void processPendingTrackChangeTasks();
     void enqueueSample(Ref<MediaSampleAVFObjC>&&, uint64_t trackID);
     void didBecomeReadyForMoreSamples(uint64_t trackID);
     void appendCompleted();
@@ -207,10 +208,7 @@ private:
     WeakPtrFactory<SourceBufferPrivateAVFObjC> m_appendWeakFactory;
 
     Ref<SourceBufferParser> m_parser;
-    bool m_processingInitializationSegment { false };
-    bool m_hasPendingAppendCompletedCallback { false };
-    Vector<Function<void()>> m_pendingTrackChangeCallbacks;
-    Vector<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_mediaSamples;
+    Vector<Function<void()>> m_pendingTrackChangeTasks;
     Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;

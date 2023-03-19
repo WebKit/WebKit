@@ -62,9 +62,9 @@ public:
 #endif
 
     WEBCORE_EXPORT void setActiveScrollSnapIndices(ScrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex);
-    WEBCORE_EXPORT void updateScrollSnapPropertiesWithFrameView(const FrameView&) override;
+    WEBCORE_EXPORT void updateScrollSnapPropertiesWithFrameView(const LocalFrameView&) override;
 
-    WEBCORE_EXPORT void updateIsMonitoringWheelEventsForFrameView(const FrameView&) override;
+    WEBCORE_EXPORT void updateIsMonitoringWheelEventsForFrameView(const LocalFrameView&) override;
 
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>);
@@ -95,15 +95,15 @@ protected:
 private:
     bool isAsyncScrollingCoordinator() const override { return true; }
 
-    bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const override { return false; }
+    bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const override { return false; }
 
     WEBCORE_EXPORT ScrollingNodeID scrollableContainerNodeID(const RenderObject&) const override;
 
-    WEBCORE_EXPORT void frameViewLayoutUpdated(FrameView&) override;
-    WEBCORE_EXPORT void frameViewRootLayerDidChange(FrameView&) override;
-    WEBCORE_EXPORT void frameViewVisualViewportChanged(FrameView&) override;
-    WEBCORE_EXPORT void frameViewEventTrackingRegionsChanged(FrameView&) override;
-    WEBCORE_EXPORT void frameViewWillBeDetached(FrameView&) override;
+    WEBCORE_EXPORT void frameViewLayoutUpdated(LocalFrameView&) override;
+    WEBCORE_EXPORT void frameViewRootLayerDidChange(LocalFrameView&) override;
+    WEBCORE_EXPORT void frameViewVisualViewportChanged(LocalFrameView&) override;
+    WEBCORE_EXPORT void frameViewEventTrackingRegionsChanged(LocalFrameView&) override;
+    WEBCORE_EXPORT void frameViewWillBeDetached(LocalFrameView&) override;
 
     WEBCORE_EXPORT bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) final;
     WEBCORE_EXPORT bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) final;
@@ -127,13 +127,13 @@ private:
     WEBCORE_EXPORT void setNodeLayers(ScrollingNodeID, const NodeLayers&) override;
 
     WEBCORE_EXPORT void setScrollingNodeScrollableAreaGeometry(ScrollingNodeID, ScrollableArea&) override;
-    WEBCORE_EXPORT void setFrameScrollingNodeState(ScrollingNodeID, const FrameView&) override;
+    WEBCORE_EXPORT void setFrameScrollingNodeState(ScrollingNodeID, const LocalFrameView&) override;
     WEBCORE_EXPORT void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) override;
     WEBCORE_EXPORT void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) override;
     WEBCORE_EXPORT void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) override;
 
-    WEBCORE_EXPORT void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) override;
-    void reconcileScrollPosition(FrameView&, ScrollingLayerPositionAction);
+    WEBCORE_EXPORT void reconcileScrollingState(LocalFrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) override;
+    void reconcileScrollPosition(LocalFrameView&, ScrollingLayerPositionAction);
 
     WEBCORE_EXPORT void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) final;
 
@@ -156,7 +156,7 @@ private:
 
     virtual void scheduleTreeStateCommit() = 0;
 
-    void ensureRootStateNodeForFrameView(FrameView&);
+    void ensureRootStateNodeForFrameView(LocalFrameView&);
 
     void setEventTrackingRegionsDirty();
     void updateEventTrackingRegions();
@@ -168,7 +168,7 @@ private:
     void wheelEventScrollWillStartForNode(ScrollingNodeID);
     void wheelEventScrollDidEndForNode(ScrollingNodeID);
 
-    FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
+    LocalFrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
     void hysterisisTimerFired(PAL::HysteresisState);
 

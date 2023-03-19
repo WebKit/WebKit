@@ -99,10 +99,8 @@
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>
@@ -110,6 +108,8 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
@@ -2150,7 +2150,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!coreFrame)
         return nil;
 
-    Ref<WebCore::Frame> protectedCoreFrame(*coreFrame);
+    Ref protectedCoreFrame(*coreFrame);
 
     WebCore::TextIndicatorData textIndicator;
     auto dragImage = createDragImageForSelection(*coreFrame, textIndicator);
@@ -2859,7 +2859,7 @@ WEBCORE_COMMAND(toggleUnderline)
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
-    RefPtr<WebCore::Frame> frame = core([self _frame]);
+    RefPtr frame = core([self _frame]);
 
     if (!frame)
         return NO;
@@ -3702,7 +3702,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Web
 
     [_private->completionController endRevertingChange:NO moveLeft:NO];
 
-    RefPtr<WebCore::Frame> coreFrame = core([self _frame]);
+    RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
 
@@ -4490,7 +4490,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;
 
-    RefPtr<WebCore::Frame> coreFrame = core([self _frame]);
+    RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
 
@@ -4512,7 +4512,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 // Utility function to make sure we don't return anything through the NSTextInput
 // API when an editable region is not currently focused.
-static BOOL isTextInput(WebCore::Frame* coreFrame)
+static BOOL isTextInput(WebCore::LocalFrame* coreFrame)
 {
     if (!coreFrame)
         return NO;
@@ -4522,14 +4522,14 @@ static BOOL isTextInput(WebCore::Frame* coreFrame)
 
 #if PLATFORM(MAC)
 
-static BOOL isInPasswordField(WebCore::Frame* coreFrame)
+static BOOL isInPasswordField(WebCore::LocalFrame* coreFrame)
 {
     return coreFrame && coreFrame->selection().selection().isInPasswordField();
 }
 
 #endif
 
-static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreFrame)
+static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* coreFrame)
 {
 #if PLATFORM(MAC)
     NSEvent *event = [NSApp currentEvent];
@@ -6575,7 +6575,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
 
     // As in insertText:, we assume that the call comes from an input method if there is marked text.
-    RefPtr<WebCore::Frame> coreFrame = core([self _frame]);
+    RefPtr<WebCore::LocalFrame> coreFrame = core([self _frame]);
     bool isFromInputMethod = coreFrame && coreFrame->editor().hasComposition();
 
     if (event && shouldSaveCommand && !isFromInputMethod)
@@ -6634,7 +6634,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (parameters)
         parameters->consumedByIM = false;
 
-    RefPtr<WebCore::Frame> coreFrame = core([self _frame]);
+    RefPtr<WebCore::LocalFrame> coreFrame = core([self _frame]);
     NSString *text;
     NSRange replacementRange = { NSNotFound, 0 };
     bool isFromInputMethod = coreFrame && coreFrame->editor().hasComposition();
@@ -6849,7 +6849,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #if PLATFORM(IOS_FAMILY)
 
-static CGImageRef imageFromRect(WebCore::Frame* frame, CGRect rect)
+static CGImageRef imageFromRect(WebCore::LocalFrame* frame, CGRect rect)
 {
     auto* page = frame->page();
     if (!page)
@@ -6915,7 +6915,7 @@ static CGImageRef imageFromRect(WebCore::Frame* frame, CGRect rect)
     return nil;
 }
 
-static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
+static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText)
 {
     ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
     frame->view()->setPaintBehavior(WebCore::PaintBehavior::SelectionOnly | (forceBlackText ? OptionSet<WebCore::PaintBehavior>(WebCore::PaintBehavior::ForceBlackText) : OptionSet<WebCore::PaintBehavior>()));
@@ -6940,7 +6940,7 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
     if (!coreFrame)
         return nil;
 
-    Ref<WebCore::Frame> protectedCoreFrame(*coreFrame);
+    Ref<WebCore::LocalFrame> protectedCoreFrame(*coreFrame);
 
 #if PLATFORM(IOS_FAMILY)
     return selectionImage(coreFrame, forceBlackText);

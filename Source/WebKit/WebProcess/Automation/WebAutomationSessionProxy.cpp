@@ -47,13 +47,10 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/DOMRectList.h>
-#include <WebCore/DOMWindow.h>
 #include <WebCore/ElementAncestorIteratorInlines.h>
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameTree.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFrameElement.h>
 #include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -61,6 +58,9 @@
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/JSElement.h>
+#include <WebCore/LocalDOMWindow.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
 #include <wtf/UUID.h>
 
@@ -349,8 +349,8 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
 
 void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
 {
-    // If the frame and DOMWindow have become disconnected, then frame is already being destroyed
-    // and there is no way to get access to the frame from the observer's DOMWindow reference.
+    // If the frame and LocalDOMWindow have become disconnected, then frame is already being destroyed
+    // and there is no way to get access to the frame from the observer's LocalDOMWindow reference.
     if (!frame.coreFrame()->window() || !frame.coreFrame()->window()->frame())
         return;
 
@@ -370,7 +370,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 
 void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier frameID)
 {
-    // The observer is no longer needed, let it become GC'd and unregister itself from DOMWindow.
+    // The observer is no longer needed, let it become GC'd and unregister itself from LocalDOMWindow.
     if (m_frameObservers.contains(frameID))
         m_frameObservers.remove(frameID);
 
@@ -474,7 +474,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdenti
         return;
     }
 
-    WebCore::Frame* coreFrame = frame->coreFrame();
+    auto* coreFrame = frame->coreFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -562,7 +562,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    WebCore::Frame* coreFrame = frame->coreFrame();
+    auto* coreFrame = frame->coreFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -634,7 +634,7 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     return &element;
 }
 
-static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::FrameView* frameView, WebCore::FloatRect clientRect)
+static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::LocalFrameView* frameView, WebCore::FloatRect clientRect)
 {
     if (!frameView->delegatesScrollingToNativeView())
         return frameView->contentsToRootView(frameView->clientToDocumentRect(clientRect));
@@ -648,7 +648,7 @@ static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::FrameVie
     return clientRect;
 }
 
-static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::FrameView* frameView, WebCore::FloatPoint clientPoint)
+static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::LocalFrameView* frameView, WebCore::FloatPoint clientPoint)
 {
     if (!frameView->delegatesScrollingToNativeView())
         return frameView->contentsToRootView(frameView->clientToDocumentPoint(clientPoint));
@@ -699,12 +699,12 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         // FIXME: Wait in an implementation-specific way up to the session implicit wait timeout for the element to become in view.
     }
 
-    WebCore::FrameView* frameView = frame->coreFrame()->view();
+    auto* frameView = frame->coreFrame()->view();
 
     auto* localFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
     if (!localFrame)
         return;
-    WebCore::FrameView* mainView = localFrame->view();
+    auto* mainView = localFrame->view();
 
     WebCore::FloatRect resultElementBounds;
     std::optional<WebCore::IntPoint> resultInViewCenterPoint;

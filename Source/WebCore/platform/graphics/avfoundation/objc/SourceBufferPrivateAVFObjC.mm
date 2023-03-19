@@ -407,12 +407,12 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
                 trackDidChangeSelected(trackRef, selected);
             };
 
-            if (!m_processingInitializationSegment) {
+            if (!processingInitializationSegment()) {
                 videoTrackSelectedChanged();
                 return;
             }
 
-            m_pendingTrackChangeCallbacks.append(WTFMove(videoTrackSelectedChanged));
+            m_pendingTrackChangeTasks.append(WTFMove(videoTrackSelectedChanged));
         });
 
         m_videoTracks.set(videoTrackInfo.track->id(), videoTrackInfo.track);
@@ -423,62 +423,44 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
             if (!weakThis)
                 return;
 
-            auto audioTrackEnabledChanged= [weakThis, this, trackRef = Ref { track }, enabled] {
+            auto audioTrackEnabledChanged = [weakThis, this, trackRef = Ref { track }, enabled] {
                 if (!weakThis)
                     return;
 
                 trackDidChangeEnabled(trackRef, enabled);
             };
 
-            if (!m_processingInitializationSegment) {
+            if (!processingInitializationSegment()) {
                 audioTrackEnabledChanged();
                 return;
             }
 
-            m_pendingTrackChangeCallbacks.append(WTFMove(audioTrackEnabledChanged));
+            m_pendingTrackChangeTasks.append(WTFMove(audioTrackEnabledChanged));
         });
 
         m_audioTracks.set(audioTrackInfo.track->id(), audioTrackInfo.track);
     }
 
-    m_processingInitializationSegment = true;
     didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (SourceBufferPrivateClient::ReceiveResult result) {
         ASSERT(isMainThread());
         if (!weakThis)
             return;
 
-        m_processingInitializationSegment = false;
         auto didAbort = abortCalled != weakThis->m_abortCalled;
-        if (didAbort || result != SourceBufferPrivateClient::ReceiveResult::RecieveSucceeded) {
+        if (didAbort || result != SourceBufferPrivateClient::ReceiveResult::Succeeded) {
             ERROR_LOG(LOGIDENTIFIER, "failed to process initialization segment: didAbort = ", didAbort, " recieveResult = ", result);
-            m_pendingTrackChangeCallbacks.clear();
-            m_mediaSamples.clear();
+            m_pendingTrackChangeTasks.clear();
             return;
         }
 
-        auto callbacks = std::exchange(m_pendingTrackChangeCallbacks, { });
-        for (auto& callback : callbacks)
-            callback();
+        // TODO: We should check that another init segment isn't also pending.
+        // https://bugs.webkit.org/show_bug.cgi?id=254079
+        processPendingTrackChangeTasks();
 
         if (auto player = this->player())
             player->characteristicsChanged();
 
-        auto mediaSamples = std::exchange(m_mediaSamples, { });
-        for (auto& trackIdMediaSamplePair : mediaSamples) {
-            auto trackId = trackIdMediaSamplePair.first;
-            auto& mediaSample = trackIdMediaSamplePair.second;
-            if (trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId)) {
-                DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-                didReceiveSample(WTFMove(mediaSample));
-            }
-        }
-
         ALWAYS_LOG(LOGIDENTIFIER, "initialization segment was processed");
-
-        if (m_hasPendingAppendCompletedCallback) {
-            m_hasPendingAppendCompletedCallback = false;
-            appendCompleted();
-        }
     });
 }
 
@@ -502,16 +484,26 @@ void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAV
         mediaSample->setKeyIDs(copyKeyIDs(findResult->value.keyIDs));
 #endif
 
-    if (m_processingInitializationSegment) {
-        DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-        m_mediaSamples.append(std::make_pair(trackId, WTFMove(mediaSample)));
-        return;
-    }
+    didReceiveSampleForTrackId(trackId, WTFMove(mediaSample));
+}
 
-    if (trackId != m_enabledVideoTrackID && !m_audioRenderers.contains(trackId)) {
-        // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
-        // will just confuse its state. Drop this sample until we can handle text tracks properly.
-        return;
+void SourceBufferPrivateAVFObjC::processPendingTrackChangeTasks()
+{
+    auto tasks = std::exchange(m_pendingTrackChangeTasks, { });
+    for (auto& task : tasks)
+        task();
+}
+
+void SourceBufferPrivateAVFObjC::didReceiveSampleForTrackId(uint64_t trackId, Ref<MediaSample>&& mediaSample)
+{
+    if (!processingInitializationSegment()) {
+        processPendingTrackChangeTasks();
+
+        if (trackId != m_enabledVideoTrackID && !m_audioRenderers.contains(trackId)) {
+            // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
+            // will just confuse its state. Drop this sample until we can handle text tracks properly.
+            return;
+        }
     }
 
     DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
@@ -713,12 +705,6 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
             callOnMainThread([weakThis = WTFMove(weakThis), abortCalled] {
                 if (!weakThis || abortCalled != weakThis->m_abortCalled)
                     return;
-
-                if (weakThis->m_processingInitializationSegment) {
-                    weakThis->m_hasPendingAppendCompletedCallback = true;
-                    return;
-                }
-
                 weakThis->appendCompleted();
             });
         });
@@ -728,20 +714,22 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
 void SourceBufferPrivateAVFObjC::appendCompleted()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_abortSemaphore) {
-        m_abortSemaphore->signal();
-        m_abortSemaphore = nil;
-    }
 
-    if (m_hasSessionSemaphore) {
-        m_hasSessionSemaphore->signal();
-        m_hasSessionSemaphore = nil;
-    }
+    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, m_mediaSource ? m_mediaSource->isEnded() : true, [this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        if (m_abortSemaphore) {
+            m_abortSemaphore->signal();
+            m_abortSemaphore = nil;
+        }
 
-    if (auto player = this->player(); player && m_parsingSucceeded)
-        player->setLoadingProgresssed(true);
-
-    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, m_mediaSource ? m_mediaSource->isEnded() : true);
+        if (m_hasSessionSemaphore) {
+            m_hasSessionSemaphore->signal();
+            m_hasSessionSemaphore = nil;
+        }
+        if (auto player = this->player(); player && m_parsingSucceeded)
+            player->setLoadingProgresssed(true);
+    });
 }
 
 void SourceBufferPrivateAVFObjC::abort()
@@ -769,10 +757,8 @@ void SourceBufferPrivateAVFObjC::resetParserState()
 
     // Wait until all tasks in the workqueue have run.
     m_appendQueue->dispatchSync([] { });
-    m_mediaSamples.clear();
-    m_hasPendingAppendCompletedCallback = false;
-    m_processingInitializationSegment = false;
     m_parser->resetParserState();
+    SourceBufferPrivate::resetParserState();
 }
 
 void SourceBufferPrivateAVFObjC::destroyStreamDataParser()

@@ -1062,6 +1062,26 @@ public:
         m_assembler.notq_m(dest.offset, dest.base, dest.index, dest.scale);
     }
 
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend8To32(src, dest);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movsbq_rr(src, dest);
+    }
+
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend16To32(src, dest);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movswq_rr(src, dest);
+    }
+
     void load64(Address address, RegisterID dest)
     {
         m_assembler.movq_mr(address.offset, address.base, dest);
@@ -1225,6 +1245,19 @@ public:
     void swap64(RegisterID src, Address dest)
     {
         m_assembler.xchgq_rm(src, dest.offset, dest.base);
+    }
+
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
+    {
+        if (reg1 == reg2)
+            return;
+
+        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
+        ASSERT(reg1 != FPRegisterID::xmm7);
+        ASSERT(reg2 != FPRegisterID::xmm7);
+        moveDouble(reg1, FPRegisterID::xmm7);
+        moveDouble(reg2, reg1);
+        moveDouble(FPRegisterID::xmm7, reg2);
     }
 
     void move32ToFloat(RegisterID src, FPRegisterID dest)

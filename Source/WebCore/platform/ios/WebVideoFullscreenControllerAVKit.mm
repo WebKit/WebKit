@@ -28,8 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "FrameView.h"
 #import "HTMLVideoElement.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionInterfaceAVKit.h"

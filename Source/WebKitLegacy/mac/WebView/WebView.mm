@@ -161,11 +161,9 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/FullscreenManager.h>
 #import <WebCore/GCController.h>
 #import <WebCore/GameControllerGamepadProvider.h>
@@ -184,6 +182,8 @@
 #import <WebCore/JSNotification.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacySchemeRegistry.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -1329,8 +1329,8 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject);
 
-    // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!globalObject->inherits<WebCore::JSDOMWindow>())
+    // Make sure the context has a LocalDOMWindow global object, otherwise this context didn't originate from a WebView.
+    if (!globalObject->inherits<WebCore::JSLocalDOMWindow>())
         return;
 
     WebCore::reportException(globalObject, toJS(globalObject, exception));
@@ -1907,7 +1907,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)updateLayoutIgnorePendingStyleSheets
 {
     WebThreadRun(^{
-        for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+        for (WebCore::Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -2236,12 +2236,12 @@ static NSMutableSet *knownPluginMIMETypes()
 
 + (BOOL)canCloseAllWebViews
 {
-    return WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents();
+    return WebCore::LocalDOMWindow::dispatchAllPendingBeforeUnloadEvents();
 }
 
 + (void)closeAllWebViews
 {
-    WebCore::DOMWindow::dispatchAllPendingUnloadEvents();
+    WebCore::LocalDOMWindow::dispatchAllPendingUnloadEvents();
 
     // This will close the WebViews in a random order. Change this if close order is important.
     for (WebView *webView in [(__bridge NSSet *)allWebViewsSet().get() allObjects])
@@ -3807,7 +3807,7 @@ IGNORE_WARNINGS_END
 
 - (void)_attachScriptDebuggerToAllFrames
 {
-    for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+    for (WebCore::Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3817,7 +3817,7 @@ IGNORE_WARNINGS_END
 
 - (void)_detachScriptDebuggerFromAllFrames
 {
-    for (WebCore::AbstractFrame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
+    for (WebCore::Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3991,7 +3991,7 @@ IGNORE_WARNINGS_END
     ASSERT(WebThreadIsLocked());
 
     if (auto* coreFrame = [self _mainCoreFrame])
-        coreFrame->viewportOffsetChanged(WebCore::Frame::IncrementalScrollOffset);
+        coreFrame->viewportOffsetChanged(WebCore::LocalFrame::IncrementalScrollOffset);
 }
 
 - (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)domNode isUserScroll:(BOOL)userScroll
@@ -4140,7 +4140,7 @@ IGNORE_WARNINGS_END
 - (BOOL)_isUsingAcceleratedCompositing
 {
     auto* coreFrame = [self _mainCoreFrame];
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4192,7 +4192,7 @@ IGNORE_WARNINGS_END
 - (BOOL)_isSoftwareRenderable
 {
     auto* coreFrame = [self _mainCoreFrame];
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -6265,7 +6265,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     auto* coreFrame = [self _mainCoreFrame];
 #if !PLATFORM(IOS_FAMILY)
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -6277,7 +6277,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
 #endif
     _private->hostWindow = hostWindow;
-    for (WebCore::AbstractFrame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
+    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -8771,7 +8771,7 @@ FORWARD(toggleUnderline)
 }
 #endif
 
-- (WebCore::Frame*)_mainCoreFrame
+- (WebCore::LocalFrame*)_mainCoreFrame
 {
     return (_private && _private->page) ? dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame()) : 0;
 }

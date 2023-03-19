@@ -62,10 +62,10 @@ add_action('wp_head', function() { ?>
     (function(document) {
         document.addEventListener("DOMContentLoaded", function () {
 
-            var creationTimeNodes = Array.prototype.slice.call(document.getElementsByClassName("date"));
-            for (var timestamp of creationTimeNodes) {
-                var date = new Date(parseInt(timestamp.textContent));
-                timestamp.textContent = date.toLocaleDateString("en", {
+            var creationTimeNodes = Array.prototype.slice.call(document.querySelectorAll("time.date"));
+            for (var time of creationTimeNodes) {
+                var date = new Date(Date.parse(time.getAttribute("datetime")));
+                time.textContent = date.toLocaleDateString("en", {
                     "timeZoneName": "short",
                     "minute":       "2-digit",
                     "hour":         "2-digit",
@@ -143,7 +143,7 @@ add_filter('the_content', function ($content) {
         <?php foreach ($changes as $change => $entry): ?>
         <li>
             <h6><a href="<?php echo esc_url($entry->url); ?>"><?php echo $change; ?></a></h6>
-            <span class="date"><?php echo intval($entry->creationTime) * 1000; ?></span>
+            <time datetime="<?php echo gmdate("Y-m-d\\TH:i:s\\Z", intval($entry->creationTime)); ?>" class="date"><?php echo wp_date("F j, Y \\a\\t h:i A T", intval($entry->creationTime)); ?></time>
         </li>
         <?php endforeach?>
     </ul>

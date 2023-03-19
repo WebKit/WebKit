@@ -204,8 +204,12 @@ inline bool refCast(Instance* instance, EncodedJSValue encodedReference, bool al
     switch (static_cast<Wasm::TypeKind>(heapType)) {
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
-        // Casts to funcref/externref canot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+    case Wasm::TypeKind::Eqref:
+    case Wasm::TypeKind::Anyref:
+        // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
         return true;
+    case Wasm::TypeKind::Nullref:
+        return false;
     case Wasm::TypeKind::I31ref:
         return refValue.isInt32();
     case Wasm::TypeKind::Arrayref:

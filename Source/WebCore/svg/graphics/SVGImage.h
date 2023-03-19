@@ -32,8 +32,8 @@
 namespace WebCore {
 
 class Element;
-class FrameView;
 class ImageBuffer;
+class LocalFrameView;
 class Page;
 class RenderBox;
 class SVGSVGElement;
@@ -45,7 +45,7 @@ public:
     static Ref<SVGImage> create(ImageObserver& observer) { return adoptRef(*new SVGImage(observer)); }
 
     RenderBox* embeddedContentBox() const;
-    FrameView* frameView() const;
+    LocalFrameView* frameView() const;
 
     bool isSVGImage() const final { return true; }
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_intrinsicSize; }

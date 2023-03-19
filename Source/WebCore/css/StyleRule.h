@@ -158,17 +158,18 @@ class StyleRuleWithNesting final : public StyleRule {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 public:
     static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    Ref<StyleRuleWithNesting> copy() const;
 
     const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
-    const CSSSelectorList& resolvedSelectorList() const { return m_resolvedSelectorList; }
-    void setResolvedSelectorList(CSSSelectorList&&) const;
-    StyleRuleWithNesting(const StyleRuleWithNesting&) = delete;
+    const CSSSelectorList& originalSelectorList() const { return m_originalSelectorList; }
+    StyleRuleWithNesting(const StyleRuleWithNesting&);
+    ~StyleRuleWithNesting();
 
 private:
     StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
 
     Vector<Ref<StyleRuleBase>> m_nestedRules;
-    mutable CSSSelectorList m_resolvedSelectorList;
+    CSSSelectorList m_originalSelectorList;
 };
 
 class StyleRuleFontFace final : public StyleRuleBase {

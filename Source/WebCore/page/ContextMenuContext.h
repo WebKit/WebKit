@@ -62,6 +62,8 @@ public:
     void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
     const String& selectedText() const { return m_selectedText; }
 
+    bool hasEntireImage() const { return m_hasEntireImage; }
+
 #if ENABLE(SERVICE_CONTROLS)
     void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
     Image* controlledImage() const { return m_controlledImage.get(); }
@@ -80,6 +82,7 @@ private:
     HitTestResult m_hitTestResult;
     RefPtr<Event> m_event;
     String m_selectedText;
+    bool m_hasEntireImage;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;

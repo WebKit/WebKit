@@ -33,10 +33,10 @@
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
-#include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSIDBSerializationGlobalObject.h"
+#include "JSLocalDOMWindow.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
@@ -69,7 +69,7 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_observableArrayHeapCellType(JSC::IsoHeapCellType::Args<JSObservableArray>())
     , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::Args<JSC::Bindings::RuntimeObject>())
     , m_windowProxyHeapCellType(JSC::IsoHeapCellType::Args<JSWindowProxy>())
-    , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::Args<JSDOMWindow>())
+    , m_heapCellTypeForJSLocalDOMWindow(JSC::IsoHeapCellType::Args<JSLocalDOMWindow>())
     , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSDedicatedWorkerGlobalScope>())
     , m_heapCellTypeForJSRemoteDOMWindow(JSC::IsoHeapCellType::Args<JSRemoteDOMWindow>())
     , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())

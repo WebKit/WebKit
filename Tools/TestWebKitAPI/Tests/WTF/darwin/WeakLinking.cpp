@@ -32,7 +32,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-asm(".linker_option \"-lTestWTFAlwaysMissing-iOS-v2\"");
+asm(".linker_option \"-lTestWTFAlwaysMissing-iOS\"");
 
 #else
 

@@ -636,6 +636,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(MAC)
     encoder << m_pageScalingLayerID;
+    encoder << m_scrolledContentsLayerID;
 #endif
 
     encoder << m_pageScaleFactor;
@@ -749,6 +750,8 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
 #if PLATFORM(MAC)
     if (!decoder.decode(result.m_pageScalingLayerID))
         return false;
+    if (!decoder.decode(result.m_scrolledContentsLayerID))
+        return false;
 #endif
 
     if (!decoder.decode(result.m_pageScaleFactor))
@@ -849,27 +852,6 @@ void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vec
 }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-
-static const char* nameForBackingStoreType(RemoteLayerBackingStore::Type type)
-{
-    switch (type) {
-    case RemoteLayerBackingStore::Type::IOSurface:
-        return "IOSurface";
-    case RemoteLayerBackingStore::Type::Bitmap:
-        return "Bitmap";
-    }
-    return nullptr;
-}
-
-static TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
-{
-    ts << backingStore.size();
-    ts << " scale=" << backingStore.scale();
-    if (backingStore.isOpaque())
-        ts << " opaque";
-    ts << " " << nameForBackingStoreType(backingStore.type());
-    return ts;
-}
 
 static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerProperties)
 {
@@ -979,8 +961,8 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & LayerChange::BackingStoreChanged) {
-            if (const RemoteLayerBackingStore* backingStore = layerProperties.backingStore.get())
-                ts.dumpProperty<const RemoteLayerBackingStore&>("backingStore", *backingStore);
+            if (auto* backingStoreProperties = layerProperties.backingStoreProperties.get())
+                ts.dumpProperty("backingStore", *backingStoreProperties);
             else
                 ts.dumpProperty("backingStore", "removed");
         }
@@ -1054,6 +1036,7 @@ String RemoteLayerTreeTransaction::description() const
 
 #if PLATFORM(MAC)
     ts.dumpProperty("pageScalingLayer", m_pageScalingLayerID);
+    ts.dumpProperty("scrolledContentsLayerID", m_scrolledContentsLayerID);
 #endif
 
     ts.dumpProperty("minimumScaleFactor", m_minimumScaleFactor);

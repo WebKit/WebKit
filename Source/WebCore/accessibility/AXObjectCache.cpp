@@ -74,7 +74,6 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementRareData.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "HTMLAreaElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDialogElement.h"
@@ -94,6 +93,7 @@
 #include "HTMLTableSectionElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineRunAndOffset.h"
+#include "LocalFrame.h"
 #include "MathMLElement.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -853,7 +853,7 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 }
 #endif
 
-AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
+AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame* frame)
 {
     if (!gAccessibilityEnabled)
         return nullptr;
@@ -1802,7 +1802,7 @@ bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* 
 #endif
 }
 
-void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent loadingEvent)
+void AXObjectCache::frameLoadingEventNotification(LocalFrame* frame, AXLoadingEvent loadingEvent)
 {
     if (!frame)
         return;

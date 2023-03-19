@@ -67,14 +67,34 @@ void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
     });
 }
 
-void GPUQueue::writeBuffer(
+static GPUSize64 computeElementSize(const BufferSource& data)
+{
+    return WTF::switchOn(data.variant(),
+        [&](const RefPtr<JSC::ArrayBufferView>& bufferView) {
+            return static_cast<GPUSize64>(JSC::elementSize(bufferView->getType()));
+        }, [&](const RefPtr<JSC::ArrayBuffer>&) {
+            return static_cast<GPUSize64>(1);
+        }
+    );
+}
+
+ExceptionOr<void> GPUQueue::writeBuffer(
     const GPUBuffer& buffer,
     GPUSize64 bufferOffset,
     BufferSource&& data,
-    std::optional<GPUSize64> dataOffset,
-    std::optional<GPUSize64> size)
+    std::optional<GPUSize64> optionalDataOffset,
+    std::optional<GPUSize64> optionalSize)
 {
-    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), data.length(), dataOffset.value_or(0), size);
+    auto elementSize = computeElementSize(data);
+    auto dataOffset = elementSize * optionalDataOffset.value_or(0);
+    auto dataSize = data.length();
+    auto contentSize = optionalSize.has_value() ? (elementSize * optionalSize.value()) : (dataSize - dataOffset);
+
+    if (dataOffset > dataSize || dataOffset + contentSize > dataSize || (contentSize % 4))
+        return Exception { OperationError };
+
+    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), dataSize, dataOffset, contentSize);
+    return { };
 }
 
 void GPUQueue::writeTexture(

@@ -75,7 +75,7 @@ class DOMRect;
 class DOMRectList;
 class DOMRectReadOnly;
 class DOMURL;
-class DOMWindow;
+class LocalDOMWindow;
 class Document;
 class Element;
 class EventListener;
@@ -83,7 +83,6 @@ class ExtendableEvent;
 class FetchRequest;
 class FetchResponse;
 class File;
-class Frame;
 class GCObservation;
 class HTMLAnchorElement;
 class HTMLAttachmentElement;
@@ -100,6 +99,7 @@ class InspectorStubFrontend;
 class InternalsMapLike;
 class InternalSettings;
 class InternalsSetLike;
+class LocalFrame;
 class Location;
 class MallocStatistics;
 class MediaStream;
@@ -216,6 +216,7 @@ public:
     enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
     void setOverrideResourceLoadPriority(ResourceLoadPriority);
     void setStrictRawResourceValidationPolicyDisabled(bool);
+    std::optional<ResourceLoadPriority> getResourcePriority(const String& url);
 
     using FetchObject = std::variant<RefPtr<FetchRequest>, RefPtr<FetchResponse>>;
     bool isFetchObjectContextStopped(const FetchObject&);
@@ -1252,7 +1253,7 @@ public:
         
     String highlightPseudoElementColor(const AtomString& highlightName, Element&);
 
-    String windowLocationHost(DOMWindow&);
+    String windowLocationHost(LocalDOMWindow&);
 
     String systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
 
@@ -1376,7 +1377,7 @@ public:
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
-    Frame* frame() const;
+    LocalFrame* frame() const;
 
     void updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue);
 

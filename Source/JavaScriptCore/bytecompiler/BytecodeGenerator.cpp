@@ -2980,12 +2980,6 @@ RegisterID* BytecodeGenerator::emitCreateAsyncGenerator(RegisterID* dst, Registe
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitCreateArgumentsButterflyExcludingThis(RegisterID* dst, RegisterID* targetFunction)
-{
-    OpCreateArgumentsButterflyExcludingThis::emit(this, dst, targetFunction);
-    return dst;
-}
-
 RegisterID* BytecodeGenerator::emitInstanceFieldInitializationIfNeeded(RegisterID* dst, RegisterID* constructor, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
     if (!(isConstructor() || isDerivedConstructorContext()) || needsClassFieldInitializer() == NeedsClassFieldInitializer::No)

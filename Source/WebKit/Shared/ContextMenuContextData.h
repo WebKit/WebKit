@@ -55,6 +55,8 @@ public:
     const std::optional<WebHitTestResultData>& webHitTestResultData() const { return m_webHitTestResultData; }
     const String& selectedText() const { return m_selectedText; }
 
+    bool hasEntireImage() const { return m_hasEntireImage; }
+
 #if ENABLE(SERVICE_CONTROLS)
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
         : m_type(Type::ServicesMenu)
@@ -108,6 +110,7 @@ private:
 
     std::optional<WebHitTestResultData> m_webHitTestResultData;
     String m_selectedText;
+    bool m_hasEntireImage;
 
 #if ENABLE(SERVICE_CONTROLS)
     void setImage(WebCore::Image&);

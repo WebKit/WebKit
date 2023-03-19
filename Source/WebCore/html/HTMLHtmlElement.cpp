@@ -29,10 +29,10 @@
 #include "DocumentLoader.h"
 #include "DocumentParser.h"
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
 

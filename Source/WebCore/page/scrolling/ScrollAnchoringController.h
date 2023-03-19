@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FloatPoint.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 
 namespace WebCore {
 
@@ -35,16 +35,16 @@ class Element;
 class ScrollAnchoringController final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ScrollAnchoringController(FrameView& frameView)
+    explicit ScrollAnchoringController(LocalFrameView& frameView)
         : m_frameView(frameView)
     { }
     void invalidateAnchorElement();
     void updateScrollPosition();
     void selectAnchorElement();
-    FrameView& frameView() { return m_frameView; }
+    LocalFrameView& frameView() { return m_frameView; }
 
 private:
-    FrameView& m_frameView;
+    LocalFrameView& m_frameView;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
     FloatPoint m_lastPositionForAnchorElement;
 };

@@ -192,7 +192,7 @@ PlatformDisplay::PlatformDisplay(GdkDisplay* display)
 
 void PlatformDisplay::sharedDisplayDidClose()
 {
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     clearSharingGLContext();
 #endif
 }
@@ -211,7 +211,7 @@ PlatformDisplay::~PlatformDisplay()
         s_sharedDisplayForCompositing = nullptr;
 }
 
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
 GLContext* PlatformDisplay::sharingGLContext()
 {
     if (!m_sharingGLContext)

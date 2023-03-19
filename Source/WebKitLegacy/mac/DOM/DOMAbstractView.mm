@@ -30,15 +30,15 @@
 
 #import "DOMDocumentInternal.h"
 #import "DOMInternal.h"
-#import <WebCore/DOMWindow.h>
-#import <WebCore/Document.h>
 #import "ExceptionHandlers.h"
-#import <WebCore/Frame.h>
+#import <WebCore/Document.h>
+#import <WebCore/LocalDOMWindow.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/WindowProxy.h>
 
-#define IMPL reinterpret_cast<WebCore::Frame*>(_internal)
+#define IMPL reinterpret_cast<WebCore::LocalFrame*>(_internal)
 
 @implementation DOMAbstractView
 
@@ -68,22 +68,22 @@
 
 @end
 
-WebCore::DOMWindow* core(DOMAbstractView *wrapper)
+WebCore::LocalDOMWindow* core(DOMAbstractView *wrapper)
 {
     if (!wrapper)
         return 0;
     if (!wrapper->_internal)
         return 0;
-    return reinterpret_cast<WebCore::Frame*>(wrapper->_internal)->document()->domWindow();
+    return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->domWindow();
 }
 
-DOMAbstractView *kit(WebCore::DOMWindow* value)
+DOMAbstractView *kit(WebCore::LocalDOMWindow* value)
 {
     WebCoreThreadViolationCheckRoundOne();
 
     if (!value)
         return nil;
-    WebCore::Frame* frame = value->frame();
+    auto* frame = value->frame();
     if (!frame)
         return nil;
     if (DOMAbstractView *wrapper = getDOMWrapper(frame))
@@ -94,12 +94,12 @@ DOMAbstractView *kit(WebCore::DOMWindow* value)
     return wrapper.autorelease();
 }
 
-DOMAbstractView *kit(WebCore::AbstractDOMWindow* value)
+DOMAbstractView *kit(WebCore::DOMWindow* value)
 {
-    if (!is<WebCore::DOMWindow>(value))
+    if (!is<WebCore::LocalDOMWindow>(value))
         return nil;
 
-    return kit(downcast<WebCore::DOMWindow>(value));
+    return kit(downcast<WebCore::LocalDOMWindow>(value));
 }
 
 DOMAbstractView *kit(WebCore::WindowProxy* windowProxy)

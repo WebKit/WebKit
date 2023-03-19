@@ -34,14 +34,14 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "MediaDevices.h"
 #include "Navigator.h"
 
 namespace WebCore {
 
-NavigatorMediaDevices::NavigatorMediaDevices(DOMWindow* window)
-    : DOMWindowProperty(window)
+NavigatorMediaDevices::NavigatorMediaDevices(LocalDOMWindow* window)
+    : LocalDOMWindowProperty(window)
 {
 }
 

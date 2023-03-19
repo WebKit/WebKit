@@ -26,10 +26,10 @@
 #include "config.h"
 #include "EventRegion.h"
 
-#include "ElementAncestorIteratorInlines.h"
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
 #include "Path.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SimpleRange.h"
@@ -121,18 +121,72 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObject& renderer)
 {
-    if (renderer.page().shouldBuildInteractionRegions()) {
-        if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
-            auto addResult = m_interactionRegionsByElement.add(interactionRegion->elementIdentifier, *interactionRegion);
-            if (!addResult.isNewEntry)
-                addResult.iterator->value.regionInLayerCoordinates.unite(interactionRegion->regionInLayerCoordinates);
+    if (!renderer.page().shouldBuildInteractionRegions())
+        return;
+
+    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
+        auto bounds = interactionRegion->regionInLayerCoordinates.bounds();
+        if (interactionRegion->type == InteractionRegion::Type::Interaction) {
+            if (m_interactionRects.contains(bounds))
+                return;
+            m_interactionRects.add(bounds);
+
+            if (shouldConsolidateInteractionRegion(bounds, renderer))
+                return;
+            m_discoveredInteractionRectsByElement.add(interactionRegion->elementIdentifier, bounds);
+        } else {
+            if (m_occlusionRects.contains(bounds))
+                return;
+            m_occlusionRects.add(bounds);
         }
+
+        m_interactionRegions.append(*interactionRegion);
     }
+}
+
+bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, RenderObject& renderer)
+{
+    if (!renderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+        return false;
+
+    for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+        if (!ancestor.element())
+            continue;
+
+        auto elementIdentifier = ancestor.element()->identifier();
+        auto rectIterator = m_discoveredInteractionRectsByElement.find(elementIdentifier);
+        if (rectIterator != m_discoveredInteractionRectsByElement.end()) {
+            auto parentBounds = rectIterator->value;
+            if (!parentBounds.contains(bounds))
+                return false;
+
+            float marginLeft = bounds.x() - parentBounds.x();
+            float marginRight = parentBounds.maxX() - bounds.maxX();
+            float marginTop = bounds.y() - parentBounds.y();
+            float marginBottom = parentBounds.maxY() - bounds.maxY();
+
+            constexpr auto maxMargin = 50;
+
+            if (marginLeft > maxMargin
+                || marginRight > maxMargin
+                || marginTop > maxMargin
+                || marginBottom > maxMargin)
+                return false;
+
+            return true;
+        }
+
+        // If we find a border / background, stop the search.
+        if (!ancestor.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+            return false;
+    }
+
+    return false;
 }
 
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
-    m_eventRegion.uniteInteractionRegions(copyToVector(m_interactionRegionsByElement.values()));
+    m_eventRegion.uniteInteractionRegions(m_interactionRegions);
 }
 
 #endif
@@ -442,14 +496,7 @@ void EventRegion::dump(TextStream& ts) const
     
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (!m_interactionRegions.isEmpty()) {
-        auto sortedInteractionRegions = copyToVector(m_interactionRegions);
-        std::sort(sortedInteractionRegions.begin(), sortedInteractionRegions.end(),
-            [&] (const auto& a, const auto& b) -> bool {
-                return a.regionInLayerCoordinates.bounds().y() == b.regionInLayerCoordinates.bounds().y()
-                    ? a.regionInLayerCoordinates.bounds().x() < b.regionInLayerCoordinates.bounds().x()
-                    : a.regionInLayerCoordinates.bounds().y() < b.regionInLayerCoordinates.bounds().y();
-        });
-        ts.dumpProperty("interaction regions", sortedInteractionRegions);
+        ts.dumpProperty("interaction regions", m_interactionRegions);
         ts << "\n";
     }
 #endif

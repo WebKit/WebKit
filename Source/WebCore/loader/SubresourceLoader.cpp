@@ -35,11 +35,11 @@
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
 #include "InspectorNetworkAgent.h"
 #include "LinkLoader.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -108,7 +108,7 @@ SubresourceLoader::RequestCountTracker::~RequestCountTracker()
         m_cachedResourceLoader->decrementRequestCount(*m_resource);
 }
 
-SubresourceLoader::SubresourceLoader(Frame& frame, CachedResource& resource, const ResourceLoaderOptions& options)
+SubresourceLoader::SubresourceLoader(LocalFrame& frame, CachedResource& resource, const ResourceLoaderOptions& options)
     : ResourceLoader(frame, options)
     , m_resource(&resource)
     , m_state(Uninitialized)
@@ -133,7 +133,7 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-void SubresourceLoader::create(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
+void SubresourceLoader::create(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
     auto subloader(adoptRef(*new SubresourceLoader(frame, resource, options)));
 #if PLATFORM(IOS_FAMILY)
@@ -572,7 +572,7 @@ bool SubresourceLoader::responseHasHTTPStatusCodeError() const
     return true;
 }
 
-static void logResourceLoaded(Frame* frame, CachedResource::Type type)
+static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
 {
     if (!frame || !frame->page())
         return;

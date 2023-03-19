@@ -26,8 +26,8 @@
 #include "AccessibilityAtspiInterfaces.h"
 #include "Document.h"
 #include "FocusController.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>
 #include <locale.h>
@@ -209,7 +209,7 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     if (!localMainFrame)
         return nullptr;
 
-    Frame& frame = *localMainFrame;
+    auto& frame = *localMainFrame;
     if (!frame.document())
         return nullptr;
 

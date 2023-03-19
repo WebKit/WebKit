@@ -31,8 +31,8 @@
 #include "WebFrameLoaderClient.h"
 #include <WebCore/DOMWindowExtension.h>
 #include <WebCore/DOMWrapperWorld.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -71,7 +71,7 @@ InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
 
 WebFrame* InjectedBundleDOMWindowExtension::frame() const
 {
-    Frame* frame = m_coreExtension->frame();
+    auto* frame = m_coreExtension->frame();
     if (!frame)
         return nullptr;
 

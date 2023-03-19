@@ -99,7 +99,7 @@ static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 static const Seconds delayBeforeNoCommitsLogging = 5_s;
 static const unsigned highlightMargin = 5;
 
-static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
+static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
 {
     switch (orientation) {
     case UIInterfaceOrientationUnknown:
@@ -267,7 +267,7 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     return _focusPreservationCount || _activeFocusedStateRetainCount;
 }
 
-- (int32_t)_deviceOrientation
+- (WebCore::IntDegrees)_deviceOrientation
 {
     auto orientation = UIInterfaceOrientationUnknown;
     auto application = UIApplication.sharedApplication;
@@ -439,8 +439,8 @@ static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
 
 static inline bool pointsEqualInDevicePixels(CGPoint a, CGPoint b, float deviceScaleFactor)
 {
-    return fabs(a.x * deviceScaleFactor - b.x * deviceScaleFactor) < std::numeric_limits<float>::epsilon()
-        && fabs(a.y * deviceScaleFactor - b.y * deviceScaleFactor) < std::numeric_limits<float>::epsilon();
+    return std::abs(a.x * deviceScaleFactor - b.x * deviceScaleFactor) < std::numeric_limits<float>::epsilon()
+        && std::abs(a.y * deviceScaleFactor - b.y * deviceScaleFactor) < std::numeric_limits<float>::epsilon();
 }
 
 static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSize contentSize)
@@ -1238,7 +1238,7 @@ static void addOverlayEventRegions(WebCore::GraphicsLayer::PlatformLayerID layer
         const double minimumZoomDuration = 0.1;
         const double zoomDurationFactor = 0.3;
 
-        duration = std::min(fabs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
+        duration = std::min(std::abs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
     }
 
     if (scale != zoomScale)
@@ -1659,7 +1659,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     double currentScale = contentZoomScale(self);
     double targetScale = [self _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
 
-    if (fabs(targetScale - currentScale) < maximumScaleFactorDeltaForPanScroll) {
+    if (std::abs(targetScale - currentScale) < maximumScaleFactorDeltaForPanScroll) {
         if ([self _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance])
             return true;
     } else if (targetScale != currentScale) {
@@ -2110,7 +2110,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _perProcessState.lastSentMinimumEffectiveDeviceWidth = newMinimumEffectiveDeviceWidth;
 }
 
-- (void)_dispatchSetDeviceOrientation:(int32_t)deviceOrientation
+- (void)_dispatchSetDeviceOrientation:(WebCore::IntDegrees)deviceOrientation
 {
     if (_perProcessState.lastSentDeviceOrientation && _perProcessState.lastSentDeviceOrientation.value() == deviceOrientation)
         return;
@@ -2587,7 +2587,7 @@ static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const 
     return WebCore::FloatSize(webView->_maximumUnobscuredSizeOverride.value_or(bounds.size));
 }
 
-static int32_t activeOrientation(WKWebView *webView)
+static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 {
     return webView->_overridesInterfaceOrientation ? deviceOrientationForUIInterfaceOrientation(webView->_interfaceOrientationOverride) : webView->_page->deviceOrientation();
 }
@@ -2698,7 +2698,7 @@ static int32_t activeOrientation(WKWebView *webView)
     auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];
     auto newMinimumUnobscuredSize = activeMinimumUnobscuredSize(self, newBounds);
     auto newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
-    int32_t newOrientation = activeOrientation(self);
+    auto newOrientation = activeOrientation(self);
     auto newMinimumEffectiveDeviceWidth = [self _minimumEffectiveDeviceWidth];
 
     if (!_perProcessState.lastSentViewLayoutSize || newViewLayoutSize != _perProcessState.lastSentViewLayoutSize.value() || newMinimumEffectiveDeviceWidth != _perProcessState.lastSentMinimumEffectiveDeviceWidth.value())
@@ -3588,7 +3588,7 @@ static bool isLockdownModeWarningNeeded()
     _perProcessState.dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithAnimation;
 
     CGFloat oldMinimumEffectiveDeviceWidth;
-    int32_t oldOrientation;
+    WebCore::IntDegrees oldOrientation;
     UIEdgeInsets oldObscuredInsets;
     if (!CGRectIsEmpty(_perProcessState.animatedResizeOldBounds)) {
         oldBounds = _perProcessState.animatedResizeOldBounds;
@@ -3612,7 +3612,7 @@ static bool isLockdownModeWarningNeeded()
     auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];
     auto newMinimumUnobscuredSize = activeMinimumUnobscuredSize(self, newBounds);
     auto newMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, newBounds);
-    int32_t newOrientation = activeOrientation(self);
+    auto newOrientation = activeOrientation(self);
     UIEdgeInsets newObscuredInsets = _obscuredInsets;
     CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGRect contentViewBounds = [_contentView bounds];
@@ -3717,7 +3717,7 @@ static bool isLockdownModeWarningNeeded()
     _perProcessState.lastSentDeviceOrientation = newOrientation;
     _perProcessState.lastSentMinimumEffectiveDeviceWidth = newMinimumEffectiveDeviceWidth;
 
-    _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMinimumUnobscuredSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID);
+    _page->dynamicViewportSizeUpdate({ newViewLayoutSize, newMinimumUnobscuredSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID });
     if (WebKit::DrawingAreaProxy* drawingArea = _page->drawingArea())
         drawingArea->setSize(WebCore::IntSize(newBounds.size));
 
@@ -3796,7 +3796,8 @@ static bool isLockdownModeWarningNeeded()
         CATransform3D transform = CATransform3DMakeScale(imageScaleInViewCoordinates, imageScaleInViewCoordinates, 1);
         transform = CATransform3DTranslate(transform, -rectInViewCoordinates.origin.x, -rectInViewCoordinates.origin.y, 0);
         CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(MACH_PORT_NULL, (CFStringRef)displayName, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform, 0);
-        completionHandler(WebCore::IOSurface::sinkIntoImage(WTFMove(surface)).get());
+        auto context = surface->createPlatformContext();
+        completionHandler(WebCore::IOSurface::sinkIntoImage(WTFMove(surface), WTFMove(context)).get());
         return;
     }
 #endif

@@ -37,11 +37,11 @@
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FullscreenManager.h"
 #include "GraphicsContext.h"
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "PODInterval.h"
@@ -402,7 +402,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     if (!hasChildNodes())
         return nullptr;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame)
         return nullptr;
 

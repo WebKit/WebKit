@@ -35,11 +35,14 @@
 #include "RemoteWCLayerTreeHostProxy.h"
 #include "UpdateInfo.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageInlines.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
+#include <WebCore/Page.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -99,7 +102,7 @@ void DrawingAreaWC::updatePreferences(const WebPreferencesStore&)
     settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
 }
 
-bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::FrameView& frameView) const
+bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView& frameView) const
 {
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
     return localFrame && localFrame->isMainFrame();

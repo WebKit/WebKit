@@ -718,6 +718,38 @@ private:
         flushForTerminal();
     }
 
+    void keepUsesOfCurrentInstructionAlive(const JSInstruction* currentInstruction, Checkpoint checkpoint)
+    {
+        // This function is useful only when the instruction creates a graph in DFG (instead of sequence of nodes).
+        // We have phantom insertion phase to keep uses of instructions alive properly. But that analysis has strong assumption
+        // that one instruction cannot create a graph. As a result, the phase does block local analysis, and if the local is not used on that basic block,
+        // we do not insert phantoms. Let's see
+        //
+        // Block #0
+        //     @0 GetLocal(local0)
+        //     @1 Use(@0)
+        //     @2 Jump(#1)
+        // Block #1
+        //     @3 ForceOSRExit
+        //
+        // In #1, we do not know that local0 needs to be kept alive even if local0 is alive in bytecode. And phantom insertion phase cannot insert phantoms
+        // to keep them alive since local0 operand in #1 is not filled.
+        // This helper function automatically inserts uses based on the current checkpoint. So we can use this in the prologue of #1.
+        //
+        // Block #0
+        //     @0 GetLocal(local0)
+        //     @1 Use(@0)
+        //     @2 Jump(#1)
+        // Block #1
+        //     @3 GetLocal(local0)
+        //     @4 ForceOSRExit
+        //
+        //  Then phatom insertion phase will see operand for local0 is filled in #1, and appropriately insert Phantom into #1 too.
+        computeUsesForBytecodeIndex(m_inlineStackTop->m_profiledBlock, currentInstruction, checkpoint, [&](VirtualRegister operand) {
+            get(operand);
+        });
+    }
+
     Node* jsConstant(FrozenValue* constantValue)
     {
         return addToGraph(JSConstant, OpInfo(constantValue));
@@ -4273,8 +4305,8 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
 
     unsigned numberOfParameters = 0;
     numberOfParameters++; // |this|
-    numberOfParameters++; // |receiver|
     numberOfParameters++; // |propertyName|
+    numberOfParameters++; // |receiver|
     numberOfParameters++; // True return PC.
 
     // Start with a register offset that corresponds to the last in-use register.
@@ -4294,8 +4326,8 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
     //    since we only really care about 'this' in this case. But we're not going to take that
     //    shortcut.
     set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
-    set(virtualRegisterForArgumentIncludingThis(1, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
-    set(virtualRegisterForArgumentIncludingThis(2, registerOffset), propertyNameNode, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(1, registerOffset), propertyNameNode, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(2, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
 
     // We've set some locals, but they are not user-visible. It's still OK to exit from here.
     m_exitOK = true;
@@ -5552,8 +5584,8 @@ void ByteCodeParser::handlePutById(
 
         unsigned numberOfParameters = 0;
         numberOfParameters++; // |this|
-        numberOfParameters++; // |receiver|
         numberOfParameters++; // |propertyName|
+        numberOfParameters++; // |receiver|
         numberOfParameters++; // |value|
         numberOfParameters++; // True return PC.
 
@@ -5574,8 +5606,8 @@ void ByteCodeParser::handlePutById(
         //    since we only really care about 'this' in this case. But we're not going to take that
         //    shortcut.
         set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
-        set(virtualRegisterForArgumentIncludingThis(1, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
-        set(virtualRegisterForArgumentIncludingThis(2, registerOffset), propertyNameNode, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(1, registerOffset), propertyNameNode, ImmediateNakedSet);
+        set(virtualRegisterForArgumentIncludingThis(2, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
         set(virtualRegisterForArgumentIncludingThis(3, registerOffset), value, ImmediateNakedSet);
 
         // We've set some locals, but they are not user-visible. It's still OK to exit from here.
@@ -7727,6 +7759,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                     m_currentBlock = fastArrayBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                 }
 
                 Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(IterationKind::Values)));
@@ -7756,6 +7789,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     ASSERT(generatedCase);
                     m_currentBlock = genericBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                 } else
                     ASSERT(!generatedCase);
 
@@ -7774,6 +7808,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 {
                     m_currentBlock = notObjectBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                     LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_s);
                     OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
                     Node* errorMessage = addToGraph(LazyJSConstant, info);
@@ -7784,6 +7819,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 {
                     m_currentBlock = isObjectBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                     SpeculatedType prediction = getPrediction();
 
                     Node* base = get(bytecode.m_iterator);
@@ -7861,6 +7897,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                     m_currentBlock = fastArrayBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                 } else
                     addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(JSValue())), get(bytecode.m_next));
 
@@ -7901,6 +7938,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 {
                     m_currentBlock = doLoadBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                     Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), get(bytecode.m_iterator));
                     Node* one = jsConstant(jsNumber(1));
                     Node* newIndex = makeSafe(addToGraph(ArithAdd, index, one));
@@ -7932,6 +7970,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 {
                     m_currentBlock = isDoneBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                     Node* trueNode = jsConstant(jsBoolean(true));
                     Node* doneIndex = jsConstant(jsNumber(-1));
                     Node* bottomNode = jsConstant(m_graph.bottomValueMatchingSpeculation(prediction));
@@ -7957,6 +7996,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     ASSERT(generatedCase);
                     m_currentBlock = genericBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                 } else
                     ASSERT(!generatedCase);
 
@@ -7985,6 +8025,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 {
                     m_currentBlock = notObjectBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                     LazyJSValue errorString = LazyJSValue::newString(m_graph, "Iterator result interface is not an object."_s);
                     OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
                     Node* errorMessage = addToGraph(LazyJSConstant, info);
@@ -7998,6 +8039,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     m_exitOK = true;
                     m_currentBlock = isObjectBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
                     SpeculatedType prediction = getPrediction();
 
                     Node* base = get(nextResult);
@@ -8025,6 +8067,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 {
                     m_currentBlock = notDoneBlock;
                     clearCaches();
+                    keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
 
                     Node* base = get(nextResult);
                     auto* valueImpl = m_vm->propertyNames->value.impl();
@@ -8623,13 +8666,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_cloned_arguments);
         }
 
-        case op_create_arguments_butterfly_excluding_this: {
-            auto bytecode = currentInstruction->as<OpCreateArgumentsButterflyExcludingThis>();
-            noticeArgumentsUse();
-            set(bytecode.m_dst, addToGraph(CreateArgumentsButterflyExcludingThis, Edge(get(bytecode.m_target), CellUse)));
-            NEXT_OPCODE(op_create_arguments_butterfly_excluding_this);
-        }
-            
         case op_get_from_arguments: {
             auto bytecode = currentInstruction->as<OpGetFromArguments>();
             set(bytecode.m_dst,

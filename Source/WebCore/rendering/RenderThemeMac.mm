@@ -32,9 +32,7 @@
 #import "FileList.h"
 #import "FloatRoundedRect.h"
 #import "FocusController.h"
-#import "Frame.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
 #import "HTMLAttachmentElement.h"
@@ -47,6 +45,8 @@
 #import "ImageControlsButtonMac.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
 #import "PaintInfo.h"
@@ -1621,7 +1621,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     if (validProgress && progress)
         paintAttachmentProgress(attachment, context, layout, progress);
 
-    if (usePlaceholder)
+    if (usePlaceholder && !element.isImageOnly())
         paintAttachmentPlaceholderBorder(attachment, context, layout);
 
     return true;

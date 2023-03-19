@@ -67,7 +67,7 @@ struct PossiblyQuotedIdentifier {
 
         bool hasExplicitNestingParent() const;
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
-        void replaceNestingParentByNotAll();
+        void replaceNestingParentByPseudoClassScope();
 
         // How the attribute value has to match. Default is Exact.
         enum Match {

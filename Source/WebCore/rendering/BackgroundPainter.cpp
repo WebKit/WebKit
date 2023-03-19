@@ -558,7 +558,7 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
         if (renderer.settings().fixedBackgroundsPaintRelativeToDocument())
             viewportRect = view.unscaledDocumentRect();
         else {
-            FrameView& frameView = view.frameView();
+            LocalFrameView& frameView = view.frameView();
             bool useFixedLayout = frameView.useFixedLayout() && !frameView.fixedLayoutSize().isEmpty();
 
             if (useFixedLayout) {

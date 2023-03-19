@@ -36,12 +36,12 @@
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "Image.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
@@ -589,7 +589,7 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
         return createDragImageFromImage(m_dragImage->image(), ImageOrientation::Orientation::None);
 
     if (m_dragImageElement) {
-        if (Frame* frame = m_dragImageElement->document().frame())
+        if (auto* frame = m_dragImageElement->document().frame())
             return createDragImageForNode(*frame, *m_dragImageElement);
     }
 

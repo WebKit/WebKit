@@ -482,7 +482,7 @@ class BundleCreator(object):
         return libc_libraries
 
     def _get_mesa_libraries(self):
-        mesa_library_names = ['libglapi', 'libxcb-glx', 'libGLX', 'libEGL', 'libGL', 'libGLESv2', 'libEGL_mesa', 'libGLX_mesa']
+        mesa_library_names = ['libglapi', 'libEGL', 'libGL', 'libGLESv2', 'libEGL_mesa']
         mesa_libraries = []
         lib_dir_dri = self._get_pkg_config_var('dri', 'libdir')
         # Some versions of the flatpak SDK ships the Mesa libraries into a non-standard path.

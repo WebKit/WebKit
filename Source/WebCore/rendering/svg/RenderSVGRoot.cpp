@@ -26,10 +26,10 @@
 #include "RenderSVGRoot.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
@@ -620,7 +620,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     }
 
     // Respect scroll offset, after mapping to container coordinates.
-    if (RefPtr<FrameView> view = document().view()) {
+    if (RefPtr view = document().view()) {
         LayoutPoint scrollPosition = view->scrollPosition();
         scrollPosition.scale(scale);
         transformState.move(-toLayoutSize(scrollPosition));

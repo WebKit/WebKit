@@ -48,21 +48,6 @@ RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayer
 
 RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = default;
 
-bool RemoteLayerBackingStoreCollection::backingStoreNeedsDisplay(const RemoteLayerBackingStore& backingStore)
-{
-    if (backingStore.size().isEmpty())
-        return false;
-
-    auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
-    if (!frontBuffer)
-        return true;
-
-    if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
-        return true;
-
-    return !backingStore.hasEmptyDirtyRegion();
-}
-
 void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
     for (auto* backingStore : m_backingStoresNeedingDisplay) {
@@ -80,7 +65,7 @@ void RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
 
 void RemoteLayerBackingStoreCollection::willFlushLayers()
 {
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "\nRemoteLayerBackingStoreCollection::willFlushLayers()");
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "\nRemoteLayerBackingStoreCollection::willFlushLayers()");
 
     m_inLayerFlush = true;
     m_reachableBackingStoreInLatestFlush.clear();
@@ -241,7 +226,7 @@ void RemoteLayerBackingStoreCollection::tryMarkAllBackingStoreVolatile(Completio
 void RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer()
 {
     bool successfullyMadeBackingStoreVolatile = markAllBackingStoreVolatile(VolatilityMarkingBehavior::ConsiderTimeSinceLastDisplay, { });
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer() - live " << m_liveBackingStore.size() << ", unparented " << m_unparentedBackingStore.size() << "; successfullyMadeBackingStoreVolatile " << successfullyMadeBackingStoreVolatile);
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer() - live " << m_liveBackingStore.size() << ", unparented " << m_unparentedBackingStore.size() << "; successfullyMadeBackingStoreVolatile " << successfullyMadeBackingStoreVolatile);
 
     if (successfullyMadeBackingStoreVolatile)
         m_volatilityTimer.stop();

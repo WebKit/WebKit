@@ -869,8 +869,8 @@ Class webAVPlayerControllerClass()
 
             if (isfinite([self liveUpdateInterval]) && [self liveUpdateInterval] > WebAVPlayerControllerLiveStreamMinimumTargetDuration) {
                 // Only update the timing if the new time differs by one segment duration plus the hysteresis delta.
-                minTimingNeedsUpdate = isnan(oldMinTime) || (fabs(oldMinTime - newMinTime) > [self liveUpdateInterval] + WebAVPlayerControllerLiveStreamSeekableTimeRangeDurationHysteresisDelta) || ([[self minTiming] rate] != newMinTimingRate);
-                maxTimingNeedsUpdate = isnan(oldMaxTime) || (fabs(oldMaxTime - newMaxTime) > [self liveUpdateInterval] + WebAVPlayerControllerLiveStreamSeekableTimeRangeDurationHysteresisDelta);
+                minTimingNeedsUpdate = isnan(oldMinTime) || (std::abs(oldMinTime - newMinTime) > [self liveUpdateInterval] + WebAVPlayerControllerLiveStreamSeekableTimeRangeDurationHysteresisDelta) || ([[self minTiming] rate] != newMinTimingRate);
+                maxTimingNeedsUpdate = isnan(oldMaxTime) || (std::abs(oldMaxTime - newMaxTime) > [self liveUpdateInterval] + WebAVPlayerControllerLiveStreamSeekableTimeRangeDurationHysteresisDelta);
             }
 
             if (minTimingNeedsUpdate || maxTimingNeedsUpdate) {

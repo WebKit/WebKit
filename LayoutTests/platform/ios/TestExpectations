@@ -19,7 +19,7 @@ media/audioSession/ios [ Pass ]
 model-element [ Pass ]
 quicklook [ Pass ]
 system-preview [ Pass ]
-remote-layer-tree/ios [ Pass ]
+remote-layer-tree [ Pass ]
 swipe [ Pass ]
 http/tests/swipe [ Pass ]
 
@@ -2366,8 +2366,6 @@ fast/animation/height-auto-transition-computed-value.html [ ImageOnlyFailure ]
 
 webkit.org/b/155174 svg/animations/animate-marker-orient-from-angle-to-autostartreverse.html [ Skip ]
 
-webkit.org/b/252839 media/video-object-fit.html [ ImageOnlyFailure ]
-
 webkit.org/b/155372 [ Debug ] css3/masking/mask-luminance-svg.html [ Pass Crash ]
 webkit.org/b/155372 [ Debug ] css3/masking/mask-svg-script-none-to-png.html [ Pass Crash ]
 
@@ -2746,7 +2744,6 @@ svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 svg/custom/acid3-test-77.html [ Failure ]
 
 # <rdar://problem/33381269> REGRESSION: Multiple Layout test from webgl/1.0.3/conformance are timing out.
-webgl/1.0.3/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip  ]
 webgl/1.0.3/conformance/ogles/GL/acos/acos_001_to_006.html [ Skip  ]
 webgl/1.0.3/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip  ]
 
@@ -3100,6 +3097,8 @@ imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ 
 
 # Test fails, but has flaky output.
 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
+webkit.org/b/253850 swipe/swipe-back-with-passive-wheel-listener.html [ Skip ]
+webkit.org/b/253850 swipe/swipe-back-with-active-wheel-listener.html [ Skip ]
 
 # These tests fail unexpectedly with accelerated drawing enabled.
 # Interestingly, these versions fail worse than the more recently updated WPT versions above.
@@ -3656,8 +3655,6 @@ webkit.org/b/240069 fast/css/continuationCrash.html [ Pass Failure ]
 
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
-webkit.org/b/240081 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
-
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
 webkit.org/b/239568 imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
@@ -3743,6 +3740,7 @@ webkit.org/b/242840 fast/text/international/system-language/han-text-style.html 
 webkit.org/b/242905 compositing/tiling/tiled-mask-inwindow.html [ Pass Failure ]
 
 webkit.org/b/243547 fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
+webkit.org/b/253959 fast/mediastream/getUserMedia-to-canvas-2.html [ Pass Timeout ]
 
 # These tests have a similar assert_equals issue, causing failures. See webkit.org/b/243688
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/upgrade/websocket.https.html [ Pass Failure ]
@@ -4394,3 +4392,8 @@ webkit.org/b/252504 http/tests/site-isolation/basic-iframe.html [ Pass ImageOnly
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
 
 http/tests/misc/heic-accept-header.html [ Pass ]
+
+webkit.org/b/254044 webxr [ Skip ]
+webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/254044 http/wpt/webxr [ Skip ]
+webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]

@@ -227,11 +227,10 @@ FormatterContentBuilder = class FormatterContentBuilder
         }
     }
 
-    removeLastWhitespace()
+    tryRemoveLastWhitespace()
     {
-        console.assert(this.lastTokenWasWhitespace);
-        console.assert(this.lastToken === " ");
         if (this.lastTokenWasWhitespace) {
+            console.assert(this.lastToken === " ");
             this._popFormattedContent();
             // No need to worry about `_startOfLine` and `lastTokenWasNewline`
             // because `appendSpace` takes care of not adding whitespace

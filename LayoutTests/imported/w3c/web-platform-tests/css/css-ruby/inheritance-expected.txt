@@ -1,0 +1,6 @@
+
+FAIL Property ruby-align has initial value space-around assert_true: ruby-align doesn't seem to be supported in the computed style expected true got false
+FAIL Property ruby-align inherits assert_true: ruby-align doesn't seem to be supported in the computed style expected true got false
+FAIL Property ruby-position has initial value alternate assert_true: ruby-position doesn't seem to be supported in the computed style expected true got false
+FAIL Property ruby-position inherits assert_true: ruby-position doesn't seem to be supported in the computed style expected true got false
+

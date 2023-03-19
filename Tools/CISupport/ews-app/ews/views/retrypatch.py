@@ -44,6 +44,7 @@ class RetryPatch(View):
     def post(self, request):
         try:
             change_id = request.POST.get('change_id')
+            change_id = int(change_id)
         except (ValueError, TypeError) as e:
             return HttpResponse('Invalid change id')
 

@@ -62,7 +62,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             return { };
         return {
             lineBoxRect.top() + rootInlineBox.logicalTop() - rootInlineBox.annotationAbove().value_or(0.f),
-            lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.annotationUnder().value_or(0.f)
+            lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.annotationBelow().value_or(0.f)
         };
     };
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
@@ -113,7 +113,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             ASSERT_NOT_REACHED();
 
         auto adjustedBorderBoxTop = borderBox.top() - inlineLevelBox.annotationAbove().value_or(0.f);
-        auto adjustedBorderBoxBottom = borderBox.bottom() + inlineLevelBox.annotationUnder().value_or(0.f);
+        auto adjustedBorderBoxBottom = borderBox.bottom() + inlineLevelBox.annotationBelow().value_or(0.f);
         enclosingTop = std::min(enclosingTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
         enclosingBottom = std::max(enclosingBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
     }

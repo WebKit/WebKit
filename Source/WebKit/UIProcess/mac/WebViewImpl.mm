@@ -2565,6 +2565,8 @@ static const SelectorNameMap& selectorExceptionMap()
         { @selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection"_s },
         { @selector(pageUp:), "MovePageUp"_s },
         { @selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection"_s },
+        { @selector(scrollPageDown:), "ScrollPageForward"_s },
+        { @selector(scrollPageUp:), "ScrollPageBackward"_s },
         { @selector(_pasteAsQuotation:), "PasteAsQuotation"_s },
     };
 
@@ -3340,7 +3342,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 
     [m_immediateActionController dismissContentRelativeChildWindows];
 
-    m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeTextIgnored);
+    m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText::Ignored);
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     [std::exchange(m_lastContextMenuTranslationPopover, nil) close];
@@ -3735,6 +3737,36 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [m_layerHostingView layer].sublayers = rootLayer ? @[ rootLayer ] : nil;
 
     [CATransaction commit];
+}
+
+void WebViewImpl::setHeaderBannerLayer(CALayer *headerBannerLayer)
+{
+    if (m_headerBannerLayer)
+        [m_headerBannerLayer removeFromSuperlayer];
+
+    m_headerBannerLayer = headerBannerLayer;
+
+    // If WebPage has not been created yet, WebPageCreationParameters.headerBannerHeight
+    // will be used to adjust the page content size.
+    if (page().hasRunningProcess()) {
+        int headerBannerHeight = headerBannerLayer ? headerBannerLayer.frame.size.height : 0;
+        page().setHeaderBannerHeight(headerBannerHeight);
+    }
+}
+
+void WebViewImpl::setFooterBannerLayer(CALayer *footerBannerLayer)
+{
+    if (m_footerBannerLayer)
+        [m_footerBannerLayer removeFromSuperlayer];
+
+    m_footerBannerLayer = footerBannerLayer;
+
+    // If WebPage has not been created yet, WebPageCreationParameters.footerBannerHeight
+    // will be used to adjust the page content size.
+    if (page().hasRunningProcess()) {
+        int footerBannerHeight = footerBannerLayer ? footerBannerLayer.frame.size.height : 0;
+        page().setFooterBannerHeight(footerBannerHeight);
+    }
 }
 
 void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
@@ -4360,7 +4392,9 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     if (captureAtNominalResolution)
         imageOptions |= kCGWindowImageNominalResolution;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()

@@ -122,6 +122,8 @@ enum Opcode : uint8_t {
     SExt8,
     SExt16,
     // Takes Int32 and returns Int64:
+    SExt8To64,
+    SExt16To64,
     SExt32,
     ZExt32,
     // Does a bitwise truncation of Int64->Int32 and Double->Float:
@@ -418,6 +420,7 @@ enum Opcode : uint8_t {
     // Currently only some architectures support this.
     // FIXME: Expand this to identical instructions for the other architectures as a macro.
     VectorMulByElement,
+    VectorShiftByVector,
 
     // SSA support, in the style of DFG SSA.
     Upsilon, // This uses the UpsilonValue class.

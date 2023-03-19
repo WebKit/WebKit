@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CachedResource;
 class Document;
-class Frame;
+class LocalFrame;
 class ResourceTiming;
 
 class ResourceTimingInformation {
@@ -42,7 +42,7 @@ public:
 
     void addResourceTiming(CachedResource&, Document&, ResourceTiming&&);
     void removeResourceTiming(CachedResource&);
-    void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const AtomString&, Frame*);
+    void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const AtomString&, LocalFrame*);
 
 private:
     enum AlreadyAdded { NotYetAdded, Added };

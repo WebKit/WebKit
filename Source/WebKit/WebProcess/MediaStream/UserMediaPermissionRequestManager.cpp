@@ -29,10 +29,11 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 
@@ -49,7 +50,7 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
 {
     Document* document = request.document();
-    Frame* frame = document ? document->frame() : nullptr;
+    auto* frame = document ? document->frame() : nullptr;
 
     if (!frame || !document->page()) {
         request.deny(UserMediaRequest::OtherFailure, emptyString());
@@ -138,7 +139,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaReques
     request->deny(reason, WTFMove(invalidConstraint));
 }
 
-void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, MediaDeviceHashSalts&&)>&& completionHandler)
+void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&)>&& completionHandler)
 {
     auto* frame = document.frame();
     if (!frame) {

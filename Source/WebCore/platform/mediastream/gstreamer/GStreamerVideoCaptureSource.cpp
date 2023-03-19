@@ -46,19 +46,6 @@ static void initializeDebugCategory()
     });
 }
 
-class GStreamerVideoPreset : public VideoPreset {
-public:
-    static Ref<GStreamerVideoPreset> create(IntSize size, Vector<FrameRateRange>&& framerates)
-    {
-        return adoptRef(*new GStreamerVideoPreset(size, WTFMove(framerates)));
-    }
-
-    GStreamerVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges)
-        : VideoPreset(size, WTFMove(frameRateRanges), GStreamer)
-    {
-    }
-};
-
 class GStreamerVideoCaptureSourceFactory final : public VideoCaptureFactory {
 public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
@@ -267,7 +254,7 @@ const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings()
 
 void GStreamerVideoCaptureSource::generatePresets()
 {
-    Vector<Ref<VideoPreset>> presets;
+    Vector<VideoPreset> presets;
     GRefPtr<GstCaps> caps = adoptGRef(m_capturer->caps());
     for (unsigned i = 0; i < gst_caps_get_size(caps.get()); i++) {
         GstStructure* str = gst_caps_get_structure(caps.get(), i);
@@ -307,7 +294,7 @@ void GStreamerVideoCaptureSource::generatePresets()
             }
         }
 
-        presets.append(GStreamerVideoPreset::create(size, WTFMove(frameRates)));
+        presets.append(VideoPreset { { size, WTFMove(frameRates) } });
     }
 
     if (presets.isEmpty()) {
@@ -317,7 +304,7 @@ void GStreamerVideoCaptureSource::generatePresets()
             Vector<FrameRateRange> frameRates;
 
             frameRates.append({ 0, G_MAXDOUBLE});
-            presets.append(GStreamerVideoPreset::create(size, WTFMove(frameRates)));
+            presets.append(VideoPreset { { size, WTFMove(frameRates) } });
         }
     }
 

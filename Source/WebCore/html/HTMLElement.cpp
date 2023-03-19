@@ -46,9 +46,7 @@
 #include "EventListener.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "HTMLBDIElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLButtonElement.h"
@@ -70,6 +68,8 @@
 #include "ImageOverlay.h"
 #include "JSHTMLElement.h"
 #include "LabelsNodeList.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "MediaControlsHost.h"
 #include "MutableStyleProperties.h"
 #include "NodeTraversal.h"
@@ -754,11 +754,11 @@ void HTMLElement::setTranslate(bool enable)
 bool HTMLElement::rendererIsEverNeeded()
 {
     if (hasTagName(noscriptTag)) {
-        RefPtr<Frame> frame = document().frame();
+        RefPtr frame { document().frame() };
         if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
             return false;
     } else if (hasTagName(noembedTag)) {
-        RefPtr<Frame> frame = document().frame();
+        RefPtr frame { document().frame() };
         if (frame && frame->arePluginsEnabled())
             return false;
     }

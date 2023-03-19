@@ -153,6 +153,10 @@ public:
     const WebCore::FloatRect& sheetRect() const { return m_sheetRect; }
 #endif
 
+#if PLATFORM(WIN)
+    static void showSavePanelForSingleFile(HWND, Vector<WebCore::InspectorFrontendClient::SaveData>&&);
+#endif
+
 #if PLATFORM(GTK)
     GtkWidget* inspectorView() const { return m_inspectorView.get(); };
     void setClient(std::unique_ptr<WebInspectorUIProxyClient>&&);

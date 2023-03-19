@@ -45,8 +45,6 @@
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GridArea.h"
 #include "GridPositionsResolver.h"
@@ -56,6 +54,8 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -110,12 +110,12 @@ static void truncateWithEllipsis(String& string, size_t length)
         string = makeString(StringView(string).left(length), ellipsis);
 }
 
-static FloatPoint localPointToRootPoint(const FrameView* view, const FloatPoint& point)
+static FloatPoint localPointToRootPoint(const LocalFrameView* view, const FloatPoint& point)
 {
     return view->contentsToRootView(point);
 }
 
-static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
+static void contentsQuadToCoordinateSystem(const LocalFrameView* mainView, const LocalFrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     quad.setP1(localPointToRootPoint(view, quad.p1()));
     quad.setP2(localPointToRootPoint(view, quad.p2()));
@@ -143,14 +143,14 @@ static Element* effectiveElementForNode(Node& node)
 
 static void buildRendererHighlight(RenderObject* renderer, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    Frame* containingFrame = renderer->document().frame();
+    auto* containingFrame = renderer->document().frame();
     if (!containingFrame)
         return;
 
     highlight.setDataFromConfig(highlightConfig);
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
-    FrameView* mainView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* mainView = localMainFrame ? localMainFrame->view() : nullptr;
 
     // (Legacy)RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRootOrLegacySVGRoot();
@@ -318,13 +318,13 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
     if (!shapeOutsideInfo)
         return;
 
-    Frame* containingFrame = node.document().frame();
+    auto* containingFrame = node.document().frame();
     if (!containingFrame)
         return;
 
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
-    FrameView* mainView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* mainView = localMainFrame ? localMainFrame->view() : nullptr;
 
     static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
 
@@ -662,7 +662,7 @@ void InspectorOverlay::update()
     if (!localMainFrame)
         return;
 
-    FrameView* view = localMainFrame->view();
+    auto* view = localMainFrame->view();
     if (!view)
         return;
 
@@ -867,7 +867,7 @@ void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverl
     if (!localMainFrame)
         return;
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
 
@@ -926,7 +926,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     if (!localMainFrame)
         return;
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
     if (!pageView->delegatesScrollingToNativeView())
         scrollOffset = pageView->visibleContentRect().location();
 
@@ -1201,11 +1201,11 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     String elementWidth;
     String elementHeight;
     if (is<RenderBoxModelObject>(renderer)) {
-        RenderBoxModelObject* modelObject = downcast<RenderBoxModelObject>(renderer);
+        auto* modelObject = downcast<RenderBoxModelObject>(renderer);
         elementWidth = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject));
         elementHeight = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject));
     } else {
-        FrameView* containingView = node.document().frame()->view();
+        auto* containingView = node.document().frame()->view();
         IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
         elementWidth = String::number(boundingBox.width());
         elementHeight = String::number(boundingBox.height());
@@ -1229,7 +1229,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
 
     String elementRole;
     if (AXObjectCache* axObjectCache = node.document().axObjectCache()) {
-        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(&node))
+        if (auto* axObject = axObjectCache->getOrCreate(&node); axObject && !axObject->accessibilityIsIgnored())
             elementRole = axObject->computedRoleString();
     }
 
@@ -1269,7 +1269,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     if (!localMainFrame)
         return { };
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
 
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
@@ -1541,7 +1541,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     if (!localMainFrame)
         return { };
 
-    FrameView* pageView = localMainFrame->view();
+    auto* pageView = localMainFrame->view();
     if (!pageView)
         return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
@@ -1561,10 +1561,10 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     float gridStartY = rowPositions[0];
     float gridEndY = rowPositions[rowPositions.size() - 1];
 
-    Frame* containingFrame = node->document().frame();
+    auto* containingFrame = node->document().frame();
     if (!containingFrame)
         return { };
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
 
     auto computedStyle = node->computedStyle();
     if (!computedStyle)
@@ -1912,10 +1912,10 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     auto itemsAtStartOfLine = m_page.inspectorController().ensureDOMAgent().flexibleBoxRendererCachedItemsAtStartOfLine(renderFlex);
 
-    Frame* containingFrame = node->document().frame();
+    auto* containingFrame = node->document().frame();
     if (!containingFrame)
         return { };
-    FrameView* containingView = containingFrame->view();
+    auto* containingView = containingFrame->view();
 
     auto computedStyle = node->computedStyle();
     if (!computedStyle)
@@ -2086,9 +2086,9 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
             auto childCrossAxisTrailingEdge = correctedCrossAxisTrailingEdge(childRect);
 
             // Build bounds for space between the current item and the cross-axis space.
-            if (std::fabs(childCrossAxisLeadingEdge - currentLineCrossAxisLeadingEdge) > 1)
+            if (std::abs(childCrossAxisLeadingEdge - currentLineCrossAxisLeadingEdge) > 1)
                 populateHighlightForGapOrSpace(childMainAxisLeadingEdge, childMainAxisTrailingEdge, currentLineCrossAxisLeadingEdge, childCrossAxisLeadingEdge, flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace);
-            if (std::fabs(childCrossAxisTrailingEdge - currentLineCrossAxisTrailingEdge) > 1)
+            if (std::abs(childCrossAxisTrailingEdge - currentLineCrossAxisTrailingEdge) > 1)
                 populateHighlightForGapOrSpace(childMainAxisLeadingEdge, childMainAxisTrailingEdge, currentLineCrossAxisTrailingEdge, childCrossAxisTrailingEdge, flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace);
 
             // Build bounds for gaps and space between the current item and previous item (or container edge).

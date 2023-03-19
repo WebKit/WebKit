@@ -34,9 +34,7 @@
 
 #include "CommandLineAPIHost.h"
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorApplicationCacheAgent.h"
@@ -58,9 +56,11 @@
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
-#include "JSDOMWindow.h"
-#include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindow.h"
+#include "JSLocalDOMWindowCustom.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageAuditAgent.h"
 #include "PageConsoleAgent.h"
@@ -225,7 +225,7 @@ unsigned InspectorController::inspectionLevel() const
     return m_inspectorFrontendClient ? m_inspectorFrontendClient->inspectionLevel() : 0;
 }
 
-void InspectorController::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
+void InspectorController::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
     if (&world != &mainThreadNormalWorld())
         return;
@@ -482,7 +482,7 @@ bool InspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject* lex
 {
     JSLockHolder lock(lexicalGlobalObject);
 
-    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject);
+    auto* inspectedWindow = jsDynamicCast<JSLocalDOMWindow*>(lexicalGlobalObject);
     if (!inspectedWindow)
         return false;
 
@@ -529,12 +529,12 @@ JSC::VM& InspectorController::vm()
     return commonVM();
 }
 
-void InspectorController::willComposite(Frame& frame)
+void InspectorController::willComposite(LocalFrame& frame)
 {
     InspectorInstrumentation::willComposite(frame);
 }
 
-void InspectorController::didComposite(Frame& frame)
+void InspectorController::didComposite(LocalFrame& frame)
 {
     InspectorInstrumentation::didComposite(frame);
 }

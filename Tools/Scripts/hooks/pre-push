@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.0'
+VERSION = '1.3'
 
 import io
 import os
@@ -16,7 +16,7 @@ LOCATION = r'{{ location }}'
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 sys.path.append(SCRIPTS)
 
-REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+)(@|://)(?P<host>[^:/]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
+REMOTE_RE = re.compile(r'{{ remote_re }}')
 NULL_HASH = '0' * 40
 TRUNCATED_COMMIT_LEN = 12
 
@@ -244,7 +244,7 @@ def main(name, remote):
         elif target_security_level == 0:
             print_tty('Pushing to {}, which is classified as a public remote'.format(name or remote))
         else:
-            print_tty('Pushing to {}, which has not classification. Treating it as a public remote'.format(name or remote))
+            print_tty('Pushing to {}, which has no classification. Treating it as a public remote'.format(name or remote))
 
     to_push = []
     for push in sys.stdin.readlines():
@@ -295,7 +295,7 @@ def main(name, remote):
             print_error("'{}' comes from an uncategorized remote, it's not safe to push it publically".format(commit))
             return 1
         # Security level of source exceeds security level of target
-        if categorization_class == 1 and security_level > (target_security_level or 0):
+        if categorization_class == 1 and (MAX_LEVEL if security_level is None else security_level) > (target_security_level or 0):
             print_error("'{}' comes from a more secure remote than '{}'".format(commit, name))
             if MODE == PUBLISH_MODE:
                 prompt_for.append(commit)
@@ -307,7 +307,7 @@ def main(name, remote):
             print_error("'{}' cherry-picks a change from an uncategorized remote, it's not safe to push it publically".format(commit))
             return 1
         # Security level of original of a cherry-pick exceeds security level of target
-        if categorization_class == 2 and security_level > (target_security_level or 0):
+        if categorization_class == 2 and (MAX_LEVEL if security_level is None else security_level) > (target_security_level or 0):
             print_error("'{}' cherry-picks a change from a more secure remote than '{}'".format(commit, name))
             if MODE == DEFAULT_MODE:
                 prompt_for.append(commit)
@@ -330,7 +330,7 @@ def main(name, remote):
         return 1
 
     if prompt_for:
-        branches = sorted({[branch_for(commit) for commit in prompt_for]})
+        branches = sorted({branch_for(commit) for commit in prompt_for})
         expected_response = 'publicize {}'.format(
             branches[0] if len(branches) == 1
             else '{}, and {}'.format(', '.join(branches[:-1]), branches[-1]),
@@ -361,4 +361,3 @@ if __name__ == '__main__':
         print_tty('')
         print_error('User has canceled push')
         sys.exit(1)
-

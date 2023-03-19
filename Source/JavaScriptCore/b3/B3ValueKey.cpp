@@ -72,6 +72,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case Depend:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Clz:
@@ -181,6 +183,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case VectorShr:
     case VectorMulSat:
     case VectorAvgRound:
+    case VectorShiftByVector:
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1));
     case VectorReplaceLane:
     case VectorMulByElement:

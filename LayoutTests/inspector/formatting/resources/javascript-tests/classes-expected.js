@@ -22,6 +22,12 @@ class Foo {
 }
 
 class Foo {
+    static{
+        1
+    }
+}
+
+class Foo {
     static staticMethod()
     {
         1

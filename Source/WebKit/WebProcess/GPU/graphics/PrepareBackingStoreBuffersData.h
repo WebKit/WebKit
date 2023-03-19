@@ -32,6 +32,10 @@
 #include "SwapBuffersDisplayRequirement.h"
 #include <WebCore/RenderingResourceIdentifier.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebKit {
 
 struct PrepareBackingStoreBuffersInputData {
@@ -45,6 +49,9 @@ struct PrepareBackingStoreBuffersOutputData {
     std::optional<ImageBufferBackendHandle> frontBufferHandle;
     SwapBuffersDisplayRequirement displayRequirement { SwapBuffersDisplayRequirement::NeedsNoDisplay };
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersInputData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersOutputData&);
 
 } // namespace WebKit
 

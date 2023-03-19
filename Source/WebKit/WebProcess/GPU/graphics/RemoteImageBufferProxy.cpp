@@ -410,15 +410,15 @@ RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore
 {
     backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
     backend.moveToSerializedBuffer(m_renderingResourceIdentifier, m_referenceTracker.write());
-
-    // Record an implicit read, since we always do a read+write (to get+remove) as a single
-    // operation.
-    m_referenceTracker.read();
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
     auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
+
+    // Record an implicit read, since we always do a read+write (to get+remove) as a single
+    // operation.
+    buffer->m_referenceTracker.read();
     backend.moveToImageBuffer(buffer->m_referenceTracker.write(), result->renderingResourceIdentifier());
     buffer->m_connection = nullptr;
     return result;

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        async function getCountOfLayerChangingUpdates()
+        {
+            return new Promise(resolve => {
+                testRunner.runUIScript("uiController.countOfUpdatesWithLayerChanges", result => resolve(result));
+            });
+        }
+        
+        async function waitForRenderingUpdates(count)
+        {
+            for (let i = 0; i < count; ++i)
+                await UIHelper.renderingUpdate();
+        }
+
+        let initialCountOfLayerChangingUpdates;
+        let finalCountOfLayerChangingUpdates;
+        
+        window.addEventListener('load', async () => {
+            // Wait to stabilize.
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            initialCountOfLayerChangingUpdates = await getCountOfLayerChangingUpdates();
+            waitForRenderingUpdates(5);
+            finalCountOfLayerChangingUpdates = await getCountOfLayerChangingUpdates();
+            
+            shouldBeTrue('initialCountOfLayerChangingUpdates === finalCountOfLayerChangingUpdates');
+            
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

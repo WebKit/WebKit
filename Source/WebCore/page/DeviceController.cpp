@@ -38,7 +38,7 @@ DeviceController::DeviceController(DeviceClient& client)
 {
 }
 
-void DeviceController::addDeviceEventListener(DOMWindow& window)
+void DeviceController::addDeviceEventListener(LocalDOMWindow& window)
 {
     bool wasEmpty = m_listeners.isEmpty();
     m_listeners.add(&window);
@@ -53,7 +53,7 @@ void DeviceController::addDeviceEventListener(DOMWindow& window)
         m_client.startUpdating();
 }
 
-void DeviceController::removeDeviceEventListener(DOMWindow& window)
+void DeviceController::removeDeviceEventListener(LocalDOMWindow& window)
 {
     m_listeners.remove(&window);
     m_lastEventListeners.remove(&window);
@@ -61,7 +61,7 @@ void DeviceController::removeDeviceEventListener(DOMWindow& window)
         m_client.stopUpdating();
 }
 
-void DeviceController::removeAllDeviceEventListeners(DOMWindow& window)
+void DeviceController::removeAllDeviceEventListeners(LocalDOMWindow& window)
 {
     m_listeners.removeAll(&window);
     m_lastEventListeners.removeAll(&window);
@@ -69,7 +69,7 @@ void DeviceController::removeAllDeviceEventListeners(DOMWindow& window)
         m_client.stopUpdating();
 }
 
-bool DeviceController::hasDeviceEventListener(DOMWindow& window) const
+bool DeviceController::hasDeviceEventListener(LocalDOMWindow& window) const
 {
     return m_listeners.contains(&window);
 }

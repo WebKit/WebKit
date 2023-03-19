@@ -61,7 +61,6 @@
 #include "DOMAudioSession.h"
 #include "DOMCSSPaintWorklet.h"
 #include "DOMImplementation.h"
-#include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
@@ -88,10 +87,8 @@
 #include "FocusOptions.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCReachableRef.h"
 #include "GPUCanvasContext.h"
@@ -145,14 +142,17 @@
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
-#include "JSDOMWindowCustom.h"
 #include "JSLazyEventListener.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
 #include "LayoutDisallowedScope.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
@@ -458,7 +458,7 @@ static bool acceptsEditingFocus(const Element& element)
     return frame->editor().shouldBeginEditing(makeRangeSelectingNodeContents(*root));
 }
 
-static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame* targetFrame)
+static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, LocalFrame* targetFrame)
 {
     // targetFrame can be 0 when we're trying to navigate a top-level frame
     // that has a 0 opener.
@@ -466,7 +466,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
         return false;
 
     const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
-    for (RefPtr<AbstractFrame> ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
+    for (RefPtr<Frame> ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
         RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestorFrame.get());
         if (!localAncestor)
             continue;
@@ -489,7 +489,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
     return false;
 }
 
-static void printNavigationErrorMessage(Frame& frame, const URL& activeURL, const char* reason)
+static void printNavigationErrorMessage(LocalFrame& frame, const URL& activeURL, const char* reason)
 {
     String message = "Unsafe JavaScript attempt to initiate navigation for frame with URL '" + frame.document()->url().string() + "' from frame with URL '" + activeURL.string() + "'. " + reason + "\n";
 
@@ -560,7 +560,7 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
-static inline int currentOrientation(Frame* frame)
+static inline IntDegrees currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
     if (frame)
@@ -571,7 +571,7 @@ static inline int currentOrientation(Frame* frame)
     return 0;
 }
 
-static Ref<CachedResourceLoader> createCachedResourceLoader(Frame* frame)
+static Ref<CachedResourceLoader> createCachedResourceLoader(LocalFrame* frame)
 {
     if (frame) {
         if (auto loader = frame->loader().activeDocumentLoader())
@@ -580,7 +580,7 @@ static Ref<CachedResourceLoader> createCachedResourceLoader(Frame* frame)
     return CachedResourceLoader::create(nullptr);
 }
 
-Document::Document(Frame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags, ScriptExecutionContextIdentifier identifier)
+Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags, ScriptExecutionContextIdentifier identifier)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , ScriptExecutionContext(identifier)
@@ -682,7 +682,7 @@ Ref<Document> Document::create(Document& contextDocument)
     return document;
 }
 
-Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
+Ref<Document> Document::createNonRenderedPlaceholder(LocalFrame& frame, const URL& url)
 {
     auto document = adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
     document->addToContextsMap();
@@ -713,9 +713,9 @@ Document::~Document()
 
     ASSERT(!renderView());
     ASSERT(m_backForwardCacheState != InBackForwardCache);
-    ASSERT(m_ranges.isEmpty());
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
+    ASSERT(m_ranges.isEmptyIgnoringNullReferences());
     ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
@@ -1482,7 +1482,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (!visualUpdatesAllowed)
         return;
 
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     bool needsLayout = frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout());
     if (needsLayout)
         updateLayout();
@@ -2019,7 +2019,7 @@ void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
     formController().setStateForNewFormElements(stateVector);
 }
 
-FrameView* Document::view() const
+LocalFrameView* Document::view() const
 {
     return m_frame ? m_frame->view() : nullptr;
 }
@@ -2101,8 +2101,8 @@ void Document::resolveStyle(ResolveStyleType type)
     if (!m_renderView)
         return;
 
-    FrameView& frameView = m_renderView->frameView();
-    Ref<FrameView> protect(frameView);
+    auto& frameView = m_renderView->frameView();
+    Ref protectedFrameView { frameView };
     if (frameView.isPainting())
         return;
     
@@ -2276,7 +2276,7 @@ bool Document::updateStyleIfNeeded()
     if (isResolvingContainerQueriesForSelfOrAncestor())
         return false;
 
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ASSERT(isMainThread());
@@ -2304,7 +2304,7 @@ void Document::updateLayout()
 {
     ASSERT(isMainThread());
 
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
@@ -2385,7 +2385,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     }
     
     // Check for re-entrancy and assert (same code that is in updateLayout()).
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
@@ -3053,7 +3053,7 @@ ScriptableDocumentParser* Document::scriptableDocumentParser() const
     return parser() ? parser()->asScriptableDocumentParser() : nullptr;
 }
 
-ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url, const AtomString& name, const String& features)
+ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& url, const AtomString& name, const String& features)
 {
     if (!m_domWindow)
         return Exception { InvalidAccessError };
@@ -3315,7 +3315,7 @@ void Document::implicitClose()
     //  -When any new HTMLLinkElement is inserted into the document
     // But those add a dynamic component to the favicon that has UI 
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
-    RefPtr<Frame> f = frame();
+    RefPtr f = frame();
     if (f) {
 #if ENABLE(XSLT)
         // Apply XSL transforms before load events so that event handlers can access the transformed DOM tree.
@@ -3760,7 +3760,7 @@ void Document::setRTCNetworkManager(Ref<RTCNetworkManager>&& rtcNetworkManager)
 }
 #endif
 
-bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
+bool Document::canNavigate(LocalFrame* targetFrame, const URL& destinationURL)
 {
     if (!m_frame)
         return false;
@@ -3783,7 +3783,7 @@ bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
     return true;
 }
 
-bool Document::canNavigateInternal(Frame& targetFrame)
+bool Document::canNavigateInternal(LocalFrame& targetFrame)
 {
     ASSERT(m_frame);
 
@@ -3879,7 +3879,7 @@ void Document::willLoadFrameElement(const URL& frameURL)
 }
 
 // Prevent cross-site top-level redirects from third-party iframes unless the user has ever interacted with the frame.
-bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL)
+bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL)
 {
     if (!settings().thirdPartyIframeRedirectBlockingEnabled())
         return false;
@@ -4527,7 +4527,7 @@ static bool serviceScrollAnimationForScrollableArea(const ScrollableArea* scroll
 void Document::runScrollSteps()
 {
     // Service user scroll animations before scroll event dispatch.
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     if (frameView) {
         MonotonicTime now = MonotonicTime::now();
         bool scrollAnimationsInProgress = serviceScrollAnimationForScrollableArea(frameView.get(), now);
@@ -5037,11 +5037,6 @@ void Document::setCSSTarget(Element* newTarget)
     m_cssTarget = newTarget;
 }
 
-Element* Document::cssTarget() const
-{
-    return m_cssTarget.get();
-}
-
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]++;
@@ -5118,8 +5113,8 @@ void Document::moveNodeIteratorsToNewDocumentSlowCase(Node& node, Document& newD
 
 void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 {
-    for (auto* range : m_ranges)
-        range->nodeChildrenChanged(container);
+    for (auto& range : m_ranges)
+        range.nodeChildrenChanged(container);
 }
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
@@ -5129,15 +5124,15 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
     adjustFocusedNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
     adjustFocusNavigationNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
 
-    for (auto* range : m_ranges)
-        range->nodeChildrenWillBeRemoved(container);
+    for (auto& range : m_ranges)
+        range.nodeChildrenWillBeRemoved(container);
 
     for (auto* it : m_nodeIterators) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
             it->nodeWillBeRemoved(*n);
     }
 
-    if (RefPtr<Frame> frame = this->frame()) {
+    if (RefPtr frame = this->frame()) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling()) {
             frame->eventHandler().nodeWillBeRemoved(*n);
             frame->selection().nodeWillBeRemoved(*n);
@@ -5161,10 +5156,10 @@ void Document::nodeWillBeRemoved(Node& node)
     for (auto* it : m_nodeIterators)
         it->nodeWillBeRemoved(node);
 
-    for (auto* range : m_ranges)
-        range->nodeWillBeRemoved(node);
+    for (auto& range : m_ranges)
+        range.nodeWillBeRemoved(node);
 
-    if (RefPtr<Frame> frame = this->frame()) {
+    if (RefPtr frame = this->frame()) {
         frame->eventHandler().nodeWillBeRemoved(node);
         frame->selection().nodeWillBeRemoved(node);
         frame->page()->dragCaretController().nodeWillBeRemoved(node);
@@ -5176,15 +5171,17 @@ void Document::nodeWillBeRemoved(Node& node)
 
 void Document::parentlessNodeMovedToNewDocument(Node& node)
 {
-    Vector<Range*, 5> rangesAffected;
+    Vector<WeakPtr<Range>, 5> rangesAffected;
 
-    for (auto* range : m_ranges) {
-        if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
+    for (auto& range : m_ranges) {
+        if (range.parentlessNodeMovedToNewDocumentAffectsRange(node))
             rangesAffected.append(range);
     }
 
-    for (auto* range : rangesAffected)
-        range->updateRangeForParentlessNodeMovedToNewDocument(node);
+    for (auto& range : rangesAffected) {
+        if (range)
+            range->updateRangeForParentlessNodeMovedToNewDocument(node);
+    }
 }
 
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
@@ -5206,9 +5203,9 @@ void Document::adjustFocusNavigationNodeOnNodeRemoval(Node& node, NodeRemoval no
 
 void Document::textInserted(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmpty()) {
-        for (auto* range : m_ranges)
-            range->textInserted(text, offset, length);
+    if (!m_ranges.isEmptyIgnoringNullReferences()) {
+        for (auto& range : m_ranges)
+            range.textInserted(text, offset, length);
     }
 
     // Update the markers for spelling and grammar checking.
@@ -5222,9 +5219,9 @@ void Document::textInserted(Node& text, unsigned offset, unsigned length)
 
 void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 {
-    if (!m_ranges.isEmpty()) {
-        for (auto* range : m_ranges)
-            range->textRemoved(text, offset, length);
+    if (!m_ranges.isEmptyIgnoringNullReferences()) {
+        for (auto& range : m_ranges)
+            range.textRemoved(text, offset, length);
     }
 
     // Update the markers for spelling and grammar checking.
@@ -5234,10 +5231,10 @@ void Document::textRemoved(Node& text, unsigned offset, unsigned length)
 
 void Document::textNodesMerged(Text& oldNode, unsigned offset)
 {
-    if (!m_ranges.isEmpty()) {
+    if (!m_ranges.isEmptyIgnoringNullReferences()) {
         NodeWithIndex oldNodeWithIndex(&oldNode);
-        for (auto* range : m_ranges)
-            range->textNodesMerged(oldNodeWithIndex, offset);
+        for (auto& range : m_ranges)
+            range.textNodesMerged(oldNodeWithIndex, offset);
     }
 
     // FIXME: This should update markers for spelling and grammar checking.
@@ -5245,8 +5242,8 @@ void Document::textNodesMerged(Text& oldNode, unsigned offset)
 
 void Document::textNodeSplit(Text& oldNode)
 {
-    for (auto* range : m_ranges)
-        range->textNodeSplit(oldNode);
+    for (auto& range : m_ranges)
+        range.textNodeSplit(oldNode);
 
     // FIXME: This should update markers for spelling and grammar checking.
 }
@@ -5256,7 +5253,7 @@ void Document::createDOMWindow()
     ASSERT(m_frame);
     ASSERT(!m_domWindow);
 
-    m_domWindow = DOMWindow::create(*this);
+    m_domWindow = LocalDOMWindow::create(*this);
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);
@@ -5267,7 +5264,7 @@ void Document::takeDOMWindowFrom(Document& document)
     ASSERT(m_frame);
     ASSERT(!m_domWindow);
     ASSERT(document.m_domWindow);
-    // A valid DOMWindow is needed by CachedFrame for its documents.
+    // A valid LocalDOMWindow is needed by CachedFrame for its documents.
     ASSERT(backForwardCacheState() == NotInBackForwardCache);
 
     m_domWindow = WTFMove(document.m_domWindow);
@@ -5824,7 +5821,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
     m_backForwardCacheState = state;
 
-    FrameView* v = view();
+    auto* v = view();
     Page* page = this->page();
 
     switch (state) {
@@ -6220,7 +6217,7 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 void Document::setDesignMode(InheritedBool value)
 {
     m_designMode = value;
-    for (RefPtr<AbstractFrame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+    for (RefPtr<Frame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame || !localFrame->document())
             continue;
@@ -6300,11 +6297,6 @@ ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceUR
     if (!shouldIgnoreNamespaceChecks && !hasValidNamespaceForAttributes(parsedName))
         return Exception { NamespaceError };
     return Attr::create(*this, parsedName, emptyAtom());
-}
-
-const SVGDocumentExtensions* Document::svgExtensions()
-{
-    return m_svgExtensions.get();
 }
 
 SVGDocumentExtensions& Document::accessSVGExtensions()
@@ -6417,7 +6409,7 @@ void Document::finishedParsing()
             eventTiming->domContentLoadedEventEnd = now;
     }
 
-    if (RefPtr<Frame> frame = this->frame()) {
+    if (RefPtr frame = this->frame()) {
 #if ENABLE(XSLT)
         applyPendingXSLTransformsNowIfScheduled();
 #endif
@@ -6743,15 +6735,15 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
 
 void Document::attachRange(Range& range)
 {
-    ASSERT(!m_ranges.contains(&range));
-    m_ranges.add(&range);
+    ASSERT(!m_ranges.contains(range));
+    m_ranges.add(range);
 }
 
 void Document::detachRange(Range& range)
 {
     // We don't ASSERT m_ranges.contains(&range) to allow us to call this
     // unconditionally to fix: https://bugs.webkit.org/show_bug.cgi?id=26044
-    m_ranges.remove(&range);
+    m_ranges.remove(range);
 }
 
 std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
@@ -7273,7 +7265,7 @@ void Document::wheelEventHandlersChanged(Node* node)
         element->invalidateStyle();
     }
 
-    m_frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
+    m_frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::EventHandlerChange);
 #else
     UNUSED_PARAM(node);
 #endif
@@ -7406,7 +7398,7 @@ void Document::didAddOrRemoveMouseEventHandler(Node& node)
     }
 
     if (RefPtr frame = this->frame())
-        frame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::EventHandlerChange);
+        frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::EventHandlerChange);
 #else
     UNUSED_PARAM(node);
 #endif
@@ -8040,7 +8032,7 @@ bool Document::hasFocus() const
     Page* page = this->page();
     if (!page || !page->focusController().isActive() || !page->focusController().isFocused())
         return false;
-    if (Frame* focusedFrame = page->focusController().focusedFrame()) {
+    if (auto* focusedFrame = page->focusController().focusedFrame()) {
         if (focusedFrame->tree().isDescendantOf(frame()))
             return true;
     }
@@ -8307,7 +8299,7 @@ struct IntersectionObservationState {
     bool isIntersecting { false };
 };
 
-static std::optional<IntersectionObservationState> computeIntersectionState(FrameView& frameView, const IntersectionObserver& observer, Element& target, bool applyRootMargin)
+static std::optional<IntersectionObservationState> computeIntersectionState(LocalFrameView& frameView, const IntersectionObserver& observer, Element& target, bool applyRootMargin)
 {
     auto* targetRenderer = target.renderer();
     if (!targetRenderer)
@@ -8620,7 +8612,7 @@ void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
     m_inDocumentShadowRoots.remove(shadowRoot);
 }
 
-void Document::orientationChanged(int orientation)
+void Document::orientationChanged(IntDegrees orientation)
 {
     LOG(Events, "Document %p orientationChanged - orientation %d", this, orientation);
     dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -9277,7 +9269,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
 #endif
 
     auto& frameView = renderView()->frameView();
-    Ref<FrameView> protector(frameView);
+    Ref<LocalFrameView> protector(frameView);
 
     bool resultLayer = renderView()->layer()->hitTest(request, location, result);
 

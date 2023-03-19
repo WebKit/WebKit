@@ -34,11 +34,11 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {
@@ -259,7 +259,7 @@ void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, con
 #endif
 }
 
-void WebResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse, FetchDestinationIsScriptLike isScriptLike)
+void WebResourceLoadObserver::logSubresourceLoading(const LocalFrame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse, FetchDestinationIsScriptLike isScriptLike)
 {
     if (isEphemeral())
         return;

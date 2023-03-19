@@ -27,6 +27,7 @@
 
 #include "PlatformLayer.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -38,6 +39,8 @@ class IntSize;
 class VideoFrame;
 
 enum class VideoFrameRotation : uint16_t;
+
+using LayerHostingContextID = uint32_t;
 
 class SampleBufferDisplayLayer {
 public:
@@ -62,7 +65,7 @@ public:
     virtual void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) = 0;
 
     virtual void updateAffineTransform(CGAffineTransform) = 0;
-    virtual void updateBoundsAndPosition(CGRect, VideoFrameRotation) = 0;
+    virtual void updateBoundsAndPosition(CGRect, VideoFrameRotation, std::optional<WTF::MachSendRight>&& = std::nullopt) = 0;
 
     virtual void flush() = 0;
     virtual void flushAndRemoveImage() = 0;
@@ -77,6 +80,8 @@ public:
 
     enum class RenderPolicy { TimingInfo, Immediately };
     virtual void setRenderPolicy(RenderPolicy) { };
+
+    virtual LayerHostingContextID hostingContextID() const { return 0; }
 
 protected:
     explicit SampleBufferDisplayLayer(Client&);

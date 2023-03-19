@@ -60,6 +60,8 @@ private:
 
     WebCore::RenderingMode renderingMode() const final;
 
+    WebCore::DecodingMode preferredImageDecodingMode() const final;
+
     void recordSave() final;
     void recordRestore() final;
     void recordTranslate(float x, float y) final;

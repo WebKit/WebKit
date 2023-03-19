@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class FrameView;
+class LocalFrameView;
 
 struct MouseRelatedEventInit : public EventModifierInit {
     int screenX { 0 };
@@ -71,10 +71,10 @@ public:
     // usable with RenderObject::absoluteToLocal).
     const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
     
-    static FrameView* frameViewFromWindowProxy(WindowProxy*);
+    static LocalFrameView* frameViewFromWindowProxy(WindowProxy*);
 
-    static LayoutPoint pagePointToClientPoint(LayoutPoint pagePoint, FrameView*);
-    static LayoutPoint pagePointToAbsolutePoint(LayoutPoint pagePoint, FrameView*);
+    static LayoutPoint pagePointToClientPoint(LayoutPoint pagePoint, LocalFrameView*);
+    static LayoutPoint pagePointToAbsolutePoint(LayoutPoint pagePoint, LocalFrameView*);
 
 protected:
     MouseRelatedEvent() = default;

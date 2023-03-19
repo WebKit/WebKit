@@ -33,9 +33,9 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
-#include "FrameView.h"
 #include "GtkUtilities.h"
 #include "HostWindow.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include "Widget.h"
 

@@ -39,6 +39,8 @@ class HTMLLinkElement;
 class Page;
 struct MediaQueryParserContext;
 
+enum class RequestPriority : uint8_t;
+
 template<typename T, typename Counter> class EventSender;
 using LinkEventSender = EventSender<HTMLLinkElement, WeakPtrImplWithEventTargetData>;
 
@@ -93,6 +95,7 @@ public:
 
     void setFetchPriorityForBindings(const AtomString&);
     String fetchPriorityForBindings() const;
+    RequestPriority fetchPriorityHint() const;
 
 private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;

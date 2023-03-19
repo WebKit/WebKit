@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "InlineDamage.h"
+#include "InlineDisplayContent.h"
+#include "InlineFormattingState.h"
 #include <optional>
 #include <wtf/Forward.h>
 
@@ -32,16 +35,12 @@ namespace WebCore {
 
 class RenderStyle;
 
-namespace InlineDisplay {
-struct Box;
-}
-
 namespace Layout {
 
 class Box;
-class InlineDamage;
 class InlineTextBox;
 class InlineFormattingState;
+struct DamagedLine;
 
 class InlineInvalidation {
 public:
@@ -49,7 +48,7 @@ public:
 
     void styleChanged(const Box&, const RenderStyle& oldStyle);
 
-    void textInserted(const InlineTextBox* damagedInlineTextBox = nullptr, std::optional<size_t> offset = { });
+    void textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
     void textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
     void textWillBeRemoved(UniqueRef<Box>&&);
 
@@ -59,6 +58,8 @@ public:
     void horizontalConstraintChanged();
 
 private:
+    void updateInlineDamage(InlineDamage::Type, std::optional<DamagedLine>);
+
     InlineDamage& m_inlineDamage;
 
     const InlineItems& m_inlineItems;

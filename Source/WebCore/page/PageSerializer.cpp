@@ -40,7 +40,6 @@
 #include "CommonAtomStrings.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLImageElement.h"
@@ -52,6 +51,7 @@
 #include "HTMLStyleElement.h"
 #include "HTTPParsers.h"
 #include "Image.h"
+#include "LocalFrame.h"
 #include "MarkupAccumulator.h"
 #include "Page.h"
 #include "RenderElement.h"
@@ -176,7 +176,7 @@ void PageSerializer::serialize(Page& page)
         serializeFrame(localMainFrame);
 }
 
-void PageSerializer::serializeFrame(Frame* frame)
+void PageSerializer::serializeFrame(LocalFrame* frame)
 {
     Document* document = frame->document();
     URL url = document->url();
@@ -231,7 +231,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         }
     }
 
-    for (AbstractFrame* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+    for (auto* childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(childFrame);
         if (!localFrame)
             continue;
@@ -321,7 +321,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
     }
 }
 
-URL PageSerializer::urlForBlankFrame(Frame* frame)
+URL PageSerializer::urlForBlankFrame(LocalFrame* frame)
 {
     auto iterator = m_blankFrameURLs.find(frame);
     if (iterator != m_blankFrameURLs.end())

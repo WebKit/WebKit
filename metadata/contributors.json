@@ -60,6 +60,16 @@
    },
    {
       "emails" : [
+         "a_protyasha@apple.com"
+      ],
+      "github" : "aprotyas",
+      "name" : "Abrar Rahman Protyasha",
+      "nicks" : [
+         "aprotyas"
+      ]
+   },
+   {
+      "emails" : [
          "adachan@apple.com"
       ],
       "expertise" : "WebKit on Windows",
@@ -2891,7 +2901,8 @@
          "squelart@apple.com"
       ],
       "github" : "squelart",
-      "name" : "Gerald Squelart"
+      "name" : "Gerald Squelart",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -3762,6 +3773,13 @@
          "Jiewen"
       ],
       "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jigen.zhou@sony.com"
+      ],
+      "github" : "jigenzhou",
+      "name" : "Jigen Zhou"
    },
    {
       "emails" : [
@@ -5389,7 +5407,7 @@
       "expertise" : "Graphics",
       "github" : "mwyrzykowski",
       "name" : "Mike Wyrzykowski",
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -6930,6 +6948,16 @@
       "name" : "Tim 'mithro' Ansell",
       "nicks" : [
          "mithro"
+      ]
+   },
+   {
+      "emails" : [
+         "tjc@igalia.com"
+      ],
+      "github" : "catamorphism",
+      "name" : "Tim Chevalier",
+      "nicks" : [
+         "tim"
       ]
    },
    {

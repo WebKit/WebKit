@@ -68,10 +68,16 @@ public:
     unsigned boundArgsLength() const { return m_boundArgs ? m_boundArgs->length() : 0; }
     JSArray* boundArgsCopy(JSGlobalObject*);
     JSString* nameMayBeNull() { return m_nameMayBeNull.get(); }
+    JSString* name()
+    {
+        if (m_nameMayBeNull)
+            return m_nameMayBeNull.get();
+        return nameSlow(vm());
+    }
     String nameString()
     {
         if (!m_nameMayBeNull)
-            return emptyString();
+            name();
         ASSERT(!m_nameMayBeNull->isRope());
         bool allocationAllowed = false;
         return m_nameMayBeNull->tryGetValue(allocationAllowed);
@@ -93,6 +99,8 @@ public:
 
 private:
     JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSObject* flattenedTargetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, double length);
+
+    JSString* nameSlow(VM&);
 
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;

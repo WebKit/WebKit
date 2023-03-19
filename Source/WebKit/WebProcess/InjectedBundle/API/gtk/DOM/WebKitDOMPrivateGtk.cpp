@@ -143,8 +143,8 @@ WebKitDOMEventTarget* wrap(EventTarget* eventTarget)
 
     if (is<Node>(*eventTarget))
         return WEBKIT_DOM_EVENT_TARGET(kit(&downcast<Node>(*eventTarget)));
-    if (is<DOMWindow>(*eventTarget))
-        return WEBKIT_DOM_EVENT_TARGET(kit(&downcast<DOMWindow>(*eventTarget)));
+    if (is<LocalDOMWindow>(*eventTarget))
+        return WEBKIT_DOM_EVENT_TARGET(kit(&downcast<LocalDOMWindow>(*eventTarget)));
     return nullptr;
 }
 

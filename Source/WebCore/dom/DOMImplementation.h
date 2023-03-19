@@ -44,7 +44,7 @@ public:
     static bool hasFeature() { return true; }
     WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media);
 
-    static Ref<Document> createDocument(const String& contentType, Frame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
+    static Ref<Document> createDocument(const String& contentType, LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
 
 private:
     Document& m_document;

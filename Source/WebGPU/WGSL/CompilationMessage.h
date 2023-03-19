@@ -43,10 +43,10 @@ public:
     void dump(PrintStream& out) const;
 
     const String& message() const { return m_message; }
-    unsigned lineNumber() const { return m_span.m_line; }
-    unsigned lineOffset() const { return m_span.m_lineOffset; }
-    unsigned offset() const { return m_span.m_offset; }
-    unsigned length() const { return m_span.m_length; }
+    unsigned lineNumber() const { return m_span.line; }
+    unsigned lineOffset() const { return m_span.lineOffset; }
+    unsigned offset() const { return m_span.offset; }
+    unsigned length() const { return m_span.length; }
 
 private:
     String m_message;

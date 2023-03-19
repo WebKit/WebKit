@@ -49,7 +49,7 @@
     ConstrainDOMString groupId;
     ConstrainDOMString displaySurface;
     ConstrainBoolean logicalSurface;
-
+    ConstrainDouble zoom;
 };
 
 typedef (double or ConstrainDoubleRange) ConstrainDouble;

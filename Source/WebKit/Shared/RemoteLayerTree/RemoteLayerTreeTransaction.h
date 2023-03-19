@@ -245,6 +245,11 @@ public:
 #endif
 
     typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<LayerProperties>> LayerPropertiesMap;
+    
+    bool hasAnyLayerChanges() const
+    {
+        return m_changedLayerProperties.size() || m_changedLayers.size() || m_createdLayers.size() || m_destroyedLayerIDs.size() || m_layerIDsWithNewlyUnreachableBackingStore.size();
+    }
 
     Vector<LayerCreationProperties> createdLayers() const { return m_createdLayers; }
     Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
@@ -295,6 +300,9 @@ public:
 #if PLATFORM(MAC)
     WebCore::GraphicsLayer::PlatformLayerID pageScalingLayerID() const { return m_pageScalingLayerID.value(); }
     void setPageScalingLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_pageScalingLayerID = layerID; }
+
+    WebCore::GraphicsLayer::PlatformLayerID scrolledContentsLayerID() const { return m_scrolledContentsLayerID.value(); }
+    void setScrolledContentsLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_scrolledContentsLayerID = layerID; }
 #endif
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
@@ -375,6 +383,7 @@ private:
 
 #if PLATFORM(MAC)
     Markable<WebCore::GraphicsLayer::PlatformLayerID> m_pageScalingLayerID; // Only used for non-delegated scaling.
+    Markable<WebCore::GraphicsLayer::PlatformLayerID> m_scrolledContentsLayerID;
 #endif
 
     double m_pageScaleFactor { 1 };

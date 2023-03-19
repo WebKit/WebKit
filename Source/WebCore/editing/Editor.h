@@ -32,8 +32,8 @@
 #include "EditingStyle.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
-#include "Frame.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "PasteboardWriterData.h"
 #include <wtf/RobinHoodHashSet.h>
 #include "ScrollView.h"
@@ -68,11 +68,11 @@ class EditCommandComposition;
 class EditorClient;
 class EditorInternalCommand;
 class File;
-class Frame;
 class HTMLElement;
 class HitTestResult;
 class KeyboardEvent;
 class KillRing;
+class LocalFrame;
 class Pasteboard;
 class PasteboardWriterData;
 class RenderLayer;
@@ -157,7 +157,7 @@ private:
 class IgnoreSelectionChangeForScope {
     WTF_MAKE_NONCOPYABLE(IgnoreSelectionChangeForScope); WTF_MAKE_FAST_ALLOCATED;
 public:
-    IgnoreSelectionChangeForScope(Frame& frame)
+    IgnoreSelectionChangeForScope(LocalFrame& frame)
         : m_selectionChange(*frame.document(), std::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
     {
     }
@@ -317,7 +317,7 @@ public:
         const EditorInternalCommand* m_command { nullptr };
         EditorCommandSource m_source;
         RefPtr<Document> m_document;
-        RefPtr<Frame> m_frame;
+        RefPtr<LocalFrame> m_frame;
     };
     WEBCORE_EXPORT Command command(const String& commandName); // Command source is CommandFromMenuOrKeyBinding.
     Command command(const String& commandName, EditorCommandSource);

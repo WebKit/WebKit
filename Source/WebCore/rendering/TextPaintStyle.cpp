@@ -28,8 +28,8 @@
 
 #include "ColorLuminance.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderStyle.h"
@@ -73,7 +73,7 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
     return textColor.lightened();
 }
 
-TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
+TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     TextPaintStyle paintStyle;
 

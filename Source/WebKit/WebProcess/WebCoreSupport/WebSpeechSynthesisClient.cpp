@@ -29,6 +29,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebSpeechSynthesisVoice.h"
+#include <WebCore/Page.h>
 
 #if ENABLE(SPEECH_SYNTHESIS)
 

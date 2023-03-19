@@ -25,6 +25,7 @@
 #include "AnimationFrameRate.h"
 #include "AppHighlightStorage.h"
 #include "ApplicationCacheStorage.h"
+#include "ArchiveResource.h"
 #include "AttachmentElementClient.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorCoordinatorClient.h"
@@ -70,7 +71,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GeolocationController.h"
 #include "HTMLElement.h"
@@ -90,11 +90,13 @@
 #include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalFrameView.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
+#include "MemoryCache.h"
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
@@ -150,6 +152,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "SubframeLoader.h"
+#include "SubresourceLoader.h"
 #include "TextIterator.h"
 #include "TextRecognitionResult.h"
 #include "TextResourceDecoder.h"
@@ -236,11 +239,11 @@ void Page::updateValidationBubbleStateIfNeeded()
 
 static void networkStateChanged(bool isOnLine)
 {
-    Vector<Ref<Frame>> frames;
+    Vector<Ref<LocalFrame>> frames;
 
     // Get all the frames of all the pages in all the page groups
     for (auto* page : allPages()) {
-        for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -262,11 +265,11 @@ static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
-static Ref<AbstractFrame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
+static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
 {
-    return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<AbstractFrame> {
+    return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
         return LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
-    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<AbstractFrame> {
+    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
     });
 }
@@ -427,7 +430,7 @@ Page::~Page()
 
     m_inspectorController->inspectedPageDestroyed();
 
-    forEachFrame([] (Frame& frame) {
+    forEachFrame([] (LocalFrame& frame) {
         frame.willDetachPage();
         frame.detachFromPage();
     });
@@ -641,7 +644,7 @@ std::optional<AXTreeData> Page::accessibilityTreeData() const
     return std::nullopt;
 }
 
-void Page::progressEstimateChanged(Frame& frameWithProgressUpdate) const
+void Page::progressEstimateChanged(LocalFrame& frameWithProgressUpdate) const
 {
     if (auto* document = frameWithProgressUpdate.document()) {
         if (auto* axObjectCache = document->existingAXObjectCache())
@@ -649,7 +652,7 @@ void Page::progressEstimateChanged(Frame& frameWithProgressUpdate) const
     }
 }
 
-void Page::progressFinished(Frame& frameWithCompletedProgress) const
+void Page::progressFinished(LocalFrame& frameWithCompletedProgress) const
 {
     if (auto* document = frameWithCompletedProgress.document()) {
         if (auto* axObjectCache = document->existingAXObjectCache())
@@ -783,7 +786,7 @@ bool Page::showAllPlugins() const
 
 inline std::optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMediaCanStartListener()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -810,11 +813,11 @@ void Page::setCanStartMedia(bool canStartMedia)
     }
 }
 
-static AbstractFrame* incrementFrame(AbstractFrame* curr, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
+static Frame* incrementFrame(Frame* current, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
 {
     return forward
-        ? curr->tree().traverseNext(canWrap, didWrap)
-        : curr->tree().traversePrevious(canWrap, didWrap);
+        ? current->tree().traverseNext(canWrap, didWrap)
+        : current->tree().traversePrevious(canWrap, didWrap);
 }
 
 bool Page::findString(const String& target, FindOptions options, DidWrap* didWrap)
@@ -824,10 +827,10 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
     CheckedRef focusController { *m_focusController };
-    RefPtr<AbstractFrame> frame = &focusController->focusedOrMainFrame();
-    RefPtr<Frame> startFrame = dynamicDowncast<LocalFrame>(frame.get());
+    RefPtr<Frame> frame = &focusController->focusedOrMainFrame();
+    RefPtr startFrame = dynamicDowncast<LocalFrame>(frame.get());
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap, didWrap);
             continue;
@@ -871,10 +874,10 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 {
     MatchingRanges result;
 
-    RefPtr<AbstractFrame> frame = &mainFrame();
-    RefPtr<Frame> frameWithSelection;
+    RefPtr frame { &mainFrame() };
+    RefPtr<LocalFrame> frameWithSelection;
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), true, CanWrap::No);
             continue;
@@ -927,10 +930,10 @@ std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::
         return std::nullopt;
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
-    RefPtr<AbstractFrame> frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
-    RefPtr<Frame> startFrame = dynamicDowncast<LocalFrame>(frame.get());
+    RefPtr frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
+    RefPtr startFrame = dynamicDowncast<LocalFrame>(frame.get());
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap);
             continue;
@@ -957,9 +960,9 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
 
     unsigned matchCount = 0;
 
-    RefPtr<AbstractFrame> frame = &mainFrame();
+    RefPtr frame = &mainFrame();
     do {
-        RefPtr<Frame> localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
             frame = incrementFrame(frame.get(), true, CanWrap::No);
             continue;
@@ -1008,9 +1011,9 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
         rangeList.insert(insertionIndex, range);
     }
 
-    HashMap<RefPtr<Frame>, unsigned> frameToTraversalIndexMap;
+    HashMap<RefPtr<LocalFrame>, unsigned> frameToTraversalIndexMap;
     unsigned currentFrameTraversalIndex = 0;
-    for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1184,7 +1187,7 @@ void Page::setInteractionRegionsEnabled(bool enable)
     if (needsUpdate) {
         auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
         if (localMainFrame)
-            localMainFrame->invalidateContentEventRegionsIfNeeded(Frame::InvalidateContentEventRegionsReason::Layout);
+            localMainFrame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::Layout);
     }
 }
 #endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -1212,7 +1215,7 @@ void Page::setDefersLoading(bool defers)
     }
 
     m_defersLoading = defers;
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1284,7 +1287,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     if (!localMainFrame)
         return;
     Document* document = localMainFrame->document();
-    RefPtr<FrameView> view = document->view();
+    RefPtr view = document->view();
 
     if (scale == m_pageScaleFactor) {
         if (view && view->scrollPosition() != origin && !delegatesScaling())
@@ -1525,7 +1528,7 @@ void Page::setTopContentInset(float contentInset)
     
     m_topContentInset = contentInset;
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->topContentInsetDidChange(m_topContentInset);
 }
 
@@ -1541,17 +1544,17 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
 void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view)
         return;
 
     view->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
     
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView)
             continue;
 
@@ -1574,7 +1577,7 @@ void Page::setVerticalScrollElasticity(ScrollElasticity elasticity)
     m_verticalScrollElasticity = elasticity;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->setVerticalScrollElasticity(elasticity);
 }
     
@@ -1586,7 +1589,7 @@ void Page::setHorizontalScrollElasticity(ScrollElasticity elasticity)
     m_horizontalScrollElasticity = elasticity;
     
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->setHorizontalScrollElasticity(elasticity);
 }
 
@@ -1620,11 +1623,11 @@ void Page::setIsInWindow(bool isInWindow)
 
 void Page::setIsInWindowInternal(bool isInWindow)
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (FrameView* frameView = localFrame->view())
+        if (auto* frameView = localFrame->view())
             frameView->setIsInWindow(isInWindow);
     }
 
@@ -1645,7 +1648,7 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 void Page::layoutIfNeeded()
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->updateLayoutAndStyleIfNeededRecursive();
 }
 
@@ -1918,7 +1921,7 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (localMainFrame) {
         ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
 #if ASSERT_ENABLED
-        for (AbstractFrame* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+        for (auto* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(child);
             auto* frameView = localFrame->view();
             ASSERT(!frameView || !frameView->needsLayout());
@@ -2273,7 +2276,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
     m_debugger = debugger;
 
-    for (AbstractFrame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2303,15 +2306,16 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
         return;
 
     m_areMemoryCacheClientCallsEnabled = enabled;
-    if (!enabled)
+    if (!enabled || !m_hasPendingMemoryCacheLoadNotifications)
         return;
 
-    for (RefPtr<AbstractFrame> frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
         localFrame->loader().tellClientAboutPastMemoryCacheLoads();
     }
+    m_hasPendingMemoryCacheLoadNotifications = false;
 }
 
 void Page::hiddenPageDOMTimerThrottlingStateChanged()
@@ -2594,7 +2598,7 @@ void Page::resumeAnimatingImages()
     // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
     // require that we repaint animated images to kickstart the animation loop.
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->resumeVisibleImageAnimationsIncludingSubframes();
 }
 
@@ -2640,7 +2644,7 @@ void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
 
 void Page::stopKeyboardScrollAnimation()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -2704,7 +2708,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 #endif
 
         auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-        if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+        if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->show();
 
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
@@ -2748,7 +2752,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 
         suspendScriptedAnimations();
         auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-        if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
+        if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->hide();
     }
 
@@ -2778,7 +2782,7 @@ void Page::setHeaderHeight(int headerHeight)
     m_headerHeight = headerHeight;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
     if (!frameView)
         return;
 
@@ -2786,6 +2790,7 @@ void Page::setHeaderHeight(int headerHeight)
     if (!renderView)
         return;
 
+    frameView->updateScrollbars(frameView->scrollPosition());
     frameView->setNeedsLayoutAfterViewConfigurationChange();
     frameView->setNeedsCompositingGeometryUpdate();
 }
@@ -2798,7 +2803,7 @@ void Page::setFooterHeight(int footerHeight)
     m_footerHeight = footerHeight;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
     if (!frameView)
         return;
 
@@ -2806,6 +2811,7 @@ void Page::setFooterHeight(int footerHeight)
     if (!renderView)
         return;
 
+    frameView->updateScrollbars(frameView->scrollPosition());
     frameView->setNeedsLayoutAfterViewConfigurationChange();
     frameView->setNeedsCompositingGeometryUpdate();
 }
@@ -2913,11 +2919,11 @@ Color Page::themeColor() const
 Color Page::pageExtendedBackgroundColor() const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
     if (!frameView)
         return Color();
 
-    RenderView* renderView = frameView->renderView();
+    auto* renderView = frameView->renderView();
     if (!renderView)
         return Color();
 
@@ -3054,7 +3060,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         && ratioOfViewThatIsUnpainted < gMaximumUnpaintedAreaRatio) {
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
-        if (Frame* frame = dynamicDowncast<LocalFrame>(mainFrame()))
+        if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
             frame->loader().didReachLayoutMilestone(DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }
@@ -3074,7 +3080,7 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
 
 void Page::suspendActiveDOMObjectsAndAnimations()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3084,7 +3090,7 @@ void Page::suspendActiveDOMObjectsAndAnimations()
 
 void Page::resumeActiveDOMObjectsAndAnimations()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3258,7 +3264,7 @@ void Page::notifyToInjectUserScripts()
 {
     m_hasBeenNotifiedToInjectUserScripts = true;
 
-    forEachFrame([] (Frame& frame) {
+    forEachFrame([] (LocalFrame& frame) {
         frame.injectUserScriptsAwaitingNotification();
     });
 }
@@ -3586,7 +3592,7 @@ bool Page::useDarkAppearance() const
 {
 #if ENABLE(DARK_MODE_CSS)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view || view->mediaType() != screenAtom())
         return false;
     if (m_useDarkAppearanceOverride)
@@ -3682,10 +3688,10 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
     return *m_renderingUpdateScheduler;
 }
 
-void Page::forEachDocumentFromMainFrame(const Frame& mainFrame, const Function<void(Document&)>& functor)
+void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Function<void(Document&)>& functor)
 {
     Vector<Ref<Document>> documents;
-    for (const AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (const Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3715,10 +3721,10 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #endif
 }
 
-void Page::forEachFrame(const Function<void(Frame&)>& functor)
+void Page::forEachFrame(const Function<void(LocalFrame&)>& functor)
 {
-    Vector<Ref<Frame>> frames;
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    Vector<Ref<LocalFrame>> frames;
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -3738,6 +3744,19 @@ bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMain
     if (!url.protocolIsInHTTPFamily() && !url.protocolIs("ws"_s) && !url.protocolIs("wss"_s))
         return true;
     return m_allowedNetworkHosts->contains<StringViewHashTranslator>(url.host());
+}
+
+bool Page::hasLocalDataForURL(const URL& url)
+{
+    if (url.isLocalFile())
+        return true;
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    DocumentLoader* documentLoader = localMainFrame ? localMainFrame->loader().documentLoader() : nullptr;
+    if (documentLoader && documentLoader->subresource(MemoryCache::removeFragmentIdentifierIfNeeded(url)))
+        return true;
+
+    return false;
 }
 
 void Page::applicationWillResignActive()
@@ -3784,10 +3803,10 @@ ScrollLatchingController* Page::scrollLatchingControllerIfExists()
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 enum class DispatchedOnDocumentEventLoop : bool { No, Yes };
-static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
+static void dispatchPrintEvent(LocalFrame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
 {
-    Vector<Ref<Frame>> frames;
-    for (AbstractFrame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
+    Vector<Ref<LocalFrame>> frames;
+    for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -4236,11 +4255,11 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
 
 void Page::forceRepaintAllFrames()
 {
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        FrameView* frameView = localFrame->view();
+        auto* frameView = localFrame->view();
         if (!frameView || !frameView->renderView())
             continue;
 
@@ -4322,7 +4341,7 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
     if (!localMainFrame || localMainFrame->document()->topOrigin().data() != origin.topOrigin)
         return;
 
-    for (AbstractFrame* frame = &m_mainFrame.get(); frame;) {
+    for (auto* frame = &m_mainFrame.get(); frame;) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame || frame->frameID() == triggeringFrame) {
             frame = frame->tree().traverseNext();

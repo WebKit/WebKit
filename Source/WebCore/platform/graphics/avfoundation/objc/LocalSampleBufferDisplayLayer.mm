@@ -283,7 +283,7 @@ void LocalSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tran
     });
 }
 
-void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation)
+void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation, std::optional<WTF::MachSendRight>&&)
 {
     updateRootLayerBoundsAndPosition(bounds, rotation, ShouldUpdateRootLayer::No);
 }

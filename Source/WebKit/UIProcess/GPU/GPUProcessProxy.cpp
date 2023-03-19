@@ -205,7 +205,7 @@ void GPUProcessProxy::setUseSCContentSharingPicker(bool use)
 #endif
 }
 
-void GPUProcessProxy::setOrientationForMediaCapture(uint64_t orientation)
+void GPUProcessProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
 {
     if (m_orientation == orientation)
         return;

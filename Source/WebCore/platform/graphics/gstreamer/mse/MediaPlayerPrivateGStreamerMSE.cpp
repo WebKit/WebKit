@@ -417,20 +417,11 @@ void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICase
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    static std::optional<VideoDecodingLimits> videoDecodingLimits;
-#ifdef VIDEO_DECODING_LIMIT
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        videoDecodingLimits = videoDecoderLimitsDefaults();
-        if (!videoDecodingLimits) {
-            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
-            ASSERT_NOT_REACHED();
-        }
-    });
-#endif
-
     MediaPlayer::SupportsType result = MediaPlayer::SupportsType::IsNotSupported;
     if (!parameters.isMediaSource)
+        return result;
+
+    if (!ensureGStreamerInitialized())
         return result;
 
     auto containerType = parameters.type.containerType();
@@ -454,6 +445,16 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     if (!ok)
         height = 0;
 
+    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+#ifdef VIDEO_DECODING_LIMIT
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        videoDecodingLimits = videoDecoderLimitsDefaults();
+        if (!videoDecodingLimits)
+            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
+    });
+#endif
+
     if (videoDecodingLimits && (width > videoDecodingLimits->mediaMaxWidth || height > videoDecodingLimits->mediaMaxHeight))
         return result;
 
@@ -461,6 +462,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     // Limit frameRate only in case of highest supported resolution.
     if (ok && videoDecodingLimits && width == videoDecodingLimits->mediaMaxWidth && height == videoDecodingLimits->mediaMaxHeight && frameRate > videoDecodingLimits->mediaMaxFrameRate)
         return result;
+
+    registerWebKitGStreamerElements();
 
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();

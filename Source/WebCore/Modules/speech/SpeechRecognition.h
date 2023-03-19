@@ -64,6 +64,8 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    virtual ~SpeechRecognition();
+
 private:
     enum class State {
         Inactive,

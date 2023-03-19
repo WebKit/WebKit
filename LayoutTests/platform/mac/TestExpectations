@@ -2367,7 +2367,7 @@ http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/compute/basic.html [ Skip ]
-http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/texture_view/read.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/texture_view/format_reinterpretation.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/texture_view/write.html [ Pass ]
@@ -2456,7 +2456,7 @@ http/tests/webgpu/webgpu/api/validation/image_copy/buffer_related.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/image_copy/buffer_texture_copies.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/image_copy/texture_related.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/image_copy/layout_related.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/createSampler.html [ Pass ]
+http/tests/webgpu/webgpu/api/validation/createSampler.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/render_pass/render_pass_descriptor.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/render_pass/storeOp.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/render_pass/attachment_compatibility.html [ Skip ]
@@ -2789,8 +2789,6 @@ webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnly
 
 webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Crash ]
 
-webkit.org/b/252839 media/video-object-fit.html [ ImageOnlyFailure ]
-
 #webkit.org/b/251526 [ Ventura EWS ] 2x AVIF tests are constant failures on EWS only
 [ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]
 [ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
@@ -2798,8 +2796,11 @@ webkit.org/b/252839 media/video-object-fit.html [ ImageOnlyFailure ]
 # AVIF overlay images are only supported on macOS and iOS post Ventura.
 [ Ventura+ ] fast/images/image-overlay-mutiple-frames.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
-
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
 
 http/tests/misc/heic-accept-header.html [ Pass ]
+
+webkit.org/b/254044 webxr [ Skip ]
+webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/254044 http/wpt/webxr [ Skip ]
+webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]

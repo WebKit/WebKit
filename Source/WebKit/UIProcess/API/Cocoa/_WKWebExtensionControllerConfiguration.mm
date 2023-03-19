@@ -59,7 +59,9 @@ static constexpr NSString *identifierCodingKey = @"identifier";
 {
     NSParameterAssert(identifier);
 
-    return WebKit::WebExtensionControllerConfiguration::create(identifier)->wrapper();
+    auto uuid = UUID::fromNSUUID(identifier);
+    RELEASE_ASSERT(uuid);
+    return WebKit::WebExtensionControllerConfiguration::create(*uuid)->wrapper();
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
@@ -82,8 +84,9 @@ static constexpr NSString *identifierCodingKey = @"identifier";
     NSUUID *identifier = [coder decodeObjectOfClass:NSUUID.class forKey:identifierCodingKey];
     BOOL persistent = [coder decodeBoolForKey:persistentCodingKey];
 
-    if (identifier)
-        API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, identifier);
+    auto uuid = UUID::fromNSUUID(identifier);
+    if (uuid)
+        API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, *uuid);
     else
         API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, persistent ? IsPersistent::Yes : IsPersistent::No);
 

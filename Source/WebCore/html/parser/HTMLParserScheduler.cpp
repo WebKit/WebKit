@@ -29,9 +29,9 @@
 
 #include "Document.h"
 #include "ElementInlines.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLDocumentParser.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
@@ -101,6 +101,16 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
     m_parser.resumeParsingAfterYield();
 }
 
+static bool parsingProgressedSinceLastYield(PumpSession& session)
+{
+    // Only yield if there has been progress since last yield.
+    if (session.processedTokens > session.processedTokensOnLastYieldBeforeScript) {
+        session.processedTokensOnLastYieldBeforeScript = session.processedTokens;
+        return true;
+    }
+    return false;
+}
+
 bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* scriptElement, PumpSession& session)
 {
     // If we've never painted before and a layout is pending, yield prior to running
@@ -120,6 +130,10 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* 
 
     if (UNLIKELY(m_documentHasActiveParserYieldTokens))
         return true;
+
+    // Yield if we have never painted and there is meaningful content
+    if (document->view() && !document->view()->hasEverPainted() && document->view()->isVisuallyNonEmpty())
+        return parsingProgressedSinceLastYield(session);
 
     auto elapsedTime = MonotonicTime::now() - session.startTime;
 

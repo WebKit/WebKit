@@ -152,6 +152,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
+#import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -2204,8 +2205,15 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
 {
     THROW_IF_SUSPENDED;
     using ExclusionRule = WebCore::TextManipulationController::ExclusionRule;
+    bool includeSubframes = configuration.includeSubframes;
 
     if (!_textManipulationDelegate || !_page) {
+        completionHandler();
+        return;
+    }
+
+    auto* frame = _page->mainFrame();
+    if (!frame) {
         completionHandler();
         return;
     }
@@ -2223,7 +2231,7 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
         }
     }
 
-    _page->startTextManipulations(exclusionRules, [weakSelf = WeakObjCPtr<WKWebView>(self)] (const Vector<WebCore::TextManipulationItem>& itemReferences) {
+    _page->startTextManipulations(exclusionRules, includeSubframes, [weakSelf = WeakObjCPtr<WKWebView>(self)] (const Vector<WebCore::TextManipulationItem>& itemReferences) {
         if (!weakSelf)
             return;
 
@@ -2241,7 +2249,8 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
                 [wkToken setUserInfo:createUserInfo(token.info).get()];
                 return wkToken;
             });
-            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:tokens.get()]);
+            auto identifier = makeString(item.frameID.processIdentifier(), '-', item.frameID.object(), '-', item.identifier);
+            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier tokens:tokens.get() isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe]);
         };
 
         if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
@@ -2255,9 +2264,40 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optiona
     });
 }
 
-static WebCore::TextManipulationItemIdentifier coreTextManipulationItemIdentifierFromString(NSString *identifier)
+struct ItemIdentifiers {
+    WebCore::FrameIdentifier frameID;
+    WebCore::TextManipulationItemIdentifier itemID;
+};
+
+static std::optional<ItemIdentifiers> coreTextManipulationItemIdentifierFromString(NSString *identifier)
 {
-    return makeObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(identifier.longLongValue);
+    String identifierString { identifier };
+    unsigned index = 0;
+    std::optional<uint64_t> processID;
+    std::optional<uint64_t> frameID;
+    std::optional<uint64_t> itemID;
+    for (auto token : StringView(identifierString).split('-')) {
+        switch (index) {
+        case 0:
+            processID = parseInteger<uint64_t>(token);
+            break;
+        case 1:
+            frameID = parseInteger<uint64_t>(token);
+            break;
+        case 2:
+            itemID = parseInteger<uint64_t>(token);
+            break;
+        default:
+            return std::nullopt;
+        }
+        ++index;
+    }
+    if (!processID || !*processID || !frameID || !*frameID || !itemID || !*itemID)
+        return std::nullopt;
+
+    return ItemIdentifiers { WebCore::ProcessQualified(makeObjectIdentifier<WebCore::FrameIdentifierType>(*frameID),
+        makeObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
+        makeObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(*itemID) };
 }
 
 static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString *identifier)
@@ -2273,7 +2313,11 @@ static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentif
         return;
     }
 
-    auto itemID = coreTextManipulationItemIdentifierFromString(item.identifier);
+    auto identifiers = coreTextManipulationItemIdentifierFromString(item.identifier);
+    if (!identifiers) {
+        completionHandler(false);
+        return;
+    }
 
     Vector<WebCore::TextManipulationToken> tokens;
     for (_WKTextManipulationToken *wkToken in item.tokens)
@@ -2281,7 +2325,7 @@ static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentif
 
     Vector<WebCore::TextManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(1);
-    coreItems.uncheckedAppend(WebCore::TextManipulationItem { itemID, WTFMove(tokens) });
+    coreItems.uncheckedAppend(WebCore::TextManipulationItem { identifiers->frameID, false, false, identifiers->itemID, WTFMove(tokens) });
     _page->completeTextManipulation(coreItems, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (bool allFailed, auto& failures) {
         capturedCompletionBlock(!allFailed && failures.isEmpty());
     });
@@ -2307,6 +2351,8 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         auto errorCode = static_cast<NSInteger>(([&coreFailure] {
             using Type = WebCore::TextManipulationController::ManipulationFailure::Type;
             switch (coreFailure.type) {
+            case Type::NotAvailable:
+                return _WKTextManipulationItemErrorNotAvailable;
             case Type::ContentChanged:
                 return _WKTextManipulationItemErrorContentChanged;
             case Type::InvalidItem:
@@ -2318,7 +2364,12 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
             }
         })());
         auto item = items[coreFailure.index];
-        ASSERT(coreTextManipulationItemIdentifierFromString(item.identifier) == coreFailure.identifier);
+#if ASSERT_ENABLED
+        auto identifiers = coreTextManipulationItemIdentifierFromString(item.identifier);
+        ASSERT(identifiers);
+        ASSERT(identifiers->frameID == coreFailure.frameID);
+        ASSERT(identifiers->itemID == coreFailure.identifier);
+#endif
         return [NSError errorWithDomain:_WKTextManipulationItemErrorDomain code:errorCode userInfo:@{_WKTextManipulationItemErrorItemKey: item}];
     });
 }
@@ -2338,7 +2389,14 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         coreTokens.reserveInitialCapacity(wkItem.tokens.count);
         for (_WKTextManipulationToken *wkToken in wkItem.tokens)
             coreTokens.uncheckedAppend(WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
-        coreItems.uncheckedAppend(WebCore::TextManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
+        auto identifiers = coreTextManipulationItemIdentifierFromString(wkItem.identifier);
+        WebCore::FrameIdentifier frameID;
+        WebCore::TextManipulationItemIdentifier itemID;
+        if (identifiers) {
+            frameID = identifiers->frameID;
+            itemID = identifiers->itemID;
+        }
+        coreItems.uncheckedAppend(WebCore::TextManipulationItem { frameID, false, false, itemID, WTFMove(coreTokens) });
     }
 
     RetainPtr<NSArray<_WKTextManipulationItem *>> retainedItems = items;
@@ -3569,14 +3627,11 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
         void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy& sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, WTF::Function<void(void)>&& completionHandler) override
         {
-            if (userData && userData->type() != API::Object::Type::Data) {
-                ASSERT(!userData || userData->type() == API::Object::Type::Data);
-                m_webView->_page->process().connection()->markCurrentlyDispatchedMessageAsInvalid();
-                completionHandler();
+            auto webView = m_webView.get();
+            if (!webView)
                 return;
-            }
 
-            auto inputDelegate = m_webView->_inputDelegate.get();
+            auto inputDelegate = webView->_inputDelegate.get();
 
             if (![inputDelegate respondsToSelector:@selector(_webView:willSubmitFormValues:userObject:submissionHandler:)]) {
                 completionHandler();
@@ -3587,21 +3642,10 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
             for (const auto& pair : textFieldValues)
                 [valueMap setObject:pair.second forKey:pair.first];
 
-            NSObject <NSSecureCoding> *userObject = nil;
-            if (API::Data* data = static_cast<API::Data*>(userData)) {
-                auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
-                auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
-                unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-                @try {
-                    auto* allowedClasses = m_webView->_page->process().processPool().allowedClassesForParameterCoding();
-                    userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
-                } @catch (NSException *exception) {
-                    LOG_ERROR("Failed to decode user data: %@", exception);
-                }
-            }
+            auto userObject = userData ? userData->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>();
 
             auto checker = WebKit::CompletionHandlerCallChecker::create(inputDelegate.get(), @selector(_webView:willSubmitFormValues:userObject:submissionHandler:));
-            [inputDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] {
+            [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() userObject:userObject.get() submissionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] {
                 if (checker->completionHandlerHasBeenCalled())
                     return;
                 checker->didCallCompletionHandler();
@@ -3610,7 +3654,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         }
 
     private:
-        WKWebView *m_webView;
+        WeakObjCPtr<WKWebView> m_webView;
     };
 
     if (inputDelegate)

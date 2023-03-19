@@ -29,13 +29,13 @@
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "AddEventListenerOptions.h"
-#import "DOMWindow.h"
 #import "Event.h"
 #import "EventListener.h"
 #import "EventNames.h"
 #import "HTMLElement.h"
 #import "HTMLVideoElement.h"
 #import "History.h"
+#import "LocalDOMWindow.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
 #import "Page.h"

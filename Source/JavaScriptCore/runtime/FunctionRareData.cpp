@@ -76,8 +76,8 @@ FunctionRareData::FunctionRareData(VM& vm, ExecutableBase* executable)
     , m_executable(vm, this, executable)
     , m_hasReifiedLength(false)
     , m_hasReifiedName(false)
-    , m_hasModifiedLengthForNonHostFunction(false)
-    , m_hasModifiedNameForNonHostFunction(false)
+    , m_hasModifiedLengthForBoundOrNonHostFunction(false)
+    , m_hasModifiedNameForBoundOrNonHostFunction(false)
 {
 }
 

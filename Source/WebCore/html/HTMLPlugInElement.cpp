@@ -28,11 +28,11 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventHandler.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
@@ -84,7 +84,7 @@ void HTMLPlugInElement::willDetachRenderers()
     m_instance = nullptr;
 
     if (m_isCapturingMouseEvents) {
-        if (RefPtr<Frame> frame = document().frame())
+        if (RefPtr frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
         m_isCapturingMouseEvents = false;
     }
@@ -122,7 +122,7 @@ PluginViewBase* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) 
 
 RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
 {
-    RefPtr<FrameView> view = document().view();
+    RefPtr view = document().view();
     if (!view || (!view->inUpdateEmbeddedObjects() && !view->layoutContext().isInLayout() && !view->isPainting())) {
         // Needs to load the plugin immediatedly because this function is called
         // when JavaScript code accesses the plugin.

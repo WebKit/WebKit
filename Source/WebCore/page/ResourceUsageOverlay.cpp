@@ -29,8 +29,8 @@
 
 #include "ResourceUsageOverlay.h"
 
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
@@ -67,7 +67,7 @@ void ResourceUsageOverlay::initialize()
     if (!localMainFrame->view())
         return;
 
-    FrameView& frameView = *localMainFrame->view();
+    auto& frameView = *localMainFrame->view();
 
     IntRect initialRect(frameView.width() / 2 - normalWidth / 2, frameView.height() - normalHeight - 20, normalWidth, normalHeight);
 
@@ -117,7 +117,7 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
             auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
             if (!localMainFrame)
                 break;
-            FrameView& frameView = *localMainFrame->view();
+            auto& frameView = *localMainFrame->view();
             if (newFrame.maxX() > frameView.width())
                 newFrame.setX(frameView.width() - newFrame.width());
             if (newFrame.maxY() > frameView.height())

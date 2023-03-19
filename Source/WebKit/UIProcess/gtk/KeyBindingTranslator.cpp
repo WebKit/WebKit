@@ -125,7 +125,7 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
     if (!rawCommand)
         return;
 
-    for (int i = 0; i < abs(count); i++)
+    for (int i = 0; i < std::abs(count); i++)
         translator->addPendingEditorCommand(rawCommand);
 }
 
@@ -166,7 +166,7 @@ static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint cou
     if (!rawCommand)
         return;
 
-    for (int i = 0; i < abs(count); i++)
+    for (int i = 0; i < std::abs(count); i++)
         translator->addPendingEditorCommand(rawCommand);
 }
 

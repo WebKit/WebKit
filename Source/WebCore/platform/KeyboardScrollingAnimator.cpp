@@ -27,7 +27,7 @@
 #include "KeyboardScrollingAnimator.h"
 
 #include "EventNames.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "PlatformKeyboardEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollTypes.h"
@@ -201,6 +201,12 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     auto scroll = makeKeyboardScroll(direction, granularity);
     if (!scroll)
         return false;
+
+    if (m_scrollableArea.isUserScrollInProgress()) {
+        m_scrollTriggeringKeyIsPressed = false;
+        m_scrollableArea.endKeyboardScroll(true);
+        return true;
+    }
 
     if (m_scrollTriggeringKeyIsPressed)
         return false;

@@ -31,8 +31,8 @@
 #include "DragData.h"
 #include "Editor.h"
 #include "Element.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "Pasteboard.h"
 #include "markup.h"
 
@@ -72,7 +72,7 @@ void DragController::cleanupAfterSystemDrag()
 
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    Frame* frame = element.document().frame();
+    auto* frame = element.document().frame();
     ASSERT(frame);
     frame->editor().writeImageToPasteboard(dataTransfer.pasteboard(), element, url, label);
 }

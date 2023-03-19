@@ -7,6 +7,8 @@ class Foo{constructor(){1}}
 
 class Foo{constructor(){1}static staticMethod(){1}}
 
+class Foo{static{1}}
+
 class Foo{static staticMethod(){1}}
 
 class Foo extends Bar{constructor(){super()}}

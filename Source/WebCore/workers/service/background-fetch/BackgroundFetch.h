@@ -54,7 +54,7 @@ class BackgroundFetch : public CanMakeWeakPtr<BackgroundFetch> {
 public:
     using NotificationCallback = Function<void(BackgroundFetch&)>;
     BackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
-    BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
+    BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&, bool pausedFlag);
     ~BackgroundFetch();
 
     static std::unique_ptr<BackgroundFetch> createFromStore(Span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
@@ -66,7 +66,11 @@ public:
 
     using RetrieveRecordResponseCallback = CompletionHandler<void(Expected<ResourceResponse, ExceptionData>&&)>;
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
-    using CreateLoaderCallback = Function<std::unique_ptr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, const ClientOrigin&)>;
+    using CreateLoaderCallback = Function<std::unique_ptr<BackgroundFetchRecordLoader>(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, size_t responseDataSize, const ClientOrigin&)>;
+
+    bool pausedFlagIsSet() const { return m_pausedFlag; }
+    void pause();
+    void resume(const CreateLoaderCallback&);
 
     class Record final : public BackgroundFetchRecordLoader::Client, public RefCounted<Record> {
         WTF_MAKE_FAST_ALLOCATED;
@@ -75,6 +79,7 @@ public:
         ~Record();
 
         void complete(const CreateLoaderCallback&);
+        void pause();
         void abort();
 
         void setAsCompleted() { m_isCompleted = true; }
@@ -84,6 +89,7 @@ public:
         const ResourceResponse& response() const { return m_response; }
 
         uint64_t responseDataSize() const { return m_responseDataSize; }
+        void clearResponseDataSize() { m_responseDataSize = 0; }
         bool isMatching(const ResourceRequest&, const CacheQueryOptions&) const;
         BackgroundFetchRecordInformation information() const;
 
@@ -125,12 +131,12 @@ public:
     uint64_t downloadTotal() const { return  m_options.downloadTotal; }
     uint64_t uploadTotal() const { return m_uploadTotal; }
 
-    void doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&&);
+    void doStore(CompletionHandler<void(BackgroundFetchStore::StoreResult)>&&, std::optional<size_t> responseBodyIndexToClear = { });
     void unsetRecordsAvailableFlag();
 
 private:
     void didSendData(uint64_t);
-    void storeResponse(size_t, ResourceResponse&&);
+    void storeResponse(size_t, bool shouldClearResponseBody, ResourceResponse&&);
     void storeResponseBodyChunk(size_t, const SharedBuffer&);
     void didFinishRecord(const ResourceError&);
 
@@ -138,7 +144,7 @@ private:
     void handleStoreResult(BackgroundFetchStore::StoreResult);
     void updateBackgroundFetchStatus(BackgroundFetchResult, BackgroundFetchFailureReason);
 
-    void setRecords(Vector<Ref<Record>>&& records) { m_records = WTFMove(records); }
+    void setRecords(Vector<Ref<Record>>&&);
 
     String m_identifier;
     Vector<Ref<Record>> m_records;
@@ -151,6 +157,7 @@ private:
 
     bool m_recordsAvailableFlag { true };
     bool m_abortFlag { false };
+    bool m_pausedFlag { false };
     bool m_isActive { true };
 
     uint64_t m_uploadTotal { 0 };

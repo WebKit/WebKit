@@ -30,7 +30,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>

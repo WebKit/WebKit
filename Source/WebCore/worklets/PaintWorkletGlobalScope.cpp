@@ -28,10 +28,10 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "JSCSSPaintCallback.h"
 #include "JSDOMConvert.h"
+#include "LocalDOMWindow.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>

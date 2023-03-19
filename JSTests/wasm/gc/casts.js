@@ -651,9 +651,273 @@ function testSubtypeCasts() {
   );
 }
 
+function testEqCasts() {
+  instantiate(`
+    (module
+      (type (array i32))
+      (start 1)
+      (func (param arrayref) (result eqref)
+        (ref.cast eq (local.get 0)))
+      (func
+        (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+        drop))
+  `);
+
+  assert.eq(
+    instantiate(`
+      (module
+        (type (array i32))
+        (func (param arrayref) (result i32)
+          (ref.test eq (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+    `).exports.f(),
+    1
+  );
+
+  instantiate(`
+    (module
+      (type (struct (field i32)))
+      (start 1)
+      (func (param structref) (result eqref)
+        (ref.cast eq (local.get 0)))
+      (func
+        (call 0 (struct.new_canon 0 (i32.const 42)))
+        drop))
+  `);
+
+  assert.eq(
+    instantiate(`
+      (module
+        (type (struct (field i32)))
+        (func (param structref) (result i32)
+          (ref.test eq (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (struct.new_canon 0 (i32.const 42)))))
+    `).exports.f(),
+    1
+  );
+
+  instantiate(`
+    (module
+      (start 1)
+      (func (param i31ref) (result eqref)
+        (ref.cast eq (local.get 0)))
+      (func
+        (call 0 (i31.new (i32.const 42)))
+        drop))
+  `);
+
+  assert.eq(
+    instantiate(`
+      (module
+        (func (param i31ref) (result i32)
+          (ref.test eq (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (i31.new (i32.const 42)))))
+    `).exports.f(),
+    1
+  );
+
+  assert.throws(
+    () => compile(`
+      (module
+        (type (func (result i32)))
+        (elem declare funcref (ref.func 0))
+        (func (type 0) (i32.const 42))
+        (func (param funcref)
+          (ref.cast eq (local.get 0))
+          drop))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: ref.cast to type Funcref expected a subtype of anyref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+}
+
+function testAnyCasts() {
+  instantiate(`
+    (module
+      (type (array i32))
+      (start 1)
+      (func (param arrayref) (result anyref)
+        (ref.cast any (local.get 0)))
+      (func
+        (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+        drop))
+  `);
+
+  assert.eq(
+    instantiate(`
+      (module
+        (type (array i32))
+        (func (param arrayref) (result i32)
+          (ref.test any (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+    `).exports.f(),
+    1
+  );
+
+  instantiate(`
+    (module
+      (type (struct (field i32)))
+      (start 1)
+      (func (param structref) (result anyref)
+        (ref.cast any (local.get 0)))
+      (func
+        (call 0 (struct.new_canon 0 (i32.const 42)))
+        drop))
+  `);
+
+  assert.eq(
+    instantiate(`
+      (module
+        (type (struct (field i32)))
+        (func (param structref) (result i32)
+          (ref.test any (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (struct.new_canon 0 (i32.const 42)))))
+    `).exports.f(),
+    1
+  );
+
+  instantiate(`
+    (module
+      (start 1)
+      (func (param i31ref) (result anyref)
+        (ref.cast any (local.get 0)))
+      (func
+        (call 0 (i31.new (i32.const 42)))
+        drop))
+  `);
+
+  assert.eq(
+    instantiate(`
+      (module
+        (func (param i31ref) (result i32)
+          (ref.test any (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (i31.new (i32.const 42)))))
+    `).exports.f(),
+    1
+  );
+
+  assert.throws(
+    () => compile(`
+      (module
+        (type (func (result i32)))
+        (elem declare funcref (ref.func 0))
+        (func (type 0) (i32.const 42))
+        (func (param funcref)
+          (ref.cast any (local.get 0))
+          drop))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: ref.cast to type Funcref expected a subtype of anyref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+}
+
+function testNullCasts() {
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (array i32))
+        (start 1)
+        (func (param arrayref) (result nullref)
+          (ref.cast none (local.get 0)))
+        (func
+          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          drop))
+    `),
+    WebAssembly.RuntimeError,
+    "ref.cast failed to cast reference to target heap type"
+  )
+
+  assert.eq(
+    instantiate(`
+      (module
+        (type (array i32))
+        (func (param arrayref) (result i32)
+          (ref.test none (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+    `).exports.f(),
+    0
+  );
+
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (struct (field i32)))
+        (start 1)
+        (func (param structref) (result nullref)
+          (ref.cast none (local.get 0)))
+        (func
+          (call 0 (struct.new_canon 0 (i32.const 42)))
+          drop))
+    `),
+    WebAssembly.RuntimeError,
+    "ref.cast failed to cast reference to target heap type"
+  );
+
+  assert.eq(
+    instantiate(`
+      (module
+        (type (struct (field i32)))
+        (func (param structref) (result i32)
+          (ref.test none (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (struct.new_canon 0 (i32.const 42)))))
+    `).exports.f(),
+    0
+  );
+
+  assert.throws(
+    () => instantiate(`
+      (module
+        (start 1)
+        (func (param i31ref) (result nullref)
+          (ref.cast none (local.get 0)))
+        (func
+          (call 0 (i31.new (i32.const 42)))
+          drop))
+    `),
+    WebAssembly.RuntimeError,
+    "ref.cast failed to cast reference to target heap type"
+  );
+
+  assert.eq(
+    instantiate(`
+      (module
+        (func (param i31ref) (result i32)
+          (ref.test none (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (i31.new (i32.const 42)))))
+    `).exports.f(),
+    0
+  );
+
+  assert.throws(
+    () => compile(`
+      (module
+        (type (func (result i32)))
+        (elem declare funcref (ref.func 0))
+        (func (type 0) (i32.const 42))
+        (func (param funcref)
+          (ref.cast none (local.get 0))
+          drop))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: ref.cast to type Funcref expected a subtype of anyref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+}
+
 testBasicCasts();
 testI31Casts();
 testFunctionCasts();
 testArrayCasts();
 testStructCasts();
 testSubtypeCasts();
+testEqCasts();
+testAnyCasts();
+testNullCasts();

@@ -29,11 +29,11 @@
 #include "AlternativeTextController.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
+#include "LocalFrame.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -90,7 +90,7 @@ DictationCommand::DictationCommand(Document& document, const String& text, const
 
 void DictationCommand::insertText(Document& document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
 {
-    RefPtr<Frame> frame = document.frame();
+    RefPtr frame { document.frame() };
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection().selection();

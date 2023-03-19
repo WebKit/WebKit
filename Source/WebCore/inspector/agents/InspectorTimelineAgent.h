@@ -46,7 +46,7 @@ namespace WebCore {
 
 class Event;
 class FloatQuad;
-class Frame;
+class LocalFrame;
 class RenderObject;
 class RunLoopObserver;
 
@@ -106,35 +106,35 @@ public:
     void breakpointActionProbe(JSC::JSGlobalObject*, JSC::BreakpointActionID, unsigned batchId, unsigned sampleId, JSC::JSValue result);
 
     // InspectorInstrumentation
-    void didInstallTimer(int timerId, Seconds timeout, bool singleShot, Frame*);
-    void didRemoveTimer(int timerId, Frame*);
-    void willFireTimer(int timerId, Frame*);
+    void didInstallTimer(int timerId, Seconds timeout, bool singleShot, LocalFrame*);
+    void didRemoveTimer(int timerId, LocalFrame*);
+    void willFireTimer(int timerId, LocalFrame*);
     void didFireTimer();
-    void willCallFunction(const String& scriptName, int scriptLine, int scriptColumn, Frame*);
-    void didCallFunction(Frame*);
-    void willDispatchEvent(const Event&, Frame*);
+    void willCallFunction(const String& scriptName, int scriptLine, int scriptColumn, LocalFrame*);
+    void didCallFunction(LocalFrame*);
+    void willDispatchEvent(const Event&, LocalFrame*);
     void didDispatchEvent(bool defaultPrevented);
-    void willEvaluateScript(const String&, int lineNumber, int columnNumber, Frame&);
-    void didEvaluateScript(Frame&);
-    void didInvalidateLayout(Frame&);
-    void willLayout(Frame&);
+    void willEvaluateScript(const String&, int lineNumber, int columnNumber, LocalFrame&);
+    void didEvaluateScript(LocalFrame&);
+    void didInvalidateLayout(LocalFrame&);
+    void willLayout(LocalFrame&);
     void didLayout(RenderObject&);
-    void willComposite(Frame&);
+    void willComposite(LocalFrame&);
     void didComposite();
-    void willPaint(Frame&);
+    void willPaint(LocalFrame&);
     void didPaint(RenderObject&, const LayoutRect&);
-    void willRecalculateStyle(Frame*);
+    void willRecalculateStyle(LocalFrame*);
     void didRecalculateStyle();
-    void didScheduleStyleRecalculation(Frame*);
-    void didTimeStamp(Frame&, const String&);
-    void didRequestAnimationFrame(int callbackId, Frame*);
-    void didCancelAnimationFrame(int callbackId, Frame*);
-    void willFireAnimationFrame(int callbackId, Frame*);
+    void didScheduleStyleRecalculation(LocalFrame*);
+    void didTimeStamp(LocalFrame&, const String&);
+    void didRequestAnimationFrame(int callbackId, LocalFrame*);
+    void didCancelAnimationFrame(int callbackId, LocalFrame*);
+    void willFireAnimationFrame(int callbackId, LocalFrame*);
     void didFireAnimationFrame();
-    void willFireObserverCallback(const String& callbackType, Frame*);
+    void willFireObserverCallback(const String& callbackType, LocalFrame*);
     void didFireObserverCallback();
-    void time(Frame&, const String&);
-    void timeEnd(Frame&, const String&);
+    void time(LocalFrame&, const String&);
+    void timeEnd(LocalFrame&, const String&);
     void mainFrameStartedLoading();
     void mainFrameNavigated();
 
@@ -181,13 +181,13 @@ private:
     double timestamp();
 
     void sendEvent(Ref<JSON::Object>&&);
-    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*);
-    void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
+    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*);
+    void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
-    TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
+    TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
 
-    void setFrameIdentifier(JSON::Object* record, Frame*);
+    void setFrameIdentifier(JSON::Object* record, LocalFrame*);
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
     void didCompleteCurrentRecord(TimelineRecordType);

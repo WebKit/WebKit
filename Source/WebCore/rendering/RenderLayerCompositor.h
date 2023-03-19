@@ -378,7 +378,7 @@ public:
 
     void updateRootContentLayerClipping();
 
-    void updateScrollSnapPropertiesWithFrameView(const FrameView&) const;
+    void updateScrollSnapPropertiesWithFrameView(const LocalFrameView&) const;
 
     // For testing.
     void startTrackingLayerFlushes() { m_layerFlushCount = 0; }

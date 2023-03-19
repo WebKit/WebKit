@@ -38,10 +38,10 @@
 
 #include "AudioSession.h"
 #include "DocumentInlines.h"
-#include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaStream.h"
 #include "JSOverconstrainedError.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
 #include "PlatformMediaSessionManager.h"

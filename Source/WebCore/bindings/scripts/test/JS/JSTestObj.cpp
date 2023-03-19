@@ -23,7 +23,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -85,6 +84,7 @@
 #include "JSWindowProxy.h"
 #include "JSWorkerGlobalScopeBase.h"
 #include "JSXPathNSResolver.h"
+#include "LocalDOMWindow.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "WebCoreJSClientData.h"

@@ -51,7 +51,7 @@ class NetworkProcess;
 class BackgroundFetchLoad final : public WebCore::BackgroundFetchRecordLoader, public CanMakeWeakPtr<BackgroundFetchLoad>, private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, Client&, const WebCore::BackgroundFetchRequest&, const WebCore::ClientOrigin&);
+    BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, Client&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
     ~BackgroundFetchLoad();
 
 private:

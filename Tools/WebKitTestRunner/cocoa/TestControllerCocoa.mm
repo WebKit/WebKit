@@ -534,26 +534,6 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
     [globalWebsiteDataStoreDelegateClient() setAllowAnySSLCertificate: allows];
 }
 
-void TestController::setBackgroundFetchPermission(bool value)
-{
-    [globalWebsiteDataStoreDelegateClient() setBackgroundFetchPermission: value];
-}
-
-WKRetainPtr<WKStringRef> TestController::lastAddedBackgroundFetchIdentifier() const
-{
-    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastAddedBackgroundFetchIdentifier]));
-}
-
-WKRetainPtr<WKStringRef> TestController::lastRemovedBackgroundFetchIdentifier() const
-{
-    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastRemovedBackgroundFetchIdentifier]));
-}
-
-WKRetainPtr<WKStringRef> TestController::lastUpdatedBackgroundFetchIdentifier() const
-{
-    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastUpdatedBackgroundFetchIdentifier]));
-}
-
 void TestController::setAllowedMenuActions(const Vector<String>& actions)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -645,6 +625,41 @@ void TestController::simulateClickBackgroundFetch(WKStringRef identifier)
         isDone = true;
     }];
     platformRunUntil(isDone, noTimeout);
+}
+
+void TestController::setBackgroundFetchPermission(bool value)
+{
+    [globalWebsiteDataStoreDelegateClient() setBackgroundFetchPermission:value];
+}
+
+WKRetainPtr<WKStringRef> TestController::lastAddedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastAddedBackgroundFetchIdentifier]));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastRemovedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastRemovedBackgroundFetchIdentifier]));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastUpdatedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[globalWebsiteDataStoreDelegateClient() lastUpdatedBackgroundFetchIdentifier]));
+}
+
+WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef identifier)
+{
+    __block bool isDone = false;
+    __block String backgroundFetchState;
+    [globalWebViewConfiguration().get().websiteDataStore _getBackgroundFetchState:toWTFString(identifier) completionHandler:^(NSDictionary *state) {
+        backgroundFetchState = makeString("{ ",
+            "\"downloaded\":", [[state valueForKey:@"Downloaded"] unsignedIntegerValue], ",",
+            "\"isPaused\":", [[state valueForKey:@"IsPaused"] boolValue] ? "true" : "false",
+        "}");
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+    return toWK(backgroundFetchState);
 }
 
 } // namespace WTR

@@ -64,11 +64,11 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
 #import <WebCore/FontCascade.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/ImageDecoderCG.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>

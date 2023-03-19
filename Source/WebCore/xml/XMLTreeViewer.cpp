@@ -34,8 +34,8 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"

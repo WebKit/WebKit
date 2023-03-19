@@ -37,13 +37,13 @@
 #include "Document.h"
 #include "ExceptionDetails.h"
 #include "FloatRect.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
 #include "ScriptController.h"
@@ -277,7 +277,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
     if (!localMainFrame)
         return;
-    Frame& mainFrame = *localMainFrame;
+    LocalFrame& mainFrame = *localMainFrame;
 
     UserGestureIndicator indicator { ProcessingUserGesture, mainFrame.document() };
 
@@ -400,7 +400,7 @@ void InspectorFrontendClientLocal::showResources()
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
 }
 
-void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
+void InspectorFrontendClientLocal::showMainResourceForFrame(LocalFrame* frame)
 {
     String frameId = m_inspectedPageController->ensurePageAgent().frameId(frame);
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameId) });

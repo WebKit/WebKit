@@ -52,7 +52,7 @@ class GStreamerMediaEndpoint : public ThreadSafeRefCounted<GStreamerMediaEndpoin
 {
 public:
     static Ref<GStreamerMediaEndpoint> create(GStreamerPeerConnectionBackend& peerConnection) { return adoptRef(*new GStreamerMediaEndpoint(peerConnection)); }
-    ~GStreamerMediaEndpoint() = default;
+    ~GStreamerMediaEndpoint();
 
     bool setConfiguration(MediaEndpointConfiguration&);
     void restartIce();

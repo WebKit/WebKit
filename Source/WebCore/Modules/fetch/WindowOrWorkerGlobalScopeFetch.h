@@ -29,13 +29,13 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class DeferredPromise;
 class WorkerGlobalScope;
 
 class WindowOrWorkerGlobalScopeFetch {
 public:
-    static void fetch(DOMWindow&, FetchRequest::Info&&, FetchRequest::Init&&, Ref<DeferredPromise>&&);
+    static void fetch(LocalDOMWindow&, FetchRequest::Info&&, FetchRequest::Init&&, Ref<DeferredPromise>&&);
     static void fetch(WorkerGlobalScope&, FetchRequest::Info&&, FetchRequest::Init&&, Ref<DeferredPromise>&&);
 };
 

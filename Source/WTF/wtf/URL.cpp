@@ -269,7 +269,7 @@ URL URL::truncatedForUseAsBase() const
     return URL(m_string.left(m_pathAfterLastSlash));
 }
 
-#if !USE(CF) || PLATFORM(WIN)
+#if !USE(CF)
 
 String URL::fileSystemPath() const
 {

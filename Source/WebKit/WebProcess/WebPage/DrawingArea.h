@@ -52,10 +52,11 @@ class Decoder;
 namespace WebCore {
 class DestinationColorSpace;
 class DisplayRefreshMonitor;
-class Frame;
-class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
+class LocalFrame;
+class LocalFrameView;
+class TiledBacking;
 struct ViewportAttributes;
 enum class DelegatedScrollingMode : uint8_t;
 }
@@ -118,7 +119,7 @@ public:
     virtual void registerScrollingTree() { }
     virtual void unregisterScrollingTree() { }
 
-    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const { return false; }
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const { return false; }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;

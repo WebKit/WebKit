@@ -56,9 +56,7 @@ constexpr bool alwaysDumpConstructionSite = false;
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
-    if (!Options::dumpDisassembly() && !Options::dumpBBQDisassembly()
-        && !Options::dumpOMGDisassembly() && !Options::dumpFTLDisassembly()
-        && !Options::dumpDFGDisassembly() && !Options::dumpGraphAfterParsing())
+    if (!Options::needDisassemblySupport() || !Options::dumpCompilerConstructionSite())
         return emptyString();
 
     StringPrintStream s;
@@ -640,6 +638,8 @@ Effects Value::effects() const
     case BitwiseCast:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Trunc:
@@ -720,6 +720,7 @@ Effects Value::effects() const
     case VectorMulSat:
     case VectorSwizzle:
     case VectorMulByElement:
+    case VectorShiftByVector:
         break;
     case Div:
     case UDiv:
@@ -841,6 +842,8 @@ ValueKey Value::key() const
     case Sqrt:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Clz:
@@ -963,6 +966,7 @@ ValueKey Value::key() const
     case VectorShr:
     case VectorMulSat:
     case VectorAvgRound:
+    case VectorShiftByVector:
         numChildrenForKind(kind(), 2);
         return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1));
     case VectorReplaceLane:
@@ -1072,6 +1076,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
         return Int32;
     case Trunc:
         return firstChild->type() == Int64 ? Int32 : Float;
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
         return Int64;

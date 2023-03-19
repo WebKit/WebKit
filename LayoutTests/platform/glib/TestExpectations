@@ -1580,8 +1580,6 @@ webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 # ChannelMergeNode Harness timeout
 
 
-webkit.org/b/232726 webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1746,6 +1744,8 @@ webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
+
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getCapabilities.https.html [ Failure ]
 
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
@@ -2926,9 +2926,6 @@ webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout ]
 webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 
 # From builds 12695-12698
-
-# GLX error in gst_gl_context_glx_create_context
-webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Pass Timeout ]
 
 http/tests/media/video-preload.html [ Pass Slow ]
 

@@ -1,10 +1,10 @@
 # Supplemental dependencies
-JSDOMWindow.h: DOMWindowConstructors.idl
-DOMWindowConstructors.idl:
 JSDedicatedWorkerGlobalScope.h: DedicatedWorkerGlobalScopeConstructors.idl
 DedicatedWorkerGlobalScopeConstructors.idl:
 JSExposedStar.h: 
 JSExposedToWorkerAndWindow.h: 
+JSLocalDOMWindow.h: LocalDOMWindowConstructors.idl
+LocalDOMWindowConstructors.idl:
 JSPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
 PaintWorkletGlobalScopeConstructors.idl:
 JSServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl

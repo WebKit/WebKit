@@ -46,12 +46,6 @@ list(APPEND TestWebCore_LIBRARIES
     dxguid
 )
 
-if (USE_CF)
-    list(APPEND TestWebCore_LIBRARIES
-        Apple::CoreFoundation
-    )
-endif ()
-
 WEBKIT_WRAP_EXECUTABLE(TestWebCore
     SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
     LIBRARIES shlwapi

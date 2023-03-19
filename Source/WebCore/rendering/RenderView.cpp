@@ -24,8 +24,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -38,6 +36,8 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
@@ -524,7 +524,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         // that the coordinate system is mapped appropriately between the iframe's contents
         // and the Renderer that contains the iframe. This transformation must account for a
         // left scrollbar (if one exists).
-        FrameView& frameView = this->frameView();
+        LocalFrameView& frameView = this->frameView();
         if (frameView.shouldPlaceVerticalScrollbarOnLeft() && frameView.verticalScrollbar())
             adjustedRect.move(LayoutSize(frameView.verticalScrollbar()->occupiedWidth(), 0));
 
@@ -597,7 +597,7 @@ bool RenderView::isScrollableOrRubberbandableBox() const
 {
     // The main frame might be allowed to rubber-band even if there is no content to scroll to. This is unique to
     // the main frame; subframes and overflow areas have to have content that can be scrolled to in order to rubber-band.
-    FrameView::Scrollability defineScrollable = frame().ownerElement() ? FrameView::Scrollability::Scrollable : FrameView::Scrollability::ScrollableOrRubberbandable;
+    LocalFrameView::Scrollability defineScrollable = frame().ownerElement() ? LocalFrameView::Scrollability::Scrollable : LocalFrameView::Scrollability::ScrollableOrRubberbandable;
     return frameView().isScrollable(defineScrollable);
 }
 

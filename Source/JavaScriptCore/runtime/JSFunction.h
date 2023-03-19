@@ -168,6 +168,9 @@ public:
     PropertyStatus reifyLazyPropertyIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
     bool canAssumeNameAndLengthAreOriginal(VM&);
+    double originalLength(VM&);
+    JSString* originalName(JSGlobalObject*);
+
     bool mayHaveNonReifiedPrototype();
 
 protected:

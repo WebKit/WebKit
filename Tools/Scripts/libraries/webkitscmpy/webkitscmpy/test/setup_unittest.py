@@ -236,4 +236,4 @@ Fetching 'fork'
             self.assertDictEqual({
                 'example.org:project/project': 0,
                 'example.org:project/project-security': 1,
-            }, program.Setup._security_levels(local.Git(self.path)))
+            }, program.InstallHooks._security_levels(local.Git(self.path)))

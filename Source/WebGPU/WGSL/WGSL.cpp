@@ -110,12 +110,13 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, Pipeli
 
         {
             PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
-            result.msl = Metal::generateMetalCode(ast);
+            result.msl = Metal::generateMetalCode(callGraph);
         }
     }
 
     logPhaseTimes(phaseTimes);
 
+    ast.revertReplacements();
     return result;
 }
 

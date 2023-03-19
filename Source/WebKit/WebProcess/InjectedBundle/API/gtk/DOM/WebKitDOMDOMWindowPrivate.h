@@ -20,15 +20,15 @@
 #ifndef WebKitDOMDOMWindowPrivate_h
 #define WebKitDOMDOMWindowPrivate_h
 
-#include <WebCore/DOMWindow.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <WebCore/WindowProxy.h>
 #include <webkitdom/WebKitDOMDOMWindow.h>
 
 namespace WebKit {
-WebKitDOMDOMWindow* wrapDOMWindow(WebCore::DOMWindow*);
-WebKitDOMDOMWindow* kit(WebCore::DOMWindow*);
+WebKitDOMDOMWindow* wrapDOMWindow(WebCore::LocalDOMWindow*);
+WebKitDOMDOMWindow* kit(WebCore::LocalDOMWindow*);
 WebKitDOMDOMWindow* kit(WebCore::WindowProxy*);
-WebCore::DOMWindow* core(WebKitDOMDOMWindow*);
+WebCore::LocalDOMWindow* core(WebKitDOMDOMWindow*);
 WebCore::WindowProxy* toWindowProxy(WebKitDOMDOMWindow*);
 } // namespace WebKit
 

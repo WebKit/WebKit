@@ -121,13 +121,15 @@ namespace WebCore {
 
 ScrollerPairMac::ScrollerPairMac(WebCore::ScrollingTreeScrollingNode& node)
     : m_scrollingNode(node)
-    , m_verticalScroller(*this, ScrollerMac::Orientation::Vertical)
-    , m_horizontalScroller(*this, ScrollerMac::Orientation::Horizontal)
+    , m_verticalScroller(*this, ScrollbarOrientation::Vertical)
+    , m_horizontalScroller(*this, ScrollbarOrientation::Horizontal)
 {
 }
 
 void ScrollerPairMac::init()
 {
+    Locker locker { m_scrollerImpPairLock };
+
     m_scrollerImpPairDelegate = adoptNS([[WebScrollerImpPairDelegateMac alloc] initWithScrollerPair:this]);
 
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
@@ -140,12 +142,16 @@ void ScrollerPairMac::init()
 
 ScrollerPairMac::~ScrollerPairMac()
 {
+    Locker locker { m_scrollerImpPairLock };
+
     [m_scrollerImpPairDelegate invalidate];
     [m_scrollerImpPair setDelegate:nil];
 }
 
 void ScrollerPairMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
+    Locker locker { m_scrollerImpPairLock };
+
     switch (phase) {
     case WebCore::PlatformWheelEventPhase::Began:
         [m_scrollerImpPair beginScrollGesture];
@@ -167,6 +173,8 @@ bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
 {
     if (event.type() != WebCore::PlatformEvent::Type::MouseMoved)
         return false;
+    
+    Locker locker { m_scrollerImpPairLock };
 
     m_lastKnownMousePosition = event.position();
     [m_scrollerImpPair mouseMovedInContentArea];
@@ -174,20 +182,39 @@ bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
     return true;
 }
 
+void ScrollerPairMac::setUsePresentationValues(bool inMomentumPhase)
+{
+    m_usingPresentationValues = inMomentumPhase;
+    [scrollerImpHorizontal() setUsePresentationValue:m_usingPresentationValues];
+    [scrollerImpVertical() setUsePresentationValue:m_usingPresentationValues];
+}
+
+void ScrollerPairMac::setHorizontalScrollbarPresentationValue(float scrollbValue)
+{
+    [scrollerImpHorizontal() setPresentationValue:scrollbValue];
+}
+
+void ScrollerPairMac::setVerticalScrollbarPresentationValue(float scrollbValue)
+{
+    [scrollerImpVertical() setPresentationValue:scrollbValue];
+}
+
 void ScrollerPairMac::updateValues()
 {
-    auto position = m_scrollingNode.currentScrollPosition();
+    Locker locker { m_scrollerImpPairLock };
 
-    if (position != m_lastScrollPosition) {
-        if (m_lastScrollPosition) {
-            auto delta = position - *m_lastScrollPosition;
+    auto offset = m_scrollingNode.currentScrollOffset();
+
+    if (offset != m_lastScrollOffset) {
+        if (m_lastScrollOffset) {
+            auto delta = offset - *m_lastScrollOffset;
             [m_scrollerImpPair contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
         }
-        m_lastScrollPosition = position;
+        m_lastScrollOffset = offset;
     }
 
-    m_verticalScroller.updateValues();
     m_horizontalScroller.updateValues();
+    m_verticalScroller.updateValues();
 }
 
 WebCore::FloatSize ScrollerPairMac::visibleSize() const
@@ -200,17 +227,17 @@ bool ScrollerPairMac::useDarkAppearance() const
     return m_scrollingNode.useDarkAppearanceForScrollbars();
 }
 
-ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollerMac::Orientation orientation)
+ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
 {
     float position;
     float totalSize;
     float visibleSize;
-    if (orientation == ScrollerMac:: Orientation::Vertical) {
-        position = m_scrollingNode.currentScrollPosition().y();
+    if (orientation == ScrollbarOrientation::Vertical) {
+        position = m_scrollingNode.currentScrollOffset().y();
         totalSize = m_scrollingNode.totalContentsSize().height();
         visibleSize = m_scrollingNode.scrollableAreaSize().height();
     } else {
-        position = m_scrollingNode.currentScrollPosition().x();
+        position = m_scrollingNode.currentScrollOffset().x();
         totalSize = m_scrollingNode.totalContentsSize().width();
         visibleSize = m_scrollingNode.scrollableAreaSize().width();
     }

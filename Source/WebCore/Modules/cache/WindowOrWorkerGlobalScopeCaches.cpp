@@ -28,10 +28,10 @@
 
 #include "CacheStorageProvider.h"
 #include "DOMCacheStorage.h"
-#include "DOMWindow.h"
-#include "DOMWindowProperty.h"
 #include "Document.h"
-#include "Frame.h"
+#include "LocalDOMWindow.h"
+#include "LocalDOMWindowProperty.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "Supplementable.h"
 #include "WorkerCacheStorageConnection.h"
@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-class DOMWindowCaches : public Supplement<DOMWindow>, public DOMWindowProperty {
+class DOMWindowCaches : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DOMWindowCaches(DOMWindow&);
+    explicit DOMWindowCaches(LocalDOMWindow&);
     virtual ~DOMWindowCaches() = default;
 
-    static DOMWindowCaches* from(DOMWindow&);
+    static DOMWindowCaches* from(LocalDOMWindow&);
     DOMCacheStorage* caches() const;
 
 private:
@@ -72,14 +72,14 @@ private:
 
 // DOMWindowCaches supplement.
 
-DOMWindowCaches::DOMWindowCaches(DOMWindow& window)
-    : DOMWindowProperty(&window)
+DOMWindowCaches::DOMWindowCaches(LocalDOMWindow& window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 
-DOMWindowCaches* DOMWindowCaches::from(DOMWindow& window)
+DOMWindowCaches* DOMWindowCaches::from(LocalDOMWindow& window)
 {
-    auto* supplement = static_cast<DOMWindowCaches*>(Supplement<DOMWindow>::from(&window, supplementName()));
+    auto* supplement = static_cast<DOMWindowCaches*>(Supplement<LocalDOMWindow>::from(&window, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<DOMWindowCaches>(window);
         supplement = newSupplement.get();
@@ -124,7 +124,7 @@ DOMCacheStorage* WorkerGlobalScopeCaches::caches() const
 
 // WindowOrWorkerGlobalScopeCaches.
 
-ExceptionOr<DOMCacheStorage*> WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext& context, DOMWindow& window)
+ExceptionOr<DOMCacheStorage*> WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext& context, LocalDOMWindow& window)
 {
     if (downcast<Document>(context).isSandboxed(SandboxOrigin))
         return Exception { SecurityError, "Cache storage is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_s };

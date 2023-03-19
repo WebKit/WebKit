@@ -1125,7 +1125,7 @@ String localizedMediaTimeDescription(float time)
     if (!std::isfinite(time))
         return WEB_UI_STRING("indefinite time", "accessibility help text for an indefinite media controller time value");
 
-    int seconds = static_cast<int>(fabsf(time));
+    int seconds = static_cast<int>(std::abs(time));
     int days = seconds / (60 * 60 * 24);
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;

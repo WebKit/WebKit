@@ -33,13 +33,13 @@
 #include "Document.h"
 #include "EventLoop.h"
 #include "FeaturePolicy.h"
-#include "Frame.h"
 #include "GeoNotifier.h"
 #include "GeolocationController.h"
 #include "GeolocationCoordinates.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "GeolocationPositionData.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "RuntimeApplicationChecks.h"
@@ -753,7 +753,7 @@ Navigator* Geolocation::navigator()
     return m_navigator.get();
 }
 
-Frame* Geolocation::frame() const
+LocalFrame* Geolocation::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }

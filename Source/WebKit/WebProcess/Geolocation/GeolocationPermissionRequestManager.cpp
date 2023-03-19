@@ -35,9 +35,9 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Document.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/Geolocation.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 
@@ -51,7 +51,7 @@ GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage
 
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
-    Frame* frame = geolocation.frame();
+    auto* frame = geolocation.frame();
 
     ASSERT_WITH_MESSAGE(frame, "It is not well understood in which cases the Geolocation is alive after its frame goes away. If you hit this assertion, please add a test covering this case.");
     if (!frame) {

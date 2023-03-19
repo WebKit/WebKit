@@ -169,7 +169,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::AccessKey, object.accessKey().isolatedCopy());
     setProperty(AXPropertyName::ReadOnlyValue, object.readOnlyValue().isolatedCopy());
     setProperty(AXPropertyName::AutoCompleteValue, object.autoCompleteValue().isolatedCopy());
-    setProperty(AXPropertyName::StringValue, object.stringValue().isolatedCopy());
     setProperty(AXPropertyName::ColorValue, object.colorValue());
     setProperty(AXPropertyName::Orientation, static_cast<int>(object.orientation()));
     setProperty(AXPropertyName::HierarchicalLevel, object.hierarchicalLevel());
@@ -262,7 +261,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         object.selectedChildren(selectedChildren);
         setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
     }
-    
+
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
@@ -342,7 +341,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
 #endif
 
-    initializePlatformProperties(axObject, isRoot);
+    initializePlatformProperties(axObject);
 }
 
 AccessibilityObject* AXIsolatedObject::associatedAXObject() const
@@ -1653,6 +1652,15 @@ bool AXIsolatedObject::hasAttributesRequiredForInclusion() const
     return false;
 }
 
+String AXIsolatedObject::stringValue() const
+{
+    if (m_propertyMap.contains(AXPropertyName::StringValue))
+        return stringAttributeValue(AXPropertyName::StringValue);
+    if (auto value = platformStringValue())
+        return *value;
+    return { };
+}
+
 String AXIsolatedObject::text() const
 {
     ASSERT_NOT_REACHED();
@@ -1722,7 +1730,7 @@ Document* AXIsolatedObject::document() const
     return nullptr;
 }
 
-FrameView* AXIsolatedObject::documentFrameView() const
+LocalFrameView* AXIsolatedObject::documentFrameView() const
 {
     ASSERT(isMainThread());
 

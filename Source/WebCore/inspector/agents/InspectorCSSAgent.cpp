@@ -40,7 +40,6 @@
 #include "CommonAtomStrings.h"
 #include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMWindow.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
@@ -49,7 +48,6 @@
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "FontPlatformData.h"
-#include "Frame.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLStyleElement.h"
@@ -57,6 +55,8 @@
 #include "InspectorHistory.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
@@ -1275,7 +1275,7 @@ Ref<JSON::ArrayOf<Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMat
             continue;
 
         auto matchingSelectors = JSON::ArrayOf<int>::create();
-        const CSSSelectorList& selectorList = matchedRule->resolvedSelectorList();
+        const CSSSelectorList& selectorList = matchedRule->selectorList();
         int index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
             bool matched = selectorChecker.match(*selector, element, context);

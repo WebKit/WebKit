@@ -196,21 +196,6 @@ bool ArgumentCoder<WebCore::ResourceError>::decodePlatformData(Decoder& decoder,
     return true;
 }
 
-void ArgumentCoder<WebCore::ProtectionSpace>::encodePlatformData(Encoder& encoder, const WebCore::ProtectionSpace& space)
-{
-    encoder << space.nsSpace();
-}
-
-bool ArgumentCoder<WebCore::ProtectionSpace>::decodePlatformData(Decoder& decoder, WebCore::ProtectionSpace& space)
-{
-    auto platformData = IPC::decode<NSURLProtectionSpace>(decoder);
-    if (!platformData)
-        return false;
-
-    space = WebCore::ProtectionSpace { platformData->get() };
-    return true;
-}
-
 void ArgumentCoder<WebCore::Credential>::encodePlatformData(Encoder& encoder, const WebCore::Credential& credential)
 {
     NSURLCredential *nsCredential = credential.nsCredential();

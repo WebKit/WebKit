@@ -39,6 +39,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <wtf/CheckedArithmetic.h>
 
 namespace WebCore {
 
@@ -88,7 +89,8 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
     , m_originalLength(length)
     , m_isDetachable(preventDetaching == LegacyPreventDetaching::No)
 {
-    if (static_cast<uint64_t>(m_originalLength) > s_maxLength) {
+    auto totalLength = CheckedUint64(m_originalLength) * numberOfChannels;
+    if (totalLength.hasOverflowed() || totalLength.value() > s_maxLength || static_cast<uint64_t>(m_originalLength) > s_maxChannelLength) {
         invalidate();
         return;
     }
@@ -117,13 +119,14 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     : m_sampleRate(bus.sampleRate())
     , m_originalLength(bus.length())
 {
-    if (static_cast<uint64_t>(m_originalLength) > s_maxLength) {
+    unsigned numberOfChannels = bus.numberOfChannels();
+    auto totalLength = CheckedUint64(m_originalLength) * numberOfChannels;
+    if (totalLength.hasOverflowed() || totalLength.value() > s_maxLength || static_cast<uint64_t>(m_originalLength) > s_maxChannelLength) {
         invalidate();
         return;
     }
 
     // Copy audio data from the bus to the Float32Arrays we manage.
-    unsigned numberOfChannels = bus.numberOfChannels();
     Vector<RefPtr<Float32Array>> channels;
     channels.reserveInitialCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {

@@ -30,15 +30,15 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-class PerformanceNavigation : public RefCounted<PerformanceNavigation>, public DOMWindowProperty {
+class PerformanceNavigation : public RefCounted<PerformanceNavigation>, public LocalDOMWindowProperty {
 public:
-    static Ref<PerformanceNavigation> create(DOMWindow* window) { return adoptRef(*new PerformanceNavigation(window)); }
+    static Ref<PerformanceNavigation> create(LocalDOMWindow* window) { return adoptRef(*new PerformanceNavigation(window)); }
 
     enum PerformanceNavigationType {
         TYPE_NAVIGATE,
@@ -51,7 +51,7 @@ public:
     unsigned short redirectCount() const;
 
 private:
-    explicit PerformanceNavigation(DOMWindow*);
+    explicit PerformanceNavigation(LocalDOMWindow*);
 };
 
 } // namespace WebCore

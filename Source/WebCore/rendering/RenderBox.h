@@ -23,7 +23,7 @@
 #pragma once
 
 #include "FontBaseline.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "RenderBoxModelObject.h"
 #include "RenderOverflow.h"
 #include "ScrollSnapOffsetsInfo.h"
@@ -780,7 +780,7 @@ private:
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, unsigned stepCount, Element** stopElement);
 
-    bool fixedElementLaysOutRelativeToFrame(const FrameView&) const;
+    bool fixedElementLaysOutRelativeToFrame(const LocalFrameView&) const;
 
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;

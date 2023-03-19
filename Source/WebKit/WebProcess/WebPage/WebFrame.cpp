@@ -63,9 +63,7 @@
 #include <WebCore/ElementChildIteratorInlines.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSnapshotting.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -77,6 +75,8 @@
 #include <WebCore/JSElement.h>
 #include <WebCore/JSFile.h>
 #include <WebCore/JSRange.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RemoteDOMWindow.h>
@@ -112,7 +112,7 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-void WebFrame::initWithCoreMainFrame(WebPage& page, AbstractFrame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
+void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
     ASSERT(!m_frameID);
     m_frameID = coreFrame.frameID();
@@ -132,7 +132,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 {
     auto frame = create(page);
     ASSERT(page.corePage());
-    auto coreFrame = Frame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
+    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
@@ -188,7 +188,7 @@ WebPage* WebFrame::page() const
     return nullptr;
 }
 
-WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
+WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
         auto* webFrameLoaderClient = toWebFrameLoaderClient(localFrame->loader().client());
@@ -203,7 +203,7 @@ WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)
     return nullptr;
 }
 
-WebCore::Frame* WebFrame::coreFrame() const
+WebCore::LocalFrame* WebFrame::coreFrame() const
 {
     return dynamicDowncast<LocalFrame>(m_coreFrame.get());
 }
@@ -470,7 +470,7 @@ String WebFrame::contentsAsString() const
 
     if (isFrameSet()) {
         StringBuilder builder;
-        for (AbstractFrame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
             if (!builder.isEmpty())
                 builder.append(' ');
 
@@ -511,7 +511,7 @@ IntSize WebFrame::size() const
     if (!localFrame)
         return IntSize();
 
-    FrameView* frameView = localFrame->view();
+    auto* frameView = localFrame->view();
     if (!frameView)
         return IntSize();
 
@@ -606,7 +606,7 @@ Ref<API::Array> WebFrame::childFrames()
     Vector<RefPtr<API::Object>> vector;
     vector.reserveInitialCapacity(size);
 
-    for (AbstractFrame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+    for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         WebFrame* webFrame = WebFrame::fromCoreFrame(*child);
         ASSERT(webFrame);
         if (!webFrame)
@@ -712,7 +712,7 @@ IntRect WebFrame::contentBounds() const
     if (!localFrame)
         return IntRect();
     
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -725,7 +725,7 @@ IntRect WebFrame::visibleContentBounds() const
     if (!localFrame)
         return IntRect();
     
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -739,7 +739,7 @@ IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
     if (!localFrame)
         return IntRect();
     
-    FrameView* view = localFrame->view();
+    LocalFrameView* view = localFrame->view();
     if (!view)
         return IntRect();
     
@@ -753,7 +753,7 @@ IntSize WebFrame::scrollOffset() const
     if (!localFrame)
         return IntSize();
     
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return IntSize();
 
@@ -766,7 +766,7 @@ bool WebFrame::hasHorizontalScrollbar() const
     if (!localFrame)
         return false;
 
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return false;
 
@@ -779,7 +779,7 @@ bool WebFrame::hasVerticalScrollbar() const
     if (!localFrame)
         return false;
 
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return false;
 
@@ -801,7 +801,7 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
     if (!localFrame)
         return false;
 
-    FrameView* view = localFrame->view();
+    auto* view = localFrame->view();
     if (!view)
         return false;
 
@@ -855,13 +855,13 @@ void WebFrame::stopLoading()
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
-    auto* coreFrame = Frame::fromJSContext(context);
+    auto* coreFrame = LocalFrame::fromJSContext(context);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
 WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
 {
-    auto* coreFrame = Frame::contentFrameFromWindowOrFrameElement(context, value);
+    auto* coreFrame = LocalFrame::contentFrameFromWindowOrFrameElement(context, value);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
@@ -871,7 +871,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle* 
     if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
+    auto* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, cssStyleDeclarationHandle->coreCSSStyleDeclaration()));
@@ -883,7 +883,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, Inj
     if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
+    auto* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, nodeHandle->coreNode()));
@@ -895,7 +895,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
     if (!localFrame)
         return nullptr;
 
-    JSDOMWindow* globalObject = localFrame->script().globalObject(world->coreWorld());
+    auto* globalObject = localFrame->script().globalObject(world->coreWorld());
 
     JSLockHolder lock(globalObject);
     return toRef(globalObject, toJS(globalObject, globalObject, rangeHandle->coreRange()));
@@ -996,7 +996,7 @@ void WebFrame::documentLoaderDetached(uint64_t navigationID)
 #if PLATFORM(COCOA)
 RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
 {
-    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](Frame& frame) -> bool {
+    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](auto& frame) -> bool {
         if (!callback)
             return true;
 

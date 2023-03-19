@@ -1,0 +1,20 @@
+baseannotation
+
+baseannotation
+
+baseannotation
+
+baseannotation
+
+baseannotation
+
+baseannotation
+
+
+PASS ruby-position:over on <ruby> works
+PASS ruby-position:under on <rt> should not work
+PASS ruby-position:over on <rtc> works
+FAIL ruby-position:under on <ruby> works assert_true: expected true got false
+FAIL ruby-position:over on <rt> should not work assert_true: expected true got false
+PASS ruby-position:under on <rtc> works
+

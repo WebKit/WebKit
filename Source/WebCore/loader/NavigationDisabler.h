@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "Frame.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 
 class NavigationDisabler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NavigationDisabler(Frame* frame)
+    NavigationDisabler(LocalFrame* frame)
         : m_frame(frame)
     {
         if (frame) {
@@ -55,7 +55,7 @@ public:
         }
     }
 
-    static bool isNavigationAllowed(Frame& frame)
+    static bool isNavigationAllowed(LocalFrame& frame)
     {
         if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame()))
             return !localFrame->m_navigationDisableCount && !s_globalNavigationDisableCount;
@@ -63,7 +63,7 @@ public:
     }
 
 private:
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
 
     static unsigned s_globalNavigationDisableCount;
 };

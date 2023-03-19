@@ -37,7 +37,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorResponseData.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/Quirks.h>
@@ -66,7 +66,7 @@ WebAuthenticatorCoordinator::WebAuthenticatorCoordinator(WebPage& webPage)
 {
 }
 
-void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, RequestCompletionHandler&& handler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
@@ -76,7 +76,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
     m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
@@ -101,7 +101,7 @@ void WebAuthenticatorCoordinator::cancel()
     m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::Cancel());
 }
 
-bool WebAuthenticatorCoordinator::processingUserGesture(const Frame& frame, const FrameIdentifier& frameID)
+bool WebAuthenticatorCoordinator::processingUserGesture(const LocalFrame& frame, const FrameIdentifier& frameID)
 {
     auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
     bool processingUserGestureOrFreebie = processingUserGesture || !m_requireUserGesture;

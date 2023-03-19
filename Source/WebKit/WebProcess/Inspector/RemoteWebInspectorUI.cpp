@@ -37,6 +37,7 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

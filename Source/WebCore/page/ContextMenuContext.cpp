@@ -42,6 +42,7 @@ ContextMenuContext::ContextMenuContext(Type type, const HitTestResult& hitTestRe
     : m_type(type)
     , m_hitTestResult(hitTestResult)
     , m_event(event)
+    , m_hasEntireImage(hitTestResult.hasEntireImage())
 {
 }
 

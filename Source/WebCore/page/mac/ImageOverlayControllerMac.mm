@@ -32,12 +32,12 @@
 #import "DataDetectionResultsStorage.h"
 #import "DataDetectorElementInfo.h"
 #import "ElementInlines.h"
-#import "FrameView.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "ImageOverlay.h"
 #import "ImageOverlayDataDetectionResultIdentifier.h"
 #import "IntRect.h"
+#import "LocalFrameView.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
 #import "SimpleRange.h"
@@ -205,7 +205,7 @@ bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
     return !!m_activeDataDetectorHighlight;
 }
 
-void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* elementUnderMouse)
+void ImageOverlayController::elementUnderMouseDidChange(LocalFrame& frame, Element* elementUnderMouse)
 {
     if (m_activeDataDetectorHighlight)
         return;

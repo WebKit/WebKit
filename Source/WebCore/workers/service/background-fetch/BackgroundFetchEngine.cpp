@@ -87,9 +87,11 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
             callback(makeUnexpected(ExceptionData { TypeError, "Background fetch store operation failed"_s }));
             break;
         case BackgroundFetchStore::StoreResult::OK:
-            fetch->perform([server = WTFMove(server)](auto& client, auto& request, auto& origin) mutable {
-                return server ? server->createBackgroundFetchRecordLoader(client, request, origin) : nullptr;
-            });
+            if (!fetch->pausedFlagIsSet()) {
+                fetch->perform([server = WTFMove(server)](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
+                    return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
+                });
+            }
             callback(fetch->information());
             break;
         };
@@ -109,7 +111,7 @@ void BackgroundFetchEngine::notifyBackgroundFetchUpdate(BackgroundFetch& fetch)
         connection.updateBackgroundFetchRegistration(information);
     });
 
-    if (information.result == BackgroundFetchResult::EmptyString)
+    if (information.result == BackgroundFetchResult::EmptyString || !information.recordsAvailable)
         return;
 
     // FIXME: We should delay events if the service worker (or related page) is not running.
@@ -298,14 +300,42 @@ void BackgroundFetchEngine::abortBackgroundFetch(const ServiceWorkerRegistration
         abortBackgroundFetch(*registration, identifier, [](auto) { });
 }
 
-void BackgroundFetchEngine::pauseBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&)
+void BackgroundFetchEngine::pauseBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier)
 {
-    // FIXME: Implement pause.
+    auto* registration = m_server ? m_server->getRegistration(key) : nullptr;
+    if (!registration)
+        return;
+
+    auto iterator = m_fetches.find(key);
+    if (iterator == m_fetches.end())
+        return;
+
+    auto& map = iterator->value;
+    auto fetchIterator = map.find(identifier);
+    if (fetchIterator == map.end())
+        return;
+
+    fetchIterator->value->pause();
 }
 
-void BackgroundFetchEngine::resumeBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&)
+void BackgroundFetchEngine::resumeBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& identifier)
 {
-    // FIXME: Implement resume.
+    auto* registration = m_server ? m_server->getRegistration(key) : nullptr;
+    if (!registration)
+        return;
+
+    auto iterator = m_fetches.find(key);
+    if (iterator == m_fetches.end())
+        return;
+
+    auto& map = iterator->value;
+    auto fetchIterator = map.find(identifier);
+    if (fetchIterator == map.end())
+        return;
+
+    fetchIterator->value->resume([server = m_server](auto& client, auto& request, auto responseDataSize, auto& origin) mutable {
+        return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
+    });
 }
 
 void BackgroundFetchEngine::clickBackgroundFetch(const ServiceWorkerRegistrationKey& key, const String& backgroundFetchIdentifier)

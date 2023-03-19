@@ -40,7 +40,7 @@ public:
     {
     }
 
-    virtual ~SpeechRecognitionConnectionClient() = default;
+    virtual ~SpeechRecognitionConnectionClient() { }
 
     virtual void didStart() = 0;
     virtual void didStartCapturingAudio() = 0;

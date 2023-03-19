@@ -32,9 +32,7 @@
 #include "Editing.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "FloatQuad.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLBRElement.h"
@@ -46,6 +44,8 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGModelObject.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PseudoElement.h"
@@ -1729,7 +1729,7 @@ static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer
     auto shouldInvalidateLineLayoutPath = true;
     if (auto* modernLineLayout = container->modernLineLayout()) {
         shouldInvalidateLineLayoutPath = LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(*container, renderer, *modernLineLayout, isRemoval == IsRemoval::Yes);
-        if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container)) {
+        if (!shouldInvalidateLineLayoutPath) {
             isRemoval == IsRemoval::Yes ? modernLineLayout->removedFromTree(*renderer.parent(), renderer) : modernLineLayout->insertedIntoTree(*renderer.parent(), renderer);
             shouldInvalidateLineLayoutPath = !modernLineLayout->isDamaged();
         }

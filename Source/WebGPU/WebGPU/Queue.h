@@ -84,7 +84,7 @@ private:
     void finalizeBlitCommandEncoder();
 
     void commitMTLCommandBuffer(id<MTLCommandBuffer>);
-    bool isIdle() const { return m_submittedCommandBufferCount == m_completedCommandBufferCount; }
+    bool isIdle() const;
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
 
     // This can be called on a background thread.

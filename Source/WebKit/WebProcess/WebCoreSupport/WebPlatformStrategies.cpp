@@ -49,8 +49,8 @@
 #include <WebCore/Color.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
-#include <WebCore/Frame.h>
 #include <WebCore/LoaderStrategy.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/MediaStrategy.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
@@ -334,6 +334,13 @@ void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, Selec
 void WebPlatformStrategies::clearClipboard(const String& pasteboardName)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::ClearClipboard(pasteboardName), 0);
+}
+
+int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
+{
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardChangeCount(pasteboardName), 0);
+    auto [changeCount] = sendResult.takeReplyOr(0);
+    return changeCount;
 }
 
 #endif // PLATFORM(GTK)

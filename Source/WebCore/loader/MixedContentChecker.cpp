@@ -32,10 +32,10 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "LocalFrame.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>
@@ -53,14 +53,14 @@ bool MixedContentChecker::isMixedContent(SecurityOrigin& securityOrigin, const U
     return !SecurityOrigin::isSecure(url);
 }
 
-static void logWarning(const Frame& frame, bool allowed, ASCIILiteral action, const URL& target)
+static void logWarning(const LocalFrame& frame, bool allowed, ASCIILiteral action, const URL& target)
 {
     const char* errorString = allowed ? " was allowed to " : " was not allowed to ";
     auto message = makeString((allowed ? "" : "[blocked] "), "The page at ", frame.document()->url().stringCenterEllipsizedToLength(), errorString, action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
     frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
-bool MixedContentChecker::canDisplayInsecureContent(Frame& frame, SecurityOrigin& securityOrigin, ContentType type, const URL& url, AlwaysDisplayInNonStrictMode alwaysDisplayInNonStrictMode)
+bool MixedContentChecker::canDisplayInsecureContent(LocalFrame& frame, SecurityOrigin& securityOrigin, ContentType type, const URL& url, AlwaysDisplayInNonStrictMode alwaysDisplayInNonStrictMode)
 {
     if (!isMixedContent(securityOrigin, url))
         return true;
@@ -83,7 +83,7 @@ bool MixedContentChecker::canDisplayInsecureContent(Frame& frame, SecurityOrigin
     return allowed;
 }
 
-bool MixedContentChecker::canRunInsecureContent(Frame& frame, SecurityOrigin& securityOrigin, const URL& url)
+bool MixedContentChecker::canRunInsecureContent(LocalFrame& frame, SecurityOrigin& securityOrigin, const URL& url)
 {
     if (!isMixedContent(securityOrigin, url))
         return true;
@@ -102,7 +102,7 @@ bool MixedContentChecker::canRunInsecureContent(Frame& frame, SecurityOrigin& se
     return allowed;
 }
 
-void MixedContentChecker::checkFormForMixedContent(Frame& frame, SecurityOrigin& securityOrigin, const URL& url)
+void MixedContentChecker::checkFormForMixedContent(LocalFrame& frame, SecurityOrigin& securityOrigin, const URL& url)
 {
     // Unconditionally allow javascript: URLs as form actions as some pages do this and it does not introduce
     // a mixed content issue.
@@ -118,7 +118,7 @@ void MixedContentChecker::checkFormForMixedContent(Frame& frame, SecurityOrigin&
     frame.loader().client().didDisplayInsecureContent();
 }
 
-std::optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const Frame& frame, const URL& url)
+std::optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const LocalFrame& frame, const URL& url)
 {
     auto* document = frame.document();
 

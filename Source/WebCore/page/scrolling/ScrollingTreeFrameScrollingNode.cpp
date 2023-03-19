@@ -28,7 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateTree.h"
@@ -99,7 +99,7 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
 {
     FloatSize visualViewportSize = m_overrideVisualViewportSize.value_or(scrollableAreaSize());
     FloatRect visibleContentRect(visibleContentOrigin, visualViewportSize);
-    LayoutRect visualViewport(FrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
+    LayoutRect visualViewport(LocalFrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
     LayoutRect layoutViewport(m_layoutViewport);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNode " << scrollingNodeID() << " layoutViewportForScrollPosition: " << "(visibleContentOrigin " << visibleContentOrigin << ", visualViewportSize " << visualViewportSize << ") fixed behavior " << m_behaviorForFixed);
@@ -107,7 +107,7 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
     LOG_WITH_STREAM(Scrolling, stream << "  visualViewport: " << visualViewport);
     LOG_WITH_STREAM(Scrolling, stream << "  scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
 
-    LayoutPoint newLocation = FrameView::computeLayoutViewportOrigin(LayoutRect(visualViewport), LayoutPoint(minLayoutViewportOrigin()), LayoutPoint(maxLayoutViewportOrigin()), layoutViewport, fixedBehavior);
+    LayoutPoint newLocation = LocalFrameView::computeLayoutViewportOrigin(LayoutRect(visualViewport), LayoutPoint(minLayoutViewportOrigin()), LayoutPoint(maxLayoutViewportOrigin()), layoutViewport, fixedBehavior);
 
     if (layoutViewport.location() != newLocation) {
         layoutViewport.setLocation(newLocation);

@@ -32,14 +32,14 @@
 #include "Editor.h"
 #include "Element.h"
 #include "ElementAncestorIteratorInlines.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
-#include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderElement.h"
@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-static bool initializeIndicator(TextIndicatorData&, Frame&, const SimpleRange&, FloatSize margin, bool indicatesCurrentSelection);
+static bool initializeIndicator(TextIndicatorData&, LocalFrame&, const SimpleRange&, FloatSize margin, bool indicatesCurrentSelection);
 
 TextIndicator::TextIndicator(const TextIndicatorData& data)
     : m_data(data)
@@ -113,7 +113,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
     return TextIndicator::create(data);
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
+RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(LocalFrame& frame, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
     auto range = frame.selection().selection().toNormalizedRange();
     if (!range)
@@ -159,7 +159,7 @@ static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndi
     return snapshotOptions;
 }
 
-static RefPtr<Image> takeSnapshot(Frame& frame, IntRect rect, SnapshotOptions&& options, float& scaleFactor, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
+static RefPtr<Image> takeSnapshot(LocalFrame& frame, IntRect rect, SnapshotOptions&& options, float& scaleFactor, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
 {
     auto buffer = snapshotFrameRectWithClip(frame, rect, clipRectsInDocumentCoordinates, WTFMove(options));
     if (!buffer)
@@ -168,7 +168,7 @@ static RefPtr<Image> takeSnapshot(Frame& frame, IntRect rect, SnapshotOptions&& 
     return ImageBuffer::sinkIntoImage(WTFMove(buffer), PreserveResolution::Yes);
 }
 
-static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapshotRect, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
+static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect snapshotRect, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
 {
     data.contentImage = takeSnapshot(frame, snapshotRect, snapshotOptionsForTextIndicatorOptions(data.options), data.contentImageScaleFactor, clipRectsInDocumentCoordinates);
     if (!data.contentImage)
@@ -246,7 +246,7 @@ static bool containsOnlyWhiteSpaceText(const SimpleRange& range)
     return plainTextReplacingNoBreakSpace(range).find(isNotSpaceOrNewline) == notFound;
 }
 
-static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const SimpleRange& range, FloatSize margin, bool indicatesCurrentSelection)
+static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, const SimpleRange& range, FloatSize margin, bool indicatesCurrentSelection)
 {
     if (auto* document = frame.document())
         document->updateLayoutIgnorePendingStylesheets();

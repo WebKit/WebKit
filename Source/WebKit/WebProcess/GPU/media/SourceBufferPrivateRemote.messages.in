@@ -34,7 +34,6 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
     SourceBufferPrivateDidParseSample(double sampleDuration)
     SourceBufferPrivateDidDropSample()
-    SourceBufferPrivateBufferedDirtyChanged(bool dirty)
     SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
     SourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 }

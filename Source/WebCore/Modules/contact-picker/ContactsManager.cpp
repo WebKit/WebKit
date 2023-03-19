@@ -32,9 +32,9 @@
 #include "ContactsRequestData.h"
 #include "ContactsSelectOptions.h"
 #include "Document.h"
-#include "Frame.h"
 #include "JSContactInfo.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
@@ -59,7 +59,7 @@ ContactsManager::ContactsManager(Navigator& navigator)
 ContactsManager::~ContactsManager() = default;
 
 
-Frame* ContactsManager::frame() const
+LocalFrame* ContactsManager::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }

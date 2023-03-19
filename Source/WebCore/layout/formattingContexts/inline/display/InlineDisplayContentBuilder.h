@@ -46,8 +46,6 @@ public:
 
     InlineDisplay::Boxes build(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, const size_t lineIndex);
 
-    static void computeIsFirstIsLastBoxForInlineContent(InlineDisplay::Boxes&);
-
 private:
     void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, InlineDisplay::Boxes&);
     void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, InlineDisplay::Boxes&);

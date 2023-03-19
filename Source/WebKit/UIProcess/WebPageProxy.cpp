@@ -8736,6 +8736,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.colorSpace = pageClient().colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;
     parameters.useFormSemanticContext = useFormSemanticContext();
+    parameters.headerBannerHeight = headerBannerHeight();
+    parameters.footerBannerHeight = footerBannerHeight();
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -9210,7 +9212,7 @@ void WebPageProxy::requestUserMediaPermissionForFrame(UserMediaRequestIdentifier
 #endif
 }
 
-void WebPageProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, WebCore::MediaDeviceHashSalts&&)>&& completionHandler)
+void WebPageProxy::enumerateMediaDevicesForFrame(FrameIdentifier frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
     RefPtr frame = WebFrameProxy::webFrame(frameID);
@@ -9800,22 +9802,19 @@ void WebPageProxy::showCorrectionPanel(AlternativeTextType panelType, const Floa
     pageClient().showCorrectionPanel(panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
-void WebPageProxy::dismissCorrectionPanel(int32_t reason)
+void WebPageProxy::dismissCorrectionPanel(ReasonForDismissingAlternativeText reason)
 {
-    // FIXME: Make ReasonForDismissingAlternativeText an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
-    pageClient().dismissCorrectionPanel((ReasonForDismissingAlternativeText)reason);
+    pageClient().dismissCorrectionPanel(reason);
 }
 
-void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&& completionHandler)
+void WebPageProxy::dismissCorrectionPanelSoon(ReasonForDismissingAlternativeText reason, CompletionHandler<void(String)>&& completionHandler)
 {
-    // FIXME: Make ReasonForDismissingAlternativeText an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
-    completionHandler(pageClient().dismissCorrectionPanelSoon((ReasonForDismissingAlternativeText)reason));
+    completionHandler(pageClient().dismissCorrectionPanelSoon(reason));
 }
 
-void WebPageProxy::recordAutocorrectionResponse(int32_t response, const String& replacedString, const String& replacementString)
+void WebPageProxy::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    // FIXME: Make AutocorrectionResponse an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
-    pageClient().recordAutocorrectionResponse(static_cast<AutocorrectionResponse>(response), replacedString, replacementString);
+    pageClient().recordAutocorrectionResponse(response, replacedString, replacementString);
 }
 
 void WebPageProxy::handleAlternativeTextUIResult(const String& result)
@@ -10348,14 +10347,14 @@ void WebPageProxy::setUseSystemAppearance(bool useSystemAppearance)
     send(Messages::WebPage::SetUseSystemAppearance(useSystemAppearance));
 }
     
-void WebPageProxy::setHeaderBannerHeightForTesting(int height)
+void WebPageProxy::setHeaderBannerHeight(int height)
 {
-    send(Messages::WebPage::SetHeaderBannerHeightForTesting(height));
+    send(Messages::WebPage::SetHeaderBannerHeight(height));
 }
 
-void WebPageProxy::setFooterBannerHeightForTesting(int height)
+void WebPageProxy::setFooterBannerHeight(int height)
 {
-    send(Messages::WebPage::SetFooterBannerHeightForTesting(height));
+    send(Messages::WebPage::SetFooterBannerHeight(height));
 }
 
 void WebPageProxy::didEndMagnificationGesture()
@@ -11373,7 +11372,7 @@ void WebPageProxy::setMockWebAuthenticationConfiguration(MockWebAuthenticationCo
 }
 #endif
 
-void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>& exclusionRules,
+void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>& exclusionRules, bool includeSubframes,
     TextManipulationItemCallback&& callback, WTF::CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
@@ -11381,7 +11380,7 @@ void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulation
         return;
     }
     m_textManipulationItemCallback = WTFMove(callback);
-    sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules, includeSubframes), WTFMove(completionHandler));
 }
 
 void WebPageProxy::didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>& items)
@@ -11462,7 +11461,7 @@ void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& com
     sendWithAsyncReply(Messages::WebPage::GetProcessDisplayName(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
+void WebPageProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
 {
 #if ENABLE(MEDIA_STREAM)
 #if PLATFORM(COCOA)

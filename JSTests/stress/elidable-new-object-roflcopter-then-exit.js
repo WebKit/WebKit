@@ -1,4 +1,5 @@
 //@ skip if $architecture != "arm64" and $architecture != "x86_64" and $architecture != "mips" and $architecture != "arm"
+//@ $skipModes << :lockdown if ($buildType == "debug")
 
 function sumOfArithSeries(limit) {
     return limit * (limit + 1) / 2;

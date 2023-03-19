@@ -190,7 +190,8 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
     if (!isValidToUseWith(buffer, *this))
         return false;
 
-    if (buffer.state() != Buffer::State::Unmapped)
+    auto bufferState = buffer.state();
+    if (bufferState != Buffer::State::Unmapped && bufferState != Buffer::State::MappedAtCreation)
         return false;
 
     if (!(buffer.usage() & WGPUBufferUsage_CopyDst))
@@ -249,14 +250,22 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared];
-    if (!temporaryBuffer)
+    if (!temporaryBuffer) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+
     [m_blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0
         toBuffer:buffer.buffer()
         destinationOffset:static_cast<NSUInteger>(bufferOffset)
         size:static_cast<NSUInteger>(size)];
+}
+
+bool Queue::isIdle() const
+{
+    return m_submittedCommandBufferCount == m_completedCommandBufferCount && !m_blitCommandEncoder;
 }
 
 static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size, size_t dataByteSize, const Texture& texture)
@@ -413,7 +422,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
-        auto destinationOrigin = MTLOriginMake(destination.origin.x, 1, 1);
+        auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
@@ -435,7 +444,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
-        auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 1);
+        auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;

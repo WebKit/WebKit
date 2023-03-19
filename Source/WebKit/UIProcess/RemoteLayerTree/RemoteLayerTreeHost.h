@@ -90,6 +90,8 @@ private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
+    bool updateBannerLayers(const RemoteLayerTreeTransaction&);
+
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 
     RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType() const;

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class HTMLMediaElement;
 class MediaStream;
 class MediaStreamAudioDestinationNode;

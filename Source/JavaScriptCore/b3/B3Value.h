@@ -424,6 +424,8 @@ protected:
         case SExt8:
         case SExt16:
         case Trunc:
+        case SExt8To64:
+        case SExt16To64:
         case SExt32:
         case ZExt32:
         case FloatToDouble:
@@ -537,6 +539,7 @@ protected:
         case VectorMulSat:
         case VectorAvgRound:
         case VectorMulByElement:
+        case VectorShiftByVector:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
@@ -657,6 +660,8 @@ private:
         case SExt8:
         case SExt16:
         case Trunc:
+        case SExt8To64:
+        case SExt16To64:
         case SExt32:
         case ZExt32:
         case FloatToDouble:
@@ -752,6 +757,7 @@ private:
         case VectorMulSat:
         case VectorAvgRound:
         case VectorMulByElement:
+        case VectorShiftByVector:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
             return Two;

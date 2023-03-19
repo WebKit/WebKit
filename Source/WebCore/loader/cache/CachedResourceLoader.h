@@ -54,8 +54,8 @@ class CachedTextTrack;
 class CachedXSLStyleSheet;
 class Document;
 class DocumentLoader;
-class Frame;
 class ImageLoader;
+class LocalFrame;
 class Page;
 class SVGImage;
 class Settings;
@@ -136,7 +136,7 @@ public:
     
     CachePolicy cachePolicy(CachedResource::Type, const URL&) const;
     
-    Frame* frame() const; // Can be null
+    LocalFrame* frame() const; // Can be null
     Document* document() const { return m_document.get(); } // Can be null
     void setDocument(Document* document) { m_document = document; }
     void clearDocumentLoader() { m_documentLoader = nullptr; }

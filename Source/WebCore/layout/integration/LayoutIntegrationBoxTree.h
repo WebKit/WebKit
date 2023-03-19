@@ -52,7 +52,7 @@ public:
 
     void updateStyle(const RenderBoxModelObject&);
     void updateContent(const RenderText&);
-    const Layout::Box& insert(const RenderElement& parent, RenderObject& child);
+    const Layout::Box& insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild = nullptr);
     UniqueRef<Layout::Box> remove(const RenderElement& parent, RenderObject& child);
 
     const RenderBlock& rootRenderer() const { return m_rootRenderer; }
@@ -82,7 +82,7 @@ private:
 
     void buildTreeForInlineContent();
     void buildTreeForFlexContent();
-    void appendChild(UniqueRef<Layout::Box>, RenderObject&);
+    void insertChild(UniqueRef<Layout::Box>, RenderObject&, const RenderObject* beforeChild = nullptr);
 
     RenderBlock& m_rootRenderer;
     Vector<WeakPtr<RenderObject>, 1> m_renderers;

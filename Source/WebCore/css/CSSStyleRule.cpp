@@ -83,6 +83,9 @@ StylePropertyMap& CSSStyleRule::styleMap()
 
 String CSSStyleRule::generateSelectorText() const
 {
+    if (m_styleRule->isStyleRuleWithNesting())
+        return downcast<StyleRuleWithNesting>(m_styleRule.get()).originalSelectorList().selectorsText();
+
     return m_styleRule->selectorList().selectorsText();
 }
 
@@ -111,6 +114,10 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     auto* sheet = parentStyleSheet();
     auto selectorList = p.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr);
     if (!selectorList)
+        return;
+
+    // FIXME: We don't support setting nesting parent selector by CSSOM
+    if (selectorList->hasExplicitNestingParent())
         return;
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
@@ -164,7 +171,11 @@ String CSSStyleRule::cssText() const
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    m_styleRule = downcast<StyleRule>(rule);
+    if (m_styleRule->isStyleRuleWithNesting())
+        m_styleRule = downcast<StyleRuleWithNesting>(rule);
+    else
+        m_styleRule = downcast<StyleRule>(rule);
+
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
 }

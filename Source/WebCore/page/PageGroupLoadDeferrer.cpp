@@ -23,7 +23,7 @@
 
 #include "Document.h"
 #include "DocumentParser.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptRunner.h"
@@ -44,7 +44,7 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 
         // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
         // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
-        for (AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
@@ -66,7 +66,7 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             continue;
         page->setDefersLoading(false);
 
-        for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;

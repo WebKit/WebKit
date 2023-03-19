@@ -1213,23 +1213,14 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
         
         if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
-            RenderRubyText* rubyText = rubyRun.rubyText();
-            if (!rubyText)
-                continue;
-            
-            if (!rubyRun.style().isFlippedLinesWritingMode()) {
-                LayoutUnit topOfFirstRubyTextLine = rubyText->logicalTop() + (rubyText->firstRootBox() ? rubyText->firstRootBox()->lineTop() : 0_lu);
-                if (topOfFirstRubyTextLine >= 0)
-                    continue;
-                topOfFirstRubyTextLine += child->logicalTop();
-                result = std::max(result, allowedPosition - topOfFirstRubyTextLine);
-            } else {
-                LayoutUnit bottomOfLastRubyTextLine = rubyText->logicalTop() + (rubyText->lastRootBox() ? rubyText->lastRootBox()->lineBottom() : rubyText->logicalHeight());
-                if (bottomOfLastRubyTextLine <= child->logicalHeight())
-                    continue;
-                bottomOfLastRubyTextLine += child->logicalTop();
-                result = std::max(result, bottomOfLastRubyTextLine - allowedPosition);
-            }
+
+            auto [above, below] = rubyRun.annotationsAboveAndBelow();
+            auto top = LayoutUnit { child->logicalTop() - above };
+            auto bottom = LayoutUnit { child->logicalBottom() + below };
+            if (!rubyRun.style().isFlippedLinesWritingMode())
+                result = std::max(result, allowedPosition - top);
+            else
+                result = std::max(result, bottom - allowedPosition);
         }
 
         if (is<LegacyInlineTextBox>(*child)) {
@@ -1261,23 +1252,14 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
 
         if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
-            RenderRubyText* rubyText = rubyRun.rubyText();
-            if (!rubyText)
-                continue;
 
-            if (rubyRun.style().isFlippedLinesWritingMode()) {
-                LayoutUnit topOfFirstRubyTextLine = rubyText->logicalTop() + (rubyText->firstRootBox() ? rubyText->firstRootBox()->lineTop() : 0_lu);
-                if (topOfFirstRubyTextLine >= 0)
-                    continue;
-                topOfFirstRubyTextLine += child->logicalTop();
-                result = std::max(result, allowedPosition - topOfFirstRubyTextLine);
-            } else {
-                LayoutUnit bottomOfLastRubyTextLine = rubyText->logicalTop() + (rubyText->lastRootBox() ? rubyText->lastRootBox()->lineBottom() : rubyText->logicalHeight());
-                if (bottomOfLastRubyTextLine <= child->logicalHeight())
-                    continue;
-                bottomOfLastRubyTextLine += child->logicalTop();
-                result = std::max(result, bottomOfLastRubyTextLine - allowedPosition);
-            }
+            auto [above, below] = rubyRun.annotationsAboveAndBelow();
+            auto top = LayoutUnit { child->logicalTop() - above };
+            auto bottom = LayoutUnit { child->logicalBottom() + below };
+            if (rubyRun.style().isFlippedLinesWritingMode())
+                result = std::max(result, allowedPosition - top);
+            else
+                result = std::max(result, bottom - allowedPosition);
         }
 
         if (is<LegacyInlineTextBox>(*child)) {

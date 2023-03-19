@@ -22,10 +22,10 @@
 #include "config.h"
 #include "RenderTextControlMultiLine.h"
 
-#include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "TextControlInnerElements.h"

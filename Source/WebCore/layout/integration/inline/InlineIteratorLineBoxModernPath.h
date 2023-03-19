@@ -54,6 +54,8 @@ public:
     float logicalWidth() const { return line().lineBoxLogicalRect().width(); }
     float inkOverflowTop() const { return line().inkOverflow().y(); }
     float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
+    float scrollableOverflowTop() const { return line().scrollableOverflow().y(); }
+    float scrollableOverflowBottom() const { return line().scrollableOverflow().maxY(); }
 
     bool hasEllipsis() const { return line().hasEllipsis(); }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return *line().ellipsisVisualRect(); }

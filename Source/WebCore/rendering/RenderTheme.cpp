@@ -34,7 +34,6 @@
 #include "FloatRoundedRect.h"
 #include "FocusController.h"
 #include "FontSelector.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
@@ -48,6 +47,7 @@
 #include "HTMLTextAreaElement.h"
 #include "ImageControlsButtonPart.h"
 #include "InnerSpinButtonPart.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "MenuListButtonPart.h"
 #include "MenuListPart.h"
@@ -1271,7 +1271,7 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
         delegate = downcast<SliderThumbElement>(*element).hostInput();
 
     Document& document = delegate->document();
-    Frame* frame = document.frame();
+    auto* frame = document.frame();
     return delegate == document.focusedElement() && frame && frame->selection().isFocusedAndActive();
 }
 

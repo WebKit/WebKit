@@ -1,0 +1,28 @@
+<style>
+    .filtered {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        margin: 50px;
+        border: none;
+        background-color: lime;
+        filter: url('#filter');
+    }
+    .bordered {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        margin: 30px;
+        border:10px solid black;
+        background-color: none;
+    }
+</style>
+<body>
+    <div class="filtered"></div>
+    <div class="bordered"></div>
+    <svg width="0" height="0">
+        <filter id="filter" primitiveUnits="userSpaceOnUse">
+            <feMorphology operator="dilate" radius="50"/>
+        </filter>
+    </svg>
+</body>

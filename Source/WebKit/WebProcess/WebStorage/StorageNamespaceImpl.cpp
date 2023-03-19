@@ -31,8 +31,9 @@
 #include "StorageAreaImpl.h"
 #include "StorageAreaMap.h"
 #include "WebPage.h"
+#include "WebPageInlines.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageType.h>

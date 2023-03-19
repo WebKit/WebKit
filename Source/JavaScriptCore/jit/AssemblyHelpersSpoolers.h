@@ -401,7 +401,7 @@ private:
             regToStore1 = temp1<RegType>();
             regToStore2 = temp2<RegType>();
 
-            int offsetDelta = abs(srcOffset1 - srcOffset2);
+            int offsetDelta = std::abs(srcOffset1 - srcOffset2);
             int minOffset = std::min(srcOffset1, srcOffset2);
             bool isValidOffset = isValidLoadPairImm<RegType>(minOffset);
 
@@ -470,7 +470,7 @@ private:
         int dstOffset1 = m_deferredStoreOffset - m_dstOffsetAdjustment;
         int dstOffset2 = storeOffset - m_dstOffsetAdjustment;
 
-        int offsetDelta = abs(dstOffset1 - dstOffset2);
+        int offsetDelta = std::abs(dstOffset1 - dstOffset2);
         int minOffset = std::min(dstOffset1, dstOffset2);
         bool isValidOffset = isValidStorePairImm<RegType>(minOffset);
 

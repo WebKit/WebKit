@@ -27,9 +27,11 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#include "Timer.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/PriorityQueue.h>
 #include <wtf/URL.h>
+#include <wtf/URLHash.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,6 +45,7 @@ class Document;
 class HTMLImageElement;
 class Page;
 class Timer;
+class WeakPtrImplWithEventTargetData;
 
 class ImageAnalysisQueue {
     WTF_MAKE_FAST_ALLOCATED;

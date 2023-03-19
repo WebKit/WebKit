@@ -35,10 +35,6 @@
 #include <libxslt/extensions.h>
 #include <libxslt/extra.h>
 
-#if OS(DARWIN) && !PLATFORM(GTK)
-#include "SoftLinkLibxslt.h"
-#endif
-
 namespace WebCore {
 
 // FIXME: This code is taken from libexslt 1.1.11; should sync with newer versions.

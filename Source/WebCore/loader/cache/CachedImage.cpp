@@ -29,11 +29,11 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "RenderElement.h"
@@ -652,7 +652,7 @@ void CachedImage::didDraw(const Image& image)
     if (&image != m_image)
         return;
     
-    MonotonicTime timeStamp = FrameView::currentPaintTimeStamp();
+    MonotonicTime timeStamp = LocalFrameView::currentPaintTimeStamp();
     if (!timeStamp) // If didDraw is called outside of a Frame paint.
         timeStamp = MonotonicTime::now();
     

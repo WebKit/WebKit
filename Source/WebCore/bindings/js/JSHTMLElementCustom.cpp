@@ -27,7 +27,6 @@
 #include "JSHTMLElement.h"
 
 #include "CustomElementRegistry.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "FormAssociatedElement.h"
 #include "HTMLFormControlElement.h"
@@ -36,6 +35,7 @@
 #include "JSDOMConstructorBase.h"
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNodeCustom.h"
+#include "LocalDOMWindow.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSWithScope.h>

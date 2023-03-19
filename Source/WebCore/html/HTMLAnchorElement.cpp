@@ -30,7 +30,6 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
@@ -41,6 +40,7 @@
 #include "HTMLPictureElement.h"
 #include "KeyboardEvent.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "PingLoader.h"
 #include "PlatformMouseEvent.h"
@@ -486,7 +486,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     using SourceSite = PCM::SourceSite;
     using AttributionDestinationSite = PCM::AttributionDestinationSite;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     auto* page = document().page();
     if (!frame || !page || !document().settings().privateClickMeasurementEnabled() || !UserGestureIndicator::processingUserGesture())
         return std::nullopt;
@@ -566,7 +566,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 {
     event.setDefaultHandled();
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     if (!frame)
         return;
 

@@ -33,12 +33,12 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/FontCascade.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/ImageDocument.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/TextIterator.h>

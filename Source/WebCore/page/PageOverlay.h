@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-class Frame;
 class GraphicsContext;
 class GraphicsLayer;
+class LocalFrame;
 class Page;
 class PageOverlayController;
 class PlatformMouseEvent;
@@ -55,7 +55,7 @@ public:
         virtual void didMoveToPage(PageOverlay&, Page*) = 0;
         virtual void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) = 0;
-        virtual void didScrollFrame(PageOverlay&, Frame&) { }
+        virtual void didScrollFrame(PageOverlay&, LocalFrame&) { }
 
         virtual bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) { return false; }
         virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)  { return false; }
@@ -87,7 +87,7 @@ public:
 
     void drawRect(GraphicsContext&, const IntRect& dirtyRect);
     bool mouseEvent(const PlatformMouseEvent&);
-    void didScrollFrame(Frame&);
+    void didScrollFrame(LocalFrame&);
 
     bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint parameter, String& value);
     bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint parameter, bool& value);

@@ -1475,6 +1475,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::IntConstraint> m_sampleRate;
     std::optional<WebCore::IntConstraint> m_sampleSize;
     std::optional<WebCore::DoubleConstraint> m_aspectRatio;
+    std::optional<WebCore::DoubleConstraint> m_zoom;
     std::optional<WebCore::DoubleConstraint> m_frameRate;
     std::optional<WebCore::DoubleConstraint> m_volume;
     std::optional<WebCore::BooleanConstraint> m_echoCancellation;
@@ -1783,6 +1784,9 @@ struct WebCore::EventTrackingRegions {
 enum class WebCore::HasInsecureContent : bool
 
 struct WebCore::TextManipulationItem {
+    WebCore::FrameIdentifier frameID;
+    bool isSubframe;
+    bool isCrossSiteSubframe;
     WebCore::TextManipulationItemIdentifier identifier;
     Vector<WebCore::TextManipulationToken> tokens;
 }
@@ -2819,9 +2823,14 @@ enum class WebCore::TextGranularity : uint8_t {
     DocumentBoundary
 };
 
+struct WebCore::ListStyleType {
+    WebCore::ListStyleType::Type type;
+    AtomString identifier;
+};
+
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
-    WebCore::ListStyleType style
+    WebCore::ListStyleType styleType;
     int startingItemNumber
     bool ordered
 };
@@ -3131,6 +3140,7 @@ header: <WebCore/TextManipulationController.h>
 
 header: <WebCore/TextManipulationController.h>
 [Nested, CustomHeader] enum class WebCore::TextManipulationControllerManipulationFailure::Type : uint8_t {
+    NotAvailable,
     ContentChanged,
     InvalidItem,
     InvalidToken,
@@ -3139,6 +3149,7 @@ header: <WebCore/TextManipulationController.h>
 
 header: <WebCore/TextManipulationController.h>
 [CustomHeader] struct WebCore::TextManipulationControllerManipulationFailure {
+    WebCore::FrameIdentifier frameID;
     WebCore::TextManipulationItemIdentifier identifier;
     uint64_t index;
     WebCore::TextManipulationControllerManipulationFailure::Type type;
@@ -3618,6 +3629,7 @@ enum class WebCore::RTCPriorityType : uint8_t {
 
 [AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::DecodingMode : uint8_t {
     Auto,
+    SynchronousThumbnail,
     Synchronous,
     Asynchronous
 };
@@ -4042,6 +4054,7 @@ enum class WebCore::MediaConstraintType : uint8_t {
     GroupId,
     DisplaySurface,
     LogicalSurface,
+    Zoom,
 };
 
 header: <WebCore/MediaConstraints.h>
@@ -4084,6 +4097,8 @@ header: <WebCore/VideoPreset.h>
 [CustomHeader] struct WebCore::VideoPresetData {
     WebCore::IntSize size;
     Vector<WebCore::FrameRateRange> frameRateRanges;
+    double minZoom;
+    double maxZoom;
 };
 
 class WebCore::RealtimeMediaSourceSupportedConstraints {
@@ -4100,6 +4115,8 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsGroupId();
     bool supportsDisplaySurface();
     bool supportsLogicalSurface();
+    bool supportsFocusDistance();
+    bool supportsZoom();
 };
 
 enum class WebCore::VideoFacingMode : uint8_t {
@@ -4133,6 +4150,7 @@ class WebCore::RealtimeMediaSourceSettings {
     AtomString label();
     WebCore::DisplaySurfaceType displaySurface();
     bool logicalSurface();
+    double zoom();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -4157,6 +4175,11 @@ class WebCore::CaptureDevice {
     bool isEphemeral();
 };
 
+struct WebCore::CaptureDeviceWithCapabilities {
+    WebCore::CaptureDevice device;
+    WebCore::RealtimeMediaSourceCapabilities capabilities;
+};
+
 [Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
 
 class WebCore::RealtimeMediaSourceCapabilities {
@@ -4171,6 +4194,8 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
     AtomString deviceId();
     AtomString groupId();
+    WebCore::CapabilityValueOrRange focusDistance();
+    WebCore::CapabilityValueOrRange zoom();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -4901,3 +4926,44 @@ header: <WebCore/CaretAnimator.h>
     Alternate,
 };
 #endif
+
+[Nested] enum class WebCore::ProtectionSpace::ServerType : uint8_t {
+    HTTP,
+    HTTPS,
+    FTP,
+    FTPS,
+    ProxyHTTP,
+    ProxyHTTPS,
+    ProxyFTP,
+    ProxySOCKS
+};
+
+[Nested] enum class WebCore::ProtectionSpace::AuthenticationScheme : uint8_t {
+    Default,
+    HTTPBasic,
+    HTTPDigest,
+    HTMLForm,
+    NTLM,
+    Negotiate,
+    ClientCertificateRequested,
+    ServerTrustEvaluationRequested,
+    OAuth,
+#if USE(GLIB)
+    ClientCertificatePINRequested,
+#endif
+    Unknown
+};
+
+class WebCore::ProtectionSpace {
+    String host();
+    int port();
+    WebCore::ProtectionSpace::ServerType serverType();
+    String realm();
+    WebCore::ProtectionSpace::AuthenticationScheme authenticationScheme();
+#if USE(CURL)
+    WebCore::CertificateInfo certificateInfo();
+#endif
+#if PLATFORM(COCOA)
+    std::optional<WebCore::ProtectionSpace::PlatformData> getPlatformDataToSerialize();
+#endif
+};

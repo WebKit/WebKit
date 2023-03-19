@@ -26,9 +26,9 @@
 #include "config.h"
 #include "InspectorFrontendAPIDispatcher.h"
 
-#include "Frame.h"
 #include "InspectorController.h"
 #include "JSDOMPromise.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"

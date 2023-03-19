@@ -77,15 +77,15 @@ private:
     void stopProducingData() final;
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return mockCamera() ? CaptureDevice::DeviceType::Camera : CaptureDevice::DeviceType::Screen; }
-    bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
+    bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
+    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
+    void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
 
 
     bool isMockSource() const final { return true; }
 
     // OrientationNotifier::Observer
-    void orientationChanged(int orientation) final;
+    void orientationChanged(IntDegrees orientation) final;
     void monitorOrientation(OrientationNotifier&) final;
 
     void drawAnimation(GraphicsContext&);
@@ -122,8 +122,9 @@ private:
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Color m_fillColor { Color::black };
+    Color m_fillColorWithZoom { Color::red };
     MockMediaDevice m_device;
-    RefPtr<VideoPreset> m_preset;
+    std::optional<VideoPreset> m_preset;
     VideoFrameRotation m_deviceOrientation { };
 };
 

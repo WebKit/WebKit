@@ -7,6 +7,42 @@
     },
     "configurePresets": [
         {
+            "name": "release",
+            "hidden": true,
+            "binaryDir": "WebKitBuild/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Release"
+                }
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "binaryDir": "WebKitBuild/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Debug"
+                }
+            }
+        },
+        {
+            "name": "dev",
+            "hidden": true,
+            "cacheVariables": {
+                "DEVELOPER_MODE": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "ON"
+                }
+            }
+        },
+        {
             "name": "gtk",
             "hidden": true,
             "generator": "Ninja",
@@ -20,41 +56,22 @@
         {
             "name": "gtk-release",
             "displayName": "GTK Release",
-            "inherits": "gtk",
-            "binaryDir": "WebKitBuild/Release",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": {
-                    "type": "STRING",
-                    "value": "Release"
-                }
-            }
+            "inherits": ["gtk", "release"]
         },
         {
             "name": "gtk-debug",
             "displayName": "GTK Debug",
-            "inherits": "gtk",
-            "binaryDir": "WebKitBuild/Debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": {
-                    "type": "STRING",
-                    "value": "Debug"
-                }
-            }
+            "inherits": ["gtk", "debug"]
         },
         {
-            "name": "gtk-dev",
-            "displayName": "GTK Development",
-            "inherits": "gtk-release",
-            "cacheVariables": {
-                "DEVELOPER_MODE": {
-                    "type": "BOOL",
-                    "value": "ON"
-                },
-                "ENABLE_EXPERIMENTAL_FEATURES": {
-                    "type": "BOOL",
-                    "value": "ON"
-                }
-            }
+            "name": "gtk-dev-release",
+            "displayName": "GTK Development Release",
+            "inherits": ["gtk", "dev", "release"]
+        },
+        {
+            "name": "gtk-dev-debug",
+            "displayName": "GTK Development Debug",
+            "inherits": ["gtk", "dev", "debug"]
         }
     ],
     "buildPresets": [
@@ -69,9 +86,14 @@
             "configurePreset": "gtk-debug"
         },
         {
-            "name": "gtk-dev",
-            "displayName": "GTK Development",
-            "configurePreset": "gtk-dev"
+            "name": "gtk-dev-relese",
+            "displayName": "GTK Dev Release",
+            "configurePreset": "gtk-dev-release"
+        },
+        {
+            "name": "gtk-dev-debug",
+            "displayName": "GTK Dev Debug",
+            "configurePreset": "gtk-dev-debug"
         }
     ]
 }

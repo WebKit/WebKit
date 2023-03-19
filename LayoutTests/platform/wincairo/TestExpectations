@@ -1546,7 +1546,7 @@ webxr [ Skip ]
 [ Debug ] js/sort-with-side-effecting-comparisons.html [ Skip ]
 [ Debug ] js/stack-overflow-regexp.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
-[ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
 [ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
@@ -1788,14 +1788,6 @@ fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
 fast/text/updateNewFont.html [ Failure ]
 fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 fast/text/user-installed-fonts/system-ui.html [ ImageOnlyFailure ]
-fast/text/variations/advances.html [ Failure ]
-fast/text/variations/exist.html [ ImageOnlyFailure ]
-fast/text/variations/font-face-format-woff2.html [ ImageOnlyFailure ]
-fast/text/variations/font-face-format.html [ ImageOnlyFailure ]
-fast/text/variations/optical-sizing-trak-2.html [ ImageOnlyFailure ]
-fast/text/variations/optical-sizing-units-2.html [ ImageOnlyFailure ]
-fast/text/variations/outofbounds.html [ ImageOnlyFailure ]
-fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 fast/text/vertical-rl-rtl-linebreak-mixed.html [ Missing ]
 fast/text/wbr-pre.html [ Failure ]
 fast/text/whitespace/001.html [ Failure ]
@@ -1818,7 +1810,6 @@ fast/text/zwj-ligature.html [ ImageOnlyFailure ]
 fast/url/data-url-mediatype.html [ Failure Pass ]
 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
 fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html [ Failure ]
-fast/workers/dedicated-worker-lifecycle.html [ Timeout ]
 fonts/fantasy.html [ Failure Pass ]
 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
@@ -1846,7 +1837,6 @@ js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
 js/dfg-double-vote-fuzz.html [ Skip ] # Slow
 js/dfg-int52-spill-trickier.html [ Skip ] # Slow
 js/dfg-int52-spill.html [ Skip ] # Slow
-js/dom/create-lots-of-workers.html [ Timeout ]
 js/dom/modules/module-fetch-failure-not-cached.html [ Failure ]
 js/dom/webassembly-memory-normal-fail.html [ Failure ]
 js/dom/webassembly-memory-shared-basic.html [ Failure ]
@@ -1934,8 +1924,6 @@ fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Failure ]
 
 webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
-
-webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
 
 fast/css/before-after-pseudo-element-case-insensitivity.html [ ImageOnlyFailure ]
 fast/dynamic/float-from-empty-line.html [ Failure ]
@@ -2406,7 +2394,8 @@ http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
-webgl/conformance/extensions/khr-parallel-shader-compile.html [ Failure ]
+
+webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
@@ -2447,14 +2436,14 @@ http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.h
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Timeout ]
 http/tests/workers/service/service-worker-resource-timing.https.html [ Timeout ]
 http/wpt/service-workers/navigation-timing.https.html [ Timeout ]
-streams/readable-stream-lock-after-worker-terminates-crash.html [ Timeout ]
 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
 webgl/many-contexts.html [ Skip ] # Timeout
 webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 
 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
-js/date-timeClip-large-values.html [ Failure ]
+
+[ Debug ] js/date-timeClip-large-values.html [ Failure ]
 
 # Tests depend on the system timezone.
 storage/indexeddb/modern/date-basic-private.html [ Failure Pass ]
@@ -2508,3 +2497,12 @@ fast/dom/Document/CaretRangeFromPoint/rtl.html [ Failure ]
 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
 
 webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failure ]
+
+webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
+
+# Doesn' support variable fonts
+fast/text/variations [ Skip ]
+
+webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
+webkit.org/b/253868 js/ShadowRealm-iframe-sandboxed.html [ Timeout Pass ]
+webkit.org/b/253868 http/tests/misc/iframe-shadow-realm.html [ Timeout Pass ]

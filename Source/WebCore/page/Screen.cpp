@@ -30,12 +30,12 @@
 #include "config.h"
 #include "Screen.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FloatRect.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "Quirks.h"
@@ -47,14 +47,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Screen);
 
-Screen::Screen(DOMWindow& window)
-    : DOMWindowProperty(&window)
+Screen::Screen(LocalDOMWindow& window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 
 Screen::~Screen() = default;
 
-static bool isLoadingInHeadlessMode(const Frame& frame)
+static bool isLoadingInHeadlessMode(const LocalFrame& frame)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
     if (!localFrame)

@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-class Frame;
 class FrameLoaderClient;
+class LocalFrame;
 class SecurityOrigin;
 
 class MixedContentChecker {
@@ -54,11 +54,11 @@ public:
     };
 
     // FIXME: This should probably have a separate client from FrameLoader.
-    static bool canDisplayInsecureContent(Frame&, SecurityOrigin&, ContentType, const URL&, AlwaysDisplayInNonStrictMode = AlwaysDisplayInNonStrictMode::No);
-    static bool canRunInsecureContent(Frame&, SecurityOrigin&, const URL&);
-    static void checkFormForMixedContent(Frame&, SecurityOrigin&, const URL&);
+    static bool canDisplayInsecureContent(LocalFrame&, SecurityOrigin&, ContentType, const URL&, AlwaysDisplayInNonStrictMode = AlwaysDisplayInNonStrictMode::No);
+    static bool canRunInsecureContent(LocalFrame&, SecurityOrigin&, const URL&);
+    static void checkFormForMixedContent(LocalFrame&, SecurityOrigin&, const URL&);
     static bool isMixedContent(SecurityOrigin&, const URL&);
-    static std::optional<String> checkForMixedContentInFrameTree(const Frame&, const URL&);
+    static std::optional<String> checkForMixedContentInFrameTree(const LocalFrame&, const URL&);
 };
 
 } // namespace WebCore

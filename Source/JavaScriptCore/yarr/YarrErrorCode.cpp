@@ -51,7 +51,7 @@ ASCIILiteral errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "missing terminating ] for character class"_s,            // CharacterClassUnmatched
         REGEXP_ERROR_PREFIX "range out of order in character class"_s,                // CharacterClassRangeOutOfOrder
         REGEXP_ERROR_PREFIX "invalid range in character class for Unicode pattern"_s, // CharacterClassRangeInvalid
-        REGEXP_ERROR_PREFIX "Missing terminating } for class string disjunction"_s,   // ClassStringDIsjunctionUnmatched
+        REGEXP_ERROR_PREFIX "missing terminating } for class string disjunction"_s,   // ClassStringDIsjunctionUnmatched
         REGEXP_ERROR_PREFIX "\\ at end of pattern"_s,                                 // EscapeUnterminated
         REGEXP_ERROR_PREFIX "invalid Unicode \\u escape"_s,                           // InvalidUnicodeEscape
         REGEXP_ERROR_PREFIX "invalid Unicode code point \\u{} escape"_s,              // InvalidUnicodeCodePointEscape
@@ -64,8 +64,9 @@ ASCIILiteral errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "too many nested disjunctions"_s,                         // TooManyDisjunctions
         REGEXP_ERROR_PREFIX "pattern exceeds string length limits"_s,                 // OffsetTooLarge
         REGEXP_ERROR_PREFIX "invalid flags"_s,                                        // InvalidRegularExpressionFlags
-        REGEXP_ERROR_PREFIX "Invalid operation in class set"_s,                       // InvalidClassSetOperation
-        REGEXP_ERROR_PREFIX "Negated class set may contain strings"_s                 // NegatedClassSetMayContainStrings
+        REGEXP_ERROR_PREFIX "invalid operation in class set"_s,                       // InvalidClassSetOperation
+        REGEXP_ERROR_PREFIX "negated class set may contain strings"_s,                // NegatedClassSetMayContainStrings
+        REGEXP_ERROR_PREFIX "invalid class set character"_s                           // InvalidClassSetCharacter
     };
 
     return errorMessages[static_cast<unsigned>(error)];
@@ -106,6 +107,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::InvalidRegularExpressionFlags:
     case ErrorCode::InvalidClassSetOperation:
     case ErrorCode::NegatedClassSetMayContainStrings:
+    case ErrorCode::InvalidClassSetCharacter:
         return createSyntaxError(globalObject, errorMessage(error));
     case ErrorCode::TooManyDisjunctions:
         return createOutOfMemoryError(globalObject, errorMessage(error));

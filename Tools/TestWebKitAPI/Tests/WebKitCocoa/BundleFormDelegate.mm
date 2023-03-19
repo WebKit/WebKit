@@ -108,7 +108,7 @@ TEST(WebKit, WKWebProcessPlugInWithRegisteredCustomClass)
     auto delegate = adoptNS([[FormInputDelegate alloc] init]);
 
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleFormDelegatePlugIn"
-        configureJSCForTesting:NO andCustomParameterClasses:[NSSet setWithObjects:[NSUnitConverterLinear class], nil]]);
+        configureJSCForTesting:NO]);
     [[configuration processPool] _setObject:@YES forBundleParameter:@"FormDelegateShouldAddCustomClass"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -127,8 +127,8 @@ TEST(WebKit, WKWebProcessPlugInWithRegisteredCustomClass)
 
     TestWebKitAPI::Util::run(&didGetFocus);
     TestWebKitAPI::Util::run(&didGetUserObject);
-    
-    EXPECT_TRUE([delegate->_userObject isKindOfClass:[NSUnitConverterLinear class]]);
+
+    EXPECT_NULL(delegate->_userObject);
 }
 
 TEST(WebKit, WKWebProcessPlugInWithUnregisteredCustomClass)
@@ -136,7 +136,7 @@ TEST(WebKit, WKWebProcessPlugInWithUnregisteredCustomClass)
     auto delegate = adoptNS([[FormInputDelegate alloc] init]);
 
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleFormDelegatePlugIn"
-        configureJSCForTesting:NO andCustomParameterClasses:[NSSet setWithObjects:[NSUnitAcceleration class], nil]]);
+        configureJSCForTesting:NO]);
     [[configuration processPool] _setObject:@YES forBundleParameter:@"FormDelegateShouldAddCustomClass"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

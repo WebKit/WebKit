@@ -145,7 +145,7 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap b3
 }
 #endif
 
-void PCToCodeOriginMapBuilder::appendItem(MacroAssembler::Label label, const CodeOrigin& codeOrigin)
+void PCToCodeOriginMapBuilder::appendItemSlow(MacroAssembler::Label label, const CodeOrigin& codeOrigin)
 {
     if (!m_shouldBuildMapping)
         return;

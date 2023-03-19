@@ -35,9 +35,9 @@
 #import "VideoFullscreenManager.h"
 #import "WebFrame.h"
 #import "WebPage.h"
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HTMLMediaElementIdentifier.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>

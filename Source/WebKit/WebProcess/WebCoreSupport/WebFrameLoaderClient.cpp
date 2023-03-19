@@ -70,13 +70,13 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>
@@ -102,6 +102,10 @@
 
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullscreenManager.h>
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionControllerProxy.h"
 #endif
 
 #define PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
@@ -672,7 +676,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
     }
 
     // Notify the UIProcess.
-    WebCore::Frame* coreFrame = m_frame->coreFrame();
+    auto* coreFrame = m_frame->coreFrame();
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
 
     // If we have a load listener, notify it.
@@ -863,7 +867,7 @@ void WebFrameLoaderClient::dispatchDidLayout()
     }
 }
 
-Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction, NewFrameOpenerPolicy newFrameOpenerPolicy)
+LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction, NewFrameOpenerPolicy newFrameOpenerPolicy)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -928,7 +932,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 }
 
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-static std::optional<WebKit::WebHitTestResultData> webHitTestResultDataInNavigationActionData(const NavigationAction& navigationAction, NavigationActionData& navigationActionData, WebCore::Frame* coreFrame)
+static std::optional<WebKit::WebHitTestResultData> webHitTestResultDataInNavigationActionData(const NavigationAction& navigationAction, NavigationActionData& navigationActionData, WebCore::LocalFrame* coreFrame)
 {
     if (!coreFrame)
         return std::nullopt;
@@ -1494,9 +1498,9 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem& historyItem)
 void WebFrameLoaderClient::restoreViewState()
 {
 #if PLATFORM(IOS_FAMILY)
-    Frame& frame = *m_frame->coreFrame();
-    HistoryItem* currentItem = frame.loader().history().currentItem();
-    if (FrameView* view = frame.view()) {
+    auto& frame = *m_frame->coreFrame();
+    auto* currentItem = frame.loader().history().currentItem();
+    if (auto* view = frame.view()) {
         if (m_frame->isMainFrame())
             m_frame->page()->restorePageState(*currentItem);
         else if (!view->wasScrolledByUser())
@@ -1630,7 +1634,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         webPage->fixedLayoutSize(), fixedVisibleContentRect, shouldUseFixedLayout,
         horizontalScrollbarMode, horizontalLock, verticalScrollbarMode, verticalLock);
 
-    RefPtr<FrameView> view = m_frame->coreFrame()->view();
+    RefPtr view = m_frame->coreFrame()->view();
 
     if (overrideSizeForCSSDefaultViewportUnits)
         view->setOverrideSizeForCSSDefaultViewportUnits(*overrideSizeForCSSDefaultViewportUnits);
@@ -1700,7 +1704,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *doc
     m_frame->convertMainResourceLoadToDownload(documentLoader, request, response);
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
+RefPtr<LocalFrame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
 {
     auto* webPage = m_frame->page();
     ASSERT(webPage);

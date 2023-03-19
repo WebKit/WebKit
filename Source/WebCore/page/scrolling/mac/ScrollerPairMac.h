@@ -43,19 +43,24 @@ class ScrollingTreeScrollingNode;
 
 namespace WebCore {
 
+// Controls a pair of NSScrollerImps via a pair of ScrollerMac. The NSScrollerImps need to remain internal to this class.
 class ScrollerPairMac {
     WTF_MAKE_FAST_ALLOCATED;
+    friend class ScrollerMac;
 public:
     ScrollerPairMac(WebCore::ScrollingTreeScrollingNode&);
     void init();
 
     ~ScrollerPairMac();
 
-    ScrollerMac& verticalScroller() { return m_verticalScroller; }
-    ScrollerMac& horizontalScroller() { return m_horizontalScroller; }
-
     void handleWheelEventPhase(PlatformWheelEventPhase);
     bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
+    
+    void setUsePresentationValues(bool);
+    bool isUsingPresentationValues() const { return m_usingPresentationValues; }
+    
+    void setVerticalScrollbarPresentationValue(float);
+    void setHorizontalScrollbarPresentationValue(float);
 
     void updateValues();
 
@@ -67,30 +72,37 @@ public:
         float value;
         float proportion;
     };
-    Values valuesForOrientation(ScrollerMac::Orientation);
+    Values valuesForOrientation(ScrollbarOrientation);
 
-    NSScrollerImpPair *scrollerImpPair() { return m_scrollerImpPair.get(); }
-    NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
-    NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
-    
     void releaseReferencesToScrollerImpsOnTheMainThread();
     
     bool hasScrollerImp();
 
+    // Only for use by WebScrollerImpPairDelegateMac. Do not use elsewhere!
+    ScrollerMac& verticalScroller() { return m_verticalScroller; }
+    ScrollerMac& horizontalScroller() { return m_horizontalScroller; }
+
 private:
+
+    NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
+    NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
+    
+    NSScrollerImpPair *scrollerImpPair() { return m_scrollerImpPair.get(); }
+    Lock& scrollerImpPairLock() WTF_RETURNS_LOCK(m_scrollerImpPairLock) { return m_scrollerImpPairLock; }
+
     WebCore::ScrollingTreeScrollingNode& m_scrollingNode;
 
     ScrollerMac m_verticalScroller;
     ScrollerMac m_horizontalScroller;
 
-    WebCore::FloatSize m_contentSize;
-    WebCore::FloatRect m_visibleContentRect;
-
     WebCore::IntPoint m_lastKnownMousePosition;
-    std::optional<WebCore::FloatPoint> m_lastScrollPosition;
+    std::optional<WebCore::FloatPoint> m_lastScrollOffset;
 
+    mutable Lock m_scrollerImpPairLock;
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
     RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
+    
+    std::atomic<bool> m_usingPresentationValues { false };
 };
 
 }

@@ -26,15 +26,15 @@
 #include "config.h"
 #include "JSEventTarget.h"
 
-#include "DOMWindow.h"
 #include "EventTarget.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
 #include "JSDOMGlobalObjectInlines.h"
-#include "JSDOMWindow.h"
 #include "JSEventListener.h"
+#include "JSLocalDOMWindow.h"
 #include "JSWindowProxy.h"
 #include "JSWorkerGlobalScope.h"
+#include "LocalDOMWindow.h"
 #include "WorkerGlobalScope.h"
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -53,8 +53,8 @@ EventTarget* JSEventTarget::toWrapped(VM&, JSValue value)
 {
     if (value.inherits<JSWindowProxy>())
         return &jsCast<JSWindowProxy*>(asObject(value))->wrapped();
-    if (value.inherits<JSDOMWindow>())
-        return &jsCast<JSDOMWindow*>(asObject(value))->wrapped();
+    if (value.inherits<JSLocalDOMWindow>())
+        return &jsCast<JSLocalDOMWindow*>(asObject(value))->wrapped();
     if (value.inherits<JSWorkerGlobalScope>())
         return &jsCast<JSWorkerGlobalScope*>(asObject(value))->wrapped();
     if (value.inherits<JSEventTarget>())
@@ -66,7 +66,7 @@ std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(VM& vm, JSValue thisValu
 {
     if (auto* target = jsDynamicCast<JSEventTarget*>(thisValue))
         return makeUnique<JSEventTargetWrapper>(target->wrapped(), *target);
-    if (auto* window = toJSDOMGlobalObject<JSDOMWindow>(vm, thisValue))
+    if (auto* window = toJSDOMGlobalObject<JSLocalDOMWindow>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(window->wrapped(), *window);
     if (auto* scope = toJSDOMGlobalObject<JSWorkerGlobalScope>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(scope->wrapped(), *scope);

@@ -21,14 +21,14 @@
 #include "config.h"
 #include "ContentfulPaintChecker.h"
 
-#include "FrameView.h"
 #include "GraphicsContext.h"
+#include "LocalFrameView.h"
 #include "NullGraphicsContext.h"
 #include "RenderView.h"
 
 namespace WebCore {
 
-bool ContentfulPaintChecker::qualifiesForContentfulPaint(FrameView& frameView)
+bool ContentfulPaintChecker::qualifiesForContentfulPaint(LocalFrameView& frameView)
 {
     ASSERT(!frameView.needsLayout());
     ASSERT(frameView.renderView());

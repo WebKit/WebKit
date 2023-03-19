@@ -23,12 +23,12 @@
 #include "config.h"
 #include "Event.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "EventPath.h"
 #include "EventTarget.h"
 #include "InspectorInstrumentation.h"
+#include "LocalDOMWindow.h"
 #include "Performance.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"

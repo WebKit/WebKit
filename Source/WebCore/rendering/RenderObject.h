@@ -28,11 +28,11 @@
 #include "CachedImageClient.h"
 #include "Element.h"
 #include "FloatQuad.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentationPublic.h"
 #include "LayoutRect.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "RenderObjectEnums.h"
 #include "RenderStyle.h"
@@ -506,7 +506,7 @@ public:
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document& document() const { ASSERT(m_node); return m_node->document(); }
-    Frame& frame() const;
+    LocalFrame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }
 
@@ -1033,7 +1033,7 @@ private:
 #endif
 };
 
-inline Frame& RenderObject::frame() const
+inline LocalFrame& RenderObject::frame() const
 {
     return *document().frame();
 }

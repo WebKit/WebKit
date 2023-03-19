@@ -352,25 +352,17 @@ if (USE_OPENGL_OR_ES)
         if (OpenGLES2_API_VERSION VERSION_GREATER_EQUAL 3.0)
             SET_AND_EXPOSE_TO_BUILD(HAVE_OPENGL_ES_3 ON)
         endif ()
-
-        if (NOT EGL_FOUND)
-            message(FATAL_ERROR "EGL is needed for ENABLE_GLES2.")
-        endif ()
     else ()
         SET_AND_EXPOSE_TO_BUILD(USE_OPENGL TRUE)
     endif ()
 
-    if (NOT EGL_FOUND AND (NOT ENABLE_X11_TARGET OR NOT TARGET OpenGL::GLX))
-        message(FATAL_ERROR "Either GLX or EGL is needed.")
+    if (NOT EGL_FOUND)
+        message(FATAL_ERROR "EGL is needed for USE_OPENGL_OR_ES.")
     endif ()
 
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL TRUE)
 
     SET_AND_EXPOSE_TO_BUILD(USE_EGL ${EGL_FOUND})
-
-    if (ENABLE_X11_TARGET AND USE_OPENGL AND TARGET OpenGL::GLX)
-        SET_AND_EXPOSE_TO_BUILD(USE_GLX TRUE)
-    endif ()
 
     if (ENABLE_WAYLAND_TARGET AND EGL_FOUND)
         find_package(WPE 1.3.0)

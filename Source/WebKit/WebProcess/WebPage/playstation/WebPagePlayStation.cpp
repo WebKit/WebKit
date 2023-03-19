@@ -86,7 +86,7 @@ bool WebPage::handleEditingKeyboardEvent(WebCore::KeyboardEvent& event)
     return false;
 }
 
-void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
+void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     notImplemented();
 }

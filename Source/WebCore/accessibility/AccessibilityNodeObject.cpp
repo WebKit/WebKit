@@ -43,10 +43,8 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatRect.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "HTMLAudioElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDetailsElement.h"
@@ -65,6 +63,8 @@
 #include "HTMLTextFormControlElement.h"
 #include "HTMLVideoElement.h"
 #include "KeyboardEvent.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MathMLElement.h"
 #include "MathMLNames.h"
@@ -322,17 +322,18 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (headingLevel())
         return AccessibilityRole::Heading;
 
-    if (isStyleFormatGroup()) {
-        if (node()->hasTagName(delTag))
-            return AccessibilityRole::Deletion;
-        if (node()->hasTagName(insTag))
-            return AccessibilityRole::Insertion;
-        if (node()->hasTagName(subTag))
-            return AccessibilityRole::Subscript;
-        if (node()->hasTagName(supTag))
-            return AccessibilityRole::Superscript;
+    if (node()->hasTagName(codeTag))
+        return AccessibilityRole::Code;
+    if (node()->hasTagName(delTag))
+        return AccessibilityRole::Deletion;
+    if (node()->hasTagName(insTag))
+        return AccessibilityRole::Insertion;
+    if (node()->hasTagName(subTag))
+        return AccessibilityRole::Subscript;
+    if (node()->hasTagName(supTag))
+        return AccessibilityRole::Superscript;
+    if (isStyleFormatGroup())
         return treatStyleFormatGroupAsInline == TreatStyleFormatGroupAsInline::Yes ? AccessibilityRole::Inline : AccessibilityRole::TextGroup;
-    }
 
     if (node()->hasTagName(ddTag))
         return AccessibilityRole::DescriptionListDetail;

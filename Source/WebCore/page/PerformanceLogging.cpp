@@ -28,12 +28,12 @@
 
 #include "BackForwardCache.h"
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 

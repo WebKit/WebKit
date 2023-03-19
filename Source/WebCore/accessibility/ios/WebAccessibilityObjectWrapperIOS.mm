@@ -37,13 +37,13 @@
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "FontCascade.h"
-#import "Frame.h"
 #import "FrameSelection.h"
 #import "HitTestResult.h"
 #import "HTMLFrameOwnerElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "IntRect.h"
+#import "LocalFrame.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
 #import "Range.h"
@@ -1018,6 +1018,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Canvas:
     case AccessibilityRole::Caption:
     case AccessibilityRole::Cell:
+    case AccessibilityRole::Code:
     case AccessibilityRole::Column:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::Definition:
@@ -1785,8 +1786,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     ASSERT(self.axBackingObject->isScrollView());
 
     // Verify this is the top document. If not, we might need to go through the platform widget.
-    FrameView* frameView = self.axBackingObject->documentFrameView();
-    Document* document = self.axBackingObject->document();
+    auto* frameView = self.axBackingObject->documentFrameView();
+    auto* document = self.axBackingObject->document();
     if (document && frameView && document != &document->topDocument())
         return frameView->platformWidget();
     
@@ -1981,7 +1982,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    if (self.axBackingObject->node() && self.axBackingObject->node()->hasTagName(codeTag))
+    if (self.axBackingObject->isCode())
         return UIAccessibilityTextualContextSourceCode;
     
     return nil;
@@ -2020,7 +2021,7 @@ static RenderObject* rendererForView(WAKView* view)
         return nil;
     
     WAKView<WebCoreFrameView>* frameView = (WAKView<WebCoreFrameView>*)view;
-    Frame* frame = [frameView _web_frame];
+    auto frame = [frameView _web_frame];
     if (!frame)
         return nil;
     

@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class Frame;
 class GraphicsContext;
+class LocalFrame;
 
 struct SimpleRange;
 
@@ -146,7 +146,7 @@ public:
     constexpr static float defaultVerticalMargin { 1 };
 
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(LocalFrame&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const SimpleRange&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
 
     WEBCORE_EXPORT ~TextIndicator();

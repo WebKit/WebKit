@@ -34,12 +34,12 @@ namespace WebCore {
 
 class ProtectionSpace : public ProtectionSpaceBase {
 public:
-    ProtectionSpace() : ProtectionSpaceBase() { }
-    ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme)
-        : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
-    {
-    }
+    struct PlatformData {
+        RetainPtr<NSURLProtectionSpace> nsSpace;
+    };
 
+    ProtectionSpace() : ProtectionSpaceBase() { }
+    WEBCORE_EXPORT ProtectionSpace(const String& host, int port, ServerType, const String& realm, AuthenticationScheme, std::optional<PlatformData> = std::nullopt);
     ProtectionSpace(WTF::HashTableDeletedValueType deletedValue) : ProtectionSpaceBase(deletedValue) { }
 
     WEBCORE_EXPORT explicit ProtectionSpace(NSURLProtectionSpace *);
@@ -50,6 +50,8 @@ public:
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
+    
+    WEBCORE_EXPORT std::optional<PlatformData> getPlatformDataToSerialize() const;
 
 private:
     WEBCORE_EXPORT static bool encodingRequiresPlatformData(NSURLProtectionSpace *);

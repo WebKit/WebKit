@@ -97,3 +97,16 @@ class OSXChromeDevDriver(OSXChromeDriverBase):
 
     def launch_args_with_url(self, url):
         return super(OSXChromeDevDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+
+
+class OSXChromiumDriver(OSXChromeDriverBase):
+    process_name = 'Chromium'
+    browser_name = 'chromium'
+    app_name = 'Chromium.app'
+    bundle_id = 'org.chromium.Chromium'
+
+    def _set_chrome_binary_location(self, options, browser_build_path):
+        set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
+
+    def launch_args_with_url(self, url):
+        return super(OSXChromiumDriver, self).launch_args_with_url(url)

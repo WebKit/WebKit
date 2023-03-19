@@ -387,7 +387,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
         DebugPageOverlays::didLayout(renderer.frame());
     }
 
-    Frame& frame = renderer.frame();
+    LocalFrame& frame = renderer.frame();
     auto* repaintContainer = renderer.containerForRepaint().renderer;
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
@@ -1671,14 +1671,14 @@ bool RenderLayerScrollableArea::scrollingMayRevealBackground() const
 bool RenderLayerScrollableArea::isVisibleToHitTesting() const
 {
     auto& renderer = m_layer.renderer();
-    FrameView& frameView = renderer.view().frameView();
+    LocalFrameView& frameView = renderer.view().frameView();
     return renderer.visibleToHitTesting() && frameView.isVisibleToHitTesting();
 }
 
 void RenderLayerScrollableArea::updateScrollableAreaSet(bool hasOverflow)
 {
     auto& renderer = m_layer.renderer();
-    FrameView& frameView = renderer.view().frameView();
+    LocalFrameView& frameView = renderer.view().frameView();
 
     bool isVisibleToHitTest = renderer.visibleToHitTesting();
     if (HTMLFrameOwnerElement* owner = frameView.frame().ownerElement())
@@ -1715,7 +1715,7 @@ void RenderLayerScrollableArea::updateScrollableAreaSet(bool hasOverflow)
 void RenderLayerScrollableArea::registerScrollableAreaForAnimatedScroll()
 {
     auto& renderer = m_layer.renderer();
-    FrameView& frameView = renderer.view().frameView();
+    LocalFrameView& frameView = renderer.view().frameView();
     if (!m_registeredScrollableArea) {
         frameView.addScrollableAreaForAnimatedScroll(this);
         m_isRegisteredForAnimatedScroll = true;
@@ -1830,9 +1830,9 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
 
     IntSize delta = lastKnownMousePosition - sourcePoint;
 
-    if (abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
+    if (std::abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
         delta.setWidth(0);
-    if (abs(delta.height()) <= ScrollView::noPanScrollRadius)
+    if (std::abs(delta.height()) <= ScrollView::noPanScrollRadius)
         delta.setHeight(0);
 
     scrollByRecursively(adjustedScrollDelta(delta));
@@ -1960,7 +1960,7 @@ void RenderLayerScrollableArea::animatedScrollDidEnd()
 {
     if (m_isRegisteredForAnimatedScroll) {
         auto& renderer = m_layer.renderer();
-        FrameView& frameView = renderer.view().frameView();
+        LocalFrameView& frameView = renderer.view().frameView();
         m_isRegisteredForAnimatedScroll = false;
         frameView.removeScrollableAreaForAnimatedScroll(this);
     }

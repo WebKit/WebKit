@@ -3998,7 +3998,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "custom": "All",
+                "converter": "ListStyleType",
                 "parser-function": "consumeListStyleType",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "<<values>> | <string> | <custom-ident>",
