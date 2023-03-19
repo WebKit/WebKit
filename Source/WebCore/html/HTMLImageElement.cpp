@@ -113,11 +113,11 @@ void HTMLImageElement::resetFormOwner()
     setForm(HTMLFormElement::findClosestFormAncestor(*this));
 }
 
-void HTMLImageElement::setFormInternal(HTMLFormElement* newForm)
+void HTMLImageElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 {
     if (auto* form = FormAssociatedElement::form())
         form->unregisterImgElement(*this);
-    FormAssociatedElement::setFormInternal(newForm);
+    FormAssociatedElement::setFormInternal(newForm.copyRef());
     if (newForm)
         newForm->registerImgElement(*this);
 }

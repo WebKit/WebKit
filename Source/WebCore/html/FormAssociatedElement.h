@@ -39,7 +39,7 @@ public:
 
     HTMLFormElement* form() const { return m_form.get(); }
 
-    virtual void setForm(HTMLFormElement*);
+    void setForm(RefPtr<HTMLFormElement>&&);
     virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
     virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
 
@@ -49,7 +49,7 @@ protected:
     explicit FormAssociatedElement(HTMLFormElement*);
 
     virtual void resetFormOwner() = 0;
-    virtual void setFormInternal(HTMLFormElement*);
+    virtual void setFormInternal(RefPtr<HTMLFormElement>&&);
 
 private:
     virtual void refFormAssociatedElement() const = 0;
@@ -58,5 +58,11 @@ private:
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_form;
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
 };
+
+inline void FormAssociatedElement::setForm(RefPtr<HTMLFormElement>&& newForm)
+{
+    if (m_form.get() != newForm)
+        setFormInternal(WTFMove(newForm));
+}
 
 } // namespace WebCore
