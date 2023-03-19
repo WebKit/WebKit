@@ -885,6 +885,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->mediaSourceEnabled();
 }
 
+- (void)_setManagedMediaSourceEnabled:(BOOL)enabled
+{
+    _preferences->setManagedMediaSourceEnabled(enabled);
+}
+
+- (BOOL)_managedMediaSourceEnabled
+{
+    return _preferences->managedMediaSourceEnabled();
+}
+
 - (void)_setManagedMediaSourceLowThreshold:(double)threshold
 {
     _preferences->setManagedMediaSourceLowThreshold(threshold);
