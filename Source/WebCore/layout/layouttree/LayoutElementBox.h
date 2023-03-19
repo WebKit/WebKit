@@ -67,6 +67,7 @@ public:
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
 
     void appendChild(UniqueRef<Box>);
+    void insertChild(UniqueRef<Box>, Box* beforeChild = nullptr);
     void destroyChildren();
 
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }

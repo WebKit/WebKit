@@ -48,7 +48,7 @@ public:
 
     void styleChanged(const Box&, const RenderStyle& oldStyle);
 
-    void textInserted(const InlineTextBox* damagedInlineTextBox = nullptr, std::optional<size_t> offset = { });
+    void textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
     void textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
     void textWillBeRemoved(UniqueRef<Box>&&);
 

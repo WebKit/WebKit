@@ -1205,10 +1205,10 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
         return;
     }
 
-    auto& childLayoutBox = m_boxTree.insert(parent, child);
+    auto& childLayoutBox = m_boxTree.insert(parent, child, child.previousSibling());
     if (is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent().boxes };
-        invalidation.textInserted();
+        invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox));
         return;
     }
 
@@ -1257,7 +1257,7 @@ void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent().boxes };
     auto& inlineTextBox = downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer));
     if (delta >= 0) {
-        invalidation.textInserted(&inlineTextBox, offset);
+        invalidation.textInserted(inlineTextBox, offset);
         return;
     }
     invalidation.textWillBeRemoved(inlineTextBox, offset);

@@ -278,7 +278,7 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
     m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
 }
 
-void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox, std::optional<size_t> offset)
+void InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset)
 {
     if (m_displayBoxes.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -287,13 +287,17 @@ void InlineInvalidation::textInserted(const InlineTextBox* damagedInlineTextBox,
     }
 
     auto damagedLine = std::optional<DamagedLine> { };
-    if (damagedInlineTextBox) {
+    if (offset) {
         // Existing text box got modified. Dirty all the way up to the damaged position's line.
-        damagedLine = leadingInlineItemPositionByDamagedBox({ *damagedInlineTextBox, offset.value_or(0) }, m_inlineItems, m_displayBoxes);
-    } else {
-        // New text box got appended. Let's dirty the last existing line.
-        ASSERT(!offset);
+        damagedLine = leadingInlineItemPositionByDamagedBox({ newOrDamagedInlineTextBox, *offset }, m_inlineItems, m_displayBoxes);
+    } else if (!newOrDamagedInlineTextBox.nextInFlowSibling()) {
+        // New text box got appended. Let's dirty the last line.
         damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes);
+    } else {
+        damagedLine = DamagedLine { };
+        // New text box got inserted. Let's damage existing content starting from the previous sibling.
+        if (auto* previousSibling = newOrDamagedInlineTextBox.previousInFlowSibling())
+            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling, *offset }, m_inlineItems, m_displayBoxes);
     }
 
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine);
@@ -330,7 +334,16 @@ void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
         return;
     }
 
-    auto damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes);
+    auto damagedLine = std::optional<DamagedLine> { };
+    if (!layoutBox.nextInFlowSibling()) {
+        // New box got appended. Let's dirty the last line.
+        damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, m_displayBoxes);
+    } else {
+        damagedLine = DamagedLine { };
+        // New box got inserted. Let's damage existing content starting from the previous sibling.
+        if (auto* previousSibling = layoutBox.previousInFlowSibling())
+            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling, { } }, m_inlineItems, m_displayBoxes);
+    }
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine);
 }
 

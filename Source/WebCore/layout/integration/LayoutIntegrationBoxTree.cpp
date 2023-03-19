@@ -227,7 +227,7 @@ void BoxTree::buildTreeForInlineContent()
                 return existingChildBox->removeFromParent();
             return createLayoutBox(childRenderer);
         };
-        appendChild(childLayoutBox(), childRenderer);
+        insertChild(childLayoutBox(), childRenderer, childRenderer.previousSibling());
     }
     m_renderers.shrinkToFit();
 }
@@ -237,19 +237,20 @@ void BoxTree::buildTreeForFlexContent()
     for (auto& flexItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
         auto style = RenderStyle::clone(flexItemRenderer.style());
         auto flexItem = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
-        appendChild(WTFMove(flexItem), flexItemRenderer);
+        insertChild(WTFMove(flexItem), flexItemRenderer, flexItemRenderer.previousSibling());
     }
     m_renderers.shrinkToFit();
 }
 
-void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer)
+void BoxTree::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer, const RenderObject* beforeChild)
 {
     auto& parentBox = layoutBoxForRenderer(*childRenderer.parent());
+    auto* beforeChildBox = beforeChild ? &layoutBoxForRenderer(*beforeChild) : nullptr;
 
     m_renderers.append(&childRenderer);
 
     childRenderer.setLayoutBox(childBox);
-    parentBox.appendChild(WTFMove(childBox));
+    parentBox.insertChild(WTFMove(childBox), beforeChildBox);
 }
 
 void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
@@ -280,11 +281,11 @@ void BoxTree::updateContent(const RenderText& textRenderer)
     inlineTextBox.updateContent(text, canUseSimpleFontCodePath, canUseSimplifiedTextMeasuring);
 }
 
-const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child)
+const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)
 {
     UNUSED_PARAM(parent);
 
-    appendChild(createLayoutBox(child), child);
+    insertChild(createLayoutBox(child), child, beforeChild);
     if (!m_boxToRendererMap.isEmpty())
         m_boxToRendererMap.add(*child.layoutBox(), child);
     return layoutBoxForRenderer(child);
