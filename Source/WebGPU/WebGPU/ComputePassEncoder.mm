@@ -69,13 +69,34 @@ void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, 
     UNUSED_PARAM(queryIndex);
 }
 
+bool ComputePassEncoder::validateEncoderBindGroups() const
+{
+    if (!m_pipelineIsValid)
+        return false;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=254307 - validate
+    // remainder of the compute encoder state
+
+    return true;
+}
+
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
+    if (!validateEncoderBindGroups()) {
+        makeInvalid();
+        return;
+    }
+
     [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    if (!validateEncoderBindGroups()) {
+        makeInvalid();
+        return;
+    }
+
     // FIXME: ensure higher levels perform validation on indirectOffset before reaching this callsite
     [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
@@ -147,7 +168,10 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
 
 void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 {
-    ASSERT(pipeline.computePipelineState());
+    if (!pipeline.isValid())
+        return;
+
+    m_pipelineIsValid = true;
     [m_computeCommandEncoder setComputePipelineState:pipeline.computePipelineState()];
     m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();
 }

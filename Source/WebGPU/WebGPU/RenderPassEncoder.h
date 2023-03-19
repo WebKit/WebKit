@@ -92,6 +92,7 @@ private:
     bool validatePopDebugGroup() const;
 
     void makeInvalid() { m_renderCommandEncoder = nil; }
+    bool validateEncoderBindGroups() const;
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
@@ -111,6 +112,7 @@ private:
     NSUInteger m_visibilityResultBufferSize { 0 };
     bool m_depthReadOnly { false };
     bool m_stencilReadOnly { false };
+    bool m_pipelineIsValid { false };
 };
 
 } // namespace WebGPU

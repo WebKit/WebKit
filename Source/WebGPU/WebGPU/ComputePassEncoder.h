@@ -80,6 +80,7 @@ private:
     bool validatePopDebugGroup() const;
 
     void makeInvalid() { m_computeCommandEncoder = nil; }
+    bool validateEncoderBindGroups() const;
 
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
@@ -92,6 +93,7 @@ private:
 
     const Ref<Device> m_device;
     MTLSize m_threadsPerThreadgroup;
+    bool m_pipelineIsValid { false };
 };
 
 } // namespace WebGPU

@@ -140,6 +140,17 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
     ++m_currentCommandIndex;
 }
 
+bool RenderBundleEncoder::validateRenderBundle() const
+{
+    if (!m_pipelineIsValid)
+        return false;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=254307 - validate
+    // remainder of the render bundle encoder state
+
+    return true;
+}
+
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
     auto commandCount = m_currentCommandIndex;
@@ -153,6 +164,9 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
 
         m_recordedCommands.clear();
     }
+
+    if (!validateRenderBundle())
+        return RenderBundle::createInvalid(m_device);
 
     auto renderBundle = RenderBundle::create(m_indirectCommandBuffer, WTFMove(m_resources), m_device);
     renderBundle->setLabel(String::fromUTF8(descriptor.label));
@@ -247,6 +261,10 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
 
 void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
 {
+    if (!pipeline.isValid())
+        return;
+
+    m_pipelineIsValid = true;
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand())
         [icbCommand setRenderPipelineState:pipeline.renderPipelineState()];
     else {

@@ -89,6 +89,11 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
 {
     // FIXME: validation according to
     // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-draw
+    if (!validateEncoderBindGroups()) {
+        makeInvalid();
+        return;
+    }
+
     [m_renderCommandEncoder
         drawPrimitives:m_primitiveType
         vertexStart:firstVertex
@@ -99,17 +104,32 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
 
 void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
+    if (!validateEncoderBindGroups()) {
+        makeInvalid();
+        return;
+    }
+
     UNUSED_PARAM(firstIndex);
     [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
 }
 
 void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    if (!validateEncoderBindGroups()) {
+        makeInvalid();
+        return;
+    }
+
     [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
 
 void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    if (!validateEncoderBindGroups()) {
+        makeInvalid();
+        return;
+    }
+
     [m_renderCommandEncoder drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
 
@@ -159,6 +179,17 @@ bool RenderPassEncoder::validatePopDebugGroup() const
 {
     if (!m_debugGroupStackSize)
         return false;
+
+    return true;
+}
+
+bool RenderPassEncoder::validateEncoderBindGroups() const
+{
+    if (!m_pipelineIsValid)
+        return false;
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=254307 - validate
+    // remainder of the compute encoder state
 
     return true;
 }
@@ -222,10 +253,13 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly))
         return;
 
-    m_primitiveType = pipeline.primitiveType();
+    if (!pipeline.isValid())
+        return;
 
-    if (pipeline.renderPipelineState())
-        [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
+    m_primitiveType = pipeline.primitiveType();
+    m_pipelineIsValid = true;
+
+    [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
     if (pipeline.depthStencilState())
         [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
     [m_renderCommandEncoder setCullMode:pipeline.cullMode()];

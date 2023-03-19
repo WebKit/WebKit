@@ -85,6 +85,7 @@ private:
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
     void makeInvalid() { m_indirectCommandBuffer = nil; }
+    bool validateRenderBundle() const;
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -98,6 +99,7 @@ private:
     Vector<WTF::Function<void(void)>> m_recordedCommands;
     Vector<BindableResource> m_resources;
     const Ref<Device> m_device;
+    bool m_pipelineIsValid { false };
 };
 
 } // namespace WebGPU
