@@ -96,6 +96,9 @@ function platformTextAlternatives(accessibilityObject, includeTitleUIElement=fal
     if (!accessibilityObject)
         return "Element not exposed";
 
+    if (accessibilityController.platformName === "ios")
+        return `\t${accessibilityObject.description}`;
+
     result = "\t" + accessibilityObject.title + "\n\t" + accessibilityObject.description;
     if (accessibilityController.platformName == "mac")
        result += "\n\t" + accessibilityObject.helpText;

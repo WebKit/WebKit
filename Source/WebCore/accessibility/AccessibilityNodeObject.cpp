@@ -1435,7 +1435,13 @@ HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) con
             return label;
     }
 
-    return ancestorsOfType<HTMLLabelElement>(*element).first();
+    if (auto* nearestLabel = ancestorsOfType<HTMLLabelElement>(*element).first()) {
+        // Only use the nearest label if it isn't pointing at something else.
+        const auto& forAttribute = nearestLabel->attributeWithoutSynchronization(forAttr);
+        if (forAttribute.isEmpty() || forAttribute == id)
+            return nearestLabel;
+    }
+    return nullptr;
 }
 
 String AccessibilityNodeObject::ariaAccessibilityDescription() const
