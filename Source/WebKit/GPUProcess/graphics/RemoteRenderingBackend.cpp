@@ -411,6 +411,7 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buf
     return std::nullopt;
 }
 
+#if PLATFORM(COCOA)
 void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&& completionHandler)
 {
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
@@ -491,6 +492,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
 
     outputData.displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
 }
+#endif
 
 void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<RenderingResourceIdentifier>& identifiers)
 {

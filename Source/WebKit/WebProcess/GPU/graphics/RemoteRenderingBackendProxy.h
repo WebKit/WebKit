@@ -119,7 +119,9 @@ public:
         SwapBuffersDisplayRequirement displayRequirement;
     };
 
+#if PLATFORM(COCOA)
     Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
+#endif
 
     void finalizeRenderingUpdate();
     void didPaintLayers();
