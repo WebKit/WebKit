@@ -1270,6 +1270,10 @@ public:
 
     void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
     {
+        if (!imm.m_value) {
+            moveZeroToFloat(dest);
+            return;
+        }
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovd_rr(scratchRegister(), dest);
@@ -1287,6 +1291,10 @@ public:
 
     void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
     {
+        if (!imm.m_value) {
+            moveZeroToDouble(dest);
+            return;
+        }
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovq_rr(scratchRegister(), dest);
@@ -1312,6 +1320,10 @@ public:
 
     void materializeVector(v128_t value, FPRegisterID dest)
     {
+        if (value.isAllZero()) {
+            moveZeroToVector(dest);
+            return;
+        }
         move(TrustedImm64(value.u64x2[0]), scratchRegister());
         vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
         move(TrustedImm64(value.u64x2[1]), scratchRegister());

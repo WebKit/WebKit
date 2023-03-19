@@ -7761,15 +7761,13 @@ public:
 
     void materializeVectorConstant(v128_t value, Location result)
     {
-        if (!value.u64x2[0] && !value.u64x2[1])
-            m_jit.moveZeroToVector(result.asFPR());
-        else if (value.u64x2[0] == 0xffffffffffffffffull && value.u64x2[1] == 0xffffffffffffffffull)
+        if (value.isAllOne()) {
 #if CPU(X86_64)
             m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::Unsigned }, result.asFPR(), result.asFPR(), result.asFPR(), wasmScratchFPR);
 #else
             m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::Unsigned }, result.asFPR(), result.asFPR(), result.asFPR());
 #endif
-        else
+        } else
             m_jit.materializeVector(value, result.asFPR());
     }
 

@@ -41,6 +41,16 @@ typedef union v128_u {
     constexpr v128_u(uint64_t first, uint64_t second)
         : u64x2 { first, second }
     { }
+
+    constexpr bool isAllZero() const
+    {
+        return !u64x2[0] && !u64x2[1];
+    }
+
+    constexpr bool isAllOne() const
+    {
+        return u64x2[0] == UINT64_MAX && u64x2[1] == UINT64_MAX;
+    }
 } v128_t;
 
 constexpr v128_t vectorAllOnes()
