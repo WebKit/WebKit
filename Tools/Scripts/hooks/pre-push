@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.2'
+VERSION = '1.3'
 
 import io
 import os
@@ -16,7 +16,7 @@ LOCATION = r'{{ location }}'
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 sys.path.append(SCRIPTS)
 
-REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+)(@|://)(?P<host>[^:/]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
+REMOTE_RE = re.compile(r'{{ remote_re }}')
 NULL_HASH = '0' * 40
 TRUNCATED_COMMIT_LEN = 12
 
