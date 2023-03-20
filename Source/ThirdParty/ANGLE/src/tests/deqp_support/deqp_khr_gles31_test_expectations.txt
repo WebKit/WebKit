@@ -65,9 +65,9 @@
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-vs-*-matR* = SKIP
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-fs-*-matR* = SKIP
 
-// GL_EXT_texture_border_clamp related test failures on NVIDIA
-5978 VULKAN NVIDIA : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 VULKAN NVIDIA : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+// https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4292
+5978 : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
 
 ////
 //// SwANGLE expectations
@@ -273,3 +273,6 @@
 6678 UBSAN : KHR-GLES31.core.internalformat.texture2d.r*half_float* = SKIP
 6678 UBSAN : KHR-GLES31.core.shader_bitfield_operation.bitfield* = SKIP
 6729 UBSAN : KHR-GLES31.core.compute_shader.shared-max = SKIP
+
+// Failure since VK-GL-CTS roll (2023-02-28)
+8045 : KHR-GLES31.shaders.negative.non_precision_qualifiers_in_struct_members = SKIP

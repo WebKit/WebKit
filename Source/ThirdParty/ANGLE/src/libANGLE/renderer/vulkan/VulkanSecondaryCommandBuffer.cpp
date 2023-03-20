@@ -26,6 +26,10 @@ angle::Result VulkanSecondaryCommandBuffer::InitializeCommandPool(Context *conte
     poolInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.flags                   = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
     poolInfo.queueFamilyIndex        = queueFamilyIndex;
+    if (context->getRenderer()->getFeatures().useResetCommandBufferBitForSecondaryPools.enabled)
+    {
+        poolInfo.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    }
     ASSERT(protectionType == ProtectionType::Unprotected ||
            protectionType == ProtectionType::Protected);
     if (protectionType == ProtectionType::Protected)
@@ -60,6 +64,7 @@ angle::Result VulkanSecondaryCommandBuffer::initialize(Context *context,
 {
     VkDevice device = context->getDevice();
 
+    mCommandPool = pool;
     mCommandTracker.reset();
     mAnyCommand = false;
 
@@ -81,6 +86,15 @@ angle::Result VulkanSecondaryCommandBuffer::initialize(Context *context,
     }
 
     return angle::Result::Continue;
+}
+
+void VulkanSecondaryCommandBuffer::free(VkDevice device)
+{
+    if (mHandle != VK_NULL_HANDLE)
+    {
+        mCommandPool->freeCommandBuffers(device, 1, &mHandle);
+        mHandle = VK_NULL_HANDLE;
+    }
 }
 
 angle::Result VulkanSecondaryCommandBuffer::begin(

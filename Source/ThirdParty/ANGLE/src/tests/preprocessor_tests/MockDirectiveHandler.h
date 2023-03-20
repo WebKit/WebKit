@@ -29,8 +29,11 @@ class MockDirectiveHandler : public pp::DirectiveHandler
                       const std::string &name,
                       const std::string &behavior));
 
-    MOCK_METHOD3(handleVersion,
-                 void(const pp::SourceLocation &loc, int version, ShShaderSpec spec));
+    MOCK_METHOD4(handleVersion,
+                 void(const pp::SourceLocation &loc,
+                      int version,
+                      ShShaderSpec spec,
+                      pp::MacroSet *macro_set));
 };
 
 }  // namespace angle

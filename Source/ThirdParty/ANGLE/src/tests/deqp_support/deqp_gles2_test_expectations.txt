@@ -132,10 +132,6 @@
 2631 MAC OPENGL : dEQP-GLES2.functional.shaders.operator.sequence.side_effects.affect_* = FAIL
 3317 MAC OPENGL : dEQP-GLES2.functional.shaders.linkage.varying_4 = FAIL
 
-5136 MAC OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.stencil_index8 = FAIL
-5136 MAC OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
-5136 MAC OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.stencil_index8 = FAIL
-
 // MAC OPENGL INTEL specific
 2137 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgb = FAIL
 2137 MAC OPENGL INTEL : dEQP-GLES2.functional.color_clear.complex_rgba = FAIL

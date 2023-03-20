@@ -894,6 +894,22 @@ bool ValidateGetFramebufferPixelLocalStorageParameterivANGLE(const Context *cont
                                                              GLint plane,
                                                              GLenum pname,
                                                              const GLint *params);
+bool ValidateGetFramebufferPixelLocalStorageParameterfvRobustANGLE(const Context *context,
+                                                                   angle::EntryPoint entryPoint,
+                                                                   GLint plane,
+                                                                   GLenum pname,
+                                                                   GLsizei bufSize,
+                                                                   const GLsizei *length,
+                                                                   const GLfloat *params);
+bool ValidateGetFramebufferPixelLocalStorageParameterivRobustANGLE(const Context *context,
+                                                                   angle::EntryPoint entryPoint,
+                                                                   GLint plane,
+                                                                   GLenum pname,
+                                                                   GLsizei bufSize,
+                                                                   const GLsizei *length,
+                                                                   const GLint *params);
+
+// GL_ANGLE_stencil_texturing
 
 // GL_ANGLE_texture_compression_dxt3
 
@@ -1092,14 +1108,16 @@ bool ValidateBufferStorageEXT(const Context *context,
 // GL_EXT_clip_control
 bool ValidateClipControlEXT(const Context *context,
                             angle::EntryPoint entryPoint,
-                            GLenum origin,
-                            GLenum depth);
+                            ClipOrigin originPacked,
+                            ClipDepthMode depthPacked);
 
 // GL_EXT_clip_cull_distance
 
 // GL_EXT_color_buffer_float
 
 // GL_EXT_color_buffer_half_float
+
+// GL_EXT_conservative_depth
 
 // GL_EXT_copy_image
 bool ValidateCopyImageSubDataEXT(const Context *context,
@@ -1145,6 +1163,8 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 GLsizei length,
                                 const GLchar *marker);
+
+// GL_EXT_depth_clamp
 
 // GL_EXT_discard_framebuffer
 bool ValidateDiscardFramebufferEXT(const Context *context,
@@ -1492,6 +1512,8 @@ bool ValidatePrimitiveBoundingBoxEXT(const Context *context,
 // GL_EXT_pvrtc_sRGB
 
 // GL_EXT_read_format_bgra
+
+// GL_EXT_render_snorm
 
 // GL_EXT_robustness
 bool ValidateGetGraphicsResetStatusEXT(const Context *context, angle::EntryPoint entryPoint);
@@ -1919,9 +1941,13 @@ bool ValidateTexBufferRangeEXT(const Context *context,
 
 // GL_EXT_texture_filter_anisotropic
 
+// GL_EXT_texture_filter_minmax
+
 // GL_EXT_texture_format_BGRA8888
 
 // GL_EXT_texture_format_sRGB_override
+
+// GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
 
@@ -2673,6 +2699,8 @@ bool ValidateFramebufferTextureMultiviewOVR(const Context *context,
                                             GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 bool ValidateShadingRateQCOM(const Context *context, angle::EntryPoint entryPoint, GLenum rate);

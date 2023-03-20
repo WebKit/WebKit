@@ -31,6 +31,8 @@ vulkan_backend_sources = [
   "ImageVk.h",
   "MemoryObjectVk.cpp",
   "MemoryObjectVk.h",
+  "MemoryTracking.cpp",
+  "MemoryTracking.h",
   "OverlayVk.cpp",
   "OverlayVk.h",
   "PersistentCommandPool.cpp",

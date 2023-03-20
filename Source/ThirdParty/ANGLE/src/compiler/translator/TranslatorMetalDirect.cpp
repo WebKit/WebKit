@@ -255,7 +255,7 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
     sequence.push_back(builtinRef->deepCopy());
     TIntermAggregate *aggregate =
         TIntermAggregate::CreateConstructor(builtin->getType(), &sequence);
-    TIntermBinary *assignment = new TIntermBinary(EOpInitialize, flippedBuiltinRef, aggregate);
+    TIntermBinary *assignment = new TIntermBinary(EOpAssign, flippedBuiltinRef, aggregate);
 
     // Create an assignment to the replaced variable's .xy.
     TIntermSwizzle *correctedXY =
@@ -337,9 +337,9 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
     TIntermSequence declareGLFragdataSequence;
 
     // Create gl_FragData_i or gl_SecondaryFragDataEXT_i
-    static constexpr const char fragData[]             = "gl_FragData";
-    static constexpr const char secondaryFragDataEXT[] = "gl_SecondaryFragDataEXT";
-    const char *name                                   = secondary ? secondaryFragDataEXT : fragData;
+    const char *fragData             = "gl_FragData";
+    const char *secondaryFragDataEXT = "gl_SecondaryFragDataEXT";
+    const char *name                 = secondary ? secondaryFragDataEXT : fragData;
     for (int i = 0; i < maxDrawBuffers; i++)
     {
         ImmutableStringBuilder builder(strlen(name) + 3);

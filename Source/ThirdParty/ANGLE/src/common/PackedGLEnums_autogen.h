@@ -106,6 +106,34 @@ ClientVertexArrayType FromGLenum<ClientVertexArrayType>(GLenum from);
 GLenum ToGLenum(ClientVertexArrayType from);
 std::ostream &operator<<(std::ostream &os, ClientVertexArrayType value);
 
+enum class ClipDepthMode : uint8_t
+{
+    NegativeOneToOne = 0,
+    ZeroToOne        = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+template <>
+ClipDepthMode FromGLenum<ClipDepthMode>(GLenum from);
+GLenum ToGLenum(ClipDepthMode from);
+std::ostream &operator<<(std::ostream &os, ClipDepthMode value);
+
+enum class ClipOrigin : uint8_t
+{
+    LowerLeft = 0,
+    UpperLeft = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+template <>
+ClipOrigin FromGLenum<ClipOrigin>(GLenum from);
+GLenum ToGLenum(ClipOrigin from);
+std::ostream &operator<<(std::ostream &os, ClipOrigin value);
+
 enum class CullFaceMode : uint8_t
 {
     Back         = 0,

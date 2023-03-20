@@ -22,8 +22,8 @@ EXIT_FAILURE = 1
 
 TEST_SUITE = 'angle_end2end_tests'
 BUILDERS = [
-    'angle/ci/android-arm64-test', 'angle/ci/android-arm64-exp-test', 'angle/ci/linux-test',
-    'angle/ci/win-test', 'angle/ci/win-x86-test'
+    'angle/ci/android-arm64-test', 'angle/ci/linux-test', 'angle/ci/win-test',
+    'angle/ci/win-x86-test'
 ]
 SWARMING_SERVER = 'chromium-swarm.appspot.com'
 

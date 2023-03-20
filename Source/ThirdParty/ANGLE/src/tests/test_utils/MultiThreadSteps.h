@@ -67,6 +67,12 @@ class ThreadSynchronization
             {
                 return false;
             }
+            // Expect increasing order to reduce risk of race conditions / deadlocks.
+            if (*mCurrentStep > waitStep)
+            {
+                FATAL() << "waitForStep requires increasing order. mCurrentStep="
+                        << (int)*mCurrentStep << ", waitStep=" << (int)waitStep;
+            }
             mCondVar->wait(lock);
         }
 

@@ -45,9 +45,12 @@ class ImageVk : public ImageImpl
     gl::LevelIndex getImageLevel() const;
     uint32_t getImageLayer() const;
 
+    UniqueSerial generateSiblingSerial() { return mImageSiblingSerialFactory.generate(); }
+
   private:
     bool mOwnsImage;
     vk::ImageHelper *mImage;
+    UniqueSerialFactory mImageSiblingSerialFactory;
 
     const gl::Context *mContext;
 };

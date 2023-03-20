@@ -184,3 +184,18 @@
 
 7814 WIN : PBOExtensionTest.PBOWithExistingData/ES2_Vulkan_SwiftShader = FLAKY
 7814 WIN : PBOExtensionTest.PBOWithOtherTarget/ES2_Vulkan_SwiftShader = FLAKY
+
+# Related to uninitialized memory/buffers when using image suballocation
+8033 WIN : FramebufferTestWithFormatFallback.R4G4B4A4_OutOfRangeStagedUpdateReformated/* = SKIP_FOR_CAPTURE
+8033 WIN : ClearTestES3.RepeatedStencilClear/* = SKIP_FOR_CAPTURE
+8033 WIN : ClearTestES3.RepeatedStencilClearWithBlitAfterClearAndDrawInBetween/* = SKIP_FOR_CAPTURE
+8033 WIN : StateChangeTestES3.StencilReferenceAndCompareMask/* = SKIP_FOR_CAPTURE
+8033 WIN : StateChangeTestES3.StencilWriteMask/* = SKIP_FOR_CAPTURE
+
+# Corrupting memory by writing past readBufferSize due to GL_PACK_SKIP_ROWS etc
+8070 : Texture2DNorm16TestES3.TextureNorm16R16RenderTest/* = SKIP_FOR_CAPTURE
+8070 : Texture2DNorm16TestES3.TextureNorm16RG16RenderTest/* = SKIP_FOR_CAPTURE
+8070 : Texture2DNorm16TestES3.TextureNorm16RGBA16RenderTest/* = SKIP_FOR_CAPTURE
+
+# Fails if run after DifferentStencilMasksTest.DrawWithSameEffectiveMask
+8079 : DiscardFramebufferEXTTest.ClearDepthThenDrawWithoutDepthTestThenDiscard/* = SKIP_FOR_CAPTURE

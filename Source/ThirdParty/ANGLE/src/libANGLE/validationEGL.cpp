@@ -1425,6 +1425,15 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
 
                 switch (attribute)
                 {
+                    case EGL_SYNC_CONDITION:
+                        if (type != EGL_SYNC_METAL_SHARED_EVENT_ANGLE ||
+                            (value != EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR &&
+                             value != EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE))
+                        {
+                            val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
+                        }
+                        break;
+
                     case EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE:
                         if (!value)
                         {

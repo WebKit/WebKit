@@ -77,7 +77,7 @@ void CheckPixels(GLint x,
         {
             const auto px = x + xx;
             const auto py = y + yy;
-            EXPECT_PIXEL_COLOR_NEAR(px, py, color, 1);
+            EXPECT_PIXEL_COLOR_NEAR(px, py, color, 2);
         }
     }
 }

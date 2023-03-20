@@ -68,10 +68,18 @@ VkResult CreateBuffer(VmaAllocator allocator,
                       const VkBufferCreateInfo *pBufferCreateInfo,
                       VkMemoryPropertyFlags requiredFlags,
                       VkMemoryPropertyFlags preferredFlags,
-                      bool persistentlyMappedBuffers,
+                      bool persistentlyMapped,
                       uint32_t *pMemoryTypeIndexOut,
                       VkBuffer *pBuffer,
                       VmaAllocation *pAllocation);
+
+VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
+                                       VkImage *pImage,
+                                       VkMemoryPropertyFlags requiredFlags,
+                                       VkMemoryPropertyFlags preferredFlags,
+                                       VmaAllocation *pAllocationOut,
+                                       uint32_t *pMemoryTypeIndexOut,
+                                       VkDeviceSize *sizeOut);
 
 VkResult FindMemoryTypeIndexForBufferInfo(VmaAllocator allocator,
                                           const VkBufferCreateInfo *pBufferCreateInfo,

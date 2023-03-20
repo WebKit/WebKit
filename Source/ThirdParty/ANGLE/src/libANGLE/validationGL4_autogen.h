@@ -680,8 +680,8 @@ bool ValidateClearNamedFramebufferuiv(const Context *context,
                                       const GLuint *value);
 bool ValidateClipControl(const Context *context,
                          angle::EntryPoint entryPoint,
-                         GLenum origin,
-                         GLenum depth);
+                         ClipOrigin originPacked,
+                         ClipDepthMode depthPacked);
 bool ValidateCompressedTextureSubImage1D(const Context *context,
                                          angle::EntryPoint entryPoint,
                                          TextureID texturePacked,

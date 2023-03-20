@@ -108,6 +108,14 @@ enum class TextureDimension
     TEX_2D_ARRAY,
 };
 
+enum class BufferUsageType
+{
+    Static      = 0,
+    Dynamic     = 1,
+    InvalidEnum = 2,
+    EnumCount   = InvalidEnum,
+};
+
 // A maximum offset of 4096 covers almost every Vulkan driver on desktop (80%) and mobile (99%). The
 // next highest values to meet native drivers are 16 bits or 32 bits.
 constexpr uint32_t kAttributeOffsetMaxBits = 15;
@@ -236,6 +244,35 @@ class QueueSerialIndexAllocator final
     angle::BitSetArray<kMaxQueueSerialIndexCount> mFreeIndexBitSetArray;
     std::atomic<size_t> mLargestIndexEverAllocated;
     std::mutex mMutex;
+};
+
+class [[nodiscard]] ScopedQueueSerialIndex final : angle::NonCopyable
+{
+  public:
+    ScopedQueueSerialIndex() : mIndex(kInvalidQueueSerialIndex), mIndexAllocator(nullptr) {}
+    ~ScopedQueueSerialIndex()
+    {
+        if (mIndex != kInvalidQueueSerialIndex)
+        {
+            ASSERT(mIndexAllocator != nullptr);
+            mIndexAllocator->release(mIndex);
+        }
+    }
+
+    void init(SerialIndex index, QueueSerialIndexAllocator *indexAllocator)
+    {
+        ASSERT(mIndex == kInvalidQueueSerialIndex);
+        ASSERT(index != kInvalidQueueSerialIndex);
+        ASSERT(indexAllocator != nullptr);
+        mIndex          = index;
+        mIndexAllocator = indexAllocator;
+    }
+
+    SerialIndex get() const { return mIndex; }
+
+  private:
+    SerialIndex mIndex;
+    QueueSerialIndexAllocator *mIndexAllocator;
 };
 
 // Abstracts error handling. Implemented by both ContextVk for GL and DisplayVk for EGL errors.
@@ -1031,34 +1068,6 @@ angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
                                       uint64_t handle,
                                       const std::string &label);
 
-// Used to store memory allocation information for tracking purposes.
-struct MemoryAllocationInfo
-{
-    MemoryAllocationInfo() = default;
-    uint64_t id;
-    MemoryAllocationType allocType;
-    uint32_t memoryHeapIndex;
-    void *handle;
-    VkDeviceSize size;
-};
-
-class MemoryAllocInfoMapKey
-{
-  public:
-    MemoryAllocInfoMapKey() : handle(nullptr) {}
-    MemoryAllocInfoMapKey(void *handle) : handle(handle) {}
-
-    bool operator==(const MemoryAllocInfoMapKey &rhs) const
-    {
-        return reinterpret_cast<uint64_t>(handle) == reinterpret_cast<uint64_t>(rhs.handle);
-    }
-
-    size_t hash() const;
-
-  private:
-    void *handle;
-};
-
 }  // namespace vk
 
 #if !defined(ANGLE_SHARED_LIBVULKAN)
@@ -1086,9 +1095,6 @@ void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance);
 
 // VK_KHR_external_semaphore_fd
 void InitExternalSemaphoreFdFunctions(VkInstance instance);
-
-// VK_EXT_external_memory_host
-void InitExternalMemoryHostFunctions(VkInstance instance);
 
 // VK_EXT_host_query_reset
 void InitHostQueryResetFunctions(VkDevice instance);
@@ -1260,7 +1266,6 @@ enum class RenderPassClosureReason
     BufferUseThenReleaseToExternal,
     ImageUseThenReleaseToExternal,
     BufferInUseWhenSynchronizedMap,
-    ImageOrphan,
     GLMemoryBarrierThenStorageResource,
     StorageResourceUseThenGLMemoryBarrier,
     ExternalSemaphoreSignal,
@@ -1293,16 +1298,6 @@ enum class RenderPassClosureReason
 };
 
 }  // namespace rx
-
-// Introduce std::hash for MemoryAllocInfoMapKey.
-namespace std
-{
-template <>
-struct hash<rx::vk::MemoryAllocInfoMapKey>
-{
-    size_t operator()(const rx::vk::MemoryAllocInfoMapKey &key) const { return key.hash(); }
-};
-}  // namespace std
 
 #define ANGLE_VK_TRY(context, command)                                                   \
     do                                                                                   \

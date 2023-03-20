@@ -34,15 +34,15 @@ void OutputIntTexCoordWrap(TInfoSinkBase &out,
         << ") / " << size << ";\n";
     out << "bool " << texCoordOutName << "UseBorderColor = false;\n";
 
-    // CLAMP_TO_EDGE
-    out << "if (" << wrapMode << " == 0)\n";
+    // CLAMP_TO_EDGE / D3D11_TEXTURE_ADDRESS_CLAMP == 3
+    out << "if (" << wrapMode << " == 3)\n";
     out << "{\n";
     out << "    " << texCoordOutName << " = clamp(int(floor(" << size << " * " << texCoordOutName
         << "Offset)), 0, int(" << size << ") - 1);\n";
     out << "}\n";
 
-    // CLAMP_TO_BORDER
-    out << "else if (" << wrapMode << " == 3)\n";
+    // CLAMP_TO_BORDER / D3D11_TEXTURE_ADDRESS_BORDER == 4
+    out << "else if (" << wrapMode << " == 4)\n";
     out << "{\n";
     out << "    int texCoordInt = int(floor(" << size << " * " << texCoordOutName << "Offset));\n";
     out << "    " << texCoordOutName << " = clamp(texCoordInt, 0, int(" << size << ") - 1);\n";
@@ -50,15 +50,23 @@ void OutputIntTexCoordWrap(TInfoSinkBase &out,
         << ");\n";
     out << "}\n";
 
-    // MIRRORED_REPEAT
+    // MIRRORED_REPEAT / D3D11_TEXTURE_ADDRESS_MIRROR == 2
     out << "else if (" << wrapMode << " == 2)\n";
     out << "{\n";
     out << "    float coordWrapped = 1.0 - abs(frac(abs(" << texCoordOutName
         << "Offset) * 0.5) * 2.0 - 1.0);\n";
-    out << "    " << texCoordOutName << " = int(floor(" << size << " * coordWrapped));\n";
+    out << "    " << texCoordOutName << " = min(int(floor(" << size << " * coordWrapped)), int("
+        << size << ") - 1);\n";
     out << "}\n";
 
-    // REPEAT
+    // MIRROR_CLAMP_TO_EDGE_EXT / D3D11_TEXTURE_ADDRESS_MIRROR_ONCE == 5
+    out << "else if (" << wrapMode << " == 5)\n";
+    out << "{\n";
+    out << "    " << texCoordOutName << " = min(int(floor(" << size << " * abs(" << texCoordOutName
+        << "Offset))), int(" << size << ") - 1);\n";
+    out << "}\n";
+
+    // REPEAT / D3D11_TEXTURE_ADDRESS_WRAP == 1
     out << "else\n";
     out << "{\n";
     out << "    " << texCoordOutName << " = int(floor(" << size << " * frac(" << texCoordOutName
@@ -73,7 +81,7 @@ void OutputIntTexCoordWraps(TInfoSinkBase &out,
                             ImmutableString *texCoordZ)
 {
     // Convert from normalized floating-point to integer
-    out << "int wrapS = samplerMetadata[samplerIndex].wrapModes & 0x3;\n";
+    out << "int wrapS = samplerMetadata[samplerIndex].wrapModes & 0x7;\n";
     if (textureFunction.offset)
     {
         OutputIntTexCoordWrap(out, "wrapS", "width", *texCoordX, "offset.x", "tix");
@@ -83,7 +91,7 @@ void OutputIntTexCoordWraps(TInfoSinkBase &out,
         OutputIntTexCoordWrap(out, "wrapS", "width", *texCoordX, "0", "tix");
     }
     *texCoordX = ImmutableString("tix");
-    out << "int wrapT = (samplerMetadata[samplerIndex].wrapModes >> 2) & 0x3;\n";
+    out << "int wrapT = (samplerMetadata[samplerIndex].wrapModes >> 3) & 0x7;\n";
     if (textureFunction.offset)
     {
         OutputIntTexCoordWrap(out, "wrapT", "height", *texCoordY, "offset.y", "tiy");
@@ -102,7 +110,7 @@ void OutputIntTexCoordWraps(TInfoSinkBase &out,
     }
     else if (!IsSamplerCube(textureFunction.sampler) && !IsSampler2D(textureFunction.sampler))
     {
-        out << "int wrapR = (samplerMetadata[samplerIndex].wrapModes >> 4) & 0x3;\n";
+        out << "int wrapR = (samplerMetadata[samplerIndex].wrapModes >> 6) & 0x7;\n";
         if (textureFunction.offset)
         {
             OutputIntTexCoordWrap(out, "wrapR", "depth", *texCoordZ, "offset.z", "tiz");

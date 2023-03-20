@@ -1653,7 +1653,8 @@ TextureStorage11_External::TextureStorage11_External(
     egl::Stream *stream,
     const egl::Stream::GLTextureDescription &glDesc,
     const std::string &label)
-    : TextureStorage11(renderer, D3D11_BIND_SHADER_RESOURCE, 0, glDesc.internalFormat, label)
+    : TextureStorage11(renderer, D3D11_BIND_SHADER_RESOURCE, 0, glDesc.internalFormat, label),
+      mAssociatedImage(nullptr)
 {
     ASSERT(stream->getProducerType() == egl::Stream::ProducerType::D3D11Texture);
     auto *producer = static_cast<StreamProducerD3DTexture *>(stream->getImplementation());
@@ -1677,6 +1678,15 @@ angle::Result TextureStorage11_External::onDestroy(const gl::Context *context)
         // If the keyed mutex is released that will unbind it and cause the state cache to become
         // desynchronized.
         mRenderer->getStateManager()->invalidateBoundViews();
+    }
+
+    if (mAssociatedImage != nullptr)
+    {
+        mAssociatedImage->verifyAssociatedStorageValid(this);
+
+        // We must let the Images recover their data before we delete it from the
+        // TextureStorage.
+        ANGLE_TRY(mAssociatedImage->recoverFromAssociatedStorage(context));
     }
 
     return angle::Result::Continue;
@@ -1886,7 +1896,8 @@ TextureStorage11_EGLImage::TextureStorage11_EGLImage(Renderer11 *renderer,
       mImage(eglImage),
       mCurrentRenderTarget(0),
       mSwizzleTexture(),
-      mSwizzleRenderTargets(gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS)
+      mSwizzleRenderTargets(gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS),
+      mAssociatedImage(nullptr)
 {
     mCurrentRenderTarget = reinterpret_cast<uintptr_t>(renderTarget11);
 
@@ -1897,6 +1908,20 @@ TextureStorage11_EGLImage::TextureStorage11_EGLImage(Renderer11 *renderer,
 }
 
 TextureStorage11_EGLImage::~TextureStorage11_EGLImage() {}
+
+angle::Result TextureStorage11_EGLImage::onDestroy(const gl::Context *context)
+{
+    if (mAssociatedImage != nullptr)
+    {
+        mAssociatedImage->verifyAssociatedStorageValid(this);
+
+        // We must let the Images recover their data before we delete it from the
+        // TextureStorage.
+        ANGLE_TRY(mAssociatedImage->recoverFromAssociatedStorage(context));
+    }
+
+    return angle::Result::Continue;
+}
 
 angle::Result TextureStorage11_EGLImage::getSubresourceIndex(const gl::Context *context,
                                                              const gl::ImageIndex &index,
@@ -2119,6 +2144,42 @@ void TextureStorage11_EGLImage::onLabelUpdate()
     {
         mSwizzleTexture.setKHRDebugLabel(&mKHRDebugLabel);
     }
+}
+
+void TextureStorage11_EGLImage::associateImage(Image11 *image, const gl::ImageIndex &index)
+{
+    ASSERT(index.getLevelIndex() == 0);
+    mAssociatedImage = image;
+}
+
+void TextureStorage11_EGLImage::verifyAssociatedImageValid(const gl::ImageIndex &index,
+                                                           Image11 *expectedImage)
+{
+    ASSERT(index.getLevelIndex() == 0 && mAssociatedImage == expectedImage);
+}
+
+void TextureStorage11_EGLImage::disassociateImage(const gl::ImageIndex &index,
+                                                  Image11 *expectedImage)
+{
+    ASSERT(index.getLevelIndex() == 0);
+    ASSERT(mAssociatedImage == expectedImage);
+    mAssociatedImage = nullptr;
+}
+
+angle::Result TextureStorage11_EGLImage::releaseAssociatedImage(const gl::Context *context,
+                                                                const gl::ImageIndex &index,
+                                                                Image11 *incomingImage)
+{
+    ASSERT(index.getLevelIndex() == 0);
+
+    if (mAssociatedImage != nullptr && mAssociatedImage != incomingImage)
+    {
+        mAssociatedImage->verifyAssociatedStorageValid(this);
+
+        ANGLE_TRY(mAssociatedImage->recoverFromAssociatedStorage(context));
+    }
+
+    return angle::Result::Continue;
 }
 
 TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,

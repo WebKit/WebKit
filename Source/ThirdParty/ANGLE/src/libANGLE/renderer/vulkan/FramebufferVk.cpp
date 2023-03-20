@@ -2707,7 +2707,7 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
             clears->reset(colorIndexGL);
             ++contextVk->getPerfCounters().colorClearAttachments;
 
-            renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::Write);
+            renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::ReadWrite);
         }
         ++colorIndexVk;
     }
@@ -2721,7 +2721,7 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
     {
         dsAspectFlags |= VK_IMAGE_ASPECT_DEPTH_BIT;
         // Explicitly mark a depth write because we are clearing the depth buffer.
-        renderPassCommands->onDepthAccess(vk::ResourceAccess::Write);
+        renderPassCommands->onDepthAccess(vk::ResourceAccess::ReadWrite);
         clears->reset(vk::kUnpackedDepthIndex);
         ++contextVk->getPerfCounters().depthClearAttachments;
     }
@@ -2730,7 +2730,7 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
     {
         dsAspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
         // Explicitly mark a stencil write because we are clearing the stencil buffer.
-        renderPassCommands->onStencilAccess(vk::ResourceAccess::Write);
+        renderPassCommands->onStencilAccess(vk::ResourceAccess::ReadWrite);
         clears->reset(vk::kUnpackedStencilIndex);
         ++contextVk->getPerfCounters().stencilClearAttachments;
     }

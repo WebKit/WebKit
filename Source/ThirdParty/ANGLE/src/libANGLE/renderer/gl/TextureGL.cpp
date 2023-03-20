@@ -74,7 +74,8 @@ bool GetEmulatedAlphaChannel(const angle::FeaturesGL &features,
                              const gl::InternalFormat &originalInternalFormat)
 {
     return (features.RGBDXT1TexturesSampleZeroAlpha.enabled &&
-            originalInternalFormat.sizedInternalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT) ||
+            (originalInternalFormat.sizedInternalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||
+             originalInternalFormat.sizedInternalFormat == GL_COMPRESSED_SRGB_S3TC_DXT1_EXT)) ||
            (features.emulateRGB10.enabled && originalInternalFormat.format == GL_RGB &&
             originalInternalFormat.type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT);
 }
@@ -324,6 +325,7 @@ angle::Result TextureGL::setSubImage(const gl::Context *context,
 {
     ASSERT(TextureTargetToType(index.getTarget()) == getType());
 
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
@@ -343,8 +345,10 @@ angle::Result TextureGL::setSubImage(const gl::Context *context,
     if (features.unpackOverlappingRowsSeparatelyUnpackBuffer.enabled && unpackBuffer &&
         unpack.rowLength != 0 && unpack.rowLength < area.width)
     {
-        return setSubImageRowByRowWorkaround(context, target, level, area, format, type, unpack,
-                                             unpackBuffer, 0, pixels);
+        ANGLE_TRY(setSubImageRowByRowWorkaround(context, target, level, area, format, type, unpack,
+                                                unpackBuffer, 0, pixels));
+        contextGL->markWorkSubmitted();
+        return angle::Result::Continue;
     }
 
     if (features.unpackLastRowSeparatelyForPaddingInclusion.enabled)
@@ -360,16 +364,20 @@ angle::Result TextureGL::setSubImage(const gl::Context *context,
         // by uploading the last row (and last level if 3D) separately.
         if (apply)
         {
-            return setSubImagePaddingWorkaround(context, target, level, area, format, type, unpack,
-                                                unpackBuffer, pixels);
+            ANGLE_TRY(setSubImagePaddingWorkaround(context, target, level, area, format, type,
+                                                   unpack, unpackBuffer, pixels));
+            contextGL->markWorkSubmitted();
+            return angle::Result::Continue;
         }
     }
 
     if (features.uploadTextureDataInChunks.enabled)
     {
-        return setSubImageRowByRowWorkaround(context, target, level, area, format, type, unpack,
-                                             unpackBuffer, kUploadTextureDataInChunksUploadSize,
-                                             pixels);
+        ANGLE_TRY(setSubImageRowByRowWorkaround(context, target, level, area, format, type, unpack,
+                                                unpackBuffer, kUploadTextureDataInChunksUploadSize,
+                                                pixels));
+        contextGL->markWorkSubmitted();
+        return angle::Result::Continue;
     }
 
     if (nativegl::UseTexImage2D(getType()))
@@ -390,6 +398,7 @@ angle::Result TextureGL::setSubImage(const gl::Context *context,
                                   texSubImageFormat.format, texSubImageFormat.type, pixels));
     }
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 
@@ -576,6 +585,7 @@ angle::Result TextureGL::setCompressedImage(const gl::Context *context,
                                             size_t imageSize,
                                             const uint8_t *pixels)
 {
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
@@ -616,6 +626,7 @@ angle::Result TextureGL::setCompressedImage(const gl::Context *context,
     ASSERT(!levelInfo.lumaWorkaround.enabled);
     setLevelInfo(context, target, level, 1, levelInfo);
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 
@@ -627,6 +638,7 @@ angle::Result TextureGL::setCompressedSubImage(const gl::Context *context,
                                                size_t imageSize,
                                                const uint8_t *pixels)
 {
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
@@ -662,6 +674,7 @@ angle::Result TextureGL::setCompressedSubImage(const gl::Context *context,
            !GetLevelInfo(features, originalInternalFormatInfo, compressedTexSubImageFormat.format)
                 .lumaWorkaround.enabled);
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 
@@ -839,6 +852,7 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
         contextGL->setNeedsFlushBeforeDeleteTextures();
     }
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 
@@ -848,6 +862,7 @@ angle::Result TextureGL::copySubImage(const gl::Context *context,
                                       const gl::Rectangle &sourceArea,
                                       gl::Framebuffer *source)
 {
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
@@ -916,10 +931,10 @@ angle::Result TextureGL::copySubImage(const gl::Context *context,
 
     if (features.flushBeforeDeleteTextureIfCopiedTo.enabled)
     {
-        ContextGL *contextGL = GetImplAs<ContextGL>(context);
         contextGL->setNeedsFlushBeforeDeleteTextures();
     }
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 
@@ -980,6 +995,7 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
                                               bool unpackUnmultiplyAlpha,
                                               const gl::Texture *source)
 {
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
     BlitGL *blitter                   = GetBlitGL(context);
@@ -992,7 +1008,6 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
     {
         // Conservatively indicate that this workaround is necessary. Not clear
         // if it is on this code path, but added for symmetry.
-        ContextGL *contextGL = GetImplAs<ContextGL>(context);
         contextGL->setNeedsFlushBeforeDeleteTextures();
     }
 
@@ -1022,6 +1037,7 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
                                            sourceArea, destOffset, &copySucceeded));
         if (copySucceeded)
         {
+            contextGL->markWorkSubmitted();
             return angle::Result::Continue;
         }
     }
@@ -1043,16 +1059,19 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
             unpackUnmultiplyAlpha, &copySucceeded));
         if (copySucceeded)
         {
+            contextGL->markWorkSubmitted();
             return angle::Result::Continue;
         }
     }
 
     // Fall back to CPU-readback
-    return blitter->copySubTextureCPUReadback(
+    ANGLE_TRY(blitter->copySubTextureCPUReadback(
         context, sourceGL, sourceLevel, sourceFormatInfo.sizedInternalFormat, this, target, level,
         destFormat.format, destFormat.type, sourceImageDesc.size, sourceArea, destOffset,
         needsLumaWorkaround, sourceLevelInfo.sourceFormat, unpackFlipY, unpackPremultiplyAlpha,
-        unpackUnmultiplyAlpha);
+        unpackUnmultiplyAlpha));
+    contextGL->markWorkSubmitted();
+    return angle::Result::Continue;
 }
 
 angle::Result TextureGL::setStorage(const gl::Context *context,
@@ -1379,6 +1398,7 @@ angle::Result TextureGL::setImageExternal(const gl::Context *context,
 
 angle::Result TextureGL::generateMipmap(const gl::Context *context)
 {
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
@@ -1433,6 +1453,7 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
     setLevelInfo(context, getType(), effectiveBaseLevel, maxLevel - effectiveBaseLevel,
                  getBaseLevelInfo());
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 
@@ -1584,18 +1605,30 @@ angle::Result TextureGL::syncState(const gl::Context *context,
             {
                 const LevelInfoGL &levelInfo    = getBaseLevelInfo();
                 angle::ColorGeneric borderColor = mState.getSamplerState().getBorderColor();
-                if (levelInfo.lumaWorkaround.enabled)
+                if (levelInfo.sourceFormat == GL_ALPHA)
                 {
-                    if (levelInfo.sourceFormat == GL_ALPHA)
+                    if (levelInfo.lumaWorkaround.enabled)
                     {
                         ASSERT(levelInfo.lumaWorkaround.workaroundFormat == GL_RED);
                         borderColor.colorF.red = borderColor.colorF.alpha;
                     }
-                    else if (levelInfo.sourceFormat == GL_LUMINANCE_ALPHA)
+                    else
                     {
-                        ASSERT(levelInfo.lumaWorkaround.workaroundFormat == GL_RG);
+                        // Some ES drivers treat ALPHA as swizzled RG, triplicating
+                        // border's red to RGB and sampling border's green as alpha.
+                        borderColor.colorF.red   = 0.0f;
                         borderColor.colorF.green = borderColor.colorF.alpha;
                     }
+                }
+                else if (levelInfo.sourceFormat == GL_LUMINANCE_ALPHA)
+                {
+                    if (levelInfo.lumaWorkaround.enabled)
+                    {
+                        ASSERT(levelInfo.lumaWorkaround.workaroundFormat == GL_RG);
+                    }
+                    // When using desktop GL, this format is emulated as swizzled RG.
+                    // Some ES drivers do the same without adjusting the border color.
+                    borderColor.colorF.green = borderColor.colorF.alpha;
                 }
 
                 mAppliedSampler.setBorderColor(borderColor);
@@ -2089,6 +2122,7 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
                                                   imageIndex, &clearSucceeded));
         if (clearSucceeded)
         {
+            contextGL->markWorkSubmitted();
             return angle::Result::Continue;
         }
     }
@@ -2187,6 +2221,7 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
     ANGLE_TRY(stateManager->setPixelUnpackState(context, context->getState().getUnpackState()));
     stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, prevUnpackBuffer);
 
+    contextGL->markWorkSubmitted();
     return angle::Result::Continue;
 }
 

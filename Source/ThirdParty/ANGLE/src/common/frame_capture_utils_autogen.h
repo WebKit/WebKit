@@ -25,6 +25,8 @@ enum class ParamType
     TBufferIDPointer,
     TBufferUsage,
     TClientVertexArrayType,
+    TClipDepthMode,
+    TClipOrigin,
     TCompositorTiming,
     TContextID,
     TCullFaceMode,
@@ -190,7 +192,7 @@ enum class ParamType
     TvoidPointerPointer,
 };
 
-constexpr uint32_t kParamTypeCount = 171;
+constexpr uint32_t kParamTypeCount = 173;
 
 union ParamValue
 {
@@ -202,6 +204,8 @@ union ParamValue
     gl::BufferID *BufferIDPointerVal;
     gl::BufferUsage BufferUsageVal;
     gl::ClientVertexArrayType ClientVertexArrayTypeVal;
+    gl::ClipDepthMode ClipDepthModeVal;
+    gl::ClipOrigin ClipOriginVal;
     egl::CompositorTiming CompositorTimingVal;
     gl::ContextID ContextIDVal;
     gl::CullFaceMode CullFaceModeVal;
@@ -423,6 +427,19 @@ inline gl::ClientVertexArrayType
 GetParamVal<ParamType::TClientVertexArrayType, gl::ClientVertexArrayType>(const ParamValue &value)
 {
     return value.ClientVertexArrayTypeVal;
+}
+
+template <>
+inline gl::ClipDepthMode GetParamVal<ParamType::TClipDepthMode, gl::ClipDepthMode>(
+    const ParamValue &value)
+{
+    return value.ClipDepthModeVal;
+}
+
+template <>
+inline gl::ClipOrigin GetParamVal<ParamType::TClipOrigin, gl::ClipOrigin>(const ParamValue &value)
+{
+    return value.ClipOriginVal;
 }
 
 template <>
@@ -1523,6 +1540,10 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TBufferUsage, T>(value);
         case ParamType::TClientVertexArrayType:
             return GetParamVal<ParamType::TClientVertexArrayType, T>(value);
+        case ParamType::TClipDepthMode:
+            return GetParamVal<ParamType::TClipDepthMode, T>(value);
+        case ParamType::TClipOrigin:
+            return GetParamVal<ParamType::TClipOrigin, T>(value);
         case ParamType::TCompositorTiming:
             return GetParamVal<ParamType::TCompositorTiming, T>(value);
         case ParamType::TContextID:
@@ -1906,6 +1927,18 @@ inline void SetParamVal<ParamType::TClientVertexArrayType>(gl::ClientVertexArray
                                                            ParamValue *valueOut)
 {
     valueOut->ClientVertexArrayTypeVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TClipDepthMode>(gl::ClipDepthMode valueIn, ParamValue *valueOut)
+{
+    valueOut->ClipDepthModeVal = valueIn;
+}
+
+template <>
+inline void SetParamVal<ParamType::TClipOrigin>(gl::ClipOrigin valueIn, ParamValue *valueOut)
+{
+    valueOut->ClipOriginVal = valueIn;
 }
 
 template <>
@@ -2986,6 +3019,12 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
             break;
         case ParamType::TClientVertexArrayType:
             SetParamVal<ParamType::TClientVertexArrayType>(valueIn, valueOut);
+            break;
+        case ParamType::TClipDepthMode:
+            SetParamVal<ParamType::TClipDepthMode>(valueIn, valueOut);
+            break;
+        case ParamType::TClipOrigin:
+            SetParamVal<ParamType::TClipOrigin>(valueIn, valueOut);
             break;
         case ParamType::TCompositorTiming:
             SetParamVal<ParamType::TCompositorTiming>(valueIn, valueOut);

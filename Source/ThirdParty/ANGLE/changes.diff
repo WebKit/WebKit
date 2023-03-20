@@ -36,21 +36,6 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
-diff --git a/src/compiler/translator/TranslatorMetalDirect.cpp b/src/compiler/translator/TranslatorMetalDirect.cpp
-index 77c40332376be8910aa2113b92cb903730568664..a0539c17c63ebcebe8cfedcda04910f82ce68902 100644
---- a/src/compiler/translator/TranslatorMetalDirect.cpp
-+++ b/src/compiler/translator/TranslatorMetalDirect.cpp
-@@ -337,8 +337,8 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
-     TIntermSequence declareGLFragdataSequence;
- 
-     // Create gl_FragData_i or gl_SecondaryFragDataEXT_i
--    constexpr const char fragData[]             = "gl_FragData";
--    constexpr const char secondaryFragDataEXT[] = "gl_SecondaryFragDataEXT";
-+    static constexpr const char fragData[]             = "gl_FragData";
-+    static constexpr const char secondaryFragDataEXT[] = "gl_SecondaryFragDataEXT";
-     const char *name                                   = secondary ? secondaryFragDataEXT : fragData;
-     for (int i = 0; i < maxDrawBuffers; i++)
-     {
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
 index 233b571b7985ba9d33b245f495725851a12be569..6bd263e0b1ec4137e5b8bb1a6269ce07cc8a6b32 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
@@ -109,7 +94,7 @@ index 101e04ccdc4a7217be38960dd372878ad4c15472..9ddc681d320550b171a2916cac8e9a4b
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index ea38c52af238f556dab0ccbef564d1a554eb5bbd..744ec1e62be1a7d5e152dd92a76318517e6b4dd5 100644
+index 46987ac1bb7ecad90214c33195c3a8f6bd0b59de..a14357ee88fa76f4d675d5463210cb8b17db65b4 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -164,10 +149,10 @@ index df9dadabc57d29d0ee96617827f5f6e837578af2..dbedfa11ddbf6a4c6180a0438e37d0f2
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index cb06689bc777a256183610ef47a7db63fb50a0f2..7c57e581532b2e3dfb7c2e48994162f7d2cf32ef 100644
+index ea9a09f233bd2fd3ff2531600a4796c6ade8b2f7..35e9b788ef2662e5a0549efa022c38f96fcc88ac 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1351,8 +1351,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1359,8 +1359,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -494,10 +479,10 @@ index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac2
          if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index bfa6a6838035d47c36040eec48293b09493949c4..47be2fdef6a650588ac83ae4ea1084a6fa94455a 100644
+index 169b89dd2922f559a4f1831086fbe3a2bfb4030e..a0396f8c88e6502c4df0c8f13384c86d9168394c 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1356,6 +1356,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1355,6 +1355,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -522,7 +507,7 @@ index bfa6a6838035d47c36040eec48293b09493949c4..47be2fdef6a650588ac83ae4ea1084a6
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1370,10 +1388,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1369,10 +1387,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -535,7 +520,7 @@ index bfa6a6838035d47c36040eec48293b09493949c4..47be2fdef6a650588ac83ae4ea1084a6
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1396,7 +1414,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1395,7 +1413,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

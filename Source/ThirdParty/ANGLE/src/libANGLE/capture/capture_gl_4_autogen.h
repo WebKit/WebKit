@@ -685,8 +685,8 @@ angle::CallCapture CaptureClearNamedFramebufferuiv(const State &glState,
                                                    const GLuint *value);
 angle::CallCapture CaptureClipControl(const State &glState,
                                       bool isCallValid,
-                                      GLenum origin,
-                                      GLenum depth);
+                                      ClipOrigin originPacked,
+                                      ClipDepthMode depthPacked);
 angle::CallCapture CaptureCompressedTextureSubImage1D(const State &glState,
                                                       bool isCallValid,
                                                       TextureID texturePacked,

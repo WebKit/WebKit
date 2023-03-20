@@ -502,13 +502,14 @@ MSG kPLSInvalidLoadOperation = "Invalid pixel local storage Load Operation: 0x%0
 MSG kPLSInvalidStoreOperation = "Invalid pixel local storage Store Operation: 0x%04X.";
 MSG kPLSInvalidTextureType = "Invalid pixel local storage texture type.";
 MSG kPLSKeepingMemorylessPlane = "Load Operation GL_LOAD_OP_LOAD_ANGLE is invalid for memoryless planes.";
+MSG kPLSLoadOpsNULL = "<loadops> cannot be null.";
 MSG kPLSMaxColorAttachmentsExceded = "Framebuffer cannot have images attached to color attachment points on or after COLOR_ATTACHMENT0 + MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE.";
 MSG kPLSMaxCombinedDrawBuffersAndPlanesExceded = "Framebuffer cannot have images attached to color attachment points on or after COLOR_ATTACHMENT0 + MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE - <n>.";
 MSG kPLSMismatchedBackingTextureSizes = "Mismatched pixel local storage backing texture sizes.";
 MSG kPLSMultisamplingEnabled = "Attempted to begin pixel local storage with a multisampled framebuffer.";
 MSG kPLSNNotEqualActivePlanes = "<n> != ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE";
 MSG kPLSNoAttachmentsNoTextureBacked = "Draw framebuffer has no attachments and no enabled, texture-backed pixel local storage planes.";
-MSG kPLSNullLoadOps = "loadops cannot null.";
+MSG kPLSParamsNULL = "<params> cannot be null.";
 MSG kPLSPlaneLessThanZero = "Plane cannot be less than 0.";
 MSG kPLSPlaneOutOfRange = "Plane must be less than GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.";
 MSG kPLSPlanesLessThanOne = "Planes must be greater than 0.";

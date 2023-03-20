@@ -8,6 +8,13 @@
     ],
     "features": [
         {
+            "name": "border_color_srgb",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers expect sRGB border color for sRGB texture formats"
+            ]
+        },
+        {
             "name": "mrt_perf_workaround",
             "category": "Workarounds",
             "description": [

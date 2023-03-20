@@ -216,7 +216,7 @@ class Texture final : public Resource,
     // case texture doesn't need format view usage flag.
     TextureRef createViewWithCompatibleFormat(MTLPixelFormat format);
     // Create a swizzled view
-    TextureRef createSwizzleView(const TextureSwizzleChannels &swizzle);
+    TextureRef createSwizzleView(MTLPixelFormat format, const TextureSwizzleChannels &swizzle);
 
     MTLTextureType textureType() const;
     MTLPixelFormat pixelFormat() const;
@@ -326,7 +326,7 @@ class Texture final : public Resource,
     // Create a texture view
     Texture(Texture *original, MTLPixelFormat format);
     Texture(Texture *original, MTLTextureType type, NSRange mipmapLevelRange, NSRange slices);
-    Texture(Texture *original, const TextureSwizzleChannels &swizzle);
+    Texture(Texture *original, MTLPixelFormat format, const TextureSwizzleChannels &swizzle);
 
     // Creates a view for a shader image binding.
     Texture(Texture *original,

@@ -2267,6 +2267,8 @@ def add_namespace(param_type):
         return param_type.replace('gl_', 'gl::')
     elif param_type.startswith('egl_'):
         return param_type.replace('egl_', 'egl::')
+    elif param_type.startswith('wl_'):
+        return param_type
     elif param_type in egl_namespace:
         return "egl::" + param_type
     else:
@@ -2934,10 +2936,6 @@ def main():
 
         header_includes = TEMPLATE_HEADER_INCLUDES.format(
             major=major_if_not_one, minor=minor_if_not_zero)
-
-        # We include the platform.h header since it undefines the conflicting MemoryBarrier macro.
-        if major_version == 3 and minor_version == 1:
-            header_includes += "\n#include \"common/platform.h\"\n"
 
         version_annotation = "%s%s" % (major_version, minor_if_not_zero)
         source_includes = TEMPLATE_SOURCES_INCLUDES.format(

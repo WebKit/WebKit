@@ -185,13 +185,13 @@ struct SwapchainImage : angle::NonCopyable
     SwapchainImage(SwapchainImage &&other);
     ~SwapchainImage();
 
-    vk::ImageHelper image;
+    std::unique_ptr<vk::ImageHelper> image;
     vk::ImageViewHelper imageViews;
     vk::Framebuffer framebuffer;
     vk::Framebuffer fetchFramebuffer;
     vk::Framebuffer framebufferResolveMS;
 
-    uint64_t mFrameNumber = 0;
+    uint64_t frameNumber = 0;
 };
 }  // namespace impl
 

@@ -95,6 +95,11 @@ class PbufferTest : public ANGLETest<>
     {
         glDeleteProgram(mTextureProgram);
 
+        destroyPbuffer();
+    }
+
+    void destroyPbuffer()
+    {
         if (mPbuffer)
         {
             EGLWindow *window = getEGLWindow();
@@ -106,10 +111,7 @@ class PbufferTest : public ANGLETest<>
     {
         EGLWindow *window = getEGLWindow();
 
-        if (mPbuffer)
-        {
-            eglDestroySurface(window->getDisplay(), mPbuffer);
-        }
+        destroyPbuffer();
 
         const EGLint pBufferSrgbAttributes[] = {
             EGL_WIDTH,
@@ -541,6 +543,71 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
     EXPECT_PIXEL_EQ(getWindowWidth() / 2, getWindowHeight() / 2, 255, 0, 255, 255);
 
     glDeleteTextures(1, &texture);
+}
+
+// Bind the Pbuffer to a texture, use that texture as Framebuffer color attachment and then
+// destroy framebuffer, texture and Pbuffer.
+TEST_P(PbufferTest, UseAsFramebufferColorThenDestroy)
+{
+    // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
+    // textures.
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
+
+    EGLWindow *window = getEGLWindow();
+
+    // Apply the window surface
+    window->makeCurrent();
+
+    // Create a texture and bind the Pbuffer to it
+    GLuint texture = 0;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    EXPECT_GL_NO_ERROR();
+
+    eglBindTexImage(window->getDisplay(), mPbuffer, EGL_BACK_BUFFER);
+    ASSERT_EGL_SUCCESS();
+
+    // Create Framebuffer and use texture as color attachment
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    ANGLE_SKIP_TEST_IF(status == GL_FRAMEBUFFER_UNSUPPORTED);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, status);
+    glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, static_cast<GLsizei>(mPbufferSize), static_cast<GLsizei>(mPbufferSize));
+    ASSERT_GL_NO_ERROR();
+
+    // Draw a quad in order to open a RenderPass
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glUseProgram(redProgram);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Unbind resources
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+    ASSERT_GL_NO_ERROR();
+
+    // Delete resources
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteTextures(1, &texture);
+    ASSERT_GL_NO_ERROR();
+
+    // Destroy Pbuffer
+    destroyPbuffer();
+
+    // Finish work
+    glFinish();
+    ASSERT_GL_NO_ERROR();
 }
 
 // Test that passing colorspace attributes do not generate EGL validation errors
