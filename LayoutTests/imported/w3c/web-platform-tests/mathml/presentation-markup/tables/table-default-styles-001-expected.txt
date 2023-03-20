@@ -1,0 +1,12 @@
+
+PASS Default math-style value on mtable
+PASS Default display value on mtable
+PASS Default display value on mtr
+PASS Default display value on mtd
+PASS Default text-align value on mtd
+PASS Default padding-left value on mtd
+PASS Default padding-right value on mtd
+PASS Default padding-top value on mtd
+PASS Default padding-bottom value on mtd
+PASS Bounding box is the same as mrow + mtd default padding
+

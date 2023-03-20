@@ -1,7 +1,11 @@
 
 PASS Operator dictionary chunk 1 - movablelimits
 PASS Operator dictionary chunk 2 - movablelimits
-PASS Operator dictionary chunk 3 - movablelimits
+FAIL Operator dictionary chunk 3 - movablelimits assert_approx_equals: Movablelimits property for ⨞ prefix should be 'true' expected 67 +/- 1 but got 77
 PASS Operator dictionary chunk 4 - movablelimits
-PASS Operator dictionary chunk 5 - movablelimits
-
+movablelimits for "⨞" (prefix):
+⨞
+ 
+ VS
+⨞
+ 

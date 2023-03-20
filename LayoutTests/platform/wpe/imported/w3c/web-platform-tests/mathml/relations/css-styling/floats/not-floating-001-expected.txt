@@ -1,0 +1,25 @@
+
+FAIL float child ignored in maction assert_approx_equals: inline position (child 1) expected -28 +/- 1 but got -8
+PASS float child ignored in menclose
+PASS float child ignored in merror
+PASS float child ignored in mfrac
+FAIL float child ignored in mi assert_approx_equals: inline size expected 85.59375 +/- 1 but got 57.59375
+PASS float child ignored in mmultiscripts
+FAIL float child ignored in mn assert_approx_equals: inline size expected 84 +/- 1 but got 56
+FAIL float child ignored in mo assert_approx_equals: inline size expected 92.875 +/- 1 but got 64.875
+PASS float child ignored in mover
+PASS float child ignored in mpadded
+PASS float child ignored in mphantom
+PASS float child ignored in mroot
+PASS float child ignored in mrow
+FAIL float child ignored in ms assert_approx_equals: inline size expected 84 +/- 1 but got 56
+PASS float child ignored in msqrt
+PASS float child ignored in mstyle
+PASS float child ignored in msub
+PASS float child ignored in msubsup
+PASS float child ignored in msup
+FAIL float child ignored in mtext assert_approx_equals: inline size expected 84 +/- 1 but got 56
+PASS float child ignored in munder
+PASS float child ignored in munderover
+FAIL float child ignored in semantics assert_approx_equals: inline position (child 1) expected -28 +/- 1 but got -8
+

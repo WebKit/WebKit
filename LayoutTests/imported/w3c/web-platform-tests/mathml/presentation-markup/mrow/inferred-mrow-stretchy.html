@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <title>Stretchy in inferred mrows</title>
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#horizontally-group-sub-expressions-mrow">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#radicals-msqrt-mroot">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#style-change-mstyle">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#error-message-merror">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#making-sub-expressions-invisible-mphantom">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#the-top-level-math-element">
+<link rel="help" href="https://w3c.github.io/mathml-core/#horizontally-group-sub-expressions-mrow">
+<link rel="help" href="https://w3c.github.io/mathml-core/#radicals-msqrt-mroot">
+<link rel="help" href="https://w3c.github.io/mathml-core/#style-change-mstyle">
+<link rel="help" href="https://w3c.github.io/mathml-core/#error-message-merror">
+<link rel="help" href="https://w3c.github.io/mathml-core/#making-sub-expressions-invisible-mphantom">
+<link rel="help" href="https://w3c.github.io/mathml-core/#the-top-level-math-element">
 <link rel="help" href="https://www.w3.org/TR/MathML3/chapter3.html#presm.menclose">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#adjust-space-around-content-mpadded">
-<link rel="help" href="https://mathml-refresh.github.io/mathml-core/#operator-fence-separator-or-accent-mo">
+<link rel="help" href="https://w3c.github.io/mathml-core/#adjust-space-around-content-mpadded">
+<link rel="help" href="https://w3c.github.io/mathml-core/#operator-fence-separator-or-accent-mo">
 <meta name="assert" content="Operators can stretch inside mrow-like elements.">
 <script src="/mathml/support/feature-detection.js"></script>
 <script src="/mathml/support/fonts.js"></script>
@@ -32,12 +32,12 @@
   window.addEventListener("load", () => { loadAllFonts().then(runTests); });
   function runTests()
   {
-      ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose", "Mpadded", "Unknown"].forEach((tag) => {
-          var mo = document.getElementById("mo" + tag);
+      ["Mrow", "Sqrt", "Style", "Error", "Phantom", "Math", "Menclose", "Mpadded", "Unknown", "Mtd", "None", "Mprescripts"].forEach((tag) => {
+          var mo = document.getElementById(`mo${tag}`);
           test(function() {
               assert_true(MathMLFeatureDetection.has_mspace());
               assert_greater_than_equal(mo.getBoundingClientRect().height, 100);
-          }, "operator stretching inside " + tag);
+          }, `operator stretching inside ${tag}`);
       });
       done();
   }
@@ -56,6 +56,9 @@
     <math><menclose notation="box"><mo id="moMenclose">&#x21A8;</mo><mspace width="1px" height="100px" style="background: magenta"></mspace></menclose></math>
     <math><mpadded lspace="10px"><mo id="moMpadded">&#x21A8;</mo><mspace width="1px" height="100px" style="background: magenta"></mspace></mpadded></math>
     <math><unknown><mo id="moUnknown">&#x21A8;</mo><mspace width="1px" height="100px" style="background: magenta"></mspace></unknown></math>
+    <math><mtable><mtr><mtd><mo id="moMtd">&#x21A8;</mo><mspace width="1px" height="100px" style="background: magenta"></mspace></mtd></mtr></mtable></math>
+    <math><none><mo id="moNone">&#x21A8;</mo><mspace width="1px" height="100px" style="background: magenta"></mspace></none></math>
+    <math><mprescripts><mo id="moMprescripts">&#x21A8;</mo><mspace width="1px" height="100px" style="background: magenta"></mspace></mprescripts></math>
   </p>
 </body>
 </html>

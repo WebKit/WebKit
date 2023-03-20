@@ -1,7 +1,6 @@
 
-PASS Operator dictionary chunk 1 - stretchy
-PASS Operator dictionary chunk 2 - stretchy
-PASS Operator dictionary chunk 3 - stretchy
-PASS Operator dictionary chunk 4 - stretchy
-PASS Operator dictionary chunk 5 - stretchy
+FAIL Operator dictionary chunk 1 - stretchy assert_true: stretchy is supported expected true got false
+FAIL Operator dictionary chunk 2 - stretchy assert_true: stretchy is supported expected true got false
+FAIL Operator dictionary chunk 3 - stretchy assert_true: stretchy is supported expected true got false
+FAIL Operator dictionary chunk 4 - stretchy assert_true: stretchy is supported expected true got false
 

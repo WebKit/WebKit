@@ -14,5 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/children-with-negative-block-sizes.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/children-with-negative-inline-sizes.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/chrome-bug-1287843.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/display-and-column-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/dynamic-height-within-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/fixed-pos-children.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/math-depth-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mathml-in-svg-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mmultiscripts-with-two-prescripts.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mtd-as-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/multicol-inside-ms.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/multicol-on-token-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/operator-and-first-letter.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/scrollbar-caching-assert.html
