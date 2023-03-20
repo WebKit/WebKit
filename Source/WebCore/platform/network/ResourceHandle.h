@@ -38,10 +38,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if USE(CURL)
-#include "CurlResourceHandleDelegate.h"
-#endif
-
 #if USE(CF)
 typedef const struct __CFData * CFDataRef;
 #endif
@@ -81,11 +77,6 @@ class SecurityOrigin;
 class FragmentedSharedBuffer;
 class SynchronousLoaderMessageQueue;
 class Timer;
-
-#if USE(CURL)
-class CurlRequest;
-class CurlResourceHandleDelegate;
-#endif
 
 class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationClient {
 public:
@@ -127,30 +118,12 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-#if OS(WINDOWS) && USE(CURL)
-    WEBCORE_EXPORT static void setHostAllowsAnyHTTPSCertificate(const String&);
-    static void setClientCertificateInfo(const String&, const String&, const String&);
-#endif
-
     bool shouldContentSniff() const;
     static bool shouldContentSniffURL(const URL&);
 
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const;
 
     WEBCORE_EXPORT static void forceContentSniffing();
-
-#if USE(CURL)
-    ResourceHandleInternal* getInternal() { return d.get(); }
-#endif
-
-#if USE(CURL)
-    bool cancelledOrClientless();
-    CurlResourceHandleDelegate* delegate();
-
-    void continueAfterDidReceiveResponse();
-    void willSendRequest();
-    void continueAfterWillSendRequest(ResourceRequest&&);
-#endif
 
     bool hasAuthenticationChallenge() const;
     void clearAuthentication();
@@ -229,23 +202,6 @@ private:
 
 #if PLATFORM(COCOA)
     NSURLRequest *applySniffingPoliciesIfNeeded(NSURLRequest *, bool shouldContentSniff, ContentEncodingSniffingPolicy);
-#endif
-
-#if USE(CURL)
-    enum class RequestStatus {
-        NewRequest,
-        ReusedRequest
-    };
-
-    void addCacheValidationHeaders(ResourceRequest&);
-    Ref<CurlRequest> createCurlRequest(ResourceRequest&&, RequestStatus = RequestStatus::NewRequest);
-
-    bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
-
-    std::optional<Credential> getCredential(const ResourceRequest&, bool);
-    void restartRequestWithCredential(const ProtectionSpace&, const Credential&);
-
-    void handleDataURL();
 #endif
 
     friend class ResourceHandleInternal;

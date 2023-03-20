@@ -34,7 +34,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include "SynchronousLoaderClient.h"
 
 namespace WebCore {
 
