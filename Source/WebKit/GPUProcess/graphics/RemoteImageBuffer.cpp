@@ -55,6 +55,12 @@ RemoteImageBuffer::~RemoteImageBuffer()
         context().restore();
 }
 
+void RemoteImageBuffer::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
+{
+    if (m_backend)
+        m_backend->setOwnershipIdentity(resourceOwner);
+}
+
 RefPtr<RemoteImageBuffer> RemoteImageBuffer::createTransfer(std::unique_ptr<ImageBufferBackend>&& backend, const ImageBufferBackend::Info& backendInfo, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto context = WebCore::ImageBufferCreationContext { nullptr

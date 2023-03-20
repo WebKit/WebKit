@@ -82,6 +82,7 @@ WebCore::SetNonVolatileResult ViewSnapshot::setVolatile(bool becomeVolatile)
 
     if (!m_surface)
         return WebCore::SetNonVolatileResult::Empty;
+
     return m_surface->setVolatile(becomeVolatile);
 }
 
@@ -104,10 +105,7 @@ RetainPtr<CGImageRef> ViewSnapshot::asImageForTesting()
         return nullptr;
 
     ASSERT(ViewSnapshotStore::singleton().disableSnapshotVolatilityForTesting());
-    // Note: here we will destroy the context immediately, which will read back
-    // the image to CPU. This should be fine for testing.
-    auto context = m_surface->createPlatformContext();
-    return m_surface->createImage(context.get());
+    return m_surface->createImage();
 }
 
 } // namespace WebKit

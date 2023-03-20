@@ -46,7 +46,7 @@ public:
 
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);
 
-    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*);
+    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&, PlatformDisplayID, IOSurfacePool*);
     ~ImageBufferIOSurfaceBackend();
     
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
@@ -56,7 +56,6 @@ public:
     void flushContext() override;
 
 protected:
-    CGContextRef ensurePlatformContext();
     IntSize backendSize() const override;
     
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) override;
@@ -85,7 +84,6 @@ protected:
     void prepareForExternalWrite();
 
     std::unique_ptr<IOSurface> m_surface;
-    RetainPtr<CGContextRef> m_platformContext;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
     const PlatformDisplayID m_displayID;

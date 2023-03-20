@@ -205,18 +205,17 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
 
     RefPtr<RemoteImageBuffer> imageBuffer;
 
-    WebCore::ImageBufferCreationContext creationContext { nullptr };
-#if HAVE(IOSURFACE)
-    creationContext.surfacePool = &ioSurfacePool();
-#endif
-    creationContext.resourceOwner = m_resourceOwner;
-
     if (renderingMode == RenderingMode::Accelerated) {
-        imageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
+        if (auto acceleratedImageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier)) {
+            // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
+            if (m_resourceOwner)
+                acceleratedImageBuffer->setOwnershipIdentity(m_resourceOwner);
+            imageBuffer = WTFMove(acceleratedImageBuffer);
+        }
     }
 
     if (!imageBuffer)
-        imageBuffer = RemoteImageBuffer::create<UnacceleratedImageBufferShareableBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
+        imageBuffer = RemoteImageBuffer::create<UnacceleratedImageBufferShareableBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier);
 
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
