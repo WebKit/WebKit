@@ -31,7 +31,7 @@
 
     undefined clear();
     DOMString initialize(DOMString newItem);
-    getter DOMString getItem(unsigned long index);
+    [RaisesException] getter DOMString getItem(unsigned long index);
     DOMString insertItemBefore(DOMString newItem, unsigned long index);
     DOMString replaceItem(DOMString newItem, unsigned long index);
     DOMString removeItem(unsigned long index);
