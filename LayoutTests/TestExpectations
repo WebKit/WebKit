@@ -5276,6 +5276,8 @@ imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ Du
 
 webkit.org/b/242498 svg/resource-invalidation/mask-resource-invalidation.html [ ImageOnlyFailure ]
 
+webkit.org/b/254143 [ Debug ] http/tests/security/cross-origin-cached-images-with-memory-pressure.html [ Skip ]
+
 # Plugins
 # FIXME: Remove these tests.
 plugins/ [ Skip ]
