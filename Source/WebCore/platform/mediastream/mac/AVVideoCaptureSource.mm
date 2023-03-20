@@ -92,7 +92,6 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     });
     return globalQueue;
 }
-
 class AVVideoPreset : public VideoPreset {
 public:
     static Ref<AVVideoPreset> create(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
@@ -101,13 +100,35 @@ public:
     }
 
     AVVideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
-        : VideoPreset(size, WTFMove(frameRateRanges), AVCapture)
-        , format(format)
+    : VideoPreset(size, WTFMove(frameRateRanges), AVCapture)
+    , format(format)
     {
     }
 
     RetainPtr<AVCaptureDeviceFormat> format;
 };
+
+std::optional<double> AVVideoCaptureSource::computeMinZoom() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_zoomScaleFactor == 1.0)
+        return { };
+    return 1.0 / m_zoomScaleFactor;
+#else
+    return { };
+#endif
+}
+
+std::optional<double> AVVideoCaptureSource::computeMaxZoom(AVCaptureDeviceFormat* format) const
+{
+#if PLATFORM(IOS_FAMILY)
+    // We restrict zoom for now as it might require elevated permissions.
+    return std::min([format videoMaxZoomFactor], 4.0) / m_zoomScaleFactor;
+#else
+    UNUSED_PARAM(format);
+    return { };
+#endif
+}
 
 CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
@@ -125,10 +146,22 @@ CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, M
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
+static double cameraZoomScaleFactor(AVCaptureDeviceType deviceType)
+{
+#if PLATFORM(IOS_FAMILY)
+    return (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera() && deviceType == AVCaptureDeviceTypeBuiltInTripleCamera)
+        || (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera() && deviceType == AVCaptureDeviceTypeBuiltInDualWideCamera) ? 2.0 : 1.0;
+#else
+    UNUSED_PARAM(deviceType);
+    return 1.0;
+#endif
+}
+
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(avDevice)
+    , m_zoomScaleFactor(cameraZoomScaleFactor([avDevice deviceType]))
     , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)
 {
     [m_device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
@@ -343,6 +376,7 @@ void AVVideoCaptureSource::setFrameRateWithPreset(double requestedFrameRate, Ref
     auto* avPreset = preset ? downcast<AVVideoPreset>(preset.get()) : nullptr;
     m_currentPreset = avPreset;
     m_currentFrameRate = requestedFrameRate;
+    m_currentZoom = m_zoomScaleFactor * requestedZoom;
 
     setSessionSizeAndFrameRate();
 }
@@ -664,7 +698,9 @@ void AVVideoCaptureSource::generatePresets()
         for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
-        presets.append(AVVideoPreset::create(size, WTFMove(frameRates), format));
+        VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format) };
+        preset.setFormat(format);
+        presets.append(WTFMove(preset));
     }
 
     setSupportedPresets(WTFMove(presets));
