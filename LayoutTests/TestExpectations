@@ -1015,9 +1015,9 @@ http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Skip ]
 # Reenable it when having a custom gc exposed in service workers.
 [ Debug ] http/wpt/service-workers/fetchEvent.https.html [ Skip ]
 
-webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.html [ Failure ]
-webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload.https.html [ Failure ]
-webkit.org/b/248743 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Failure ]
+webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.html [ Pass Failure ]
+webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload.https.html [ Pass Failure ]
+webkit.org/b/248743 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Pass Failure ]
 webkit.org/b/248743 http/wpt/service-workers/file-upload.html [ Pass Failure ]
 
 [ Debug ] http/tests/workers/worker-messageport-2.html [ Slow ]
