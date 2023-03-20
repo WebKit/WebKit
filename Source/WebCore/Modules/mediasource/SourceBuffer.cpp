@@ -91,6 +91,7 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_pendingRemoveStart(MediaTime::invalidTime())
     , m_pendingRemoveEnd(MediaTime::invalidTime())
     , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
+    , m_buffered(TimeRanges::create())
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_private->sourceBufferLogger())
     , m_logIdentifier(m_private->sourceBufferLogIdentifier())
@@ -111,7 +112,7 @@ SourceBuffer::~SourceBuffer()
     m_private->setClient(nullptr);
 }
 
-ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered() const
+ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
 {
     // Section 3.1 buffered attribute steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#attributes-1
@@ -120,8 +121,12 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered() const
     if (isRemoved())
         return Exception { InvalidStateError };
 
-    // 2. Return a new static normalized TimeRanges object for the media segments buffered.
-    return TimeRanges::create(m_private->buffered());
+    // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute, then update the current value of this attribute to intersection ranges.
+    if (m_buffered->ranges() != m_private->buffered())
+        m_buffered = TimeRanges::create(m_private->buffered());
+
+    // 6. Return the current value of this attribute.
+    return Ref { m_buffered };
 }
 
 double SourceBuffer::timestampOffset() const
