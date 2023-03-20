@@ -71,8 +71,8 @@ public:
     static bool validateImageCopyTexture(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static bool validateTextureCopyRange(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static bool refersToSingleAspect(WGPUTextureFormat, WGPUTextureAspect);
-    static bool isValidImageCopySource(WGPUTextureFormat, WGPUTextureAspect);
-    static bool isValidImageCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
+    static bool isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
+    static bool isValidDepthStencilCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
     static bool validateLinearTextureData(const WGPUTextureDataLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
     static MTLTextureUsage usage(WGPUTextureUsageFlags);
     static MTLPixelFormat pixelFormat(WGPUTextureFormat);

@@ -285,13 +285,14 @@ static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const 
     if (!Texture::refersToSingleAspect(texture.format(), destination.aspect))
         return false;
 
-    if (!Texture::isValidImageCopyDestination(texture.format(), destination.aspect))
-        return false;
-
     auto aspectSpecificFormat = texture.format();
 
-    if (Texture::isDepthOrStencilFormat(texture.format()))
+    if (Texture::isDepthOrStencilFormat(texture.format())) {
+        if (!Texture::isValidDepthStencilCopyDestination(texture.format(), destination.aspect))
+            return false;
+
         aspectSpecificFormat = Texture::aspectSpecificFormat(texture.format(), destination.aspect);
+    }
 
     if (!Texture::validateLinearTextureData(dataLayout, dataByteSize, aspectSpecificFormat, size))
         return false;
