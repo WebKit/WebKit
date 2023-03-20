@@ -65,6 +65,7 @@ http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ S
 http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-applePayLaterMode.https.html [ Skip ]
 http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]

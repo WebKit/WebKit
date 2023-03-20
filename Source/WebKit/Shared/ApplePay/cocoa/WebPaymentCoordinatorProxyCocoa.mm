@@ -234,6 +234,27 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
 
 #endif // HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 
+#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+
+static PKApplePayLaterMode toPKApplePayLaterMode(WebCore::ApplePayLaterMode applePayLaterMode)
+{
+    switch (applePayLaterMode) {
+    case WebCore::ApplePayLaterMode::Enabled:
+        return PKApplePayLaterModeEnabled;
+
+    case WebCore::ApplePayLaterMode::DisabledMerchantIneligible:
+        return PKApplePayLaterModeDisabledMerchantIneligible;
+
+    case WebCore::ApplePayLaterMode::DisabledItemIneligible:
+        return PKApplePayLaterModeDisabledItemIneligible;
+
+    case WebCore::ApplePayLaterMode::DisabledRecurringTransaction:
+        return PKApplePayLaterModeDisabledRecurringTransaction;
+    }
+}
+
+#endif // HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
     if (strings.isEmpty())
@@ -336,6 +357,11 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
     if (auto& shippingContactEditingMode = paymentRequest.shippingContactEditingMode())
         [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
+#endif
+
+#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+    if (auto& applePayLaterMode = paymentRequest.applePayLaterMode())
+        [result setApplePayLaterMode:toPKApplePayLaterMode(*applePayLaterMode)];
 #endif
 
 #if HAVE(PASSKIT_RECURRING_PAYMENTS)

@@ -29,6 +29,9 @@
 #if defined(ENABLE_APPLE_PAY_LATER) && ENABLE_APPLE_PAY_LATER
     "applePayLater",
 #endif
+#if defined(ENABLE_APPLE_PAY_LATER_MODE) && ENABLE_APPLE_PAY_LATER_MODE
+    "applePayLaterMode",
+#endif
 #if defined(ENABLE_APPLE_PAY_PAYMENT_ORDER_DETAILS) && ENABLE_APPLE_PAY_PAYMENT_ORDER_DETAILS
     "authorizationResultOrderDetails",
 #endif

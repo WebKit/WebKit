@@ -67,6 +67,10 @@ struct ApplePayRequestBase {
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
     std::optional<ApplePayShippingContactEditingMode> shippingContactEditingMode;
 #endif
+
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    std::optional<ApplePayLaterMode> applePayLaterMode;
+#endif
 };
 
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document&, unsigned version, ApplePayRequestBase&, const PaymentCoordinator&);
