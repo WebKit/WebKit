@@ -71,7 +71,7 @@ public:
 
     virtual ~RemoteGPU();
 
-    void stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection);
+    void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
