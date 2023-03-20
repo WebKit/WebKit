@@ -61,7 +61,10 @@ ComputePassEncoder::ComputePassEncoder(Device& device)
 {
 }
 
-ComputePassEncoder::~ComputePassEncoder() = default;
+ComputePassEncoder::~ComputePassEncoder()
+{
+    [m_computeCommandEncoder endEncoding];
+}
 
 void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
 {
@@ -87,6 +90,7 @@ void ComputePassEncoder::endPass()
         [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
     [m_computeCommandEncoder endEncoding];
+    m_computeCommandEncoder = nil;
 }
 
 void ComputePassEncoder::endPipelineStatisticsQuery()
