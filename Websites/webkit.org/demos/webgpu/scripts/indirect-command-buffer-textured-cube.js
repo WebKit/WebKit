@@ -240,7 +240,7 @@ async function helloCube() {
         secondsBuffer.set([seconds*10 * (6.28318530718 / 60.0),
                           seconds*5 * (6.28318530718 / 60.0),
                           seconds*1 * (6.28318530718 / 60.0)]);
-        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer, 0, 12);
+        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer);
 
         const gpuContext = canvas.getContext("webgpu");
         
