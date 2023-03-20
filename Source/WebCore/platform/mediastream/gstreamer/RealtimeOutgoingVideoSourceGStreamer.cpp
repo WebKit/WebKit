@@ -28,8 +28,8 @@
 
 #include <wtf/glib/WTFGType.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_video_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_outgoing_video_debug
 
 namespace WebCore {
 
@@ -42,6 +42,10 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(RealtimeOutgoingVideoSourceHolder)
 RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
     : RealtimeOutgoingMediaSourceGStreamer(mediaStreamId, track)
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_outgoing_video_debug, "webkitwebrtcoutgoingvideo", 0, "WebKit WebRTC outgoing video");
+    });
     registerWebKitGStreamerElements();
 
     static Atomic<uint64_t> sourceCounter = 0;
