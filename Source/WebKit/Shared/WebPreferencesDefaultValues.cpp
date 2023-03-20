@@ -206,13 +206,13 @@ bool defaultRunningBoardThrottlingEnabled()
 #endif
 }
 
-bool defaultShouldTakeSuspendedAssertions()
+bool defaultShouldDropSuspendedAssertionAfterDelay()
 {
 #if PLATFORM(COCOA)
     static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent);
-    return !newSDK;
+    return newSDK;
 #else
-    return true;
+    return false;
 #endif
 }
 

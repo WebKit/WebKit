@@ -95,7 +95,7 @@ bool defaultGamepadVibrationActuatorEnabled();
 #endif
 
 bool defaultRunningBoardThrottlingEnabled();
-bool defaultShouldTakeSuspendedAssertions();
+bool defaultShouldDropSuspendedAssertionAfterDelay();
 bool defaultShowModalDialogEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();

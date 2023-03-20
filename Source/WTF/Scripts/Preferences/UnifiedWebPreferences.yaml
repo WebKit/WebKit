@@ -5789,6 +5789,19 @@ ShouldDisplayTextDescriptions:
     WebCore:
       default: false
 
+ShouldDropSuspendedAssertionAfterDelay:
+  type: bool
+  status: internal
+  humanReadableName: "Drop Suspended Assertion After Delay"
+  humanReadableDescription: "Causes processes to fully suspend after a delay"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultShouldDropSuspendedAssertionAfterDelay()
+    WebCore:
+      default: false
+
 ShouldEnableTextAutosizingBoost:
   type: bool
   status: embedder
@@ -5875,7 +5888,7 @@ ShouldTakeSuspendedAssertions:
     WebKitLegacy:
       default: true
     WebKit:
-      default: WebKit::defaultShouldTakeSuspendedAssertions()
+      default: true
     WebCore:
       default: true
 
