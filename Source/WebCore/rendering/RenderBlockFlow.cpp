@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2014-2015 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Google Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -966,6 +966,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.
         LayoutUnit fb = std::max(previousFloatLogicalBottom, lowestFloatLogicalBottom());
+        fb = std::max(fb, childBlockFlow->lowestFloatLogicalBottom());
         if (fb > logicalTopEstimate)
             markDescendantsWithFloats = true;
     }

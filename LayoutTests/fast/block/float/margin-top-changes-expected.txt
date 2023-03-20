@@ -1,0 +1,2 @@
+
+PASS crbug.com/711938: Sibling elements notice when a float no longer overlaps due to margin top changing.
