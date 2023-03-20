@@ -435,6 +435,9 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
 
 void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)
 {
+    if (!event.target() || !event.target()->hasEventListeners(event.type()))
+        return;
+
     m_pendingAnimationEvents.append(event);
     if (m_shouldScheduleAnimationResolutionForNewPendingEvents)
         scheduleAnimationResolution();
