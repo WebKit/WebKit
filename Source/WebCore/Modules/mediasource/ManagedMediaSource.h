@@ -54,8 +54,7 @@ private:
     explicit ManagedMediaSource(ScriptExecutionContext&);
     void monitorSourceBuffers() final;
     bool isBuffered(const PlatformTimeRanges&) const;
-    void startStreaming();
-    void endStreaming();
+    void setStreaming(bool);
     bool m_streaming { false };
     std::optional<double> m_lowThreshold;
     std::optional<double> m_highThreshold;

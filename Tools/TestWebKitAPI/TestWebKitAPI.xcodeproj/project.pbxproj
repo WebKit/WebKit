@@ -1003,6 +1003,7 @@
 		CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD577798211CDE8F001B371E /* web-audio-only.html */; };
 		CD57779C211CE91F001B371E /* audio-with-web-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD57779A211CE6B7001B371E /* audio-with-web-audio.html */; };
 		CD57779D211CE91F001B371E /* video-with-audio-and-web-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */; };
+		51E1007929C6D947009CEE99 /* file-with-managedmse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E1007129C6D891009CEE99 /* file-with-managedmse.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
 		CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5FF4962162E27E004BD86F /* ISOBox.cpp */; };
@@ -1573,6 +1574,7 @@
 				F41AB9A31EF4696B0083FA08 /* file-uploading.html in Copy Resources */,
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
 				49D2E5C22731E3BC00BCCAED /* file-with-iframe.html in Copy Resources */,
+				51E1007929C6D947009CEE99 /* file-with-managedmse.html in Copy Resources */,
 				CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */,
 				524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
@@ -3213,6 +3215,7 @@
 		CD577798211CDE8F001B371E /* web-audio-only.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-audio-only.html"; sourceTree = "<group>"; };
 		CD57779A211CE6B7001B371E /* audio-with-web-audio.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "audio-with-web-audio.html"; sourceTree = "<group>"; };
 		CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "video-with-audio-and-web-audio.html"; sourceTree = "<group>"; };
+		51E1007129C6D891009CEE99 /* file-with-managedmse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-managedmse.html"; sourceTree = "<group>"; };
 		CD59F53219E910AA00CF1835 /* file-with-mse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-mse.html"; sourceTree = "<group>"; };
 		CD59F53319E910BC00CF1835 /* test-mse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test-mse.mp4"; sourceTree = "<group>"; };
 		CD5FF4962162E27E004BD86F /* ISOBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOBox.cpp; sourceTree = "<group>"; };
@@ -5248,6 +5251,7 @@
 				07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
+				51E1007129C6D891009CEE99 /* file-with-managedmse.html */,
 				CD59F53219E910AA00CF1835 /* file-with-mse.html */,
 				524BBC9B19DF3714002F1AF1 /* file-with-video.html */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,

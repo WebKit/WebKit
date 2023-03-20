@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,5 +82,53 @@ TEST(WebKit, MSEHasMediaStreamingActivity)
     EXPECT_FALSE(isMediaStreaming);
     notify_cancel(token);
 }
+
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+TEST(WebKit, ManagedMSEHasMediaStreamingActivity)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration preferences] _setMediaSourceEnabled:YES];
+    [[configuration preferences] _setManagedMediaSourceEnabled:YES];
+    [[configuration preferences] _setAllowFileAccessFromFileURLs:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"file-with-managedmse"];
+
+    // Bail out of the test early if the platform does not support MSE.
+    if (![[webView objectByEvaluatingJavaScript:@"window.MediaSource !== undefined"] boolValue])
+        return;
+    if (![[webView objectByEvaluatingJavaScript:@"window.ManagedMediaSource !== undefined"] boolValue])
+        return;
+    // Test is only valid if either of those format is supported.
+    auto typeSupported = [[webView objectByEvaluatingJavaScript:@"isMP4Supported() || isWebMVP9Supported() || isWebMOpusSupported()"] boolValue];
+    if (!typeSupported)
+        return;
+    int token = NOTIFY_TOKEN_INVALID;
+    if (notify_register_check(WebKitMediaStreamingActivity, &token) != NOTIFY_STATUS_OK)
+        return;
+
+    __block bool isMediaStreamingChanged = false;
+    __block bool isMediaStreaming = false;
+
+    int status = notify_register_dispatch(WebKitMediaStreamingActivity, &token, dispatch_get_main_queue(), ^(int token) {
+        uint64_t state = 0;
+        notify_get_state(token, &state);
+        isMediaStreamingChanged = true;
+        isMediaStreaming= !!state;
+    });
+
+    if (status != NOTIFY_STATUS_OK)
+        return;
+
+    [webView objectByEvaluatingJavaScript:@"loadVideo()"];
+    Util::run(&isMediaStreamingChanged);
+    EXPECT_TRUE(isMediaStreaming);
+
+    isMediaStreamingChanged = false;
+    [webView objectByEvaluatingJavaScript:@"startStreaming()"];
+    Util::run(&isMediaStreamingChanged);
+    EXPECT_FALSE(isMediaStreaming);
+    notify_cancel(token);
+}
+#endif
 
 } // namespace TestWebKitAPI
