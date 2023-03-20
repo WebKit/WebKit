@@ -344,7 +344,7 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& deco
 #if ENABLE(APPLE_PAY_LATER_MODE)
     std::optional<std::optional<WebCore::ApplePayLaterMode>> applePayLaterMode;
     decoder >> applePayLaterMode;
-    if !(applePayLaterMode)
+    if (!applePayLaterMode)
         return false;
     request.setApplePayLaterMode(WTFMove(*applePayLaterMode));
 #endif
