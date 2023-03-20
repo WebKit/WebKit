@@ -119,6 +119,9 @@ private:
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
 
+    std::optional<double> computeMinZoom() const;
+    std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
+
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
@@ -138,6 +141,11 @@ private:
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
 
     double m_currentFrameRate;
+<<<<<<< HEAD
+=======
+    double m_currentZoom { 1 };
+    double m_zoomScaleFactor { 1 };
+>>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
     bool m_interrupted { false };
     bool m_isRunning { false };
 
