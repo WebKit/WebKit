@@ -120,6 +120,9 @@ private:
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
 
+    std::optional<double> computeMinZoom() const;
+    std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
+
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
@@ -141,6 +144,7 @@ private:
 
     double m_currentFrameRate;
     double m_currentZoom { 1 };
+    double m_zoomScaleFactor { 1 };
     bool m_interrupted { false };
     bool m_isRunning { false };
 
