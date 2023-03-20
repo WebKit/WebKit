@@ -783,10 +783,10 @@ TEST_P(EGLContextSharingTestNoFixture, InactiveThreadDoesntPreventCleanup)
     {
         Start,
         Thread0Initialize,
-        Thread0MakeCurrent,
         Thread1MakeCurrent,
-        Thread0Terminate,
+        Thread0MakeCurrent,
         Thread1Render,
+        Thread0Terminate,
         Finish,
         Abort,
     };

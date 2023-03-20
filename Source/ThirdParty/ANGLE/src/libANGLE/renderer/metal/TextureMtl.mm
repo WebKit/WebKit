@@ -574,12 +574,12 @@ GLenum OverrideSwizzleValue(const gl::Context *context,
                             const mtl::Format &format,
                             const gl::InternalFormat &glInternalFormat)
 {
-    if (format.actualAngleFormat().depthBits)
+    if (format.actualAngleFormat().hasDepthOrStencilBits())
     {
         ASSERT(!format.swizzled);
         if (context->getState().getClientMajorVersion() >= 3 && glInternalFormat.sized)
         {
-            // ES 3.0 spec: treat depth texture as red texture during sampling.
+            // ES 3.1 spec: treat depth and stencil textures as red textures during sampling.
             if (swizzle == GL_GREEN || swizzle == GL_BLUE)
             {
                 return GL_NONE;
@@ -656,8 +656,8 @@ void TextureMtl::releaseTexture(bool releaseImages, bool releaseTextureObjectsOn
         retainImageDefinitions();
     }
 
-    mNativeTexture             = nullptr;
-    mNativeSwizzleSamplingView = nullptr;
+    mNativeTexture                    = nullptr;
+    mNativeSwizzleStencilSamplingView = nullptr;
 
     // Clear render target cache for each texture's image. We don't erase them because they
     // might still be referenced by a framebuffer.
@@ -1487,9 +1487,10 @@ angle::Result TextureMtl::syncState(const gl::Context *context,
             case gl::Texture::DIRTY_BIT_SWIZZLE_GREEN:
             case gl::Texture::DIRTY_BIT_SWIZZLE_BLUE:
             case gl::Texture::DIRTY_BIT_SWIZZLE_ALPHA:
+            case gl::Texture::DIRTY_BIT_DEPTH_STENCIL_TEXTURE_MODE:
             {
-                // Recreate swizzle view.
-                mNativeSwizzleSamplingView = nullptr;
+                // Recreate swizzle/stencil view.
+                mNativeSwizzleStencilSamplingView = nullptr;
             }
             break;
             default:
@@ -1516,14 +1517,21 @@ angle::Result TextureMtl::bindToShader(const gl::Context *context,
     float maxLodClamp;
     id<MTLSamplerState> samplerState;
 
-    if (!mNativeSwizzleSamplingView)
+    if (!mNativeSwizzleStencilSamplingView)
     {
 #if ANGLE_MTL_SWIZZLE_AVAILABLE
-        ContextMtl *contextMtl = mtl::GetImpl(context);
+        ContextMtl *contextMtl             = mtl::GetImpl(context);
+        const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
 
-        if ((mState.getSwizzleState().swizzleRequired() || mFormat.actualAngleFormat().depthBits ||
-             mFormat.swizzled) &&
-            contextMtl->getDisplay()->getFeatures().hasTextureSwizzle.enabled)
+        // Sampling from unused channels of depth and stencil textures is undefined in Metal.
+        // ANGLE relies on swizzled views to enforce values required by OpenGL ES specs. Some
+        // drivers fail to sample from a swizzled view of a stencil texture so skip this step.
+        const bool skipStencilSwizzle = mFormat.actualFormatId == angle::FormatID::S8_UINT &&
+                                        features.avoidStencilTextureSwizzle.enabled;
+        if (!skipStencilSwizzle &&
+            (mState.getSwizzleState().swizzleRequired() ||
+             mFormat.actualAngleFormat().hasDepthOrStencilBits() || mFormat.swizzled) &&
+            features.hasTextureSwizzle.enabled)
         {
             const gl::InternalFormat &glInternalFormat = *mState.getBaseLevelDesc().format.info;
 
@@ -1537,12 +1545,28 @@ angle::Result TextureMtl::bindToShader(const gl::Context *context,
                 mtl::GetTextureSwizzle(OverrideSwizzleValue(
                     context, mState.getSwizzleState().swizzleAlpha, mFormat, glInternalFormat)));
 
-            mNativeSwizzleSamplingView = mNativeTexture->createSwizzleView(swizzle);
+            MTLPixelFormat format = mNativeTexture->pixelFormat();
+            if (mState.isStencilMode())
+            {
+                if (format == MTLPixelFormatDepth32Float_Stencil8)
+                {
+                    format = MTLPixelFormatX32_Stencil8;
+                }
+#    if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+                else if (format == MTLPixelFormatDepth24Unorm_Stencil8)
+                {
+                    format = MTLPixelFormatX24_Stencil8;
+                }
+#    endif
+            }
+
+            mNativeSwizzleStencilSamplingView = mNativeTexture->createSwizzleView(format, swizzle);
         }
         else
 #endif  // ANGLE_MTL_SWIZZLE_AVAILABLE
         {
-            mNativeSwizzleSamplingView = mNativeTexture;
+            mNativeSwizzleStencilSamplingView =
+                mState.isStencilMode() ? mNativeTexture->getStencilView() : mNativeTexture;
         }
     }
 
@@ -1562,7 +1586,7 @@ angle::Result TextureMtl::bindToShader(const gl::Context *context,
 
     minLodClamp = std::max(minLodClamp, 0.f);
 
-    cmdEncoder->setTexture(shaderType, mNativeSwizzleSamplingView, textureSlotIndex);
+    cmdEncoder->setTexture(shaderType, mNativeSwizzleStencilSamplingView, textureSlotIndex);
     cmdEncoder->setSamplerState(shaderType, samplerState, minLodClamp, maxLodClamp,
                                 samplerSlotIndex);
 

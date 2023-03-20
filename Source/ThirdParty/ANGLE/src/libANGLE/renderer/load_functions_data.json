@@ -865,6 +865,12 @@
     "R16G16B16A16_UNORM": {
       "GL_UNSIGNED_SHORT": "LoadToNative3To4<GLushort, 0xFFFF>"
     },
+    "R32G32B32_FLOAT": {
+      "GL_UNSIGNED_SHORT": "LoadToFloat<GLushort, 3, 3, true>"
+    },
+    "R32G32B32A32_FLOAT": {
+      "GL_UNSIGNED_SHORT": "LoadToFloat<GLushort, 3, 4, true>"
+    },
     "R16G16B16_UNORM": {
       "GL_UNSIGNED_SHORT": "LoadToNative<GLushort, 3>"
     }
@@ -887,6 +893,12 @@
   "GL_RGB16_SNORM_EXT": {
     "R16G16B16A16_SNORM": {
       "GL_SHORT": "LoadToNative3To4<GLushort, 0x7FFF>"
+    },
+    "R32G32B32_FLOAT": {
+      "GL_SHORT": "LoadToFloat<GLshort, 3, 3, true>"
+    },
+    "R32G32B32A32_FLOAT": {
+      "GL_SHORT": "LoadToFloat<GLshort, 3, 4, true>"
     },
     "R16G16B16_SNORM": {
       "GL_SHORT": "LoadToNative<GLushort, 3>"

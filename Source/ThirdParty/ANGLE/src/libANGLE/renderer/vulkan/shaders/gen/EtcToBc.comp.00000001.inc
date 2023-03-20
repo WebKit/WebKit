@@ -594,7 +594,8 @@ constexpr uint8_t kEtcToBc_comp_00000001[] = {
 // }
 //
 // uint packColorToRGB565(uvec3 color){
-//     return((color . r >> 3)<< 11)|((color . g >> 2)<< 5)|(color . b >> 3);
+//     uvec3 quant = uvec3(round(vec3(color)* vec3(31.0 / 255.0, 63.0 / 255.0, 31.0 / 255.0)));
+//     return(quant . r << 11)|(quant . g << 5)| quant . b;
 // }
 //
 // void swap(inout uint a, inout uint b){

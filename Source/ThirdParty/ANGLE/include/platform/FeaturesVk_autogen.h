@@ -61,6 +61,13 @@ struct FeaturesVk : FeatureSetBase
         "Enable uploading the previously defined mutable mipmap texture.", &members,
         "https://anglebug.com/7308"};
 
+    FeatureInfo useVmaForImageSuballocation = {
+        "useVmaForImageSuballocation",
+        FeatureCategory::VulkanFeatures,
+        "Utilize VMA for image memory suballocation.",
+        &members,
+    };
+
     FeatureInfo supportsMemoryBudget = {
         "supportsMemoryBudget",
         FeatureCategory::VulkanFeatures,
@@ -837,6 +844,13 @@ struct FeaturesVk : FeatureSetBase
                                        "VkDevice supports the VK_KHR_bind_memory2 extension",
                                        &members, "https://anglebug.com/4966"};
 
+    FeatureInfo supportsSamplerMirrorClampToEdge = {
+        "supportsSamplerMirrorClampToEdge",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_sampler_mirror_clamp_to_edge extension",
+        &members,
+    };
+
     FeatureInfo preferSubmitOnAnySamplesPassedQueryEnd = {
         "preferSubmitOnAnySamplesPassedQueryEnd", FeatureCategory::VulkanWorkarounds,
         "Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance "
@@ -847,6 +861,19 @@ struct FeaturesVk : FeatureSetBase
         "forceWaitForSubmissionToCompleteForQueryResult", FeatureCategory::VulkanWorkarounds,
         "Force wait for submission to complete before calling getQueryResult(wait).", &members,
         "https://issuetracker.google.com/253522366"};
+
+    FeatureInfo asyncCommandBufferReset = {"asyncCommandBufferReset",
+                                           FeatureCategory::VulkanFeatures,
+                                           "Reset command buffer in async thread.", &members,
+                                           "https://issuetracker.google.com/255411748"};
+
+    FeatureInfo useResetCommandBufferBitForSecondaryPools = {
+        "useResetCommandBufferBitForSecondaryPools",
+        FeatureCategory::VulkanWorkarounds,
+        "Use VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT for initializing "
+        "SecondaryCommandPools when using VulkanSecondaryCommandBuffer. ",
+        &members,
+    };
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

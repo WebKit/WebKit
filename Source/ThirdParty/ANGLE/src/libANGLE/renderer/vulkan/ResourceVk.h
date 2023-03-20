@@ -255,6 +255,22 @@ class ReadWriteResource : public Resource
     // Track write use of the object. Only updated for setWriteQueueSerial().
     ResourceUse mWriteUse;
 };
+
+// Adds "void release(RendererVk *)" method for collecting garbage.
+// Enables RendererScoped<> for classes that support DeviceScoped<>.
+template <class T>
+class ReleasableResource final : public Resource
+{
+  public:
+    // Calls collectGarbage() on the object.
+    void release(RendererVk *renderer);
+
+    const T &get() const { return mObject; }
+    T &get() { return mObject; }
+
+  private:
+    T mObject;
+};
 }  // namespace vk
 }  // namespace rx
 

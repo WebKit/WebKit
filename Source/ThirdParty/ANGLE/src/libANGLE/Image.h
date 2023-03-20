@@ -93,7 +93,7 @@ class ExternalImageSibling : public ImageSibling
 
     void onDestroy(const egl::Display *display);
 
-    Error initialize(const Display *display);
+    Error initialize(const Display *display, const gl::Context *context);
 
     gl::Extents getAttachmentSize(const gl::ImageIndex &imageIndex) const override;
     gl::Format getAttachmentFormat(GLenum binding, const gl::ImageIndex &imageIndex) const override;
@@ -191,7 +191,7 @@ class Image final : public RefCountObject, public LabeledObject
     GLuint getLevelCount() const;
     bool hasProtectedContent() const;
 
-    Error initialize(const Display *display);
+    Error initialize(const Display *display, const gl::Context *context);
 
     rx::ImageImpl *getImplementation() const;
 
@@ -217,6 +217,8 @@ class Image final : public RefCountObject, public LabeledObject
     ImageState mState;
     rx::ImageImpl *mImplementation;
     bool mOrphanedAndNeedsInit;
+    bool mIsTexturable = false;
+    bool mIsRenderable = false;
 };
 }  // namespace egl
 

@@ -55,6 +55,12 @@ Sync::Sync(rx::EGLImplFactory *factory,
     {
         mCondition = EGL_SYNC_NATIVE_FENCE_SIGNALED_ANDROID;
     }
+
+    // Per extension spec: Signaling Condition.
+    if (mType == EGL_SYNC_METAL_SHARED_EVENT_ANGLE)
+    {
+        mCondition = attribs.getAsInt(EGL_SYNC_CONDITION, EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR);
+    }
 }
 
 void Sync::onDestroy(const Display *display)

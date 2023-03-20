@@ -48,6 +48,13 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
             WriteParamValueReplay<ParamType::TClientVertexArrayType>(
                 os, call, param.value.ClientVertexArrayTypeVal);
             break;
+        case ParamType::TClipDepthMode:
+            WriteParamValueReplay<ParamType::TClipDepthMode>(os, call,
+                                                             param.value.ClipDepthModeVal);
+            break;
+        case ParamType::TClipOrigin:
+            WriteParamValueReplay<ParamType::TClipOrigin>(os, call, param.value.ClipOriginVal);
+            break;
         case ParamType::TCompositorTiming:
             WriteParamValueReplay<ParamType::TCompositorTiming>(os, call,
                                                                 param.value.CompositorTimingVal);
@@ -667,6 +674,10 @@ const char *ParamTypeToString(ParamType paramType)
         case ParamType::TBufferUsage:
             return "GLenum";
         case ParamType::TClientVertexArrayType:
+            return "GLenum";
+        case ParamType::TClipDepthMode:
+            return "GLenum";
+        case ParamType::TClipOrigin:
             return "GLenum";
         case ParamType::TCompositorTiming:
             return "GLenum";

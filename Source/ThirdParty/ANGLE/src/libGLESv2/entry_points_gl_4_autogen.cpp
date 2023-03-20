@@ -3380,16 +3380,19 @@ void GL_APIENTRY GL_ClipControl(GLenum origin, GLenum depth)
 
     if (context)
     {
+        ClipOrigin originPacked   = PackParam<ClipOrigin>(origin);
+        ClipDepthMode depthPacked = PackParam<ClipDepthMode>(depth);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
              (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLClipControl) &&
-              ValidateClipControl(context, angle::EntryPoint::GLClipControl, origin, depth)));
+              ValidateClipControl(context, angle::EntryPoint::GLClipControl, originPacked,
+                                  depthPacked)));
         if (isCallValid)
         {
-            context->clipControl(origin, depth);
+            context->clipControl(originPacked, depthPacked);
         }
-        ANGLE_CAPTURE_GL(ClipControl, isCallValid, context, origin, depth);
+        ANGLE_CAPTURE_GL(ClipControl, isCallValid, context, originPacked, depthPacked);
     }
     else
     {

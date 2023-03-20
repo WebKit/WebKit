@@ -1085,9 +1085,8 @@ static bool IsValidES3CopyTexImageCombination(const InternalFormat &textureForma
         return false;
     }
 
-    // SNORM is not supported (e.g. is not in the tables of "effective internal format" that
-    // correspond to internal formats.
-    if (textureFormatInfo.componentType == GL_SIGNED_NORMALIZED)
+    if ((textureFormatInfo.componentType == GL_SIGNED_NORMALIZED) !=
+        (framebufferFormatInfo.componentType == GL_SIGNED_NORMALIZED))
     {
         return false;
     }
@@ -5293,6 +5292,12 @@ bool ValidateDrawBufferIndexIfActivePLS(const Context *context,
     int numPLSPlanes = context->getState().getPixelLocalStorageActivePlanes();
     if (numPLSPlanes != 0)
     {
+        // INVALID_OPERATION is generated ... if any of the following are true:
+        //
+        //   <drawBufferIdx> >= MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
+        //   <drawBufferIdx> >= (MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
+        //                       ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE)
+        //
         if (drawBufferIdx >= context->getCaps().maxColorAttachmentsWithActivePixelLocalStorage)
         {
             context->validationErrorF(entryPoint, GL_INVALID_OPERATION,

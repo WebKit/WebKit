@@ -276,16 +276,22 @@ GLenum TextureState::getGenerateMipmapHint() const
 
 SamplerFormat TextureState::computeRequiredSamplerFormat(const SamplerState &samplerState) const
 {
-    const ImageDesc &baseImageDesc = getImageDesc(getBaseImageTarget(), getEffectiveBaseLevel());
-    if ((baseImageDesc.format.info->format == GL_DEPTH_COMPONENT ||
-         baseImageDesc.format.info->format == GL_DEPTH_STENCIL) &&
+    const InternalFormat &info =
+        *getImageDesc(getBaseImageTarget(), getEffectiveBaseLevel()).format.info;
+    if ((info.format == GL_DEPTH_COMPONENT ||
+         (info.format == GL_DEPTH_STENCIL && mDepthStencilTextureMode == GL_DEPTH_COMPONENT)) &&
         samplerState.getCompareMode() != GL_NONE)
     {
         return SamplerFormat::Shadow;
     }
+    else if (info.format == GL_STENCIL_INDEX ||
+             (info.format == GL_DEPTH_STENCIL && mDepthStencilTextureMode == GL_STENCIL_INDEX))
+    {
+        return SamplerFormat::Unsigned;
+    }
     else
     {
-        switch (baseImageDesc.format.info->componentType)
+        switch (info.componentType)
         {
             case GL_UNSIGNED_NORMALIZED:
             case GL_SIGNED_NORMALIZED:

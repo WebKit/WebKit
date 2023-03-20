@@ -116,30 +116,15 @@ const char VertexShaderCompileFails4[] =
         gl_CullDistance[gl_MaxCullDistances] = dot(aPosition, uPlane);
     })";
 
+// Simple ESSL1 vertex shader that should still fail because of incompatible
+// #extension require
 const char VertexShaderCompileFails5[] =
     R"(
-    uniform vec4 uPlane;
-
     attribute vec4 aPosition;
 
     void main()
     {
         gl_Position = aPosition;
-        gl_CullDistance[0] = 0.0;
-    })";
-
-const char VertexShaderCompileFailes6[] =
-    R"(
-    uniform vec4 uPlane;
-
-    attribute vec4 aPosition;
-
-    varying float gl_ClipDistance[1];
-
-    void main()
-    {
-        gl_Position = aPosition;
-        gl_ClipDistance[0] = 0.0;
     })";
 #endif
 
@@ -512,7 +497,7 @@ INSTANTIATE_TEST_SUITE_P(IncorrectESSL100Shaders,
                          EXTClipCullDistanceForVertexShaderCompileFailureTest,
                          Combine(Values(SH_GLES2_SPEC),
                                  Values(sh::ESSLVersion100),
-                                 Values(VertexShaderCompileFails5, VertexShaderCompileFailes6)));
+                                 Values(VertexShaderCompileFails5)));
 
 INSTANTIATE_TEST_SUITE_P(IncorrectESSL300Shaders,
                          EXTClipCullDistanceForVertexShaderCompileFailureTest,

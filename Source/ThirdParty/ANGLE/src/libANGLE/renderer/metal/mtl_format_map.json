@@ -409,7 +409,7 @@
                 "colorRenderable": "true"
             },
             "MTLPixelFormatR32Float":{
-                "filterable": "display->supportsEitherGPUFamily(1, 1)",
+                "filterable": "display->supportsMacGPUFamily(1)",
                 "writable": "true",
                 "blendable": "true",
                 "multisample": "true",
@@ -601,15 +601,15 @@
                 "colorRenderable": "true"
             },
             "MTLPixelFormatRG32Float":{
-                "filterable": "display->supportsEitherGPUFamily(1, 1)",
+                "filterable": "display->supportsMacGPUFamily(1)",
                 "writable": "true",
                 "blendable": "true",
-                "multisample": "display->supportsMacGPUFamily(1)",
+                "multisample": "display->supportsEitherGPUFamily(7, 1)",
                 "resolve": "display->supportsMacGPUFamily(1)",
                 "colorRenderable": "true"
             },
             "MTLPixelFormatRGBA32Float":{
-                "filterable": "display->supportsEitherGPUFamily(1, 1)",
+                "filterable": "display->supportsMacGPUFamily(1)",
                 "writable": "true",
                 "blendable": "display->supportsMacGPUFamily(1)",
                 "multisample": "display->supportsEitherGPUFamily(7, 1)",

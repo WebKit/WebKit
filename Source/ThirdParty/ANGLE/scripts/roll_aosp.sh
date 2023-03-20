@@ -119,7 +119,6 @@ third_party_deps=(
     "third_party/vulkan-deps/spirv-tools/src"
     "third_party/vulkan-deps/vulkan-headers/src"
     "third_party/vulkan_memory_allocator"
-    "third_party/zlib"
 )
 
 root_add_deps=(
@@ -130,6 +129,7 @@ root_add_deps=(
 # Only add the parts of NDK and vulkan-deps that are required by ANGLE. The entire dep is too large.
 delete_only_deps=(
     "third_party/vulkan-deps"
+    "third_party/zlib"  # Replaced by Android's zlib; delete for gclient to work https://crbug.com/skia/14155#c3
 )
 
 # Delete dep directories so that gclient can check them out
@@ -156,6 +156,7 @@ unsupported_third_party_deps=(
    "third_party/llvm-build"
    "third_party/android_build_tools"
    "third_party/android_sdk"
+   "third_party/zlib"  # Replaced by Android's zlib
 )
 for unsupported_third_party_dep in "${unsupported_third_party_deps[@]}"; do
    rm -rf "$unsupported_third_party_dep"
@@ -187,9 +188,9 @@ for removal_file in "${extra_removal_files[@]}"; do
    rm -rf "$removal_file"
 done
 
-# Add all changes to third_party/ so we delete everything not explicitly allowed.
+# Add all changes under $root_add_deps so we delete everything not explicitly allowed.
 for root_add_dep in "${root_add_deps[@]}"; do
-git add -f "$root_add_dep/*"
+    git add -f $root_add_dep
 done
 
 # Done with depot_tools

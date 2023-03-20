@@ -396,6 +396,7 @@ void X11Window::destroy()
     if (mWindow)
     {
         XDestroyWindow(mDisplay, mWindow);
+        XFlush(mDisplay);
         // There appears to be a race condition where XDestroyWindow+XCreateWindow ignores
         // the new size (the same window normally gets reused but this only happens sometimes on
         // some X11 versions). Wait until we get the destroy notification.

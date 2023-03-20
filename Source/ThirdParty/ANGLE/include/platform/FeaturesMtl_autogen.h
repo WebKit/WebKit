@@ -199,6 +199,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo avoidStencilTextureSwizzle = {
+        "avoidStencilTextureSwizzle",
+        FeatureCategory::MetalFeatures,
+        "Do not create swizzled views of stencil textures",
+        &members,
+    };
+
     FeatureInfo multisampleColorFormatShaderReadWorkaround = {
         "multisampleColorFormatShaderReadWorkaround", FeatureCategory::MetalWorkarounds,
         "Add shaderRead usage to some multisampled texture formats", &members,

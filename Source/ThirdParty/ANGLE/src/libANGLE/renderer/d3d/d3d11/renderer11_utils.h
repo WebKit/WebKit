@@ -190,21 +190,6 @@ outType *DynamicCastComObject(IUnknown *object)
     }
 }
 
-template <typename outType>
-angle::ComPtr<outType> DynamicCastComObjectToComPtr(IUnknown *object)
-{
-    angle::ComPtr<outType> outObject;
-    const HRESULT hr = object->QueryInterface(IID_PPV_ARGS(&outObject));
-    if (SUCCEEDED(hr))
-    {
-        return outObject;
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
 inline bool isDeviceLostError(HRESULT errorCode)
 {
     switch (errorCode)

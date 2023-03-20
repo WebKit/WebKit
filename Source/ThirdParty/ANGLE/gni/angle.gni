@@ -135,6 +135,7 @@ declare_args() {
 
   # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
   angle_is_winuwp = is_win && target_os == "winuwp"
+  angle_is_msvc = is_win && !is_clang
 
   # Default to using "_angle" suffix on Android
   if (is_android) {

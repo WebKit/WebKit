@@ -55,6 +55,8 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
                              bool isRenderPassCommandBuffer,
                              SecondaryCommandMemoryAllocator *allocator);
 
+    void free(VkDevice device);
+
     void attachAllocator(SecondaryCommandMemoryAllocator *source) {}
 
     void detachAllocator(SecondaryCommandMemoryAllocator *destination) {}
@@ -242,6 +244,7 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
   private:
     void onRecordCommand() { mAnyCommand = true; }
 
+    CommandPool *mCommandPool = nullptr;
     CommandBufferCommandTracker mCommandTracker;
     bool mAnyCommand = false;
 };

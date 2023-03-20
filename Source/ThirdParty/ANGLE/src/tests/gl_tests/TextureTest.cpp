@@ -1847,16 +1847,20 @@ class ETC1CompressedTextureTest : public Texture2DTest
     void testTearDown() override { Texture2DTest::testTearDown(); }
 };
 
-class Texture2DTestES31 : public Texture2DTest
+class Texture2DDepthStencilTestES3 : public Texture2DTest
 {
   protected:
-    Texture2DTestES31() : Texture2DTest() {}
+    Texture2DDepthStencilTestES3() : Texture2DTest() {}
 
     void TestSampleWithDepthStencilMode(GLenum format, GLenum mode, bool swizzle);
 };
 
-void Texture2DTestES31::TestSampleWithDepthStencilMode(GLenum format, GLenum mode, bool swizzle)
+void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
+                                                                  GLenum mode,
+                                                                  bool swizzle)
 {
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_stencil_texturing"));
+
     constexpr GLsizei kSize = 4;
 
     ASSERT(mode == GL_STENCIL_INDEX || mode == GL_DEPTH_COMPONENT);
@@ -1896,7 +1900,7 @@ void Texture2DTestES31::TestSampleWithDepthStencilMode(GLenum format, GLenum mod
     glTexStorage2D(GL_TEXTURE_2D, 1, format, kSize, kSize);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, mode);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE, mode);
     if (swizzle)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_ALPHA);
@@ -3204,57 +3208,88 @@ TEST_P(Texture2DTestES3, TexImageWithDepthPBO)
 }
 
 // Test sampling modes with a DEPTH_COMPONENT16 texture.
-TEST_P(Texture2DTestES31, TexSampleModesWithDepth16)
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth16)
 {
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, false);
-    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX, false);
+}
+
+// Test sampling modes with a swizzled DEPTH_COMPONENT16 texture.
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth16Swizzled)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX, true);
 }
 
 // Test sampling modes with a DEPTH_COMPONENT24 texture.
-TEST_P(Texture2DTestES31, TexSampleModesWithDepth24)
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth24)
 {
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, false);
-    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_STENCIL_INDEX, false);
+}
+
+// Test sampling modes with a swizzled DEPTH_COMPONENT24 texture.
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth24Swizzled)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_STENCIL_INDEX, true);
 }
 
 // Test depth sampling with a DEPTH_COMPONENT32F texture.
-TEST_P(Texture2DTestES31, TexSampleModesWithDepth32f)
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth32f)
 {
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, false);
-    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_STENCIL_INDEX, false);
+}
+
+// Test depth sampling with a swizzled DEPTH_COMPONENT32F texture.
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth32fSwizzled)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_STENCIL_INDEX, true);
 }
 
 // Test sampling modes with a DEPTH24_STENCIL8 texture.
-TEST_P(Texture2DTestES31, TexSampleModesWithDepth24Stencil8)
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth24Stencil8)
 {
     TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, false);
-    TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_STENCIL_INDEX, false);
+}
+
+// Test sampling modes with a swizzled DEPTH24_STENCIL8 texture.
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth24Stencil8Swizzled)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_STENCIL_INDEX, true);
 }
 
 // Test sampling modes with a DEPTH32F_STENCIL8 texture.
-TEST_P(Texture2DTestES31, TexSampleModesWithDepth32fStencil8)
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth32fStencil8)
 {
     TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, false);
-    TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_STENCIL_INDEX, false);
+}
+
+// Test sampling modes with a swizzled DEPTH32F_STENCIL8 texture.
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithDepth32fStencil8Swizzled)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_STENCIL_INDEX, true);
 }
 
 // Test sampling modes with a STENCIL_INDEX8 texture.
-TEST_P(Texture2DTestES31, TexSampleModesWithStencil8)
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithStencil8)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_stencil8"));
     TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_DEPTH_COMPONENT, false);
-    TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_STENCIL_INDEX, false);
+}
+
+// Test sampling modes with a swizzled STENCIL_INDEX8 texture.
+TEST_P(Texture2DDepthStencilTestES3, TexSampleModesWithStencil8Swizzled)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_stencil8"));
+    TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_DEPTH_COMPONENT, true);
     TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_STENCIL_INDEX, true);
 }
 
@@ -7015,6 +7050,33 @@ class TextureBorderClampTest : public Texture2DTest
                      texDataRed.data());
         EXPECT_GL_NO_ERROR();
     }
+
+    void testFormat(GLenum format, GLenum type, GLColor32F borderColor)
+    {
+        glBindTexture(GL_TEXTURE_2D, mTexture2D);
+        glActiveTexture(GL_TEXTURE0);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, &borderColor.R);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, 2, 2, 0, format, type, nullptr);
+        drawQuad(mProgram, "position", 0.5f);
+    }
+
+    void testCompressedFormat(GLenum format, GLsizei size, GLColor32F borderColor)
+    {
+        setUpProgram();
+        glBindTexture(GL_TEXTURE_2D, mTexture2D);
+        glActiveTexture(GL_TEXTURE0);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, &borderColor.R);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, format, 4, 4, 0, size, nullptr);
+        drawQuad(mProgram, "position", 0.5f);
+    }
 };
 
 // Test if the color set as GL_TEXTURE_BORDER_COLOR is used when sampling outside of the texture in
@@ -7117,6 +7179,175 @@ TEST_P(TextureBorderClampTest, TextureBorderClampValidation)
         glGetSamplerParameterIuivOES(sampler, GL_TEXTURE_BORDER_COLOR, colorUInt);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
     }
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with unorm formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampUnorm8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testFormat(GL_ALPHA, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 0, 0, 16), 1);
+
+    testFormat(GL_RGB, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 255), 1);
+
+    testFormat(GL_RGBA, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
+
+    testFormat(GL_LUMINANCE, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 128, 128, 255), 1);
+
+    testFormat(GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 128, 128, 16), 1);
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with sRGB formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampSrgb)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_sRGB"));
+
+    // AMD D3D9 drivers always sample sRGB formats with (0, 0, 0, 0) border color, won't fix.
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D9());
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testFormat(GL_SRGB_EXT, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 255), 1);
+
+    testFormat(GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with half-float formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampFloat16)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testFormat(GL_ALPHA, GL_HALF_FLOAT_OES, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 0, 0, 16), 1);
+
+    testFormat(GL_RGB, GL_HALF_FLOAT_OES, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 255), 1);
+
+    testFormat(GL_RGBA, GL_HALF_FLOAT_OES, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
+
+    testFormat(GL_LUMINANCE, GL_HALF_FLOAT_OES, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 128, 128, 255), 1);
+
+    testFormat(GL_LUMINANCE_ALPHA, GL_HALF_FLOAT_OES, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 128, 128, 16), 1);
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with float formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampFloat32)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testFormat(GL_ALPHA, GL_FLOAT, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 0, 0, 16), 1);
+
+    testFormat(GL_RGB, GL_FLOAT, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 255), 1);
+
+    testFormat(GL_RGBA, GL_FLOAT, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
+
+    testFormat(GL_LUMINANCE, GL_FLOAT, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 128, 128, 255), 1);
+
+    testFormat(GL_LUMINANCE_ALPHA, GL_FLOAT, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 128, 128, 16), 1);
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with red and red-green formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampRG)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_rg"));
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testFormat(GL_RED_EXT, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 0, 0, 255), 1);
+
+    testFormat(GL_RG_EXT, GL_UNSIGNED_BYTE, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 0, 255), 1);
+
+    if (IsGLExtensionEnabled("GL_OES_texture_half_float"))
+    {
+        testFormat(GL_RED_EXT, GL_HALF_FLOAT_OES, kBorder);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 0, 0, 255), 1);
+
+        testFormat(GL_RG_EXT, GL_HALF_FLOAT_OES, kBorder);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 0, 255), 1);
+    }
+
+    if (IsGLExtensionEnabled("GL_OES_texture_float"))
+    {
+        testFormat(GL_RED_EXT, GL_FLOAT, kBorder);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 0, 0, 255), 1);
+
+        testFormat(GL_RG_EXT, GL_FLOAT, kBorder);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 0, 255), 1);
+    }
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with DXT1 formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampDXT1)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testCompressedFormat(GL_COMPRESSED_RGB_S3TC_DXT1_EXT, 8, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 255), 1);
+
+    testCompressedFormat(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 8, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
+}
+
+// Test GL_TEXTURE_BORDER_COLOR parameter with DXT1 sRGB formats.
+TEST_P(TextureBorderClampTest, TextureBorderClampDXT1Srgb)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc_srgb"));
+
+    // AMD D3D9 drivers always sample sRGB formats with (0, 0, 0, 0) border color, won't fix.
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D9());
+
+    GLColor32F kBorder = {0.5f, 0.25f, 0.125f, 0.0625f};
+
+    setUpProgram();
+
+    testCompressedFormat(GL_COMPRESSED_SRGB_S3TC_DXT1_EXT, 8, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 255), 1);
+
+    testCompressedFormat(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT, 8, kBorder);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
 }
 
 class TextureBorderClampTestES3 : public TextureBorderClampTest
@@ -7235,6 +7466,30 @@ TEST_P(TextureBorderClampTestES3, TextureBorderClampES3Validation)
 
     glSamplerParameteri(sampler, GL_TEXTURE_BORDER_COLOR, std::numeric_limits<GLint>::max());
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
+}
+
+// Test that format-specific adjustments are applied
+// when the border color type does not match the texture type.
+TEST_P(TextureBorderClampTestES3, TextureBorderTypeMismatch)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
+
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glActiveTexture(GL_TEXTURE0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    GLColor32UI kBorder = {1, 2, 3, 0};
+    glTexParameterIuivOES(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, &kBorder.R);
+    ASSERT_GL_NO_ERROR();
+
+    setUpProgram();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_ALPHA_EQ(0, 0, 255);
 }
 
 class TextureBorderClampIntegerTestES3 : public Texture2DTest
@@ -7439,6 +7694,260 @@ TEST_P(TextureBorderClampIntegerTestES3, TextureBorderClampIntegerUnsigned2)
 }
 
 // ~GL_OES_texture_border_clamp
+
+// GL_EXT_texture_mirror_clamp_to_edge
+class TextureMirrorClampToEdgeTest : public Texture2DTest
+{
+  protected:
+    TextureMirrorClampToEdgeTest() : Texture2DTest() {}
+
+    const char *getVertexShaderSource() override
+    {
+        return R"(precision highp float;
+attribute vec4 position;
+varying vec2 texcoord;
+
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texcoord = position.xy * 2.0;
+})";
+    }
+
+    void uploadTexture(bool isInteger, bool isSigned, GLuint sampler)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mTexture2D);
+        if (isInteger && isSigned)
+        {
+            const int8_t data[] = {0, 0, 0, -1, -1, 0, 0, -1, 0, -1, 0, -1, 0, 0, -1, -1};
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8I, 2, 2, 0, GL_RGBA_INTEGER, GL_BYTE, data);
+        }
+        else if (isInteger)
+        {
+            const uint8_t data[] = {0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1};
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8UI, 2, 2, 0, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE,
+                         data);
+        }
+        else
+        {
+            const uint8_t data[] = {0, 0, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255};
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        }
+
+        if (sampler != 0)
+        {
+            glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_TO_EDGE_EXT);
+            glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE_EXT);
+            glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        }
+        else
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_TO_EDGE_EXT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE_EXT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void checkTextureSampling()
+    {
+        auto screenX = [&](float x) { return getWindowWidth() * (x * 0.25 + 0.5); };
+        auto screenY = [&](float y) { return getWindowHeight() * (y * 0.25 + 0.5); };
+
+        // +S, +T
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.25), screenY(0.25), GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.75), screenY(0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(1.50), screenY(0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.25), screenY(0.75), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.25), screenY(1.50), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.75), screenY(0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(1.50), screenY(0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.75), screenY(1.50), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(1.50), screenY(1.50), GLColor::blue);
+
+        // -S, +T
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.25), screenY(0.25), GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.75), screenY(0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-1.50), screenY(0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.25), screenY(0.75), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.25), screenY(1.50), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.75), screenY(0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-1.50), screenY(0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.75), screenY(1.50), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-1.50), screenY(1.50), GLColor::blue);
+
+        // +S, -T
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.25), screenY(-0.25), GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.75), screenY(-0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(1.50), screenY(-0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.25), screenY(-0.75), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.25), screenY(-1.50), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.75), screenY(-0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(1.50), screenY(-0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(0.75), screenY(-1.50), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(1.50), screenY(-1.50), GLColor::blue);
+
+        // -S, -T
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.25), screenY(-0.25), GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.75), screenY(-0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-1.50), screenY(-0.25), GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.25), screenY(-0.75), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.25), screenY(-1.50), GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.75), screenY(-0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-1.50), screenY(-0.75), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-0.75), screenY(-1.50), GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(screenX(-1.50), screenY(-1.50), GLColor::blue);
+    }
+};
+
+// Test that the texture is correctly mirrored in negative directions
+// and clamped to edge pixels outside of the normalized range.
+TEST_P(TextureMirrorClampToEdgeTest, TexParameter)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_mirror_clamp_to_edge"));
+
+    setUpProgram();
+    uploadTexture(false, false, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    checkTextureSampling();
+}
+
+class TextureMirrorClampToEdgeTestES3 : public TextureMirrorClampToEdgeTest
+{
+  protected:
+    TextureMirrorClampToEdgeTestES3() : TextureMirrorClampToEdgeTest() {}
+};
+
+// Test that the texture is correctly mirrored in negative directions and clamped
+// to edge pixels outside of the normalized range with mode set via glSamplerParameter.
+TEST_P(TextureMirrorClampToEdgeTestES3, SamplerParameter)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_mirror_clamp_to_edge"));
+
+    GLSampler sampler;
+    glBindSampler(0, sampler);
+
+    setUpProgram();
+    uploadTexture(false, false, sampler);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    checkTextureSampling();
+}
+
+class TextureMirrorClampToEdgeIntegerTestES3 : public TextureMirrorClampToEdgeTestES3
+{
+  protected:
+    TextureMirrorClampToEdgeIntegerTestES3() : TextureMirrorClampToEdgeTestES3() {}
+
+    const char *getVertexShaderSource() override
+    {
+        return R"(#version 300 es
+precision highp float;
+in vec4 position;
+out vec2 texcoord;
+
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texcoord = position.xy * 2.0;
+})";
+    }
+
+    const char *getFragmentShaderSource() override
+    {
+        if (mIsSigned)
+        {
+            return R"(#version 300 es
+precision highp float;
+uniform highp isampler2D tex;
+in vec2 texcoord;
+out vec4 fragColor;
+void main() { fragColor = vec4(-texture(tex, texcoord)); })";
+        }
+        else
+        {
+            return R"(#version 300 es
+precision highp float;
+uniform highp usampler2D tex;
+in vec2 texcoord;
+out vec4 fragColor;
+void main() { fragColor = vec4(texture(tex, texcoord)); })";
+        }
+    }
+
+    bool mIsSigned = false;
+};
+
+// Test that the texture is correctly mirrored in negative directions and clamped
+// to edge pixels outside of the normalized range with mode set with glTexParameter.
+TEST_P(TextureMirrorClampToEdgeIntegerTestES3, TexParameterSigned)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_mirror_clamp_to_edge"));
+
+    mIsSigned = true;
+    setUpProgram();
+    uploadTexture(true, true, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    checkTextureSampling();
+}
+
+// Test that the texture is correctly mirrored in negative directions and clamped
+// to edge pixels outside of the normalized range with mode set with glSamplerParameter.
+TEST_P(TextureMirrorClampToEdgeIntegerTestES3, SamplerParameterSigned)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_mirror_clamp_to_edge"));
+
+    GLSampler sampler;
+    glBindSampler(0, sampler);
+
+    mIsSigned = true;
+    setUpProgram();
+    uploadTexture(true, true, sampler);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    checkTextureSampling();
+}
+
+// Test that the unsigned integer texture is correctly mirrored in negative directions and clamped
+// to edge pixels outside of the normalized range with mode set with glTexParameter.
+TEST_P(TextureMirrorClampToEdgeIntegerTestES3, TexParameterUnsigned)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_mirror_clamp_to_edge"));
+
+    setUpProgram();
+    uploadTexture(true, false, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    checkTextureSampling();
+}
+
+// Test that the unsigned integer texture is correctly mirrored in negative directions and clamped
+// to edge pixels outside of the normalized range with mode set with glSamplerParameter.
+TEST_P(TextureMirrorClampToEdgeIntegerTestES3, SamplerParameterUnsigned)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_mirror_clamp_to_edge"));
+
+    GLSampler sampler;
+    glBindSampler(0, sampler);
+
+    setUpProgram();
+    uploadTexture(true, false, sampler);
+    drawQuad(mProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    checkTextureSampling();
+}
+// ~GL_EXT_texture_mirror_clamp_to_edge
 
 class TextureLimitsTest : public ANGLETest<>
 {
@@ -10084,6 +10593,10 @@ TEST_P(Texture2DTestES3, NonZeroBaseEmulatedClear)
     // Tests behavior of the Vulkan backend with emulated formats.
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
+    // TODO(http://anglebug.com/8036): Skip when using VMA image suballocation on Linux/Intel.
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() &&
+                       getEGLWindow()->isFeatureEnabled(Feature::UseVmaForImageSuballocation));
+
     // This test assumes GL_RGB is always emulated, which overrides the
     // Feature::AllocateNonZeroMemory memory feature, clearing the memory to zero. However, if the
     // format is *not* emulated and the feature Feature::AllocateNonZeroMemory is enabled, the
@@ -10186,6 +10699,25 @@ TEST_P(Texture2DTestES3, UpdateRenderTargetCacheOnDestroyTexStorage)
     EXPECT_GL_NO_ERROR();
 
     EXPECT_PIXEL_RECT_EQ(0, 0, 100, 1, GLColor::red);
+}
+
+// Test that we can allocate at least 4096 images, which is the maximum allocation count on some
+// platforms. Image suballocation should enable us to allocate more than this limit.
+TEST_P(Texture2DTestES3, AllocateMoreThan4096Textures)
+{
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseVmaForImageSuballocation));
+
+    // The test is skipped when AllocateNonZeroMemory is enabled due to risk of timeout.
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::AllocateNonZeroMemory));
+
+    constexpr size_t kTextureCount = 8000;
+    std::vector<GLTexture> textures(kTextureCount);
+    for (auto &texture : textures)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    }
+    EXPECT_GL_NO_ERROR();
 }
 
 // Draw a quad with an integer texture with a non-zero base level, and test that the color of the
@@ -11354,6 +11886,14 @@ ANGLE_INSTANTIATE_TEST_ES3(TextureBorderClampTestES3);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureBorderClampIntegerTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(TextureBorderClampIntegerTestES3);
 
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(TextureMirrorClampToEdgeTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureMirrorClampToEdgeTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(TextureMirrorClampToEdgeTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureMirrorClampToEdgeIntegerTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(TextureMirrorClampToEdgeIntegerTestES3);
+
 ANGLE_INSTANTIATE_TEST_ES2(TextureLimitsTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DNorm16TestES3);
@@ -11408,8 +11948,8 @@ ANGLE_INSTANTIATE_TEST_ES3(TextureChangeStorageUploadTest);
 
 ANGLE_INSTANTIATE_TEST_ES3(ExtraSamplerCubeShadowUseTest);
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES31);
-ANGLE_INSTANTIATE_TEST_ES31_AND(Texture2DTestES31,
-                                ES31_VULKAN().enable(Feature::ForceFallbackFormat));
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DDepthStencilTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DDepthStencilTestES3,
+                               ES3_VULKAN().enable(Feature::ForceFallbackFormat));
 
 }  // anonymous namespace

@@ -3060,12 +3060,15 @@ CallCapture CaptureClearNamedFramebufferuiv(const State &glState,
     return CallCapture(angle::EntryPoint::GLClearNamedFramebufferuiv, std::move(paramBuffer));
 }
 
-CallCapture CaptureClipControl(const State &glState, bool isCallValid, GLenum origin, GLenum depth)
+CallCapture CaptureClipControl(const State &glState,
+                               bool isCallValid,
+                               ClipOrigin originPacked,
+                               ClipDepthMode depthPacked)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("origin", BigGLEnum::ClipControlOrigin, ParamType::TGLenum, origin);
-    paramBuffer.addEnumParam("depth", BigGLEnum::ClipControlDepth, ParamType::TGLenum, depth);
+    paramBuffer.addValueParam("originPacked", ParamType::TClipOrigin, originPacked);
+    paramBuffer.addValueParam("depthPacked", ParamType::TClipDepthMode, depthPacked);
 
     return CallCapture(angle::EntryPoint::GLClipControl, std::move(paramBuffer));
 }

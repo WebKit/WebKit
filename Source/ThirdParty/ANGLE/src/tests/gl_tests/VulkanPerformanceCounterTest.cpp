@@ -1944,6 +1944,58 @@ TEST_P(VulkanPerformanceCounterTest, DepthStencilMaskedDrawThenClear)
                                      getPerfCounters().depthClearAttachments);
 }
 
+// Tests that depth compare function change, get correct loadop for depth buffer
+//
+// - Scenario: depth test enabled, depth write mask = 0,
+//   clear depth, draw red quad with compare function always,
+//   and then  draw green quad with compare function less equal
+TEST_P(VulkanPerformanceCounterTest, DepthFunctionDynamicChangeLoadOp)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    // This optimization is not implemented when this workaround is in effect.
+    ANGLE_SKIP_TEST_IF(hasPreferDrawOverClearAttachments());
+
+    angle::VulkanPerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+1, Loads+0, LoadNones+0, Stores+0, StoreNones+0),
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 1, 0, 0, 0, 0, &expected);
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupForColorDepthOpsTest(&framebuffer, &texture, &renderbuffer);
+
+    // Clear color and depth.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // No depth write
+    glDepthMask(GL_FALSE);
+    // Depth function always
+    glDepthFunc(GL_ALWAYS);
+
+    // Draw read quad.
+    ANGLE_GL_PROGRAM(redprogram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(redprogram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Depth function switch to less equal
+    glDepthFunc(GL_LEQUAL);
+
+    // Draw green quad.
+    ANGLE_GL_PROGRAM(greenprogram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(greenprogram, essl1_shaders::PositionAttrib(), 0.7f);
+
+    GLenum attachments = GL_DEPTH_ATTACHMENT;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &attachments);
+
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+
+    // Break the render pass and check how many clears were actually done
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_CLEAR_ATTACHMENTS_COUNTER(expected.depthLoadOpClears,
+                                     getPerfCounters().depthLoadOpClears);
+}
+
 // Tests that common PUBG MOBILE case does not break render pass, and that counts are correct:
 //
 // - Scenario: invalidate, disable, draw
@@ -7144,6 +7196,84 @@ TEST_P(VulkanPerformanceCounterTest, FBOChangeAndBackDoesNotBreakRenderPass)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
+// This is test for optimization in vulkan backend. efootball_pes_2021 usage shows this usage
+// pattern and we expect implementation to reuse the storage for performance.
+TEST_P(VulkanPerformanceCounterTest,
+       bufferDataWithSizeFollowedByZeroAndThenSizeAgainShouldReuseStorage)
+{
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    constexpr size_t count = 288;
+    std::array<uint32_t, count> data;
+    constexpr size_t bufferSize = data.size() * sizeof(uint32_t);
+    data.fill(0x1234567);
+
+    glBufferData(GL_ARRAY_BUFFER, bufferSize, data.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    // This should get back the original storage with proper BufferVk optimization
+    data.fill(0x89abcdef);
+    uint64_t expectedSuballocationCalls = getPerfCounters().bufferSuballocationCalls;
+    glBufferData(GL_ARRAY_BUFFER, bufferSize, data.data(), GL_DYNAMIC_DRAW);
+    EXPECT_EQ(getPerfCounters().bufferSuballocationCalls, expectedSuballocationCalls);
+
+    uint32_t *mapPtr = reinterpret_cast<uint32_t *>(
+        glMapBufferRange(GL_ARRAY_BUFFER, 0, bufferSize, GL_MAP_READ_BIT));
+    ASSERT_NE(nullptr, mapPtr);
+    EXPECT_EQ(0x89abcdef, mapPtr[0]);
+    EXPECT_EQ(0x89abcdef, mapPtr[count - 1]);
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
+class VulkanPerformanceCounterTest_AsyncCQ : public VulkanPerformanceCounterTest
+{};
+
+// Tests that submitting the outside command buffer during flushing staged updates and
+// "asyncCommandQueue" enabled, properly updates old command buffer with the new one.
+TEST_P(VulkanPerformanceCounterTest_AsyncCQ, SubmittingOutsideCommandBufferAssertIsOpen)
+{
+    uint64_t submitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal;
+
+    ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
+                     essl1_shaders::fs::Texture2D());
+    glUseProgram(textureProgram);
+    GLint textureLoc = glGetUniformLocation(textureProgram, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, textureLoc);
+    glUniform1i(textureLoc, 0);
+
+    // This loop shouls update texture with multiple staged updates. When kMaxBufferToImageCopySize
+    // threshold reached, outside command buffer will be submitted in the middle of staged updates
+    // flushing. If "asyncCommandQueue" enabled and bug present, old command buffer will not be
+    // replaced by a new one, casing "ASSERT(mIsOpen)" or UB in release.
+    constexpr GLsizei kMaxOutsideRPCommandsSubmitCount = 10;
+    constexpr GLsizei kTexDim                          = 1024;
+    constexpr GLint kMaxSubOffset                      = 10;
+    std::vector<GLColor> kInitialData(kTexDim * kTexDim, GLColor::green);
+    while (getPerfCounters().vkQueueSubmitCallsTotal <
+           submitCommandsCount + kMaxOutsideRPCommandsSubmitCount)
+    {
+        GLTexture newTexture;
+        glBindTexture(GL_TEXTURE_2D, newTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        // Provide data for the texture without previously defining a storage.
+        // This should prevent immediate staged update flushing.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexDim, kTexDim, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     kInitialData.data());
+        // Append staged updates...
+        for (GLsizei offset = 1; offset <= kMaxSubOffset; ++offset)
+        {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, offset, offset, kTexDim - offset, kTexDim - offset,
+                            GL_RGBA, GL_UNSIGNED_BYTE, kInitialData.data());
+        }
+        // This will flush multiple staged updates
+        drawQuad(textureProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest);
 ANGLE_INSTANTIATE_TEST(
     VulkanPerformanceCounterTest,
@@ -7165,5 +7295,10 @@ ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_MSAA, ES3_VULKAN(), ES3_VULK
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_SingleBuffer);
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_SingleBuffer, ES3_VULKAN());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_AsyncCQ);
+ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_AsyncCQ,
+                       ES3_VULKAN(),
+                       ES3_VULKAN().enable(Feature::AsyncCommandQueue));
 
 }  // anonymous namespace

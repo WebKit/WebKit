@@ -13,13 +13,39 @@ namespace angle
 class VersionTest : public SimplePreprocessorTest
 {};
 
+TEST_F(VersionTest, NoDirectives)
+{
+    const char *str      = "foo\n";
+    const char *expected = "foo\n";
+
+    using testing::_;
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 100, SH_GLES2_SPEC, _));
+    // No error or warning.
+    EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
+
+    preprocess(str, expected);
+}
+
+TEST_F(VersionTest, NoVersion)
+{
+    const char *str      = "#define foo\n";
+    const char *expected = "\n";
+
+    using testing::_;
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 100, SH_GLES2_SPEC, _));
+    // No error or warning.
+    EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
+
+    preprocess(str, expected);
+}
+
 TEST_F(VersionTest, Valid)
 {
     const char *str      = "#version 200\n";
     const char *expected = "\n";
 
     using testing::_;
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC, _));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -34,7 +60,7 @@ TEST_F(VersionTest, GLSpec)
 
     using testing::_;
     EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 1), 330, SH_GL_COMPATIBILITY_SPEC));
+                handleVersion(pp::SourceLocation(0, 1), 330, SH_GL_COMPATIBILITY_SPEC, _));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -56,7 +82,7 @@ TEST_F(VersionTest, CommentsIgnored)
     const char *expected = "\n";
 
     using testing::_;
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC, _));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -70,7 +96,7 @@ TEST_F(VersionTest, MissingNewline)
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 200, SH_GLES2_SPEC, _));
     // Error reported about EOF.
     EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_EOF_IN_DIRECTIVE, _, _));
 
@@ -87,7 +113,7 @@ TEST_F(VersionTest, AfterComments)
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200, SH_GLES2_SPEC));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200, SH_GLES2_SPEC, _));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -104,7 +130,7 @@ TEST_F(VersionTest, AfterWhitespace)
 
     using testing::_;
     // Directive successfully parsed.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200, SH_GLES2_SPEC));
+    EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 3), 200, SH_GLES2_SPEC, _));
     // No error or warning.
     EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
 
@@ -198,7 +224,7 @@ TEST_P(InvalidVersionTest, Identified)
 
     using testing::_;
     // No handleVersion call.
-    EXPECT_CALL(mDirectiveHandler, handleVersion(_, _, _)).Times(0);
+    EXPECT_CALL(mDirectiveHandler, handleVersion(_, _, _, _)).Times(0);
     // Invalid version directive call.
     EXPECT_CALL(mDiagnostics, print(param.id, pp::SourceLocation(0, 1), _));
 

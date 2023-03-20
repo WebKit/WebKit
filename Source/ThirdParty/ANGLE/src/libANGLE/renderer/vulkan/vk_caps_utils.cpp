@@ -353,11 +353,16 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.debugMarkerEXT                = true;
     mNativeExtensions.robustnessEXT                 = true;
     mNativeExtensions.discardFramebufferEXT         = true;
+    mNativeExtensions.stencilTexturingANGLE         = true;
     mNativeExtensions.textureBorderClampOES = getFeatures().supportsCustomBorderColor.enabled;
     mNativeExtensions.textureBorderClampEXT = getFeatures().supportsCustomBorderColor.enabled;
     mNativeExtensions.polygonOffsetClampEXT = mPhysicalDeviceFeatures.depthBiasClamp == VK_TRUE;
     // Enable EXT_texture_type_2_10_10_10_REV
     mNativeExtensions.textureType2101010REVEXT = true;
+
+    // Enable EXT_texture_mirror_clamp_to_edge
+    mNativeExtensions.textureMirrorClampToEdgeEXT =
+        getFeatures().supportsSamplerMirrorClampToEdge.enabled;
 
     // Enable EXT_multi_draw_indirect
     mNativeExtensions.multiDrawIndirectEXT = true;
@@ -672,25 +677,20 @@ void RendererVk::ensureCapsInitialized() const
     }
     mNativeCaps.maxUniformLocations = maxUniformVectors;
 
-    // Every stage has 1 reserved uniform buffer for the default uniforms, and 1 for the driver
-    // uniforms.
-    constexpr uint32_t kTotalReservedPerStageUniformBuffers =
-        kReservedDriverUniformBindingCount + kReservedPerStageDefaultUniformBindingCount;
-    constexpr uint32_t kTotalReservedUniformBuffers =
-        kReservedDriverUniformBindingCount + kReservedDefaultUniformBindingCount;
-
     const int32_t maxPerStageUniformBuffers = LimitToInt(
-        limitsVk.maxPerStageDescriptorUniformBuffers - kTotalReservedPerStageUniformBuffers);
-    const int32_t maxCombinedUniformBuffers =
-        LimitToInt(limitsVk.maxDescriptorSetUniformBuffers - kTotalReservedUniformBuffers);
+        limitsVk.maxPerStageDescriptorUniformBuffers - kReservedPerStageDefaultUniformBindingCount);
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mNativeCaps.maxShaderUniformBlocks[shaderType] = maxPerStageUniformBuffers;
     }
-    mNativeCaps.maxCombinedUniformBlocks = maxCombinedUniformBuffers;
 
-    mNativeCaps.maxUniformBufferBindings = maxCombinedUniformBuffers;
-    mNativeCaps.maxUniformBlockSize      = maxUniformBlockSize;
+    // Reserved uniform buffer count depends on number of stages.  Vertex and fragment shaders are
+    // always supported.  The limit needs to be adjusted based on whether geometry and tessellation
+    // is supported.
+    int32_t maxCombinedUniformBuffers = LimitToInt(limitsVk.maxDescriptorSetUniformBuffers) -
+                                        2 * kReservedPerStageDefaultUniformBindingCount;
+
+    mNativeCaps.maxUniformBlockSize = maxUniformBlockSize;
     mNativeCaps.uniformBufferOffsetAlignment =
         static_cast<GLint>(limitsVk.minUniformBufferOffsetAlignment);
 
@@ -861,14 +861,12 @@ void RendererVk::ensureCapsInitialized() const
 
     // Total number of resources available to the user are as many as Vulkan allows minus everything
     // that ANGLE uses internally.  That is, one dynamic uniform buffer used per stage for default
-    // uniforms and a single dynamic uniform buffer for driver uniforms.  Additionally, Vulkan uses
-    // up to IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS + 1 buffers for transform feedback (Note:
-    // +1 is for the "counter" buffer of transform feedback, which will be necessary for transform
-    // feedback extension and ES3.2 transform feedback emulation, but is not yet present).
+    // uniforms.  Additionally, Vulkan uses up to IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS + 1
+    // buffers for transform feedback (Note: +1 is for the "counter" buffer of
+    // VK_EXT_transform_feedback).
     constexpr uint32_t kReservedPerStageUniformBufferCount = 1;
     constexpr uint32_t kReservedPerStageBindingCount =
-        kReservedDriverUniformBindingCount + kReservedPerStageUniformBufferCount +
-        gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS + 1;
+        kReservedPerStageUniformBufferCount + gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS + 1;
 
     // Note: maxPerStageResources is required to be at least the sum of per stage UBOs, SSBOs etc
     // which total a minimum of 44 resources, so no underflow is possible here.  Limit the total
@@ -1025,6 +1023,12 @@ void RendererVk::ensureCapsInitialized() const
         }
         mNativeCaps.maxGeometryShaderInvocations =
             LimitToInt(limitsVk.maxGeometryShaderInvocations);
+
+        // Reserve a uniform buffer binding for the geometry stage
+        if (geometryShaderEnabled)
+        {
+            maxCombinedUniformBuffers -= kReservedPerStageDefaultUniformBindingCount;
+        }
     }
 
     // Tessellation shaders are required for ES 3.2.
@@ -1071,7 +1075,16 @@ void RendererVk::ensureCapsInitialized() const
             mNativeCaps.maxShaderAtomicCounterBuffers[gl::ShaderType::TessEvaluation] =
                 maxCombinedAtomicCounterBuffers;
         }
+
+        // Reserve a uniform buffer binding for each tessellation stage
+        if (tessellationShaderEnabled)
+        {
+            maxCombinedUniformBuffers -= 2 * kReservedPerStageDefaultUniformBindingCount;
+        }
     }
+
+    mNativeCaps.maxCombinedUniformBlocks = maxCombinedUniformBuffers;
+    mNativeCaps.maxUniformBufferBindings = maxCombinedUniformBuffers;
 
     // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
     // From the EXT_clip_cull_distance extension spec:

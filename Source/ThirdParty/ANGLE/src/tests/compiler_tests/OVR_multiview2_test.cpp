@@ -251,6 +251,20 @@ TEST_F(OVRMultiview2VertexShaderTest, InvalidNumViewsGreaterThanMax)
     }
 }
 
+// Test that GL_OVR_multiview2 cannot be used in an ESSL 1.00 vertex shader.
+TEST_F(OVRMultiview2VertexShaderTest, InvalidShaderVersion)
+{
+    const std::string &shaderString =
+        "#extension GL_OVR_multiview2 : require\n"
+        "void main()\n"
+        "{\n"
+        "}\n";
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
 // Valid use of gl_ViewID_OVR.
 TEST_F(OVRMultiview2VertexShaderTest, ViewIDUsed)
 {
@@ -609,19 +623,6 @@ TEST_F(OVRMultiview2FragmentShaderTest, PreprocessorOutput)
         "{\n"
         "}\n";
     compileAssumeSuccess(shaderString);
-}
-
-// Test that ViewID_OVR is declared as a flat output variable in an ESSL 1.00 vertex shader.
-TEST_F(OVRMultiview2VertexShaderTest, ViewIDDeclaredAsFlatOutput)
-{
-    const std::string &shaderString =
-        "#extension GL_OVR_multiview2 : require\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
-    mCompileOptions.initializeBuiltinsForInstancedMultiview = true;
-    compileAssumeSuccess(shaderString);
-    VariableOccursNTimes(mASTRoot, ImmutableString("ViewID_OVR"), EvqFlatOut, 2u);
 }
 
 // Test that GL_OVR_multiview is not defined by the preprocessor for WebGL spec shader;

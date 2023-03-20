@@ -630,6 +630,11 @@ void CreateContext(GLuint contextID)
     gContextMap2[contextID] = context;
 }
 
+void SetCurrentContextID(GLuint id)
+{
+    gContextMap2[id] = eglGetCurrentContext();
+}
+
 ANGLE_REPLAY_EXPORT PFNEGLCREATEIMAGEPROC r_eglCreateImage;
 ANGLE_REPLAY_EXPORT PFNEGLCREATEIMAGEKHRPROC r_eglCreateImageKHR;
 ANGLE_REPLAY_EXPORT PFNEGLDESTROYIMAGEPROC r_eglDestroyImage;

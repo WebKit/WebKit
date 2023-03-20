@@ -1449,7 +1449,7 @@ Error Display::createImage(const gl::Context *context,
     ImageID id = {mImageHandleAllocator.allocate()};
     angle::UniqueObjectPointer<Image, Display> imagePtr(
         new Image(mImplementation, id, context, target, sibling, attribs), this);
-    ANGLE_TRY(imagePtr->initialize(this));
+    ANGLE_TRY(imagePtr->initialize(this, context));
 
     Image *image = imagePtr.release();
 
@@ -2240,8 +2240,8 @@ void Display::initializeFrontendFeatures()
     // No longer enable this on any Impl - crbug.com/1165751
     ANGLE_FEATURE_CONDITION((&mFrontendFeatures), scalarizeVecAndMatConstructorArgs, false);
 
-    // Disabled by default until work on the extension is complete - anglebug.com/7279.
-    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, false);
+    // Togglable until work on the extension is complete - anglebug.com/7279.
+    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, true);
 
     mImplementation->initializeFrontendFeatures(&mFrontendFeatures);
 

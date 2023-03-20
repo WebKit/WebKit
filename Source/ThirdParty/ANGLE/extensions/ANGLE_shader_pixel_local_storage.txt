@@ -50,7 +50,11 @@ Dependencies
     This extension is written against the OpenGL ES 3.0 specification and the
     OpenGL ES Shading Language 3.00 specification.
 
-    This extension interacts with GL_OES_sample_variables.
+    This extension interacts with ANGLE_robust_client_memory.
+
+    This extension interacts with ANGLE_request_extension.
+
+    This extension interacts with OES_sample_variables.
 
     This extension interacts with OpenGL ES 3.1.
 
@@ -132,7 +136,7 @@ New Procedures and Functions
                                                   int layer)
 
     void FramebufferPixelLocalClearValue{f,i,ui}vANGLE(int plane,
-                                                       const T value[4])
+                                                       const T value[])
 
     void BeginPixelLocalStorageANGLE(sizei n, const enum loadops[])
 
@@ -142,7 +146,16 @@ New Procedures and Functions
 
     void GetFramebufferPixelLocalStorageParameter{f,i}vANGLE(int plane,
                                                              enum pname,
-                                                             T* params)
+                                                             T *params)
+
+    (the following commands are supported only if ANGLE_robust_client_memory is
+     supported)
+
+    void GetFramebufferPixelLocalStorageParameter{f,i}vRobustANGLE(int plane,
+                                                                   enum pname,
+                                                                   GLsizei bufSize,
+                                                                   GLsizei *length,
+                                                                   T *params)
 
 New Tokens
 
@@ -159,31 +172,33 @@ New Tokens
         LOAD_OP_ZERO_ANGLE                                                0x96E4
         LOAD_OP_CLEAR_ANGLE                                               0x96E5
         LOAD_OP_LOAD_ANGLE                                                0x96E6
-        LOAD_OP_DISABLE_ANGLE                                             0x96E7
 
     Accepted as array elements in the <storeops> parameter of
     EndPixelLocalStorageANGLE():
 
-        STORE_OP_STORE_ANGLE                                              0x96E8
+        STORE_OP_STORE_ANGLE                                              0x96E7
 
     Accepted by the <pname> parameter of
-    GetFramebufferPixelLocalStorageParameterivANGLE():
+    GetFramebufferPixelLocalStorageParameterivANGLE() and
+    GetFramebufferPixelLocalStorageParameterivRobustANGLE():
 
-        PIXEL_LOCAL_FORMAT_ANGLE                                          0x96E9
-        PIXEL_LOCAL_TEXTURE_NAME_ANGLE                                    0x96EA
-        PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE                                   0x96EB
-        PIXEL_LOCAL_TEXTURE_LAYER_ANGLE                                   0x96EC
-
-    Accepted by the <pname> parameter of
-    GetFramebufferPixelLocalStorageParameterfvANGLE():
-
-        PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE                               0x96ED
+        PIXEL_LOCAL_FORMAT_ANGLE                                          0x96E8
+        PIXEL_LOCAL_TEXTURE_NAME_ANGLE                                    0x96E9
+        PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE                                   0x96EA
+        PIXEL_LOCAL_TEXTURE_LAYER_ANGLE                                   0x96EB
 
     Accepted by the <pname> parameter of
-    GetFramebufferPixelLocalStorageParameterivANGLE():
+    GetFramebufferPixelLocalStorageParameterfvANGLE() and
+    GetFramebufferPixelLocalStorageParameterfvRobustANGLE():
 
-        PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE                                 0x96EE
-        PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE                        0x96EF
+        PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE                               0x96EC
+
+    Accepted by the <pname> parameter of
+    GetFramebufferPixelLocalStorageParameterivANGLE() and
+    GetFramebufferPixelLocalStorageParameterivRobustANGLE():
+
+        PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE                                 0x96ED
+        PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE                        0x96EE
 
 New GLSL Opaque Types
 
@@ -229,7 +244,7 @@ Additions to the OpenGL ES Specification, Version 3.0.6
                   performed on the entire area of each plane, irrespective of
                   scissor or viewport state.
 
-        Load Operation    Description
+        Load Operation           Description
         -----------------------------------------------------------------------
         LOAD_OP_ZERO_ANGLE       Clear all components of the pixel local storage
                                  plane to 0. This is recommended over
@@ -261,21 +276,16 @@ Additions to the OpenGL ES Specification, Version 3.0.6
                                  with the caveat that they are _not_ leaked from
                                  outside the current draw framebuffer.
 
-        LOAD_OP_DISABLE_ANGLE    Leave this plane disabled.
-
-                                 Note that all pixel local storage planes on or
-                                 after index <n> are disabled implicitly.
-
         Table X.1: Pixel local storage Load Operations.
 
       * <storeops> specifies an array of <n> pixel local storage "Store
                    Operations", whose ith element describes the Store Operation
                    to perform on the backing texture of the ith pixel local
                    storage plane. The store operation is ignored if its plane is
-                   memoryless or disabled. Supported Store Operations are listed
-                   in Table X.2.
+                   memoryless. Supported Store Operations are listed in Table
+                   X.2.
 
-        Store Operation    Description
+        Store Operation         Description
         -----------------------------------------------------------------------
         STORE_OP_STORE_ANGLE    Update the the bound texture image to reflect
                                 the pixel local storage contents.
@@ -326,9 +336,8 @@ Additions to the OpenGL ES Specification, Version 3.0.6
       * INVALID_ENUM is generated if <loadops>[0..<n>-1] is not one of the Load
         Operations enumerated in Table X.1.
 
-      * INVALID_OPERATION is generated if <loadops>[0..<n>-1] is not
-        LOAD_OP_DISABLE_ANGLE, and the pixel local storage plane at that same
-        index is in a deinitialized state.
+      * INVALID_OPERATION is generated if a pixel local storage plane at index
+        [0..<n>-1] is in a deinitialized state.
 
       * INVALID_OPERATION is generated if <loadops>[0..<n>-1] is
         LOAD_OP_LOAD_ANGLE and the pixel local storage plane at that same index
@@ -369,17 +378,17 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         the Store Operations enumerated in Table X.2.
 
     After a successful call to BeginPixelLocalStorageANGLE(), the pixel local
-    storage planes indexed in the range [0..<n>-1] (except those whose Load
-    Operation was LOAD_OP_DISABLE_ANGLE) are fully activated, initialized and
-    available for fragment shaders to read and write.
-    PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is also updated to equal <n>. Pixel
-    local storage data will persist across all fragment invocations and across
-    all draws issued until the application calls EndPixelLocalStorageANGLE(),
-    even if the application binds different shader programs. In order to make
-    this guarantee, the the OpenGL ES API only allows a limited set of commands
-    while PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is nonzero. All other commands
-    generate INVALID_OPERATION. Valid commands while pixel local storage is
-    active are listed in Table X.3.
+    storage planes indexed in the range [0..<n>-1] are fully activated,
+    initialized and available for fragment shaders to read and write.
+    PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is also updated to equal <n>.
+
+    Pixel local storage data will persist across all fragment invocations and
+    across all draws issued until the application calls
+    EndPixelLocalStorageANGLE(), even if the application binds different shader
+    programs. In order to make this guarantee, the the OpenGL ES API only allows
+    a limited set of commands while PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is
+    nonzero. All other commands generate INVALID_OPERATION. Valid commands while
+    pixel local storage is active are listed in Table X.3.
 
         ActiveTexture            DepthMask                  MapBufferRange
         BindBuffer               DepthRangef                PixelLocalStorageBarrierANGLE
@@ -411,26 +420,27 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         PRIMITIVE_RESTART_FIXED_INDEX, SCISSOR_TEST, STENCIL_TEST
 
       * INVALID_OPERATION is generated by ClearBufferfv(), ClearBufferiv(),
-        ClearBufferuiv() if <buffer> is COLOR and:
+        ClearBufferuiv() if <buffer> is COLOR and any of the following are true:
 
-        <buffer> < MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
-        <buffer> <
+        <buffer> >= MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
+        <buffer> >=
             (MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
              ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE)
 
-      * INVALID_OPERATION is generated by Enablei*(), Disablei*() if:
+      * INVALID_OPERATION is generated by Enablei*(), Disablei*() if any of the
+        following are true:
 
-        <index> < MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
-        <index> <
+        <index> >= MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
+        <index> >=
             (MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
              ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE)
 
       * INVALID_OPERATION is generated by BlendEquationi*(),
         BlendEquationSeparatei*(), BlendFunci*(), BlendFuncSeparatei*(),
-        ColorMaski*() if:
+        ColorMaski*() if any of the following are true:
 
-        <buf> < MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
-        <buf> <
+        <buf> >= MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
+        <buf> >=
             (MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
              ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE)
 
@@ -672,13 +682,13 @@ Additions to the OpenGL ES Specification, Version 3.0.6
     internalformat. (See Table X.4.) Clear values are set with the commands:
 
       void FramebufferPixelLocalClearValuefvANGLE(int plane,
-                                                  const float value[4])
+                                                  const float value[])
 
       void FramebufferPixelLocalClearValueivANGLE(int plane,
-                                                  const int value[4])
+                                                  const int value[])
 
       void FramebufferPixelLocalClearValueuivANGLE(int plane,
-                                                   const uint value[4])
+                                                   const uint value[])
 
     Parameters:
 
@@ -710,11 +720,15 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
       void GetFramebufferPixelLocalStorageParameterfvANGLE(int plane,
                                                            enum pname,
-                                                           float* params)
+                                                           GLsizei bufSize,
+                                                           GLsizei *length,
+                                                           GLfloat *params)
 
       void GetFramebufferPixelLocalStorageParameterivANGLE(int plane,
                                                            enum pname,
-                                                           int* params)
+                                                           GLsizei bufSize,
+                                                           GLsizei *length,
+                                                           GLint *params)
 
     Parameters:
 
@@ -722,7 +736,9 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
       * <pname> specifies the parameter of the plane to query.
 
-      * <params> returns the value parameter <pname> for the plane.
+      * <params> receives the value(s) for parameter <pname> of the pixel local
+        storage plane at index <plane>. When an error is generated, nothing is
+        written to <params>.
 
     Description:
 
@@ -762,6 +778,38 @@ Additions to the OpenGL ES Specification, Version 3.0.6
       * INVALID_ENUM is generated if <pname> is not in Table 6.Y, or if the
         command issued is not the associated "Get Command" for <pname> in Table
         6.Y.
+
+      * INVALID_VALUE is generated if <params> is NULL.
+
+    If ANGLE_robust_client_memory is supported, the alternative query commands
+    may also be used:
+
+      void GetFramebufferPixelLocalStorageParameterfvRobustANGLE(int plane,
+                                                                 enum pname,
+                                                                 GLsizei bufSize,
+                                                                 GLsizei *length,
+                                                                 GLfloat *params)
+
+      void GetFramebufferPixelLocalStorageParameterivRobustANGLE(int plane,
+                                                                 enum pname,
+                                                                 GLsizei bufSize,
+                                                                 GLsizei *length,
+                                                                 GLint *params)
+
+    Additional Parameters:
+
+      * <bufSize> indicates the maximum number of values that can be written to
+        <params>.
+
+      * <length> may be NULL. If not NULL, it receives the number of values
+        written to <params>. When an error is generated, nothing is written to
+        <length>.
+
+    Additional Errors:
+
+      * INVALID_OPERATION is generated if <bufSize> is not large enough to
+        receive the requested parameter.
+
 
   Modify Section 6.1 "State Tables"
 
@@ -813,6 +861,20 @@ Additions to the OpenGL ES Specification, Version 3.0.6
     _UNSIGNED_INT_ANGLE        4*Z+  StorageParameterivANGLE    0,0,0,0  6.1.X
 
     Table 6.Y: Pixel Local Storage State
+
+
+Interactions with the ANGLE_request_extension specification
+
+    When either ANGLE_shader_pixel_local_storage or
+    ANGLE_shader_pixel_local_storage_coherent is enabled, the following
+    extensions are all implicitly enabled, if supported:
+
+      * OES_draw_buffers_indexed
+      * EXT_draw_buffers_indexed
+      * EXT_color_buffer_float
+      * EXT_color_buffer_half_float
+      * ANGLE_shader_pixel_local_storage_coherent
+      * ANGLE_shader_pixel_local_storage
 
 
 Interactions with OpenGL ES 3.1
@@ -1030,3 +1092,13 @@ Issues
       doesn't come from another context, and that needs to be specified. Similar
       decisions have been made previously in performance-critical areas of the
       spec.
+
+    (3) Should we support the ability to enable/disable pixel local storage
+    planes on an individual basis? (e.g., "GL_LOAD_OP_DISABLE_ANGLE.)
+
+      RESOLVED: No. Some implementations need to reserve color attachments for
+      internal use. Allowing any combination of planes to be enabled or disabled
+      would make this specification unnecessarily complex. Furthermore, browsers
+      implementing WebGL will need the ability to interrupt pixel local storage
+      rendering passes, which would also be more complicated if we were to
+      support enabling and disabling planes individually.

@@ -50,12 +50,12 @@ overhead in ANGLE code.
 
 Several command-line arguments control how the tests run:
 
-* `--one-frame-only`: Runs tests once and quickly exits. Used as a quick smoke test.
+* `--run-to-key-frame`: If the trace specifies a key frame, run to that frame and stop. Traces without a `KeyFrames` entry in their JSON will default to frame 1. This is primarily to save cycles on our bots that do screenshot quality comparison.
 * `--enable-trace`: Write a JSON event log that can be loaded in Chrome.
 * `--trace-file file`: Name of the JSON event log for `--enable-trace`.
 * `--calibration`: Prints the number of steps a test runs in a fixed time. Used by `perf_test_runner.py`.
 * `--steps-per-trial x`: Fixed number of steps to run for each test trial.
-* `--max-steps-performed x`: Upper maximum on total number of steps for the entire test run.
+* `--max-steps-performed x`: Upper maximum on total number of steps for the entire test run.  For a quick smoke test, you can specify 1.
 * `--render-test-output-dir=dir`: Directory to store test artifacts (including screenshots but unlike `--screenshot-dir`, `dir` here is always a local directory regardless of platform and `--save-screenshots` isn't implied).
 * `--verbose`: Print extra timing information.
 * `--warmup-trials x`: Number of times to warm up the test before starting timing. Defaults to 3.
