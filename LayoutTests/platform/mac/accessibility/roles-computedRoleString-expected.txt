@@ -84,18 +84,18 @@ PASS time -> time.
 PASS ul -> list.
 PASS li -> listitem.
 PASS var -> .
-PASS div[role="command"] -> .
-PASS div[role="composite"] -> .
-PASS div[role="input"] -> .
-PASS div[role="landmark"] -> .
-PASS div[role="range"] -> .
-PASS div[role="roletype"] -> .
-PASS div[role="section"] -> .
-PASS div[role="sectionhead"] -> .
-PASS div[role="select"] -> .
-PASS div[role="structure"] -> .
-PASS div[role="widget"] -> .
-PASS div[role="window"] -> .
+PASS div[role="command"] -> generic.
+PASS div[role="composite"] -> generic.
+PASS div[role="input"] -> generic.
+PASS div[role="landmark"] -> generic.
+PASS div[role="range"] -> generic.
+PASS div[role="roletype"] -> generic.
+PASS div[role="section"] -> generic.
+PASS div[role="sectionhead"] -> generic.
+PASS div[role="select"] -> generic.
+PASS div[role="structure"] -> generic.
+PASS div[role="widget"] -> generic.
+PASS div[role="window"] -> generic.
 PASS div[role="alert"] -> alert.
 PASS div[role="alertdialog"] -> alertdialog.
 PASS div[role="application"] -> application.
@@ -153,7 +153,7 @@ PASS div[role="paragraph"] -> paragraph.
 PASS div[role="progressbar"] -> progressbar.
 PASS div[role="radiogroup"] -> radiogroup.
 PASS div[role="radio"] -> radio.
-PASS div[role="region"]:not([aria-label]:not([aria-labelledby]) -> .
+PASS div[role="region"]:not([aria-label]:not([aria-labelledby]) -> generic.
 PASS div[role="region"][aria-label] -> region.
 PASS div[role="region"][aria-labelledby] -> region.
 PASS div[role="scrollbar"] -> scrollbar.
@@ -181,13 +181,14 @@ PASS div[role="row"] -> row.
 PASS div[role="rowheader"] -> rowheader.
 PASS div[role="columnheader"] -> columnheader.
 PASS div[role="gridcell"] -> gridcell.
+PASS div[role="generic"] -> generic.
 PASS div[role="button foo"] -> button.
 PASS div[role="foo button bar"] -> button.
 PASS div[role="foo  button  bar"] -> button.
-PASS div[role="foo	button	bar"] -> .
+PASS div[role="foo	button	bar"] -> generic.
 PASS div[role="foo
 button
-bar"] -> .
+bar"] -> generic.
 PASS img[role="foo"] -> image.
 PASS img[role="foo bar"] -> image.
 PASS img[role="foo  bar"] -> image.

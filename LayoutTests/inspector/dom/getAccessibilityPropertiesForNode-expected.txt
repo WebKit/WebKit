@@ -12,7 +12,7 @@ Total elements to be tested: 122.
 <div onclick="void(0);">click</div>
     exists: true
     label:
-    role:
+    role: generic
     childNodeIds.length: 1
     mouseEventNodeId: exists
     parentNodeId: exists
@@ -947,7 +947,7 @@ Total elements to be tested: 122.
 <div aria-hidden="true"></div>
     exists: true
     label:
-    role:
+    role: generic
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -956,7 +956,7 @@ Total elements to be tested: 122.
 <div></div>
     exists: true
     label:
-    role:
+    role: generic
     ignored: true
     parentNodeId: exists
 
@@ -985,7 +985,7 @@ Total elements to be tested: 122.
 <div><div></div></div>
     exists: true
     label:
-    role:
+    role: generic
     ignored: true
     parentNodeId: exists
 

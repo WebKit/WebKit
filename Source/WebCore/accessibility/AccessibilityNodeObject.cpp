@@ -354,7 +354,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (node()->hasTagName(dfnTag))
         return AccessibilityRole::Definition;
     if (node()->hasTagName(divTag))
-        return AccessibilityRole::Div;
+        return AccessibilityRole::Generic;
     if (is<HTMLFormElement>(node()))
         return AccessibilityRole::Form;
     if (node()->hasTagName(articleTag))
@@ -1918,7 +1918,7 @@ bool AccessibilityNodeObject::roleIgnoresTitle() const
         return false;
 
     switch (roleValue()) {
-    case AccessibilityRole::Div:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::Unknown:
         return true;
     default:

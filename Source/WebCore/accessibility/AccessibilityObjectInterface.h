@@ -140,7 +140,6 @@ enum class AccessibilityRole {
     Details,
     Directory,
     DisclosureTriangle,
-    Div,
     Document,
     DocumentArticle,
     DocumentMath,
@@ -152,6 +151,7 @@ enum class AccessibilityRole {
     Footer,
     Footnote,
     Form,
+    Generic,
     GraphicsDocument,
     GraphicsObject,
     GraphicsSymbol,
@@ -334,8 +334,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Directory"_s;
     case AccessibilityRole::DisclosureTriangle:
         return "DisclosureTriangle"_s;
-    case AccessibilityRole::Div:
-        return "Div"_s;
     case AccessibilityRole::Document:
         return "Document"_s;
     case AccessibilityRole::DocumentArticle:
@@ -358,6 +356,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Footnote"_s;
     case AccessibilityRole::Form:
         return "Form"_s;
+    case AccessibilityRole::Generic:
+        return "Generic"_s;
     case AccessibilityRole::GraphicsDocument:
         return "GraphicsDocument"_s;
     case AccessibilityRole::GraphicsObject:

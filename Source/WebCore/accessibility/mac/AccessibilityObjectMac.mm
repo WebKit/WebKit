@@ -123,7 +123,8 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
 
 static bool shouldIgnoreGroup(const AccessibilityObject& axObject)
 {
-    if (!axObject.isGroup() && axObject.roleValue() != AccessibilityRole::Div)
+    // The given object must either be a group, or an implicit generic element (like a div), as implicit generics map to groups.
+    if (!axObject.isGroup() && !axObject.hasImplicitGenericRole())
         return false;
 
     // Never ignore a group with event listeners attached to it (e.g. onclick).
@@ -883,8 +884,8 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::ListItem, NSAccessibilityGroupRole },
         { AccessibilityRole::Paragraph, NSAccessibilityGroupRole },
         { AccessibilityRole::Label, NSAccessibilityGroupRole },
-        { AccessibilityRole::Div, NSAccessibilityGroupRole },
         { AccessibilityRole::Form, NSAccessibilityGroupRole },
+        { AccessibilityRole::Generic, NSAccessibilityGroupRole },
         { AccessibilityRole::SpinButton, NSAccessibilityIncrementorRole },
         { AccessibilityRole::SpinButtonPart, @"AXIncrementorArrow" },
         { AccessibilityRole::Footer, NSAccessibilityGroupRole },

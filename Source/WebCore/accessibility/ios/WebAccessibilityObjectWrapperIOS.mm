@@ -1028,7 +1028,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::DescriptionListDetail:
     case AccessibilityRole::Details:
     case AccessibilityRole::Directory:
-    case AccessibilityRole::Div:
     case AccessibilityRole::Document:
     case AccessibilityRole::DocumentArticle:
     case AccessibilityRole::DocumentNote:
@@ -1039,6 +1038,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Footer:
     case AccessibilityRole::Footnote:
     case AccessibilityRole::Form:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::GraphicsDocument:
     case AccessibilityRole::GraphicsObject:
     case AccessibilityRole::GraphicsSymbol:

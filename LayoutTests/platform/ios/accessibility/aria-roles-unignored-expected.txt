@@ -16,7 +16,7 @@ WebArea
         AXLabel: A form with a button
         Button
     Button
-    Div
+    Generic
         StaticText
         AXLabel: Just some text inside a div
     TextField

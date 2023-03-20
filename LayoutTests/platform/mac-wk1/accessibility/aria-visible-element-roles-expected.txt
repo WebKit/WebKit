@@ -142,6 +142,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <div hidden="" aria-hidden="false" id="div"></div>
     AXRole: AXGroup
+    computedRoleString: generic
 
 <form hidden="" aria-hidden="false" id="form"></form>
     AXRole: AXGroup
