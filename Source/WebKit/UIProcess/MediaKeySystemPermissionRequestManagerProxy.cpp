@@ -30,6 +30,7 @@
 #include "APIUIClient.h"
 #include "Logging.h"
 #include "WebAutomationSession.h"
+#include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcess.h"

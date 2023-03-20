@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "WebInspector.h"
 #include "WebPage.h"
 #include <WebCore/Animation.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>

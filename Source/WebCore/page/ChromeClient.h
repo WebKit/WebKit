@@ -33,7 +33,6 @@
 #include "FocusDirection.h"
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
-#include "GraphicsLayer.h"
 #include "HTMLMediaElementEnums.h"
 #include "HighlightVisibility.h"
 #include "HostWindow.h"

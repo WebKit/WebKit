@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,14 @@
 #include "HandleMessage.h"
 #include "Logging.h"
 #include "PageClient.h"
+#include "SuspendedPageProxy.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebBackForwardCacheEntry.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListCounts.h"
 #include "WebBackForwardListItem.h"
 #include "WebErrors.h"
+#include "WebFrameProxy.h"
 #include "WebNavigationDataStore.h"
 #include "WebNavigationState.h"
 #include "WebPageInspectorController.h"

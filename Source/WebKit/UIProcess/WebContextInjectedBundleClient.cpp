@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "APIMessageListener.h"
 #include "WKAPICast.h"
+#include "WebFrameProxy.h"
 #include "WebProcessPool.h"
 #include <wtf/text/WTFString.h>
 

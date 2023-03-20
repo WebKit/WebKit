@@ -480,7 +480,7 @@ String GraphicsLayerCA::debugName() const
 #endif
 }
 
-GraphicsLayer::PlatformLayerID GraphicsLayerCA::primaryLayerID() const
+PlatformLayerIdentifier GraphicsLayerCA::primaryLayerID() const
 {
     return primaryLayer()->layerID();
 }
@@ -1257,9 +1257,9 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction
     noteLayerPropertyChanged(ContentsRectsChanged | OpacityChanged);
 }
 
-GraphicsLayer::PlatformLayerID GraphicsLayerCA::contentsLayerIDForModel() const
+PlatformLayerIdentifier GraphicsLayerCA::contentsLayerIDForModel() const
 {
-    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? m_contentsLayer->layerID() : GraphicsLayer::PlatformLayerID { };
+    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? m_contentsLayer->layerID() : PlatformLayerIdentifier { };
 }
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,7 +122,7 @@ public:
         void encode(IPC::Encoder&) const;
         static std::optional<LayerCreationProperties> decode(IPC::Decoder&);
 
-        WebCore::GraphicsLayer::PlatformLayerID layerID;
+        WebCore::PlatformLayerIdentifier layerID;
         WebCore::PlatformCALayer::LayerType type;
         std::optional<PlaybackSessionContextIdentifier> playerIdentifier;
         std::optional<WebCore::FloatSize> initialSize;
@@ -167,7 +167,7 @@ public:
         std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
         std::unique_ptr<WebCore::FloatRoundedRect> shapeRoundedRect;
 
-        Vector<WebCore::GraphicsLayer::PlatformLayerID> children;
+        Vector<WebCore::PlatformLayerIdentifier> children;
 
         Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
         HashSet<String> keysOfAnimationsToRemove;
@@ -186,8 +186,8 @@ public:
         std::unique_ptr<RemoteLayerBackingStoreProperties> backingStoreProperties;
         std::unique_ptr<WebCore::FilterOperations> filters;
         WebCore::Path shapePath;
-        Markable<WebCore::GraphicsLayer::PlatformLayerID> maskLayerID;
-        Markable<WebCore::GraphicsLayer::PlatformLayerID> clonedLayerID;
+        Markable<WebCore::PlatformLayerIdentifier> maskLayerID;
+        Markable<WebCore::PlatformLayerIdentifier> clonedLayerID;
 #if ENABLE(SCROLLING_THREAD)
         WebCore::ScrollingNodeID scrollingNodeID { 0 };
 #endif
@@ -232,19 +232,19 @@ public:
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerTreeTransaction&);
 
-    WebCore::GraphicsLayer::PlatformLayerID rootLayerID() const { return m_rootLayerID; }
-    void setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+    WebCore::PlatformLayerIdentifier rootLayerID() const { return m_rootLayerID; }
+    void setRootLayerID(WebCore::PlatformLayerIdentifier);
     void layerPropertiesChanged(PlatformCALayerRemote&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
-    void setDestroyedLayerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID>);
-    void setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::GraphicsLayer::PlatformLayerID>);
+    void setDestroyedLayerIDs(Vector<WebCore::PlatformLayerIdentifier>);
+    void setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::PlatformLayerIdentifier>);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
     void dump() const;
 #endif
 
-    typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<LayerProperties>> LayerPropertiesMap;
+    typedef HashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<LayerProperties>> LayerPropertiesMap;
     
     bool hasAnyLayerChanges() const
     {
@@ -252,8 +252,8 @@ public:
     }
 
     const Vector<LayerCreationProperties>& createdLayers() const { return m_createdLayers; }
-    const Vector<WebCore::GraphicsLayer::PlatformLayerID>& destroyedLayers() const { return m_destroyedLayerIDs; }
-    const Vector<WebCore::GraphicsLayer::PlatformLayerID>& layerIDsWithNewlyUnreachableBackingStore() const { return m_layerIDsWithNewlyUnreachableBackingStore; }
+    const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers() const { return m_destroyedLayerIDs; }
+    const Vector<WebCore::PlatformLayerIdentifier>& layerIDsWithNewlyUnreachableBackingStore() const { return m_layerIDsWithNewlyUnreachableBackingStore; }
 
     HashSet<RefPtr<PlatformCALayerRemote>>& changedLayers() { return m_changedLayers; }
 
@@ -298,11 +298,11 @@ public:
     void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
 
 #if PLATFORM(MAC)
-    WebCore::GraphicsLayer::PlatformLayerID pageScalingLayerID() const { return m_pageScalingLayerID.value(); }
-    void setPageScalingLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_pageScalingLayerID = layerID; }
+    WebCore::PlatformLayerIdentifier pageScalingLayerID() const { return m_pageScalingLayerID.value(); }
+    void setPageScalingLayerID(WebCore::PlatformLayerIdentifier layerID) { m_pageScalingLayerID = layerID; }
 
-    WebCore::GraphicsLayer::PlatformLayerID scrolledContentsLayerID() const { return m_scrolledContentsLayerID.value(); }
-    void setScrolledContentsLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_scrolledContentsLayerID = layerID; }
+    WebCore::PlatformLayerIdentifier scrolledContentsLayerID() const { return m_scrolledContentsLayerID.value(); }
+    void setScrolledContentsLayerID(WebCore::PlatformLayerIdentifier layerID) { m_scrolledContentsLayerID = layerID; }
 #endif
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
@@ -358,16 +358,16 @@ public:
 #endif
 
 private:
-    WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
+    WebCore::PlatformLayerIdentifier m_rootLayerID;
     HashSet<RefPtr<PlatformCALayerRemote>> m_changedLayers; // Only used in the Web process.
     LayerPropertiesMap m_changedLayerProperties; // Only used in the UI process.
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
     Vector<LayerCreationProperties> m_createdLayers;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_videoLayerIDsPendingFullscreen;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_layerIDsWithNewlyUnreachableBackingStore;
+    Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayerIDs;
+    Vector<WebCore::PlatformLayerIdentifier> m_videoLayerIDsPendingFullscreen;
+    Vector<WebCore::PlatformLayerIdentifier> m_layerIDsWithNewlyUnreachableBackingStore;
 
     Vector<TransactionCallbackID> m_callbackIDs;
 
@@ -382,8 +382,8 @@ private:
     WebCore::Color m_sampledPageTopColor;
 
 #if PLATFORM(MAC)
-    Markable<WebCore::GraphicsLayer::PlatformLayerID> m_pageScalingLayerID; // Only used for non-delegated scaling.
-    Markable<WebCore::GraphicsLayer::PlatformLayerID> m_scrolledContentsLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID; // Only used for non-delegated scaling.
+    Markable<WebCore::PlatformLayerIdentifier> m_scrolledContentsLayerID;
 #endif
 
     double m_pageScaleFactor { 1 };

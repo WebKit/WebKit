@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,11 @@
 
 #pragma once
 
-#include <WebCore/GraphicsLayer.h>
+#include <WebCore/EventRegion.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -42,13 +46,13 @@ class RemoteLayerTreeScrollbars;
 class RemoteLayerTreeNode : public CanMakeWeakPtr<RemoteLayerTreeNode> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
 #endif
     ~RemoteLayerTreeNode();
 
-    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID);
+    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
     CALayer *layer() const { return m_layer.get(); }
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -58,22 +62,22 @@ public:
     UIView *uiView() const { return m_uiView.get(); }
 #endif
 
-    WebCore::GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
+    WebCore::PlatformLayerIdentifier layerID() const { return m_layerID; }
 
     const WebCore::EventRegion& eventRegion() const { return m_eventRegion; }
     void setEventRegion(const WebCore::EventRegion&);
 
     // Non-ancestor scroller that controls positioning of the layer.
-    WebCore::GraphicsLayer::PlatformLayerID actingScrollContainerID() const { return m_actingScrollContainerID; }
+    WebCore::PlatformLayerIdentifier actingScrollContainerID() const { return m_actingScrollContainerID; }
     // Ancestor scrollers that don't affect positioning of the layer.
-    const Vector<WebCore::GraphicsLayer::PlatformLayerID>& stationaryScrollContainerIDs() const { return m_stationaryScrollContainerIDs; }
+    const Vector<WebCore::PlatformLayerIdentifier>& stationaryScrollContainerIDs() const { return m_stationaryScrollContainerIDs; }
 
-    void setActingScrollContainerID(WebCore::GraphicsLayer::PlatformLayerID value) { m_actingScrollContainerID = value; }
-    void setStationaryScrollContainerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID>&& value) { m_stationaryScrollContainerIDs = WTFMove(value); }
+    void setActingScrollContainerID(WebCore::PlatformLayerIdentifier value) { m_actingScrollContainerID = value; }
+    void setStationaryScrollContainerIDs(Vector<WebCore::PlatformLayerIdentifier>&& value) { m_stationaryScrollContainerIDs = WTFMove(value); }
 
     void detachFromParent();
 
-    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer *);
+    static WebCore::PlatformLayerIdentifier layerID(CALayer *);
     static RemoteLayerTreeNode* forCALayer(CALayer *);
 
     static NSString *appendLayerDescription(NSString *description, CALayer *);
@@ -101,7 +105,7 @@ public:
 private:
     void initializeLayer();
 
-    WebCore::GraphicsLayer::PlatformLayerID m_layerID;
+    WebCore::PlatformLayerIdentifier m_layerID;
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostingIdentifier;
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
@@ -119,8 +123,8 @@ private:
     WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
 #endif
 
-    WebCore::GraphicsLayer::PlatformLayerID m_actingScrollContainerID;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_stationaryScrollContainerIDs;
+    WebCore::PlatformLayerIdentifier m_actingScrollContainerID;
+    Vector<WebCore::PlatformLayerIdentifier> m_stationaryScrollContainerIDs;
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;
 };

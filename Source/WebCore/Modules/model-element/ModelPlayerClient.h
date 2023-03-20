@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "GraphicsLayer.h"
+#include "PlatformLayerIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,7 +40,7 @@ public:
 
     virtual void didFinishLoading(ModelPlayer&) = 0;
     virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
-    virtual GraphicsLayer::PlatformLayerID platformLayerID() = 0;
+    virtual PlatformLayerIdentifier platformLayerID() = 0;
 };
 
 }

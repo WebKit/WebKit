@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,17 +226,17 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(GraphicsLayer::PlatformLayerID layerID, ImageBufferBackendHandle&& handle)
+void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLayerIdentifier layerID, ImageBufferBackendHandle&& handle)
 {
     m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTFMove(handle));
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, MonotonicTime startTime)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_identifier);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
 {
     m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), m_identifier);
 }
@@ -443,7 +443,7 @@ bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
     return m_remoteLayerTreeHost->rootLayer();
 }
 
-CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(WebCore::GraphicsLayer::PlatformLayerID layerID) const
+CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
     return m_remoteLayerTreeHost->layerWithIDForTesting(layerID);
 }

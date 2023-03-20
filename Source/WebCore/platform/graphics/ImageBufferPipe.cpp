@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ImageBufferPipe.h"
 
+#include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include <wtf/Lock.h>
 

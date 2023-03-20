@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-#import <WebCore/GraphicsLayer.h>
+#import <WebCore/PlatformLayerIdentifier.h>
 #endif
 
 namespace WebKit {
@@ -39,7 +39,7 @@ struct ModelIdentifier {
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     String uuid;
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    WebCore::GraphicsLayer::PlatformLayerID layerIdentifier;
+    WebCore::PlatformLayerIdentifier layerIdentifier;
 #endif
 };
 

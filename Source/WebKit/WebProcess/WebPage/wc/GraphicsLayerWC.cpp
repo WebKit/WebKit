@@ -155,7 +155,7 @@ GraphicsLayerWC::~GraphicsLayerWC()
         m_observer->graphicsLayerRemoved(*this);
 }
 
-GraphicsLayer::PlatformLayerID GraphicsLayerWC::primaryLayerID() const
+PlatformLayerIdentifier GraphicsLayerWC::primaryLayerID() const
 {
     return m_layerID;
 }

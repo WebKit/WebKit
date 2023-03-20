@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,7 @@ bool RemoteLayerTreeContext::canShowWhileLocked() const
 
 void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type)
 {
-    GraphicsLayer::PlatformLayerID layerID = layer.layerID();
+    PlatformLayerIdentifier layerID = layer.layerID();
 
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
     layer.populateCreationProperties(creationProperties, *this, type);
@@ -121,7 +121,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
 #if HAVE(AVKIT)
 void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type, WebCore::HTMLVideoElement& videoElement)
 {
-    GraphicsLayer::PlatformLayerID layerID = layer.layerID();
+    PlatformLayerIdentifier layerID = layer.layerID();
 
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
     creationProperties.playerIdentifier = videoElement.identifier();
@@ -140,7 +140,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
 void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 {
     ASSERT(layer.layerID());
-    GraphicsLayer::PlatformLayerID layerID = layer.layerID();
+    PlatformLayerIdentifier layerID = layer.layerID();
 
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);
@@ -206,14 +206,14 @@ void RemoteLayerTreeContext::willStartAnimationOnLayer(PlatformCALayerRemote& la
     m_layersWithAnimations.add(layer.layerID(), &layer);
 }
 
-void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, MonotonicTime startTime)
+void RemoteLayerTreeContext::animationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     auto it = m_layersWithAnimations.find(layerID);
     if (it != m_layersWithAnimations.end())
         it->value->animationStarted(key, startTime);
 }
 
-void RemoteLayerTreeContext::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key)
+void RemoteLayerTreeContext::animationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
 {
     auto it = m_layersWithAnimations.find(layerID);
     if (it != m_layersWithAnimations.end())

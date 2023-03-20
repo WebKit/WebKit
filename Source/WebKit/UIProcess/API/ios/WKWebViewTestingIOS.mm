@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #import "WKFullScreenWindowController.h"
 #import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKTextInputContextInternal.h"
 #import <WebCore/ColorCocoa.h>
@@ -316,7 +317,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID
 {
-    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ makeObjectIdentifier<WebCore::GraphicsLayer::PlatformLayerIDType>(layerID), _page->process().coreProcessIdentifier() });
+    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ makeObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->process().coreProcessIdentifier() });
     if (!layer)
         return nil;
 

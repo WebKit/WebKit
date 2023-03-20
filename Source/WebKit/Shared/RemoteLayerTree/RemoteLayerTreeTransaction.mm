@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -690,7 +690,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     for (uint64_t i = 0; i < numChangedLayerProperties; ++i) {
-        WebCore::GraphicsLayer::PlatformLayerID layerID;
+        WebCore::PlatformLayerIdentifier layerID;
         if (!decoder.decode(layerID))
             return false;
 
@@ -824,7 +824,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     return true;
 }
 
-void RemoteLayerTreeTransaction::setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID rootLayerID)
+void RemoteLayerTreeTransaction::setRootLayerID(WebCore::PlatformLayerIdentifier rootLayerID)
 {
     ASSERT_ARG(rootLayerID, rootLayerID);
 
@@ -841,12 +841,12 @@ void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties
     m_createdLayers = WTFMove(createdLayers);
 }
 
-void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayerIDs)
+void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<WebCore::PlatformLayerIdentifier> destroyedLayerIDs)
 {
     m_destroyedLayerIDs = WTFMove(destroyedLayerIDs);
 }
 
-void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore)
+void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::PlatformLayerIdentifier> layerIDsWithNewlyUnreachableBackingStore)
 {
     m_layerIDsWithNewlyUnreachableBackingStore = WTFMove(layerIDsWithNewlyUnreachableBackingStore);
 }
@@ -875,7 +875,7 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("name", layerProperties.name);
 
         if (layerProperties.changedProperties & LayerChange::ChildrenChanged)
-            ts.dumpProperty<Vector<WebCore::GraphicsLayer::PlatformLayerID>>("children", layerProperties.children);
+            ts.dumpProperty<Vector<WebCore::PlatformLayerIdentifier>>("children", layerProperties.children);
 
         if (layerProperties.changedProperties & LayerChange::PositionChanged)
             ts.dumpProperty("position", layerProperties.position);
@@ -1078,7 +1078,7 @@ String RemoteLayerTreeTransaction::description() const
     dumpChangedLayers(ts, m_changedLayerProperties);
 
     if (!m_destroyedLayerIDs.isEmpty())
-        ts.dumpProperty<Vector<WebCore::GraphicsLayer::PlatformLayerID>>("destroyed-layers", m_destroyedLayerIDs);
+        ts.dumpProperty<Vector<WebCore::PlatformLayerIdentifier>>("destroyed-layers", m_destroyedLayerIDs);
 
     if (m_editorState) {
         TextStream::GroupScope scope(ts);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "LayerHostingContextIdentifier.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "PlatformLayerIdentifier.h"
 #include "ProcessIdentifier.h"
 #include "ProcessQualified.h"
 #include "Region.h"
@@ -298,9 +299,7 @@ public:
 
     virtual void initialize(Type) { }
 
-    enum PlatformLayerIDType { };
-    using PlatformLayerID = ProcessQualified<ObjectIdentifier<PlatformLayerIDType>>;
-    virtual PlatformLayerID primaryLayerID() const { return { }; }
+    virtual PlatformLayerIdentifier primaryLayerID() const { return { }; }
 
     GraphicsLayerClient& client() const { return *m_client; }
 
@@ -550,7 +549,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     enum class ModelInteraction : uint8_t { Enabled, Disabled };
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
-    virtual PlatformLayerID contentsLayerIDForModel() const { return { }; }
+    virtual PlatformLayerIdentifier contentsLayerIDForModel() const { return { }; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
 
@@ -824,7 +823,7 @@ protected:
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::GraphicsLayerPaintingPhase);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Vector<GraphicsLayer::PlatformLayerID>&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Vector<PlatformLayerIdentifier>&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsLayer::CustomAppearance&);
 
 } // namespace WebCore

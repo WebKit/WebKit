@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@ messages -> DrawingArea NotRefCounted {
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 
-    AcceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, String key, MonotonicTime startTime)
-    AcceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, String key)
+    AcceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, String key, MonotonicTime startTime)
+    AcceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, String key)
     
     DispatchAfterEnsuringDrawing() -> () CallWithReplyID
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/Page.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebKit {

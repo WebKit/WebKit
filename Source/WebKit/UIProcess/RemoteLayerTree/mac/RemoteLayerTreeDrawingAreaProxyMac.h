@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,7 +89,7 @@ private:
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
     std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
-    WebCore::GraphicsLayer::PlatformLayerID m_pageScalingLayerID;
+    WebCore::PlatformLayerIdentifier m_pageScalingLayerID;
 
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
     std::optional<double> m_transientZoomScale;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,12 @@
 #include "CachedRawResource.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "GraphicsLayer.h"
 #include "HTMLElement.h"
 #include "HTMLModelElementCamera.h"
 #include "IDLTypes.h"
 #include "ModelPlayerClient.h"
 #include "PlatformLayer.h"
+#include "PlatformLayerIdentifier.h"
 #include "SharedBuffer.h"
 #include <wtf/UniqueRef.h>
 
@@ -152,7 +152,7 @@ private:
     // ModelPlayerClient overrides.
     void didFinishLoading(ModelPlayer&) final;
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
-    GraphicsLayer::PlatformLayerID platformLayerID() final;
+    PlatformLayerIdentifier platformLayerID() final;
 
     void defaultEventHandler(Event&) final;
     void dragDidStart(MouseEvent&);

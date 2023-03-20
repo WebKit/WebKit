@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CanvasBase.h"
-#include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
@@ -41,6 +40,7 @@ class CSSStyleImageValue;
 class CachedImage;
 class CanvasPattern;
 class DestinationColorSpace;
+class GraphicsLayer;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;

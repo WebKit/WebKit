@@ -5078,7 +5078,7 @@ void WebPage::requestRectForFoundTextRange(const WebFoundTextRange& range, Compl
     foundTextRangeController().requestRectForFoundTextRange(range, WTFMove(completionHandler));
 }
 
-void WebPage::addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&& completionHandler)
+void WebPage::addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&& completionHandler)
 {
     foundTextRangeController().addLayerForFindOverlay(WTFMove(completionHandler));
 }
@@ -8511,12 +8511,12 @@ void WebPage::cancelTextRecognitionForVideoInElementFullScreen()
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-void WebPage::modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
+void WebPage::modelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
 {
     ARKitInlinePreviewModelPlayerIOS::pageLoadedModelInlinePreview(*this, layerID);
 }
 
-void WebPage::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+void WebPage::modelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier layerID, const WebCore::ResourceError& error)
 {
     ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview(*this, layerID, error);
 }

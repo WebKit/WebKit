@@ -40,7 +40,7 @@ namespace WebCore {
 
 PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
     : m_layerType(layerType)
-    , m_layerID(GraphicsLayer::PlatformLayerID::generate())
+    , m_layerID(PlatformLayerIdentifier::generate())
     , m_owner(owner)
 {
 }

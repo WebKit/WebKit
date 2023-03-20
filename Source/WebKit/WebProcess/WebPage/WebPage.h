@@ -72,7 +72,6 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSizeHash.h>
@@ -82,6 +81,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PointerCharacteristics.h>
@@ -358,6 +358,7 @@ struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditorState;
+struct FrameTreeNodeData;
 struct FocusedElementInformation;
 struct FontInfo;
 struct FrameTreeNodeData;
@@ -373,7 +374,6 @@ struct WebAutocorrectionContext;
 struct WebFoundTextRange;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
-struct WebsitePoliciesData;
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 class VisibleContentRectUpdateInfo;
@@ -1590,8 +1590,8 @@ public:
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID);
-    void modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID, const WebCore::ResourceError&);
+    void modelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier);
+    void modelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier, const WebCore::ResourceError&);
 #endif
 
 #if ENABLE(VIDEO)
@@ -1921,7 +1921,7 @@ private:
     void didEndTextSearchOperation();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
-    void addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&&);
+    void addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&&);
     void removeLayerForFindOverlay(CompletionHandler<void()>&&);
 
 #if USE(COORDINATED_GRAPHICS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -332,7 +332,7 @@ void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceEr
         m_readyPromise->reject(Exception { AbortError });
 }
 
-GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()
+PlatformLayerIdentifier HTMLModelElement::platformLayerID()
 {
     auto* page = document().page();
     if (!page)

@@ -87,6 +87,7 @@
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
+#include "PolicyDecision.h"
 #include "PrintInfo.h"
 #include "ProcessThrottler.h"
 #include "ProvisionalPageProxy.h"
@@ -94,6 +95,7 @@
 #include "SpeechRecognitionPermissionManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
+#include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -117,6 +119,7 @@
 #include "WebFrame.h"
 #include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebFrameProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebImage.h"
@@ -4553,7 +4556,7 @@ void WebPageProxy::requestRectForFoundTextRange(const WebFoundTextRange& range, 
     sendWithAsyncReply(Messages::WebPage::RequestRectForFoundTextRange(range), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&& callbackFunction)
+void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&& callbackFunction)
 {
     sendWithAsyncReply(Messages::WebPage::AddLayerForFindOverlay(), WTFMove(callbackFunction));
 }
@@ -11710,12 +11713,12 @@ void WebPageProxy::modelElementSetInteractionEnabled(ModelIdentifier modelIdenti
         m_modelElementController->setInteractionEnabledForModelElement(modelIdentifier, isInteractionEnabled);
 }
 
-void WebPageProxy::modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
+void WebPageProxy::modelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
 {
     send(Messages::WebPage::ModelInlinePreviewDidLoad(layerID));
 }
 
-void WebPageProxy::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+void WebPageProxy::modelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier layerID, const WebCore::ResourceError& error)
 {
     send(Messages::WebPage::ModelInlinePreviewDidFailToLoad(layerID, error));
 }

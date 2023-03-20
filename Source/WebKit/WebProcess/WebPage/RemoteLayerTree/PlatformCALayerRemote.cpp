@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -449,9 +449,9 @@ RefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String&
     return m_animations.get(key);
 }
 
-static inline bool isEquivalentLayer(const PlatformCALayer* layer, const std::optional<GraphicsLayer::PlatformLayerID>& layerID)
+static inline bool isEquivalentLayer(const PlatformCALayer* layer, const std::optional<PlatformLayerIdentifier>& layerID)
 {
-    auto newLayerID = layer ? layer->layerID() : GraphicsLayer::PlatformLayerID { };
+    auto newLayerID = layer ? layer->layerID() : PlatformLayerIdentifier { };
     return layerID == newLayerID;
 }
 

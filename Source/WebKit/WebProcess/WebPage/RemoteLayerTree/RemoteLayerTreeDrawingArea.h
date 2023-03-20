@@ -41,6 +41,7 @@
 namespace WebCore {
 class PlatformCALayer;
 class ThreadSafeImageBufferFlusher;
+class TiledBacking;
 }
 
 namespace WebKit {
@@ -97,8 +98,8 @@ private:
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
     std::optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }
 
-    void acceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, MonotonicTime startTime) override;
-    void acceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, const String& key) override;
+    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) override;
+    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) override;
 
     WebCore::FloatRect exposedContentRect() const override;
     void setExposedContentRect(const WebCore::FloatRect&) override;

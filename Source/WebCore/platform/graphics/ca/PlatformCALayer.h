@@ -95,7 +95,7 @@ public:
 
     virtual ~PlatformCALayer();
 
-    GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
+    PlatformLayerIdentifier layerID() const { return m_layerID; }
 
     enum class Type : uint8_t {
         Cocoa,
@@ -325,7 +325,7 @@ protected:
     virtual LayerPool& layerPool();
 
     const LayerType m_layerType;
-    const GraphicsLayer::PlatformLayerID m_layerID;
+    const PlatformLayerIdentifier m_layerID;
     RetainPtr<PlatformLayer> m_layer;
     PlatformCALayerClient* m_owner;
 };

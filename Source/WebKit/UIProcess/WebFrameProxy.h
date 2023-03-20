@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,6 +43,7 @@
 #endif
 
 namespace API {
+class Data;
 class Navigation;
 }
 
@@ -51,10 +53,13 @@ class Decoder;
 }
 
 namespace WebKit {
+class DownloadProxy;
 class ProvisionalFrameProxy;
 class SafeBrowsingWarning;
 class SubframePageProxy;
+class UserData;
 class WebFramePolicyListenerProxy;
+class WebProcessProxy;
 class WebsiteDataStore;
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;

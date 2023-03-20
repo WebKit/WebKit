@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,8 +72,8 @@ public:
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
 
     // From the UI process
-    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, MonotonicTime startTime);
-    void animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, const String& key);
+    void animationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
+    void animationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
 
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
@@ -104,13 +104,13 @@ private:
 
     WebPage& m_webPage;
 
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
+    Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayers;
 
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_livePlatformLayers;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersWithAnimations;
+    HashMap<WebCore::PlatformLayerIdentifier, PlatformCALayerRemote*> m_livePlatformLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, PlatformCALayerRemote*> m_layersWithAnimations;
 #if HAVE(AVKIT)
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlaybackSessionContextIdentifier> m_videoLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
 #endif
 
     HashSet<GraphicsLayerCARemote*> m_liveGraphicsLayers;
