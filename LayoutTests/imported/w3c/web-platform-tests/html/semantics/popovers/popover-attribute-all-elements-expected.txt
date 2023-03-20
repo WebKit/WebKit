@@ -5,8 +5,6 @@ PASS A <abbr popover> element should behave as a popover.
 PASS A <abbr> element should *not* behave as a popover.
 PASS A <address popover> element should behave as a popover.
 PASS A <address> element should *not* behave as a popover.
-FAIL A <area popover> element should behave as a popover. assert_equals: After showPopover(), a popover should be visible: Expected this element to be visible expected true but got false
-FAIL A <area> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
 PASS A <article popover> element should behave as a popover.
 PASS A <article> element should *not* behave as a popover.
 PASS A <aside popover> element should behave as a popover.
@@ -115,10 +113,6 @@ PASS A <object popover> element should behave as a popover.
 PASS A <object> element should *not* behave as a popover.
 PASS A <ol popover> element should behave as a popover.
 PASS A <ol> element should *not* behave as a popover.
-FAIL A <optgroup popover> element should behave as a popover. assert_equals: After showPopover(), a popover should be visible: Expected this element to be visible expected true but got false
-FAIL A <optgroup> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
-FAIL A <option popover> element should behave as a popover. assert_equals: After showPopover(), a popover should be visible: Expected this element to be visible expected true but got false
-FAIL A <option> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
 PASS A <output popover> element should behave as a popover.
 PASS A <output> element should *not* behave as a popover.
 PASS A <p popover> element should behave as a popover.
@@ -183,4 +177,25 @@ PASS A <var popover> element should behave as a popover.
 PASS A <var> element should *not* behave as a popover.
 PASS A <video popover> element should behave as a popover.
 PASS A <video> element should *not* behave as a popover.
+PASS A <area popover> element should not be rendered.
+PASS A <audio popover> element should not be rendered.
+PASS A <base popover> element should not be rendered.
+PASS A <br popover> element should not be rendered.
+PASS A <datalist popover> element should not be rendered.
+PASS A <dialog popover> element should not be rendered.
+PASS A <embed popover> element should not be rendered.
+PASS A <head popover> element should not be rendered.
+PASS A <link popover> element should not be rendered.
+PASS A <meta popover> element should not be rendered.
+PASS A <noscript popover> element should not be rendered.
+PASS A <optgroup popover> element should not be rendered.
+PASS A <option popover> element should not be rendered.
+PASS A <param popover> element should not be rendered.
+PASS A <rp popover> element should not be rendered.
+PASS A <script popover> element should not be rendered.
+PASS A <slot popover> element should not be rendered.
+PASS A <style popover> element should not be rendered.
+PASS A <template popover> element should not be rendered.
+PASS A <title popover> element should not be rendered.
+PASS A <wbr popover> element should not be rendered.
 
