@@ -145,6 +145,9 @@ private:
 =======
     double m_currentZoom { 1 };
     double m_zoomScaleFactor { 1 };
+<<<<<<< HEAD
+>>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
+=======
 >>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
     bool m_interrupted { false };
     bool m_isRunning { false };

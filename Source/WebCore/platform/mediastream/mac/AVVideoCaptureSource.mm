@@ -94,6 +94,7 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 class AVVideoPreset : public VideoPreset {
 public:
     static Ref<AVVideoPreset> create(IntSize size, Vector<FrameRateRange>&& frameRateRanges, AVCaptureDeviceFormat* format)
@@ -110,6 +111,8 @@ public:
     RetainPtr<AVCaptureDeviceFormat> format;
 };
 =======
+=======
+>>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
 std::optional<double> AVVideoCaptureSource::computeMinZoom() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -380,6 +383,10 @@ void AVVideoCaptureSource::setFrameRateWithPreset(double requestedFrameRate, Ref
     m_currentPreset = avPreset;
     m_currentFrameRate = requestedFrameRate;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    m_currentZoom = m_zoomScaleFactor * requestedZoom;
+>>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
 =======
     m_currentZoom = m_zoomScaleFactor * requestedZoom;
 >>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
@@ -705,8 +712,11 @@ void AVVideoCaptureSource::generatePresets()
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         presets.append(AVVideoPreset::create(size, WTFMove(frameRates), format));
 =======
+=======
+>>>>>>> 1ed9893d3737 (REGRESSION iOS 16.4 beta selects ultra-wide for facingMode: environment)
         VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format) };
         preset.setFormat(format);
         presets.append(WTFMove(preset));
