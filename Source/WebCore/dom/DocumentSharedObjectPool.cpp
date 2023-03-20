@@ -59,27 +59,44 @@ ALWAYS_INLINE bool equalAttributes(const uint8_t* a, const uint8_t* b, unsigned 
 }
 #endif
 
-inline bool hasSameAttributes(Span<const Attribute> attributes, ShareableElementData& elementData)
-{
-    if (attributes.size() != elementData.length())
-        return false;
-    return equalAttributes(reinterpret_cast<const uint8_t*>(attributes.data()), reinterpret_cast<const uint8_t*>(elementData.m_attributeArray), attributes.size() * sizeof(Attribute));
-}
+struct DocumentSharedObjectPool::ShareableElementDataHash {
+    static unsigned hash(const Ref<ShareableElementData>& data)
+    {
+        return computeHash(Span<const Attribute> { data->m_attributeArray, data->length() });
+    }
+    static bool equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
+    {
+        if (a->length() != b->length())
+            return false;
+        return equalAttributes(reinterpret_cast<const uint8_t*>(a->m_attributeArray), reinterpret_cast<const uint8_t*>(b->m_attributeArray), a->length() * sizeof(Attribute));
+    }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct AttributeSpanTranslator {
+    static unsigned hash(Span<const Attribute> attributes)
+    {
+        return computeHash(attributes);
+    }
+
+    static bool equal(const Ref<ShareableElementData>& a, Span<const Attribute> b)
+    {
+        if (a->length() != b.size())
+            return false;
+        return equalAttributes(reinterpret_cast<const uint8_t*>(a->m_attributeArray), reinterpret_cast<const uint8_t*>(b.data()), b.size() * sizeof(Attribute));
+    }
+
+    static void translate(Ref<ShareableElementData>& location, Span<const Attribute> attributes, unsigned /*hash*/)
+    {
+        location = ShareableElementData::createWithAttributes(attributes);
+    }
+};
 
 Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(Span<const Attribute> attributes)
 {
     ASSERT(!attributes.empty());
 
-    auto& cachedData = m_shareableElementDataCache.add(computeHash(attributes), nullptr).iterator->value;
-
-    // FIXME: This prevents sharing when there's a hash collision.
-    if (cachedData && !hasSameAttributes(attributes, *cachedData))
-        return ShareableElementData::createWithAttributes(attributes);
-
-    if (!cachedData)
-        cachedData = ShareableElementData::createWithAttributes(attributes);
-
-    return *cachedData;
+    return m_shareableElementDataCache.add<AttributeSpanTranslator>(attributes).iterator->get();
 }
 
-}
+} // namespace WebCore

@@ -42,7 +42,8 @@ public:
     Ref<ShareableElementData> cachedShareableElementDataWithAttributes(Span<const Attribute>);
 
 private:
-    typedef HashMap<unsigned, RefPtr<ShareableElementData>, AlreadyHashed> ShareableElementDataCache;
+    struct ShareableElementDataHash;
+    using ShareableElementDataCache = HashSet<Ref<ShareableElementData>, ShareableElementDataHash>;
     ShareableElementDataCache m_shareableElementDataCache;
 };
 
