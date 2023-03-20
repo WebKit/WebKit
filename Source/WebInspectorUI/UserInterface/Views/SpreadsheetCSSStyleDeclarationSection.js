@@ -43,6 +43,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._filterText = null;
         this._shouldFocusSelectorElement = false;
         this._wasEditing = false;
+        this._setSelectorTextPromise = Promise.resolve();
 
         this._isMousePressed = false;
         this._mouseDownIndex = NaN;
@@ -761,7 +762,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let selectorText = this._selectorElement.textContent.trim();
         if (selectorText && changed) {
             this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.SelectorOrGroupingWillChange);
-            this._style.ownerRule.setSelectorText(selectorText).finally(this._renderSelector.bind(this));
+            this._setSelectorTextPromise = this._style.ownerRule.setSelectorText(selectorText).finally(this._renderSelector.bind(this));
         } else
             this._discardSelectorChange();
     }
@@ -769,7 +770,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _handleSpreadsheetSelectorFieldWillNavigate(direction)
     {
         if (direction === "forward")
-            this._propertiesEditor.startEditingFirstProperty();
+            this._setSelectorTextPromise.then(() => this._propertiesEditor.startEditingFirstProperty());
         else if (direction === "backward") {
             for (let i = this._groupingElements.length - 1; i >= 0; ++i) {
                 let groupingElementTextField = this._groupingElements[i].associatedTextField;
@@ -782,7 +783,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
                 const delta = -1;
                 this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(this, delta);
             } else
-                this._propertiesEditor.startEditingLastProperty();
+                this._setSelectorTextPromise.then(() => this._propertiesEditor.startEditingLastProperty());
         }
     }
 
