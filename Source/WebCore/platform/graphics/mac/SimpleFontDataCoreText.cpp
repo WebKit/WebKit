@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
     values[0] = platformData().ctFont();
     size_t count = 1;
 
-#if USE(CTFONTSHAPEGLYPHS)
     RetainPtr<CFStringRef> localeString;
     if (!locale.isEmpty()) {
         localeString = locale.string().createCFString();
@@ -71,9 +70,7 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
         values[count] = localeString.get();
         ++count;
     }
-#else
-    UNUSED_PARAM(locale);
-#endif
+
     keys[count] = kCTParagraphStyleAttributeName;
     values[count] = paragraphStyleWithCompositionLanguageNone();
     ++count;

@@ -49,11 +49,7 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
 
 bool isSystemFont(CTFontRef font)
 {
-#if HAVE(CTFONTISSYSTEMUIFONT)
     return CTFontIsSystemUIFont(font);
-#else
-    return CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get());
-#endif
 }
 
 CTFontRef FontPlatformData::registeredFont() const
