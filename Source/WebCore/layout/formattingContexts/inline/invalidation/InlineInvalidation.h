@@ -59,6 +59,7 @@ public:
 
 private:
     void updateInlineDamage(InlineDamage::Type, std::optional<DamagedLine>);
+    bool applyFullDamageIfNeeded(const Box&);
 
     InlineDamage& m_inlineDamage;
 
