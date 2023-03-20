@@ -312,6 +312,9 @@
 // Skipped because intel macs use a GPU family that doesn't support swizzle
 5049 MAC METAL INTEL : DXT1CompressedTextureTest.DXT1Alpha/* = SKIP
 
+// Skipped because Intel GPUs fail sampling stencil textures from swizzled views
+8051 MAC METAL INTEL : Texture2DDepthStencilTestES3.TexSampleModesWithStencil8Swizzled/* = SKIP
+
 6447 MAC METAL : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = SKIP
 6447 MAC METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBellowBaseLevelLOD/* = SKIP
 6447 MAC METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP
@@ -882,6 +885,8 @@
 7994 IOS METAL : VertexAttributeTestES3.DrawWithUnalignedData/ES3_Metal_NoHasExplicitMemBarrier_NoHasCheapRenderPass = SKIP
 7994 IOS METAL : WebGL2ReadOutsideFramebufferTest.CopyTexSubImage3D/ES2_Metal = SKIP
 7994 IOS METAL : WebGL2ValidationStateChangeTest.MultiAttachmentDrawFramebufferNegativeAPI/ES3_Metal = SKIP
+8043 IOS METAL : FramebufferTest_ES3.RenderSharedExponent/ES3_Metal = SKIP
+8051 IOS METAL : Texture2DDepthStencilTestES3.TexSampleModes*Swizzled/ES3_Metal = SKIP
 
 // Test is disabled as it only pertains to desktop GLSL
 6197 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = SKIP
@@ -1004,14 +1009,8 @@
 // On D3D: readonly image2D handles don't return the texture's existing contents.
 7611 D3D11 : GLSLTest_ES31.ReadOnlyImage2DAsFunctionArg/* = SKIP
 
-// Flaky hangs on Linux SwANGLE
-7419 SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchBeforeRenderPass/* = SKIP
-7419 SWIFTSHADER : MultithreadingTestES3.Thread* = SKIP
-
 // Flaky timeout on Windows SwANGLE
 7900 WIN SWIFTSHADER : InstancingTestES3.LargeDivisor/* = SKIP
-7419 WIN SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchMidRenderPass/* = SKIP
-7992 WIN SWIFTSHADER : MultithreadingTestES3.ProgramUseAndDestroyInTwoContexts/* = SKIP
 
 // Timeout with SwiftShader and MAC OpenGL due to large workloads
 7389 SWIFTSHADER : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
@@ -1082,6 +1081,16 @@
 5466 OPENGL : ClipCullDistanceTest.CullDistanceInteractWithGeometryShader/* = SKIP
 5466 GLES : ClipCullDistanceTest.ClipDistanceInteractWithGeometryShader/* = SKIP
 5466 GLES : ClipCullDistanceTest.CullDistanceInteractWithGeometryShader/* = SKIP
+
+// ReadPixels returns zeros on Red and Red-Green snorm color buffers
+8048 WIN INTEL OPENGL : FramebufferTest_ES3.RenderSnorm* = SKIP
+
+// ReadPixels returns zeros on snorm color buffers
+8048 LINUX INTEL OPENGL : FramebufferTest_ES3.RenderSnorm* = SKIP
+
+// ReadPixels returns zeros on Red and Red-Green 16-bit snorm color buffers
+8048 NVIDIA OPENGL : FramebufferTest_ES3.RenderSnorm16* = SKIP
+8048 NVIDIA GLES : FramebufferTest_ES3.RenderSnorm16* = SKIP
 
 // bits 24..31 from glClearValueuiv value don't work on Intel Metal.
 7794 MAC INTEL METAL : PixelLocalStorageTest.ClearValues_r32/* = SKIP

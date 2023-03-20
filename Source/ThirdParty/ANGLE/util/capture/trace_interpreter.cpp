@@ -506,8 +506,7 @@ void TraceInterpreter::setBinaryDataDecompressCallback(DecompressCallback decomp
 void TraceInterpreter::replayFrame(uint32_t frameIndex)
 {
     char funcName[kMaxTokenSize];
-    snprintf(funcName, kMaxTokenSize, "ReplayContext%dFrame%u", mTraceInfo.windowSurfaceContextId,
-             frameIndex);
+    snprintf(funcName, kMaxTokenSize, "ReplayFrame%u", frameIndex);
     runTraceFunction(funcName);
 }
 

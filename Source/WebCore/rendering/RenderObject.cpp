@@ -573,7 +573,7 @@ void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayo
     auto ancestor = container();
 
     bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
-    bool hasOutOfFlowPosition = !isText() && style().hasOutOfFlowPosition();
+    bool hasOutOfFlowPosition = isOutOfFlowPositioned();
 
     while (ancestor) {
         // FIXME: Remove this once we remove the special cases for counters, quotes and mathml calling setNeedsLayout during preferred width computation.
@@ -612,7 +612,7 @@ void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayo
         if (scheduleRelayout == ScheduleRelayout::Yes && objectIsRelayoutBoundary(ancestor))
             break;
 
-        hasOutOfFlowPosition = ancestor->style().hasOutOfFlowPosition();
+        hasOutOfFlowPosition = ancestor->isOutOfFlowPositioned();
         ancestor = container;
     }
 

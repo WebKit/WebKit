@@ -326,7 +326,7 @@
     {
       "name": "WebKitPy-Tests-EWS", "shortname": "webkitpy", "icon": "testOnly",
       "factory": "WebKitPyFactory", "platform": "*",
-      "workernames": ["ews151", "webkit-misc"]
+      "workernames": ["webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS", "shortname": "webkitperl", "icon": "testOnly",

@@ -2980,6 +2980,30 @@ LoadImageFunctionInfo RGB16_EXT_to_R16G16B16_UNORM(GLenum type)
     }
 }
 
+LoadImageFunctionInfo RGB16_EXT_to_R32G32B32A32_FLOAT(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_SHORT:
+            return LoadImageFunctionInfo(LoadToFloat<GLushort, 3, 4, true>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo RGB16_EXT_to_R32G32B32_FLOAT(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_SHORT:
+            return LoadImageFunctionInfo(LoadToFloat<GLushort, 3, 3, true>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
 LoadImageFunctionInfo RGB16_SNORM_EXT_to_R16G16B16A16_SNORM(GLenum type)
 {
     switch (type)
@@ -2998,6 +3022,30 @@ LoadImageFunctionInfo RGB16_SNORM_EXT_to_R16G16B16_SNORM(GLenum type)
     {
         case GL_SHORT:
             return LoadImageFunctionInfo(LoadToNative<GLushort, 3>, false);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo RGB16_SNORM_EXT_to_R32G32B32A32_FLOAT(GLenum type)
+{
+    switch (type)
+    {
+        case GL_SHORT:
+            return LoadImageFunctionInfo(LoadToFloat<GLshort, 3, 4, true>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo RGB16_SNORM_EXT_to_R32G32B32_FLOAT(GLenum type)
+{
+    switch (type)
+    {
+        case GL_SHORT:
+            return LoadImageFunctionInfo(LoadToFloat<GLshort, 3, 3, true>, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -5079,6 +5127,10 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
                     return RGB16_EXT_to_R16G16B16A16_UNORM;
                 case FormatID::R16G16B16_UNORM:
                     return RGB16_EXT_to_R16G16B16_UNORM;
+                case FormatID::R32G32B32A32_FLOAT:
+                    return RGB16_EXT_to_R32G32B32A32_FLOAT;
+                case FormatID::R32G32B32_FLOAT:
+                    return RGB16_EXT_to_R32G32B32_FLOAT;
                 default:
                     break;
             }
@@ -5092,6 +5144,10 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
                     return RGB16_SNORM_EXT_to_R16G16B16A16_SNORM;
                 case FormatID::R16G16B16_SNORM:
                     return RGB16_SNORM_EXT_to_R16G16B16_SNORM;
+                case FormatID::R32G32B32A32_FLOAT:
+                    return RGB16_SNORM_EXT_to_R32G32B32A32_FLOAT;
+                case FormatID::R32G32B32_FLOAT:
+                    return RGB16_SNORM_EXT_to_R32G32B32_FLOAT;
                 default:
                     break;
             }

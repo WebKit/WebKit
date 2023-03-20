@@ -107,6 +107,8 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mViewport(0, 0, 0, 0),
       mNear(0.0f),
       mFar(1.0f),
+      mClipOrigin(gl::ClipOrigin::LowerLeft),
+      mClipDepthMode(gl::ClipDepthMode::NegativeOneToOne),
       mBlendColor(0, 0, 0, 0),
       mBlendStateExt(rendererCaps.maxDrawBuffers),
       mIndependentBlendStates(extensions.drawBuffersIndexedAny()),
@@ -1149,6 +1151,23 @@ void StateManagerGL::setDepthRange(float near, float far)
     }
 
     mLocalDirtyBits.set(gl::State::DIRTY_BIT_DEPTH_RANGE);
+}
+
+void StateManagerGL::setClipControl(gl::ClipOrigin origin, gl::ClipDepthMode depth)
+{
+    if (mClipOrigin == origin && mClipDepthMode == depth)
+    {
+        return;
+    }
+
+    mClipOrigin    = origin;
+    mClipDepthMode = depth;
+
+    ASSERT(mFunctions->clipControl);
+    mFunctions->clipControl(ToGLenum(mClipOrigin), ToGLenum(mClipDepthMode));
+
+    mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+    mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL);
 }
 
 void StateManagerGL::setBlendEnabled(bool enabled)
@@ -2207,6 +2226,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 {
                     switch (extendedDirtyBit)
                     {
+                        case gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
+                            setClipControl(state.getClipOrigin(), state.getClipDepthMode());
+                            break;
                         case gl::State::EXTENDED_DIRTY_BIT_CLIP_DISTANCES:
                             setClipDistancesEnable(state.getEnabledClipDistances());
                             if (mFeatures.emulateClipDistanceState.enabled)
@@ -2226,7 +2248,6 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                         case gl::State::EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT:
                             // These hints aren't forwarded to GL yet.
                             break;
-                        case gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
                         case gl::State::EXTENDED_DIRTY_BIT_SHADING_RATE:
                             // Unimplemented extensions.
                             break;
@@ -2737,6 +2758,20 @@ void StateManagerGL::syncFromNativeContext(const gl::Extensions &extensions,
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_VIEWPORT);
     }
 
+    if (extensions.clipControlEXT)
+    {
+        get(GL_CLIP_ORIGIN, &state->clipOrigin);
+        get(GL_CLIP_DEPTH_MODE, &state->clipDepthMode);
+        if (mClipOrigin != gl::FromGLenum<gl::ClipOrigin>(state->clipOrigin) ||
+            mClipDepthMode != gl::FromGLenum<gl::ClipDepthMode>(state->clipDepthMode))
+        {
+            mClipOrigin    = gl::FromGLenum<gl::ClipOrigin>(state->clipOrigin);
+            mClipDepthMode = gl::FromGLenum<gl::ClipDepthMode>(state->clipDepthMode);
+            mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+            mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL);
+        }
+    }
+
     get(GL_SCISSOR_TEST, &state->scissorTest);
     if (mScissorTestEnabled != static_cast<bool>(state->scissorTest))
     {
@@ -2923,6 +2958,11 @@ void StateManagerGL::restoreNativeContext(const gl::Extensions &extensions,
     ASSERT(mFunctions->getError() == GL_NO_ERROR);
 
     setViewport(state->viewport);
+    if (extensions.clipControlEXT)
+    {
+        setClipControl(gl::FromGLenum<gl::ClipOrigin>(state->clipOrigin),
+                       gl::FromGLenum<gl::ClipDepthMode>(state->clipDepthMode));
+    }
 
     setScissorTestEnabled(state->scissorTest);
     setScissor(state->scissorBox);

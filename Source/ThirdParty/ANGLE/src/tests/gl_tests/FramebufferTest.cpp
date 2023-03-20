@@ -1177,6 +1177,136 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that GL_RGB9_E5 is renderable with the extension.
+TEST_P(FramebufferTest_ES3, RenderSharedExponent)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_render_shared_exponent"));
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    const uint32_t data = 0x80000100;  // Red
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB9_E5, 1, 1, 0, GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV, &data);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR32F_EQ(0, 0, kFloatRed);
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB9_E5, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer drawFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFbo);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0, 1.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR32F_EQ(0, 0, kFloatGreen);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, drawFbo);
+    EXPECT_PIXEL_COLOR32F_EQ(0, 0, kFloatRed);
+}
+
+// Test that R8_SNORM, RG8_SNORM, and RGBA8_SNORM are renderable with the extension.
+TEST_P(FramebufferTest_ES3, RenderSnorm8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+
+    auto test = [&](GLenum format) {
+        GLRenderbuffer rbo;
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, 4, 4);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+        GLint colorLocation = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+        glUniform4f(colorLocation, -1.0f, -0.5f, -0.25f, -0.125f);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        if (format == GL_R8_SNORM)
+        {
+            EXPECT_PIXEL_8S_NEAR(0, 0, -127, 0, 0, 127, 2);
+        }
+        else if (format == GL_RG8_SNORM)
+        {
+            EXPECT_PIXEL_8S_NEAR(0, 0, -127, -64, 0, 127, 2);
+        }
+        else if (format == GL_RGBA8_SNORM)
+        {
+            EXPECT_PIXEL_8S_NEAR(0, 0, -127, -64, -32, -16, 2);
+        }
+    };
+
+    test(GL_R8_SNORM);
+    test(GL_RG8_SNORM);
+    test(GL_RGBA8_SNORM);
+}
+
+// Test that R16_SNORM, RG16_SNORM, and RGBA16_SNORM are renderable with the extension.
+TEST_P(FramebufferTest_ES3, RenderSnorm16)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
+    auto test = [&](GLenum format) {
+        GLRenderbuffer rbo;
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, 4, 4);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+        GLint colorLocation = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+        glUniform4f(colorLocation, -1.0f, -0.5f, -0.25f, -0.125f);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        if (format == GL_R16_SNORM_EXT)
+        {
+            EXPECT_PIXEL_16S_NEAR(0, 0, -32767, 0, 0, 32767, 2);
+        }
+        else if (format == GL_RG16_SNORM_EXT)
+        {
+            EXPECT_PIXEL_16S_NEAR(0, 0, -32767, -16383, 0, 32767, 2);
+        }
+        else if (format == GL_RGBA16_SNORM_EXT)
+        {
+            EXPECT_PIXEL_16S_NEAR(0, 0, -32767, -16383, -8191, -4095, 2);
+        }
+    };
+
+    test(GL_R16_SNORM_EXT);
+    test(GL_RG16_SNORM_EXT);
+    test(GL_RGBA16_SNORM_EXT);
+}
+
 class FramebufferTest_ES3Metal : public FramebufferTest_ES3
 {};
 

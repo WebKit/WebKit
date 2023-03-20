@@ -55,12 +55,19 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
     Vector<RemoteLayerBackingStore*> backingStoreList;
     backingStoreList.reserveInitialCapacity(m_backingStoresNeedingDisplay.size());
 
+    Vector<RemoteLayerBackingStore*> backingStoresWithNoBuffers;
+
     for (auto* backingStore : m_backingStoresNeedingDisplay) {
         backingStore->layer()->properties().notePropertiesChanged(LayerChange::BackingStoreChanged);
         transaction.layerPropertiesChanged(*backingStore->layer());
 
         if (backingStore->performDelegatedLayerDisplay())
             continue;
+
+        if (backingStore->hasNoBuffers()) {
+            backingStoresWithNoBuffers.append(backingStore);
+            continue;
+        }
 
         prepareBuffersData.uncheckedAppend({
             {
@@ -75,14 +82,21 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresF
         backingStoreList.uncheckedAppend(backingStore);
     }
 
-    auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
-    auto swapResult = remoteRenderingBackend.prepareBuffersForDisplay(WTFMove(prepareBuffersData));
+    if (prepareBuffersData.size()) {
+        auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
+        auto swapResult = remoteRenderingBackend.prepareBuffersForDisplay(WTFMove(prepareBuffersData));
 
-    RELEASE_ASSERT(swapResult.size() == backingStoreList.size());
-    for (unsigned i = 0; i < swapResult.size(); ++i) {
-        auto& backingStoreSwapResult = swapResult[i];
-        auto* backingStore = backingStoreList[i];
-        backingStore->applySwappedBuffers(WTFMove(backingStoreSwapResult.buffers.front), WTFMove(backingStoreSwapResult.buffers.back), WTFMove(backingStoreSwapResult.buffers.secondaryBack), backingStoreSwapResult.displayRequirement);
+        RELEASE_ASSERT(swapResult.size() == backingStoreList.size());
+        for (unsigned i = 0; i < swapResult.size(); ++i) {
+            auto& backingStoreSwapResult = swapResult[i];
+            auto* backingStore = backingStoreList[i];
+            backingStore->applySwappedBuffers(WTFMove(backingStoreSwapResult.buffers.front), WTFMove(backingStoreSwapResult.buffers.back), WTFMove(backingStoreSwapResult.buffers.secondaryBack), backingStoreSwapResult.displayRequirement);
+        }
+    }
+    
+    for (auto* backingStore : backingStoresWithNoBuffers) {
+        backingStore->applySwappedBuffers(nullptr, nullptr, nullptr, SwapBuffersDisplayRequirement::NeedsFullDisplay);
+        LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresForDisplay - allocated first buffers for layer " << backingStore->layer()->layerID() << " backing store " << *backingStore);
     }
 }
 

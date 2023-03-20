@@ -44,6 +44,7 @@ angle_end2end_tests_sources = [
   "gl_tests/BuiltinVariableTest.cpp",
   "gl_tests/ClearTest.cpp",
   "gl_tests/ClientArraysTest.cpp",
+  "gl_tests/ClipControlTest.cpp",
   "gl_tests/ClipDistanceTest.cpp",
   "gl_tests/ColorMaskTest.cpp",
   "gl_tests/CompressedTextureFormatsTest.cpp",

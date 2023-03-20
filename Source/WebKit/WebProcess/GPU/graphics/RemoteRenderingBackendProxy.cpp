@@ -272,6 +272,7 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
     send(Messages::RemoteRenderingBackend::ReleaseResource(renderingResourceIdentifier));
 }
 
+#if PLATFORM(COCOA)
 auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
 {
     if (prepareBuffersInput.isEmpty())
@@ -371,6 +372,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
     return result;
 }
+#endif
 
 void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
 {

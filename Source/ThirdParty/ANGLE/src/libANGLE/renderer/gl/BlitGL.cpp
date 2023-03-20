@@ -85,6 +85,8 @@ class [[nodiscard]] ScopedGLState : angle::NonCopyable
         }
         stateManager->setViewport(viewport);
         stateManager->setDepthRange(0.0f, 1.0f);
+        stateManager->setClipControl(gl::ClipOrigin::LowerLeft,
+                                     gl::ClipDepthMode::NegativeOneToOne);
         stateManager->setBlendEnabled(false);
         stateManager->setColorMask(true, true, true, true);
         stateManager->setSampleAlphaToCoverageEnabled(false);

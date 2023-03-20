@@ -48,6 +48,11 @@ class InstallHooks(Command):
             '--mode', default=cls.MODES[0],
             help='Set default mode for installed hooks ({})'.format(string_utils.join(cls.MODES, conjunction='or')),
         )
+        parser.add_argument(
+            '--level', type=str, default=[], action='append', dest='levels',
+            help="Specify a security level for a specific remote with '<hostname>:<path>=<level>'. Note that this "
+                 "level cannot override the level specified by the repository's for the same remote."
+        )
 
     @classmethod
     def _security_levels(cls, repository):
@@ -127,7 +132,26 @@ class InstallHooks(Command):
             sys.stderr.write('No matching hooks in repository to install\n')
             return 1
 
+        early_exit = False
         security_levels = cls._security_levels(repository)
+        for level in getattr(args, 'levels', None) or []:
+            key, value = level.split('=', 1)
+            if not re.match(r'\d+', value):
+                sys.stderr.write("'{}' is not a valid security level\n".format(value))
+                continue
+            value = int(value)
+            if key in security_levels:
+                exisiting_level = security_levels.get(key, None)
+                if exisiting_level is None:
+                    sys.stderr.write("'{}' is already specified, but with an unknown security level\n".format(key))
+                if exisiting_level != value:
+                    sys.stderr.write("'{}' already has a security level of '{}'\n".format(key, exisiting_level))
+                    early_exit = True
+                    continue
+            security_levels[key] = value
+        if early_exit:
+            return 1
+
         for hook in hook_names:
             source_path = os.path.join(hooks, hook)
             if not os.path.isfile(source_path):

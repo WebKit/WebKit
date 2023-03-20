@@ -103,6 +103,7 @@ private:
     Ref<PAL::WebGPU::CompositorIntegration> createCompositorIntegration() final;
 
     void abandonGPUProcess();
+    void disconnectGpuProcessIfNeeded();
 
     Deque<CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
 

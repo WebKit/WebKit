@@ -97,7 +97,7 @@ inline bool isDeviceLostError(HRESULT errorCode)
     }
 }
 
-void InitializeFeatures(angle::FeaturesD3D *features);
+void InitializeFeatures(angle::FeaturesD3D *features, DWORD VendorID);
 }  // namespace d3d9
 
 }  // namespace rx

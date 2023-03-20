@@ -81,6 +81,8 @@ private:
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;
+    void minimumSizeForAutoLayoutDidChange() final;
+    void sizeToContentAutoSizeMaximumSizeDidChange() final;
     void didUpdateGeometry();
     void attachToProvisionalFrameProcess(WebProcessProxy&) final;
     void startReceivingRemoteLayerTreeDrawingAreaProxyMessages(WebProcessProxy&);
@@ -125,6 +127,8 @@ private:
     DidUpdateMessageState m_didUpdateMessageState { DoesNotNeedDidUpdate };
 
     WebCore::IntSize m_lastSentSize;
+    WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
+    WebCore::IntSize m_lastSentSizeToContentAutoSizeMaximumSize;
 
     std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
     RetainPtr<CALayer> m_tileMapHostLayer;

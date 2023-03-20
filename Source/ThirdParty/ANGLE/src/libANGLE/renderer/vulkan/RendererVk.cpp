@@ -46,18 +46,6 @@ constexpr bool kExposeNonConformantExtensionsAndVersions = true;
 #else
 constexpr bool kExposeNonConformantExtensionsAndVersions = false;
 #endif
-
-// This flag is used for memory allocation tracking using allocation size counters.
-constexpr bool kTrackMemoryAllocationSizes = true;
-#if defined(ANGLE_ENABLE_MEMORY_ALLOC_LOGGING)
-// Flag used for logging memory allocations and deallocations.
-constexpr bool kTrackMemoryAllocationDebug = true;
-static_assert(kTrackMemoryAllocationSizes,
-              "kTrackMemoryAllocationSizes must be enabled to use kTrackMemoryAllocationDebug.");
-#else
-// Only the allocation size counters are used (if enabled).
-constexpr bool kTrackMemoryAllocationDebug = false;
-#endif
 }  // anonymous namespace
 
 namespace rx
@@ -88,6 +76,18 @@ constexpr uint32_t kPreferredVulkanAPIVersion = VK_API_VERSION_1_1;
 bool IsVulkan11(uint32_t apiVersion)
 {
     return apiVersion >= VK_API_VERSION_1_1;
+}
+
+bool IsVenus(uint32_t driverId, const char *deviceName)
+{
+    // Where driver id is available, check against Venus driver id:
+    if (driverId != 0)
+    {
+        return driverId == VK_DRIVER_ID_MESA_VENUS;
+    }
+
+    // Otherwise, look for Venus in the device name.
+    return strstr(deviceName, "Venus") != nullptr;
 }
 
 bool IsQualcommOpenSource(uint32_t vendorId, uint32_t driverId, const char *deviceName)
@@ -213,6 +213,10 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkDescriptorImageInfo-imageView-06711",
     // http://crbug.com/1412096
     "VUID-VkImageCreateInfo-pNext-00990",
+    // http://crbug.com/1420265
+    "VUID-vkCmdEndDebugUtilsLabelEXT-commandBuffer-01912",
+    // https://anglebug.com/8076
+    "VUID-VkGraphicsPipelineCreateInfo-None-06573",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -330,6 +334,17 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
         "SYNC_TRANSFORM_FEEDBACK_EXT_TRANSFORM_FEEDBACK_COUNTER_READ_EXT|SYNC_TRANSFORM_FEEDBACK_"
         "EXT_"
         "TRANSFORM_FEEDBACK_COUNTER_WRITE_EXT",
+    },
+    // http://anglebug.com/8054 (VkNonDispatchableHandle on x86 bots)
+    {
+        "SYNC-HAZARD-READ-AFTER-WRITE",
+        "vkCmdDraw: Hazard READ_AFTER_WRITE for VkBuffer",
+        "usage: SYNC_VERTEX_SHADER_SHADER_STORAGE_READ",
+    },
+    {
+        "SYNC-HAZARD-READ-AFTER-WRITE",
+        "vkCmdDraw: Hazard READ_AFTER_WRITE for VkNonDispatchableHandle",
+        "usage: SYNC_VERTEX_SHADER_SHADER_STORAGE_READ",
     },
     // From: TraceTest.manhattan_31 with SwiftShader. These failures appears related to
     // dynamic uniform buffers. The failures are gone if I force mUniformBufferDescriptorType to
@@ -1058,183 +1073,6 @@ ANGLE_INLINE gl::ShadingRate GetShadingRateFromVkExtent(const VkExtent2D &extent
 
     return gl::ShadingRate::_1x1;
 }
-
-// Output memory log stream based on level of severity.
-void outputMemoryLogStream(std::stringstream &outStream, vk::MemoryLogSeverity severity)
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return;
-    }
-
-    switch (severity)
-    {
-        case vk::MemoryLogSeverity::INFO:
-            INFO() << outStream.str();
-            break;
-        case vk::MemoryLogSeverity::WARN:
-            WARN() << outStream.str();
-            break;
-        default:
-            UNREACHABLE();
-            break;
-    }
-}
-
-// Check for currently allocated memory. It is used at the end of the renderer object and when there
-// is an allocation error (from ANGLE_VK_TRY()).
-void checkForCurrentMemoryAllocations(RendererVk *renderer, vk::MemoryLogSeverity severity)
-{
-    if (kTrackMemoryAllocationDebug)
-    {
-        for (uint32_t i = 0; i < vk::kMemoryAllocationTypeCount; i++)
-        {
-            if (renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsSize(i) == 0)
-            {
-                continue;
-            }
-
-            std::stringstream outStream;
-
-            outStream << "Currently allocated size for memory allocation type ("
-                      << vk::kMemoryAllocationTypeMessage[i] << "): "
-                      << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsSize(i)
-                      << " | Count: "
-                      << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsCount(i)
-                      << std::endl;
-
-            for (uint32_t heapIndex = 0;
-                 heapIndex < renderer->getMemoryProperties().getMemoryHeapCount(); heapIndex++)
-            {
-                outStream
-                    << "--> Heap index " << heapIndex << ": "
-                    << renderer->getMemoryAllocationTracker()->getActiveHeapMemoryAllocationsSize(
-                           i, heapIndex)
-                    << " | Count: "
-                    << renderer->getMemoryAllocationTracker()->getActiveHeapMemoryAllocationsCount(
-                           i, heapIndex)
-                    << std::endl;
-            }
-
-            outputMemoryLogStream(outStream, severity);
-        }
-    }
-    else if (kTrackMemoryAllocationSizes)
-    {
-        for (uint32_t i = 0; i < vk::kMemoryAllocationTypeCount; i++)
-        {
-            if (renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsSize(i) == 0)
-            {
-                continue;
-            }
-
-            std::stringstream outStream;
-
-            outStream << "Currently allocated size for memory allocation type ("
-                      << vk::kMemoryAllocationTypeMessage[i] << "): "
-                      << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsSize(i)
-                      << std::endl;
-
-            for (uint32_t heapIndex = 0;
-                 heapIndex < renderer->getMemoryProperties().getMemoryHeapCount(); heapIndex++)
-            {
-                outStream << "--> Heap index " << heapIndex << ": "
-                          << renderer->getMemoryAllocationTracker()
-                                 ->getActiveHeapMemoryAllocationsSize(i, heapIndex)
-                          << std::endl;
-            }
-
-            outputMemoryLogStream(outStream, severity);
-        }
-    }
-}
-
-// In case of an allocation error, log pending memory allocation if the size in non-zero.
-void logPendingMemoryAllocation(RendererVk *renderer, vk::MemoryLogSeverity severity)
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return;
-    }
-
-    vk::MemoryAllocationType allocInfo =
-        renderer->getMemoryAllocationTracker()->getPendingMemoryAllocationType();
-    VkDeviceSize allocSize =
-        renderer->getMemoryAllocationTracker()->getPendingMemoryAllocationSize();
-    uint32_t memoryHeapIndex = renderer->getMemoryProperties().getHeapIndexForMemoryType(
-        renderer->getMemoryAllocationTracker()->getPendingMemoryTypeIndex());
-
-    if (allocSize != 0)
-    {
-        std::stringstream outStream;
-
-        outStream << "Pending allocation size for memory allocation type ("
-                  << vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)]
-                  << ") for heap index " << memoryHeapIndex << ": " << allocSize;
-        outputMemoryLogStream(outStream, severity);
-    }
-}
-
-void logMemoryHeapStats(RendererVk *renderer, vk::MemoryLogSeverity severity)
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return;
-    }
-
-    // Log stream for the heap information.
-    std::stringstream outStream;
-
-    // VkPhysicalDeviceMemoryProperties2 enables the use of memory budget properties if supported.
-    VkPhysicalDeviceMemoryProperties2KHR memoryProperties;
-    memoryProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
-    memoryProperties.pNext = nullptr;
-
-    VkPhysicalDeviceMemoryBudgetPropertiesEXT memoryBudgetProperties;
-    memoryBudgetProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT;
-    memoryBudgetProperties.pNext = nullptr;
-
-    if (renderer->getFeatures().supportsMemoryBudget.enabled)
-    {
-        vk::AddToPNextChain(&memoryProperties, &memoryBudgetProperties);
-    }
-
-    vkGetPhysicalDeviceMemoryProperties2KHR(renderer->getPhysicalDevice(), &memoryProperties);
-
-    // Add memory heap information to the stream.
-    outStream << "Memory heap info" << std::endl;
-
-    outStream << std::endl << "* Available memory heaps:" << std::endl;
-    for (uint32_t i = 0; i < memoryProperties.memoryProperties.memoryHeapCount; i++)
-    {
-        outStream << std::dec << i
-                  << " | Heap size: " << memoryProperties.memoryProperties.memoryHeaps[i].size
-                  << " | Flags: 0x" << std::hex
-                  << memoryProperties.memoryProperties.memoryHeaps[i].flags << std::endl;
-    }
-
-    if (renderer->getFeatures().supportsMemoryBudget.enabled)
-    {
-        outStream << std::endl << "* Available memory budget and usage per heap:" << std::endl;
-        for (uint32_t i = 0; i < memoryProperties.memoryProperties.memoryHeapCount; i++)
-        {
-            outStream << std::dec << i << " | Heap budget: " << memoryBudgetProperties.heapBudget[i]
-                      << " | Heap usage: " << memoryBudgetProperties.heapUsage[i] << std::endl;
-        }
-    }
-
-    outStream << std::endl << "* Available memory types:" << std::endl;
-    for (uint32_t i = 0; i < memoryProperties.memoryProperties.memoryTypeCount; i++)
-    {
-        outStream << std::dec << i
-                  << " | Heap index: " << memoryProperties.memoryProperties.memoryTypes[i].heapIndex
-                  << " | Property flags: 0x" << std::hex
-                  << memoryProperties.memoryProperties.memoryTypes[i].propertyFlags << std::endl;
-    }
-
-    // Output the log stream based on the level of severity.
-    outputMemoryLogStream(outStream, severity);
-}
 }  // namespace
 
 // OneOffCommandPool implementation.
@@ -1275,7 +1113,8 @@ angle::Result OneOffCommandPool::getCommandBuffer(vk::Context *context,
         {
             VkCommandPoolCreateInfo createInfo = {};
             createInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-            createInfo.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+            createInfo.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT |
+                               VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
             ASSERT(mProtectionType == vk::ProtectionType::Unprotected ||
                    mProtectionType == vk::ProtectionType::Protected);
             if (mProtectionType == vk::ProtectionType::Protected)
@@ -1327,7 +1166,6 @@ RendererVk::RendererVk()
       mMaxVertexAttribDivisor(1),
       mCurrentQueueFamilyIndex(std::numeric_limits<uint32_t>::max()),
       mMaxVertexAttribStride(0),
-      mMinImportedHostPointerAlignment(1),
       mDefaultUniformBufferSize(kPreferredDefaultUniformBufferSize),
       mDevice(VK_NULL_HANDLE),
       mDeviceLost(false),
@@ -1384,23 +1222,13 @@ void RendererVk::onDestroy(vk::Context *context)
         handleDeviceLost();
     }
 
-    for (std::unique_ptr<vk::BufferBlock> &block : mOrphanedBufferBlocks)
-    {
-        ASSERT(block->isEmpty());
-        block->destroy(this);
-    }
-    mOrphanedBufferBlocks.clear();
-
-    if (isAsyncCommandQueueEnabled())
-    {
-        mCommandProcessor.destroy(context);
-    }
-
+    mCommandProcessor.destroy(context);
     mCommandQueue.destroy(context);
 
     // mCommandQueue.destroy should already set "last completed" serials to infinite.
     cleanupGarbage();
     ASSERT(!hasSharedGarbage());
+    ASSERT(mOrphanedBufferBlocks.empty());
 
     for (OneOffCommandPool &oneOffCommandPool : mOneOffCommandPoolMap)
     {
@@ -1415,14 +1243,12 @@ void RendererVk::onDestroy(vk::Context *context)
     mOutsideRenderPassCommandBufferRecycler.onDestroy();
     mRenderPassCommandBufferRecycler.onDestroy();
 
+    mImageMemorySuballocator.destroy(this);
     mAllocator.destroy();
 
     // When the renderer is being destroyed, it is possible to check if all the allocated memory
     // throughout the execution has been freed.
-    if (kTrackMemoryAllocationDebug)
-    {
-        checkForCurrentMemoryAllocations(this, vk::MemoryLogSeverity::INFO);
-    }
+    mMemoryAllocationTracker.onDestroy();
 
     if (mDevice)
     {
@@ -2023,7 +1849,6 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 //                                                     geometryStreams (feature)
 // - VK_EXT_index_type_uint8:                          indexTypeUint8 (feature)
 // - VK_EXT_device_memory_report:                      deviceMemoryReport (feature)
-// - VK_EXT_external_memory_host:                      minImportedHostPointerAlignment (property)
 // - VK_EXT_multisampled_render_to_single_sampled or
 //   VK_GOOGLEX_multisampled_render_to_single_sampled: multisampledRenderToSingleSampled (feature)
 // - VK_EXT_image_2d_view_of_3d:                       image2DViewOf3D (feature)
@@ -2083,11 +1908,6 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     if (ExtensionFound(VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mMemoryReportFeatures);
-    }
-
-    if (ExtensionFound(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME, deviceExtensionNames))
-    {
-        vk::AddToPNextChain(deviceProperties, &mExternalMemoryHostProperties);
     }
 
     if (ExtensionFound(VK_EXT_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_EXTENSION_NAME,
@@ -2342,10 +2162,6 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mMemoryReportFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
 
-    mExternalMemoryHostProperties = {};
-    mExternalMemoryHostProperties.sType =
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT;
-
     mShaderFloat16Int8Features = {};
     mShaderFloat16Int8Features.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
@@ -2492,7 +2308,6 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mIndexTypeUint8Features.pNext                           = nullptr;
     mSubgroupProperties.pNext                               = nullptr;
     mSubgroupExtendedTypesFeatures.pNext                    = nullptr;
-    mExternalMemoryHostProperties.pNext                     = nullptr;
     mCustomBorderColorFeatures.pNext                        = nullptr;
     mShaderFloat16Int8Features.pNext                        = nullptr;
     mDepthStencilResolveProperties.pNext                    = nullptr;
@@ -2544,7 +2359,6 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
 // - VK_GOOGLE_display_timing
 // - VK_EXT_external_memory_dma_buf
 // - VK_EXT_image_drm_format_modifier
-// - VK_EXT_external_memory_host
 // - VK_EXT_blend_operation_advanced
 //
 void RendererVk::enableDeviceExtensionsNotPromoted(
@@ -2701,13 +2515,6 @@ void RendererVk::enableDeviceExtensionsNotPromoted(
     {
         mEnabledDeviceExtensions.push_back(VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME);
         mEnabledDeviceExtensions.push_back(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME);
-    }
-
-    if (mFeatures.supportsExternalMemoryHost.enabled)
-    {
-        mEnabledDeviceExtensions.push_back(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME);
-        mMinImportedHostPointerAlignment =
-            mExternalMemoryHostProperties.minImportedHostPointerAlignment;
     }
 
     if (mFeatures.supportsDepthClipControl.enabled)
@@ -2893,6 +2700,7 @@ void RendererVk::enableDeviceExtensionsPromotedTo11(
 //
 // - VK_KHR_create_renderpass2
 // - VK_KHR_image_format_list
+// - VK_KHR_sampler_mirror_clamp_to_edge
 //
 void RendererVk::enableDeviceExtensionsPromotedTo12(
     const vk::ExtensionNameList &deviceExtensionNames)
@@ -2905,6 +2713,11 @@ void RendererVk::enableDeviceExtensionsPromotedTo12(
     if (mFeatures.supportsImageFormatList.enabled)
     {
         mEnabledDeviceExtensions.push_back(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME);
+    }
+
+    if (mFeatures.supportsSamplerMirrorClampToEdge.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME);
     }
 
     if (mFeatures.supportsDepthStencilResolve.enabled)
@@ -3048,11 +2861,6 @@ void RendererVk::initInstanceExtensionEntryPoints()
 {
 #if !defined(ANGLE_SHARED_LIBVULKAN)
     // Instance entry points
-    if (mFeatures.supportsExternalMemoryHost.enabled)
-    {
-        InitExternalMemoryHostFunctions(mInstance);
-    }
-
     if (mFeatures.supportsExternalSemaphoreFd.enabled ||
         mFeatures.supportsExternalSemaphoreFuchsia.enabled)
     {
@@ -3318,11 +3126,7 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
         queueFamily.initializeQueueMap(mDevice, enableProtectedContent, 0, queueCount);
 
     ANGLE_TRY(mCommandQueue.init(displayVk, graphicsQueueMap));
-
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.init());
-    }
+    ANGLE_TRY(mCommandProcessor.init());
 
     if (mFeatures.forceMaxUniformBufferSize16KB.enabled)
     {
@@ -3367,10 +3171,7 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     mSupportedVulkanPipelineStageMask = ~unsupportedStages;
 
     // Log the memory heap stats when the device has been initialized (when debugging).
-    if (kTrackMemoryAllocationDebug)
-    {
-        logMemoryHeapStats(this, vk::MemoryLogSeverity::INFO);
-    }
+    mMemoryAllocationTracker.onDeviceInit();
 
     return angle::Result::Continue;
 }
@@ -3768,6 +3569,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     const bool isSwiftShader =
         IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
 
+    // MESA Virtio-GPU Venus driver: https://docs.mesa3d.org/drivers/venus.html
+    const bool isVenus = IsVenus(mDriverProperties.driverID, mPhysicalDeviceProperties.deviceName);
+
     // Distinguish between the open source and proprietary Qualcomm drivers
     const bool isQualcommOpenSource =
         IsQualcommOpenSource(mPhysicalDeviceProperties.vendorID, mDriverProperties.driverID,
@@ -4088,10 +3892,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         ExtensionFound(VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME, deviceExtensionNames) &&
             ExtensionFound(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME, deviceExtensionNames));
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsExternalMemoryHost,
-        ExtensionFound(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME, deviceExtensionNames));
-
     // Android pre-rotation support can be disabled.
     ANGLE_FEATURE_CONDITION(&mFeatures, enablePreRotateSurfaces,
                             IsAndroid() && supportsNegativeViewport);
@@ -4119,6 +3919,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // Currently disabled by default: http://anglebug.com/4324
     ANGLE_FEATURE_CONDITION(&mFeatures, asyncCommandQueue, false);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, asyncCommandBufferReset, true);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsYUVSamplerConversion,
                             mSamplerYcbcrConversionFeatures.samplerYcbcrConversion != VK_FALSE);
@@ -4177,6 +3979,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         &mFeatures, supportsImageFormatList,
         ExtensionFound(VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME, deviceExtensionNames));
 
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsSamplerMirrorClampToEdge,
+        ExtensionFound(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME, deviceExtensionNames));
+
     // Emulation of GL_EXT_multisampled_render_to_texture is only really useful on tiling hardware,
     // but is exposed on any configuration deployed on Android, such as Samsung's AMD-based GPU.
     //
@@ -4224,9 +4030,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // Negative viewports are exposed in the Maintenance1 extension and in core Vulkan 1.1+.
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsNegativeViewport, supportsNegativeViewport);
 
-    // Whether non-conformant configurations and extensions should be exposed.
+    // Whether non-conformant configurations and extensions should be exposed. Always disable for
+    // MESA Virtio-GPU Venus driver for production purpose.
     ANGLE_FEATURE_CONDITION(&mFeatures, exposeNonConformantExtensionsAndVersions,
-                            kExposeNonConformantExtensionsAndVersions);
+                            kExposeNonConformantExtensionsAndVersions && !isVenus);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMemoryBudget,
@@ -4238,8 +4045,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // Testing shows that on ARM GPU, doing implicit flush at framebuffer boundary improves
     // performance. Most app traces shows frame time reduced and manhattan 3.1 offscreen score
-    // improves 7%.
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferSubmitAtFBOBoundary, isARM || isSwiftShader);
+    // improves 7%. Disable for MESA Virtio-GPU Venus driver in virtualized environment where
+    // batching is preferred.
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferSubmitAtFBOBoundary,
+                            (isARM || isSwiftShader) && !isVenus);
 
     // In order to support immutable samplers tied to external formats, we need to overallocate
     // descriptor counts for such immutable samplers
@@ -4277,9 +4086,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // - Avoiding swapchain recreation when present modes change
     // - Amortizing the cost of memory allocation for swapchain creation over multiple frames
     //
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsSwapchainMaintenance1,
-        !IsAndroid() && mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsSwapchainMaintenance1,
+                            mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE);
 
     // http://anglebug.com/6872
     // On ARM hardware, framebuffer-fetch-like behavior on Vulkan is already coherent, so we can
@@ -4324,9 +4132,13 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     //
     // - Intel
     //
+    // The above platforms are not excluded if behind MESA Virtio-GPU Venus driver since WSI is
+    // implemented with external memory there.
+    //
     // Without VK_GOOGLE_surfaceless_query, there is no way to automatically deduce this support.
-    ANGLE_FEATURE_CONDITION(&mFeatures, emulateAdvancedBlendEquations,
-                            !mFeatures.supportsBlendOperationAdvanced.enabled && !isIntel);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, emulateAdvancedBlendEquations,
+        !mFeatures.supportsBlendOperationAdvanced.enabled && (isVenus || !isIntel));
 
     // Workaround for platforms that do not return 1.0f even when dividend and divisor have the same
     // value.
@@ -4344,6 +4156,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // The mutable texture uploading feature can sometimes result in incorrect rendering of some
     // textures.
     ANGLE_FEATURE_CONDITION(&mFeatures, mutableMipmapTextureUpload, false);
+
+    // Use VMA for image suballocation.
+    ANGLE_FEATURE_CONDITION(&mFeatures, useVmaForImageSuballocation, true);
 
     // Retain debug info in SPIR-V blob.
     ANGLE_FEATURE_CONDITION(&mFeatures, retainSPIRVDebugInfo, getEnableValidationLayers());
@@ -4540,6 +4355,18 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, forceWaitForSubmissionToCompleteForQueryResult,
                             isARM || (isNvidia && nvidiaVersion.major < 470u));
 
+    // Some ARM drivers may not free memory in "vkFreeCommandBuffers()" without
+    // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT flag.
+    ANGLE_FEATURE_CONDITION(&mFeatures, useResetCommandBufferBitForSecondaryPools, isARM);
+
+    // Required to pass android.media.cts.DecodeAccuracyTest with MESA Virtio-GPU Venus driver in
+    // virtualized environment. https://issuetracker.google.com/246378938
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferLinearFilterForYUV, isVenus);
+
+    // Required to pass android.media.codec.cts.EncodeDecodeTest with MESA Virtio-GPU Venus driver
+    // in virtualized environment. https://issuetracker.google.com/246218584
+    ANGLE_FEATURE_CONDITION(&mFeatures, mapUnspecifiedColorSpaceToPassThrough, isVenus);
+
     ApplyFeatureOverrides(&mFeatures, displayVk->getState());
 
     // Disable async command queue when using Vulkan secondary command buffers temporarily to avoid
@@ -4550,7 +4377,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     if (!vk::OutsideRenderPassCommandBuffer::ExecutesInline() ||
         !vk::RenderPassCommandBuffer::ExecutesInline())
     {
-        mFeatures.asyncCommandQueue.enabled = false;
+        mFeatures.asyncCommandQueue.enabled       = false;
+        mFeatures.asyncCommandBufferReset.enabled = false;
     }
 
     // Disable memory report feature overrides if extension is not supported.
@@ -4854,12 +4682,11 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
                                             QueueSerial *queueSerialOut)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::queueSubmitOneOff");
-    // Allocate a oneoff submitQueueSerial and generate a serial and then use it and release the
+    // Allocate a one off SerialIndex and generate a QueueSerial and then use it and release the
     // index.
-    QueueSerial lastSubmittedQueueSerial;
-    ANGLE_TRY(allocateQueueSerialIndex(&lastSubmittedQueueSerial));
-    QueueSerial submitQueueSerial(lastSubmittedQueueSerial.getIndex(),
-                                  generateQueueSerial(lastSubmittedQueueSerial.getIndex()));
+    vk::ScopedQueueSerialIndex index;
+    ANGLE_TRY(allocateScopedQueueSerialIndex(&index));
+    QueueSerial submitQueueSerial(index.get(), generateQueueSerial(index.get()));
 
     if (isAsyncCommandQueueEnabled())
     {
@@ -4874,14 +4701,35 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
             waitSemaphoreStageMasks, fence, submitPolicy, submitQueueSerial));
     }
 
-    // Immediately release the queue index since itis an one off use.
-    releaseQueueSerialIndex(lastSubmittedQueueSerial.getIndex());
-
     *queueSerialOut = submitQueueSerial;
     if (primary.valid())
     {
         mOneOffCommandPoolMap[protectionType].releaseCommandBuffer(submitQueueSerial,
                                                                    std::move(primary));
+    }
+
+    ANGLE_TRY(mCommandQueue.postSubmitCheck(context));
+
+    return angle::Result::Continue;
+}
+
+angle::Result RendererVk::queueSubmitWaitSemaphore(vk::Context *context,
+                                                   egl::ContextPriority priority,
+                                                   const vk::Semaphore *waitSemaphore,
+                                                   VkPipelineStageFlags waitSemaphoreStageMasks,
+                                                   QueueSerial submitQueueSerial)
+{
+    if (isAsyncCommandQueueEnabled())
+    {
+        ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
+            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE, waitSemaphore,
+            waitSemaphoreStageMasks, nullptr, vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
+    }
+    else
+    {
+        ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
+            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE, waitSemaphore,
+            waitSemaphoreStageMasks, nullptr, vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
     }
 
     return angle::Result::Continue;
@@ -5189,7 +5037,6 @@ angle::Result RendererVk::submitCommands(vk::Context *context,
                                          vk::ProtectionType protectionType,
                                          egl::ContextPriority contextPriority,
                                          const vk::Semaphore *signalSemaphore,
-                                         vk::SecondaryCommandPools *commandPools,
                                          const QueueSerial &submitQueueSerial)
 {
     vk::SecondaryCommandBufferList commandBuffersToReset;
@@ -5205,14 +5052,57 @@ angle::Result RendererVk::submitCommands(vk::Context *context,
     {
         ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(
             context, protectionType, contextPriority, signalVkSemaphore,
-            std::move(commandBuffersToReset), commandPools, submitQueueSerial));
+            std::move(commandBuffersToReset), submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.submitCommands(context, protectionType, contextPriority,
                                                signalVkSemaphore, std::move(commandBuffersToReset),
-                                               commandPools, submitQueueSerial));
+                                               submitQueueSerial));
     }
+
+    ANGLE_TRY(mCommandQueue.postSubmitCheck(context));
+
+    return angle::Result::Continue;
+}
+
+angle::Result RendererVk::submitPriorityDependency(vk::Context *context,
+                                                   vk::ProtectionTypes protectionTypes,
+                                                   egl::ContextPriority srcContextPriority,
+                                                   egl::ContextPriority dstContextPriority,
+                                                   SerialIndex index)
+{
+    vk::RendererScoped<vk::ReleasableResource<vk::Semaphore>> semaphore(this);
+    ANGLE_VK_TRY(context, semaphore.get().get().init(mDevice));
+
+    // First, submit already flushed commands / wait semaphores into the source Priority VkQueue.
+    // Commands that are in the Secondary Command Buffers will be flushed into the new VkQueue.
+
+    // Submit commands and attach Signal Semaphore.
+    ASSERT(protectionTypes.any());
+    while (protectionTypes.any())
+    {
+        vk::ProtectionType protectionType = protectionTypes.first();
+        protectionTypes.reset(protectionType);
+
+        QueueSerial queueSerial(index, generateQueueSerial(index));
+        // Submit semaphore only if this is the last submission (all into the same VkQueue).
+        const vk::Semaphore *signalSemaphore = nullptr;
+        if (protectionTypes.none())
+        {
+            // Update QueueSerial to collect semaphore using the latest possible queueSerial.
+            semaphore.get().setQueueSerial(queueSerial);
+            signalSemaphore = &semaphore.get().get();
+        }
+        ANGLE_TRY(submitCommands(context, protectionType, srcContextPriority, signalSemaphore,
+                                 queueSerial));
+    }
+
+    // Submit only Wait Semaphore into the destination Priority (VkQueue).
+    QueueSerial queueSerial(index, generateQueueSerial(index));
+    semaphore.get().setQueueSerial(queueSerial);
+    ANGLE_TRY(queueSubmitWaitSemaphore(context, dstContextPriority, &semaphore.get().get(),
+                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, queueSerial));
 
     return angle::Result::Continue;
 }
@@ -5270,25 +5160,22 @@ angle::Result RendererVk::finish(vk::Context *context)
     return mCommandQueue.waitIdle(context, getMaxFenceWaitTimeNs());
 }
 
-angle::Result RendererVk::checkCompletedCommands(vk::Context *context)
-{
-    return mCommandQueue.checkCompletedCommands(context);
-}
-
 angle::Result RendererVk::flushWaitSemaphores(
     vk::ProtectionType protectionType,
+    egl::ContextPriority priority,
     std::vector<VkSemaphore> &&waitSemaphores,
     std::vector<VkPipelineStageFlags> &&waitSemaphoreStageMasks)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushWaitSemaphores");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.enqueueFlushWaitSemaphores(
-            protectionType, std::move(waitSemaphores), std::move(waitSemaphoreStageMasks)));
+        ANGLE_TRY(mCommandProcessor.enqueueFlushWaitSemaphores(protectionType, priority,
+                                                               std::move(waitSemaphores),
+                                                               std::move(waitSemaphoreStageMasks)));
     }
     else
     {
-        mCommandQueue.flushWaitSemaphores(protectionType, std::move(waitSemaphores),
+        mCommandQueue.flushWaitSemaphores(protectionType, priority, std::move(waitSemaphores),
                                           std::move(waitSemaphoreStageMasks));
     }
 
@@ -5298,19 +5185,20 @@ angle::Result RendererVk::flushWaitSemaphores(
 angle::Result RendererVk::flushRenderPassCommands(
     vk::Context *context,
     vk::ProtectionType protectionType,
+    egl::ContextPriority priority,
     const vk::RenderPass &renderPass,
     vk::RenderPassCommandBufferHelper **renderPassCommands)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushRenderPassCommands");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.enqueueFlushRenderPassCommands(context, protectionType,
-                                                                   renderPass, renderPassCommands));
+        ANGLE_TRY(mCommandProcessor.enqueueFlushRenderPassCommands(
+            context, protectionType, priority, renderPass, renderPassCommands));
     }
     else
     {
-        ANGLE_TRY(mCommandQueue.flushRenderPassCommands(context, protectionType, renderPass,
-                                                        renderPassCommands));
+        ANGLE_TRY(mCommandQueue.flushRenderPassCommands(context, protectionType, priority,
+                                                        renderPass, renderPassCommands));
     }
 
     return angle::Result::Continue;
@@ -5319,17 +5207,19 @@ angle::Result RendererVk::flushRenderPassCommands(
 angle::Result RendererVk::flushOutsideRPCommands(
     vk::Context *context,
     vk::ProtectionType protectionType,
+    egl::ContextPriority priority,
     vk::OutsideRenderPassCommandBufferHelper **outsideRPCommands)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushOutsideRPCommands");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.enqueueFlushOutsideRPCommands(context, protectionType,
+        ANGLE_TRY(mCommandProcessor.enqueueFlushOutsideRPCommands(context, protectionType, priority,
                                                                   outsideRPCommands));
     }
     else
     {
-        ANGLE_TRY(mCommandQueue.flushOutsideRPCommands(context, protectionType, outsideRPCommands));
+        ANGLE_TRY(mCommandQueue.flushOutsideRPCommands(context, protectionType, priority,
+                                                       outsideRPCommands));
     }
 
     return angle::Result::Continue;
@@ -5425,13 +5315,6 @@ void RendererVk::logCacheStats() const
     }
 }
 
-void RendererVk::logMemoryStatsOnError()
-{
-    checkForCurrentMemoryAllocations(this, vk::MemoryLogSeverity::WARN);
-    logPendingMemoryAllocation(this, vk::MemoryLogSeverity::WARN);
-    logMemoryHeapStats(this, vk::MemoryLogSeverity::WARN);
-}
-
 angle::Result RendererVk::getFormatDescriptorCountForVkFormat(ContextVk *contextVk,
                                                               VkFormat format,
                                                               uint32_t *descriptorCountOut)
@@ -5506,13 +5389,28 @@ VkDeviceSize RendererVk::getPreferedBufferBlockSize(uint32_t memoryTypeIndex) co
     return std::min(heapSize / 64, mPreferredLargeHeapBlockSize);
 }
 
-angle::Result RendererVk::allocateQueueSerialIndex(QueueSerial *queueSerialOut)
+angle::Result RendererVk::allocateQueueSerialIndexImpl(SerialIndex *indexOut)
 {
-    SerialIndex index = mQueueSerialIndexAllocator.allocate();
-    if (index == kInvalidQueueSerialIndex)
+    *indexOut = mQueueSerialIndexAllocator.allocate();
+    if (*indexOut == kInvalidQueueSerialIndex)
     {
         return angle::Result::Stop;
     }
+    return angle::Result::Continue;
+}
+
+angle::Result RendererVk::allocateScopedQueueSerialIndex(vk::ScopedQueueSerialIndex *indexOut)
+{
+    SerialIndex index;
+    ANGLE_TRY(allocateQueueSerialIndexImpl(&index));
+    indexOut->init(index, &mQueueSerialIndexAllocator);
+    return angle::Result::Continue;
+}
+
+angle::Result RendererVk::allocateQueueSerialIndex(QueueSerial *queueSerialOut)
+{
+    SerialIndex index;
+    ANGLE_TRY(allocateQueueSerialIndexImpl(&index));
     Serial serial   = isAsyncCommandQueueEnabled() ? mCommandProcessor.getLastEnqueuedSerial(index)
                                                    : mCommandQueue.getLastSubmittedSerial(index);
     *queueSerialOut = QueueSerial(index, serial);
@@ -5524,362 +5422,34 @@ void RendererVk::releaseQueueSerialIndex(SerialIndex index)
     mQueueSerialIndexAllocator.release(index);
 }
 
-MemoryAllocationTracker::MemoryAllocationTracker(RendererVk *renderer)
-    : mRenderer(renderer), mMemoryAllocationID(0)
-{}
-
-void MemoryAllocationTracker::initMemoryTrackers()
+// static
+const char *RendererVk::GetVulkanObjectTypeName(VkObjectType type)
 {
-    // Allocation counters are initialized here to keep track of the size and count of the memory
-    // allocations.
-    for (uint32_t i = 0; i < mActiveMemoryAllocationsSize.size(); i++)
-    {
-        mActiveMemoryAllocationsSize[i]  = 0;
-        mActiveMemoryAllocationsCount[i] = 0;
-    }
-
-    // Per-heap allocation counters are initialized here.
-    for (size_t i = 0; i < vk::kMemoryAllocationTypeCount; i++)
-    {
-        mActivePerHeapMemoryAllocationsSize[i].resize(
-            mRenderer->getMemoryProperties().getMemoryHeapCount());
-        mActivePerHeapMemoryAllocationsCount[i].resize(
-            mRenderer->getMemoryProperties().getMemoryHeapCount());
-    }
-
-    resetPendingMemoryAlloc();
-}
-
-void MemoryAllocationTracker::onMemoryAllocImpl(vk::MemoryAllocationType allocType,
-                                                VkDeviceSize size,
-                                                uint32_t memoryTypeIndex,
-                                                void *handle)
-{
-    ASSERT(allocType != vk::MemoryAllocationType::InvalidEnum && size != 0);
-
-    if (kTrackMemoryAllocationDebug)
-    {
-        // If enabled (debug layers), we keep more details in the memory tracker, such as handle,
-        // and log the action to the output.
-        std::unique_lock<std::mutex> lock(mMemoryAllocationMutex);
-
-        uint32_t allocTypeIndex = ToUnderlying(allocType);
-        uint32_t memoryHeapIndex =
-            mRenderer->getMemoryProperties().getHeapIndexForMemoryType(memoryTypeIndex);
-        mActiveMemoryAllocationsCount[allocTypeIndex]++;
-        mActiveMemoryAllocationsSize[allocTypeIndex] += size;
-        mActivePerHeapMemoryAllocationsCount[allocTypeIndex][memoryHeapIndex]++;
-        mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] += size;
-
-        // Add the new allocation to the memory tracker.
-        vk::MemoryAllocationInfo memAllocLogInfo;
-        memAllocLogInfo.id              = ++mMemoryAllocationID;
-        memAllocLogInfo.allocType       = allocType;
-        memAllocLogInfo.memoryHeapIndex = memoryHeapIndex;
-        memAllocLogInfo.size            = size;
-        memAllocLogInfo.handle          = handle;
-
-        vk::MemoryAllocInfoMapKey memoryAllocInfoMapKey(memAllocLogInfo.handle);
-        mMemoryAllocationRecord[angle::getBacktraceInfo()].insert(
-            std::make_pair(memoryAllocInfoMapKey, memAllocLogInfo));
-
-        INFO() << "Memory allocation: (id " << memAllocLogInfo.id << ") for object "
-               << memAllocLogInfo.handle << " | Size: " << memAllocLogInfo.size
-               << " | Type: " << vk::kMemoryAllocationTypeMessage[allocTypeIndex]
-               << " | Heap index: " << memAllocLogInfo.memoryHeapIndex;
-
-        resetPendingMemoryAlloc();
-    }
-    else if (kTrackMemoryAllocationSizes)
-    {
-        // Add the new allocation size to the allocation counter.
-        uint32_t allocTypeIndex = ToUnderlying(allocType);
-        mActiveMemoryAllocationsSize[allocTypeIndex] += size;
-
-        {
-            std::unique_lock<std::mutex> lock(mMemoryAllocationMutex);
-            uint32_t memoryHeapIndex =
-                mRenderer->getMemoryProperties().getHeapIndexForMemoryType(memoryTypeIndex);
-            mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] += size;
-        }
-
-        resetPendingMemoryAlloc();
-    }
-}
-
-void MemoryAllocationTracker::onMemoryDeallocImpl(vk::MemoryAllocationType allocType,
-                                                  VkDeviceSize size,
-                                                  uint32_t memoryTypeIndex,
-                                                  void *handle)
-{
-    ASSERT(allocType != vk::MemoryAllocationType::InvalidEnum && size != 0);
-
-    if (kTrackMemoryAllocationDebug)
-    {
-        // If enabled (debug layers), we keep more details in the memory tracker, such as handle,
-        // and log the action to the output. The memory allocation tracker uses the backtrace info
-        // as key, if available.
-        for (auto &memInfoPerBacktrace : mMemoryAllocationRecord)
-        {
-            vk::MemoryAllocInfoMapKey memoryAllocInfoMapKey(handle);
-            MemoryAllocInfoMap &memInfoMap = memInfoPerBacktrace.second;
-            std::unique_lock<std::mutex> lock(mMemoryAllocationMutex);
-
-            if (memInfoMap.find(memoryAllocInfoMapKey) != memInfoMap.end())
-            {
-                // Object found; remove it from the allocation tracker.
-                vk::MemoryAllocationInfo *memInfoEntry = &memInfoMap[memoryAllocInfoMapKey];
-                ASSERT(memInfoEntry->allocType == allocType && memInfoEntry->size == size);
-
-                uint32_t allocTypeIndex = ToUnderlying(memInfoEntry->allocType);
-                uint32_t memoryHeapIndex =
-                    mRenderer->getMemoryProperties().getHeapIndexForMemoryType(memoryTypeIndex);
-                ASSERT(mActiveMemoryAllocationsCount[allocTypeIndex] != 0 &&
-                       mActiveMemoryAllocationsSize[allocTypeIndex] >= size);
-                ASSERT(memoryHeapIndex == memInfoEntry->memoryHeapIndex &&
-                       mActivePerHeapMemoryAllocationsCount[allocTypeIndex][memoryHeapIndex] != 0 &&
-                       mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] >=
-                           size);
-                mActiveMemoryAllocationsCount[allocTypeIndex]--;
-                mActiveMemoryAllocationsSize[allocTypeIndex] -= size;
-                mActivePerHeapMemoryAllocationsCount[allocTypeIndex][memoryHeapIndex]--;
-                mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] -= size;
-
-                INFO() << "Memory deallocation: (id " << memInfoEntry->id << ") for object "
-                       << memInfoEntry->handle << " | Size: " << memInfoEntry->size
-                       << " | Type: " << vk::kMemoryAllocationTypeMessage[allocTypeIndex]
-                       << " | Heap index: " << memInfoEntry->memoryHeapIndex;
-
-                memInfoMap.erase(memoryAllocInfoMapKey);
-            }
-        }
-    }
-    else if (kTrackMemoryAllocationSizes)
-    {
-        // Remove the allocation size from the allocation counter.
-        uint32_t allocTypeIndex = ToUnderlying(allocType);
-        ASSERT(mActiveMemoryAllocationsSize[allocTypeIndex] >= size);
-        mActiveMemoryAllocationsSize[allocTypeIndex] -= size;
-
-        {
-            std::unique_lock<std::mutex> lock(mMemoryAllocationMutex);
-            uint32_t memoryHeapIndex =
-                mRenderer->getMemoryProperties().getHeapIndexForMemoryType(memoryTypeIndex);
-            ASSERT(mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] >= size);
-            mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] -= size;
-        }
-    }
-}
-
-VkDeviceSize MemoryAllocationTracker::getActiveMemoryAllocationsSize(uint32_t allocTypeIndex) const
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return 0;
-    }
-
-    return mActiveMemoryAllocationsSize[allocTypeIndex];
-}
-
-VkDeviceSize MemoryAllocationTracker::getActiveHeapMemoryAllocationsSize(uint32_t allocTypeIndex,
-                                                                         uint32_t heapIndex) const
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return 0;
-    }
-
-    return mActivePerHeapMemoryAllocationsSize[allocTypeIndex][heapIndex];
-}
-
-uint64_t MemoryAllocationTracker::getActiveMemoryAllocationsCount(uint32_t allocTypeIndex) const
-{
-    if (!kTrackMemoryAllocationDebug)
-    {
-        return 0;
-    }
-
-    return mActiveMemoryAllocationsCount[allocTypeIndex];
-}
-
-uint64_t MemoryAllocationTracker::getActiveHeapMemoryAllocationsCount(uint32_t allocTypeIndex,
-                                                                      uint32_t heapIndex) const
-{
-    if (!kTrackMemoryAllocationDebug)
-    {
-        return 0;
-    }
-
-    return mActivePerHeapMemoryAllocationsCount[allocTypeIndex][heapIndex];
-}
-
-VkDeviceSize MemoryAllocationTracker::getPendingMemoryAllocationSize() const
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return 0;
-    }
-
-    return mPendingMemoryAllocationSize;
-}
-
-vk::MemoryAllocationType MemoryAllocationTracker::getPendingMemoryAllocationType() const
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return vk::MemoryAllocationType::Unspecified;
-    }
-
-    return mPendingMemoryAllocationType;
-}
-
-uint32_t MemoryAllocationTracker::getPendingMemoryTypeIndex() const
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return 0;
-    }
-
-    return mPendingMemoryTypeIndex;
-}
-
-void MemoryAllocationTracker::setPendingMemoryAlloc(vk::MemoryAllocationType allocType,
-                                                    VkDeviceSize size,
-                                                    uint32_t memoryTypeIndex)
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return;
-    }
-
-    ASSERT(allocType != vk::MemoryAllocationType::InvalidEnum && size != 0);
-    mPendingMemoryAllocationType = allocType;
-    mPendingMemoryAllocationSize = size;
-    mPendingMemoryTypeIndex      = memoryTypeIndex;
-}
-
-void MemoryAllocationTracker::resetPendingMemoryAlloc()
-{
-    if (!kTrackMemoryAllocationSizes)
-    {
-        return;
-    }
-
-    mPendingMemoryAllocationType = vk::MemoryAllocationType::Unspecified;
-    mPendingMemoryAllocationSize = 0;
-    mPendingMemoryTypeIndex      = kInvalidMemoryTypeIndex;
+    return GetVkObjectTypeName(type);
 }
 
 namespace vk
 {
-MemoryReport::MemoryReport()
-    : mCurrentTotalAllocatedMemory(0),
-      mMaxTotalAllocatedMemory(0),
-      mCurrentTotalImportedMemory(0),
-      mMaxTotalImportedMemory(0)
-{}
+ImageMemorySuballocator::ImageMemorySuballocator() {}
+ImageMemorySuballocator::~ImageMemorySuballocator() {}
 
-void MemoryReport::processCallback(const VkDeviceMemoryReportCallbackDataEXT &callbackData,
-                                   bool logCallback)
+void ImageMemorySuballocator::destroy(RendererVk *renderer) {}
+
+VkResult ImageMemorySuballocator::allocateAndBindMemory(RendererVk *renderer,
+                                                        Image *image,
+                                                        VkMemoryPropertyFlags requiredFlags,
+                                                        VkMemoryPropertyFlags preferredFlags,
+                                                        Allocation *allocationOut,
+                                                        uint32_t *memoryTypeIndexOut,
+                                                        VkDeviceSize *sizeOut)
 {
-    std::unique_lock<std::mutex> lock(mMemoryReportMutex);
-    VkDeviceSize size = 0;
-    std::string reportType;
-    switch (callbackData.type)
-    {
-        case VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT:
-            reportType = "Allocate";
-            if ((mUniqueIDCounts[callbackData.memoryObjectId] += 1) > 1)
-            {
-                break;
-            }
-            size = mSizesPerType[callbackData.objectType].allocatedMemory + callbackData.size;
-            mSizesPerType[callbackData.objectType].allocatedMemory = size;
-            if (mSizesPerType[callbackData.objectType].allocatedMemoryMax < size)
-            {
-                mSizesPerType[callbackData.objectType].allocatedMemoryMax = size;
-            }
-            mCurrentTotalAllocatedMemory += callbackData.size;
-            if (mMaxTotalAllocatedMemory < mCurrentTotalAllocatedMemory)
-            {
-                mMaxTotalAllocatedMemory = mCurrentTotalAllocatedMemory;
-            }
-            break;
-        case VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT:
-            reportType = "Free";
-            ASSERT(mUniqueIDCounts[callbackData.memoryObjectId] > 0);
-            mUniqueIDCounts[callbackData.memoryObjectId] -= 1;
-            size = mSizesPerType[callbackData.objectType].allocatedMemory - callbackData.size;
-            mSizesPerType[callbackData.objectType].allocatedMemory = size;
-            mCurrentTotalAllocatedMemory -= callbackData.size;
-            break;
-        case VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_IMPORT_EXT:
-            reportType = "Import";
-            if ((mUniqueIDCounts[callbackData.memoryObjectId] += 1) > 1)
-            {
-                break;
-            }
-            size = mSizesPerType[callbackData.objectType].importedMemory + callbackData.size;
-            mSizesPerType[callbackData.objectType].importedMemory = size;
-            if (mSizesPerType[callbackData.objectType].importedMemoryMax < size)
-            {
-                mSizesPerType[callbackData.objectType].importedMemoryMax = size;
-            }
-            mCurrentTotalImportedMemory += callbackData.size;
-            if (mMaxTotalImportedMemory < mCurrentTotalImportedMemory)
-            {
-                mMaxTotalImportedMemory = mCurrentTotalImportedMemory;
-            }
-            break;
-        case VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_UNIMPORT_EXT:
-            reportType = "Un-Import";
-            ASSERT(mUniqueIDCounts[callbackData.memoryObjectId] > 0);
-            mUniqueIDCounts[callbackData.memoryObjectId] -= 1;
-            size = mSizesPerType[callbackData.objectType].importedMemory - callbackData.size;
-            mSizesPerType[callbackData.objectType].importedMemory = size;
-            mCurrentTotalImportedMemory -= callbackData.size;
-            break;
-        case VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATION_FAILED_EXT:
-            reportType = "allocFail";
-            break;
-        default:
-            UNREACHABLE();
-            return;
-    }
-    if (logCallback)
-    {
-        INFO() << std::right << std::setw(9) << reportType << ": size=" << std::setw(10)
-               << callbackData.size << "; type=" << std::setw(15) << std::left
-               << GetVkObjectTypeName(callbackData.objectType)
-               << "; heapIdx=" << callbackData.heapIndex << "; id=" << std::hex
-               << callbackData.memoryObjectId << "; handle=" << std::hex
-               << callbackData.objectHandle << ": Total=" << std::right << std::setw(10) << std::dec
-               << size;
-    }
+    ASSERT(image && image->valid());
+    ASSERT(allocationOut && !allocationOut->valid());
+    const Allocator &allocator = renderer->getAllocator();
+    return vma::AllocateAndBindMemoryForImage(allocator.getHandle(), &image->mHandle, requiredFlags,
+                                              preferredFlags, &allocationOut->mHandle,
+                                              memoryTypeIndexOut, sizeOut);
 }
 
-void MemoryReport::logMemoryReportStats() const
-{
-    std::unique_lock<std::mutex> lock(mMemoryReportMutex);
-
-    INFO() << std::right << "GPU Memory Totals:       Allocated=" << std::setw(10)
-           << mCurrentTotalAllocatedMemory << " (max=" << std::setw(10) << mMaxTotalAllocatedMemory
-           << ");  Imported=" << std::setw(10) << mCurrentTotalImportedMemory
-           << " (max=" << std::setw(10) << mMaxTotalImportedMemory << ")";
-    INFO() << "Sub-Totals per type:";
-    for (const auto &it : mSizesPerType)
-    {
-        VkObjectType objectType         = it.first;
-        MemorySizes memorySizes         = it.second;
-        VkDeviceSize allocatedMemory    = memorySizes.allocatedMemory;
-        VkDeviceSize allocatedMemoryMax = memorySizes.allocatedMemoryMax;
-        VkDeviceSize importedMemory     = memorySizes.importedMemory;
-        VkDeviceSize importedMemoryMax  = memorySizes.importedMemoryMax;
-        INFO() << std::right << "- Type=" << std::setw(15) << GetVkObjectTypeName(objectType)
-               << ":  Allocated=" << std::setw(10) << allocatedMemory << " (max=" << std::setw(10)
-               << allocatedMemoryMax << ");  Imported=" << std::setw(10) << importedMemory
-               << " (max=" << std::setw(10) << importedMemoryMax << ")";
-    }
-}
 }  // namespace vk
 }  // namespace rx

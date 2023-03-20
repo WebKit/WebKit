@@ -109,7 +109,7 @@ protected:
 
     template<class T> void checkOrigin(const T* arg)
     {
-        if (taintsOrigin(arg))
+        if (m_canvas.originClean() && taintsOrigin(arg))
             m_canvas.setOriginTainted();
     }
     void checkOrigin(const URL&);

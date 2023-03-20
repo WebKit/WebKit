@@ -3585,7 +3585,7 @@ void Document::setURL(const URL& url)
 const URL& Document::urlForBindings() const
 {
     auto shouldAdjustURL = [this] {
-        if (m_url.url().isEmpty() || !loader() || !isTopDocument() || !frame())
+        if (m_url.url().isEmpty() || m_url.url() == m_adjustedURL || !loader() || !isTopDocument() || !frame())
             return false;
 
         auto* topDocumentLoader = topDocument().loader();
@@ -3599,8 +3599,17 @@ const URL& Document::urlForBindings() const
         return mayBeExecutingThirdPartyScript();
     }();
 
-    if (shouldAdjustURL)
+    if (shouldAdjustURL) {
+        if (settings().adjustURLForBindingsDebugModeEnabled()) {
+            DOCUMENT_RELEASE_LOG(Loading, "Adjusted URL from %s to %s for script %s after navigating from %s", 
+                m_url.url().string().utf8().data(), 
+                m_adjustedURL.string().utf8().data(), 
+                currentSourceURL().string().utf8().data(), 
+                loader()->originalRequest().httpReferrer().utf8().data()
+            );
+        }
         return m_adjustedURL;
+    }
 
     return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url();
 }

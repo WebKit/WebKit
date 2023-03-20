@@ -935,6 +935,22 @@ constexpr bool is_gteq(PartialOrdering ordering)
     return is_gt(ordering) || is_eq(ordering);
 }
 
+inline void EventTarget::ref()
+{
+    if (LIKELY(isNode()))
+        downcast<Node>(*this).ref();
+    else
+        refEventTarget();
+}
+
+inline void EventTarget::deref()
+{
+    if (LIKELY(isNode()))
+        downcast<Node>(*this).deref();
+    else
+        derefEventTarget();
+}
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Node&);
 
 } // namespace WebCore

@@ -4076,6 +4076,80 @@ void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameterivANGLE(GLint plane,
     }
 }
 
+void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameterfvRobustANGLE(GLint plane,
+                                                                          GLenum pname,
+                                                                          GLsizei bufSize,
+                                                                          GLsizei *length,
+                                                                          GLfloat *params)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetFramebufferPixelLocalStorageParameterfvRobustANGLE,
+          "context = %d, plane = %d, pname = %s, bufSize = %d, length = 0x%016" PRIxPTR
+          ", params = 0x%016" PRIxPTR "",
+          CID(context), plane, GLenumToString(GLESEnum::PLSQueryFloat, pname), bufSize,
+          (uintptr_t)length, (uintptr_t)params);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetFramebufferPixelLocalStorageParameterfvRobustANGLE(
+                 context,
+                 angle::EntryPoint::GLGetFramebufferPixelLocalStorageParameterfvRobustANGLE, plane,
+                 pname, bufSize, length, params));
+        if (isCallValid)
+        {
+            context->getFramebufferPixelLocalStorageParameterfvRobust(plane, pname, bufSize, length,
+                                                                      params);
+        }
+        ANGLE_CAPTURE_GL(GetFramebufferPixelLocalStorageParameterfvRobustANGLE, isCallValid,
+                         context, plane, pname, bufSize, length, params);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameterivRobustANGLE(GLint plane,
+                                                                          GLenum pname,
+                                                                          GLsizei bufSize,
+                                                                          GLsizei *length,
+                                                                          GLint *params)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetFramebufferPixelLocalStorageParameterivRobustANGLE,
+          "context = %d, plane = %d, pname = %s, bufSize = %d, length = 0x%016" PRIxPTR
+          ", params = 0x%016" PRIxPTR "",
+          CID(context), plane, GLenumToString(GLESEnum::PLSQueryInt, pname), bufSize,
+          (uintptr_t)length, (uintptr_t)params);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetFramebufferPixelLocalStorageParameterivRobustANGLE(
+                 context,
+                 angle::EntryPoint::GLGetFramebufferPixelLocalStorageParameterivRobustANGLE, plane,
+                 pname, bufSize, length, params));
+        if (isCallValid)
+        {
+            context->getFramebufferPixelLocalStorageParameterivRobust(plane, pname, bufSize, length,
+                                                                      params);
+        }
+        ANGLE_CAPTURE_GL(GetFramebufferPixelLocalStorageParameterivRobustANGLE, isCallValid,
+                         context, plane, pname, bufSize, length, params);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+// GL_ANGLE_stencil_texturing
+
 // GL_ANGLE_texture_compression_dxt3
 
 // GL_ANGLE_texture_compression_dxt5
@@ -4968,16 +5042,19 @@ void GL_APIENTRY GL_ClipControlEXT(GLenum origin, GLenum depth)
 
     if (context)
     {
+        ClipOrigin originPacked   = PackParam<ClipOrigin>(origin);
+        ClipDepthMode depthPacked = PackParam<ClipDepthMode>(depth);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
              (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLClipControlEXT) &&
-              ValidateClipControlEXT(context, angle::EntryPoint::GLClipControlEXT, origin, depth)));
+              ValidateClipControlEXT(context, angle::EntryPoint::GLClipControlEXT, originPacked,
+                                     depthPacked)));
         if (isCallValid)
         {
-            context->clipControl(origin, depth);
+            context->clipControl(originPacked, depthPacked);
         }
-        ANGLE_CAPTURE_GL(ClipControlEXT, isCallValid, context, origin, depth);
+        ANGLE_CAPTURE_GL(ClipControlEXT, isCallValid, context, originPacked, depthPacked);
     }
     else
     {
@@ -4990,6 +5067,8 @@ void GL_APIENTRY GL_ClipControlEXT(GLenum origin, GLenum depth)
 // GL_EXT_color_buffer_float
 
 // GL_EXT_color_buffer_half_float
+
+// GL_EXT_conservative_depth
 
 // GL_EXT_copy_image
 void GL_APIENTRY GL_CopyImageSubDataEXT(GLuint srcName,
@@ -5185,6 +5264,8 @@ void GL_APIENTRY GL_PushGroupMarkerEXT(GLsizei length, const GLchar *marker)
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
 }
+
+// GL_EXT_depth_clamp
 
 // GL_EXT_discard_framebuffer
 void GL_APIENTRY GL_DiscardFramebufferEXT(GLenum target,
@@ -6892,6 +6973,8 @@ void GL_APIENTRY GL_PrimitiveBoundingBoxEXT(GLfloat minX,
 // GL_EXT_pvrtc_sRGB
 
 // GL_EXT_read_format_bgra
+
+// GL_EXT_render_snorm
 
 // GL_EXT_robustness
 GLenum GL_APIENTRY GL_GetGraphicsResetStatusEXT()
@@ -9112,9 +9195,13 @@ void GL_APIENTRY GL_TexBufferRangeEXT(GLenum target,
 
 // GL_EXT_texture_filter_anisotropic
 
+// GL_EXT_texture_filter_minmax
+
 // GL_EXT_texture_format_BGRA8888
 
 // GL_EXT_texture_format_sRGB_override
+
+// GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
 
@@ -12554,6 +12641,8 @@ void GL_APIENTRY GL_FramebufferTextureMultiviewOVR(GLenum target,
 }
 
 // GL_OVR_multiview2
+
+// GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 void GL_APIENTRY GL_ShadingRateQCOM(GLenum rate)

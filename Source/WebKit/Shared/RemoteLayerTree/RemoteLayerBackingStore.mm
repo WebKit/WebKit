@@ -757,6 +757,16 @@ void RemoteLayerBackingStore::Buffer::discard()
     imageBuffer = nullptr;
 }
 
+TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
+{
+    ts.dumpProperty("front buffer", backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front));
+    ts.dumpProperty("back buffer", backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Back));
+    ts.dumpProperty("secondaryBack buffer", backingStore.bufferForType(RemoteLayerBackingStore::BufferType::SecondaryBack));
+    ts.dumpProperty("is opaque", backingStore.isOpaque());
+
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStoreProperties& properties)
 {
     ts.dumpProperty("front buffer", properties.frontBufferIdentifier());

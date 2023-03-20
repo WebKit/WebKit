@@ -189,6 +189,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setAppBadgeEnabled:) BOOL _appBadgeEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, setter=_setClientBadgeEnabled:) BOOL _clientBadgeEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, setter=_setVerifyWindowOpenUserGestureFromUIProcess:) BOOL _verifyWindowOpenUserGestureFromUIProcess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setManagedMediaSourceEnabled:) BOOL _managedMediaSourceEnabled  WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setManagedMediaSourceLowThreshold:) double _managedMediaSourceLowThreshold WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setManagedMediaSourceHighThreshold:) double _managedMediaSourceHighThreshold WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

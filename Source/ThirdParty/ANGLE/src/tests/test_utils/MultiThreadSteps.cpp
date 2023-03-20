@@ -8,6 +8,7 @@
 
 #include "MultiThreadSteps.h"
 
+#include "angle_test_platform.h"
 #include "gtest/gtest.h"
 #include "util/EGLWindow.h"
 
@@ -33,8 +34,14 @@ void RunLockStepThreads(EGLWindow *window, size_t threadCount, LockStepThreadFun
     {
         surfaces[threadIndex] = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
         EXPECT_EQ(eglGetError(), EGL_SUCCESS);
+        EGLint extraAttributes[] = {EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE,
+                                    static_cast<EGLint>(threadIndex), EGL_NONE};
+        if (!IsEGLDisplayExtensionEnabled(dpy, "EGL_ANGLE_context_virtualization"))
+        {
+            extraAttributes[0] = EGL_NONE;
+        }
         contexts[threadIndex] =
-            window->createContext(threadIndex == 0 ? EGL_NO_CONTEXT : contexts[0], nullptr);
+            window->createContext(threadIndex == 0 ? EGL_NO_CONTEXT : contexts[0], extraAttributes);
         EXPECT_NE(EGL_NO_CONTEXT, contexts[threadIndex]) << threadIndex;
     }
 

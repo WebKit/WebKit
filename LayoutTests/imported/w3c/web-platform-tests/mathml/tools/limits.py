@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 from utils import mathfont
 import fontforge
 
-nArySumCodePoint = 0x2211 # largeop operator
+nArySumCodePoint = 0x2211  # largeop operator
 
 v = 3 * mathfont.em
 f = mathfont.create("limits-lowerlimitbaselinedropmin%d" % v,

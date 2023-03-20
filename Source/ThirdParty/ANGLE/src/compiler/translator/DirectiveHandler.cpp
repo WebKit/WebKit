@@ -151,7 +151,7 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
     }
 
     TExtensionBehavior::iterator iter = mExtensionBehavior.find(GetExtensionByName(name.c_str()));
-    if (iter != mExtensionBehavior.end())
+    if (iter != mExtensionBehavior.end() && CheckExtensionVersion(iter->first, mShaderVersion))
     {
         iter->second = behaviorVal;
         // OVR_multiview is implicitly enabled when OVR_multiview2 is enabled
@@ -251,14 +251,6 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
         // GL_ANGLE_clip_cull_distance are enabled.
         else if (name == "GL_EXT_clip_cull_distance" || name == "GL_ANGLE_clip_cull_distance")
         {
-            // These extensions only can be enabled on greater than ESSL 300
-            if (mShaderVersion < 300)
-            {
-                mDiagnostics.error(loc, "extension can be enabled on greater than ESSL 300",
-                                   name.c_str());
-                return;
-            }
-
             constexpr char kAPPLEClipDistanceEXTName[] = "GL_APPLE_clip_distance";
             iter = mExtensionBehavior.find(GetExtensionByName(kAPPLEClipDistanceEXTName));
             if (iter != mExtensionBehavior.end())
@@ -287,13 +279,28 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
 
 void TDirectiveHandler::handleVersion(const angle::pp::SourceLocation &loc,
                                       int version,
-                                      ShShaderSpec spec)
+                                      ShShaderSpec spec,
+                                      angle::pp::MacroSet *macro_set)
 {
     if (((version == 100 || version == 300 || version == 310 || version == 320) &&
          !IsDesktopGLSpec(spec)) ||
         IsDesktopGLSpec(spec))
     {
         mShaderVersion = version;
+
+        // Add macros for supported extensions
+        for (const auto &iter : mExtensionBehavior)
+        {
+            if (CheckExtensionVersion(iter.first, version))
+            {
+                // OVR_multiview should not be defined for WebGL spec'ed shaders.
+                if (IsWebGLBasedSpec(spec) && (iter.first == TExtension::OVR_multiview))
+                {
+                    continue;
+                }
+                PredefineMacro(macro_set, GetExtensionNameString(iter.first), 1);
+            }
+        }
     }
     else
     {

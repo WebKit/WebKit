@@ -201,7 +201,7 @@ def get_internal_format_initializer(internal_format, format_id):
     elif component_type == 'unorm' and bits['R'] == 8:
         return 'Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>'
     elif component_type == 'unorm' and bits['R'] == 16:
-        return 'Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>'
+        return 'Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0xFFFF>'
     elif component_type == 'int' and bits['R'] == 8:
         return 'Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x01>'
     elif component_type == 'snorm' and bits['R'] == 8:

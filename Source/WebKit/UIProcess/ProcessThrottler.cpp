@@ -49,7 +49,7 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
-    , m_removeAllAssertionsTimer(RunLoop::main(), this, &ProcessThrottler::removeAllAssertionsTimerFired)
+    , m_dropSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropSuspendedAssertionTimerFired)
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -190,10 +190,13 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
             weakThis->assertionWasInvalidated();
     });
 
-    if (m_assertion->type() == ProcessAssertionType::Suspended)
-        m_removeAllAssertionsTimer.startOneShot(removeAllAssertionsTimeout);
-    else
-        m_removeAllAssertionsTimer.stop();
+    if (m_assertion->type() == ProcessAssertionType::Suspended) {
+        if (!m_shouldTakeSuspendedAssertion)
+            m_assertion = nullptr;
+        else
+            m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    } else
+        m_dropSuspendedAssertionTimer.stop();
 
     m_process.didChangeThrottleState(newState);
 }
@@ -243,12 +246,11 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
     updateThrottleStateNow();
 }
 
-void ProcessThrottler::removeAllAssertionsTimerFired()
+void ProcessThrottler::dropSuspendedAssertionTimerFired()
 {
-    PROCESSTHROTTLER_RELEASE_LOG("removeAllAssertionsTimerFired: Removing all process assertions");
+    PROCESSTHROTTLER_RELEASE_LOG("dropSuspendedAssertionTimerFired: Removing suspended process assertion");
     RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::Suspended);
-    if (!m_shouldTakeSuspendedAssertion)
-        m_assertion = nullptr;
+    m_assertion = nullptr;
 }
     
 void ProcessThrottler::processReadyToSuspend()
@@ -335,8 +337,8 @@ void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedA
 void ProcessThrottler::delaySuspension()
 {
     PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
-    if (m_removeAllAssertionsTimer.isActive())
-        m_removeAllAssertionsTimer.startOneShot(removeAllAssertionsTimeout);
+    if (m_dropSuspendedAssertionTimer.isActive())
+        m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

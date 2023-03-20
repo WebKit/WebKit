@@ -130,6 +130,20 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
         }
     }
 
+    if (meta.HasMember("KeyFrames"))
+    {
+        const rapidjson::Value &keyFrames = meta["KeyFrames"];
+        if (!keyFrames.IsArray())
+        {
+            return false;
+        }
+        for (rapidjson::SizeType i = 0; i < keyFrames.Size(); i++)
+        {
+            int frame = keyFrames[i].GetInt();
+            traceInfoOut->keyFrames.push_back(frame);
+        }
+    }
+
     const rapidjson::Document::Array &traceFiles = doc["TraceFiles"].GetArray();
     for (const rapidjson::Value &value : traceFiles)
     {

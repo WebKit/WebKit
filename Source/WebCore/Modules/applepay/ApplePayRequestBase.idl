@@ -47,4 +47,6 @@
     [Conditional=APPLE_PAY_COUPON_CODE] DOMString couponCode;
 
     [Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE] ApplePayShippingContactEditingMode shippingContactEditingMode;
+
+    [Conditional=APPLE_PAY_LATER_MODE] ApplePayLaterMode applePayLaterMode;
 };

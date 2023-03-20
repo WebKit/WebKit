@@ -140,6 +140,11 @@ public:
         return m_contentsBufferHandle || !!m_frontBuffer.imageBuffer;
     }
 
+    bool hasNoBuffers() const
+    {
+        return !m_frontBuffer.imageBuffer && !m_backBuffer.imageBuffer && !m_secondaryBackBuffer.imageBuffer && !m_contentsBufferHandle;
+    }
+
     // Just for RemoteBackingStoreCollection.
     void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, SwapBuffersDisplayRequirement);
     WebCore::SetNonVolatileResult swapToValidFrontBuffer();
@@ -256,6 +261,7 @@ private:
 
 WTF::TextStream& operator<<(WTF::TextStream&, SwapBuffersDisplayRequirement);
 WTF::TextStream& operator<<(WTF::TextStream&, BackingStoreNeedsDisplayReason);
+WTF::TextStream& operator<<(WTF::TextStream&, const RemoteLayerBackingStore&);
 WTF::TextStream& operator<<(WTF::TextStream&, const RemoteLayerBackingStoreProperties&);
 
 } // namespace WebKit

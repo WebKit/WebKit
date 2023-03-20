@@ -355,8 +355,8 @@ class TextureMtl : public TextureImpl
     // Mipmap views are indexed by native level (ignored base level):
     mtl::NativeTexLevelArray mNativeLevelViews;
 
-    // The swizzled view used for shader sampling.
-    mtl::TextureRef mNativeSwizzleSamplingView;
+    // The swizzled or stencil view used for shader sampling.
+    mtl::TextureRef mNativeSwizzleStencilSamplingView;
 
     GLuint mCurrentBaseLevel = 0;
     GLuint mCurrentMaxLevel  = 1000;

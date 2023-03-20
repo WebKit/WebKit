@@ -1149,4 +1149,24 @@ describe('/api/build-requests', function () {
         assert.deepEqual(response['buildRequests'][0].id, 700);
         assert.deepEqual(response['buildRequests'][0].url, url);
     });
+
+    it('should not set "may_need_more_requests" for a hidden test group when updating a test group to failed', async () => {
+        const updates = {'700': {status: 'failed'}};
+        await MockData.addMockData(TestServer.database(), ['canceled', 'canceled', 'canceled', 'canceled'], false, null, null, 'alternating', false, true);
+
+        let testGroup = await TestServer.database().selectFirstRow('analysis_test_groups', {id: 600});
+        assert(!testGroup.may_need_more_requests);
+        assert(testGroup.hidden);
+
+        const response = await TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
+            'buildRequestUpdates': updates
+        });
+        assert.equal(response['status'], 'OK');
+
+        testGroup = await TestServer.database().selectFirstRow('analysis_test_groups', {id: 600});
+        assert(!testGroup.may_need_more_requests);
+        assert(testGroup.hidden);
+    });
 });

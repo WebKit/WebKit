@@ -502,6 +502,27 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
     _configuration->setPerOriginStorageQuota(quota);
 }
 
+- (NSNumber *)originQuotaRatio
+{
+    auto ratio = _configuration->originQuotaRatio();
+    if (!ratio)
+        return nil;
+
+    return [NSNumber numberWithFloat:*ratio];
+}
+
+- (void)setOriginQuotaRatio:(NSNumber *)originQuotaRatio
+{
+    std::optional<double> ratio = std::nullopt;
+    if (originQuotaRatio) {
+        ratio = [originQuotaRatio doubleValue];
+        if (!ratio.value())
+            [NSException raise:NSInvalidArgumentException format:@"originQuotaRatio is 0.0"];
+    }
+
+    _configuration->setOriginQuotaRatio(ratio);
+}
+
 - (NSUInteger)testSpeedMultiplier
 {
     return _configuration->testSpeedMultiplier();

@@ -32,50 +32,45 @@
 
 #pragma once
 
-#include "CurlStream.h"
+#if USE(CURL)
+
 #include "SocketStreamHandle.h"
 #include <pal/SessionID.h>
-#include <wtf/StreamBuffer.h>
 
 namespace WebCore {
 
 class SocketStreamHandleClient;
 class StorageSessionProvider;
 
-class SocketStreamHandleImpl : public SocketStreamHandle, public CurlStream::Client {
+class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider, bool) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
+    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider*, bool)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
-    virtual ~SocketStreamHandleImpl();
+    void platformSend(const uint8_t*, size_t, Function<void(bool)>&&) final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
-    WEBCORE_EXPORT void platformSend(const uint8_t* data, size_t length, Function<void(bool)>&&) final;
-    WEBCORE_EXPORT void platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
-    WEBCORE_EXPORT void platformClose() final;
+    void platformSendHandshake(const uint8_t*, size_t, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void platformClose() final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
 private:
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, const StorageSessionProvider*);
-
-    size_t bufferedAmount() final;
-    std::optional<size_t> platformSendInternal(const uint8_t*, size_t);
-    bool sendPendingData();
-
-    // CurlStream::Client
-    void didOpen(CurlStreamID) final;
-    void didSendData(CurlStreamID, size_t) final;
-    void didReceiveData(CurlStreamID, const SharedBuffer&) final;
-    void didFail(CurlStreamID, CURLcode) final;
-
-    bool isStreamInvalidated() { return m_streamID == invalidCurlStreamID; }
-    void destructStream();
-
-    RefPtr<const StorageSessionProvider> m_storageSessionProvider;
-
-    StreamBuffer<uint8_t, 1024 * 1024> m_buffer;
-    static const unsigned maxBufferSize = 100 * 1024 * 1024;
-
-    CurlStreamScheduler& m_scheduler;
-    CurlStreamID m_streamID { invalidCurlStreamID };
-    unsigned m_totalSendDataSize { 0 };
+    size_t bufferedAmount() final
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 };
 
 } // namespace WebCore
+
+#endif // USE(CURL)

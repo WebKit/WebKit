@@ -1041,7 +1041,7 @@ void UpdateColorAccess(ContextVk *contextVk,
     {
         if (colorEnabledMask.test(colorIndexGL))
         {
-            renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::Write);
+            renderPassCommands->onColorAccess(colorIndexVk, vk::ResourceAccess::ReadWrite);
         }
         ++colorIndexVk;
     }
@@ -1058,14 +1058,14 @@ void UpdateDepthStencilAccess(ContextVk *contextVk,
     if (depthWrite)
     {
         // Explicitly mark a depth write because we are modifying the depth buffer.
-        renderPassCommands->onDepthAccess(vk::ResourceAccess::Write);
+        renderPassCommands->onDepthAccess(vk::ResourceAccess::ReadWrite);
         // Because we may have changed the depth access mode, update read only depth mode.
         framebuffer->updateRenderPassDepthReadOnlyMode(contextVk, renderPassCommands);
     }
     if (stencilWrite)
     {
         // Explicitly mark a stencil write because we are modifying the stencil buffer.
-        renderPassCommands->onStencilAccess(vk::ResourceAccess::Write);
+        renderPassCommands->onStencilAccess(vk::ResourceAccess::ReadWrite);
         // Because we may have changed the stencil access mode, update read only stencil mode.
         framebuffer->updateRenderPassStencilReadOnlyMode(contextVk, renderPassCommands);
     }
@@ -2274,7 +2274,7 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
     gl::Rectangle completeRenderArea = framebuffer->getRotatedCompleteRenderArea(contextVk);
     bool invertViewport              = contextVk->isViewportFlipEnabledForDrawFBO();
     bool clipSpaceOriginUpperLeft =
-        contextVk->getState().getClipSpaceOrigin() == gl::ClipSpaceOrigin::UpperLeft;
+        contextVk->getState().getClipOrigin() == gl::ClipOrigin::UpperLeft;
     // Set depth range to clear value.  If clearing depth, the vertex shader depth output is clamped
     // to this value, thus clearing the depth buffer to the desired clear value.
     const float clearDepthValue = params.depthStencilClearValue.depth;
@@ -2731,7 +2731,8 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     ANGLE_TRY(blitBuffer.get().initSuballocation(
         contextVk, contextVk->getRenderer()->getDeviceLocalMemoryTypeIndex(),
-        static_cast<size_t>(bufferSize), contextVk->getRenderer()->getDefaultBufferAlignment()));
+        static_cast<size_t>(bufferSize), contextVk->getRenderer()->getDefaultBufferAlignment(),
+        BufferUsageType::Static));
 
     BlitResolveStencilNoExportShaderParams shaderParams;
     // Note: adjustments made for pre-rotatation in FramebufferVk::blit() affect these
@@ -3618,7 +3619,7 @@ angle::Result UtilsVk::unresolve(ContextVk *contextVk,
     gl::Rectangle completeRenderArea = framebuffer->getRotatedCompleteRenderArea(contextVk);
     bool invertViewport              = contextVk->isViewportFlipEnabledForDrawFBO();
     bool clipSpaceOriginUpperLeft =
-        contextVk->getState().getClipSpaceOrigin() == gl::ClipSpaceOrigin::UpperLeft;
+        contextVk->getState().getClipOrigin() == gl::ClipOrigin::UpperLeft;
     gl_vk::GetViewport(completeRenderArea, 0.0f, 1.0f, invertViewport, clipSpaceOriginUpperLeft,
                        completeRenderArea.height, &viewport);
     commandBuffer->setViewport(0, 1, &viewport);
@@ -3959,9 +3960,9 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
 
     // Overlay is always drawn as the last render pass before present.  Automatically move the
     // layout to PresentSrc.
-    contextVk->onColorDraw(gl::LevelIndex(0), 0, 1, dst, nullptr, vk::PackedAttachmentIndex(0));
+    contextVk->onColorDraw(gl::LevelIndex(0), 0, 1, dst, nullptr, {}, vk::PackedAttachmentIndex(0));
     contextVk->getStartedRenderPassCommands().setImageOptimizeForPresent(dst);
-    contextVk->finalizeImageLayout(dst);
+    contextVk->finalizeImageLayout(dst, {});
 
     // Close the render pass for this temporary framebuffer.
     return contextVk->flushCommandsAndEndRenderPass(

@@ -381,8 +381,9 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
 
     while (mRunning)
     {
-        // Only stop on aligned steps or in --smoke-test-mode (single step per trial).
-        if (mTrialNumStepsPerformed % stepAlignment == 0 || gStepsPerTrial == 1)
+        // Only stop on aligned steps or in a few special case modes
+        if (mTrialNumStepsPerformed % stepAlignment == 0 || gStepsPerTrial == 1 || gRunToKeyFrame ||
+            gMaxStepsPerformed != kDefaultMaxStepsPerformed)
         {
             if (gMaxStepsPerformed > 0 && mTotalNumStepsPerformed >= gMaxStepsPerformed)
             {

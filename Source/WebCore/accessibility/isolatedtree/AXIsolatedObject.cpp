@@ -163,7 +163,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
-    setProperty(AXPropertyName::ComputedRoleString, object.computedRoleString().isolatedCopy());
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXPropertyName::URL, object.url().isolatedCopy());
     setProperty(AXPropertyName::AccessKey, object.accessKey().isolatedCopy());
@@ -1825,6 +1824,12 @@ int AXIsolatedObject::layoutCount() const
 }
 
 Vector<String> AXIsolatedObject::classList() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+String AXIsolatedObject::computedRoleString() const
 {
     ASSERT_NOT_REACHED();
     return { };

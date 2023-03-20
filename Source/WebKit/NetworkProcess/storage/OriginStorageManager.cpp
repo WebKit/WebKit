@@ -784,7 +784,7 @@ WebCore::StorageEstimate OriginStorageManager::estimate()
 {
     ASSERT(!RunLoop::isMain());
 
-    return WebCore::StorageEstimate { quotaManager().usage(), quotaManager().quota() };
+    return WebCore::StorageEstimate { quotaManager().usage(), quotaManager().reportedQuota() };
 }
 
 OriginStorageManager::DataTypeSizeMap OriginStorageManager::fetchDataTypesInList(OptionSet<WebsiteDataType> types, bool shouldComputeSize)

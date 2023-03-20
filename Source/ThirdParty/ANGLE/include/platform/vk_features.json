@@ -61,6 +61,13 @@
             "issue": "https://anglebug.com/7308"
         },
         {
+            "name": "use_vma_for_image_suballocation",
+            "category": "Features",
+            "description": [
+                "Utilize VMA for image memory suballocation."
+            ]
+        },
+        {
             "name": "supports_memory_budget",
             "category": "Features",
             "description": [
@@ -1141,6 +1148,13 @@
             "issue": "https://anglebug.com/4966"
         },
         {
+            "name": "supports_sampler_mirror_clamp_to_edge",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_sampler_mirror_clamp_to_edge extension"
+            ]
+        },
+        {
             "name": "prefer_submit_on_any_samples_passed_query_end",
             "category": "Workarounds",
             "description":["Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance improvements."],
@@ -1151,6 +1165,20 @@
             "category": "Workarounds",
             "description":["Force wait for submission to complete before calling getQueryResult(wait)."],
             "issue": "https://issuetracker.google.com/253522366"
+        },
+        {
+            "name": "async_command_buffer_reset",
+            "category": "Features",
+            "description":["Reset command buffer in async thread."],
+            "issue": "https://issuetracker.google.com/255411748"
+        },
+        {
+            "name": "use_reset_command_buffer_bit_for_secondary_pools",
+            "category": "Workarounds",
+            "description": [
+                "Use VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT for initializing ",
+                "SecondaryCommandPools when using VulkanSecondaryCommandBuffer. "
+            ]
         }
     ]
 }

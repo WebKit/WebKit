@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.3'
+VERSION = '1.4'
 
 import io
 import os
@@ -151,6 +151,8 @@ def remote_name_mappings():
 
 
 def remotes_for(commit):
+    if not commit:
+        return None
     try:
         result = set()
         for line in subprocess.check_output(
@@ -165,6 +167,8 @@ def remotes_for(commit):
 
 
 def branch_for(commit):
+    if not commit:
+        return None
     try:
         candidate = None
         for line in subprocess.check_output(
@@ -192,6 +196,8 @@ def branch_for(commit):
 
 
 def message_for(commit):
+    if not commit:
+        return None
     return subprocess.check_output(
         ['git', 'log', '--format=%B', '-n', '1', commit],
         **ENCODING_KWARGS

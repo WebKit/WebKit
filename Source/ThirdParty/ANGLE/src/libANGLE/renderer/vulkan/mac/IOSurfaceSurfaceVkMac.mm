@@ -125,7 +125,7 @@ angle::Result IOSurfaceSurfaceVkMac::initializeImpl(DisplayVk *displayVk)
                                           mState.hasProtectedContent()));
 
     mColorRenderTarget.init(&mColorAttachment.image, &mColorAttachment.imageViews, nullptr, nullptr,
-                            gl::LevelIndex(0), 0, 1, RenderTargetTransience::Default);
+                            {}, gl::LevelIndex(0), 0, 1, RenderTargetTransience::Default);
 
     return angle::Result::Continue;
 }

@@ -227,6 +227,7 @@ IGNORED_INCLUDES = {
     b'vulkan_ios.h',
     b'vulkan_macos.h',
     b'vulkan_metal.h',
+    b'vulkan_sci.h',
     b'vulkan_vi.h',
     b'vulkan_wayland.h',
     b'vulkan_win32.h',

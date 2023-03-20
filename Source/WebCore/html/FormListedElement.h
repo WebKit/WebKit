@@ -45,7 +45,6 @@ class FormListedElement : public FormAssociatedElement {
 public:
     virtual ~FormListedElement();
 
-    static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
     ValidityState* validity();
 
     virtual bool isValidatedFormListedElement() const = 0;
@@ -110,7 +109,7 @@ protected:
     String customValidationMessage() const;
 
 private:
-    void setFormInternal(HTMLFormElement*) final;
+    void setFormInternal(RefPtr<HTMLFormElement>&&) final;
     // "willValidate" means "is a candidate for constraint validation".
     virtual bool willValidate() const = 0;
 

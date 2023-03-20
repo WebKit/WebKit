@@ -20,18 +20,41 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
+import sys
 
-from webkitcorepy import testing
-from webkitscmpy import program
+from webkitcorepy import OutputCapture, testing, Version
+from webkitscmpy import local, program, mocks
 
 
 class TestInstallHooks(testing.PathTestCase):
     basepath = 'mock/repository'
 
+    @classmethod
+    def write_hook(cls, path, security_levels=False):
+        with open(path, 'w') as f:
+            f.write('#!/usr/bin/env {{ python }}\n')
+            if security_levels:
+                f.write('SECURITY_LEVELS = { {% for item in security_levels|dictsort %}\n')
+                f.write("    '{{ item[0] }}': {{ item[1] }},{% endfor %}\n")
+                f.write('}\n')
+            f.write("print('Hello, world!\\n')\n")
+
+    def write_config(self, **kwargs):
+        if not kwargs:
+            return
+        with open(os.path.join(self.path, '.git', 'config'), 'a') as f:
+            for remote, args in kwargs.items():
+                f.write('[webkitscmpy "remotes.{}"]\n'.format(remote))
+                for key, value in args.items():
+                    f.write('    {} = {}\n'.format(key, value))
+
     def setUp(self):
         super(TestInstallHooks, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, 'hooks'))
+        os.mkdir(os.path.join(self.path, '.git', 'hooks'))
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_regex(self):
@@ -51,3 +74,155 @@ class TestInstallHooks(testing.PathTestCase):
             program.InstallHooks.REMOTE_RE.match('ssh://git@github.com/WebKit/WebKit').groups(),
             ('ssh://', 'git@', 'github.com', '/', 'WebKit/WebKit', None),
         )
+
+    def test_security_levels(self):
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, remote='git@example.org:project/project') as git, mocks.local.Svn():
+            self.write_config(
+                origin={
+                    'url': 'git@example.org:project/project',
+                    'security-level': 0,
+                }, security={
+                    'url': 'git@example.org:project/project-security',
+                    'security-level': 1,
+                },
+            )
+
+            self.assertDictEqual({
+                'example.org:project/project': 0,
+                'example.org:project/project-security': 1,
+            }, program.InstallHooks._security_levels(local.Git(self.path)))
+
+    def test_install_hook(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
+            self.assertEqual(0, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Successfully installed 1 repository hooks\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Configuring and copying hook 'pre-commit' for this repository\n",
+        )
+
+        resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-commit')
+        self.assertTrue(os.path.isfile(resolved_hook))
+        with open(resolved_hook, 'r') as f:
+            self.assertEqual(
+                f.read(),
+                "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
+            )
+
+    def test_security_level_in_hook(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), security_levels=True)
+            self.write_config(
+                origin={
+                    'url': 'git@example.org:project/project',
+                    'security-level': 0,
+                }, security={
+                    'url': 'git@example.org:project/project-security',
+                    'security-level': 1,
+                },
+            )
+            self.assertEqual(0, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Successfully installed 1 repository hooks\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Configuring and copying hook 'pre-push' for this repository\n",
+        )
+
+        resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-push')
+        self.assertTrue(os.path.isfile(resolved_hook))
+        with open(resolved_hook, 'r') as f:
+            self.assertEqual(
+                f.read(), '''#!/usr/bin/env {}
+SECURITY_LEVELS = {{ 
+    'example.org:project/project': 0,
+    'example.org:project/project-security': 1,
+}}
+print('Hello, world!\\n')
+'''.format(os.path.basename(sys.executable)),
+            )
+
+    def test_security_level_addition(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), security_levels=True)
+            self.write_config(
+                origin={
+                    'url': 'git@example.org:project/project',
+                    'security-level': 0,
+                }, security={
+                    'url': 'git@example.org:project/project-security',
+                    'security-level': 1,
+                },
+            )
+            self.assertEqual(0, program.main(
+                args=('install-hooks', '-v', '--level', 'example.org:organization/project=2'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Successfully installed 1 repository hooks\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Configuring and copying hook 'pre-push' for this repository\n",
+        )
+
+        resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-push')
+        self.assertTrue(os.path.isfile(resolved_hook))
+        with open(resolved_hook, 'r') as f:
+            self.assertEqual(
+                f.read(), '''#!/usr/bin/env {}
+SECURITY_LEVELS = {{ 
+    'example.org:organization/project': 2,
+    'example.org:project/project': 0,
+    'example.org:project/project-security': 1,
+}}
+print('Hello, world!\\n')
+'''.format(os.path.basename(sys.executable)),
+            )
+
+    def test_security_level_override(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), security_levels=True)
+            self.write_config(
+                origin={
+                    'url': 'git@example.org:project/project',
+                    'security-level': 0,
+                }, security={
+                    'url': 'git@example.org:project/project-security',
+                    'security-level': 1,
+                },
+            )
+            self.assertEqual(1, program.main(
+                args=('install-hooks', '-v', '--level', 'example.org:project/project=2'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "'example.org:project/project' already has a security level of '0'\n")
+        self.assertEqual(captured.root.log.getvalue(), '')
+
+        resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-push')
+        self.assertFalse(os.path.isfile(resolved_hook))

@@ -135,6 +135,7 @@ protected:
     bool hasFutureTime();
 
     void scheduleEvent(const AtomString& eventName);
+    void notifyElementUpdateMediaState() const;
 
     std::unique_ptr<PlatformTimeRanges> m_buffered;
 
@@ -163,7 +164,6 @@ private:
 
     void regenerateActiveSourceBuffers();
     void updateBufferedIfNeeded();
-    void notifyElementUpdateMediaState() const;
 
     void completeSeek();
 

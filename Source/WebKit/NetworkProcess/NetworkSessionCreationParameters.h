@@ -120,6 +120,7 @@ struct NetworkSessionCreationParameters {
     UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Basic };
     uint64_t perOriginStorageQuota;
     uint64_t perThirdPartyOriginStorageQuota;
+    std::optional<double> originQuotaRatio;
     String localStorageDirectory;
     SandboxExtension::Handle localStorageDirectoryExtensionHandle;
     String indexedDBDirectory;

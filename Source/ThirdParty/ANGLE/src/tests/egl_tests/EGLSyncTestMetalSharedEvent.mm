@@ -159,6 +159,64 @@ TEST_P(EGLSyncTestMetalSharedEvent, GetSyncAttrib)
     sharedEvent = nil;
 }
 
+// Test usage of eglGetSyncAttrib with explicit sync condition
+TEST_P(EGLSyncTestMetalSharedEvent, GetSyncAttrib_ExplicitSyncCondition)
+{
+    ANGLE_SKIP_TEST_IF(!hasSyncMetalSharedEventExtension());
+
+    id<MTLSharedEvent> sharedEvent = createMetalSharedEvent();
+    EXPECT_EQ(sharedEvent.signaledValue, 0u);
+
+    EGLDisplay display          = getEGLWindow()->getDisplay();
+    EGLAttrib syncAttribs[3][5] = {
+        {EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, sharedEventAsAttrib(sharedEvent), EGL_NONE},
+        {EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, sharedEventAsAttrib(sharedEvent),
+         EGL_SYNC_CONDITION, EGL_SYNC_PRIOR_COMMANDS_COMPLETE, EGL_NONE},
+        {EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, sharedEventAsAttrib(sharedEvent),
+         EGL_SYNC_CONDITION, EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE, EGL_NONE}};
+
+    EGLAttrib expectedSyncCondition[3] = {EGL_SYNC_PRIOR_COMMANDS_COMPLETE,
+                                          EGL_SYNC_PRIOR_COMMANDS_COMPLETE,
+                                          EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE};
+
+    for (int i = 0; i < 3; ++i)
+    {
+        uint64_t initialSignalValue = sharedEvent.signaledValue;
+
+        EGLSync sync = eglCreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttribs[i]);
+        EXPECT_NE(sync, EGL_NO_SYNC);
+
+        constexpr EGLAttrib kSentinelAttribValue = 123456789;
+        EGLAttrib attribValue                    = kSentinelAttribValue;
+        EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_TYPE, &attribValue));
+        EXPECT_EQ(attribValue, EGL_SYNC_METAL_SHARED_EVENT_ANGLE);
+
+        attribValue = kSentinelAttribValue;
+        EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_CONDITION, &attribValue));
+        EXPECT_EQ(attribValue, expectedSyncCondition[i]);
+
+        attribValue = kSentinelAttribValue;
+        EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_STATUS, &attribValue));
+        EXPECT_EQ(attribValue, EGL_UNSIGNALED);
+
+        glFinish();
+
+        if (i == 2)
+        {
+            sharedEvent.signaledValue += 1;
+        }
+
+        attribValue = kSentinelAttribValue;
+        EXPECT_EGL_TRUE(eglGetSyncAttrib(display, sync, EGL_SYNC_STATUS, &attribValue));
+        EXPECT_EQ(attribValue, EGL_SIGNALED);
+        EXPECT_EQ(sharedEvent.signaledValue, initialSignalValue + 1);
+
+        EXPECT_EGL_TRUE(eglDestroySync(display, sync));
+    }
+
+    sharedEvent = nil;
+}
+
 // Verify CreateSync and ClientWait for EGL_ANGLE_metal_shared_event_sync
 TEST_P(EGLSyncTestMetalSharedEvent, AngleMetalSharedEventSync_ClientWait)
 {
@@ -343,6 +401,76 @@ TEST_P(EGLSyncTestMetalSharedEvent, AngleMetalSharedEventSync_WaitSync)
 
     // Clean up created objects.
     EXPECT_EGL_TRUE(eglDestroySync(display, syncWithSharedEvent1));
+    sharedEvent = nil;
+}
+
+// Verify WaitSync with EGL_ANGLE_metal_shared_event_sync
+// Simulate passing shared events across processes by passing across Contexts.
+TEST_P(EGLSyncTestMetalSharedEvent, AngleMetalSharedEventSync_WaitSync_ExternallySignaled)
+{
+    ANGLE_SKIP_TEST_IF(!hasSyncMetalSharedEventExtension());
+
+    id<MTLSharedEvent> sharedEvent = createMetalSharedEvent();
+
+    EGLAttrib value    = 0;
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EGLAttrib syncAttribs[] = {EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE,
+                               sharedEventAsAttrib(sharedEvent), EGL_SYNC_CONDITION,
+                               EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE, EGL_NONE};
+
+    // We can ClientWait on this
+    EGLSync syncWithSharedEvent =
+        eglCreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttribs);
+    EXPECT_NE(syncWithSharedEvent, EGL_NO_SYNC);
+    if (syncWithSharedEvent == EGL_NO_SYNC)
+    {
+        // Unable to continue with test.
+        return;
+    }
+
+    constexpr EGLAttrib kSentinelAttribValue = 123456789;
+    value                                    = kSentinelAttribValue;
+    EXPECT_EGL_TRUE(eglGetSyncAttrib(display, syncWithSharedEvent, EGL_SYNC_CONDITION, &value));
+    EXPECT_EQ(value, EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE);
+
+    EXPECT_EQ(EGL_TIMEOUT_EXPIRED,
+              eglClientWaitSync(display, syncWithSharedEvent, EGL_SYNC_FLUSH_COMMANDS_BIT, 0));
+
+    value = kSentinelAttribValue;
+    EXPECT_EGL_TRUE(eglGetSyncAttrib(display, syncWithSharedEvent, EGL_SYNC_STATUS, &value));
+    EXPECT_EQ(value, EGL_UNSIGNALED);
+
+    // Wait for previous work to complete before drawing
+    EXPECT_EGL_TRUE(eglWaitSync(display, syncWithSharedEvent, 0));
+
+    // Create work to do
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glFlush();
+
+    // After explicit flush, should still time out
+    // TODO(djg): flushing here causes a 5s stall in `CommandBuffer::wait`
+    // (mtl_command_buffer.mm:765) EXPECT_EQ(EGL_TIMEOUT_EXPIRED,
+    //           eglClientWaitSync(display, syncWithSharedEvent, EGL_SYNC_FLUSH_COMMANDS_BIT, 0));
+    EXPECT_EQ(EGL_TIMEOUT_EXPIRED, eglClientWaitSync(display, syncWithSharedEvent, 0, 0));
+
+    value = kSentinelAttribValue;
+    EXPECT_EGL_TRUE(eglGetSyncAttrib(display, syncWithSharedEvent, EGL_SYNC_STATUS, &value));
+    EXPECT_EQ(value, EGL_UNSIGNALED);
+
+    // Signal the MTLSharedEvent
+    sharedEvent.signaledValue += 1;
+
+    // Wait for draw to complete. This will be satisfied since the signalValue
+    // was incremented on sharedEvent.
+    EXPECT_EQ(EGL_CONDITION_SATISFIED,
+              eglClientWaitSync(display, syncWithSharedEvent, EGL_SYNC_FLUSH_COMMANDS_BIT, 0));
+    EXPECT_EGL_TRUE(eglGetSyncAttrib(display, syncWithSharedEvent, EGL_SYNC_STATUS, &value));
+    EXPECT_EQ(value, EGL_SIGNALED);
+
+    // Clean up created objects.
+    EXPECT_EGL_TRUE(eglDestroySync(display, syncWithSharedEvent));
     sharedEvent = nil;
 }
 

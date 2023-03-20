@@ -27,6 +27,7 @@
 #import "IOSurface.h"
 
 #import "DestinationColorSpace.h"
+#import "GraphicsContextCG.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
@@ -51,6 +52,7 @@ std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, 
 
     if (pool) {
         if (auto cachedSurface = pool->takeSurface(size, colorSpace, pixelFormat)) {
+            cachedSurface->releasePlatformContext();
             LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
             return cachedSurface;
         }
@@ -94,8 +96,9 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGIma
     auto surface = IOSurface::create(pool, IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
     if (!surface)
         return nullptr;
-    auto context = surface->createPlatformContext();
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, width, height), image);
+    auto surfaceContext = surface->ensurePlatformContext();
+    CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
+    CGContextFlush(surfaceContext);
     return surface;
 }
 
@@ -345,17 +348,14 @@ RetainPtr<id> IOSurface::asCAIOSurfaceLayerContents() const
     return nil;
 }
 
-RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
+RetainPtr<CGImageRef> IOSurface::createImage()
 {
-    ASSERT(CGIOSurfaceContextGetSurface(context) == m_surface);
-    return adoptCF(CGIOSurfaceContextCreateImage(context));
+    return adoptCF(CGIOSurfaceContextCreateImage(ensurePlatformContext()));
 }
 
-RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> context)
+RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface)
 {
-    ASSERT(CGIOSurfaceContextGetSurface(context.get()) == surface->m_surface);
-    UNUSED_PARAM(surface);
-    return adoptCF(CGIOSurfaceContextCreateImageReference(context.get()));
+    return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
 }
 
 IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
@@ -399,20 +399,23 @@ RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsign
     return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
 }
 
-RetainPtr<CGContextRef> IOSurface::createPlatformContext(PlatformDisplayID displayID)
+CGContextRef IOSurface::ensurePlatformContext(PlatformDisplayID displayID)
 {
+    if (m_cgContext)
+        return m_cgContext.get();
+
     auto configuration = bitmapConfiguration();
     auto bitsPerPixel = configuration.bitsPerComponent * 4;
 
     ensureColorSpace();
-    auto cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
         if (displayID)
             displayMask = displayMaskForDisplay(displayID);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CGIOSurfaceContextSetDisplayMask(cgContext.get(), displayMask); // NOLINT
+        CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), displayMask);
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #else
@@ -420,9 +423,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
     if (m_resourceOwner && CGContextSetOwnerIdentity)
-        CGContextSetOwnerIdentity(cgContext.get(), m_resourceOwner.taskIdToken());
+        CGContextSetOwnerIdentity(m_cgContext.get(), m_resourceOwner.taskIdToken());
 #endif
-    return cgContext;
+    return m_cgContext.get();
 }
 
 SetNonVolatileResult IOSurface::state() const
@@ -477,6 +480,11 @@ size_t IOSurface::bytesPerRow() const
 bool IOSurface::isInUse() const
 {
     return IOSurfaceIsInUse(m_surface.get());
+}
+
+void IOSurface::releasePlatformContext()
+{
+    m_cgContext = nullptr;
 }
 
 #if HAVE(IOSURFACE_ACCELERATOR)
@@ -542,6 +550,10 @@ void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
     ASSERT(resourceOwner);
     m_resourceOwner = resourceOwner;
     setOwnershipIdentity(m_surface.get(), resourceOwner);
+#if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
+    if (m_cgContext && CGContextSetOwnerIdentity)
+        CGContextSetOwnerIdentity(m_cgContext.get(), m_resourceOwner.taskIdToken());
+#endif
 }
 
 void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity& resourceOwner)

@@ -2153,7 +2153,7 @@ TEST_P(EGLSingleBufferTest, SharedPresentBarrier)
 
         for (int i = 0; i < 5; ++i)
         {
-            GLColor testColor(rand() % 255, rand() % 255, rand() % 255, 255);
+            GLColor testColor(rand() % 256, rand() % 256, rand() % 256, 255);
             angle::Vector4 clearColor = testColor.toNormalizedVector();
             glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), clearColor.w());
             glClear(GL_COLOR_BUFFER_BIT);
@@ -2387,6 +2387,7 @@ void EGLSurfaceTest::runWaitSemaphoreTest(bool useSecondContext)
         }
 
         eglSwapBuffers(mDisplay, mWindowSurface);
+        ASSERT_EGL_SUCCESS();
     }
 
     mOSWindow->resize(kInitialSize, kInitialSize);
@@ -2394,14 +2395,14 @@ void EGLSurfaceTest::runWaitSemaphoreTest(bool useSecondContext)
 
 // Test that there no artifacts because of the bug when wait semaphore could be added after
 // rendering commands. This was possible by switching to Pbuffer surface and submit.
-TEST_P(EGLSurfaceTest, WaitSemaphoreAddedAfterCommands)
+TEST_P(EGLSurfaceTest, DISABLED_WaitSemaphoreAddedAfterCommands)
 {
     runWaitSemaphoreTest(false);
 }
 
 // Test that there no artifacts because of the bug when rendering commands could be submitted
 // without adding wait semaphore. This was possible if submit commands from other thread.
-TEST_P(EGLSurfaceTest, CommandsSubmittedWithoutWaitSemaphore)
+TEST_P(EGLSurfaceTest, DISABLED_CommandsSubmittedWithoutWaitSemaphore)
 {
     runWaitSemaphoreTest(true);
 }
@@ -2480,6 +2481,42 @@ TEST_P(EGLSurfaceTest, DestroyNotCurrentPbufferSurface)
 TEST_P(EGLSurfaceTest, DestroyNotCurrentWindowSurface)
 {
     runDestroyNotCurrentSurfaceTest(true);
+}
+
+// Test that there is no tearing because of incorrect pipeline barriers
+TEST_P(EGLSurfaceTest, DISABLED_RandomClearTearing)
+{
+    // Note: This test requires visual inspection for rendering artifacts.
+    // However, absence of artifacts does not guarantee that there is no problem.
+
+    initializeDisplay();
+
+    constexpr int kInitialSize   = 64;
+    constexpr int kWindowWidth   = 1080;
+    constexpr int kWindowWHeight = 1920;
+
+    mOSWindow->resize(kWindowWidth, kWindowWHeight);
+
+    initializeSurfaceWithDefaultConfig(true);
+    initializeMainContext();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    constexpr int kFrameCount = 60 * 4;  // 4 sec @ 60Hz; 2 sec @ 120Hz;
+
+    for (int frame = 0; frame < kFrameCount; ++frame)
+    {
+        glClearColor(rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        eglSwapBuffers(mDisplay, mWindowSurface);
+        ASSERT_EGL_SUCCESS();
+    }
+
+    mOSWindow->resize(kInitialSize, kInitialSize);
 }
 
 }  // anonymous namespace

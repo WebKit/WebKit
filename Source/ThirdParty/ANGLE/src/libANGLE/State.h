@@ -181,14 +181,11 @@ class State : angle::NonCopyable
     float getNearPlane() const { return mNearZ; }
     float getFarPlane() const { return mFarZ; }
 
-    // Clip control extension
-    void setClipControl(GLenum origin, GLenum depth);
-    bool isClipControlDepthZeroToOne() const { return mClipControlDepth == GL_ZERO_TO_ONE_EXT; }
-    gl::ClipSpaceOrigin getClipSpaceOrigin() const
-    {
-        return mClipControlOrigin == GL_UPPER_LEFT_EXT ? ClipSpaceOrigin::UpperLeft
-                                                       : ClipSpaceOrigin::LowerLeft;
-    }
+    // EXT_clip_control
+    void setClipControl(ClipOrigin origin, ClipDepthMode depth);
+    ClipOrigin getClipOrigin() const { return mClipOrigin; }
+    ClipDepthMode getClipDepthMode() const { return mClipDepthMode; }
+    bool isClipDepthModeZeroToOne() const { return mClipDepthMode == ClipDepthMode::ZeroToOne; }
 
     // Blend state manipulation
     bool isBlendEnabled() const { return mBlendStateExt.getEnabledMask().test(0); }
@@ -1101,8 +1098,8 @@ class State : angle::NonCopyable
     float mNearZ;
     float mFarZ;
 
-    GLenum mClipControlOrigin;
-    GLenum mClipControlDepth;
+    ClipOrigin mClipOrigin;
+    ClipDepthMode mClipDepthMode;
 
     Framebuffer *mReadFramebuffer;
     Framebuffer *mDrawFramebuffer;

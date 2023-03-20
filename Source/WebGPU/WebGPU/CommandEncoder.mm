@@ -472,7 +472,7 @@ static bool validateCopyBufferToTexture(const WGPUImageCopyBuffer& source, const
         if (!Texture::refersToSingleAspect(destinationTexture.format(), destination.aspect))
             return false;
 
-        if (!Texture::isValidImageCopyDestination(destinationTexture.format(), destination.aspect))
+        if (!Texture::isValidDepthStencilCopyDestination(destinationTexture.format(), destination.aspect))
             return false;
 
         aspectSpecificFormat = Texture::aspectSpecificFormat(destinationTexture.format(), destination.aspect);
@@ -631,7 +631,7 @@ static bool validateCopyTextureToBuffer(const WGPUImageCopyTexture& source, cons
         if (!Texture::refersToSingleAspect(sourceTexture.format(), source.aspect))
             return false;
 
-        if (!Texture::isValidImageCopySource(sourceTexture.format(), source.aspect))
+        if (!Texture::isValidDepthStencilCopySource(sourceTexture.format(), source.aspect))
             return false;
 
         aspectSpecificFormat = Texture::aspectSpecificFormat(sourceTexture.format(), source.aspect);

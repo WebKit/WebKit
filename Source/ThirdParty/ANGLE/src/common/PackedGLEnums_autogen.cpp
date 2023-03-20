@@ -385,6 +385,96 @@ std::ostream &operator<<(std::ostream &os, ClientVertexArrayType value)
 }
 
 template <>
+ClipDepthMode FromGLenum<ClipDepthMode>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_NEGATIVE_ONE_TO_ONE_EXT:
+            return ClipDepthMode::NegativeOneToOne;
+        case GL_ZERO_TO_ONE_EXT:
+            return ClipDepthMode::ZeroToOne;
+        default:
+            return ClipDepthMode::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(ClipDepthMode from)
+{
+    switch (from)
+    {
+        case ClipDepthMode::NegativeOneToOne:
+            return GL_NEGATIVE_ONE_TO_ONE_EXT;
+        case ClipDepthMode::ZeroToOne:
+            return GL_ZERO_TO_ONE_EXT;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ClipDepthMode value)
+{
+    switch (value)
+    {
+        case ClipDepthMode::NegativeOneToOne:
+            os << "GL_NEGATIVE_ONE_TO_ONE_EXT";
+            break;
+        case ClipDepthMode::ZeroToOne:
+            os << "GL_ZERO_TO_ONE_EXT";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ClipOrigin FromGLenum<ClipOrigin>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_LOWER_LEFT_EXT:
+            return ClipOrigin::LowerLeft;
+        case GL_UPPER_LEFT_EXT:
+            return ClipOrigin::UpperLeft;
+        default:
+            return ClipOrigin::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(ClipOrigin from)
+{
+    switch (from)
+    {
+        case ClipOrigin::LowerLeft:
+            return GL_LOWER_LEFT_EXT;
+        case ClipOrigin::UpperLeft:
+            return GL_UPPER_LEFT_EXT;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ClipOrigin value)
+{
+    switch (value)
+    {
+        case ClipOrigin::LowerLeft:
+            os << "GL_LOWER_LEFT_EXT";
+            break;
+        case ClipOrigin::UpperLeft:
+            os << "GL_UPPER_LEFT_EXT";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 CullFaceMode FromGLenum<CullFaceMode>(GLenum from)
 {
     switch (from)

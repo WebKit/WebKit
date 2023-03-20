@@ -82,6 +82,7 @@ enum TBehavior : uint8_t
 
 const char *GetExtensionNameString(TExtension extension);
 TExtension GetExtensionByName(const char *extension);
+bool CheckExtensionVersion(TExtension extension, int version);
 
 const char *GetBehaviorString(TBehavior b);
 

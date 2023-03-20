@@ -251,9 +251,9 @@ public:
         return m_changedLayerProperties.size() || m_changedLayers.size() || m_createdLayers.size() || m_destroyedLayerIDs.size() || m_layerIDsWithNewlyUnreachableBackingStore.size();
     }
 
-    Vector<LayerCreationProperties> createdLayers() const { return m_createdLayers; }
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore() const { return m_layerIDsWithNewlyUnreachableBackingStore; }
+    const Vector<LayerCreationProperties>& createdLayers() const { return m_createdLayers; }
+    const Vector<WebCore::GraphicsLayer::PlatformLayerID>& destroyedLayers() const { return m_destroyedLayerIDs; }
+    const Vector<WebCore::GraphicsLayer::PlatformLayerID>& layerIDsWithNewlyUnreachableBackingStore() const { return m_layerIDsWithNewlyUnreachableBackingStore; }
 
     HashSet<RefPtr<PlatformCALayerRemote>>& changedLayers() { return m_changedLayers; }
 

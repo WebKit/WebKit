@@ -200,13 +200,13 @@ async function helloCube() {
                           seconds*1 * (6.28318530718 / 60.0),
                           .3]);
 
-        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer, 0, 16);
+        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer);
         
         secondsBuffer.set([seconds*10 * (6.28318530718 / 60.0) + 3.14159265359,
                           seconds*5 * (6.28318530718 / 60.0) + 3.14159265359,
                           seconds*1 * (6.28318530718 / 60.0) + 3.14159265359,
                           -.3]);
-        device.queue.writeBuffer(uniformBuffer, 256, secondsBuffer, 0, 16);
+        device.queue.writeBuffer(uniformBuffer, 256, secondsBuffer);
 
         const canvas = document.querySelector("canvas");
         canvas.width = 600;

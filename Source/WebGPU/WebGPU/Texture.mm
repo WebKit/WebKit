@@ -2469,9 +2469,10 @@ bool Texture::refersToSingleAspect(WGPUTextureFormat format, WGPUTextureAspect a
     return true;
 }
 
-bool Texture::isValidImageCopySource(WGPUTextureFormat format, WGPUTextureAspect aspect)
+bool Texture::isValidDepthStencilCopySource(WGPUTextureFormat format, WGPUTextureAspect aspect)
 {
     // https://gpuweb.github.io/gpuweb/#depth-formats
+    ASSERT(Texture::isDepthOrStencilFormat(format));
 
     switch (format) {
     case WGPUTextureFormat_Undefined:
@@ -2581,13 +2582,13 @@ bool Texture::isValidImageCopySource(WGPUTextureFormat format, WGPUTextureAspect
     }
 }
 
-bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureAspect aspect)
+bool Texture::isValidDepthStencilCopyDestination(WGPUTextureFormat format, WGPUTextureAspect aspect)
 {
     // https://gpuweb.github.io/gpuweb/#depth-formats
+    ASSERT(Texture::isDepthOrStencilFormat(format));
 
     switch (format) {
     case WGPUTextureFormat_Undefined:
-        return false;
     case WGPUTextureFormat_R8Unorm:
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
@@ -2624,7 +2625,7 @@ bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureA
     case WGPUTextureFormat_RGBA32Float:
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
-        return true;
+        return false;
     case WGPUTextureFormat_Stencil8:
     case WGPUTextureFormat_Depth16Unorm:
         return true;

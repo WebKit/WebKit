@@ -41,7 +41,7 @@ function main($id, $path, $post_data) {
 
 function update_builds($db, $updates) {
     $db->begin_transaction();
-    $test_groups_may_need_more_requests = array();
+    $processed_test_groups = array();
     foreach ($updates as $id => $info) {
         $id = intval($id);
         $status = $info['status'];
@@ -100,11 +100,11 @@ function update_builds($db, $updates) {
         }
 
         $test_group_id = $request_row['request_group'];
-        if (array_key_exists($test_group_id, $test_groups_may_need_more_requests))
+        if (array_key_exists($test_group_id, $processed_test_groups))
             continue;
 
-        $db->update_row('analysis_test_groups', 'testgroup', array('id' => $test_group_id), array('may_need_more_requests' => TRUE));
-        $test_groups_may_need_more_requests[$test_group_id] = TRUE;
+        $db->update_row('analysis_test_groups', 'testgroup', array('id' => $test_group_id, 'hidden' => FALSE), array('may_need_more_requests' => TRUE));
+        $processed_test_groups[$test_group_id] = TRUE;
     }
     $db->commit_transaction();
 }

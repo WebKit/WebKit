@@ -314,8 +314,7 @@ function updateTransformArray() {
     mat4.rotate(viewMatrix, viewMatrix, 1, vec3.fromValues(Math.sin(now), Math.cos(now), 0));
     const modelViewProjectionMatrix = mat4.create();
     mat4.multiply(modelViewProjectionMatrix, projectionMatrix, viewMatrix);
-    // FIXME: we should not require the 4th argument here
-    device.queue.writeBuffer(transformBuffer, 0, modelViewProjectionMatrix, 0);
+    device.queue.writeBuffer(transformBuffer, 0, modelViewProjectionMatrix);
 }
 
 window.addEventListener("DOMContentLoaded", init);

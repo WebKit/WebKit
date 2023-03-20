@@ -335,11 +335,11 @@ angle::Result VertexArrayVk::convertIndexBufferCPU(ContextVk *contextVk,
         if (mCachedStreamIndexBuffers.size() < kMaxCachedStreamIndexBuffers)
         {
             std::unique_ptr<vk::BufferHelper> buffer = std::make_unique<vk::BufferHelper>();
-            ANGLE_TRY(buffer->initSuballocation(contextVk,
-                                                renderer->getVertexConversionBufferMemoryTypeIndex(
-                                                    vk::MemoryHostVisibility::Visible),
-                                                amount,
-                                                renderer->getVertexConversionBufferAlignment()));
+            ANGLE_TRY(buffer->initSuballocation(
+                contextVk,
+                renderer->getVertexConversionBufferMemoryTypeIndex(
+                    vk::MemoryHostVisibility::Visible),
+                amount, renderer->getVertexConversionBufferAlignment(), BufferUsageType::Static));
             memcpy(buffer->getMappedMemory(), sourcePointer, amount);
             ANGLE_TRY(buffer->flush(renderer));
 
@@ -664,7 +664,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
             BufferVk *bufferVk                  = vk::GetImpl(bufferGL);
             const angle::Format &intendedFormat = vertexFormat.getIntendedFormat();
             bool bindingIsAligned               = BindingIsAligned(
-                              binding, intendedFormat, intendedFormat.channelCount, attrib.relativeOffset);
+                binding, intendedFormat, intendedFormat.channelCount, attrib.relativeOffset);
 
             if (renderer->getFeatures().compressVertexData.enabled &&
                 gl::IsStaticBufferUsage(bufferGL->getUsage()) &&

@@ -27,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/scripts.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stacks.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stretchstacks.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stretchy-centered-on-baseline.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stretchy.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/underover.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/use-typo-lineheight.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/xHeight.py

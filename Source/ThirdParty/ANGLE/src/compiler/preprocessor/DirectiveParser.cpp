@@ -147,7 +147,8 @@ DirectiveParser::DirectiveParser(Tokenizer *tokenizer,
                                  Diagnostics *diagnostics,
                                  DirectiveHandler *directiveHandler,
                                  const PreprocessorSettings &settings)
-    : mPastFirstStatement(false),
+    : mHandledVersion(false),
+      mPastFirstStatement(false),
       mSeenNonPreprocessorToken(false),
       mTokenizer(tokenizer),
       mMacroSet(macroSet),
@@ -173,6 +174,12 @@ void DirectiveParser::lex(Token *token)
         else if (!isEOD(token) && !skipping())
         {
             mSeenNonPreprocessorToken = true;
+            if (!mHandledVersion)
+            {
+                // If #version does not appear before first token, then this is
+                // an ESSL1 shader without a version directive
+                handleVersion(token->location);
+            }
         }
 
         if (token->type == Token::LAST)
@@ -203,6 +210,13 @@ void DirectiveParser::parseDirective(Token *token)
     }
 
     DirectiveType directive = getDirective(token);
+
+    if (!mHandledVersion && directive != DIRECTIVE_VERSION)
+    {
+        // If first directive is not #version, then this is an ESSL1 shader
+        // without a version directive
+        handleVersion(token->location);
+    }
 
     // While in an excluded conditional block/group,
     // we only parse conditional directives.
@@ -806,9 +820,8 @@ void DirectiveParser::parseVersion(Token *token)
 
     if (valid)
     {
-        mDirectiveHandler->handleVersion(token->location, version, mSettings.shaderSpec);
         mShaderVersion = version;
-        PredefineMacro(mMacroSet, "__VERSION__", version);
+        handleVersion(token->location);
     }
 }
 
@@ -974,6 +987,13 @@ int DirectiveParser::parseExpressionIfdef(Token *token)
         skipUntilEOD(mTokenizer, token);
     }
     return expression;
+}
+
+void DirectiveParser::handleVersion(const SourceLocation &location)
+{
+    PredefineMacro(mMacroSet, "__VERSION__", mShaderVersion);
+    mDirectiveHandler->handleVersion(location, mShaderVersion, mSettings.shaderSpec, mMacroSet);
+    mHandledVersion = true;
 }
 
 }  // namespace pp

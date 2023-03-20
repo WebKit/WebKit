@@ -35,16 +35,10 @@ FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
 {
 }
 
-void FormAssociatedElement::setForm(HTMLFormElement* newForm)
+void FormAssociatedElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 {
-    if (m_form != newForm)
-        setFormInternal(newForm);
-}
-
-void FormAssociatedElement::setFormInternal(HTMLFormElement* newForm)
-{
-    ASSERT(m_form != newForm);
-    m_form = newForm;
+    ASSERT(m_form.get() != newForm);
+    m_form = WTFMove(newForm);
 }
 
 void FormAssociatedElement::elementInsertedIntoAncestor(Element& element, Node::InsertionType)

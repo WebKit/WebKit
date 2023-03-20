@@ -356,7 +356,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
         double constraintDistance = fitnessDistance(*widthConstraint);
         if (std::isinf(constraintDistance)) {
             auto range = capabilities.width();
-            WTFLogAlways("RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = widthConstraint->name();
             return false;
         }
@@ -373,7 +373,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
         double constraintDistance = fitnessDistance(*heightConstraint);
         if (std::isinf(constraintDistance)) {
             auto range = capabilities.height();
-            WTFLogAlways("RealtimeMediaSource::supportsSizeFrameRateAndZoom failed height constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed height constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = heightConstraint->name();
             return false;
         }
@@ -390,7 +390,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
         double constraintDistance = fitnessDistance(*frameRateConstraint);
         if (std::isinf(constraintDistance)) {
             auto range = capabilities.frameRate();
-            WTFLogAlways("RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = frameRateConstraint->name();
             return false;
         }
@@ -407,7 +407,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
         double constraintDistance = fitnessDistance(*zoomConstraint);
         if (std::isinf(constraintDistance)) {
             auto range = capabilities.zoom();
-            WTFLogAlways("RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
             badConstraint = zoomConstraint->name();
             return false;
         }
@@ -766,7 +766,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
         double constraintDistance = fitnessDistance(constraint);
         if (std::isinf(constraintDistance)) {
-            WTFLogAlways("RealtimeMediaSource::selectSettings failed constraint %d", static_cast<int>(constraint.constraintType()));
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::selectSettings failed constraint %d", static_cast<int>(constraint.constraintType()));
             failedConstraint = constraint.name();
             return true;
         }

@@ -307,17 +307,9 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         if (context->getExtensions().blendFuncExtendedEXT)
         {
             gl::Shader *fragmentShader = mState.getAttachedShader(gl::ShaderType::Fragment);
-            if (fragmentShader && fragmentShader->getShaderVersion(context) == 100)
+            if (fragmentShader && fragmentShader->getShaderVersion(context) == 100 &&
+                mFunctions->standard == STANDARD_GL_DESKTOP)
             {
-                // TODO(http://anglebug.com/2833): The bind done below is only valid in case the
-                // compiler transforms the shader outputs to the angle/webgl prefixed ones. If we
-                // added support for running EXT_blend_func_extended on top of GLES, some changes
-                // would be required:
-                //  - If we're backed by GLES 2.0, we shouldn't do the bind because it's not needed.
-                //  - If we're backed by GLES 3.0+, it's a bit unclear what should happen. Currently
-                //    the compiler doesn't support transforming GLSL ES 1.00 shaders to GLSL ES 3.00
-                //    shaders in general, but support for that might be required. Or we might be
-                //    able to skip the bind in case the compiler outputs GLSL ES 1.00.
                 const auto &shaderOutputs = mState.getAttachedShader(gl::ShaderType::Fragment)
                                                 ->getActiveOutputVariables(context);
                 for (const auto &output : shaderOutputs)
@@ -360,7 +352,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                     }
                 }
             }
-            else
+            else if (fragmentShader && fragmentShader->getShaderVersion(context) >= 300)
             {
                 // ESSL 3.00 and up.
                 const auto &outputLocations          = mState.getOutputLocations();

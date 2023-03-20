@@ -66,6 +66,10 @@ public:
 
     void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTFMove(layoutBox)); }
 
+#ifndef NDEBUG
+    bool hasDetachedContent() const { return !m_detachedLayoutBoxes.isEmpty(); }
+#endif
+
 private:
     friend class InlineInvalidation;
 

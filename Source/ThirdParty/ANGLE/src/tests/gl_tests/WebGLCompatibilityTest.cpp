@@ -1632,10 +1632,10 @@ void main()
 
     constexpr GLuint kMaxIntAsGLuint = static_cast<GLuint>(std::numeric_limits<GLint>::max());
     constexpr GLuint kIndexData[]    = {
-           kMaxIntAsGLuint,
-           kMaxIntAsGLuint + 1,
-           kMaxIntAsGLuint + 2,
-           kMaxIntAsGLuint + 3,
+        kMaxIntAsGLuint,
+        kMaxIntAsGLuint + 1,
+        kMaxIntAsGLuint + 2,
+        kMaxIntAsGLuint + 3,
     };
 
     GLBuffer indexBuffer;
@@ -3687,8 +3687,8 @@ TEST_P(WebGLCompatibilityTest, R16FTextures)
 
     constexpr float readPixelsData[] = {-5000.0f, 0.0f, 0.0f, 1.0f};
     const GLushort textureData[]     = {
-            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -3748,8 +3748,8 @@ TEST_P(WebGLCompatibilityTest, RG16FTextures)
 
     constexpr float readPixelsData[] = {7108.0f, -10.0f, 0.0f, 1.0f};
     const GLushort textureData[]     = {
-            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -3811,8 +3811,8 @@ TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 
     constexpr float readPixelsData[] = {7000.0f, 100.0f, 33.0f, 1.0f};
     const GLushort textureData[]     = {
-            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -3874,8 +3874,8 @@ TEST_P(WebGLCompatibilityTest, RGBA16FTextures)
 
     constexpr float readPixelsData[] = {7000.0f, 100.0f, 33.0f, -1.0f};
     const GLushort textureData[]     = {
-            gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
-            gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
+        gl::float32ToFloat16(readPixelsData[0]), gl::float32ToFloat16(readPixelsData[1]),
+        gl::float32ToFloat16(readPixelsData[2]), gl::float32ToFloat16(readPixelsData[3])};
 
     for (auto extension : FloatingPointTextureExtensions)
     {
@@ -5801,6 +5801,59 @@ TEST_P(WebGL2CompatibilityTest, HalfFloatOesType)
             EXPECT_GL_NO_ERROR();
         }
     }
+}
+
+// Test that unsigned integer samplers work with stencil textures.
+TEST_P(WebGL2CompatibilityTest, StencilTexturingStencil8)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_texture_stencil8"));
+
+    const uint8_t stencilValue = 42;
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX8, 1, 1, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE,
+                 &stencilValue);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr char kFS[] = R"(#version 300 es
+out mediump vec4 color;
+uniform mediump usampler2D tex;
+void main() {
+    color = vec4(vec3(texture(tex, vec2(0.0, 0.0))) / 255.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(42, 0, 0, 255), 1);
+}
+
+// Test that unsigned integer samplers work with combined depth/stencil textures.
+TEST_P(WebGL2CompatibilityTest, StencilTexturingCombined)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_stencil_texturing"));
+
+    const uint32_t stencilValue = 42;
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE, GL_STENCIL_INDEX);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 1, 1, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, &stencilValue);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr char kFS[] = R"(#version 300 es
+out mediump vec4 color;
+uniform mediump usampler2D tex;
+void main() {
+    color = vec4(vec3(texture(tex, vec2(0.0, 0.0))) / 255.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(42, 0, 0, 255), 1);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

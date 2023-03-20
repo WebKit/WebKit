@@ -78,6 +78,8 @@ struct ExternalContextState
     GLenum blendDestAlpha;
     GLenum activeTexture;
     gl::Rectangle viewport;
+    GLenum clipOrigin;
+    GLenum clipDepthMode;
     bool scissorTest;
     gl::Rectangle scissorBox;
 
@@ -199,6 +201,7 @@ class StateManagerGL final : angle::NonCopyable
 
     void setViewport(const gl::Rectangle &viewport);
     void setDepthRange(float near, float far);
+    void setClipControl(gl::ClipOrigin origin, gl::ClipDepthMode depth);
 
     void setBlendEnabled(bool enabled);
     void setBlendEnabledIndexed(const gl::DrawBufferMask blendEnabledMask);
@@ -455,6 +458,9 @@ class StateManagerGL final : angle::NonCopyable
     gl::Rectangle mViewport;
     float mNear;
     float mFar;
+
+    gl::ClipOrigin mClipOrigin;
+    gl::ClipDepthMode mClipDepthMode;
 
     gl::ColorF mBlendColor;
     gl::BlendStateExt mBlendStateExt;

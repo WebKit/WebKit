@@ -66,7 +66,8 @@ New Tokens
 
     EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE            0x34D9
     EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE   0x34DA
-    EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE   0x34DA
+    EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE   0x34DB
+    EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE          0x34DC
 
 Additions to the EGL Specification
 
@@ -76,8 +77,9 @@ Additions to the EGL Specification
     "If <type> is EGL_SYNC_METAL_SHARED_EVENT_ANGLE, an EGL metal event sync
     object is created. In this case the
     EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE,
-    EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, and
-    EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE may be specified.
+    EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE,
+    EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, and
+    EGL_SYNC_CONDITION may be specified.
 
     If EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE attribute is specified, it must
     be set to a pointer to a valid id<MTLSharedEvent>, or to a NULL pointer. If
@@ -95,6 +97,13 @@ Additions to the EGL Specification
     of EGLSync creation. The signal value will wrap to 0 if the initial
     signaledValue is the maximum value for uint64_t.
 
+    If EGL_SYNC_CONDITION attribute is specified, it must be either
+    EGL_SYNC_PRIOR_COMMANDS_COMPLETE or EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE.
+    The EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE condition is satisfied by the
+    signaling of the MTLSharedEvent referred to by the
+    EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE attribute. When this happens any
+    eglClientWaitSync commands blocking on <sync> unblock.
+
     The default values for the EGL metal event sync object attributes are as
     follows:
 
@@ -110,6 +119,15 @@ Additions to the EGL Specification
     "Errors
      ------
     ..."
+
+    Modify the second paragraph of Section 3.8.1.1 (Creating Fence Sync Objects),
+
+    When a fence sync object is created or when an EGL metal shared event sync
+    object is created with the EGL_SYNC_CONDITION attribute set to
+    EGL_SYNC_PRIOR_COMMANDS_COMPLETE, eglCreateSync also inserts a fence command
+    into the command stream of the bound client API’s current context (i.e., the
+    context returned by eglGetCurrentContext), and associates it with the newly
+    created sync object.
 
     Add the following after the last paragraph of Section 3.8.1 (Sync Objects):
 
@@ -135,3 +153,6 @@ Revision History
       - Initial draft
     Version 2, 2022-09-08
       - Add eglCopyMetalSharedEventANGLE function
+    Version 3, 2023-03-06
+      - Add EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
+

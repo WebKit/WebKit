@@ -79,7 +79,7 @@ public:
     virtual ~SourceBuffer();
 
     bool updating() const { return m_updating; }
-    ExceptionOr<Ref<TimeRanges>> buffered() const;
+    ExceptionOr<Ref<TimeRanges>> buffered();
     double timestampOffset() const;
     ExceptionOr<void> setTimestampOffset(double);
 
@@ -267,7 +267,7 @@ private:
     bool m_active { false };
     bool m_shouldGenerateTimestamps { false };
     bool m_pendingInitializationSegmentForChangeType { false };
-
+    Ref<TimeRanges> m_buffered;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

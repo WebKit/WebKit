@@ -31,8 +31,8 @@
 #include <gst/webrtc/webrtc.h>
 #undef GST_USE_UNSTABLE_API
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_media_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_outgoing_media_debug
 
 namespace WebCore {
 
@@ -40,6 +40,11 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(const
     : m_mediaStreamId(mediaStreamId)
     , m_trackId(track.id())
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_outgoing_media_debug, "webkitwebrtcoutgoingmedia", 0, "WebKit WebRTC outgoing media");
+    });
+
     m_bin = gst_bin_new(nullptr);
 
     m_inputSelector = gst_element_factory_make("input-selector", nullptr);
@@ -109,8 +114,10 @@ void RealtimeOutgoingMediaSourceGStreamer::setSource(Ref<MediaStreamTrackPrivate
 
 void RealtimeOutgoingMediaSourceGStreamer::start()
 {
-    if (!m_isStopped)
+    if (!m_isStopped) {
+        GST_DEBUG_OBJECT(m_bin.get(), "Source already started");
         return;
+    }
 
     GST_DEBUG_OBJECT(m_bin.get(), "Starting outgoing source");
     m_source.value()->addObserver(*this);
@@ -119,6 +126,7 @@ void RealtimeOutgoingMediaSourceGStreamer::start()
     if (m_transceiver) {
         auto selectorSrcPad = adoptGRef(gst_element_get_static_pad(m_inputSelector.get(), "src"));
         if (!gst_pad_is_linked(selectorSrcPad.get())) {
+            GST_DEBUG_OBJECT(m_bin.get(), "Codec preferences haven't changed before startup, ensuring source is linked");
             GRefPtr<GstCaps> codecPreferences;
             g_object_get(m_transceiver.get(), "codec-preferences", &codecPreferences.outPtr(), nullptr);
             callOnMainThreadAndWait([&] {
@@ -213,6 +221,7 @@ void RealtimeOutgoingMediaSourceGStreamer::link()
 
 void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
 {
+    GST_DEBUG_OBJECT(m_bin.get(), "Associating with webrtcbin pad %" GST_PTR_FORMAT, pad.get());
     m_webrtcSinkPad = WTFMove(pad);
 
     if (m_transceiver)

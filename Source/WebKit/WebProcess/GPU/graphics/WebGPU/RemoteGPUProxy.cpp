@@ -63,7 +63,10 @@ RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, Ref<I
 {
 }
 
-RemoteGPUProxy::~RemoteGPUProxy() = default;
+RemoteGPUProxy::~RemoteGPUProxy()
+{
+    disconnectGpuProcessIfNeeded();
+}
 
 void RemoteGPUProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RenderingBackendIdentifier renderingBackend)
 {
@@ -73,6 +76,15 @@ void RemoteGPUProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverC
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
+}
+
+void RemoteGPUProxy::disconnectGpuProcessIfNeeded()
+{
+    if (m_gpuProcessConnection) {
+        m_streamConnection->invalidate();
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteGPU(m_backing), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_gpuProcessConnection = nullptr;
+    }
 }
 
 void RemoteGPUProxy::gpuProcessConnectionDidClose(GPUProcessConnection& connection)

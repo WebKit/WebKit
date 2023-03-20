@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
@@ -55,4 +55,4 @@ WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersOu
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

@@ -114,7 +114,7 @@ Renderer9::Renderer9(egl::Display *display) : RendererD3D(display), mStateManage
 
     const egl::AttributeMap &attributes = display->getAttributeMap();
     EGLint requestedDeviceType          = static_cast<EGLint>(attributes.get(
-                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE));
+        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE));
     switch (requestedDeviceType)
     {
         case EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE:
@@ -564,7 +564,7 @@ egl::ConfigSet Renderer9::generateConfigs()
                     config.transparentGreenValue = 0;
                     config.transparentBlueValue  = 0;
                     config.colorComponentType    = gl_egl::GLComponentTypeToEGLColorComponentType(
-                           colorBufferFormatInfo.componentType);
+                        colorBufferFormatInfo.componentType);
 
                     configs.add(config);
                 }
@@ -1026,13 +1026,52 @@ angle::Result Renderer9::setSamplerState(const gl::Context *context,
             mDevice->SetSamplerState(d3dSampler, D3DSAMP_MAXANISOTROPY, maxAnisotropy);
         }
 
-        const bool isSrgb = gl::GetSizedInternalFormatInfo(textureD3D->getBaseLevelInternalFormat())
-                                .colorEncoding == GL_SRGB;
-        mDevice->SetSamplerState(d3dSampler, D3DSAMP_SRGBTEXTURE, isSrgb);
+        const gl::InternalFormat &info =
+            gl::GetSizedInternalFormatInfo(textureD3D->getBaseLevelInternalFormat());
 
-        ASSERT(texture->getBorderColor().type == angle::ColorGeneric::Type::Float);
-        mDevice->SetSamplerState(d3dSampler, D3DSAMP_BORDERCOLOR,
-                                 gl_d3d9::ConvertColor(texture->getBorderColor().colorF));
+        mDevice->SetSamplerState(d3dSampler, D3DSAMP_SRGBTEXTURE, info.colorEncoding == GL_SRGB);
+
+        if (samplerState.usesBorderColor())
+        {
+            angle::ColorGeneric borderColor = texture->getBorderColor();
+            ASSERT(borderColor.type == angle::ColorGeneric::Type::Float);
+
+            // Enforce opaque alpha for opaque formats, excluding DXT1 RGBA as it has no bits info.
+            if (info.alphaBits == 0 && info.componentCount < 4)
+            {
+                borderColor.colorF.alpha = 1.0f;
+            }
+
+            if (info.isLUMA())
+            {
+                if (info.luminanceBits == 0)
+                {
+                    borderColor.colorF.red = 0.0f;
+                }
+                // Older Intel drivers use RGBA border color when sampling from D3DFMT_A8L8.
+                // However, some recent Intel drivers sample alpha from green border channel
+                // when using this format. Assume the old behavior because newer GPUs should
+                // use D3D11 anyway.
+                borderColor.colorF.green = borderColor.colorF.red;
+                borderColor.colorF.blue  = borderColor.colorF.red;
+            }
+
+            D3DCOLOR d3dBorderColor;
+            if (info.colorEncoding == GL_SRGB && getFeatures().borderColorSrgb.enabled)
+            {
+                d3dBorderColor =
+                    D3DCOLOR_RGBA(gl::linearToSRGB(gl::clamp01(borderColor.colorF.red)),
+                                  gl::linearToSRGB(gl::clamp01(borderColor.colorF.green)),
+                                  gl::linearToSRGB(gl::clamp01(borderColor.colorF.blue)),
+                                  gl::unorm<8>(borderColor.colorF.alpha));
+            }
+            else
+            {
+                d3dBorderColor = gl_d3d9::ConvertColor(borderColor.colorF);
+            }
+
+            mDevice->SetSamplerState(d3dSampler, D3DSAMP_BORDERCOLOR, d3dBorderColor);
+        }
     }
 
     appliedSampler.forceSet     = false;
@@ -3062,7 +3101,7 @@ void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
 {
     if (!mDisplay->getState().featuresAllDisabled)
     {
-        d3d9::InitializeFeatures(features);
+        d3d9::InitializeFeatures(features, mAdapterIdentifier.VendorId);
     }
     ApplyFeatureOverrides(features, mDisplay->getState());
 }

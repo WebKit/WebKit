@@ -93,11 +93,22 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
     return globalQueue;
 }
 
-static std::optional<double> computeMaxZoom(AVCaptureDeviceFormat* format)
+std::optional<double> AVVideoCaptureSource::computeMinZoom() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_zoomScaleFactor == 1.0)
+        return { };
+    return 1.0 / m_zoomScaleFactor;
+#else
+    return { };
+#endif
+}
+
+std::optional<double> AVVideoCaptureSource::computeMaxZoom(AVCaptureDeviceFormat* format) const
 {
 #if PLATFORM(IOS_FAMILY)
     // We restrict zoom for now as it might require elevated permissions.
-    return std::min([format videoMaxZoomFactor], 4.0);
+    return std::min([format videoMaxZoomFactor], 4.0) / m_zoomScaleFactor;
 #else
     UNUSED_PARAM(format);
     return { };
@@ -120,10 +131,22 @@ CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, M
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
+static double cameraZoomScaleFactor(AVCaptureDeviceType deviceType)
+{
+#if PLATFORM(IOS_FAMILY)
+    return (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera() && deviceType == AVCaptureDeviceTypeBuiltInTripleCamera)
+        || (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera() && deviceType == AVCaptureDeviceTypeBuiltInDualWideCamera) ? 2.0 : 1.0;
+#else
+    UNUSED_PARAM(deviceType);
+    return 1.0;
+#endif
+}
+
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(avDevice)
+    , m_zoomScaleFactor(cameraZoomScaleFactor([avDevice deviceType]))
     , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)
 {
     [m_device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
@@ -360,7 +383,7 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
 {
     m_currentPreset = WTFMove(preset);
     m_currentFrameRate = requestedFrameRate;
-    m_currentZoom = requestedZoom;
+    m_currentZoom = m_zoomScaleFactor * requestedZoom;
 
     setSessionSizeFrameRateAndZoom();
 }
@@ -693,7 +716,7 @@ void AVVideoCaptureSource::generatePresets()
         for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
-        VideoPreset preset { size, WTFMove(frameRates), { }, computeMaxZoom(format) };
+        VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format) };
         preset.setFormat(format);
         presets.append(WTFMove(preset));
     }

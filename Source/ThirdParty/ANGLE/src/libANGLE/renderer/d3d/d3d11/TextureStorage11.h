@@ -492,6 +492,8 @@ class TextureStorage11_EGLImage final : public TextureStorage11ImmutableBase
                               const std::string &label);
     ~TextureStorage11_EGLImage() override;
 
+    angle::Result onDestroy(const gl::Context *context) override;
+
     angle::Result getSubresourceIndex(const gl::Context *context,
                                       const gl::ImageIndex &index,
                                       UINT *outSubresourceIndex) const override;
@@ -517,6 +519,13 @@ class TextureStorage11_EGLImage final : public TextureStorage11ImmutableBase
     angle::Result useLevelZeroWorkaroundTexture(const gl::Context *context,
                                                 bool useLevelZeroTexture) override;
     void onLabelUpdate() override;
+
+    void associateImage(Image11 *image, const gl::ImageIndex &index) override;
+    void disassociateImage(const gl::ImageIndex &index, Image11 *expectedImage) override;
+    void verifyAssociatedImageValid(const gl::ImageIndex &index, Image11 *expectedImage) override;
+    angle::Result releaseAssociatedImage(const gl::Context *context,
+                                         const gl::ImageIndex &index,
+                                         Image11 *incomingImage) override;
 
   protected:
     angle::Result getSwizzleTexture(const gl::Context *context,
@@ -545,6 +554,8 @@ class TextureStorage11_EGLImage final : public TextureStorage11ImmutableBase
     // Swizzle-related variables
     TextureHelper11 mSwizzleTexture;
     std::vector<d3d11::RenderTargetView> mSwizzleRenderTargets;
+
+    Image11 *mAssociatedImage;
 };
 
 class TextureStorage11_Cube : public TextureStorage11

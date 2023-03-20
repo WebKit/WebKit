@@ -1377,9 +1377,8 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
 
     // Decide if we should use dynamic or fixed descriptor types.
     VkPhysicalDeviceLimits limits = contextVk->getRenderer()->getPhysicalDeviceProperties().limits;
-    uint32_t totalDynamicUniformBufferCount = numActiveUniformBufferDescriptors +
-                                              mNumDefaultUniformDescriptors +
-                                              kReservedDriverUniformBindingCount;
+    uint32_t totalDynamicUniformBufferCount =
+        numActiveUniformBufferDescriptors + mNumDefaultUniformDescriptors;
     if (totalDynamicUniformBufferCount <= limits.maxDescriptorSetUniformBuffersDynamic)
     {
         mUniformBufferDescriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;

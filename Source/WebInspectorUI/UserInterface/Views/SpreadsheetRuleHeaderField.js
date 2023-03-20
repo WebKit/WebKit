@@ -41,6 +41,7 @@ WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Obje
         this._editing = false;
         this._valueBeforeEditing = "";
         this._handledMouseDown = false;
+        this._tabNavigationDirection = null;
     }
 
     // Public
@@ -79,6 +80,7 @@ WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Obje
         this._valueBeforeEditing = "";
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
+        this._tabNavigationDirection = null;
 
         this.dispatchEventToListeners(WI.SpreadsheetRuleHeaderField.Event.StoppedEditing);
     }
@@ -111,10 +113,11 @@ WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Obje
         if (document.activeElement === this._element)
             return;
 
-        if (this._delegate?.spreadsheetRuleHeaderFieldDidCommit) {
-            let changed = this._element.textContent !== this._valueBeforeEditing;
-            this._delegate.spreadsheetRuleHeaderFieldDidCommit(this, changed);
-        }
+        let changed = this._element.textContent !== this._valueBeforeEditing;
+        this._delegate?.spreadsheetRuleHeaderFieldDidCommit?.(this, changed);
+
+        if (this._tabNavigationDirection)
+            this._delegate?.spreadsheetRuleHeaderFieldWillNavigate?.(this, this._tabNavigationDirection);
 
         this.stopEditing();
     }
@@ -134,11 +137,8 @@ WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Obje
         if (event.key === "Enter" || event.key === "Tab") {
             event.stop();
 
-            if (this._delegate?.spreadsheetRuleHeaderFieldWillNavigate) {
-                let direction = (event.shiftKey && event.key === "Tab") ? "backward" : "forward";
-                this._delegate.spreadsheetRuleHeaderFieldWillNavigate(this, direction);
-            }
-            this.stopEditing();
+            this._tabNavigationDirection = (event.shiftKey && event.key === "Tab") ? "backward" : "forward";
+            this._element.blur();
             return;
         }
 

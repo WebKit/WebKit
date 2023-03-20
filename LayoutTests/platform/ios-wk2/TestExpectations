@@ -94,6 +94,7 @@ http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ 
 http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
 http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-applePayLaterMode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-supportsCouponCode.https.html [ Skip ]
@@ -2235,16 +2236,6 @@ editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.
 editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html [ Pass Timeout ]
 editing/selection/ios/show-callout-bar-after-selecting-word.html [ Pass Timeout ]
 editing/selection/ios/show-callout-bar-after-tap.html [ Pass Timeout ]
-
-# rdar://93063355 ([ iOS16 ] 8x imported/w3c/web-platform-tests/mathml/relations/* layout tests are a constant text failure)
-imported/w3c/web-platform-tests/mathml/relations/css-styling/display-2.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
 
 # Timing out since import.
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events-closewatcher.tentative.html [ Skip ]

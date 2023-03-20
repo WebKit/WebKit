@@ -30,62 +30,12 @@ class FixedQueue final : angle::NonCopyable
     using reference       = typename Storage::reference;
     using const_reference = typename Storage::const_reference;
 
-    class iterator
-    {
-      public:
-        iterator() : mData(nullptr), mIndex(-1) {}
-
-        T &operator*() const { return mData[mIndex % N]; }
-        T *operator->() const { return &mData[mIndex % N]; }
-
-        bool operator==(const iterator &rhs) const { return mIndex == rhs.mIndex; }
-        bool operator!=(const iterator &rhs) const { return mIndex != rhs.mIndex; }
-
-        iterator &operator++()
-        {
-            mIndex++;
-            return *this;
-        }
-
-      private:
-        Storage &mData;
-        size_type mIndex;
-        friend class FixedQueue<T, N, Storage>;
-        iterator(Storage &data, size_type index) : mData(data), mIndex(index) {}
-    };
-    class const_iterator
-    {
-      public:
-        const_iterator() : mData(nullptr), mIndex(-1) {}
-
-        const T &operator*() const { return mData[mIndex % N]; }
-        const T *operator->() const { return &mData[mIndex % N]; }
-
-        bool operator==(const iterator &rhs) const { mIndex == rhs.mIndex; }
-        bool operator!=(const iterator &rhs) const { mIndex != rhs.mIndex; }
-
-        const_iterator &operator++()
-        {
-            mIndex++;
-            return *this;
-        }
-
-      private:
-        const Storage &mData;
-        size_type mIndex;
-        friend class FixedQueue<T, N, Storage>;
-        const_iterator(const Storage &data, size_type index) : mData(data), mIndex(index) {}
-    };
-
     FixedQueue();
     ~FixedQueue();
 
     size_type size() const;
     bool empty() const;
     bool full() const;
-
-    reference operator[](size_type pos);
-    const_reference operator[](size_type pos) const;
 
     reference front();
     const_reference front() const;
@@ -98,12 +48,6 @@ class FixedQueue final : angle::NonCopyable
 
     void pop();
     void clear();
-
-    iterator begin();
-    const_iterator begin() const;
-
-    iterator end();
-    const_iterator end() const;
 
   private:
     Storage mData;
@@ -141,21 +85,6 @@ template <class T, size_t N, class Storage>
 ANGLE_INLINE bool FixedQueue<T, N, Storage>::full() const
 {
     return mSize >= N;
-}
-
-template <class T, size_t N, class Storage>
-typename FixedQueue<T, N, Storage>::reference FixedQueue<T, N, Storage>::operator[](size_type pos)
-{
-    ASSERT(pos < mSize);
-    return mData[(pos + mFrontIndex) % N];
-}
-
-template <class T, size_t N, class Storage>
-typename FixedQueue<T, N, Storage>::const_reference FixedQueue<T, N, Storage>::operator[](
-    size_type pos) const
-{
-    ASSERT(pos < mSize);
-    return mData[(pos + mFrontIndex) % N];
 }
 
 template <class T, size_t N, class Storage>
@@ -232,30 +161,6 @@ void FixedQueue<T, N, Storage>::clear()
     {
         pop();
     }
-}
-
-template <class T, size_t N, class Storage>
-typename FixedQueue<T, N, Storage>::iterator FixedQueue<T, N, Storage>::begin()
-{
-    return iterator(mData, mFrontIndex);
-}
-
-template <class T, size_t N, class Storage>
-typename FixedQueue<T, N, Storage>::const_iterator FixedQueue<T, N, Storage>::begin() const
-{
-    return const_iterator(mData, mFrontIndex);
-}
-
-template <class T, size_t N, class Storage>
-typename FixedQueue<T, N, Storage>::iterator FixedQueue<T, N, Storage>::end()
-{
-    return iterator(mData, mFrontIndex + mSize);
-}
-
-template <class T, size_t N, class Storage>
-typename FixedQueue<T, N, Storage>::const_iterator FixedQueue<T, N, Storage>::end() const
-{
-    return const_iterator(mData, mFrontIndex + mSize);
 }
 }  // namespace angle
 

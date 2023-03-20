@@ -29,99 +29,11 @@
 #import "APIConversions.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
+#import "Pipeline.h"
 #import "PipelineLayout.h"
 #import "ShaderModule.h"
 
 namespace WebGPU {
-
-struct LibraryCreationResult {
-    id<MTLLibrary> library;
-    WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
-};
-
-static std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)
-{
-    if (shaderModule.library()) {
-        if (const auto* pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
-            if (*pipelineLayoutHint == pipelineLayout) {
-                if (const auto* entryPointInformation = shaderModule.entryPointInformation(entryPoint))
-                    return { { shaderModule.library(), *entryPointInformation } };
-            }
-        }
-    }
-
-    auto* ast = shaderModule.ast();
-    if (!ast)
-        return std::nullopt;
-
-    auto prepareResult = WGSL::prepare(*ast, entryPoint, ShaderModule::convertPipelineLayout(pipelineLayout));
-
-    auto library = ShaderModule::createLibrary(device, prepareResult.msl, label);
-
-    auto iterator = prepareResult.entryPoints.find(entryPoint);
-    if (iterator == prepareResult.entryPoints.end())
-        return std::nullopt;
-    const auto& entryPointInformation = iterator->value;
-
-    return { { library, entryPointInformation } };
-}
-
-static MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, const WGPUConstantEntry* constants, const WGSL::Reflection::EntryPointInformation& entryPointInformation)
-{
-    auto constantValues = [MTLFunctionConstantValues new];
-    for (uint32_t i = 0; i < constantCount; ++i) {
-        const auto& entry = constants[i];
-        auto nameIterator = entryPointInformation.specializationConstantIndices.find(fromAPI(entry.key));
-        if (nameIterator == entryPointInformation.specializationConstantIndices.end())
-            return nullptr;
-        auto specializationConstantIndex = nameIterator->value;
-        auto indexIterator = entryPointInformation.specializationConstants.find(specializationConstantIndex);
-        if (indexIterator == entryPointInformation.specializationConstants.end())
-            return nullptr;
-        const auto& specializationConstant = indexIterator->value;
-        switch (specializationConstant.type) {
-        case WGSL::Reflection::SpecializationConstantType::Boolean: {
-            bool value = entry.value;
-            [constantValues setConstantValue:&value type:MTLDataTypeBool withName:specializationConstant.mangledName];
-            break;
-        }
-        case WGSL::Reflection::SpecializationConstantType::Float: {
-            float value = entry.value;
-            [constantValues setConstantValue:&value type:MTLDataTypeFloat withName:specializationConstant.mangledName];
-            break;
-        }
-        case WGSL::Reflection::SpecializationConstantType::Int: {
-            int value = entry.value;
-            [constantValues setConstantValue:&value type:MTLDataTypeInt withName:specializationConstant.mangledName];
-            break;
-        }
-        case WGSL::Reflection::SpecializationConstantType::Unsigned: {
-            unsigned value = entry.value;
-            [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
-            break;
-        }
-        }
-    }
-    return constantValues;
-}
-
-static id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, const WGPUProgrammableStageDescriptor& compute, NSString *label)
-{
-    auto functionDescriptor = [MTLFunctionDescriptor new];
-    functionDescriptor.name = entryPointInformation.mangledName;
-    if (compute.constantCount) {
-        auto constantValues = createConstantValues(compute.constantCount, compute.constants, entryPointInformation);
-        if (!constantValues)
-            return nullptr;
-        functionDescriptor.constantValues = constantValues;
-    }
-    NSError *error = nil;
-    id<MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
-    if (error)
-        WTFLogAlways("Function creation error: %@", error);
-    function.label = label;
-    return function;
-}
 
 static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label, MTLComputePipelineReflection **reflection, MTLPipelineOption pipelineOptions)
 {
@@ -162,7 +74,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251171 - this should come from the WGSL compiler
     WGSL::Reflection::Compute computeInformation { .workgroupSize = { .width = 1, .height = 1, .depth = 1 } };
     if (!function) {
-        auto libraryCreationResult = createLibrary(m_device, shaderModule, pipelineLayout, fromAPI(descriptor.compute.entryPoint), label);
+        auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, fromAPI(descriptor.compute.entryPoint), label);
         if (!libraryCreationResult)
             return ComputePipeline::createInvalid(*this);
 
@@ -173,7 +85,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
             return ComputePipeline::createInvalid(*this);
         computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-        function = createFunction(library, entryPointInformation, descriptor.compute, label);
+        function = createFunction(library, entryPointInformation, &descriptor.compute, label);
     }
 
     MTLComputePipelineReflection *reflection;

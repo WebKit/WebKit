@@ -83,8 +83,8 @@ class EventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget, W
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
 
-    void ref() { refEventTarget(); }
-    void deref() { derefEventTarget(); }
+    inline void ref(); // Defined in Node.h.
+    inline void deref(); // Defined in Node.h.
 
     virtual EventTargetInterface eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

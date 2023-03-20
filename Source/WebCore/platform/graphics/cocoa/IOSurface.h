@@ -121,11 +121,9 @@ public:
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
     // Any images created from a surface need to be released before releasing
-    // the context, or an expensive GPU readback can result.
-    // Passed in context is the context through which the contents was drawn.
-    WEBCORE_EXPORT RetainPtr<CGImageRef> createImage(CGContextRef);
-    // Passed in context is the context through which the contents was drawn.
-    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef>);
+    // the surface, or an expensive GPU readback can result.
+    WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
+    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
 
 #ifdef __OBJC__
     id asLayerContents() const { return (__bridge id)m_surface.get(); }
@@ -133,8 +131,10 @@ public:
     WEBCORE_EXPORT RetainPtr<id> asCAIOSurfaceLayerContents() const;
 
     IOSurfaceRef surface() const { return m_surface.get(); }
-
-    WEBCORE_EXPORT RetainPtr<CGContextRef> createPlatformContext(PlatformDisplayID = 0);
+    WEBCORE_EXPORT CGContextRef ensurePlatformContext(PlatformDisplayID = 0);
+    // The graphics context cached on the surface counts as a "user", so to get
+    // an accurate result from isInUse(), it needs to be released.
+    WEBCORE_EXPORT void releasePlatformContext();
 
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to
@@ -187,6 +187,7 @@ private:
     size_t m_totalBytes;
 
     ProcessIdentity m_resourceOwner;
+    RetainPtr<CGContextRef> m_cgContext;
 
     RetainPtr<IOSurfaceRef> m_surface;
 

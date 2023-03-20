@@ -838,6 +838,39 @@ static bool DetermineStencilIndex8Support(const TextureCapsMap &textureCaps)
     return GetFormatSupport(textureCaps, requiredFormats, true, false, true, false, false);
 }
 
+// Checks for GL_QCOM_render_shared_exponent support
+static bool DetermineRenderSharedExponentSupport(const TextureCapsMap &textureCaps)
+{
+    constexpr GLenum requiredFormats[] = {
+        GL_RGB9_E5,
+    };
+
+    return GetFormatSupport(textureCaps, requiredFormats, false, false, true, true, true);
+}
+
+static bool DetermineRenderSnormSupport(const TextureCapsMap &textureCaps, bool textureNorm16EXT)
+{
+    constexpr GLenum requiredSnorm8Formats[] = {
+        GL_R8_SNORM,
+        GL_RG8_SNORM,
+        GL_RGBA8_SNORM,
+    };
+
+    constexpr GLenum requiredSnorm16Formats[] = {
+        GL_R16_SNORM_EXT,
+        GL_RG16_SNORM_EXT,
+        GL_RGBA16_SNORM_EXT,
+    };
+
+    if (textureNorm16EXT &&
+        !GetFormatSupport(textureCaps, requiredSnorm16Formats, false, false, true, true, true))
+    {
+        return false;
+    }
+
+    return GetFormatSupport(textureCaps, requiredSnorm8Formats, false, false, true, true, true);
+}
+
 void Extensions::setTextureExtensionSupport(const TextureCapsMap &textureCaps)
 {
     // TODO(ynovikov): rgb8Rgba8OES, colorBufferHalfFloatEXT, textureHalfFloatOES,
@@ -896,6 +929,8 @@ void Extensions::setTextureExtensionSupport(const TextureCapsMap &textureCaps)
     textureCompressionPvrtcIMG          = DeterminePVRTCTextureSupport(textureCaps);
     pvrtcSRGBEXT                        = DeterminePVRTCsRGBTextureSupport(textureCaps);
     textureStencil8OES                  = DetermineStencilIndex8Support(textureCaps);
+    renderSharedExponentQCOM            = DetermineRenderSharedExponentSupport(textureCaps);
+    renderSnormEXT = DetermineRenderSnormSupport(textureCaps, textureNorm16EXT);
 }
 
 TypePrecision::TypePrecision() = default;

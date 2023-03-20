@@ -1287,6 +1287,7 @@
     'win10_intel_gtests': [
       'angle_deqp_gles2_d3d11_gtests',
       'angle_end2end_gtests',
+      'angle_gles1_conformance_gtests',
       'angle_unit_gtests',
       'angle_white_box_gtests',
     ],

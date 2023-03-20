@@ -186,7 +186,13 @@
                 "Allow creation of render passes without any attachments"
             ]
         },
-
+        {
+            "name": "avoid_stencil_texture_swizzle",
+            "category": "Features",
+            "description": [
+                "Do not create swizzled views of stencil textures"
+            ]
+        },
         {
             "name": "multisample_color_format_shader_read_workaround",
             "category": "Workarounds",

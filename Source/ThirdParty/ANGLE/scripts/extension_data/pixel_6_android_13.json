@@ -1,8 +1,8 @@
 {
     "Vendor": "Google Inc. (ARM)",
-    "Version": "OpenGL ES 3.2.0 (ANGLE 2.1.19130 git hash: e3933465d88f)",
-    "Renderer": "ANGLE (ARM, Vulkan 1.1.201 (Mali-G78 (0x92020010)), Mali-G78-35.0.0)",
-    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.19130 git hash: e3933465d88f)",
+    "Version": "OpenGL ES 3.2.0 (ANGLE 2.1.20572 git hash: 75901296a09f)",
+    "Renderer": "ANGLE (ARM, Vulkan 1.1.201 (Mali-G78 (0x92020010)), Mali-G78-36.0.0)",
+    "ShaderLanguageVersion": "OpenGL ES GLSL ES 3.20 (ANGLE 2.1.20572 git hash: 75901296a09f)",
     "Extensions": [
         "GL_AMD_performance_monitor",
         "GL_ANDROID_extension_pack_es31a",
@@ -65,9 +65,12 @@
         "GL_EXT_memory_object",
         "GL_EXT_memory_object_fd",
         "GL_EXT_multi_draw_indirect",
+        "GL_EXT_multisample_compatibility",
         "GL_EXT_occlusion_query_boolean",
+        "GL_EXT_polygon_offset_clamp",
         "GL_EXT_primitive_bounding_box",
         "GL_EXT_read_format_bgra",
+        "GL_EXT_robustness",
         "GL_EXT_sRGB",
         "GL_EXT_sRGB_write_control",
         "GL_EXT_semaphore",
@@ -156,5 +159,5 @@
         "GL_OVR_multiview",
         "GL_OVR_multiview2"
     ],
-    "DateRecorded": "July 24, 2022"
+    "DateRecorded": "February 22, 2023"
 }

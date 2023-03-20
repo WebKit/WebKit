@@ -61,4 +61,6 @@
     [Conditional=APPLE_PAY_MULTI_MERCHANT_PAYMENTS] readonly attribute sequence<ApplePayPaymentTokenContext>? multiTokenContexts;
 
     [Conditional=APPLE_PAY_DEFERRED_PAYMENTS] readonly attribute ApplePayDeferredPaymentRequest? deferredPaymentRequest;
+
+    [Conditional=APPLE_PAY_LATER_MODE] readonly attribute ApplePayLaterMode? applePayLaterMode;
 };

@@ -4604,6 +4604,12 @@
     "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.html": [
         "slow"
     ],

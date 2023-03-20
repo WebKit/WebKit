@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+static constexpr uint64_t defaultMinimumReportedQuota = 10 * GB;
+
 Ref<QuotaManager> QuotaManager::create(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction)
 {
     return adoptRef(*new QuotaManager(quota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction)));
@@ -70,6 +72,12 @@ void QuotaManager::handleRequests()
             continue;
         }
 
+        if (!m_increaseQuotaFunction) {
+            m_currentRequest->callback(Decision::Deny);
+            m_currentRequest = std::nullopt;
+            continue;
+        }
+    
         m_currentRequest->identifier = QuotaIncreaseRequestIdentifier::generateThreadSafe();
         m_increaseQuotaFunction(m_currentRequest->identifier, m_quota, *m_usage, m_currentRequest->spaceRequested);
     }
@@ -132,6 +140,14 @@ void QuotaManager::resetQuotaForTesting()
 {
     m_quota = m_initialQuota;
     m_quotaCountdown = 0;
+}
+
+uint64_t QuotaManager::reportedQuota() const
+{
+    if (!m_usage || (m_usage && m_usage.value() < defaultMinimumReportedQuota))
+        return std::min(m_quota, defaultMinimumReportedQuota);
+
+    return m_quota;
 }
 
 } // namespace WebKit

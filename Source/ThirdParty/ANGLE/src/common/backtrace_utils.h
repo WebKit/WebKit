@@ -45,6 +45,8 @@ class BacktraceInfo
         return mStackAddresses == rhs.mStackAddresses;
     }
 
+    bool operator<(const BacktraceInfo &rhs) const { return mStackAddresses < rhs.mStackAddresses; }
+
     void *getStackAddress(size_t index) const
     {
         ASSERT(index < mStackAddresses.size());

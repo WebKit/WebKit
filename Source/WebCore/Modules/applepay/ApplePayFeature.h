@@ -33,6 +33,9 @@ enum class ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_LATER)
     ApplePayLater,
 #endif
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    ApplePayLaterMode,
+#endif
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
     AuthorizationResultOrderDetails,
 #endif
@@ -83,6 +86,9 @@ template<> struct EnumTraits<WebCore::ApplePayFeature> {
         WebCore::ApplePayFeature
 #if ENABLE(APPLE_PAY_LATER)
         , WebCore::ApplePayFeature::ApplePayLater
+#endif
+#if ENABLE(APPLE_PAY_LATER_MODE)
+        , WebCore::ApplePayFeature::ApplePayLaterMode
 #endif
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
         , WebCore::ApplePayFeature::AuthorizationResultOrderDetails

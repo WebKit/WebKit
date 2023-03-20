@@ -78,6 +78,14 @@ std::optional<uint64_t> volumeFreeSpace(const String& path)
     return std::nullopt;
 }
 
+std::optional<uint64_t> volumeCapacity(const String& path)
+{
+    struct statvfs fileSystemStat;
+    if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat))
+        return fileSystemStat.f_blocks * fileSystemStat.f_frsize;
+    return std::nullopt;
+}
+
 Vector<String> listDirectorySub(const String& path, bool fullPath)
 {
     Vector<String> entries;

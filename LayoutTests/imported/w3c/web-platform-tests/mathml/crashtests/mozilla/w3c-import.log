@@ -1,0 +1,89 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/1028521-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/1061027.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/1221888-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/1373767-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/1376158.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/151054-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/1600635.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/289180-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/307826-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/307839-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/307839-2.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/323733-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/323737-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/323738-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/323741-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/323742-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/336074-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/347355-1-inner.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/347355-1.gif
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/347355-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/347495-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/347507-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/348492-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/348709-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/348811-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/348811-2.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/353612-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/355986-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/364685-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/366012-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/366564-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/367107-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/368430-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/370791-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/370862-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/372483-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/373472-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/373472-2.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/375562-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/377824-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/379418-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/385226-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/393760-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/397518-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/398038-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/400475-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/402400-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/403156-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/404485-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/405187-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/405271-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/412237-1.xml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/413063-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/416907-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/420420-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/431072-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/443089-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/462929-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/463763-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/463763-2.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/476547-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/541620-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/557474-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/654928-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/655451-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/713606-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/716349-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/767251.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/770710-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/848725-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/848725-2.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/947557-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mozilla/973322-1.xhtml

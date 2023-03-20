@@ -286,8 +286,8 @@ async function helloCube() {
             translations[i * 4 + 3] = 1;
         }
 
-        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer, 0, uniformBufferSize);
-        device.queue.writeBuffer(translationBuffer, 0, translations, 0, translationBufferSize);
+        device.queue.writeBuffer(uniformBuffer, 0, secondsBuffer);
+        device.queue.writeBuffer(translationBuffer, 0, translations);
 
         const gpuContext = canvas.getContext("webgpu");
         

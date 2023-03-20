@@ -68,9 +68,10 @@
 
 6008 VULKAN NVIDIA LINUX :  KHR-GLES32.core.framebuffer_completeness.cube_map_layered_attachment_valid_size_and_format = SKIP
 
-// GL_EXT_texture_border_clamp related test failures on NVIDIA
-5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+// https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4292
+5978 : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+
 // Lack of border clamp support on older drivers.
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_border_clamp.* = SKIP
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
@@ -101,3 +102,6 @@
 
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
+
+// Failure since VK-GL-CTS roll (2023-02-28)
+8045 : KHR-GLES32.shaders.negative.non_precision_qualifiers_in_struct_members = SKIP

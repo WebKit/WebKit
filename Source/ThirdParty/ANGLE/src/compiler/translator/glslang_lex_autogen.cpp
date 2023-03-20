@@ -1129,7 +1129,8 @@ static int input(yyscan_t yyscanner);
         do                                                \
         {                                                 \
             if (fwrite(yytext, (size_t)yyleng, 1, yyout)) \
-            {}                                            \
+            {                                             \
+            }                                             \
         } while (0)
 #endif
 
@@ -4304,19 +4305,6 @@ int glslang_scan(size_t count,
     if (!preprocessor->init(count, string, length))
         return 1;
 
-    // Define extension macros.
-    const TExtensionBehavior &extBehavior = context->extensionBehavior();
-    for (TExtensionBehavior::const_iterator iter = extBehavior.begin(); iter != extBehavior.end();
-         ++iter)
-    {
-        // OVR_multiview should not be defined for WebGL spec'ed shaders.
-        if (sh::IsWebGLBasedSpec(context->getShaderSpec()) &&
-            iter->first == TExtension::OVR_multiview)
-        {
-            continue;
-        }
-        preprocessor->predefineMacro(GetExtensionNameString(iter->first), 1);
-    }
     if (context->getFragmentPrecisionHigh())
         preprocessor->predefineMacro("GL_FRAGMENT_PRECISION_HIGH", 1);
 

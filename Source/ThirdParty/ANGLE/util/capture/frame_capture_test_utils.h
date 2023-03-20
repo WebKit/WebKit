@@ -195,6 +195,7 @@ struct TraceInfo
     std::vector<std::string> traceFiles;
     int windowSurfaceContextId;
     std::vector<std::string> requiredExtensions;
+    std::vector<int> keyFrames;
 };
 
 bool LoadTraceNamesFromJSON(const std::string jsonFilePath, std::vector<std::string> *namesOut);

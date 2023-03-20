@@ -46,6 +46,8 @@ public:
 
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;
 
+    void setOwnershipIdentity(const WebCore::ProcessIdentity&);
+
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
 private:

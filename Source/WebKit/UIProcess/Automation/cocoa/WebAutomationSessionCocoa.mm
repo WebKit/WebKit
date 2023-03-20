@@ -70,8 +70,8 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
     auto* snapshotSurface = snapshot.surface();
     if (!snapshotSurface)
         return std::nullopt;
-    auto context = snapshotSurface->createPlatformContext();
-    return getBase64EncodedPNGData(snapshotSurface->createImage(context.get()));
+
+    return getBase64EncodedPNGData(snapshotSurface->createImage());
 }
 
 std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)

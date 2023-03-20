@@ -67,8 +67,7 @@ RenderPassEncoder::RenderPassEncoder(Device& device)
 
 RenderPassEncoder::~RenderPassEncoder()
 {
-    // FIXME: Metal driver requires the command encoder to end before being destroyed.
-    // Might have to explicitly end encoding here if the user forgets to?
+    [m_renderCommandEncoder endEncoding];
 }
 
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)

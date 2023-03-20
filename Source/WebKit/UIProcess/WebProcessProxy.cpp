@@ -691,6 +691,11 @@ bool WebProcessProxy::shouldTakeSuspendedAssertion() const
     return false;
 }
 
+bool WebProcessProxy::shouldDropSuspendedAssertionAfterDelay() const
+{
+    return WTF::anyOf(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropSuspendedAssertionAfterDelay(); });
+}
+
 void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "addExistingWebPage: webPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &webPage, webPage.identifier().toUInt64(), webPage.webPageID().toUInt64());
@@ -714,6 +719,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     globalPageMap().set(webPage.identifier(), WeakPtr { webPage });
 
     m_throttler.setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertion());
+    m_throttler.setShouldDropSuspendedAssertionAfterDelay(shouldDropSuspendedAssertionAfterDelay());
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
@@ -1210,6 +1216,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif // USE(RUNNINGBOARD)
 
     m_throttler.setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertion());
+    m_throttler.setShouldDropSuspendedAssertionAfterDelay(shouldDropSuspendedAssertionAfterDelay());
 
 #if PLATFORM(COCOA)
     unblockAccessibilityServerIfNeeded();

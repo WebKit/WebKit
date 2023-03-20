@@ -29,6 +29,13 @@ struct ValidateASTOptions
     // Whether validateVariableReferences should also include specialization constants.  Their
     // declaration is output after their usage is discovered, so this is disabled until then.
     bool validateSpecConstReferences = false;
+    // Validate that:
+    //
+    // - TIntermUnary only contains unary operators
+    // - TIntermBinary only contains binary operators
+    // - TIntermBranch only contains branch operators
+    // - EOpInitialize is only used in TIntermDeclaration
+    bool validateOps = true;
     // Check that TIntermUnary and TIntermAggregate nodes with a built-in op reference a function
     // with said op.
     bool validateBuiltInOps = true;

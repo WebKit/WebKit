@@ -64,26 +64,26 @@ RemoteGPU::~RemoteGPU() = default;
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
-    m_streamConnection->open();
     workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
+void RemoteGPU::stopListeningForIPC()
 {
     assertIsMainRunLoop();
-    m_streamConnection->invalidate();
-    m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
-    workQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
-        protectedThis->workQueueUninitialize();
+    workQueue().dispatch([this]() {
+        workQueueUninitialize();
     });
+    workQueue().stopAndWaitForCompletion();
 }
 
 void RemoteGPU::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
+    m_streamConnection->open();
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
+
 #if HAVE(WEBGPU_IMPLEMENTATION)
     // BEWARE: This is a retain cycle.
     // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
@@ -106,6 +106,8 @@ void RemoteGPU::workQueueInitialize()
 void RemoteGPU::workQueueUninitialize()
 {
     assertIsCurrent(workQueue());
+    m_streamConnection->invalidate();
+    m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     m_streamConnection = nullptr;
     m_objectHeap->clear();
     m_backing = nullptr;

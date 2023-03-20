@@ -150,16 +150,13 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
             },
             "/webkit/WebKitWebView/is-web-process-responsive": {
-                "expected": {"gtk": {"status": ["PASS"], "slow": true}}
+                "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "slow": true, "bug": "webkit.org/b/254002"}}
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {
                         "gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"},
                         "wpe": {"status": ["TIMEOUT", "PASS"]}
                 }
-            },
-            "/webkit/WebKitWebView/is-web-process-responsive": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
             },
             "/webkit/WebKitWebView/terminate-unresponsive-web-process": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
@@ -224,13 +221,10 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205336"}}
             },
             "WebKit.OnDeviceChangeCrash": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214805"}}
+                "expected": {"gtk": {"status": ["CRASH", "TIMEOUT", "PASS"], "bug": "webkit.org/b/214805"}}
             },
             "WebKit.PrivateBrowsingPushStateNoHistoryCallback": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
-            },
-            "WebKit.OnDeviceChangeCrash": {
-                "expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/254002"}}
             },
             "WebKit.GeolocationWatchMultiprocess": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}

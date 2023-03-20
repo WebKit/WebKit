@@ -100,7 +100,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << isBlobRegistryTopOriginPartitioningEnabled;
 
     encoder << unifiedOriginStorageLevel;
-    encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota;
+    encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota << originQuotaRatio;
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
     encoder << indexedDBDirectory << indexedDBDirectoryExtensionHandle;
     encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
@@ -377,6 +377,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!perThirdPartyOriginStorageQuota)
         return std::nullopt;
 
+    std::optional<std::optional<double>> originQuotaRatio;
+    decoder >> originQuotaRatio;
+    if (!originQuotaRatio)
+        return std::nullopt;
+
     std::optional<String> localStorageDirectory;
     decoder >> localStorageDirectory;
     if (!localStorageDirectory)
@@ -501,6 +506,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , *unifiedOriginStorageLevel
         , WTFMove(*perOriginStorageQuota)
         , WTFMove(*perThirdPartyOriginStorageQuota)
+        , WTFMove(*originQuotaRatio)
         , WTFMove(*localStorageDirectory)
         , WTFMove(*localStorageDirectoryExtensionHandle)
         , WTFMove(*indexedDBDirectory)

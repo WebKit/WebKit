@@ -2172,6 +2172,7 @@ accessibility/aria-roles-unignored.html [ Pass ]
 accessibility/aria-slider-value.html [ Pass ]
 accessibility/ax-object-destroyed-on-reload.html [ Pass ]
 accessibility/basic-focusability.html [ Pass ]
+accessibility/button-inside-label-ax-text.html [ Pass ]
 accessibility/checkbox-mixed-value.html [ Pass ]
 accessibility/display-contents-dynamically-added-children.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
@@ -4382,10 +4383,6 @@ webkit.org/b/251889 imported/w3c/web-platform-tests/content-security-policy/repo
 webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [ Pass Failure ]
 
 webkit.org/b/252191 imported/w3c/web-platform-tests/editing/other/edit-in-textcontrol-immediately-after-hidden.tentative.html [ Skip ]
-
-webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-119.html [ ImageOnlyFailure ]
-webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-120.html [ ImageOnlyFailure ]
-webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-121.html [ ImageOnlyFailure ]
 
 webkit.org/b/252504 http/tests/site-isolation/basic-iframe.html [ Pass ImageOnlyFailure ]
 

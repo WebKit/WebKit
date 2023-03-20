@@ -107,6 +107,8 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
     bool mOwnsImage;
+    // Generated from ImageVk if EGLImage target.
+    UniqueSerial mImageSiblingSerial;
 
     // |mOwnsImage| indicates that |RenderbufferVk| owns the image.  Otherwise, this is a weak
     // pointer shared with another class.  Due to this sharing, for example through EGL images, the

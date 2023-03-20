@@ -156,7 +156,11 @@
 
 #if ENABLE(MEDIA_SOURCE)
 #include "LocalDOMWindow.h"
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+#include "ManagedMediaSource.h"
+#else
 #include "MediaSource.h"
+#endif
 #include "SourceBufferList.h"
 #endif
 
@@ -8516,8 +8520,18 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
+    bool streaming = false;
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+    RefPtr managedMediasource = is<ManagedMediaSource>(m_mediaSource) ? downcast<ManagedMediaSource>(m_mediaSource.get()) : nullptr;
+    streaming |= managedMediasource && managedMediasource->streaming();
+    if (!managedMediasource) {
+#endif
     // We can assume that if we have active source buffers, later networking activity (such as stream or XHR requests) will be media related.
-    if (m_mediaSource && m_mediaSource->activeSourceBuffers() && m_mediaSource->activeSourceBuffers()->length())
+    streaming |= m_mediaSource && m_mediaSource->activeSourceBuffers() && m_mediaSource->activeSourceBuffers()->length();
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+    }
+#endif
+    if (streaming)
         state.add(MediaProducerMediaState::HasStreamingActivity);
 #endif
 

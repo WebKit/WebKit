@@ -2686,12 +2686,28 @@ CallCapture ParseCallCapture(const Token &nameToken,
         return CallCapture(EntryPoint::GLGetFramebufferPixelLocalStorageParameterfvANGLE,
                            std::move(params));
     }
+    if (strcmp(nameToken, "glGetFramebufferPixelLocalStorageParameterfvRobustANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<
+            PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERFVROBUSTANGLEPROC>::type>(paramTokens,
+                                                                                   strings);
+        return CallCapture(EntryPoint::GLGetFramebufferPixelLocalStorageParameterfvRobustANGLE,
+                           std::move(params));
+    }
     if (strcmp(nameToken, "glGetFramebufferPixelLocalStorageParameterivANGLE") == 0)
     {
         ParamBuffer params = ParseParameters<
             std::remove_pointer<PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERIVANGLEPROC>::type>(
             paramTokens, strings);
         return CallCapture(EntryPoint::GLGetFramebufferPixelLocalStorageParameterivANGLE,
+                           std::move(params));
+    }
+    if (strcmp(nameToken, "glGetFramebufferPixelLocalStorageParameterivRobustANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<
+            PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERIVROBUSTANGLEPROC>::type>(paramTokens,
+                                                                                   strings);
+        return CallCapture(EntryPoint::GLGetFramebufferPixelLocalStorageParameterivRobustANGLE,
                            std::move(params));
     }
     if (strcmp(nameToken, "glGetGraphicsResetStatus") == 0)
@@ -6181,6 +6197,11 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params = ParseParameters<decltype(SetBufferID)>(paramTokens, strings);
         return CallCapture("SetBufferID", std::move(params));
     }
+    if (strcmp(nameToken, "SetCurrentContextID") == 0)
+    {
+        ParamBuffer params = ParseParameters<decltype(SetCurrentContextID)>(paramTokens, strings);
+        return CallCapture("SetCurrentContextID", std::move(params));
+    }
     if (strcmp(nameToken, "SetFramebufferID") == 0)
     {
         ParamBuffer params = ParseParameters<decltype(SetFramebufferID)>(paramTokens, strings);
@@ -6506,6 +6527,11 @@ void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &c
     if (call.customFunctionName == "SetBufferID")
     {
         DispatchCallCapture(SetBufferID, captures);
+        return;
+    }
+    if (call.customFunctionName == "SetCurrentContextID")
+    {
+        DispatchCallCapture(SetCurrentContextID, captures);
         return;
     }
     if (call.customFunctionName == "SetFramebufferID")

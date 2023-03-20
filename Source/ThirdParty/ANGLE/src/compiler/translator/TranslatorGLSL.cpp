@@ -180,7 +180,10 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
         if (hasGLFragData)
         {
-            sink << "out vec4 webgl_FragData[gl_MaxDrawBuffers];\n";
+            sink << "out vec4 webgl_FragData["
+                 << (hasGLSecondaryFragData ? getResources().MaxDualSourceDrawBuffers
+                                            : getResources().MaxDrawBuffers)
+                 << "];\n";
         }
         if (hasGLSecondaryFragColor)
         {

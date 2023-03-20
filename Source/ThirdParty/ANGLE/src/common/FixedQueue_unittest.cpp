@@ -151,14 +151,7 @@ TEST(FixedQueue, ConcurrentPushPop)
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
 
-            // test iterator
-            int i = 0;
-            for (uint64_t v : q)
-            {
-                EXPECT_EQ(expectedValue + i, v);
-                i++;
-            }
-
+            EXPECT_EQ(expectedValue, q.front());
             // test pop
             q.pop();
 

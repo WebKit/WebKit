@@ -151,6 +151,10 @@
     "glClientWaitSync": {
         "sync": "SyncID"
     },
+    "glClipControl": {
+        "origin": "ClipOrigin",
+        "depth": "ClipDepthMode"
+    },
     "glColorPointer": {
         "type": "VertexAttribType"
     },

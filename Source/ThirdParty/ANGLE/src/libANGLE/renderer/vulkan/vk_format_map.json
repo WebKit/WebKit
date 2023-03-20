@@ -407,10 +407,12 @@
             "buffer_compressed": "R16G16_FLOAT"
         },
         "R16G16B16_UNORM": {
+            "image": ["R16G16B16A16_UNORM", "R32G32B32_FLOAT", "R32G32B32A32_FLOAT"],
             "buffer": ["R16G16B16A16_UNORM", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R16G16B16_SNORM": {
+            "image": ["R16G16B16A16_SNORM", "R32G32B32_FLOAT", "R32G32B32A32_FLOAT"],
             "buffer": ["R16G16B16A16_SNORM", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },

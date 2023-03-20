@@ -1,6 +1,5 @@
 
 PASS mroot is not space-like
-PASS menclose is not space-like
 PASS mfrac is not space-like
 PASS mi is not space-like
 PASS mmultiscripts is not space-like
@@ -16,11 +15,6 @@ PASS msubsup is not space-like
 PASS msqrt is not space-like
 PASS mtable is not space-like
 X
-X
-X
-X
-X
-
 X
 X
 X

@@ -46,6 +46,16 @@
         "TextureCoord": "GL_TEXTURE_COORD_ARRAY",
         "Vertex": "GL_VERTEX_ARRAY"
     },
+    "ClipOrigin":
+    {
+        "LowerLeft": "GL_LOWER_LEFT_EXT",
+        "UpperLeft": "GL_UPPER_LEFT_EXT"
+    },
+    "ClipDepthMode":
+    {
+        "NegativeOneToOne": "GL_NEGATIVE_ONE_TO_ONE_EXT",
+        "ZeroToOne": "GL_ZERO_TO_ONE_EXT"
+    },
     "CullFaceMode":
     {
         "Back": "GL_BACK",

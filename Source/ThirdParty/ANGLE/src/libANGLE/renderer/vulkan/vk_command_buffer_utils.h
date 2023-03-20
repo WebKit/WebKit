@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_COMMAND_BUFFER_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_COMMAND_BUFFER_UTILS_H_
 
+#include "common/PackedEnums.h"
 #include "common/angleutils.h"
 
 namespace rx
@@ -17,7 +18,7 @@ namespace rx
 namespace vk
 {
 
-enum class ProtectionType
+enum class ProtectionType : uint8_t
 {
     Unprotected = 0,
     Protected   = 1,
@@ -25,6 +26,8 @@ enum class ProtectionType
     InvalidEnum = 2,
     EnumCount   = 2,
 };
+
+using ProtectionTypes = angle::PackedEnumBitSet<ProtectionType, uint8_t>;
 
 ANGLE_INLINE ProtectionType ConvertProtectionBoolToType(bool isProtected)
 {

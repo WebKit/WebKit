@@ -40,6 +40,7 @@
 #include "StyleScope.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContext.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderDescendantIterator.h"
@@ -94,35 +95,37 @@ static bool isObjectAncestorContainerOf(RenderElement& ancestor, RenderElement& 
 #ifndef NDEBUG
 class RenderTreeNeedsLayoutChecker {
 public :
-    RenderTreeNeedsLayoutChecker(const RenderElement& layoutRoot)
-        : m_layoutRoot(layoutRoot)
+    RenderTreeNeedsLayoutChecker(const RenderView& renderView)
+        : m_renderView(renderView)
     {
     }
 
     ~RenderTreeNeedsLayoutChecker()
     {
-        auto reportNeedsLayoutError = [] (const RenderObject& renderer) {
-            WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "post-layout: dirty renderer(s)");
-            renderer.showRenderTreeForThis();
-            ASSERT_NOT_REACHED();
+        auto checkAndReportNeedsLayoutError = [] (const RenderObject& renderer) {
+            auto needsLayout = [&] {
+                if (renderer.needsLayout())
+                    return true;
+                if (is<RenderBlockFlow>(renderer) && downcast<RenderBlockFlow>(renderer).modernLineLayout())
+                    return downcast<RenderBlockFlow>(renderer).modernLineLayout()->hasDetachedContent();
+                return false;
+            };
+
+            if (needsLayout()) {
+                WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "post-layout: dirty renderer(s)");
+                renderer.showRenderTreeForThis();
+                ASSERT_NOT_REACHED();
+            }
         };
 
-        if (m_layoutRoot.needsLayout()) {
-            reportNeedsLayoutError(m_layoutRoot);
-            return;
-        }
+        checkAndReportNeedsLayoutError(m_renderView);
 
-        for (auto* descendant = m_layoutRoot.firstChild(); descendant; descendant = descendant->nextInPreOrder(&m_layoutRoot)) {
-            if (!descendant->needsLayout())
-                continue;
-            
-            reportNeedsLayoutError(*descendant);
-            return;
-        }
+        for (auto* descendant = m_renderView.firstChild(); descendant; descendant = descendant->nextInPreOrder(&m_renderView))
+            checkAndReportNeedsLayoutError(*descendant);
     }
 
 private:
-    const RenderElement& m_layoutRoot;
+    const RenderView& m_renderView;
 };
 #endif
 
@@ -244,7 +247,7 @@ void LocalFrameViewLayoutContext::performLayout()
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 #ifndef NDEBUG
-        RenderTreeNeedsLayoutChecker checker(*layoutRoot);
+        RenderTreeNeedsLayoutChecker checker(*renderView());
 #endif
         layoutRoot->layout();
         layoutUsingFormattingContext();

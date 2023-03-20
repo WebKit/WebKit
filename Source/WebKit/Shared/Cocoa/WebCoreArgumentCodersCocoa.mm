@@ -193,6 +193,9 @@ void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& enco
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     encoder << request.deferredPaymentRequest();
 #endif
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    encoder << request.applePayLaterMode();
+#endif
 }
 
 bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest& request)
@@ -336,6 +339,14 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& deco
     if (!deferredPaymentRequest)
         return false;
     request.setDeferredPaymentRequest(WTFMove(*deferredPaymentRequest));
+#endif
+
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    std::optional<std::optional<WebCore::ApplePayLaterMode>> applePayLaterMode;
+    decoder >> applePayLaterMode;
+    if (!applePayLaterMode)
+        return false;
+    request.setApplePayLaterMode(WTFMove(*applePayLaterMode));
 #endif
 
     return true;

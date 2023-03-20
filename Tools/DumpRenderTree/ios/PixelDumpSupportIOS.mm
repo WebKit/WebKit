@@ -73,9 +73,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::BGRA;
 #endif
     auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), snapshotFormat);
-    // FIXME: Something is missing here, nothing draws to surface.
-    auto context = surface->createPlatformContext();
-    RetainPtr<CGImageRef> cgImage = surface->createImage(context.get());
+    RetainPtr<CGImageRef> cgImage = surface->createImage();
 
     size_t bitmapRowBytes = 0;
     auto bitmapContext = createBitmapContext(bufferWidth, bufferHeight, bitmapRowBytes);
