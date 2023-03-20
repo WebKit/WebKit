@@ -155,7 +155,7 @@ private:
     }
     constexpr PtrType fromStorageType(CFTypeRef ptr) const { return fromStorageTypeHelper<PtrType>(ptr); }
     constexpr CFTypeRef toStorageType(id ptr) const { return (__bridge CFTypeRef)ptr; }
-    constexpr CFTypeRef toStorageType(CFTypeRef ptr) const { return (CFTypeRef)ptr; }
+    constexpr CFTypeRef toStorageType(CFTypeRef ptr) const { return ptr; }
 #else
     constexpr PtrType fromStorageType(CFTypeRef ptr) const
     {
@@ -224,7 +224,7 @@ template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 // FIXME: It would be better if we could base the return type on the type that is toll-free bridged with T rather than using id.
 template<typename T> inline id RetainPtr<T>::bridgingAutorelease()
 {
-    static_assert((!std::is_convertible<PtrType, id>::value), "Don't use bridgingAutorelease for Objective-C pointer types.");
+    static_assert(!std::is_convertible_v<PtrType, id>, "Don't use bridgingAutorelease for Objective-C pointer types.");
     return CFBridgingRelease(leakRef());
 }
 
@@ -315,7 +315,7 @@ template<typename T, typename U> constexpr bool operator!=(T* a, const RetainPtr
 template<typename T> constexpr RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT ptr)
 {
 #ifdef __OBJC__
-    static_assert((!std::is_convertible<T, id>::value), "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
+    static_assert(!std::is_convertible_v<T, id>, "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
 #endif
     return RetainPtr<T>(ptr, RetainPtr<T>::Adopt);
 }
@@ -323,6 +323,7 @@ template<typename T> constexpr RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT ptr)
 #ifdef __OBJC__
 template<typename T> inline RetainPtr<typename RetainPtr<T>::HelperPtrType> adoptNS(T NS_RELEASES_ARGUMENT ptr)
 {
+    static_assert(std::is_convertible_v<T, id>, "Don't use adoptNS with Core Foundation pointer types, use adoptCF.");
 #if __has_feature(objc_arc)
     return ptr;
 #elif defined(OBJC_NO_GC)
