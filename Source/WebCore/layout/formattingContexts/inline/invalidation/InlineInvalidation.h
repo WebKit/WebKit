@@ -44,7 +44,7 @@ struct DamagedLine;
 
 class InlineInvalidation {
 public:
-    InlineInvalidation(InlineDamage&, const InlineItems&, const InlineDisplay::Content&);
+    InlineInvalidation(InlineDamage&, const InlineItems&, const InlineDisplay::Boxes&);
 
     void styleChanged(const Box&, const RenderStyle& oldStyle);
 
@@ -59,13 +59,11 @@ public:
 
 private:
     void updateInlineDamage(InlineDamage::Type, std::optional<DamagedLine>);
-    const InlineDisplay::Boxes& displayBoxes() const { return m_displayContent.boxes; }
-    const InlineDisplay::Lines& displayLines() const { return m_displayContent.lines; }
 
     InlineDamage& m_inlineDamage;
 
     const InlineItems& m_inlineItems;
-    const InlineDisplay::Content& m_displayContent;
+    const InlineDisplay::Boxes& m_displayBoxes;
 };
 
 }
