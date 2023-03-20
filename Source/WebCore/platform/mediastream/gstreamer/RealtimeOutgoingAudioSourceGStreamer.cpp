@@ -28,14 +28,18 @@
 
 #include <wtf/text/StringToIntegerConversion.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_audio_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_outgoing_audio_debug
 
 namespace WebCore {
 
 RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
     : RealtimeOutgoingMediaSourceGStreamer(mediaStreamId, track)
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_outgoing_audio_debug, "webkitwebrtcoutgoingaudio", 0, "WebKit WebRTC outgoing audio");
+    });
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-", sourceCounter.exchangeAdd(1)).ascii().data());
     m_audioconvert = makeGStreamerElement("audioconvert", nullptr);

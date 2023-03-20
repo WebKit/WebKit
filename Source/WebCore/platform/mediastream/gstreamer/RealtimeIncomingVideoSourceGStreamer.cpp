@@ -27,14 +27,18 @@
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_incoming_video_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_incoming_video_debug
 
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
     : RealtimeIncomingSourceGStreamer(CaptureDevice { WTFMove(videoTrackId), CaptureDevice::DeviceType::Camera, emptyString() })
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_video_debug, "webkitwebrtcincomingvideo", 0, "WebKit WebRTC incoming video");
+    });
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(bin(), makeString("incoming-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
     GST_DEBUG_OBJECT(bin(), "New incoming video source created");
