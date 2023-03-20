@@ -245,6 +245,17 @@ Vector<String> AXIsolatedObject::classList() const
         return { };
     });
 }
+
+String AXIsolatedObject::computedRoleString() const
+{
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+
+    return Accessibility::retrieveValueFromMainThread<String>([this] () -> String {
+        if (auto* object = associatedAXObject())
+            return object->computedRoleString().isolatedCopy();
+        return { };
+    });
+}
 // End purposely un-cached properties block.
 
 String AXIsolatedObject::descriptionAttributeValue() const

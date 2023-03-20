@@ -86,7 +86,6 @@ enum class AXPropertyName : uint16_t {
     ColumnHeaders,
     ColumnIndex,
     ColumnIndexRange,
-    ComputedRoleString,
     Contents,
     CurrentState,
     DatetimeAttributeValue,

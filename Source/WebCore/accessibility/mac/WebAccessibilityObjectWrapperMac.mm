@@ -1480,7 +1480,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 
-- (NSString *)computedRoleString
+- (NSString *)_computedRoleString
 {
     if (!self.axBackingObject)
         return nil;
@@ -1556,7 +1556,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // AXARIARole is only used by DumpRenderTree (so far).
     if ([attributeName isEqualToString:@"AXARIARole"])
-        return [self computedRoleString];
+        return [self _computedRoleString];
 
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
         // This will return the parent of the AXWebArea, if this is a web area.
