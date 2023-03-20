@@ -423,12 +423,20 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     {
         selector = selector || this._node.appropriateSelectorFor(true);
 
+        let result = new WI.WrappedPromise;
         let target = WI.assumingMainTarget();
 
         function completed()
         {
             target.DOMAgent.markUndoableState();
-            this.refresh();
+
+            // Wait for the refresh promise caused by injecting an empty inspector stylesheet to resolve
+            // (another call will be ignored while one is still pending),
+            // then refresh again to get the latest matching styles which include the newly created rule.
+            if (this._pendingRefreshTask)
+                this._pendingRefreshTask.then(this.refresh.bind(this));
+            else
+                this.refresh();
         }
 
         function styleChanged(error, stylePayload)
@@ -441,8 +449,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         function addedRule(error, rulePayload)
         {
-            if (error)
+            if (error){
+                result.reject(error);
                 return;
+            }
+
+            result.resolve(rulePayload);
 
             if (!text || !text.length) {
                 completed.call(this);
@@ -464,6 +476,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             inspectorStyleSheetAvailable.call(this, WI.cssManager.styleSheetForIdentifier(styleSheetId));
         else
             WI.cssManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
+
+        return result.promise;
     }
 
     effectivePropertyForName(name)

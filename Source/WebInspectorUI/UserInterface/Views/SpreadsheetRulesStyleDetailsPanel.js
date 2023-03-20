@@ -38,6 +38,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this._headerMap = new Map;
         this._sections = [];
         this._newRuleSelector = null;
+        this._newRuleStyleId = null;
         this._ruleMediaAndInherticanceList = [];
         this._propertyToSelectAndHighlight = null;
         this._filterText = null;
@@ -210,7 +211,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
     spreadsheetCSSStyleDeclarationSectionAddNewRule(section, selector, text)
     {
         this._newRuleSelector = selector;
-        this.nodeStyles.addRule(this._newRuleSelector, text);
+        this.nodeStyles.addRule(this._newRuleSelector, text).then((rulePayload) => {this._newRuleStyleId = rulePayload.style.styleId;});
     }
 
     spreadsheetCSSStyleDeclarationSectionSetAllPropertyVisibilityMode(section, propertyVisibilityMode)
@@ -280,7 +281,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 style[SpreadsheetRulesStyleDetailsPanel.StyleSectionSymbol] = section;
             }
 
-            if (this._newRuleSelector === style.selectorText && style.enabledProperties.length === 0)
+            if (this._newRuleSelector === style.selectorText && style.enabledProperties.length === 0 && Object.shallowEqual(this._newRuleStyleId, style.id))
                 section.startEditingRuleSelector();
 
             addSection(section);
@@ -327,6 +328,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         addPseudoStyles();
 
         this._newRuleSelector = null;
+        this._newRuleStyleId = null;
 
         this.element.append(this._emptyFilterResultsElement);
 
@@ -359,7 +361,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this._newRuleSelector = this.nodeStyles.node.appropriateSelectorFor(justSelector);
 
         const text = "";
-        this.nodeStyles.addRule(this._newRuleSelector, text, stylesheetId);
+        this.nodeStyles.addRule(this._newRuleSelector, text, stylesheetId).then((rulePayload) => {this._newRuleStyleId = rulePayload.style.styleId;});
     }
 
     _handleSectionSelectorWillChange(event)
