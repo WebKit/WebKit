@@ -538,7 +538,7 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
         }
 
         m_requestEntityBody = FormData::create();
-        m_requestEntityBody->appendBlob(body.url());
+        m_requestEntityBody->appendBlob(body.url(), scriptExecutionContext()->topOrigin().data());
     }
 
     return createRequest();

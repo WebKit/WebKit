@@ -30,6 +30,7 @@
 #include <WebCore/BlobData.h>
 #include <WebCore/FormData.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/FileSystem.h>
 
 namespace WebKit {
@@ -122,7 +123,7 @@ BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem& 
     return state;
 }
 
-static Ref<FormData> toFormData(const HTTPBody& httpBody)
+static Ref<FormData> toFormData(const HTTPBody& httpBody, const String& mainFrameURL)
 {
     auto formData = FormData::create();
 
@@ -132,14 +133,14 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
         }, [&] (const HTTPBody::Element::FileData& data) {
             formData->appendFileRange(data.filePath, data.fileStart, data.fileLength.value_or(BlobDataItem::toEndOfFile), data.expectedFileModificationTime);
         }, [&] (const String& blobURLString) {
-            formData->appendBlob(URL { blobURLString });
+            formData->appendBlob(URL { blobURLString }, SecurityOriginData::fromURL(URL { mainFrameURL }));
         });
     }
 
     return formData;
 }
 
-static void applyFrameState(HistoryItem& historyItem, const FrameState& frameState)
+static void applyFrameState(HistoryItem& historyItem, const FrameState& frameState, const FrameState& mainFrameState)
 {
     historyItem.setOriginalURLString(frameState.originalURLString);
     historyItem.setReferrer(frameState.referrer);
@@ -163,7 +164,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
         const auto& httpBody = frameState.httpBody.value();
         historyItem.setFormContentType(httpBody.contentType);
 
-        historyItem.setFormData(toFormData(httpBody));
+        historyItem.setFormData(toFormData(httpBody, mainFrameState.urlString));
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -177,7 +178,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 
     for (const auto& childFrameState : frameState.children) {
         Ref<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, { }, { });
-        applyFrameState(childHistoryItem, childFrameState);
+        applyFrameState(childHistoryItem, childFrameState, mainFrameState);
 
         historyItem.addChildItem(WTFMove(childHistoryItem));
     }
@@ -188,7 +189,7 @@ Ref<HistoryItem> toHistoryItem(const BackForwardListItemState& itemState)
     Ref<HistoryItem> historyItem = HistoryItem::create(itemState.pageState.mainFrameState.urlString, itemState.pageState.title, { }, itemState.identifier);
     historyItem->setShouldOpenExternalURLsPolicy(itemState.pageState.shouldOpenExternalURLsPolicy);
     historyItem->setStateObject(itemState.pageState.sessionStateObject.get());
-    applyFrameState(historyItem, itemState.pageState.mainFrameState);
+    applyFrameState(historyItem, itemState.pageState.mainFrameState, itemState.pageState.mainFrameState);
 
     return historyItem;
 }

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "BlobData.h"
+#include "SecurityOriginData.h"
 #include <variant>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
@@ -52,10 +53,10 @@ struct FormDataElement {
         : data(WTFMove(array)) { }
     FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
-    explicit FormDataElement(const URL& blobURL)
-        : data(EncodedBlobData { blobURL }) { }
+    explicit FormDataElement(const URL& blobURL, const SecurityOriginData& topOrigin)
+        : data(EncodedBlobData { blobURL, topOrigin }) { }
 
-    uint64_t lengthInBytes(const Function<uint64_t(const URL&)>&) const;
+    uint64_t lengthInBytes(const Function<uint64_t(const URL&, const SecurityOriginData&)>&) const;
     uint64_t lengthInBytes() const;
 
     FormDataElement isolatedCopy() const;
@@ -84,6 +85,7 @@ struct FormDataElement {
 
     struct EncodedBlobData {
         URL url;
+        SecurityOriginData topOrigin;
 
         bool operator==(const EncodedBlobData& other) const
         {
@@ -155,7 +157,7 @@ public:
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath);
     WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
-    WEBCORE_EXPORT void appendBlob(const URL& blobURL);
+    WEBCORE_EXPORT void appendBlob(const URL& blobURL, const SecurityOriginData&);
 
     WEBCORE_EXPORT Vector<uint8_t> flatten() const; // omits files
     String flattenToString() const; // omits files
@@ -201,7 +203,7 @@ private:
     FormData() = default;
     FormData(const FormData&);
 
-    void appendMultiPartFileValue(const File&, Vector<char>& header, PAL::TextEncoding&);
+    void appendMultiPartFileValue(const File&, Vector<char>& header, PAL::TextEncoding&, const SecurityOriginData&);
     void appendMultiPartStringValue(const String&, Vector<char>& header, PAL::TextEncoding&);
     void appendMultiPartKeyValuePairItems(const DOMFormData&);
     void appendNonMultiPartKeyValuePairItems(const DOMFormData&, EncodingType);

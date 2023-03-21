@@ -138,7 +138,7 @@ unsigned FormData::imageOrMediaFilesCount() const
     return imageOrMediaFilesCount;
 }
 
-uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
+uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&, const SecurityOriginData&)>& blobSize) const
 {
     return WTF::switchOn(data,
         [] (const Vector<uint8_t>& bytes) {
@@ -148,14 +148,14 @@ uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& bl
                 return static_cast<uint64_t>(fileData.fileLength);
             return FileSystem::fileSize(fileData.filename).value_or(0);
         }, [&blobSize] (const FormDataElement::EncodedBlobData& blobData) {
-            return blobSize(blobData.url);
+            return blobSize(blobData.url, blobData.topOrigin);
         }
     );
 }
 
 uint64_t FormDataElement::lengthInBytes() const
 {
-    return lengthInBytes([](auto& url) {
+    return lengthInBytes([](auto& url, auto&) {
         return ThreadableBlobRegistry::blobSize(url);
     });
 }
@@ -168,7 +168,7 @@ FormDataElement FormDataElement::isolatedCopy() const
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             return FormDataElement(fileData.isolatedCopy());
         }, [] (const FormDataElement::EncodedBlobData& blobData) {
-            return FormDataElement(blobData.url.isolatedCopy());
+            return FormDataElement(blobData.url.isolatedCopy(), blobData.topOrigin.isolatedCopy());
         }
     );
 }
@@ -197,9 +197,9 @@ void FormData::appendFileRange(const String& filename, long long start, long lon
     m_lengthInBytes = std::nullopt;
 }
 
-void FormData::appendBlob(const URL& blobURL)
+void FormData::appendBlob(const URL& blobURL, const SecurityOriginData& topOrigin)
 {
-    m_elements.append(FormDataElement(blobURL));
+    m_elements.append(FormDataElement(blobURL, topOrigin));
     m_lengthInBytes = std::nullopt;
 }
 
@@ -208,7 +208,7 @@ static Vector<uint8_t> normalizeStringData(PAL::TextEncoding& encoding, const St
     return normalizeLineEndingsToCRLF(encoding.encode(value, PAL::UnencodableHandling::Entities, PAL::NFCNormalize::No));
 }
 
-void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, PAL::TextEncoding& encoding)
+void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, PAL::TextEncoding& encoding, const SecurityOriginData& topOrigin)
 {
     auto name = file.name();
 
@@ -229,7 +229,7 @@ void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, 
     if (!file.path().isEmpty())
         appendFile(file.path());
     else if (file.size())
-        appendBlob(file.url());
+        appendBlob(file.url(), topOrigin);
 }
 
 void FormData::appendMultiPartStringValue(const String& string, Vector<char>& header, PAL::TextEncoding& encoding)
@@ -255,7 +255,7 @@ void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData)
         FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), normalizedName);
 
         if (std::holds_alternative<RefPtr<File>>(item.data))
-            appendMultiPartFileValue(*std::get<RefPtr<File>>(item.data), header, encoding);
+            appendMultiPartFileValue(*std::get<RefPtr<File>>(item.data), header, encoding, formData.scriptExecutionContext() ? formData.scriptExecutionContext()->topOrigin().data() : SecurityOriginData::createOpaque());
         else
             appendMultiPartStringValue(std::get<String>(item.data), header, encoding);
 
@@ -306,14 +306,14 @@ String FormData::flattenToString() const
     return PAL::Latin1Encoding().decode(bytes.data(), bytes.size());
 }
 
-static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const URL& url)
+static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const FormDataElement::EncodedBlobData& formBlobData)
 {
     if (!blobRegistry) {
         LOG_ERROR("Tried to resolve a blob without a usable registry");
         return;
     }
 
-    auto* blobData = blobRegistry->getBlobDataFromURL(url);
+    auto* blobData = blobRegistry->getBlobDataFromURL(formBlobData.url);
     if (!blobData) {
         LOG_ERROR("Could not get blob data from a registry");
         return;
@@ -357,7 +357,7 @@ Ref<FormData> FormData::resolveBlobReferences(BlobRegistryImpl* blobRegistryImpl
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 newFormData->appendFileRange(fileData.filename, fileData.fileStart, fileData.fileLength, fileData.expectedFileModificationTime);
             }, [&] (const FormDataElement::EncodedBlobData& blobData) {
-                appendBlobResolved(blobRegistryImpl ? blobRegistryImpl : blobRegistry().blobRegistryImpl(), newFormData.get(), blobData.url);
+                appendBlobResolved(blobRegistryImpl ? blobRegistryImpl : blobRegistry().blobRegistryImpl(), newFormData.get(), blobData);
             }
         );
     }

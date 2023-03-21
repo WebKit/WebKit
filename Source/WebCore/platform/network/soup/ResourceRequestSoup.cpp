@@ -116,7 +116,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     auto resolvedFormData = formData->resolveBlobReferences();
     uint64_t length = 0;
     for (auto& element : resolvedFormData->elements()) {
-        length += element.lengthInBytes([&](auto& url) {
+        length += element.lengthInBytes([&](auto& url, auto&) {
             return blobRegistry.blobSize(url);
         });
     }

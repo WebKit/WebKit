@@ -38,6 +38,7 @@
 #include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSource.h"
+#include "SecurityOrigin.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 
 namespace WebCore {
@@ -252,7 +253,7 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
         return FormData::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
     if (isBlob()) {
         auto body = FormData::create();
-        body->appendBlob(blobBody().url());
+        body->appendBlob(blobBody().url(), blobBody().scriptExecutionContext() ? blobBody().scriptExecutionContext()->topOrigin().data() : SecurityOriginData::createOpaque());
         return body;
     }
     if (isArrayBuffer())
@@ -279,7 +280,7 @@ FetchBody::TakenData FetchBody::take()
 
     if (isBlob()) {
         auto body = FormData::create();
-        body->appendBlob(blobBody().url());
+        body->appendBlob(blobBody().url(), blobBody().scriptExecutionContext() ? blobBody().scriptExecutionContext()->topOrigin().data() : SecurityOriginData::createOpaque());
         return TakenData { WTFMove(body) };
     }
 

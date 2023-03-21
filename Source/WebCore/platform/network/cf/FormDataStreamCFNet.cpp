@@ -366,7 +366,7 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
     // Precompute the content length so CFNetwork doesn't use chunked mode.
     unsigned long long length = 0;
     for (auto& element : dataForUpload.data().elements()) {
-        length += element.lengthInBytes([](auto& url) {
+        length += element.lengthInBytes([](auto& url, auto&) {
             return blobRegistry().blobRegistryImpl()->blobSize(url);
         });
     }

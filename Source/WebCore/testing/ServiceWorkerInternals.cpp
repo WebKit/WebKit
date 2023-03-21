@@ -129,7 +129,7 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
 {
     auto blob = Blob::create(&context);
     auto formData = FormData::create();
-    formData->appendBlob(blob->url());
+    formData->appendBlob(blob->url(), context.topOrigin().data());
 
     ResourceResponse response;
     response.setType(ResourceResponse::Type::Cors);
