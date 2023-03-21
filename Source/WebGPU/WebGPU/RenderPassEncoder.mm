@@ -72,6 +72,7 @@ RenderPassEncoder::~RenderPassEncoder()
 
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
+    queryIndex *= sizeof(uint64_t);
     if (queryIndex < m_visibilityResultBufferSize) {
         m_visibilityResultBufferOffset = queryIndex;
         [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
