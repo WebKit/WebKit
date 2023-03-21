@@ -1748,36 +1748,6 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     });
 }
 
-void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
-{
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "loadWebArchiveData:");
-
-    if (m_isClosed) {
-        WEBPAGEPROXY_RELEASE_LOG(Loading, "loadWebArchiveData: page is closed");
-        return;
-    }
-
-    if (!hasRunningProcess())
-        launchProcess({ }, ProcessLaunchReason::InitialProcess);
-
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), { }, LoadedWebArchive::Yes), [this, protectedThis = Ref { *this }, webArchiveData = RefPtr { webArchiveData }, userData = RefPtr { userData }] {
-        auto transaction = m_pageLoadState.transaction();
-        m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
-
-        LoadParameters loadParameters;
-        loadParameters.navigationID = 0;
-        loadParameters.data = webArchiveData->dataReference();
-        loadParameters.MIMEType = "application/x-webarchive"_s;
-        loadParameters.encodingName = "utf-16"_s;
-        loadParameters.userData = UserData(process().transformObjectsToHandles(userData.get()).get());
-        prepareToLoadWebPage(process(), loadParameters);
-
-        m_process->markProcessAsRecentlyUsed();
-        send(Messages::WebPage::LoadData(loadParameters));
-        m_process->startResponsivenessTimer();
-    });
-}
-
 void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "navigateToPDFLinkWithSimulatedClick:");
