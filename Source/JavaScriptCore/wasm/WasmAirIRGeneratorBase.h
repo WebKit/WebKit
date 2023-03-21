@@ -2669,6 +2669,10 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructSet(ExpressionType st
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
 {
+    // Ensure that the result expression is typed with the type it's being cast to
+    result = tmpForType(Type { reference.type().kind, static_cast<TypeIndex>(heapType) });
+    self().emitMoveWithoutTypeCheck(reference, result);
+
     emitRefTestOrCast(CastKind::Cast, reference, allowNull, heapType, result);
     return { };
 }
@@ -2676,6 +2680,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefCast(ExpressionType refe
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
 {
+    result = self().g32();
     emitRefTestOrCast(CastKind::Test, reference, allowNull, heapType, result);
     return { };
 }
@@ -2683,11 +2688,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefTest(ExpressionType refe
 template <typename Derived, typename ExpressionType>
 void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind castKind, ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result)
 {
-    if (castKind == CastKind::Cast)
-        result = reference;
-    else
-        result = self().g32();
-
     BasicBlock* continuation = m_code.addBlock();
     BasicBlock* trueBlock = nullptr;
     BasicBlock* falseBlock = nullptr;
