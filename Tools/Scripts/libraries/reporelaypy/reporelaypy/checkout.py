@@ -65,7 +65,7 @@ class Checkout(object):
         return cls(**data, primary=False)
 
     @staticmethod
-    def clone(url, path, remotes, credentials, sentinal_file=None, checkout_data=None, disable_origin=True):
+    def clone(url, path, remotes, credentials, sentinal_file=None, checkout_data=None, disable_origin=True, post_clone_commands=None):
         run([local.Git.executable(), 'clone', url, path], cwd=os.path.dirname(path))
         run([local.Git.executable(), 'config', 'pull.ff', 'only'], cwd=path)
         if disable_origin:
@@ -73,6 +73,9 @@ class Checkout(object):
 
         Checkout.add_remotes(local.Git(path), remotes)
         Checkout.add_credentials(local.Git(path), credentials)
+
+        for command in post_clone_commands or []:
+            run(**command)
 
         if sentinal_file:
             with open(sentinal_file, 'w') as cloned:
@@ -116,6 +119,7 @@ class Checkout(object):
         sentinal=True, fallback_url=None, primary=True,
         remotes=None, credentials=None,
         forwarding=None, disable_origin=True,
+        post_clone_commands=None,
     ):
         self.sentinal = sentinal
         self.path = path
@@ -171,11 +175,11 @@ class Checkout(object):
         if self.sentinal:
             self._child_process = multiprocessing.Process(
                 target=self.clone,
-                args=(self.url, path, self.remotes, self.credentials, self.sentinal_file, checkout_data, disable_origin),
+                args=(self.url, path, self.remotes, self.credentials, self.sentinal_file, checkout_data, disable_origin, post_clone_commands),
             )
             self._child_process.start()
         else:
-            self.clone(self.url, path, self.remotes, self.credentials, checkout_data=checkout_data, disable_origin=disable_origin)
+            self.clone(self.url, path, self.remotes, self.credentials, checkout_data=checkout_data, disable_origin=disable_origin, post_clone_commands=post_clone_commands)
 
     @property
     def sentinal_file(self):
