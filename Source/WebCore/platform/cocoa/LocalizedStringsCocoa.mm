@@ -190,12 +190,6 @@ String AXMeterGaugeRegionLessGoodText()
     return WEB_UI_STRING("critical value", "The less good value description for a meter element.");
 }
 
-String builtInPDFPluginName()
-{
-    // Also exposed to DOM.
-    return WEB_UI_STRING("WebKit built-in PDF", "Pseudo plug-in name, visible in the Installed Plug-ins page in Safari.");
-}
-
 String pdfDocumentTypeDescription()
 {
     // Also exposed to DOM.

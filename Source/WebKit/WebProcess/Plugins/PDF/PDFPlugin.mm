@@ -1276,7 +1276,11 @@ void PDFPlugin::cancelAndForgetLoader(NetscapePlugInStreamLoader& loader)
 PluginInfo PDFPlugin::pluginInfo()
 {
     PluginInfo info;
-    info.name = builtInPDFPluginName();
+
+    // Note: HTML specification requires that the WebKit built-in PDF name
+    // is presented in plain English text.
+    // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
+    info.name = "WebKit built-in PDF"_s;
     info.desc = pdfDocumentTypeDescription();
     info.file = "internal-pdf-viewer"_s;
     info.isApplicationPlugin = true;
