@@ -377,7 +377,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
     if (CGRectIsEmpty(rect))
         return;
 
-    CGRect baseRect = WKViewConvertRectToBase(viewRef, rect);
+    CGRect baseRect = WKViewConvertRectToBacking(viewRef, rect);
     [window setNeedsDisplayInRect:baseRect];
 }
 
@@ -564,17 +564,17 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 
 - (NSPoint)convertPoint:(NSPoint)aPoint toView:(WAKView *)aView 
 {
-    CGPoint p = WKViewConvertPointToBase (viewRef, aPoint);
+    CGPoint p = WKViewConvertPointToBacking(viewRef, aPoint);
     if (aView)
-        return WKViewConvertPointFromBase ([aView _viewRef], p);
+        return WKViewConvertPointFromBacking([aView _viewRef], p);
     return p;
 }
 
 - (NSPoint)convertPoint:(NSPoint)aPoint fromView:(WAKView *)aView
 {
     if (aView)
-        aPoint = WKViewConvertPointToBase ([aView _viewRef], aPoint);
-    return WKViewConvertPointFromBase (viewRef, aPoint);
+        aPoint = WKViewConvertPointToBacking([aView _viewRef], aPoint);
+    return WKViewConvertPointFromBacking(viewRef, aPoint);
 }
 
 - (NSSize)convertSize:(NSSize)size toView:(WAKView *)aView
@@ -585,15 +585,15 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 - (NSRect)convertRect:(NSRect)aRect fromView:(WAKView *)aView
 {
     if (aView)
-        aRect = WKViewConvertRectToBase ([aView _viewRef], aRect);
-    return WKViewConvertRectFromBase (viewRef, aRect);
+        aRect = WKViewConvertRectToBacking([aView _viewRef], aRect);
+    return WKViewConvertRectFromBacking(viewRef, aRect);
 }
 
 - (NSRect)convertRect:(NSRect)aRect toView:(WAKView *)aView
 {
-    CGRect r = WKViewConvertRectToBase (viewRef, aRect);
+    CGRect r = WKViewConvertRectToBacking(viewRef, aRect);
     if (aView)
-        return WKViewConvertRectFromBase ([aView _viewRef], r);
+        return WKViewConvertRectFromBacking([aView _viewRef], r);
     return r;
 }
 

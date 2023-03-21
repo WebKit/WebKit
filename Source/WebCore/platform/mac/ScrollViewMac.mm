@@ -239,9 +239,7 @@ IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
     if (NSView* documentView = this->documentView()) {
         NSRect tempRect = rect;
         tempRect = [documentView convertRect:tempRect toView:nil];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        tempRect.origin = [[documentView window] convertBaseToScreen:tempRect.origin];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        tempRect = [[documentView window] convertRectToScreen:tempRect];
         return enclosingIntRect(tempRect);
     }
     END_BLOCK_OBJC_EXCEPTIONS
@@ -252,9 +250,7 @@ IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (NSView* documentView = this->documentView()) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSPoint windowCoord = [[documentView window] convertScreenToBase: point];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        NSPoint windowCoord = [[documentView window] convertPointFromScreen:point];
         return IntPoint([documentView convertPoint:windowCoord fromView:nil]);
     }
     END_BLOCK_OBJC_EXCEPTIONS

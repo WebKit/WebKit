@@ -36,7 +36,7 @@
 + (NSPoint)mouseLocation
 {
     WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
-    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
+    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertPointToScreen:NSMakePoint(location.x, location.y)];
 }
 
 @end

@@ -3844,9 +3844,7 @@ void WebViewImpl::draggedImage(NSImage *, CGPoint endPoint, NSDragOperation oper
 
 void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation dragOperationMask)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPoint windowImageLoc = [[m_view window] convertScreenToBase:NSPointFromCGPoint(endPoint)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSPoint windowImageLoc = [[m_view window] convertPointFromScreen:NSPointFromCGPoint(endPoint)];
     NSPoint windowMouseLoc = windowImageLoc;
 
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
@@ -4952,10 +4950,8 @@ void WebViewImpl::characterIndexForPoint(NSPoint point, void(^completionHandler)
 
     NSWindow *window = [m_view window];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (window)
-        point = [window convertScreenToBase:point];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+        point = [window convertPointFromScreen:point];
     point = [m_view convertPoint:point fromView:nil];  // the point is relative to the main frame
 
     m_page->characterIndexForPointAsync(WebCore::IntPoint(point), [completionHandler = makeBlockPtr(completionHandler)](uint64_t result) {

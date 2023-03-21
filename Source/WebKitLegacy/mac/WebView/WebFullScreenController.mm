@@ -493,10 +493,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     [_scaleAnimation.get() startAnimation];
     
     // setClipRectForWindow takes window coordinates, so convert from screen coordinates here:
-    NSRect finalBounds = _finalFrame;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSRect finalBounds = [[self window] convertRectFromScreen:_finalFrame];
     setClipRectForWindow(self.window, finalBounds);
     
     [[self window] makeKeyAndOrderFront:self];
@@ -564,10 +561,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
     
     // setClipRectForWindow takes window coordinates, so convert from screen coordinates here:
-    NSRect finalBounds = _finalFrame;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSRect finalBounds = [[self window] convertRectFromScreen:_finalFrame];
     setClipRectForWindow(self.window, finalBounds);
     
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

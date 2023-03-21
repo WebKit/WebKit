@@ -119,13 +119,13 @@ WEBCORE_EXPORT void WKViewRemoveFromSuperview (WKViewRef view);
 
 CGPoint WKViewConvertPointToSuperview (WKViewRef view, CGPoint aPoint);
 CGPoint WKViewConvertPointFromSuperview (WKViewRef view, CGPoint aPoint);
-CGPoint WKViewConvertPointToBase(WKViewRef view, CGPoint aPoint);
-CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint aPoint);
+CGPoint WKViewConvertPointToBacking(WKViewRef, CGPoint);
+CGPoint WKViewConvertPointFromBacking(WKViewRef, CGPoint);
 
 CGRect WKViewConvertRectToSuperview (WKViewRef view, CGRect aRect);
 CGRect WKViewConvertRectFromSuperview (WKViewRef view, CGRect aRect);
-WEBCORE_EXPORT CGRect WKViewConvertRectToBase (WKViewRef view, CGRect r);
-WEBCORE_EXPORT CGRect WKViewConvertRectFromBase (WKViewRef view, CGRect aRect);
+WEBCORE_EXPORT CGRect WKViewConvertRectToBacking(WKViewRef, CGRect);
+WEBCORE_EXPORT CGRect WKViewConvertRectFromBacking(WKViewRef, CGRect);
 
 CGRect WKViewGetVisibleRect (WKViewRef view);
 

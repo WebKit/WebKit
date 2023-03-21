@@ -457,7 +457,7 @@ IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     NSRect tempRect = rect;
     tempRect = [m_view convertRect:tempRect toView:nil];
-    tempRect.origin = [m_view.window convertPointToScreen:tempRect.origin];
+    tempRect = [m_view.window convertRectToScreen:tempRect];
     return enclosingIntRect(tempRect);
 }
 

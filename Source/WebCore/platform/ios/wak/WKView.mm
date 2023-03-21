@@ -554,8 +554,8 @@ CGRect WKViewGetVisibleRect(WKViewRef viewRef)
     }
     
     if (view != viewRef) {
-        rect = WKViewConvertRectToBase(view, rect);
-        rect = WKViewConvertRectFromBase(viewRef, rect);
+        rect = WKViewConvertRectToBacking(view, rect);
+        rect = WKViewConvertRectFromBacking(viewRef, rect);
     }
     
     return rect;
@@ -571,7 +571,7 @@ CGRect WKViewConvertRectToSuperview(WKViewRef view, CGRect r)
     return CGRectApplyAffineTransform(r, _WKViewGetTransform(view));
 }
 
-CGRect WKViewConvertRectToBase(WKViewRef view, CGRect r)
+CGRect WKViewConvertRectToBacking(WKViewRef view, CGRect r)
 {
     if (!view) {
         WKError ("invalid parameter");
@@ -609,7 +609,7 @@ CGPoint WKViewConvertPointFromSuperview(WKViewRef view, CGPoint p)
     return CGPointApplyAffineTransform(p, transform);
 }
 
-CGPoint WKViewConvertPointToBase(WKViewRef view, CGPoint p)
+CGPoint WKViewConvertPointToBacking(WKViewRef view, CGPoint p)
 {
     if (!view) {
         WKError ("invalid parameter");
@@ -646,7 +646,7 @@ static void _WKViewGetAncestorViewsIncludingView (WKViewRef view, WKViewRef *vie
     *viewCount = count;
 }
 
-CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint p)
+CGPoint WKViewConvertPointFromBacking(WKViewRef view, CGPoint p)
 {
     if (!view) {
         WKError ("invalid parameter");
@@ -680,7 +680,7 @@ CGRect WKViewConvertRectFromSuperview(WKViewRef view, CGRect r)
     return CGRectApplyAffineTransform(r, transform);
 }
 
-CGRect WKViewConvertRectFromBase(WKViewRef view, CGRect r)
+CGRect WKViewConvertRectFromBacking(WKViewRef view, CGRect r)
 {
     if (!view) {
         WKError ("invalid parameter");

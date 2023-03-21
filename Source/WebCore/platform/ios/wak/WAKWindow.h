@@ -105,8 +105,8 @@ WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 - (void)close;
 - (WAKView *)firstResponder;
 
-- (NSPoint)convertBaseToScreen:(NSPoint)point;
-- (NSPoint)convertScreenToBase:(NSPoint)point;
+- (NSPoint)convertPointToScreen:(NSPoint)point;
+- (NSPoint)convertPointFromScreen:(NSPoint)point;
 - (NSRect)convertRectToScreen:(NSRect)rect;
 - (NSRect)convertRectFromScreen:(NSRect)rect;
 - (BOOL)isKeyWindow;

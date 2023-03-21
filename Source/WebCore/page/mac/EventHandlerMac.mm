@@ -597,7 +597,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     m_sendingEventToSubview = false;
-    int eventType = [initiatingEvent type];
+    NSEventType eventType = [initiatingEvent type];
     if (eventType == NSEventTypeLeftMouseDown || eventType == NSEventTypeKeyDown) {
         ASSERT([NSApp isRunning]);
         NSEvent *fakeEvent = nil;
@@ -632,9 +632,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         // no up-to-date cache of them anywhere.
         fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
                                        location:[[view->platformWidget() window]
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                                  convertScreenToBase:[NSEvent mouseLocation]]
-        ALLOW_DEPRECATED_DECLARATIONS_END
+                                                    convertPointFromScreen:[NSEvent mouseLocation]]
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]

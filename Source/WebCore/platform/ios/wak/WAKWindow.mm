@@ -146,7 +146,7 @@ static RetainPtr<WebEvent>& currentEvent()
     return _nextResponder;
 }
 
-- (NSPoint)convertBaseToScreen:(NSPoint)aPoint
+- (NSPoint)convertPointToScreen:(NSPoint)aPoint
 {
     CALayer* rootLayer = _hostLayer;
     while (rootLayer.superlayer)
@@ -155,7 +155,7 @@ static RetainPtr<WebEvent>& currentEvent()
     return [_hostLayer convertPoint:aPoint toLayer:rootLayer];
 }
 
-- (NSPoint)convertScreenToBase:(NSPoint)aPoint
+- (NSPoint)convertPointFromScreen:(NSPoint)aPoint
 {
     CALayer* rootLayer = _hostLayer;
     while (rootLayer.superlayer)
