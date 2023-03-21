@@ -228,7 +228,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
 {
     auto span = function.span();
     for (unsigned group : requiredGroups) {
-        function.parameters().append(makeUniqueRef<AST::Parameter>(
+        function.parameters().append(adoptRef(*new AST::Parameter(
             span,
             argumentBufferParameterName(group),
             adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group))),
@@ -236,7 +236,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
                 adoptRef(*new AST::GroupAttribute(span, group))
             },
             AST::ParameterRole::BindGroup
-        ));
+        )));
     }
 }
 

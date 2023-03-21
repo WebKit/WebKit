@@ -58,6 +58,12 @@ public:
     Attribute::List& returnAttributes() { return m_returnAttributes; }
     TypeName* maybeReturnType() { return m_returnType.get(); }
     CompoundStatement& body() { return m_body; }
+    const Identifier& name() const { return m_name; }
+    const Parameter::List& parameters() const { return m_parameters; }
+    const Attribute::List& attributes() const { return m_attributes; }
+    const Attribute::List& returnAttributes() const { return m_returnAttributes; }
+    const TypeName* maybeReturnType() const { return m_returnType.get(); }
+    const CompoundStatement& body() const { return m_body; }
 
 private:
     Identifier m_name;

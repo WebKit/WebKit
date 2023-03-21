@@ -28,6 +28,7 @@
 #include "ASTAttribute.h"
 #include "ASTIdentifier.h"
 #include "ASTTypeName.h"
+#include <wtf/RefCounted.h>
 
 namespace WGSL::AST {
 
@@ -37,10 +38,10 @@ enum class ParameterRole : uint8_t {
     BindGroup,
 };
 
-class Parameter final : public Node {
+class Parameter final : public Node, public RefCounted<Parameter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using List = UniqueRefVector<Parameter>;
+    using List = RefVector<Parameter>;
 
     Parameter(SourceSpan span, Identifier&& name, TypeName::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
         : Node(span)

@@ -37,7 +37,7 @@ namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(ShaderModule&, AST::Function&, AST::StageAttribute::Stage);
+    EntryPointRewriter(ShaderModule&, const AST::Function&, AST::StageAttribute::Stage);
 
     void rewrite();
     Reflection::EntryPointInformation takeEntryPointInformation();
@@ -63,7 +63,7 @@ private:
 
     AST::StageAttribute::Stage m_stage;
     ShaderModule& m_shaderModule;
-    AST::Function& m_function;
+    const AST::Function& m_function;
 
     Vector<MemberOrParameter> m_builtins;
     Vector<MemberOrParameter> m_parameters;
@@ -73,7 +73,7 @@ private:
     Reflection::EntryPointInformation m_information;
 };
 
-EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, AST::Function& function, AST::StageAttribute::Stage stage)
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, AST::StageAttribute::Stage stage)
     : m_stage(stage)
     , m_shaderModule(shaderModule)
     , m_function(function)
@@ -109,16 +109,16 @@ void EntryPointRewriter::rewrite()
     appendBuiltins();
 
     // add parameter to builtins: ${structName} : ${structType}
-    m_function.parameters().append(makeUniqueRef<AST::Parameter>(
+    m_shaderModule.append(m_function.parameters(), adoptRef(*new AST::Parameter(
         SourceSpan::empty(),
         AST::Identifier::make(m_structParameterName),
         adoptRef(*new AST::NamedTypeName(SourceSpan::empty(), AST::Identifier::make(m_structTypeName))),
         AST::Attribute::List { },
         AST::ParameterRole::StageIn
-    ));
+    )));
 
     while (m_materializations.size())
-        m_function.body().statements().insert(0, m_materializations.takeLast());
+        m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
 }
 
 Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation()
@@ -129,7 +129,7 @@ Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation(
 void EntryPointRewriter::collectParameters()
 {
     while (m_function.parameters().size()) {
-        auto parameter = m_function.parameters().takeLast();
+        auto parameter = m_shaderModule.takeLast(m_function.parameters());
         Vector<String> path;
         visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), WTFMove(parameter->attributes()) });
     }
@@ -175,7 +175,7 @@ void EntryPointRewriter::constructInputStruct()
         break;
     }
 
-    m_shaderModule.structures().append(makeUniqueRef<AST::Structure>(
+    m_shaderModule.append(m_shaderModule.structures(), makeUniqueRef<AST::Structure>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structTypeName),
         WTFMove(structMembers),
@@ -281,13 +281,13 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_function.parameters().append(makeUniqueRef<AST::Parameter>(
+        m_shaderModule.append(m_function.parameters(), adoptRef(*new AST::Parameter(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),
             WTFMove(data.type),
             WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
-        ));
+        )));
     }
 }
 

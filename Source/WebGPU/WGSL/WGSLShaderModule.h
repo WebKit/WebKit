@@ -62,8 +62,8 @@ public:
     {
         RELEASE_ASSERT(current->kind() == replacement.kind());
         std::swap(*current, replacement);
-        m_replacements.append([current, replacement = WTFMove(replacement)]() {
-            std::exchange(*current, replacement);
+        m_replacements.append([current, replacement = WTFMove(replacement)]() mutable {
+            std::exchange(*current, WTFMove(replacement));
         });
     }
 
@@ -81,6 +81,36 @@ public:
         new (current) ReplacementType(WTFMove(replacement));
     }
 
+    template<typename T, size_t size>
+    T takeLast(const Vector<T, size>& constVector)
+    {
+        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        auto last = vector.takeLast();
+        m_replacements.append([&vector, last]() mutable {
+            vector.append(WTFMove(last));
+        });
+        return last;
+    }
+
+    template<typename T, size_t size>
+    void append(const Vector<T, size>& constVector, T&& value)
+    {
+        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        vector.append(std::forward<T>(value));
+        m_replacements.append([&vector]() {
+            vector.takeLast();
+        });
+    }
+
+    template<typename T, size_t size>
+    void insert(const Vector<T, size>& constVector, size_t position, T&& value)
+    {
+        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        vector.insert(position, std::forward<T>(value));
+        m_replacements.append([&vector, position]() {
+            vector.remove(position);
+        });
+    }
 
     void revertReplacements()
     {

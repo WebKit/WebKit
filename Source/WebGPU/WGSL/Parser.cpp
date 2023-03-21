@@ -731,7 +731,7 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
     AST::Parameter::List parameters;
     while (current().type != TokenType::ParenRight) {
         PARSE(parameter, Parameter);
-        parameters.append(makeUniqueRef<AST::Parameter>(WTFMove(parameter)));
+        parameters.append(WTFMove(parameter));
         if (current().type == TokenType::Comma)
             consume();
         else
@@ -755,7 +755,7 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
 }
 
 template<typename Lexer>
-Result<AST::Parameter> Parser<Lexer>::parseParameter()
+Result<Ref<AST::Parameter>> Parser<Lexer>::parseParameter()
 {
     START_PARSE();
 
@@ -764,7 +764,7 @@ Result<AST::Parameter> Parser<Lexer>::parseParameter()
     CONSUME_TYPE(Colon);
     PARSE(type, TypeName);
 
-    RETURN_NODE(Parameter, WTFMove(name), WTFMove(type), WTFMove(attributes), AST::ParameterRole::UserDefined);
+    RETURN_NODE_REF(Parameter, WTFMove(name), WTFMove(type), WTFMove(attributes), AST::ParameterRole::UserDefined);
 }
 
 template<typename Lexer>

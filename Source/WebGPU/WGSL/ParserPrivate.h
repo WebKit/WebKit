@@ -68,7 +68,7 @@ public:
     Result<AST::StorageClass> parseStorageClass();
     Result<AST::AccessMode> parseAccessMode();
     Result<AST::Function> parseFunction(AST::Attribute::List&&);
-    Result<AST::Parameter> parseParameter();
+    Result<Ref<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
     Result<AST::CompoundStatement> parseCompoundStatement();
     Result<AST::ReturnStatement> parseReturnStatement();
