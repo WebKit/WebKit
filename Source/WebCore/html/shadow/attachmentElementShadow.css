@@ -25,9 +25,17 @@
 div#attachment-container {
     display: grid;
     gap: 0;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    grid-template-columns: 76px auto;
+    width: 338px;
+    height: 92px;
+    background-color: rgb(244, 244, 245); /* FIXME: Use quaternary-fill when available, see rdar://105252500 depending on rdar://104844460 */
+#else
     grid-template-columns: 68px auto;
     width: 266px;
     height: 80px;
+    background-color: rgb(242, 242, 242); /* FIXME: Use quinary-fill when available, see rdar://105252500 depending on rdar://104844460 */
+#endif
     border-radius: 8px;
     font: caption;
     pointer-events: none;
@@ -36,17 +44,23 @@ div#attachment-container {
 }
 
 div#attachment-container::selection {
-    background-color: blue; /* FIXME: Use semantic colors, see rdar://105252500 */
+    background-color: -apple-system-selected-content-background;
 }
 
 div#attachment-preview-area {
     grid-row: 1;
     grid-column: 1;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 56px; /* Co-dependent with attachmentImageOnlySize.width */
+    height: 72px; /* Co-dependent with attachmentImageOnlySize.height */
+    padding: 10px;
+    border-radius: 12px 0px 0px 12px;
+#else
     width: 40px;
-    height: 52px;
+    height: 52px; /* Co-dependent with attachmentImageOnlyIconSize */
     padding: 14px;
-    background-color: lightgray; /* FIXME: Use semantic colors, see rdar://105252500 */
     border-radius: 8px 0px 0px 8px;
+#endif
     display: grid;
     gap: 0;
     align-items: center;
@@ -56,18 +70,27 @@ div#attachment-preview-area {
 attachment#attachment-preview {
     grid-row: 1;
     grid-column: 1;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    max-width: 72px;
+    max-height: 72px;
+#else
     max-width: 52px;
     max-height: 52px;
+#endif
     overflow: hidden;
 }
 
 div#attachment-information-area {
     grid-row: 1;
     grid-column: 2;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    height: 92px;
+    border-radius: 0px 12px 12px 0px;
+#else
     height: 80px;
-    padding: 0;
-    background-color: lightgray; /* FIXME: Use semantic colors, see rdar://105252500 */
     border-radius: 0px 8px 8px 0px;
+#endif
+    padding: 0;
     display: grid;
     gap: 0;
     align-items: center;
@@ -76,8 +99,13 @@ div#attachment-information-area {
 div#attachment-information-block {
     grid-row: 1;
     grid-column: 1;
-    margin-left: 4px;
-    margin-right: 24px;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    margin-inline-start: 6px;
+    margin-inline-end: 26px;
+#else
+    margin-inline-start: 4px;
+    margin-inline-end: 24px;
+#endif
     margin-top: auto;
     margin-bottom: auto;
     display: grid;
@@ -89,7 +117,8 @@ div#attachment-action {
     grid-column: 1;
     justify-self: stretch;
     font-size: small;
-    color: rgb(82, 145, 214); /* FIXME: Use semantic colors, see rdar://105252500 */
+    font-weight: bold;
+    color: -apple-system-secondary-label;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     overflow: hidden;
@@ -102,9 +131,10 @@ div#attachment-title {
     justify-self: stretch;
     font-size: small;
     font-weight: bold;
+    color: -apple-system-label;
     overflow-wrap: anywhere;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     overflow: hidden;
     -webkit-box-orient: vertical;
 }
@@ -114,7 +144,7 @@ div#attachment-subtitle {
     grid-column: 1;
     justify-self: stretch;
     font-size: x-small;
-    color: rgb(82, 145, 214); /* FIXME: Use semantic colors, see rdar://105252500 */
+    color: -apple-system-secondary-label;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     overflow: hidden;
@@ -126,25 +156,37 @@ div#attachment-save-area {
     grid-column: 2;
     justify-self: end;
     align-self: center;
-    margin-left: 10px;
+    margin-inline-start: 10px;
 }
 
 button#attachment-save-button {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 40px;
+    height: 40px;
+    background-color: -apple-system-opaque-tertiary-fill;
+    border: 0;
+#else
     width: 28px;
     height: 28px;
-    margin: 0;
-    border: 1px solid;
-    padding: 0;
     background-color: transparent;
-    pointer-events: initial;
+    border: 1px solid;
+#endif
     border-radius: 50%;
+    margin: 0;
+    padding: 0;
+    pointer-events: initial;
 }
 
 div#attachment-save-icon {
     /* SF Symbol square.and.arrow.down */
-    background-image: url('data:image/svg+xml,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="17.334" height="21.5723"><path d="M3.06641 21.084L14.2676 21.084C16.3086 21.084 17.334 20.0684 17.334 18.0566L17.334 8.31055C17.334 6.29883 16.3086 5.2832 14.2676 5.2832L11.543 5.2832L11.543 6.85547L14.2383 6.85547C15.2051 6.85547 15.7617 7.38281 15.7617 8.39844L15.7617 17.9688C15.7617 18.9844 15.2051 19.5117 14.2383 19.5117L3.08594 19.5117C2.10938 19.5117 1.57227 18.9844 1.57227 17.9688L1.57227 8.39844C1.57227 7.38281 2.10938 6.85547 3.08594 6.85547L5.79102 6.85547L5.79102 5.2832L3.06641 5.2832C1.02539 5.2832 0 6.29883 0 8.31055L0 18.0566C0 20.0684 1.02539 21.084 3.06641 21.084ZM8.66211 14.6582C8.86719 14.6582 9.0332 14.5996 9.22852 14.4043L12.5293 11.2109C12.6758 11.0645 12.7637 10.9082 12.7637 10.7031C12.7637 10.3027 12.4512 10.0195 12.0508 10.0195C11.8555 10.0195 11.6602 10.0977 11.5234 10.2539L10.0391 11.8262L9.38477 12.5195L9.44336 11.0547L9.44336 0.761719C9.44336 0.351562 9.08203 0 8.66211 0C8.24219 0 7.89062 0.351562 7.89062 0.761719L7.89062 11.0547L7.94922 12.5195L7.28516 11.8262L5.81055 10.2539C5.67383 10.0977 5.45898 10.0195 5.27344 10.0195C4.86328 10.0195 4.57031 10.3027 4.57031 10.7031C4.57031 10.9082 4.64844 11.0645 4.79492 11.2109L8.0957 14.4043C8.30078 14.5996 8.4668 14.6582 8.66211 14.6582Z" stroke="black"/></svg>');
-    background-repeat: no-repeat;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    background-image: url('data:image/svg+xml,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="17.334" height="21.5723"><path d="M3.06641 21.084L14.2676 21.084C16.3086 21.084 17.334 20.0684 17.334 18.0566L17.334 8.31055C17.334 6.29883 16.3086 5.2832 14.2676 5.2832L11.543 5.2832L11.543 6.85547L14.2383 6.85547C15.2051 6.85547 15.7617 7.38281 15.7617 8.39844L15.7617 17.9688C15.7617 18.9844 15.2051 19.5117 14.2383 19.5117L3.08594 19.5117C2.10938 19.5117 1.57227 18.9844 1.57227 17.9688L1.57227 8.39844C1.57227 7.38281 2.10938 6.85547 3.08594 6.85547L5.79102 6.85547L5.79102 5.2832L3.06641 5.2832C1.02539 5.2832 0 6.29883 0 8.31055L0 18.0566C0 20.0684 1.02539 21.084 3.06641 21.084ZM8.66211 14.6582C8.86719 14.6582 9.0332 14.5996 9.22852 14.4043L12.5293 11.2109C12.6758 11.0645 12.7637 10.9082 12.7637 10.7031C12.7637 10.3027 12.4512 10.0195 12.0508 10.0195C11.8555 10.0195 11.6602 10.0977 11.5234 10.2539L10.0391 11.8262L9.38477 12.5195L9.44336 11.0547L9.44336 0.761719C9.44336 0.351562 9.08203 0 8.66211 0C8.24219 0 7.89062 0.351562 7.89062 0.761719L7.89062 11.0547L7.94922 12.5195L7.28516 11.8262L5.81055 10.2539C5.67383 10.0977 5.45898 10.0195 5.27344 10.0195C4.86328 10.0195 4.57031 10.3027 4.57031 10.7031C4.57031 10.9082 4.64844 11.0645 4.79492 11.2109L8.0957 14.4043C8.30078 14.5996 8.4668 14.6582 8.66211 14.6582Z" stroke="-apple-system-blue"/></svg>');
+    background-size: 83%;
+#else
+    background-image: url('data:image/svg+xml,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="17.334" height="21.5723"><path d="M3.06641 21.084L14.2676 21.084C16.3086 21.084 17.334 20.0684 17.334 18.0566L17.334 8.31055C17.334 6.29883 16.3086 5.2832 14.2676 5.2832L11.543 5.2832L11.543 6.85547L14.2383 6.85547C15.2051 6.85547 15.7617 7.38281 15.7617 8.39844L15.7617 17.9688C15.7617 18.9844 15.2051 19.5117 14.2383 19.5117L3.08594 19.5117C2.10938 19.5117 1.57227 18.9844 1.57227 17.9688L1.57227 8.39844C1.57227 7.38281 2.10938 6.85547 3.08594 6.85547L5.79102 6.85547L5.79102 5.2832L3.06641 5.2832C1.02539 5.2832 0 6.29883 0 8.31055L0 18.0566C0 20.0684 1.02539 21.084 3.06641 21.084ZM8.66211 14.6582C8.86719 14.6582 9.0332 14.5996 9.22852 14.4043L12.5293 11.2109C12.6758 11.0645 12.7637 10.9082 12.7637 10.7031C12.7637 10.3027 12.4512 10.0195 12.0508 10.0195C11.8555 10.0195 11.6602 10.0977 11.5234 10.2539L10.0391 11.8262L9.38477 12.5195L9.44336 11.0547L9.44336 0.761719C9.44336 0.351562 9.08203 0 8.66211 0C8.24219 0 7.89062 0.351562 7.89062 0.761719L7.89062 11.0547L7.94922 12.5195L7.28516 11.8262L5.81055 10.2539C5.67383 10.0977 5.45898 10.0195 5.27344 10.0195C4.86328 10.0195 4.57031 10.3027 4.57031 10.7031C4.57031 10.9082 4.64844 11.0645 4.79492 11.2109L8.0957 14.4043C8.30078 14.5996 8.4668 14.6582 8.66211 14.6582Z" stroke="-apple-system-secondary-label"/></svg>');
     background-size: 70%;
+#endif
+    background-repeat: no-repeat;
     background-position: center;
     width: 18px;
     height: 22px;
