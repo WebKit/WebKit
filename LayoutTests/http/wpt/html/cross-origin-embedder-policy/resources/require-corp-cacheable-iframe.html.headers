@@ -1,0 +1,3 @@
+Cross-Origin-Resource-Policy: cross-origin
+Cross-Origin-Embedder-Policy: require-corp
+Cache-Control: public, max-age=3600

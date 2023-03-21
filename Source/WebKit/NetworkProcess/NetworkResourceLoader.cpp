@@ -660,11 +660,11 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
     if (!contentSecurityPolicy.allowFrameAncestors(m_parameters.frameAncestorOrigins, url))
         return true;
 
-    if (shouldInterruptNavigationForCrossOriginEmbedderPolicy(m_response))
+    if (shouldInterruptNavigationForCrossOriginEmbedderPolicy(response))
         return true;
 
     if (!contentSecurityPolicy.overridesXFrameOptions()) {
-        String xFrameOptions = m_response.httpHeaderField(HTTPHeaderName::XFrameOptions);
+        String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
         if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(xFrameOptions, response.url())) {
             String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '", xFrameOptions, "'.");
             send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
