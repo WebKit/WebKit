@@ -277,7 +277,6 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String builtInPDFPluginName();
     WEBCORE_EXPORT String postScriptDocumentTypeDescription();
     String keygenMenuItem2048();
     WEBCORE_EXPORT String keygenKeychainItemName(const String& host);
