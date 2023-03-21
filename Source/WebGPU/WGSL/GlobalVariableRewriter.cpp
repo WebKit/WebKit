@@ -93,7 +93,6 @@ void RewriteGlobalVariables::run()
     insertStructs();
     for (auto& entryPoint : m_callGraph.entrypoints())
         visitEntryPoint(entryPoint.function);
-    m_callGraph.ast().variables().clear();
 }
 
 void RewriteGlobalVariables::visit(AST::Function& function)
@@ -214,7 +213,7 @@ void RewriteGlobalVariables::insertStructs()
             ));
         }
 
-        m_callGraph.ast().structures().append(makeUniqueRef<AST::Structure>(
+        m_callGraph.ast().append(m_callGraph.ast().structures(), makeUniqueRef<AST::Structure>(
             SourceSpan::empty(),
             WTFMove(structName),
             WTFMove(structMembers),
@@ -228,7 +227,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
 {
     auto span = function.span();
     for (unsigned group : requiredGroups) {
-        function.parameters().append(adoptRef(*new AST::Parameter(
+        m_callGraph.ast().append(function.parameters(), adoptRef(*new AST::Parameter(
             span,
             argumentBufferParameterName(group),
             adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group))),
