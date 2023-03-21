@@ -2633,8 +2633,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructGet(ExpressionType st
     auto payload = self().gPtr();
     auto structBase = self().extractJSValuePointer(structReference);
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
+    uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.offsetOfField(fieldIndex));
 
-    uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.getFieldOffset(fieldIndex));
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
     ASSERT(structType.field(fieldIndex).type.is<Type>());
     Type fieldType = structType.field(fieldIndex).type.as<Type>();
@@ -2651,8 +2651,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructSet(ExpressionType st
     auto payload = self().gPtr();
     auto structBase = self().extractJSValuePointer(structReference);
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
+    uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.offsetOfField(fieldIndex));
 
-    uint32_t fieldOffset = fixupPointerPlusOffset(payload, *structType.getFieldOffset(fieldIndex));
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
     ASSERT(structType.field(fieldIndex).type.is<Type>());
     Type fieldType = structType.field(fieldIndex).type.as<Type>();
