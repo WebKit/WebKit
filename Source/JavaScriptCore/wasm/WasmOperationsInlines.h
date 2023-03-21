@@ -137,6 +137,7 @@ inline void arraySet(Instance* instance, uint32_t typeIndex, EncodedJSValue arra
     arrayObject->set(vm, index, value);
 }
 
+// structNew() expects the `arguments` array (when used) to be in reverse order
 inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool useDefault, uint64_t* arguments)
 {
     JSWebAssemblyInstance* jsInstance = instance->owner();
@@ -160,10 +161,12 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
         }
     } else {
         ASSERT(arguments);
-        for (unsigned i = 0; i < structType.fieldCount(); ++i) {
+        for (unsigned dstIndex = 0; dstIndex < structType.fieldCount(); ++dstIndex) {
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-            ASSERT(structType.field(i).type.is<Type>());
-            structValue->set(globalObject, i, toJSValue(globalObject, structType.field(i).type.as<Type>(), arguments[i]));
+            ASSERT(structType.field(dstIndex).type.is<Type>());
+            // Arguments are in reverse order!
+            unsigned srcIndex = structType.fieldCount() - dstIndex - 1;
+            structValue->set(globalObject, dstIndex, toJSValue(globalObject, structType.field(dstIndex).type.as<Type>(), arguments[srcIndex]));
         }
     }
     return JSValue::encode(structValue);
