@@ -1,0 +1,91 @@
+<body>
+<video id="localVideo" autoplay playsInline></video>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../webrtc/routines.js"></script>
+<script>
+
+promise_test(async() => {
+    if (!window.internals)
+       return Promise.reject("Test requires internals API");
+
+    if (!internals.supportsAudioSession)
+        return;
+
+    internals.settings.setShouldManageAudioSessionCategory(true);
+
+    const defaultCategory = internals.audioSessionCategory();
+    assert_not_equals(defaultCategory, "AmbientSound");
+
+    const audioContext = new AudioContext();
+    await audioContext.resume();
+
+    // Make sure that a not audible AudioContext is still setting the category to AmbientSound.
+    assert_equals(internals.audioSessionCategory(), "AmbientSound", "AmbientSound");
+
+    let stream = await navigator.mediaDevices.getUserMedia({audio : true});
+
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "PlayAndRecord1");
+
+    const source = audioContext.createMediaStreamSource(stream);
+    source.connect(audioContext.destination);
+
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    const audioTrack = stream.getAudioTracks()[0];
+    audioTrack.stop();
+
+    await new Promise(resolve => setTimeout(resolve, 200));
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "PlayAndRecord2");
+
+    audioContext.close();
+
+    const maxTries = 300;
+    let counter = 0;
+    while (++counter < maxTries) {
+        if (internals.audioSessionCategory() == defaultCategory)
+            break;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert_less_than(counter, maxTries);
+    assert_equals(internals.audioSessionCategory(), defaultCategory);
+}, "Check audio session state in case of stopped audio track and stopped audio context");
+
+promise_test(async() => {
+    if (!window.internals)
+       return Promise.reject("Test requires internals API");
+
+    if (!internals.supportsAudioSession)
+        return;
+
+    internals.settings.setShouldManageAudioSessionCategory(true);
+
+    const defaultCategory = internals.audioSessionCategory();
+
+    const stream = await navigator.mediaDevices.getUserMedia({audio : true});
+
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
+
+    const context = new AudioContext();
+    analyseAudio(stream, 100, context);
+
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    const audioTrack = stream.getAudioTracks()[0];
+    audioTrack.stop();
+
+    const maxTries = 300;
+    let counter = 0;
+    while (++counter < maxTries) {
+        if (internals.audioSessionCategory() == "AmbientSound")
+            break;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert_less_than(counter, maxTries);
+    assert_equals(internals.audioSessionCategory(), "AmbientSound");
+
+    context.close();
+}, "Check audio session state in case of stopped audio track and not audible audio context");
+
+</script>
+</body>
