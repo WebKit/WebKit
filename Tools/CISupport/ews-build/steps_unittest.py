@@ -51,7 +51,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin,
-                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
+                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
@@ -6085,6 +6085,117 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
+        return self.runStep()
+
+
+class TestInstallHooks(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_no_remote(self):
+        self.setupStep(InstallHooks())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', 'install-hooks', 'pre-push', '--mode', 'no-radar']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_unknown_remote(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit-igalia')
+        self.setProperty('project', 'Igalia/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', 'install-hooks', 'pre-push', '--mode', 'no-radar']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_origin_remote(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit')
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=[
+                            'python3', 'Tools/Scripts/git-webkit',
+                            'install-hooks', 'pre-push', '--mode', 'no-radar',
+                            '--level', 'github.com:JonWBedard/WebKit=0',
+                        ]) + ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_apple_remote(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit-apple')
+        self.setProperty('project', 'apple/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=[
+                            'python3', 'Tools/Scripts/git-webkit',
+                            'install-hooks', 'pre-push', '--mode', 'no-radar',
+                            '--level', 'github.com:JonWBedard/WebKit-apple=2',
+                        ]) + ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit')
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=[
+                            'python3', 'Tools/Scripts/git-webkit',
+                            'install-hooks', 'pre-push', '--mode', 'no-radar',
+                            '--level', 'github.com:JonWBedard/WebKit=0',
+                        ]) + ExpectShell.log('stdio', stdout='Unexpected failure') + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to install hooks to checkout')
         return self.runStep()
 
 

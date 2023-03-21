@@ -28,7 +28,7 @@ from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canon
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
-                   InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
+                   InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
@@ -299,6 +299,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(FetchBranches())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
+        self.addStep(InstallHooks())
         self.addStep(CommitPatch())
 
         self.addStep(ValidateSquashed())
@@ -332,6 +333,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(MapBranchAlias())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
+        self.addStep(InstallHooks())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateRemote())
         self.addStep(ValidateSquashed())
