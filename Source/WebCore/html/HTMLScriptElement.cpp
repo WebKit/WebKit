@@ -217,7 +217,9 @@ String HTMLScriptElement::fetchPriorityForBindings() const
 
 RequestPriority HTMLScriptElement::fetchPriorityHint() const
 {
-    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+    if (document().settings().priorityHintsEnabled())
+        return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+    return RequestPriority::Auto;
 }
 
 }

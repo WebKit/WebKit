@@ -96,7 +96,8 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.navigationPreloadIdentifier = request.navigationPreloadIdentifier();
     options.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Disable;
-    options.fetchPriorityHint = request.fetchPriorityHint();
+    if (context.settingsValues().priorityHintsEnabled)
+        options.fetchPriorityHint = request.fetchPriorityHint();
 
     ResourceRequest fetchRequest = request.resourceRequest();
 

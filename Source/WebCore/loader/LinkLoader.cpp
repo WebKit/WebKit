@@ -120,9 +120,12 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
         if (equalIgnoringFragmentIdentifier(url, baseURL))
             continue;
 
+        RequestPriority fetchPriorityHint = RequestPriority::Auto;
+        if (document.settings().priorityHintsEnabled())
+            fetchPriorityHint = parseEnumerationFromString<RequestPriority>(header.fetchPriorityHint()).value_or(RequestPriority::Auto);
+
         LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),
-            parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString),
-            parseEnumerationFromString<RequestPriority>(header.fetchPriorityHint()).value_or(RequestPriority::Auto) };
+            parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString), fetchPriorityHint };
 
         preconnectIfNeeded(params, document);
         preloadIfNeeded(params, document, nullptr);
