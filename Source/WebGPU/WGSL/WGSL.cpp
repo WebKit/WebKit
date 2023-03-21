@@ -103,7 +103,7 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, Pipeli
 
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(rewriteEntryPoints, callGraph, result);
-        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
+        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts, result);
         RUN_PASS(mangleNames, callGraph, result);
 
         dumpASTAtEndIfNeeded(ast);
