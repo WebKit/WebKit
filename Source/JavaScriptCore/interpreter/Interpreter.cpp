@@ -351,6 +351,8 @@ Interpreter::Interpreter()
 #if ASSERT_ENABLED
     static std::once_flag assertOnceKey;
     std::call_once(assertOnceKey, [] {
+        if (g_jscConfig.vmEntryDisallowed)
+            return;
         for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i) {
             OpcodeID opcodeID = static_cast<OpcodeID>(i);
             RELEASE_ASSERT(getOpcodeID(getOpcode(opcodeID)) == opcodeID);
