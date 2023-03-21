@@ -342,6 +342,23 @@ typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 @end
 #endif
 
+#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+
+// FIXME: rdar://106983272 Remove staging code.
+
+typedef NS_ENUM(NSUInteger, PKApplePayLaterMode);
+
+#define PKApplePayLaterModeEnabled 0
+#define PKApplePayLaterModeDisabledMerchantIneligible 1
+#define PKApplePayLaterModeDisabledItemIneligible 2
+#define PKApplePayLaterModeDisabledRecurringTransaction 3
+
+@interface PKPaymentRequest (Staging_105877661)
+@property (nonatomic, assign) PKApplePayLaterMode applePayLaterMode;
+@end
+
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #define PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION
