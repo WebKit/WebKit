@@ -1685,7 +1685,7 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    void setLookalikeCharacterStrings(Vector<String>&&);
+    void setLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&&);
     void setAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&&);
 #endif
 
@@ -2588,6 +2588,7 @@ private:
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     HashSet<String> m_lookalikeCharacterStrings;
+    HashMap<WebCore::RegistrableDomain, HashSet<String>> m_domainScopedLookalikeCharacterStrings;
     HashMap<WebCore::RegistrableDomain, String> m_allowedLookalikeCharacterStrings;
 #endif
 

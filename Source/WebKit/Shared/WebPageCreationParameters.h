@@ -300,7 +300,7 @@ struct WebPageCreationParameters {
     std::optional<SubframeProcessFrameTreeInitializationParameters> subframeProcessFrameTreeInitializationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    Vector<String> lookalikeCharacterStrings;
+    Vector<WebCore::LookalikeCharactersSanitizationData> lookalikeCharacterStrings;
     Vector<WebCore::LookalikeCharactersSanitizationData> allowedLookalikeCharacterStrings;
 #endif
 

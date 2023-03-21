@@ -712,7 +712,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GenerateTestReport(String message, String group);
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    SetLookalikeCharacterStrings(Vector<String> strings);
+    SetLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> strings);
     SetAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> allowedStrings);
 #endif
 

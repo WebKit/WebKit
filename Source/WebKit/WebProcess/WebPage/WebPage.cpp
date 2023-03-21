@@ -8676,12 +8676,24 @@ bool WebPage::isUsingUISideCompositing() const
 }
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-void WebPage::setLookalikeCharacterStrings(Vector<String>&& strings)
+void WebPage::setLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&& strings)
 {
     m_lookalikeCharacterStrings.clear();
-    m_lookalikeCharacterStrings.reserveInitialCapacity(strings.size());
-    for (auto& string : strings)
-        m_lookalikeCharacterStrings.add(string);
+    m_domainScopedLookalikeCharacterStrings.clear();
+
+    for (auto& data : strings) {
+        if (data.domain.isEmpty()) {
+            m_lookalikeCharacterStrings.add(data.lookalikeCharacters);
+            continue;
+        }
+
+        if (!m_domainScopedLookalikeCharacterStrings.isValidKey(data.domain))
+            continue;
+
+        m_domainScopedLookalikeCharacterStrings.ensure(data.domain, [&] {
+            return HashSet<String> { };
+        }).iterator->value.add(data.lookalikeCharacters);
+    }
 }
 
 void WebPage::setAllowedLookalikeCharacterStrings(Vector<LookalikeCharactersSanitizationData>&& allowStrings)

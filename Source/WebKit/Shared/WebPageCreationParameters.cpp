@@ -650,7 +650,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    std::optional<Vector<String>> lookalikeCharacterStrings;
+    std::optional<Vector<WebCore::LookalikeCharactersSanitizationData>> lookalikeCharacterStrings;
     decoder >> lookalikeCharacterStrings;
     if (!lookalikeCharacterStrings)
         return std::nullopt;
