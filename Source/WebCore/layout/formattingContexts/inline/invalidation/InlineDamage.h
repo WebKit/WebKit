@@ -76,6 +76,7 @@ private:
     void setDamageType(Type type) { m_damageType = type; }
     void setDamagedPosition(Position position) { m_startPosition = position; }
     void reset();
+    void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTFMove(trailingDisplayBoxes); }
 
     Type m_damageType { Type::Invalid };
     std::optional<Position> m_startPosition;
