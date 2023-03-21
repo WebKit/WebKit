@@ -564,12 +564,12 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     auto screenSize = page->overrideScreenSize();
     CGFloat preferredWidth = screenSize.width();
     CGFloat preferredHeight = screenSize.height();
-    CGFloat preferredAspectRatio = preferredWidth / preferredHeight;
-    CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : preferredAspectRatio;
 
     CGFloat targetWidth = preferredWidth;
     CGFloat targetHeight = preferredHeight;
     if (videoDimensions.height && videoDimensions.width) {
+        CGFloat preferredAspectRatio = preferredWidth / preferredHeight;
+        CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : preferredAspectRatio;
         if (videoAspectRatio > preferredAspectRatio)
             targetHeight = videoDimensions.height * preferredWidth / videoDimensions.width;
         else
