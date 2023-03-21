@@ -208,8 +208,12 @@ class InlineMediaControls extends MediaControls
         this.leftContainer.layout();
         this.rightContainer.layout();
 
+        // Get the definitive list of shown buttons in the right container since we may have dropped some of
+        // the buttons and associated them with the overflow button.
+        const visibleRightContainerButtons = this.rightContainer.children.filter(button => button.visible);
+
         const widthLeftOfTimeControl = this.leftContainer.children.length > 0 ? this.leftContainer.width : this.leftContainer.leftMargin;
-        const widthRightOfTimeControl = this.rightContainer.children.length > 0 ? this.rightContainer.width : this.rightContainer.rightMargin;
+        const widthRightOfTimeControl = visibleRightContainerButtons.length > 0 ? this.rightContainer.width : this.rightContainer.rightMargin;
         centerControl.x = widthLeftOfTimeControl;
         centerControl.width = this.bottomControlsBar.width - widthLeftOfTimeControl - widthRightOfTimeControl;
         centerControl.layout();
@@ -219,7 +223,7 @@ class InlineMediaControls extends MediaControls
         if (this.leftContainer.children.length)
             controlsBarChildren.push(this.leftContainer);
         controlsBarChildren.push(centerControl);
-        if (this.rightContainer.children.length) {
+        if (visibleRightContainerButtons.length) {
             controlsBarChildren.push(this.rightContainer);
             this.rightContainer.x = this.bottomControlsBar.width - this.rightContainer.width;
         }
