@@ -236,6 +236,17 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
     return true;
 }
 
+static bool isStencilOnlyFormat(MTLPixelFormat format)
+{
+    switch (format) {
+    case MTLPixelFormatStencil8:
+    case MTLPixelFormatX32_Stencil8:
+        return true;
+    default:
+        return false;
+    }
+}
+
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
@@ -277,20 +288,25 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     }
 
     bool depthReadOnly = false, stencilReadOnly = false;
+    bool isStencilOnly = false;
     if (const auto* attachment = descriptor.depthStencilAttachment) {
-        const auto& mtlAttachment = mtlDescriptor.depthAttachment;
-        depthReadOnly = attachment->depthReadOnly;
-        mtlAttachment.clearDepth = attachment->depthClearValue;
-        mtlAttachment.texture = fromAPI(attachment->view).texture();
-        mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
-        mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
+        id<MTLTexture> metalDepthStencilTexture = fromAPI(attachment->view).texture();
+        isStencilOnly = isStencilOnlyFormat(metalDepthStencilTexture.pixelFormat);
+        if (!isStencilOnly) {
+            const auto& mtlAttachment = mtlDescriptor.depthAttachment;
+            depthReadOnly = attachment->depthReadOnly;
+            mtlAttachment.clearDepth = attachment->depthClearValue;
+            mtlAttachment.texture = metalDepthStencilTexture;
+            mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
+            mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
+        }
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.stencilAttachment;
         stencilReadOnly = attachment->stencilReadOnly;
-        // FIXME: assign the correct stencil texture
-        // mtlAttachment.texture = fromAPI(attachment->view).texture();
+        if (isStencilOnly)
+            mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.clearStencil = attachment->stencilClearValue;
         mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
