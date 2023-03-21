@@ -708,9 +708,6 @@ String HTMLImageElement::decoding() const
     switch (decodingMode()) {
     case DecodingMode::Auto:
         break;
-    case DecodingMode::SynchronousThumbnail:
-        ASSERT_NOT_REACHED();
-        break;
     case DecodingMode::Synchronous:
         return "sync"_s;
     case DecodingMode::Asynchronous:
@@ -1036,7 +1033,9 @@ String HTMLImageElement::fetchPriorityForBindings() const
 
 RequestPriority HTMLImageElement::fetchPriorityHint() const
 {
-    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+    if (document().settings().priorityHintsEnabled())
+        return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+    return RequestPriority::Auto;
 }
 
 }

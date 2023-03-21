@@ -95,7 +95,7 @@ UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(S
 }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-void RemoteScrollingCoordinatorProxyIOS::removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>& destroyedLayers)
+void RemoteScrollingCoordinatorProxyIOS::removeFixedScrollingNodeLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers)
 {
     for (auto layerID : destroyedLayers)
         m_fixedScrollingNodeLayerIDs.remove(layerID);
@@ -104,7 +104,7 @@ void RemoteScrollingCoordinatorProxyIOS::removeFixedScrollingNodeLayerIDs(const 
 
 void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
-    using PlatformLayerID = GraphicsLayer::PlatformLayerID;
+    using PlatformLayerID = PlatformLayerIdentifier;
 
     for (auto& currNode : stateTree.nodeMap().values()) {
         if (currNode->hasChangedProperty(ScrollingStateNode::Property::Layer)) {
@@ -224,7 +224,7 @@ void RemoteScrollingCoordinatorProxyIOS::establishLayerTreeScrollingRelations(co
     // To do overlap hit testing correctly we tell layers about such relations.
     
     for (auto& positionedNode : scrollingTree()->activePositionedNodes()) {
-        Vector<GraphicsLayer::PlatformLayerID> stationaryScrollContainerIDs;
+        Vector<PlatformLayerIdentifier> stationaryScrollContainerIDs;
 
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
             auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(overflowNodeID));

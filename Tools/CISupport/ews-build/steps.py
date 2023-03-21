@@ -64,7 +64,7 @@ WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
 # First project is treated as the default
-GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
+GITHUB_PROJECTS = ['WebKit/WebKit', 'WebKit/WebKit-security', 'apple/WebKit']
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE = 'origin'
@@ -913,6 +913,40 @@ class ShowIdentifier(shell.ShellCommand):
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
+
+
+class InstallHooks(steps.ShellSequence):
+    name = 'install-hooks'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        super().__init__(timeout=30, logEnviron=False, **kwargs)
+
+    def run(self):
+        install_hooks_command = [
+            'python3', 'Tools/Scripts/git-webkit',
+            'install-hooks', 'pre-push',
+            '--mode', 'no-radar',
+        ]
+        source = self.getProperty('github.head.repo.full_name', None)
+        project = self.getProperty('project', None)
+        if project in GITHUB_PROJECTS and source:
+            install_hooks_command += ['--level', 'github.com:{}={}'.format(source, GITHUB_PROJECTS.index(project))]
+
+        self.commands = []
+        for command in [
+            ['git', 'config', 'include.path', '../metadata/git_config_extension'],
+            install_hooks_command,
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        return super().run()
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Installed hooks to checkout'}
+        return {'step': 'Failed to install hooks to checkout'}
 
 
 class CleanWorkingDirectory(shell.ShellCommand):

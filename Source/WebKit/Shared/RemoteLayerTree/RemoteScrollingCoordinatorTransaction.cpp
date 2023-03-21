@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,10 +116,10 @@ bool ArgumentCoder<ScrollingStateNode>::decode(Decoder& decoder, ScrollingStateN
 
     node.setChangedProperties(changedProperties);
     if (node.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     return true;
@@ -253,31 +253,31 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::KeyboardScrollData, RequestedKeyboardScrollData, setKeyboardScrollData);
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setScrollContainerLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setScrollContainerLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setScrolledContentsLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setScrolledContentsLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setHorizontalScrollbarLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setHorizontalScrollbarLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setVerticalScrollbarLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setVerticalScrollbarLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     return true;
@@ -306,31 +306,31 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::OverrideVisualViewportSize, std::optional<FloatSize>, setOverrideVisualViewportSize)
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setCounterScrollingLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setCounterScrollingLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setInsetClipLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setInsetClipLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setContentShadowLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setContentShadowLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer)) {
-        std::optional<GraphicsLayer::PlatformLayerID> layerID;
+        std::optional<PlatformLayerIdentifier> layerID;
         if (!decoder.decode(layerID))
             return false;
-        node.setRootContentsLayer(layerID.value_or(GraphicsLayer::PlatformLayerID { }));
+        node.setRootContentsLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     return true;
@@ -614,10 +614,10 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
     }
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
-        ts.dumpProperty("scroll-container-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrollContainerLayer()));
+        ts.dumpProperty("scroll-container-layer", static_cast<PlatformLayerIdentifier>(node.scrollContainerLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
-        ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
+        ts.dumpProperty("scrolled-contents-layer", static_cast<PlatformLayerIdentifier>(node.scrolledContentsLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo)) {
         ts.dumpProperty("horizontal snap offsets", node.snapOffsetsInfo().horizontalSnapOffsets);
@@ -700,16 +700,16 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
         ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
-        ts.dumpProperty("clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
+        ts.dumpProperty("clip-inset-layer", static_cast<PlatformLayerIdentifier>(node.insetClipLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        ts.dumpProperty("content-shadow-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer()));
+        ts.dumpProperty("content-shadow-layer", static_cast<PlatformLayerIdentifier>(node.contentShadowLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
-        ts.dumpProperty("header-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.headerLayer()));
+        ts.dumpProperty("header-layer", static_cast<PlatformLayerIdentifier>(node.headerLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
-        ts.dumpProperty("footer-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.footerLayer()));
+        ts.dumpProperty("footer-layer", static_cast<PlatformLayerIdentifier>(node.footerLayer()));
 }
     
 static void dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
@@ -749,7 +749,7 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
     ts.dumpProperty("type", node.nodeType());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::Layer))
-        ts.dumpProperty("layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
+        ts.dumpProperty("layer", static_cast<PlatformLayerIdentifier>(node.layer()));
     
     switch (node.nodeType()) {
     case ScrollingNodeType::MainFrame:

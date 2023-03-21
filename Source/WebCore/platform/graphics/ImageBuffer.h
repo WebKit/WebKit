@@ -29,6 +29,7 @@
 
 #include "ImageBufferAllocator.h"
 #include "ImageBufferBackend.h"
+#include "ProcessIdentity.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/OptionSet.h>
@@ -67,6 +68,7 @@ struct ImageBufferCreationContext {
     enum class UseCGDisplayListImageCache : bool { No, Yes };
     UseCGDisplayListImageCache useCGDisplayListImageCache;
 #endif
+    WebCore::ProcessIdentity resourceOwner;
 
     ImageBufferCreationContext(GraphicsClient* client = nullptr
 #if HAVE(IOSURFACE)
@@ -76,6 +78,7 @@ struct ImageBufferCreationContext {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
 #endif
+        , WebCore::ProcessIdentity resourceOwner = { }
     )
         : graphicsClient(client)
 #if HAVE(IOSURFACE)
@@ -85,6 +88,7 @@ struct ImageBufferCreationContext {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         , useCGDisplayListImageCache(useCGDisplayListImageCache)
 #endif
+        , resourceOwner(resourceOwner)
     { }
 };
 
@@ -138,11 +142,10 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> cloneForDifferentThread();
 
     WEBCORE_EXPORT virtual GraphicsContext& context() const;
-    WEBCORE_EXPORT virtual void flushContext();
 
     virtual bool prefersPreparationForDisplay() { return false; }
-    virtual void flushDrawingContext() { }
-    virtual bool flushDrawingContextAsync() { return false; }
+    WEBCORE_EXPORT virtual void flushDrawingContext();
+    WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
 
     WEBCORE_EXPORT std::unique_ptr<ImageBufferBackend> takeBackend();
     WEBCORE_EXPORT IntSize backendSize() const;

@@ -30,6 +30,7 @@
 
 #import "APIUIClient.h"
 #import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>

@@ -693,7 +693,9 @@ String HTMLLinkElement::fetchPriorityForBindings() const
 
 RequestPriority HTMLLinkElement::fetchPriorityHint() const
 {
-    return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+    if (document().settings().priorityHintsEnabled())
+        return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
+    return RequestPriority::Auto;
 }
 
 } // namespace WebCore

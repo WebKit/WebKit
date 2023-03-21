@@ -238,18 +238,19 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
 
 static PKApplePayLaterMode toPKApplePayLaterMode(WebCore::ApplePayLaterMode applePayLaterMode)
 {
+    // FIXME: rdar://106983272 Remove staging code.
     switch (applePayLaterMode) {
     case WebCore::ApplePayLaterMode::Enabled:
-        return PKApplePayLaterModeEnabled;
+        return (PKApplePayLaterMode)PKApplePayLaterModeEnabled;
 
     case WebCore::ApplePayLaterMode::DisabledMerchantIneligible:
-        return PKApplePayLaterModeDisabledMerchantIneligible;
+        return (PKApplePayLaterMode)PKApplePayLaterModeDisabledMerchantIneligible;
 
     case WebCore::ApplePayLaterMode::DisabledItemIneligible:
-        return PKApplePayLaterModeDisabledItemIneligible;
+        return (PKApplePayLaterMode)PKApplePayLaterModeDisabledItemIneligible;
 
     case WebCore::ApplePayLaterMode::DisabledRecurringTransaction:
-        return PKApplePayLaterModeDisabledRecurringTransaction;
+        return (PKApplePayLaterMode)PKApplePayLaterModeDisabledRecurringTransaction;
     }
 }
 
@@ -360,8 +361,11 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 #endif
 
 #if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
-    if (auto& applePayLaterMode = paymentRequest.applePayLaterMode())
-        [result setApplePayLaterMode:toPKApplePayLaterMode(*applePayLaterMode)];
+    if (auto& applePayLaterMode = paymentRequest.applePayLaterMode()) {
+        // FIXME: rdar://106983272 Remove staging code.
+        if ([result respondsToSelector:@selector(setApplePayLaterMode:)])
+            [result setApplePayLaterMode:toPKApplePayLaterMode(*applePayLaterMode)];
+    }
 #endif
 
 #if HAVE(PASSKIT_RECURRING_PAYMENTS)

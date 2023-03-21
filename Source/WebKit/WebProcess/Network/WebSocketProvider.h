@@ -33,16 +33,10 @@ namespace WebKit {
 class WebSocketProvider final : public WebCore::SocketProvider {
 public:
     static Ref<WebSocketProvider> create(WebPageProxyIdentifier webPageProxyID) { return adoptRef(*new WebSocketProvider(webPageProxyID)); }
-    WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
-        : m_webPageProxyID(webPageProxyID)
-    {
-    }
-
-    Ref<WebCore::SocketStreamHandle> createSocketStreamHandle(const URL&, WebCore::SocketStreamHandleClient&, WebCore::WebSocketIdentifier, PAL::SessionID, const String& credentialPartition, const WebCore::StorageSessionProvider*) final;
-    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&) final;
-    virtual ~WebSocketProvider() { }
-
 private:
+    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&) final;
+    explicit WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
+        : m_webPageProxyID(webPageProxyID) { }
     WebPageProxyIdentifier m_webPageProxyID;
 };
 

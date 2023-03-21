@@ -3338,23 +3338,6 @@ IsLoggedInAPIEnabled:
       default: false
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
-# FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-IsNSURLSessionWebSocketEnabled:
-  type: bool
-  status: stable
-  category: networking
-  humanReadableName: "NSURLSession WebSocket"
-  humanReadableDescription: "Use NSURLSession WebSocket API"
-  condition: HAVE(NSURLSESSION_WEBSOCKET)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-# FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
 IsSameSiteStrictEnforcementEnabled:
   type: bool
   status: unstable

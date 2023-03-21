@@ -718,7 +718,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithLegacyReceiver_SetVideoLayerID:
         return Vector<ArgumentDescription> {
-            { "videoLayerID", "WebCore::GraphicsLayer::PlatformLayerID", nullptr, false },
+            { "videoLayerID", "WebCore::PlatformLayerIdentifier", nullptr, false },
         };
 #if PLATFORM(MAC)
     case MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection:
@@ -827,7 +827,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithoutAttributes_SetVideoLayerID:
         return Vector<ArgumentDescription> {
-            { "videoLayerID", "WebCore::GraphicsLayer::PlatformLayerID", nullptr, false },
+            { "videoLayerID", "WebCore::PlatformLayerIdentifier", nullptr, false },
         };
 #if PLATFORM(MAC)
     case MessageName::TestWithoutAttributes_DidCreateWebProcessConnection:

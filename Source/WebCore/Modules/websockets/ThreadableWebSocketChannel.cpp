@@ -51,28 +51,12 @@
 
 namespace WebCore {
 
-Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
+RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
 {
-#if USE(CURL) || USE(SOUP)
-    bool enabled = true;
-#elif HAVE(NSURLSESSION_WEBSOCKET)
-    bool enabled = document.settings().isNSURLSessionWebSocketEnabled();
-#else
-    bool enabled = false;
-#endif
-    if (enabled) {
-        if (auto channel = provider.createWebSocketChannel(document, client))
-            return channel.releaseNonNull();
-    }
-
-#if USE(SOUP)
-    RELEASE_ASSERT_NOT_REACHED();
-#else
-    return WebSocketChannel::create(document, client, provider);
-#endif
+    return provider.createWebSocketChannel(document, client);
 }
 
-Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
+RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
 {
     if (is<WorkerGlobalScope>(context)) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);

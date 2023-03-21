@@ -2806,7 +2806,7 @@ void FrameLoader::didFirstLayout()
 
 void FrameLoader::didReachVisuallyNonEmptyState()
 {
-    ASSERT(m_frame.isMainFrame());
+    ASSERT(m_frame.isRootFrame());
     m_client->dispatchDidReachVisuallyNonEmptyState();
 }
 

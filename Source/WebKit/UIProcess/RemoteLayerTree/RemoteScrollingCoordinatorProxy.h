@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingTree.h"
 #include "RemoteScrollingUIState.h"
-#include <WebCore/GraphicsLayer.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/Noncopyable.h>
@@ -170,7 +170,7 @@ protected:
     std::optional<unsigned> m_currentHorizontalSnapPointIndex;
     std::optional<unsigned> m_currentVerticalSnapPointIndex;
     bool m_waitingForDidScrollReply { false };
-    HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;
+    HashSet<WebCore::PlatformLayerIdentifier> m_layersWithScrollingRelations;
 };
 
 } // namespace WebKit

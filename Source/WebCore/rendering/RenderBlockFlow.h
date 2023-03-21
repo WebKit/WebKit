@@ -227,7 +227,6 @@ public:
         LayoutUnit negativeMargin() const { return m_negativeMargin; }
         LayoutUnit margin() const { return m_positiveMargin - m_negativeMargin; }
     };
-    LayoutUnit marginOffsetForSelfCollapsingBlock();
 
     bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
     void trimFloatBlockEndMargins(LayoutUnit blockFormattingContextInFlowContentHeight);
@@ -549,6 +548,8 @@ private:
 #endif
     // FIXME: This is temporary until after we remove the forced "line layout codepath" invalidation.
     std::optional<LayoutUnit> m_previousModernLineLayoutContentBoxLogicalHeight;
+
+    std::optional<LayoutUnit> selfCollapsingMarginBeforeWithClear(RenderObject* candidate);
 
 public:
     // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.

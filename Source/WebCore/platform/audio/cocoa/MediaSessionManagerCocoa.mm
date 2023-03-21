@@ -139,7 +139,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         case PlatformMediaSession::MediaType::WebAudio:
             if (session.canProduceAudio()) {
                 ++webAudioCount;
-                isPlayingAudio |= session.isPlaying();
+                isPlayingAudio |= session.isPlaying() && session.isAudible();
             }
             break;
         }
@@ -147,7 +147,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         if (!hasAudibleAudioOrVideoMediaType) {
             bool isPotentiallyAudible = session.isPlayingToWirelessPlaybackTarget()
                 || ((type == PlatformMediaSession::MediaType::VideoAudio || type == PlatformMediaSession::MediaType::Audio)
-                    && session.canProduceAudio()
+                    && session.isAudible()
                     && (session.isPlaying() || session.preparingToPlay() || session.hasPlayedAudiblySinceLastInterruption()));
             if (isPotentiallyAudible) {
                 hasAudibleAudioOrVideoMediaType = true;

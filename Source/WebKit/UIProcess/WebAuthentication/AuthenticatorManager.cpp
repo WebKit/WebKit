@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,14 @@
 #include "AuthenticatorPresenterCoordinator.h"
 #include "LocalService.h"
 #include "NfcService.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorTransport.h>
+#include <WebCore/EventRegion.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/MonotonicTime.h>

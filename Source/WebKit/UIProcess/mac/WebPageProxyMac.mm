@@ -43,6 +43,7 @@
 #import "PageClient.h"
 #import "PageClientImplMac.h"
 #import "RemoteLayerTreeHost.h"
+#import "RemoteLayerTreeNode.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"

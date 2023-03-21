@@ -47,6 +47,7 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <div class="testcase" id="div"></div>
     AXRole: AXGroup
+    computedRoleString: generic
 
 <dl class="testcase" id="dl"></dl>
     AXRole: AXList

@@ -53,7 +53,7 @@ public:
     void clearObserver() { m_observer = nullptr; }
 
     // GraphicsLayer
-    WebCore::GraphicsLayer::PlatformLayerID primaryLayerID() const override;
+    WebCore::PlatformLayerIdentifier primaryLayerID() const override;
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::FloatRect&, ShouldClipToLayer) override;
     void setContentsNeedsDisplay() override;
@@ -122,7 +122,7 @@ private:
 
     GraphicsLayerWC* m_prev;
     GraphicsLayerWC* m_next;
-    WebCore::GraphicsLayer::PlatformLayerID m_layerID { WebCore::GraphicsLayer::PlatformLayerID::generate() };
+    WebCore::PlatformLayerIdentifier m_layerID { WebCore::PlatformLayerIdentifier::generate() };
     Observer* m_observer;
     std::unique_ptr<WCTiledBacking> m_tiledBacking;
     PlatformLayer* m_platformLayer { nullptr };

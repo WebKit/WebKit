@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -144,8 +144,8 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     }
 
     struct LayerAndClone {
-        GraphicsLayer::PlatformLayerID layerID;
-        GraphicsLayer::PlatformLayerID cloneLayerID;
+        PlatformLayerIdentifier layerID;
+        PlatformLayerIdentifier cloneLayerID;
     };
     Vector<LayerAndClone> clonesToUpdate;
 
@@ -222,7 +222,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     return rootLayerChanged;
 }
 
-void RemoteLayerTreeHost::asyncSetLayerContents(GraphicsLayer::PlatformLayerID layerID, ImageBufferBackendHandle&& handle)
+void RemoteLayerTreeHost::asyncSetLayerContents(PlatformLayerIdentifier layerID, ImageBufferBackendHandle&& handle)
 {
     auto* node = nodeForID(layerID);
     if (!node)
@@ -232,7 +232,7 @@ void RemoteLayerTreeHost::asyncSetLayerContents(GraphicsLayer::PlatformLayerID l
     node->layer().contents = contents.get();
 }
 
-RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(GraphicsLayer::PlatformLayerID layerID) const
+RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(PlatformLayerIdentifier layerID) const
 {
     if (!layerID)
         return nullptr;
@@ -240,7 +240,7 @@ RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(GraphicsLayer::PlatformLayer
     return m_nodes.get(layerID);
 }
 
-void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID layerID)
+void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::PlatformLayerIdentifier layerID)
 {
     auto animationDelegateIter = m_animationDelegates.find(layerID);
     if (animationDelegateIter != m_animationDelegates.end()) {
@@ -267,7 +267,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
     m_nodes.remove(layerID);
 }
 
-void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, MonotonicTime startTime)
+void RemoteLayerTreeHost::animationDidStart(WebCore::PlatformLayerIdentifier layerID, CAAnimation *animation, MonotonicTime startTime)
 {
     if (!m_drawingArea)
         return;
@@ -288,7 +288,7 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLaye
         m_drawingArea->acceleratedAnimationDidStart(layerID, animationKey, startTime);
 }
 
-void RemoteLayerTreeHost::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation)
+void RemoteLayerTreeHost::animationDidEnd(WebCore::PlatformLayerIdentifier layerID, CAAnimation *animation)
 {
     if (!m_drawingArea)
         return;
@@ -325,12 +325,12 @@ void RemoteLayerTreeHost::clearLayers()
     m_rootNode = nullptr;
 }
 
-CALayer *RemoteLayerTreeHost::layerWithIDForTesting(WebCore::GraphicsLayer::PlatformLayerID layerID) const
+CALayer *RemoteLayerTreeHost::layerWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
     return layerForID(layerID);
 }
 
-CALayer *RemoteLayerTreeHost::layerForID(WebCore::GraphicsLayer::PlatformLayerID layerID) const
+CALayer *RemoteLayerTreeHost::layerForID(WebCore::PlatformLayerIdentifier layerID) const
 {
     auto* node = nodeForID(layerID);
     if (!node)

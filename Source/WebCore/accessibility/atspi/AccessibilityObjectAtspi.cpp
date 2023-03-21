@@ -50,7 +50,7 @@ static inline bool roleIsTextType(AccessibilityRole role)
 {
     return role == AccessibilityRole::Paragraph
         || role == AccessibilityRole::Heading
-        || role == AccessibilityRole::Div
+        || role == AccessibilityRole::Generic
         || role == AccessibilityRole::Cell
         || role == AccessibilityRole::Link
         || role == AccessibilityRole::WebCoreLink
@@ -292,7 +292,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::Footnote;
     case AccessibilityRole::ApplicationTextGroup:
     case AccessibilityRole::Code:
-    case AccessibilityRole::Div:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::Pre:
     case AccessibilityRole::SVGText:
     case AccessibilityRole::TextGroup:
@@ -1344,7 +1344,7 @@ const char* AccessibilityObjectAtspi::effectiveLocalizedRoleName() const
     case Atspi::Role::TableCell:
         return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Cell);
     case Atspi::Role::Section:
-        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Div);
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Generic);
     case Atspi::Role::MathFraction:
         return _("math fraction");
     case Atspi::Role::MathRoot:

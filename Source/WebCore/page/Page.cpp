@@ -268,7 +268,9 @@ static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
 static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
 {
     return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
-        return LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
+        auto localFrame = LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
+        page.addRootFrame(localFrame.get());
+        return localFrame;
     }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
     });
@@ -1941,10 +1943,16 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
+    for (auto& rootFrame : m_rootFrames)
+        finalizeRenderingUpdateForRootFrame(rootFrame, flags);
+}
+
+void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<FinalizeRenderingUpdateFlags> flags)
+{
     LOG(EventLoop, "Page %p finalizeRenderingUpdate()", this);
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
+    ASSERT(rootFrame.isRootFrame());
+    auto* view = rootFrame.view();
     if (!view)
         return;
 

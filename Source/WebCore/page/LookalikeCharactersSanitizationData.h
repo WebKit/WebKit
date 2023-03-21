@@ -46,6 +46,11 @@ struct LookalikeCharactersSanitizationData {
     {
     }
 
+    LookalikeCharactersSanitizationData(const String& lookalikeCharacters)
+        : lookalikeCharacters(lookalikeCharacters)
+    {
+    }
+
     template<class Encoder> void encode(Encoder& encoder) const
     {
         encoder << domain;

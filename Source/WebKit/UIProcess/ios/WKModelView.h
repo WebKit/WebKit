@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ OBJC_CLASS ASVInlinePreview;
 
 @interface WKModelView : WKCompositingView <WKNativelyInteractible>
 
-- (instancetype)initWithModel:(WebCore::Model&)model layerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID page:(WebKit::WebPageProxy&)page NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithModel:(WebCore::Model&)model layerID:(WebCore::PlatformLayerIdentifier)layerID page:(WebKit::WebPageProxy&)page NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;

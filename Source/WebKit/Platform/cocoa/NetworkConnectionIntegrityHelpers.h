@@ -51,7 +51,7 @@ class LookalikeCharacters {
 public:
     static LookalikeCharacters& shared();
 
-    const Vector<String>& cachedStrings() const { return m_cachedStrings; }
+    const Vector<WebCore::LookalikeCharactersSanitizationData>& cachedStrings() const { return m_cachedStrings; }
     void updateStrings(CompletionHandler<void()>&&);
 
     class Observer : public RefCounted<Observer>, public CanMakeWeakPtr<Observer> {
@@ -80,10 +80,10 @@ public:
 
 private:
     LookalikeCharacters() = default;
-    void setCachedStrings(Vector<String>&&);
+    void setCachedStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&&);
 
     RetainPtr<WKNetworkConnectionIntegrityNotificationListener> m_notificationListener;
-    Vector<String> m_cachedStrings;
+    Vector<WebCore::LookalikeCharactersSanitizationData> m_cachedStrings;
     WeakHashSet<Observer> m_observers;
 };
 

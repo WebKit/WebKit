@@ -38,6 +38,7 @@
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
+#import "RemoteLayerTreeNode.h"
 #import "StringUtilities.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"

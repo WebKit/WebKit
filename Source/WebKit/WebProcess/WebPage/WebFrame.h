@@ -77,6 +77,8 @@ class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public 
 public:
     static Ref<WebFrame> create(WebPage& page) { return adoptRef(*new WebFrame(page)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
+    static Ref<WebFrame> createLocalSubframeHostedInAnotherProcess(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier);
+    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier);
     ~WebFrame();
 
     void initWithCoreMainFrame(WebPage&, WebCore::Frame&, bool receivedMainFrameIdentifierFromUIProcess);
@@ -89,6 +91,7 @@ public:
     static WebFrame* fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
+    WebCore::Frame* coreAbstractFrame() const;
 
     FrameInfoData info() const;
     void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
@@ -119,6 +122,7 @@ public:
 
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
+    bool isRootFrame() const;
     String name() const;
     URL url() const;
     WebCore::CertificateInfo certificateInfo() const;
@@ -215,8 +219,12 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
+    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
+
 private:
     WebFrame(WebPage&);
+
+    void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
 
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
@@ -242,7 +250,7 @@ private:
     TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;
 #endif
     std::optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
-
+    Markable<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
 };
 
 } // namespace WebKit

@@ -45,6 +45,8 @@ struct PromisedAttachmentInfo;
 
 namespace WebKit {
 
+class RemoteLayerTreeNode;
+
 enum class UndoOrRedo : bool;
 
 class PageClientImpl final : public PageClientImplCocoa

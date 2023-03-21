@@ -45,6 +45,7 @@ struct PromisedAttachmentInfo;
 
 namespace WebKit {
 
+class RemoteLayerTreeNode;
 class WebViewImpl;
 
 class PageClientImpl final : public PageClientImplCocoa

@@ -5095,7 +5095,7 @@ void LocalFrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         return;
 
     m_contentQualifiesAsVisuallyNonEmpty = true;
-    if (m_frame->isMainFrame())
+    if (m_frame->isRootFrame())
         m_frame->loader().didReachVisuallyNonEmptyState();
 }
 

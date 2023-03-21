@@ -762,6 +762,8 @@ void InjectedBundlePage::dump()
 
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
     auto urlRef = adoptWK(WKBundleFrameCopyURL(frame));
+    if (!urlRef)
+        return;
     String url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
     auto mimeType = adoptWK(WKBundleFrameCopyMIMETypeForResourceWithURL(frame, urlRef.get()));
     if (url.find("dumpAsText/"_s) != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))

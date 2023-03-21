@@ -87,6 +87,7 @@
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
+#include "PolicyDecision.h"
 #include "PrintInfo.h"
 #include "ProcessThrottler.h"
 #include "ProvisionalPageProxy.h"
@@ -94,6 +95,7 @@
 #include "SpeechRecognitionPermissionManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
+#include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -117,6 +119,7 @@
 #include "WebFrame.h"
 #include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebFrameProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebImage.h"
@@ -1742,36 +1745,6 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
             process->addPreviouslyApprovedFileURL(unreachableURL);
         send(Messages::WebPage::LoadAlternateHTML(loadParameters));
         process->startResponsivenessTimer();
-    });
-}
-
-void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
-{
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "loadWebArchiveData:");
-
-    if (m_isClosed) {
-        WEBPAGEPROXY_RELEASE_LOG(Loading, "loadWebArchiveData: page is closed");
-        return;
-    }
-
-    if (!hasRunningProcess())
-        launchProcess({ }, ProcessLaunchReason::InitialProcess);
-
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), { }, LoadedWebArchive::Yes), [this, protectedThis = Ref { *this }, webArchiveData = RefPtr { webArchiveData }, userData = RefPtr { userData }] {
-        auto transaction = m_pageLoadState.transaction();
-        m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
-
-        LoadParameters loadParameters;
-        loadParameters.navigationID = 0;
-        loadParameters.data = webArchiveData->dataReference();
-        loadParameters.MIMEType = "application/x-webarchive"_s;
-        loadParameters.encodingName = "utf-16"_s;
-        loadParameters.userData = UserData(process().transformObjectsToHandles(userData.get()).get());
-        prepareToLoadWebPage(process(), loadParameters);
-
-        m_process->markProcessAsRecentlyUsed();
-        send(Messages::WebPage::LoadData(loadParameters));
-        m_process->startResponsivenessTimer();
     });
 }
 
@@ -4553,7 +4526,7 @@ void WebPageProxy::requestRectForFoundTextRange(const WebFoundTextRange& range, 
     sendWithAsyncReply(Messages::WebPage::RequestRectForFoundTextRange(range), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&& callbackFunction)
+void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&& callbackFunction)
 {
     sendWithAsyncReply(Messages::WebPage::AddLayerForFindOverlay(), WTFMove(callbackFunction));
 }
@@ -5366,7 +5339,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
                 automationSession->navigationOccurredForFrame(*frame);
         }
 
-        frame->didFinishLoad(request.url().isAboutBlank());
+        frame->didFinishLoad();
 
         m_pageLoadState.commitChanges();
     }
@@ -11710,12 +11683,12 @@ void WebPageProxy::modelElementSetInteractionEnabled(ModelIdentifier modelIdenti
         m_modelElementController->setInteractionEnabledForModelElement(modelIdentifier, isInteractionEnabled);
 }
 
-void WebPageProxy::modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
+void WebPageProxy::modelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
 {
     send(Messages::WebPage::ModelInlinePreviewDidLoad(layerID));
 }
 
-void WebPageProxy::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+void WebPageProxy::modelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier layerID, const WebCore::ResourceError& error)
 {
     send(Messages::WebPage::ModelInlinePreviewDidFailToLoad(layerID, error));
 }

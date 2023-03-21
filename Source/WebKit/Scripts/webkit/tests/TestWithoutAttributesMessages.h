@@ -33,8 +33,8 @@
 #endif
 #include "MessageNames.h"
 #include "Plugin.h"
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/PluginData.h>
 #include <utility>
 #include <wtf/Forward.h>
@@ -432,12 +432,12 @@ private:
 
 class SetVideoLayerID {
 public:
-    using Arguments = std::tuple<WebCore::GraphicsLayer::PlatformLayerID>;
+    using Arguments = std::tuple<WebCore::PlatformLayerIdentifier>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_SetVideoLayerID; }
     static constexpr bool isSync = false;
 
-    explicit SetVideoLayerID(const WebCore::GraphicsLayer::PlatformLayerID& videoLayerID)
+    explicit SetVideoLayerID(const WebCore::PlatformLayerIdentifier& videoLayerID)
         : m_arguments(videoLayerID)
     {
     }
@@ -448,7 +448,7 @@ public:
     }
 
 private:
-    std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> m_arguments;
+    std::tuple<const WebCore::PlatformLayerIdentifier&> m_arguments;
 };
 
 #if PLATFORM(MAC)

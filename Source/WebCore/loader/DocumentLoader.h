@@ -164,6 +164,7 @@ using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
     : public RefCounted<DocumentLoader>
+    , public CanMakeCheckedPtr
     , public FrameDestructionObserver
     , public ContentSecurityPolicyClient
 #if ENABLE(CONTENT_FILTERING)

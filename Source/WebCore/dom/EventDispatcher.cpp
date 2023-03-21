@@ -159,7 +159,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
-    std::optional<bool> shouldClearTargetsAfterDispatch;
+    bool shouldClearTargetsAfterDispatch = false;
     for (size_t i = eventPath.size(); i > 0; --i) {
         const EventContext& eventContext = eventPath.contextAt(i - 1);
         // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
@@ -180,17 +180,13 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     InputElementClickState clickHandlingState;
 
-    bool isActivationEvent = event.type() == eventNames().clickEvent;
     RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
-    if (!inputForLegacyPreActivationBehavior && isActivationEvent && event.bubbles())
+    if (!inputForLegacyPreActivationBehavior && event.bubbles() && event.type() == eventNames().clickEvent)
         inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
     if (inputForLegacyPreActivationBehavior)
         inputForLegacyPreActivationBehavior->willDispatchEvent(event, clickHandlingState);
 
-    if (shouldSuppressEventDispatchInDOM(node, event))
-        event.stopPropagation();
-
-    if (!event.propagationStopped() && !eventPath.isEmpty()) {
+    if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event)) {
         event.setEventPath(eventPath);
         dispatchEventInDOM(event, eventPath);
     }
@@ -212,7 +208,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         event.setTarget(WTFMove(finalTarget));
     }
 
-    if (shouldClearTargetsAfterDispatch.value_or(false)) {
+    if (shouldClearTargetsAfterDispatch) {
         event.setTarget(nullptr);
         event.setRelatedTarget(nullptr);
         // FIXME: We should also clear the event's touch target list.

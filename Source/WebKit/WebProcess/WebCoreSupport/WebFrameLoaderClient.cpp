@@ -838,7 +838,7 @@ void WebFrameLoaderClient::dispatchDidReachVisuallyNonEmptyState()
 {
     if (!m_frame->page() || m_frame->page()->corePage()->settings().suppressesIncrementalRendering())
         return;
-    ASSERT(m_frame->isMainFrame());
+    ASSERT(m_frame->isRootFrame());
     completePageTransitionIfNeeded();
 }
 

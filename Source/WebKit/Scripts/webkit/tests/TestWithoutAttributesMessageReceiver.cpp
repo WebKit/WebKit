@@ -46,10 +46,10 @@
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
 #include "WebTouchEvent.h" // NOLINT
 #endif
-#include <WebCore/GraphicsLayer.h> // NOLINT
 #if PLATFORM(MAC)
 #include <WebCore/KeyboardEvent.h> // NOLINT
 #endif
+#include <WebCore/PlatformLayerIdentifier.h> // NOLINT
 #include <WebCore/PluginData.h> // NOLINT
 #include <utility> // NOLINT
 #include <wtf/HashMap.h> // NOLINT

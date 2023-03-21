@@ -555,15 +555,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     if (platformData().size()) {
         bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
         CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
-#if USE(CTFONTGETADVANCES_WORKAROUND)
-        CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
-        if (!CTFontIsAppleColorEmoji(m_platformData.ctFont()) && !m_platformData.hasVariations())
-            CTFontGetUnsummedAdvancesForGlyphsAndStyle(m_platformData.ctFont(), orientation, style, &glyph, &advance, 1);
-        else
-#endif
-        {
-            CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
-        }
+        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
     }
     return advance.width;
 }
@@ -572,7 +564,6 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
 {
     UNUSED_PARAM(requiresShaping);
 
-#if USE(CTFONTSHAPEGLYPHS)
     auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer, CGPoint** newOffsetsPointer, CFIndex** newIndicesPointer)
     {
         range.location = std::min(std::max(range.location, static_cast<CFIndex>(0)), static_cast<CFIndex>(glyphBuffer.size()));
@@ -679,31 +670,6 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
 
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] += beginningStringIndex;
-
-#else
-
-    UNUSED_PARAM(beginningStringIndex);
-    UNUSED_PARAM(locale);
-    UNUSED_PARAM(text);
-
-    // CTFontTransformGlyphs() operates in visual order, but WidthIterator iterates in logical order.
-    // Temporarily put us in visual order just for the call, then put us back into logical order when
-    // the call is done.
-    // We don't have a global view of the entire GlyphBuffer; we're just operating on a single chunk of it.
-    // WidthIterator encounters the chunks out in logical order, so we have to maintain that invariant.
-    // Eventually, FontCascade::layoutSimpleText() will reverse the whole buffer to put the entire thing
-    // in visual order, but that's okay because it has a view of the entire GlyphBuffer.
-    // On the other hand, CTFontShapeGlyphs() accepts the buffer in logical order but returns it in physical
-    // order, which means the second reverse() in this function still needs to execute when
-    // CTFontShapeGlyphs() is being used.
-    if (textDirection == TextDirection::RTL)
-        glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
-
-    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | kCTFontTransformApplyShaping;
-    CTFontTransformGlyphs(m_platformData.ctFont(), glyphBuffer.glyphs(beginningGlyphIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningGlyphIndex)), glyphBuffer.size() - beginningGlyphIndex, options);
-
-    auto initialAdvance = makeGlyphBufferAdvance();
-#endif
 
     // See the comment above in this function where the other call to reverse() is.
     if (textDirection == TextDirection::RTL)

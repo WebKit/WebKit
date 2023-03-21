@@ -523,7 +523,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
 
     ASSERT(decodingOptions.decodingMode() != DecodingMode::Auto);
 
-    if (decodingOptions.decodingMode() == DecodingMode::Synchronous && !decodingOptions.sizeForDrawing()) {
+    if (decodingOptions.decodingMode() == DecodingMode::Synchronous) {
         // Decode an image synchronously for its native size.
         options = imageSourceOptions(subsamplingLevel);
         image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));

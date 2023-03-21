@@ -72,7 +72,6 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSizeHash.h>
@@ -82,6 +81,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PointerCharacteristics.h>
@@ -358,6 +358,7 @@ struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditorState;
+struct FrameTreeNodeData;
 struct FocusedElementInformation;
 struct FontInfo;
 struct FrameTreeNodeData;
@@ -373,7 +374,6 @@ struct WebAutocorrectionContext;
 struct WebFoundTextRange;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
-struct WebsitePoliciesData;
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 class VisibleContentRectUpdateInfo;
@@ -441,7 +441,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void willCommitLayerTree(RemoteLayerTreeTransaction&);
+    void willCommitLayerTree(RemoteLayerTreeTransaction&, WebFrame*);
     void didFlushLayerTreeAtTime(MonotonicTime);
 #endif
 
@@ -676,8 +676,8 @@ public:
     bool defersLoading() const;
     void setDefersLoading(bool deferLoading);
 
-    void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
-    void exitAcceleratedCompositingMode();
+    void enterAcceleratedCompositingMode(WebCore::Frame&, WebCore::GraphicsLayer*);
+    void exitAcceleratedCompositingMode(WebCore::Frame&);
 
 #if ENABLE(PDFKIT_PLUGIN)
     void addPluginView(PluginView*);
@@ -922,6 +922,8 @@ public:
     };
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
+    
+    void updateFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
 
@@ -1590,8 +1592,8 @@ public:
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID);
-    void modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID, const WebCore::ResourceError&);
+    void modelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier);
+    void modelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier, const WebCore::ResourceError&);
 #endif
 
 #if ENABLE(VIDEO)
@@ -1625,10 +1627,10 @@ public:
     bool shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&) const;
     void setSkipDecidePolicyForResponseIfPossible(bool value) { m_skipDecidePolicyForResponseIfPossible = value; }
 
-    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
-
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
+
+    void constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier localFrameIdentifier, WebCore::LayerHostingContextIdentifier localFrameHostLayerIdentifier, const FrameTreeCreationParameters&);
 
     void updateThrottleState();
 
@@ -1683,7 +1685,7 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    void setLookalikeCharacterStrings(Vector<String>&&);
+    void setLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&&);
     void setAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&&);
 #endif
 
@@ -1921,7 +1923,7 @@ private:
     void didEndTextSearchOperation();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
-    void addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&&);
+    void addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&&);
     void removeLayerForFindOverlay(CompletionHandler<void()>&&);
 
 #if USE(COORDINATED_GRAPHICS)
@@ -2557,7 +2559,6 @@ private:
     Vector<String> m_corsDisablingPatterns;
 
     std::unique_ptr<WebCore::CachedPage> m_cachedPage;
-    Markable<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
 
 #if ENABLE(IPC_TESTING_API)
     bool m_ipcTestingAPIEnabled { false };
@@ -2587,6 +2588,7 @@ private:
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     HashSet<String> m_lookalikeCharacterStrings;
+    HashMap<WebCore::RegistrableDomain, HashSet<String>> m_domainScopedLookalikeCharacterStrings;
     HashMap<WebCore::RegistrableDomain, String> m_allowedLookalikeCharacterStrings;
 #endif
 

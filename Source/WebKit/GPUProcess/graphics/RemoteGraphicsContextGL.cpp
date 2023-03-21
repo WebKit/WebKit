@@ -268,7 +268,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(RefPtr<WebCore::Pixe
             else
                 imageBuffer->context().clearRect({ IntPoint(), imageBuffer->backendSize() });
             // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
-            imageBuffer->flushContext();
+            imageBuffer->flushDrawingContext();
         }
         Locker locker { lock };
         isFinished = true;

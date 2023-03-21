@@ -567,7 +567,7 @@ private:
 #endif
 
     bool documentUsesTiledBacking() const;
-    bool isMainFrameCompositor() const;
+    bool isRootFrameCompositor() const;
 
     void updateCompositingForLayerTreeAsTextDump();
 

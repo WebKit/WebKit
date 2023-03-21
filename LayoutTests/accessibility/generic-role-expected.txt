@@ -1,0 +1,9 @@
+This test ensures the generic ARIA role is exposed correctly.
+
+PASS: accessibilityController.accessibleElementById('explicit-generic').isIgnored === false
+PASS: !implicitGenericDiv || implicitGenericDiv.isIgnored === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

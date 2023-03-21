@@ -26,13 +26,13 @@
 
 #pragma once
 
-#include "GraphicsLayer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+class GraphicsLayer;
 class ImageBuffer;
 
 // Used to provide GraphicsLayer contents for an externally managed ImageBuffer; e.g. an ImageBuffer created and owned by a Worker thread

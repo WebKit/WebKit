@@ -112,6 +112,7 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
+// FIXME: Remove receivedMainFrameIdentifierFromUIProcess in favor of a more correct way of sending frame tree deltas to each process.
 void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
     ASSERT(!m_frameID);
@@ -145,6 +146,42 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     ASSERT(ownerElement.document().frame());
     coreFrame->init();
 
+    return frame;
+}
+
+Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
+{
+    auto frame = create(page);
+    RELEASE_ASSERT(page.corePage());
+    RELEASE_ASSERT(parent.coreAbstractFrame());
+    auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), frameID, *parent.coreAbstractFrame());
+    frame->m_coreFrame = coreFrame.get();
+    frame->setLayerHostingContextIdentifier(layerHostingContextIdentifier);
+
+    ASSERT(!frame->m_frameID);
+    frame->m_frameID = coreFrame->frameID();
+    WebProcess::singleton().addWebFrame(frameID, frame.ptr());
+    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), frame.get());
+
+    // FIXME: Pass in a name and call FrameTree::setName here.
+    coreFrame->init();
+    return frame;
+}
+
+Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID)
+{
+    auto frame = create(page);
+    auto invalidator = makeScopeExit<Function<void()>>([frame] {
+        frame->invalidate(); // FIXME: This is duplicate code with WebFrameLoaderClient ctor.
+    });
+    auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), WTFMove(invalidator));
+    RELEASE_ASSERT(page.corePage());
+    RELEASE_ASSERT(parent.coreAbstractFrame());
+    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreAbstractFrame());
+    frame->m_coreFrame = coreFrame.get();
+    WebProcess::singleton().addWebFrame(frameID, frame.ptr());
+    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), frame.get());
+    // FIXME: Pass in a name and call FrameTree::setName here.
     return frame;
 }
 
@@ -211,6 +248,12 @@ WebCore::LocalFrame* WebFrame::coreFrame() const
 WebCore::RemoteFrame* WebFrame::coreRemoteFrame() const
 {
     return dynamicDowncast<RemoteFrame>(m_coreFrame.get());
+}
+
+// FIXME: Remove coreRemoteFrame and replace coreFrame with this.
+WebCore::Frame* WebFrame::coreAbstractFrame() const
+{
+    return m_coreFrame.get();
 }
 
 FrameInfoData WebFrame::info() const
@@ -313,7 +356,7 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
 
     RefPtr ownerElement = coreFrame->ownerElement();
     if (!ownerElement) {
-        ASSERT_NOT_REACHED();
+        // FIXME: This shouldn't be reached but is after finishing a SiteIsolation API test. Investigate and fix.
         return;
     }
 
@@ -533,6 +576,11 @@ bool WebFrame::isFrameSet() const
 bool WebFrame::isMainFrame() const
 {
     return m_coreFrame && m_coreFrame->isMainFrame();
+}
+
+bool WebFrame::isRootFrame() const
+{
+    return m_coreFrame && m_coreFrame->isRootFrame();
 }
 
 String WebFrame::name() const

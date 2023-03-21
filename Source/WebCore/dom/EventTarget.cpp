@@ -72,11 +72,8 @@ Ref<EventTarget> EventTarget::create(ScriptExecutionContext& context)
 EventTarget::~EventTarget()
 {
     // Explicitly tearing down since WeakPtrImpl can be alive longer than EventTarget.
-    if (hasEventTargetData()) {
-        auto* eventTargetData = this->eventTargetData();
-        ASSERT(eventTargetData);
+    if (auto* eventTargetData = this->eventTargetData())
         eventTargetData->clear();
-    }
 }
 
 bool EventTarget::isPaymentRequest() const

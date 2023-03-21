@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -340,7 +340,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidEndTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
-    AddLayerForFindOverlay() -> (WebCore::GraphicsLayer::PlatformLayerID findLayerID)
+    AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
     RemoveLayerForFindOverlay() -> ()
     
     AddMIMETypeWithCustomContentProvider(String mimeType)
@@ -697,8 +697,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (bool result)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    ModelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
-    ModelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, WebCore::ResourceError error)
+    ModelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
+    ModelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier layerID, WebCore::ResourceError error)
 #endif
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -712,7 +712,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GenerateTestReport(String message, String group);
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    SetLookalikeCharacterStrings(Vector<String> strings);
+    SetLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> strings);
     SetAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> allowedStrings);
 #endif
 
@@ -720,4 +720,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PauseAllAnimations() -> ()
     PlayAllAnimations() -> ()
 #endif
+
+    UpdateFrameSize(WebCore::FrameIdentifier frame, WebCore::IntSize newSize)
 }

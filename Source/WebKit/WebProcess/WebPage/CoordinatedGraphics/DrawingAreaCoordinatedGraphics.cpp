@@ -327,7 +327,7 @@ GraphicsLayerFactory* DrawingAreaCoordinatedGraphics::graphicsLayerFactory()
     return m_layerTreeHost ? m_layerTreeHost->graphicsLayerFactory() : nullptr;
 }
 
-void DrawingAreaCoordinatedGraphics::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+void DrawingAreaCoordinatedGraphics::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* graphicsLayer)
 {
     if (m_layerTreeHost) {
         if (graphicsLayer) {

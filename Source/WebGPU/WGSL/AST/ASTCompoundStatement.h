@@ -42,6 +42,7 @@ public:
 
     NodeKind kind() const override;
     Statement::List& statements() { return m_statements; }
+    const Statement::List& statements() const { return m_statements; }
 
 private:
     Statement::List m_statements;

@@ -326,6 +326,11 @@ bool PlatformMediaSession::isPlaying() const
     return m_client.isPlaying();
 }
 
+bool PlatformMediaSession::isAudible() const
+{
+    return m_client.isAudible();
+}
+
 bool PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction() const
 {
     return m_client.shouldOverrideBackgroundLoadingRestriction();

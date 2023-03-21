@@ -51,6 +51,7 @@
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
 #import "WebEventFactory.h"
+#import "WebFrameProxy.h"
 #import "WebOpenPanelResultListenerProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKContextMenuElementInfoInternal.h"

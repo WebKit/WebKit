@@ -34,6 +34,7 @@
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionInternal.h"
+#import <WebCore/EventRegion.h>
 #import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKWebExtensionController

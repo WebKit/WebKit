@@ -10,7 +10,7 @@
 </head>
 <body>
     <canvas id="canvas" width="200" height="200"></canvas> 
-<pre id="layers"></pre>
+    <pre id="layers"></pre>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -33,19 +33,24 @@
             if (window.testRunner)
                 testRunner.notifyDone();
         }
-        
+
         function startTest()
         {
-            var canvas = document.getElementById('canvas');
-            ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = "rgb(0, 128, 0)";
-            ctx.fillRect(0, 0, 200, 200);
-            
             requestAnimationFrame(() => {
-                repaintTest();
+                requestAnimationFrame(() => {
+                    var canvas = document.getElementById('canvas');
+                    ctx = canvas.getContext('2d');
+
+                    ctx.fillStyle = "rgb(0, 128, 0)";
+                    ctx.fillRect(0, 0, 200, 200);
+            
+                    requestAnimationFrame(() => {
+                        repaintTest();
+                    });
+                });
             });
         }
+
         window.addEventListener('load', startTest, false);
     </script>
 </body>

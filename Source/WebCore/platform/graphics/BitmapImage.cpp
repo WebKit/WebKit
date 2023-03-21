@@ -303,9 +303,6 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
                 LOG(Images, "BitmapImage::%s - %p - url: %s [waiting for async decoding to finish]", __FUNCTION__, this, sourceURL().string().utf8().data());
             }
             return ImageDrawResult::DidRequestDecoding;
-        } else if (options.decodingMode() == DecodingMode::SynchronousThumbnail) {
-            image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, { options.decodingMode(), sizeForDrawing });
-            LOG(Images, "BitmapImage::%s - %p - url: %s [an image frame will be decoded synchronously as a thumbnail]", __FUNCTION__, this, sourceURL().string().utf8().data());
         } else {
             image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, options.decodingMode());
             LOG(Images, "BitmapImage::%s - %p - url: %s [an image frame will be decoded synchronously]", __FUNCTION__, this, sourceURL().string().utf8().data());

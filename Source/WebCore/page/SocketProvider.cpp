@@ -28,18 +28,14 @@
 
 #include "SocketStreamHandleImpl.h"
 #include "ThreadableWebSocketChannel.h"
+#include "WebSocketChannel.h"
 
 namespace WebCore {
-    
-Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, WebSocketIdentifier, PAL::SessionID sessionID, const String& credentialPartition, const StorageSessionProvider* provider)
-{
-    static const auto shouldAcceptInsecureCertificates = false;
-    return SocketStreamHandleImpl::create(url, client, sessionID, credentialPartition, { }, provider, shouldAcceptInsecureCertificates);
-}
 
-RefPtr<ThreadableWebSocketChannel> SocketProvider::createWebSocketChannel(Document&, WebSocketChannelClient&)
+RefPtr<ThreadableWebSocketChannel> SocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client)
 {
-    return nullptr;
+    // FIXME: Move this to WebKitLegacy.
+    return WebCore::WebSocketChannel::create(document, client, *this);
 }
 
 }

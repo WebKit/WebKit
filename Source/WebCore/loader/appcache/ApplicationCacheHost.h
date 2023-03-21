@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -151,7 +152,7 @@ private:
     bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
 
     WeakPtr<DOMApplicationCache, WeakPtrImplWithEventTargetData> m_domApplicationCache;
-    DocumentLoader& m_documentLoader;
+    CheckedRef<DocumentLoader> m_documentLoader;
 
     bool m_defersEvents { true }; // Events are deferred until after document onload.
     Vector<DeferredEvent> m_deferredEvents;

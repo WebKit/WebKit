@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 
 @implementation WKAnimationDelegate
 
-- (instancetype)initWithLayerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost
+- (instancetype)initWithLayerID:(WebCore::PlatformLayerIdentifier)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost
 {
     if ((self = [super init])) {
         _layerID = layerID;
@@ -684,7 +684,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         [caAnimation setValue:@YES forKey:WKExplicitBeginTimeFlag];
 
     if (layerTreeHost) {
-        GraphicsLayer::PlatformLayerID layerID = RemoteLayerTreeNode::layerID(layer);
+        PlatformLayerIdentifier layerID = RemoteLayerTreeNode::layerID(layer);
 
         RetainPtr<WKAnimationDelegate>& delegate = layerTreeHost->animationDelegates().add(layerID, nullptr).iterator->value;
         if (!delegate)

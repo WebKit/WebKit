@@ -353,15 +353,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
         return { };
     }
     // FIXME: WebSocketChannel also has a m_bufferedAmount. Remove that one. This one is the correct one accessed by JS.
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, utf8.length());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, utf8.length());
     ASSERT(m_channel);
     m_channel->send(WTFMove(utf8));
     return { };
@@ -378,15 +370,7 @@ ExceptionOr<void> WebSocket::send(ArrayBuffer& binaryData)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.byteLength());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.byteLength());
     ASSERT(m_channel);
     m_channel->send(binaryData, 0, binaryData.byteLength());
     return { };
@@ -404,15 +388,7 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, arrayBufferView.byteLength());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, arrayBufferView.byteLength());
     ASSERT(m_channel);
     m_channel->send(*arrayBufferView.unsharedBuffer(), arrayBufferView.byteOffset(), arrayBufferView.byteLength());
     return { };
@@ -429,15 +405,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.size());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.size());
     ASSERT(m_channel);
     m_channel->send(binaryData);
     return { };

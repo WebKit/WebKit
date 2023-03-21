@@ -47,6 +47,7 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
 #include <variant>
@@ -56,7 +57,6 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
-#include "RemoteLayerTreeNode.h"
 #include "WKFoundation.h"
 
 #if PLATFORM(IOS_FAMILY)
@@ -80,6 +80,7 @@ OBJC_CLASS UIScrollView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
+OBJC_CLASS NSWindow;
 OBJC_CLASS WKView;
 #endif
 #endif
@@ -150,6 +151,7 @@ class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
+class RemoteLayerTreeNode;
 class RemoteLayerTreeTransaction;
 class SafeBrowsingWarning;
 class UserData;

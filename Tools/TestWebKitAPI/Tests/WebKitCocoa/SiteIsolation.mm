@@ -81,18 +81,13 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
                 size_t contentLength = 2000000 + webkitHTML.length();
                 co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Length: "_s, contentLength, "\r\n\r\n"_s));
 
-                while (framesCommitted < 2)
-                    Util::spinRunLoop();
-                Util::runFor(Seconds(0.1));
-                EXPECT_EQ(framesCommitted, 2u);
-
                 co_await connection.awaitableSend(webkitHTML);
                 co_await connection.awaitableSend(Vector<uint8_t>(1000000, ' '));
 
-                while (framesCommitted < 3)
+                while (framesCommitted < 2)
                     Util::spinRunLoop();
-                Util::runFor(Seconds(0.1));
-                EXPECT_EQ(framesCommitted, 3u);
+                Util::runFor(Seconds(0.5));
+                EXPECT_EQ(framesCommitted, 2u);
 
                 EXPECT_FALSE(finishedLoading);
                 co_await connection.awaitableSend(Vector<uint8_t>(1000000, ' '));
@@ -108,18 +103,16 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
         switch (++framesCommitted) {
         case 1:
             EXPECT_WK_STREQ(url, "https://example.com/example");
+            EXPECT_TRUE(frameInfo.isMainFrame);
             break;
         case 2:
-            EXPECT_WK_STREQ(url, "about:blank");
-            break;
-        case 3:
             EXPECT_WK_STREQ(url, "https://webkit.org/webkit");
+            EXPECT_FALSE(frameInfo.isMainFrame);
             break;
         default:
             EXPECT_FALSE(true);
             break;
         }
-        EXPECT_TRUE(frameInfo.isMainFrame); // FIXME: The second frame should not report that it is the main frame.
     }).get();
     navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
         if (navigation._request) {

@@ -131,6 +131,7 @@ private:
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
     bool isPlaying() const final;
+    bool isAudible() const final;
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
     // MediaCanStartListener.

@@ -108,12 +108,13 @@ StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const Fi
     , m_hasRecursiveReference(false)
 {
     bool hasRecursiveReference = false;
-    unsigned currentFieldOffset = 0;
+    // Account for the internal header in m_payload.m_storage.data
+    unsigned currentFieldOffset = FixedVector<uint8_t>::Storage::offsetOfData();
     for (unsigned fieldIndex = 0; fieldIndex < m_fieldCount; ++fieldIndex) {
         const auto& fieldType = fieldTypes[fieldIndex];
         hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
         getField(fieldIndex) = fieldType;
-        *getFieldOffset(fieldIndex) = currentFieldOffset;
+        *offsetOfField(fieldIndex) = currentFieldOffset;
         currentFieldOffset += typeSizeInBytes(field(fieldIndex).type);
     }
 

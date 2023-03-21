@@ -57,6 +57,7 @@ public:
     Settings& settings() const { return m_settings.get(); }
     Frame& mainFrame() const { return m_mainFrame; }
     bool isMainFrame() const { return this == &m_mainFrame; }
+    WEBCORE_EXPORT bool isRootFrame() const;
 
     WEBCORE_EXPORT void detachFromPage();
     inline HTMLFrameOwnerElement* ownerElement() const; // Defined in HTMLFrameOwnerElement.h.

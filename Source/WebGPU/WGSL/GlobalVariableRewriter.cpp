@@ -39,9 +39,10 @@ namespace WGSL {
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
-    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts)
+    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts, PrepareResult& result)
         : AST::Visitor()
         , m_callGraph(callGraph)
+        , m_result(result)
     {
         UNUSED_PARAM(pipelineLayouts);
     }
@@ -76,11 +77,12 @@ private:
 
     void collectGlobals();
     void insertStructs();
-    void visitEntryPoint(AST::Function&);
-    IndexSet requiredGroups();
+    void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
+    IndexSet requiredGroups(PipelineLayout&, AST::StageAttribute::Stage);
     void insertParameters(AST::Function&, const IndexSet& requiredGroups);
 
     CallGraph& m_callGraph;
+    PrepareResult& m_result;
     HashMap<String, Global> m_globals;
     IndexMap<IndexMap<Global*>> m_groupBindingMap;
     HashSet<String> m_defs;
@@ -91,9 +93,14 @@ void RewriteGlobalVariables::run()
 {
     collectGlobals();
     insertStructs();
-    for (auto& entryPoint : m_callGraph.entrypoints())
-        visitEntryPoint(entryPoint.function);
-    m_callGraph.ast().variables().clear();
+    for (auto& entryPoint : m_callGraph.entrypoints()) {
+        PipelineLayout pipelineLayout;
+        visitEntryPoint(entryPoint.function, entryPoint.stage, pipelineLayout);
+
+        auto it = m_result.entryPoints.find(entryPoint.function.name());
+        ASSERT(it != m_result.entryPoints.end());
+        it->value.defaultLayout = WTFMove(pipelineLayout);
+    }
 }
 
 void RewriteGlobalVariables::visit(AST::Function& function)
@@ -140,6 +147,7 @@ void RewriteGlobalVariables::collectGlobals()
                 continue;
             }
         }
+
         std::optional<Global::Resource> resource;
         if (group.has_value()) {
             RELEASE_ASSERT(binding.has_value());
@@ -160,7 +168,7 @@ void RewriteGlobalVariables::collectGlobals()
     }
 }
 
-void RewriteGlobalVariables::visitEntryPoint(AST::Function& function)
+void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::StageAttribute::Stage stage, PipelineLayout& pipelineLayout)
 {
     m_reads.clear();
     m_defs.clear();
@@ -169,13 +177,13 @@ void RewriteGlobalVariables::visitEntryPoint(AST::Function& function)
     if (m_reads.isEmpty())
         return;
 
-    auto groupsToGenerate = requiredGroups();
+    auto groupsToGenerate = requiredGroups(pipelineLayout, stage);
     // FIXME: not all globals are parameters
     insertParameters(function, groupsToGenerate);
 }
 
 
-auto RewriteGlobalVariables::requiredGroups() -> IndexSet
+auto RewriteGlobalVariables::requiredGroups(PipelineLayout& pipelineLayout, AST::StageAttribute::Stage stage) -> IndexSet
 {
     IndexSet groups;
     for (const auto& globalName : m_reads) {
@@ -184,7 +192,31 @@ auto RewriteGlobalVariables::requiredGroups() -> IndexSet
         auto& global = it->value;
         if (!global.resource.has_value())
             continue;
-        groups.add(global.resource->group);
+        auto group = global.resource->group;
+        groups.add(group);
+
+        if (pipelineLayout.bindGroupLayouts.size() <= group)
+            pipelineLayout.bindGroupLayouts.grow(group + 1);
+
+        ShaderStage shaderStage;
+        switch (stage) {
+        case AST::StageAttribute::Stage::Compute:
+            shaderStage = ShaderStage::Compute;
+            break;
+        case AST::StageAttribute::Stage::Vertex:
+            shaderStage = ShaderStage::Vertex;
+            break;
+        case AST::StageAttribute::Stage::Fragment:
+            shaderStage = ShaderStage::Fragment;
+            break;
+        }
+        // FIXME: we need to check for an existing entry with the same binding
+        pipelineLayout.bindGroupLayouts[group].entries.append({
+            global.resource->binding,
+            shaderStage,
+            // FIXME: add the missing bindingMember information
+            { }
+        });
     }
     return groups;
 }
@@ -214,7 +246,7 @@ void RewriteGlobalVariables::insertStructs()
             ));
         }
 
-        m_callGraph.ast().structures().append(makeUniqueRef<AST::Structure>(
+        m_callGraph.ast().append(m_callGraph.ast().structures(), makeUniqueRef<AST::Structure>(
             SourceSpan::empty(),
             WTFMove(structName),
             WTFMove(structMembers),
@@ -228,7 +260,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
 {
     auto span = function.span();
     for (unsigned group : requiredGroups) {
-        function.parameters().append(makeUniqueRef<AST::Parameter>(
+        m_callGraph.ast().append(function.parameters(), adoptRef(*new AST::Parameter(
             span,
             argumentBufferParameterName(group),
             adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group))),
@@ -236,7 +268,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
                 adoptRef(*new AST::GroupAttribute(span, group))
             },
             AST::ParameterRole::BindGroup
-        ));
+        )));
     }
 }
 
@@ -266,9 +298,9 @@ AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
     return AST::Identifier::make(makeString("__ArgumentBuferT_", String::number(group)));
 }
 
-void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts)
+void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts, PrepareResult& result)
 {
-    RewriteGlobalVariables(callGraph, pipelineLayouts).run();
+    RewriteGlobalVariables(callGraph, pipelineLayouts, result).run();
 }
 
 } // namespace WGSL

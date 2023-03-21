@@ -289,12 +289,18 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
-    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier; // FIXME: Move to frame.
-    std::optional<FrameTreeCreationParameters> mainFrameCreationParameters;
+    struct SubframeProcessFrameTreeInitializationParameters {
+        WebCore::FrameIdentifier localFrameIdentifier;
+        FrameTreeCreationParameters treeCreationParameters;
+        WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier;
+
+        void encode(IPC::Encoder&) const;
+        static std::optional<SubframeProcessFrameTreeInitializationParameters> decode(IPC::Decoder&);
+    };
+    std::optional<SubframeProcessFrameTreeInitializationParameters> subframeProcessFrameTreeInitializationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    Vector<String> lookalikeCharacterStrings;
+    Vector<WebCore::LookalikeCharactersSanitizationData> lookalikeCharacterStrings;
     Vector<WebCore::LookalikeCharactersSanitizationData> allowedLookalikeCharacterStrings;
 #endif
 

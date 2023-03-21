@@ -2079,8 +2079,6 @@ webkit.org/b/223193 [ BigSur ] imported/w3c/web-platform-tests/html/canvas/eleme
 
 webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/send-response-event-order.htm [ Pass Failure ]
 
-webkit.org/b/223283 fast/repaint/canvas-object-fit.html [ Pass Failure ]
-
 webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
 
 webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.html [ Pass Failure ]

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@
 #include "ActiveDOMObject.h"
 #include "DecodingOptions.h"
 #include "FormAssociatedElement.h"
-#include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
 #include "MediaQuery.h"
@@ -40,6 +39,7 @@ class HTMLAttachmentElement;
 class HTMLFormElement;
 class HTMLImageLoader;
 class HTMLMapElement;
+class Image;
 
 struct ImageCandidate;
 

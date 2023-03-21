@@ -32,8 +32,8 @@
 #include "PlaybackSessionContextIdentifier.h"
 #include "ShareableBitmap.h"
 #include <WebCore/AudioSession.h>
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/VideoFullscreenChangeObserver.h>
 #include <WebCore/VideoFullscreenModel.h>

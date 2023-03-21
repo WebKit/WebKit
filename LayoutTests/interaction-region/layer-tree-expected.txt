@@ -68,11 +68,21 @@
                                     (
                                       (type interaction)
                                       (layer bounds [x: 0 y: 0 width: 284 height: 192])
-                                      (layer position [x: 152 y: 152]))
+                                      (layer position [x: 152 y: 152])
+                                      (sublayers
+                                        (
+                                          (layer bounds [x: 0 y: 0 width: 284 height: 192])
+                                          (layer position [x: 142 y: 142])
+                                          (layer opacity 0))))
                                     (
                                       (type interaction)
                                       (layer bounds [x: 0 y: 0 width: 59 height: 20])
-                                      (layer position [x: 29.5 y: 29.5]))
+                                      (layer position [x: 29.5 y: 29.5])
+                                      (sublayers
+                                        (
+                                          (layer bounds [x: 0 y: 0 width: 59 height: 20])
+                                          (layer position [x: 29.5 y: 29.5])
+                                          (layer opacity 0))))
                                     (
                                       (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                       (sublayers
@@ -91,7 +101,12 @@
                                             (
                                               (type interaction)
                                               (layer bounds [x: 0 y: 0 width: 74 height: 25])
-                                              (layer position [x: 34 y: 34]))))
+                                              (layer position [x: 34 y: 34])
+                                              (sublayers
+                                                (
+                                                  (layer bounds [x: 0 y: 0 width: 74 height: 25])
+                                                  (layer position [x: 37 y: 37])
+                                                  (layer opacity 0))))))
                                         (
                                           (layer bounds [x: 0 y: 0 width: 800 height: 600])
                                           (layer position [x: 400 y: 400])
@@ -104,7 +119,12 @@
                                             (
                                               (type interaction)
                                               (layer bounds [x: 0 y: 0 width: 31 height: 25])
-                                              (layer position [x: 12.5 y: 12.5]))
+                                              (layer position [x: 12.5 y: 12.5])
+                                              (sublayers
+                                                (
+                                                  (layer bounds [x: 0 y: 0 width: 31 height: 25])
+                                                  (layer position [x: 15.5 y: 15.5])
+                                                  (layer opacity 0))))
                                             (
                                               (layer bounds [x: 0 y: 0 width: 800 height: 20])
                                               (layer position [x: 400 y: 400]))))))))))))))))))

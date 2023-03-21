@@ -173,13 +173,13 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    if (canMapBackingStore())
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return ImageBuffer::copyNativeImage(copyBehavior);
-
+    }
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return { };
 
-    const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
     auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
     if (!bitmap)
         return { };
@@ -188,8 +188,10 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy cop
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
-    if (canMapBackingStore())
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return ImageBuffer::copyNativeImageForDrawing(destination);
+    }
     return copyNativeImage(DontCopyBackingStore);
 }
 
@@ -225,19 +227,18 @@ RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return { };
-    flushDrawingContext();
     return m_remoteRenderingBackendProxy->getFilteredImage(m_renderingResourceIdentifier, filter);
 }
 
 RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
-    if (canMapBackingStore())
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
         return ImageBuffer::getPixelBuffer(destinationFormat, srcRect, allocator);
+    }
 
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return nullptr;
-    auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-    mutableThis.flushDrawingContextAsync();
     IntRect sourceRectScaled = srcRect;
     sourceRectScaled.scale(resolutionScale());
     auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
@@ -265,10 +266,11 @@ GraphicsContext& RemoteImageBufferProxy::context() const
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     if (canMapBackingStore()) {
-        // At the moment, this does not need to invalidate the possible read caches in
-        // GPUP side. GPUP side does not use bitmap-based deferred rendering that would need
-        // trigger to migrate the backend surfaces to bitmap copies.
+        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
         ImageBuffer::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
+        // Simulate a write so that read caches are cleared.
+        // FIXME: This should not be done via the context draw, as that induces a flush.
+        context().fillRect({ });
         return;
     }
 
@@ -277,8 +279,6 @@ void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, cons
     // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
     // This means that putPixelBuffer() is only called when resolutionScale() == 1.
     ASSERT(resolutionScale() == 1);
-    auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-    mutableThis.flushDrawingContextAsync();
     backingStoreWillChange();
     m_remoteRenderingBackendProxy->putPixelBufferForImageBuffer(m_renderingResourceIdentifier, pixelBuffer, srcRect, destPoint, destFormat);
 }
@@ -291,12 +291,6 @@ void RemoteImageBufferProxy::convertToLuminanceMask()
 void RemoteImageBufferProxy::transformToColorSpace(const DestinationColorSpace& colorSpace)
 {
     m_remoteDisplayList.transformToColorSpace(colorSpace);
-}
-
-void RemoteImageBufferProxy::flushContext()
-{
-    flushDrawingContext();
-    m_backend->flushContext();
 }
 
 void RemoteImageBufferProxy::flushDrawingContext()

@@ -2426,6 +2426,7 @@ static void initializeRoleMap()
         { "doc-tip"_s, AccessibilityRole::DocumentNote },
         { "doc-toc"_s, AccessibilityRole::LandmarkNavigation },
         { "figure"_s, AccessibilityRole::Figure },
+        { "generic"_s, AccessibilityRole::Generic },
         // The mappings for 'graphics-*' roles are defined in this spec: https://w3c.github.io/graphics-aam/
         { "graphics-document"_s, AccessibilityRole::GraphicsDocument },
         { "graphics-object"_s, AccessibilityRole::GraphicsObject },
@@ -2668,7 +2669,7 @@ bool AccessibilityObject::supportsARIARoleDescription() const
 {
     auto role = this->roleValue();
     switch (role) {
-    case AccessibilityRole::Div:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::Unknown:
         return false;
     default:

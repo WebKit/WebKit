@@ -29,7 +29,6 @@
 
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
-#include <WebCore/GraphicsLayer.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/PlaybackSessionModel.h>

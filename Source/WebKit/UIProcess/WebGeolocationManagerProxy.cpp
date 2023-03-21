@@ -27,6 +27,7 @@
 #include "WebGeolocationManagerProxy.h"
 
 #include "APIGeolocationProvider.h"
+#include "GeolocationPermissionRequestManagerProxy.h"
 #include "Logging.h"
 #include "WebGeolocationManagerMessages.h"
 #include "WebGeolocationManagerProxyMessages.h"

@@ -213,8 +213,8 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_innerLegacyAttachment->m_implementation = Implementation::ImageOnly;
     m_innerLegacyAttachment->cloneAttributesFromElement(*this);
     m_innerLegacyAttachment->m_file = m_file;
-    m_innerLegacyAttachment->m_thumbnail = WTFMove(m_thumbnail);
-    m_innerLegacyAttachment->m_icon = WTFMove(m_icon);
+    m_innerLegacyAttachment->m_thumbnail = m_thumbnail;
+    m_innerLegacyAttachment->m_icon = m_icon;
     m_innerLegacyAttachment->m_iconSize = m_iconSize;
     m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
     previewArea->appendChild(*m_innerLegacyAttachment);
@@ -556,6 +556,8 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
 void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
 {
     m_thumbnail = thumbnail;
+    if (m_innerLegacyAttachment)
+        m_innerLegacyAttachment->updateThumbnail(thumbnail);
     removeAttribute(HTMLNames::progressAttr);
     invalidateRendering();
 }
@@ -564,6 +566,8 @@ void HTMLAttachmentElement::updateIcon(const RefPtr<Image>& icon, const WebCore:
 {
     m_icon = icon;
     m_iconSize = iconSize;
+    if (m_innerLegacyAttachment)
+        m_innerLegacyAttachment->updateIcon(icon, iconSize);
     invalidateRendering();
 }
 

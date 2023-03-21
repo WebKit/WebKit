@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ constexpr CGFloat attachmentIconSelectionBorderThickness = 1;
 constexpr CGFloat attachmentIconBackgroundRadius = 3;
 constexpr CGFloat attachmentIconToTitleMargin = 2;
 
-constexpr CGFloat attachmentImageOnlyIconSize = 52;
+constexpr CGFloat attachmentImageOnlyIconSize = 52; // Co-dependent with shadow css div#attachment-preview-area's height.
 
 constexpr auto attachmentIconBackgroundColor = Color::black.colorWithAlphaByte(30);
 constexpr auto attachmentIconBorderColor = Color::white.colorWithAlphaByte(125);
@@ -199,6 +199,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
 #if PLATFORM(IOS_FAMILY)
 
 constexpr CGSize attachmentSize = { 160, 119 };
+constexpr CGSize attachmentImageOnlySize = { 56, 72 }; // Co-dependent with shadow css div#attachment-preview-area's width&height.
 
 constexpr CGFloat attachmentBorderRadius = 16;
 constexpr auto attachmentBorderColor = SRGBA<uint8_t> { 204, 204, 204 };
@@ -230,12 +231,7 @@ static RetainPtr<CTFontRef> attachmentActionFont()
     auto style = kCTUIFontTextStyleFootnote;
     auto size = contentSizeCategory();
     auto attributes = static_cast<CFDictionaryRef>(@{ (id)kCTFontTraitsAttribute: @{ (id)kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) } });
-#if HAVE(CTFONTDESCRIPTOR_CREATE_WITH_TEXT_STYLE_AND_ATTRIBUTES)
     auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyleAndAttributes(style, size, attributes));
-#else
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(style, size, 0));
-    auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes));
-#endif
 
     return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));
 }
@@ -278,6 +274,24 @@ static CGFloat attachmentDynamicTypeScaleFactor()
 
 AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, AttachmentLayoutStyle)
 {
+    if (attachment.attachmentElement().isImageOnly()) {
+        iconRect = FloatRect(0, 0, attachmentImageOnlySize.width, attachmentImageOnlySize.height);
+        iconBackgroundRect = iconRect;
+        attachmentRect = encloseRectToDevicePixels(iconBackgroundRect, attachment.document().deviceScaleFactor());
+
+        icon = attachment.attachmentElement().icon();
+        if (!icon)
+            attachment.attachmentElement().requestIconWithSize(iconRect.size());
+
+        thumbnailIcon = attachment.attachmentElement().thumbnail();
+
+        hasProgress = getAttachmentProgress(attachment, progress);
+        if (hasProgress)
+            progressRect = FloatRect((attachmentRect.width() / 2) - (attachmentProgressSize / 2), (attachmentRect.height() / 2) - (attachmentProgressSize / 2), attachmentProgressSize, attachmentProgressSize);
+
+        return;
+    }
+
     excludeTypographicLeading = true;
     attachmentRect = FloatRect(0, 0, attachment.width().toFloat(), attachment.height().toFloat());
     wrappingWidth = attachmentWrappingTextMaximumWidth * attachmentDynamicTypeScaleFactor();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,7 +115,7 @@ Color GraphicsLayerCARemote::pageTiledBackingBorderColor() const
 
 class GraphicsLayerCARemoteAsyncContentsDisplayDelegate : public GraphicsLayerAsyncContentsDisplayDelegate {
 public:
-    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::GraphicsLayer::PlatformLayerID layerID)
+    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::PlatformLayerIdentifier layerID)
         : m_connection(connection)
         , m_drawingArea(identifier)
         , m_layerID(layerID)
@@ -144,7 +144,7 @@ public:
 private:
     Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
-    WebCore::GraphicsLayer::PlatformLayerID m_layerID;
+    WebCore::PlatformLayerIdentifier m_layerID;
 };
 
 RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate()

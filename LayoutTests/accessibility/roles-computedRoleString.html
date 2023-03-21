@@ -153,18 +153,18 @@
 <!-- ==================================================================================================== -->
 <!-- Abstract ARIA roles in alphabetical order; only generic role should be exposed on abstract roles -->
 <!-- ==================================================================================================== -->
-<div role="command"     data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="composite"   data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="input"       data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="landmark"    data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="range"       data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="roletype"    data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="section"     data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="sectionhead" data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="select"      data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="structure"   data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="widget"      data-role="" data-platform="atspi,mac" class="ex">X</div>
-<div role="window"      data-role="" data-platform="atspi,mac" class="ex">X</div>
+<div role="command"     data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="composite"   data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="input"       data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="landmark"    data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="range"       data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="roletype"    data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="section"     data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="sectionhead" data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="select"      data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="structure"   data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="widget"      data-role="generic" data-platform="atspi,mac" class="ex">X</div>
+<div role="window"      data-role="generic" data-platform="atspi,mac" class="ex">X</div>
 
 
 <!-- ==================================================================================================== -->
@@ -237,7 +237,7 @@
 <div role="radiogroup"               data-role="radiogroup" data-platform="atspi,mac" class="ex">
     <div role="radio"                data-role="radio" data-platform="atspi,mac" class="ex">X</div>
 </div>
-<div role="region"                   data-platform="atspi,mac" class="ex" data-role="" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
+<div role="region"                   data-platform="atspi,mac" class="ex" data-role="generic" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
 <div role="region"                   data-platform="atspi,mac" class="ex" data-role="region" aria-label="x" data-note="[aria-label]">X</div>
 <div role="region"                   data-platform="atspi,mac" class="ex" data-role="region" aria-labelledby="region-label" data-note="[aria-labelledby]">
     <h2 id="region-label">X</h2>
@@ -281,15 +281,16 @@
 <!-- ==================================================================================================== -->
 <!-- generic role attribute parsing tests -->
 <!-- ==================================================================================================== -->
+<div role="generic"                  data-role="generic" data-platform="atspi,mac" class="ex">X</div>
 <div role="button foo"               data-role="button" data-platform="atspi,mac" class="ex">X</div>
 <div role="foo button bar"           data-role="button" data-platform="atspi,mac" class="ex">X</div>
 <div role="foo  button  bar"         data-role="button" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Two spaces in role string -->
 
 <!-- FIXME: These two should be button but fail b/c of http://webkit.org/b/128400 -->
-<div role="foo	button	bar"         data-role="" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Tab chars in role string -->
+<div role="foo	button	bar"         data-role="generic" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Tab chars in role string -->
 <div role="foo
 button
-bar"                                 data-role="" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Newlines in role string -->
+bar"                                 data-role="generic" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Newlines in role string -->
 
 
 <!-- ==================================================================================================== -->

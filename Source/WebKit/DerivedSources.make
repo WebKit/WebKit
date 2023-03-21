@@ -133,7 +133,6 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/ServiceWorker/WebSWServerToContextConnection \
 	NetworkProcess/SharedWorker/WebSharedWorkerServerConnection \
 	NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection \
-	NetworkProcess/NetworkSocketStream \
 	NetworkProcess/NetworkProcess \
 	NetworkProcess/NetworkResourceLoader \
 	NetworkProcess/webrtc/NetworkMDNSRegister \
@@ -222,7 +221,6 @@ MESSAGE_RECEIVERS = \
 	WebProcess/MediaSession/RemoteMediaSessionCoordinator \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
-	WebProcess/Network/WebSocketStream \
 	WebProcess/Network/WebResourceLoader \
 	WebProcess/Network/webrtc/LibWebRTCNetwork \
 	WebProcess/Network/webrtc/RTCDataChannelRemoteManager \

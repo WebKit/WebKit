@@ -105,8 +105,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkResourceLoaderMessageReceiver
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkResourceLoaderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkSocketChannelMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkSocketChannelMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkSocketStreamMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkSocketStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkStorageManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkStorageManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NotificationManagerMessageHandlerMessageReceiver.cpp
@@ -476,8 +474,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSharedWorkerServerToContextConnec
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSharedWorkerServerToContextConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSocketChannelMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSocketChannelMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSocketStreamMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSocketStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSpeechRecognitionConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebSpeechRecognitionConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerMessageReceiver.cpp

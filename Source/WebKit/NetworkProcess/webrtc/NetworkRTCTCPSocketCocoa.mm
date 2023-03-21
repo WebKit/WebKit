@@ -139,9 +139,18 @@ void NetworkRTCTCPSocketCocoa::close()
     m_rtcProvider.takeSocket(m_identifier);
 }
 
-void NetworkRTCTCPSocketCocoa::setOption(int, int)
+void NetworkRTCTCPSocketCocoa::setOption(int option, int value)
 {
-    // FIXME: Validate this is not needed.
+    if (option != rtc::Socket::OPT_DSCP)
+        return;
+
+    auto trafficClass = trafficClassFromDSCP(static_cast<rtc::DiffServCodePoint>(value));
+    if (!trafficClass) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCTCPSocketCocoa has an unexpected DSCP value %d", value);
+        return;
+    }
+
+    nw_connection_reset_traffic_class(m_nwConnection.get(), *trafficClass);
 }
 
 static RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&& v)

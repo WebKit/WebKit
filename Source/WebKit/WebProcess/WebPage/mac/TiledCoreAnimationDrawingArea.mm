@@ -160,7 +160,7 @@ void TiledCoreAnimationDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
 {
 }
 
-void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+void TiledCoreAnimationDrawingArea::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* graphicsLayer)
 {
     CALayer *rootLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
 
