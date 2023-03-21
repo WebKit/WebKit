@@ -283,6 +283,8 @@ void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_st
         " Memory Wasted             : %hu \n"
         " Size of Data Pages        : %zu \n"
         " Start of Data Pages       : %p  \n"
+        " Lower Guard Page          : %p  \n"
+        " Upper Guard Page          : %p  \n"
         " Memory Address for User   : %p  \n"
         "******************************************************\n\n\n",
         operation,
@@ -293,6 +295,8 @@ void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_st
         value->mem_to_waste,
         value->size_of_data_pages,
         (uintptr_t*) value->start_of_data_pages,
+        (uintptr_t*) value->start_of_data_pages - value->page_size,
+        (uintptr_t*) value->start_of_data_pages + value->size_of_data_pages,
         key);
 }
 
