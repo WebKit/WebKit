@@ -64,6 +64,8 @@ struct Config {
     bool disabledFreezingForTesting;
     bool restrictedOptionsEnabled;
     bool jitDisabled;
+    bool vmCreationDisallowed;
+    bool vmEntryDisallowed;
 
     bool useFastJITPermissions;
 

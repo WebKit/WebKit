@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,6 +67,10 @@ extern "C" void _ReadWriteBarrier(void);
 #endif
 #include <intrin.h>
 #endif
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <sys/reason.h>
 #endif
 
 /* ASSERT_ENABLED is defined in PlatformEnable.h. */
@@ -819,6 +823,16 @@ inline void compilerFenceForCrash()
 #endif
 
 #endif /* __cplusplus */
+
+#if USE(APPLE_INTERNAL_SDK)
+#define CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(abortReason, abortMsg, ...) do { \
+        if (g_wtfConfig.useSpecialAbortForExtraSecurityImplications) \
+            abort_with_reason(OS_REASON_WEBKIT, abortReason, abortMsg, OS_REASON_FLAG_SECURITY_SENSITIVE); \
+        CRASH_WITH_INFO(__VA_ARGS__); \
+    } while (false)
+#else
+#define CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(abortReason, abortMsg, ...) CRASH_WITH_INFO(__VA_ARGS__)
+#endif
 
 /* UNREACHABLE_FOR_PLATFORM */
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1321,6 +1321,8 @@ namespace JSC {
 static ExecutableAllocator* globalExecutableAllocatorToWorkAroundLeaks = nullptr;
 void ExecutableAllocator::initialize()
 {
+    if (g_jscConfig.jitDisabled)
+        return;
     g_jscConfig.executableAllocator = new ExecutableAllocator;
     globalExecutableAllocatorToWorkAroundLeaks = g_jscConfig.executableAllocator;
 }
