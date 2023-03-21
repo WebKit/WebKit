@@ -3796,7 +3796,8 @@ static bool isLockdownModeWarningNeeded()
         CATransform3D transform = CATransform3DMakeScale(imageScaleInViewCoordinates, imageScaleInViewCoordinates, 1);
         transform = CATransform3DTranslate(transform, -rectInViewCoordinates.origin.x, -rectInViewCoordinates.origin.y, 0);
         CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(MACH_PORT_NULL, (CFStringRef)displayName, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform, 0);
-        completionHandler(WebCore::IOSurface::sinkIntoImage(WTFMove(surface)).get());
+        auto context = surface->createPlatformContext();
+        completionHandler(WebCore::IOSurface::sinkIntoImage(WTFMove(surface), WTFMove(context)).get());
         return;
     }
 #endif
