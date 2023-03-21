@@ -46,6 +46,14 @@ void nw_parameters_set_is_known_tracker(nw_parameters_t, bool is_known_tracker);
 void nw_parameters_allow_sharing_port_with_listener(nw_parameters_t, nw_listener_t);
 #endif // HAVE(NWPARAMETERS_TRACKER_API)
 
+#define SO_TC_BK_SYS 100
+#define SO_TC_BE 0
+#define SO_TC_VI 700
+#define SO_TC_VO 800
+
+void nw_connection_reset_traffic_class(nw_connection_t, uint32_t traffic_class);
+void nw_parameters_set_traffic_class(nw_parameters_t, uint32_t traffic_class);
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
