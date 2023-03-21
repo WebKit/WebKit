@@ -99,7 +99,7 @@
 
 #define PAS_ALLOCATOR_INDEX_BYTES        4
 
-#if PAS_OS(DARWIN)
+#if PAS_OS(DARWIN) || PAS_PLATFORM(PLAYSTATION)
 #define PAS_USE_SPINLOCKS                0
 #else
 #define PAS_USE_SPINLOCKS                1
