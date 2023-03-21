@@ -33,6 +33,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/DisplayRefreshMonitorFactory.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/PlatformScreen.h>
@@ -122,7 +123,8 @@ public:
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const { return false; }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
+    virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
+    virtual void attachToInitialRootFrame(WebCore::FrameIdentifier) { }
     virtual void triggerRenderingUpdate() = 0;
 
     virtual void willStartRenderingUpdateDisplay();

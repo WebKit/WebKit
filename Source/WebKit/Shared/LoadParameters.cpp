@@ -38,6 +38,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << host;
 #endif
     encoder << navigationID;
+    encoder << frameIdentifier;
     encoder << request;
 
     encoder << static_cast<bool>(request.httpBody());
@@ -81,6 +82,9 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 #endif
 
     if (!decoder.decode(data.navigationID))
+        return false;
+
+    if (!decoder.decode(data.frameIdentifier))
         return false;
 
     if (!decoder.decode(data.request))

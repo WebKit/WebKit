@@ -5339,7 +5339,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
                 automationSession->navigationOccurredForFrame(*frame);
         }
 
-        frame->didFinishLoad(request.url().isAboutBlank());
+        frame->didFinishLoad();
 
         m_pageLoadState.commitChanges();
     }

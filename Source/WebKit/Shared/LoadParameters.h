@@ -31,6 +31,7 @@
 #include "SandboxExtension.h"
 #include "UserData.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
@@ -62,6 +63,7 @@ struct LoadParameters {
 #endif
 
     uint64_t navigationID { 0 };
+    std::optional<WebCore::FrameIdentifier> frameIdentifier;
 
     WebCore::ResourceRequest request;
     SandboxExtension::Handle sandboxExtensionHandle;

@@ -247,16 +247,14 @@ void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::Cert
     m_containsPluginDocument = containsPluginDocument;
 }
 
-void WebFrameProxy::didFinishLoad(bool isAboutBlank)
+void WebFrameProxy::didFinishLoad()
 {
     m_frameLoadState.didFinishLoad();
 
     if (m_navigateCallback)
         m_navigateCallback(pageIdentifier(), frameID());
 
-    // FIXME: This isn't quite right. We shouldn't ignore all about:blank load finishes.
-    // We should ignore just the initial about:blank load finish. Add a test that re-loads about:blank in and from an isolated iframe.
-    if (m_subframePage && m_parentFrame && !isAboutBlank)
+    if (m_subframePage && m_parentFrame)
         m_parentFrame->m_process->send(Messages::WebFrame::DidFinishLoadInAnotherProcess(), m_frameID.object());
 }
 
@@ -421,14 +419,8 @@ void WebFrameProxy::updateRemoteFrameSize(WebCore::IntSize newSize)
     auto* drawingArea = m_page->drawingArea();
     if (!drawingArea)
         return;
-    if (m_subframePage) {
-#if PLATFORM(COCOA)
-        m_subframePage->sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(newSize, false /* flushSynchronously */, MachSendRight()), [] { }, drawingArea->identifier());
-#endif
-#if ENABLE(META_VIEWPORT)
-        m_subframePage->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(newSize, m_page->layoutSizeScaleFactor(), m_page->minimumEffectiveDeviceWidth()));
-#endif
-    }
+    if (m_subframePage)
+        m_subframePage->send(Messages::WebPage::UpdateFrameSize(m_frameID, newSize));
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)

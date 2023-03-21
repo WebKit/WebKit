@@ -40,6 +40,7 @@ namespace WebKit {
 class GraphicsLayerCARemote;
 class PlatformCALayerRemote;
 class RemoteRenderingBackendProxy;
+class WebFrame;
 class WebPage;
 
 // FIXME: This class doesn't do much now. Roll into RemoteLayerTreeDrawingArea?
@@ -67,7 +68,7 @@ public:
 
     DrawingAreaIdentifier drawingAreaIdentifier() const;
 
-    void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
+    void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebFrame* rootFrame);
 
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
 

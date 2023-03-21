@@ -441,7 +441,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void willCommitLayerTree(RemoteLayerTreeTransaction&);
+    void willCommitLayerTree(RemoteLayerTreeTransaction&, WebFrame*);
     void didFlushLayerTreeAtTime(MonotonicTime);
 #endif
 
@@ -676,8 +676,8 @@ public:
     bool defersLoading() const;
     void setDefersLoading(bool deferLoading);
 
-    void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
-    void exitAcceleratedCompositingMode();
+    void enterAcceleratedCompositingMode(WebCore::Frame&, WebCore::GraphicsLayer*);
+    void exitAcceleratedCompositingMode(WebCore::Frame&);
 
 #if ENABLE(PDFKIT_PLUGIN)
     void addPluginView(PluginView*);
@@ -922,6 +922,8 @@ public:
     };
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
+    
+    void updateFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
 
@@ -1625,10 +1627,10 @@ public:
     bool shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&) const;
     void setSkipDecidePolicyForResponseIfPossible(bool value) { m_skipDecidePolicyForResponseIfPossible = value; }
 
-    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
-
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
+
+    void constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier localFrameIdentifier, WebCore::LayerHostingContextIdentifier localFrameHostLayerIdentifier, const FrameTreeCreationParameters&);
 
     void updateThrottleState();
 
@@ -2557,7 +2559,6 @@ private:
     Vector<String> m_corsDisablingPatterns;
 
     std::unique_ptr<WebCore::CachedPage> m_cachedPage;
-    Markable<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
 
 #if ENABLE(IPC_TESTING_API)
     bool m_ipcTestingAPIEnabled { false };

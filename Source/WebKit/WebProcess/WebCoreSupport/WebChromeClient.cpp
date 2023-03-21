@@ -982,12 +982,12 @@ RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 #endif
 }
 
-void WebChromeClient::attachRootGraphicsLayer(LocalFrame&, GraphicsLayer* layer)
+void WebChromeClient::attachRootGraphicsLayer(LocalFrame& frame, GraphicsLayer* layer)
 {
     if (layer)
-        m_page.enterAcceleratedCompositingMode(layer);
+        m_page.enterAcceleratedCompositingMode(frame, layer);
     else
-        m_page.exitAcceleratedCompositingMode();
+        m_page.exitAcceleratedCompositingMode(frame);
 }
 
 void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer* graphicsLayer)

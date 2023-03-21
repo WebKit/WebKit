@@ -200,9 +200,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
     encoder << contentSecurityPolicyModeForExtension;
-    encoder << mainFrameIdentifier;
-    encoder << mainFrameCreationParameters;
-    encoder << layerHostingContextIdentifier;
+    encoder << subframeProcessFrameTreeInitializationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     encoder << lookalikeCharacterStrings;
@@ -648,13 +646,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.contentSecurityPolicyModeForExtension))
         return std::nullopt;
 
-    if (!decoder.decode(parameters.mainFrameIdentifier))
-        return std::nullopt;
-
-    if (!decoder.decode(parameters.mainFrameCreationParameters))
-        return std::nullopt;
-
-    if (!decoder.decode(parameters.layerHostingContextIdentifier))
+    if (!decoder.decode(parameters.subframeProcessFrameTreeInitializationParameters))
         return std::nullopt;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
@@ -680,6 +672,34 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
     return { WTFMove(parameters) };
+}
+
+void WebPageCreationParameters::SubframeProcessFrameTreeInitializationParameters::encode(IPC::Encoder& encoder) const
+{
+    encoder << localFrameIdentifier;
+    encoder << treeCreationParameters;
+    encoder << layerHostingContextIdentifier;
+}
+
+auto WebPageCreationParameters::SubframeProcessFrameTreeInitializationParameters::decode(IPC::Decoder& decoder) -> std::optional<SubframeProcessFrameTreeInitializationParameters>
+{
+    auto localFrameIdentifier = decoder.decode<WebCore::FrameIdentifier>();
+    if (!localFrameIdentifier)
+        return std::nullopt;
+
+    auto treeCreationParameters = decoder.decode<FrameTreeCreationParameters>();
+    if (!treeCreationParameters)
+        return std::nullopt;
+
+    auto layerHostingContextIdentifier = decoder.decode<WebCore::LayerHostingContextIdentifier>();
+    if (!layerHostingContextIdentifier)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*localFrameIdentifier),
+        WTFMove(*treeCreationParameters),
+        WTFMove(*layerHostingContextIdentifier)
+    } };
 }
 
 } // namespace WebKit

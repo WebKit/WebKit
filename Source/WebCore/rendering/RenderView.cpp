@@ -548,7 +548,6 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
 
 void RenderView::flushAccumulatedRepaintRegion() const
 {
-    ASSERT(!document().ownerElement());
     ASSERT(m_accumulatedRepaintRegion);
     auto repaintRects = m_accumulatedRepaintRegion->rects();
     for (auto& rect : repaintRects)

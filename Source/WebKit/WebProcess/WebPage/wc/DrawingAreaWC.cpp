@@ -82,7 +82,7 @@ void DrawingAreaWC::updateRootLayers()
     triggerRenderingUpdate();
 }
 
-void DrawingAreaWC::setRootCompositingLayer(GraphicsLayer* rootLayer)
+void DrawingAreaWC::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* rootLayer)
 {
     m_contentLayer = rootLayer;
     if (rootLayer)

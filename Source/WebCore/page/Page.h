@@ -650,6 +650,7 @@ public:
     WEBCORE_EXPORT void isolatedUpdateRendering();
     // Called when the rendering update steps are complete, but before painting.
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
+    WEBCORE_EXPORT void finalizeRenderingUpdateForRootFrame(LocalFrame&, OptionSet<FinalizeRenderingUpdateFlags>);
 
     // Called before and after the "display" steps of the rendering update: painting, and when we push
     // layers to the platform compositor.
@@ -1023,6 +1024,9 @@ public:
     void willBeginScrolling();
     void didFinishScrolling();
 
+    const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
+    void addRootFrame(LocalFrame& frame) { m_rootFrames.add(frame); }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1097,6 +1101,7 @@ private:
     const std::unique_ptr<ProgressTracker> m_progress;
 
     const std::unique_ptr<BackForwardController> m_backForwardController;
+    WeakHashSet<LocalFrame> m_rootFrames;
     Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;

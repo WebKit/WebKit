@@ -396,9 +396,12 @@ LocalFrame& FocusController::focusedOrMainFrame() const
 {
     if (auto* frame = focusedFrame())
         return *frame;
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    ASSERT(localMainFrame);
-    return *localMainFrame;
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+        return *localMainFrame;
+
+    // FIXME: Do something better here in the site isolated case.
+    ASSERT(m_page.settings().siteIsolationEnabled());
+    return *m_page.rootFrames().begin();
 }
 
 void FocusController::setFocused(bool focused)

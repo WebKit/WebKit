@@ -64,7 +64,7 @@ private:
     void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override;
-    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void triggerRenderingUpdate() override;
 
     void updatePreferences(const WebPreferencesStore&) override;

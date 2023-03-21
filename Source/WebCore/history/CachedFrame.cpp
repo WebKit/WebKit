@@ -153,7 +153,7 @@ CachedFrame::CachedFrame(LocalFrame& frame)
 
     // Create the CachedFrames for all Frames in the FrameTree.
     for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        auto* localChild = downcast<LocalFrame>(child);
+        auto* localChild = dynamicDowncast<LocalFrame>(child);
         if (!localChild)
             continue;
         m_childFrames.append(makeUniqueRef<CachedFrame>(*localChild));

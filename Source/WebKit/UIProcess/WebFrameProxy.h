@@ -125,7 +125,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const URL&);
     void didFailProvisionalLoad();
     void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&, bool containsPluginDocument);
-    void didFinishLoad(bool isAboutBlank);
+    void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(const URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);

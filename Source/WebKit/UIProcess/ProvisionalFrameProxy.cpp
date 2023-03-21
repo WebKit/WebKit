@@ -65,11 +65,13 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     ASSERT(drawingArea);
 
     auto parameters = page.creationParameters(m_process, *drawingArea);
-    parameters.mainFrameCreationParameters = page.frameTreeCreationParameters();
+    parameters.subframeProcessFrameTreeInitializationParameters = { {
+        frame.frameID(),
+        *page.frameTreeCreationParameters(),
+        m_layerHostingContextIdentifier
+    } };
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
-    parameters.layerHostingContextIdentifier = m_layerHostingContextIdentifier;
-    parameters.mainFrameIdentifier = frame.frameID();
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
 
@@ -78,6 +80,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     LoadParameters loadParameters;
     loadParameters.request = request;
     loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
+    loadParameters.frameIdentifier = frame.frameID();
     // FIXME: Add more parameters as appropriate.
 
     // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
@@ -86,7 +89,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
         // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
         process->send(Messages::WebPage::LoadRequest(loadParameters), pageID);
     });
-    m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()

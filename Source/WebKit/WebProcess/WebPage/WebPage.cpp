@@ -135,6 +135,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebProgressTrackerClient.h"
+#include "WebRemoteFrameClient.h"
 #include "WebScreenOrientationManager.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebSocketProvider.h"
@@ -494,6 +495,18 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     return parsedPatterns;
 }
 
+static std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame(Ref<WebFrame>&& mainFrame, bool local)
+{
+    if (local)
+        return UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(WTFMove(mainFrame)));
+
+    // FIXME: This is duplicate code with WebFrameLoaderClient ctor.
+    auto invalidator = makeScopeExit<Function<void()>>([frame = mainFrame.copyRef()] {
+        frame->invalidate();
+    });
+    return UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+}
+
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
     , m_mainFrame(WebFrame::create(*this))
@@ -581,7 +594,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
     , m_lastNavigationWasAppInitiated(parameters.lastNavigationWasAppInitiated)
-    , m_layerHostingContextIdentifier(parameters.layerHostingContextIdentifier)
 #if ENABLE(APP_HIGHLIGHTS)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
@@ -625,8 +637,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef())),
-        parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate(),
+        clientForMainFrame(m_mainFrame.copyRef(), !parameters.subframeProcessFrameTreeInitializationParameters),
+        parameters.subframeProcessFrameTreeInitializationParameters ? parameters.subframeProcessFrameTreeInitializationParameters->treeCreationParameters.frameID : WebCore::FrameIdentifier::generate(),
         makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
@@ -726,7 +738,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
 #endif
 
-    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.mainFrameIdentifier;
+    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.subframeProcessFrameTreeInitializationParameters;
     
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
@@ -758,6 +770,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
     m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame(), receivedMainFrameIdentifierFromUIProcess);
+    if (auto& subframeProcessFrameTreeInitializationParameters = parameters.subframeProcessFrameTreeInitializationParameters) {
+        for (auto& childParameters : subframeProcessFrameTreeInitializationParameters->treeCreationParameters.children)
+            constructFrameTree(m_mainFrame.get(), subframeProcessFrameTreeInitializationParameters->localFrameIdentifier, subframeProcessFrameTreeInitializationParameters->layerHostingContextIdentifier, childParameters);
+        m_drawingArea->attachToInitialRootFrame(subframeProcessFrameTreeInitializationParameters->localFrameIdentifier);
+    }
 
     m_drawingArea->updatePreferences(parameters.store);
 
@@ -988,6 +1005,20 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setLookalikeCharacterStrings(WTFMove(parameters.lookalikeCharacterStrings));
     setAllowedLookalikeCharacterStrings(WTFMove(parameters.allowedLookalikeCharacterStrings));
 #endif
+}
+
+void WebPage::constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier localFrameIdentifier, WebCore::LayerHostingContextIdentifier localFrameHostLayerIdentifier, const FrameTreeCreationParameters& treeCreationParameters)
+{
+    bool shouldCreateLocalFrame = treeCreationParameters.frameID == localFrameIdentifier;
+    auto frame = shouldCreateLocalFrame
+        ? WebFrame::createLocalSubframeHostedInAnotherProcess(*this, parent, treeCreationParameters.frameID, localFrameHostLayerIdentifier)
+        : WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID);
+    if (shouldCreateLocalFrame) {
+        ASSERT(frame->coreFrame());
+        m_page->addRootFrame(*frame->coreFrame());
+    }
+    for (auto& parameters : treeCreationParameters.children)
+        constructFrameTree(frame, localFrameIdentifier, localFrameHostLayerIdentifier, parameters);
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -1555,14 +1586,14 @@ void WebPage::clearMainFrameName()
         frame->tree().clearName();
 }
 
-void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
+void WebPage::enterAcceleratedCompositingMode(WebCore::Frame& frame, GraphicsLayer* layer)
 {
-    m_drawingArea->setRootCompositingLayer(layer);
+    m_drawingArea->setRootCompositingLayer(frame, layer);
 }
 
-void WebPage::exitAcceleratedCompositingMode()
+void WebPage::exitAcceleratedCompositingMode(WebCore::Frame& frame)
 {
-    m_drawingArea->setRootCompositingLayer(nullptr);
+    m_drawingArea->setRootCompositingLayer(frame, nullptr);
 }
 
 void WebPage::close()
@@ -1746,10 +1777,16 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
     WEBPAGE_RELEASE_LOG(Loading, "loadRequest: navigationID=%" PRIu64 ", shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, loadParameters.navigationID, static_cast<unsigned>(loadParameters.shouldTreatAsContinuingLoad), loadParameters.request.isAppInitiated(), valueOrDefault(loadParameters.existingNetworkResourceLoadIdentifierToResume).toUInt64());
 
+    RefPtr frame = loadParameters.frameIdentifier ? WebProcess::singleton().webFrame(*loadParameters.frameIdentifier) : m_mainFrame.ptr();
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     setLastNavigationWasAppInitiated(loadParameters.request.isAppInitiated());
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
+    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, frame.get());
 #endif
 
     WebProcess::singleton().webLoaderStrategy().setExistingNetworkResourceLoadIdentifierToResume(loadParameters.existingNetworkResourceLoadIdentifierToResume);
@@ -1762,7 +1799,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     m_pendingNavigationID = loadParameters.navigationID;
     m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);
 
-    m_sandboxExtensionTracker.beginLoad(m_mainFrame.ptr(), WTFMove(loadParameters.sandboxExtensionHandle));
+    m_sandboxExtensionTracker.beginLoad(frame.get(), WTFMove(loadParameters.sandboxExtensionHandle));
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
@@ -1771,7 +1808,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     platformDidReceiveLoadParameters(loadParameters);
 
     // Initate the load in WebCore.
-    FrameLoadRequest frameLoadRequest { *m_mainFrame->coreFrame(), loadParameters.request };
+    ASSERT(frame->coreFrame());
+    FrameLoadRequest frameLoadRequest { *frame->coreFrame(), loadParameters.request };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
     frameLoadRequest.setLockHistory(loadParameters.lockHistory);
@@ -1784,7 +1822,10 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
             localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
     }
 
-    corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
+    if (frame.get() == m_mainFrame.ptr())
+        corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
+    else
+        frame->coreFrame()->loader().load(WTFMove(frameLoadRequest));
 
     ASSERT(!m_pendingNavigationID);
     ASSERT(!m_pendingWebsitePolicies);
@@ -2973,6 +3014,28 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 #endif
 
     m_drawingArea->setLayerTreeStateIsFrozen(!!m_layerTreeFreezeReasons);
+}
+
+void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize newSize)
+{
+    auto* webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame)
+        return;
+
+    auto* frame = webFrame->coreFrame();
+    if (!frame)
+        return;
+
+    auto* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    frameView->resize(newSize);
+
+    if (m_drawingArea) {
+        m_drawingArea->setNeedsDisplay();
+        m_drawingArea->triggerRenderingUpdate();
+    }
 }
 
 void WebPage::tryMarkLayersVolatile(CompletionHandler<void(bool)>&& completionHandler)
@@ -4453,9 +4516,12 @@ void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDet
 #endif // ENABLE(DATA_DETECTION)
 
 #if PLATFORM(COCOA)
-void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
+void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, WebFrame* rootFrame)
 {
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!rootFrame)
+        return;
+
+    auto* localMainFrame = rootFrame->coreFrame();
     if (!localMainFrame)
         return;
 
@@ -5574,7 +5640,7 @@ void WebPage::SandboxExtensionTracker::willPerformLoadDragDestinationAction(RefP
 
 void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, SandboxExtension::Handle&& handle)
 {
-    ASSERT_UNUSED(frame, frame->isMainFrame());
+    ASSERT_UNUSED(frame, frame->isRootFrame());
 
     setPendingProvisionalSandboxExtension(SandboxExtension::create(WTFMove(handle)));
 }
@@ -6904,7 +6970,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (m_textManipulationIncludesSubframes)
         startTextManipulationForFrame(*frame->coreFrame());
 
-    if (!frame->isMainFrame())
+    if (!frame->isRootFrame())
         return;
 
     if (m_drawingArea)

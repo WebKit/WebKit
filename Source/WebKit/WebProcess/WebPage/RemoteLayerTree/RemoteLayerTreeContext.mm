@@ -174,13 +174,14 @@ Ref<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::Graphics
     return adoptRef(*new GraphicsLayerCARemote(layerType, client, *this));
 }
 
-void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
+void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer, WebFrame* rootFrame)
 {
     TraceScope tracingScope(BuildTransactionStart, BuildTransactionEnd);
 
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
-    transaction.setRemoteContextHostedIdentifier(m_webPage.layerHostingContextIdentifier());
+    if (rootFrame)
+        transaction.setRemoteContextHostedIdentifier(rootFrame->layerHostingContextIdentifier());
 
     m_currentTransaction = &transaction;
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);

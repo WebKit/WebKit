@@ -398,7 +398,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
-        m_legacyScrollingLayerCoordinator = makeUnique<LegacyWebKitScrollingLayerCoordinator>(page().chrome().client(), isMainFrameCompositor());
+        m_legacyScrollingLayerCoordinator = makeUnique<LegacyWebKitScrollingLayerCoordinator>(page().chrome().client(), isRootFrameCompositor());
 #endif
 }
 
@@ -464,7 +464,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
 
     // forceCompositingMode for subframes can only be computed after layout.
     bool forceCompositingMode = m_forceCompositingMode;
-    if (isMainFrameCompositor())
+    if (isRootFrameCompositor())
         forceCompositingMode = m_renderView.settings().forceCompositingMode() && hasAcceleratedCompositing; 
     
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter || forceCompositingMode != m_forceCompositingMode) {
@@ -501,7 +501,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout()
 {
     cacheAcceleratedCompositingFlags();
 
-    if (isMainFrameCompositor())
+    if (isRootFrameCompositor())
         return;
 
     RequiresCompositingData queryData;
@@ -840,7 +840,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         return false;
     }
 
-    if (!m_compositing && (m_forceCompositingMode || (isMainFrameCompositor() && page().pageOverlayController().overlayCount())))
+    if (!m_compositing && (m_forceCompositingMode || (isRootFrameCompositor() && page().pageOverlayController().overlayCount())))
         enableCompositingMode(true);
 
     bool isPageScroll = !updateRoot || updateRoot == &rootRenderLayer();
@@ -892,7 +892,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         m_secondaryBackingStoreBytes = 0;
 
         auto& frame = m_renderView.frameView().frame();
-        bool isMainFrame = isMainFrameCompositor();
+        bool isMainFrame = isRootFrameCompositor();
         LOG_WITH_STREAM(Compositing, stream << "\nUpdate " << m_rootLayerUpdateCount << " of " << (isMainFrame ? "main frame"_s : makeString("frame "_s, frame.frameID().object().toUInt64())) << " - compositing policy is " << m_compositingPolicy);
     }
 #endif
@@ -1553,7 +1553,7 @@ void RenderLayerCompositor::adjustOverflowScrollbarContainerLayers(RenderLayer& 
 
 void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>& childList)
 {
-    if (!isMainFrameCompositor() || !m_compositing)
+    if (!isRootFrameCompositor() || !m_compositing)
         return;
 
     if (!page().pageOverlayController().hasDocumentOverlays())
@@ -2549,7 +2549,7 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
         if (m_rootLayerAttachment != RootLayerUnattached)
             return;
 
-        RootLayerAttachment attachment = isMainFrameCompositor() ? RootLayerAttachedViaChromeClient : RootLayerAttachedViaEnclosingFrame;
+        RootLayerAttachment attachment = isRootFrameCompositor() ? RootLayerAttachedViaChromeClient : RootLayerAttachedViaEnclosingFrame;
         attachRootLayer(attachment);
 #if PLATFORM(IOS_FAMILY)
         if (m_legacyScrollingLayerCoordinator) {
@@ -3352,7 +3352,7 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& 
 
 bool RenderLayerCompositor::requiresCompositingForScrollableFrame(RequiresCompositingData& queryData) const
 {
-    if (isMainFrameCompositor())
+    if (isRootFrameCompositor())
         return false;
 
 #if PLATFORM(COCOA) || USE(NICOSIA)
@@ -3516,7 +3516,7 @@ bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& laye
 
 #if PLATFORM(IOS_FAMILY)
     // iOS WK1 has fixed/sticky support in the main frame via WebFixedPositionContent.
-    return isMainFrameCompositor();
+    return isRootFrameCompositor();
 #else
     return false;
 #endif
@@ -3727,7 +3727,7 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
     auto& frameView = m_renderView.frameView();
 
     // This applies when the application UI handles scrolling, in which case RenderLayerCompositor doesn't need to manage it.
-    if (frameView.delegatedScrollingMode() == DelegatedScrollingMode::DelegatedToNativeScrollView && isMainFrameCompositor())
+    if (frameView.delegatedScrollingMode() == DelegatedScrollingMode::DelegatedToNativeScrollView && isRootFrameCompositor())
         return false;
 
     // We need to handle our own scrolling if we're:
@@ -3861,12 +3861,9 @@ bool RenderLayerCompositor::documentUsesTiledBacking() const
     return backing->isFrameLayerWithTiledBacking();
 }
 
-bool RenderLayerCompositor::isMainFrameCompositor() const
+bool RenderLayerCompositor::isRootFrameCompositor() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame());
-    if (!localFrame)
-        return false;
-    return localFrame->isMainFrame();
+    return m_renderView.frameView().frame().isRootFrame();
 }
 
 bool RenderLayerCompositor::shouldCompositeOverflowControls() const
@@ -3879,7 +3876,7 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (documentUsesTiledBacking())
         return true;
 
-    if (m_overflowControlsHostLayer && isMainFrameCompositor())
+    if (m_overflowControlsHostLayer && isRootFrameCompositor())
         return true;
 
 #if !USE(COORDINATED_GRAPHICS)
@@ -3908,7 +3905,7 @@ bool RenderLayerCompositor::requiresScrollCornerLayer() const
 #if HAVE(RUBBER_BANDING)
 bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 {
-    if (!isMainFrameCompositor())
+    if (!isRootFrameCompositor())
         return false;
 
     // We do want a layer if we're using tiled drawing and can scroll.
@@ -3920,7 +3917,7 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 
 bool RenderLayerCompositor::requiresContentShadowLayer() const
 {
-    if (!isMainFrameCompositor())
+    if (!isRootFrameCompositor())
         return false;
 
 #if PLATFORM(COCOA)
@@ -3941,7 +3938,7 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLayer)
 {
-    if (!isMainFrameCompositor())
+    if (!isRootFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -3960,7 +3957,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool wantsLayer)
 {
-    if (!isMainFrameCompositor())
+    if (!isRootFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -3981,7 +3978,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 {
-    if (!isMainFrameCompositor())
+    if (!isRootFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -4018,7 +4015,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 {
-    if (!isMainFrameCompositor())
+    if (!isRootFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -4264,7 +4261,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 
 void RenderLayerCompositor::ensureRootLayer()
 {
-    RootLayerAttachment expectedAttachment = isMainFrameCompositor() ? RootLayerAttachedViaChromeClient : RootLayerAttachedViaEnclosingFrame;
+    RootLayerAttachment expectedAttachment = isRootFrameCompositor() ? RootLayerAttachedViaChromeClient : RootLayerAttachedViaEnclosingFrame;
     if (expectedAttachment == m_rootLayerAttachment)
          return;
 

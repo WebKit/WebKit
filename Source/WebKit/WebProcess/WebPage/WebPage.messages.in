@@ -720,4 +720,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PauseAllAnimations() -> ()
     PlayAllAnimations() -> ()
 #endif
+
+    UpdateFrameSize(WebCore::FrameIdentifier frame, WebCore::IntSize newSize)
 }

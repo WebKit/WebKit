@@ -30,6 +30,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include "RemoteFrame.h"
 #include "WindowProxy.h"
 
 namespace WebCore {
@@ -51,6 +52,23 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
 Frame::~Frame()
 {
     m_windowProxy->detachFromFrame();
+}
+
+bool Frame::isRootFrame() const
+{
+    // A root frame is a local frame with a remote frame parent or no parent.
+    // It is the root of its local frame tree in this process but might have
+    // a parent in another process.
+    switch (m_frameType) {
+    case FrameType::Local:
+        if (auto* parent = tree().parent())
+            return is<RemoteFrame>(parent);
+        ASSERT(&m_mainFrame == this);
+        return true;
+    case FrameType::Remote:
+        break;
+    }
+    return false;
 }
 
 void Frame::resetWindowProxy()
