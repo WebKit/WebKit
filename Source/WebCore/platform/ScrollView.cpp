@@ -711,7 +711,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             }
         }
 
-        const unsigned cMaxUpdateScrollbarsPass = 2;
+        const unsigned cMaxUpdateScrollbarsPass = 3;
         if ((sendContentResizedNotification || needAnotherPass) && m_updateScrollbarsPass < cMaxUpdateScrollbarsPass) {
             m_updateScrollbarsPass++;
             availableContentSizeChanged(AvailableSizeChangeReason::ScrollbarsChanged);

@@ -499,7 +499,7 @@ TEST(CSSViewportUnits, MinimumViewportInsetWithWritingMode)
     EXPECT_FLOAT_EQ(458, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed"); // No vertical overflow.
+        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize;
         double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize;
         EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
         EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
@@ -576,7 +576,7 @@ TEST(CSSViewportUnits, MaximumViewportInsetWithWritingMode)
     EXPECT_FLOAT_EQ(500, viewportUnitLength(webView, @"lvi"));
 
     {
-        double fixedWidth = widthOfElementWithID(webView, @"fixed"); // No vertical overflow.
+        double fixedWidth = widthOfElementWithID(webView, @"fixed") + scrollbarSize;
         double fixedHeight = heightOfElementWithID(webView, @"fixed") + scrollbarSize;
         EXPECT_FLOAT_EQ(fixedWidth, viewportUnitLength(webView, @"dvw"));
         EXPECT_FLOAT_EQ(fixedHeight, viewportUnitLength(webView, @"dvh"));
