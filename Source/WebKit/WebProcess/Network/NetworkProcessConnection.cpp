@@ -64,8 +64,6 @@
 #include "WebSharedWorkerObjectConnectionMessages.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelMessages.h"
-#include "WebSocketStream.h"
-#include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/InspectorInstrumentationWebKit.h>
@@ -105,11 +103,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     }
     if (decoder.messageReceiverName() == Messages::WebBroadcastChannelRegistry::messageReceiverName()) {
         WebProcess::singleton().broadcastChannelRegistry().didReceiveMessage(connection, decoder);
-        return;
-    }
-    if (decoder.messageReceiverName() == Messages::WebSocketStream::messageReceiverName()) {
-        if (auto* stream = WebSocketStream::streamWithIdentifier(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
-            stream->didReceiveMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebSocketChannel::messageReceiverName()) {

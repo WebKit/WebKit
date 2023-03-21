@@ -91,7 +91,6 @@
 #include "WebSharedWorkerContextManagerConnection.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebSharedWorkerProvider.h"
-#include "WebSocketStream.h"
 #include "WebsiteData.h"
 #include "WebsiteDataStoreParameters.h"
 #include "WebsiteDataType.h"
@@ -1287,7 +1286,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     logDiagnosticMessageForNetworkProcessCrash();
 
     m_webLoaderStrategy.networkProcessCrashed();
-    WebSocketStream::networkProcessCrashed();
     m_webSocketChannelManager.networkProcessCrashed();
     m_broadcastChannelRegistry->networkProcessCrashed();
 

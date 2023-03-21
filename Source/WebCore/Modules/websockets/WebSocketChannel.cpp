@@ -51,6 +51,7 @@
 #include "SocketProvider.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandle.h"
+#include "SocketStreamHandleImpl.h"
 #include "UserContentProvider.h"
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
@@ -60,6 +61,7 @@
 
 namespace WebCore {
 
+// FIXME: Move this to WebKitLegacy.
 const Seconds TCPMaximumSegmentLifetime { 2_min };
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
@@ -112,7 +114,8 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
 
     ref();
     String partition = m_document->domainForCachePartition();
-    m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, identifier(), page->sessionID(), partition, frame->loader().networkingContext());
+    bool shouldAcceptInsecureCertificates = false;
+    m_handle = SocketStreamHandleImpl::create(m_handshake->url(), *this, page->sessionID(), partition, { }, frame->loader().networkingContext(), shouldAcceptInsecureCertificates);
     return ConnectStatus::OK;
 }
 

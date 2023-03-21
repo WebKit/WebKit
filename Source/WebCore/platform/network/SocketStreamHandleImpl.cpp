@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+// FIXME: Move this to WebKitLegacy.
 void SocketStreamHandleImpl::platformSend(const uint8_t* data, size_t length, Function<void(bool)>&& completionHandler)
 {
     if (!m_buffer.isEmpty()) {

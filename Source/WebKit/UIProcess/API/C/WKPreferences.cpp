@@ -1597,16 +1597,6 @@ bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->paintTimingEnabled();
 }
 
-void WKPreferencesSetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setIsNSURLSessionWebSocketEnabled(flag);
-}
-
-bool WKPreferencesGetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->isNSURLSessionWebSocketEnabled();
-}
-
 void WKPreferencesSetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebRTCPlatformCodecsInGPUProcessEnabled(flag);

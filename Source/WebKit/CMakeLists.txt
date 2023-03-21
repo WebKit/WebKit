@@ -195,7 +195,6 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/NetworkProcess
     NetworkProcess/NetworkResourceLoader
     NetworkProcess/NetworkSocketChannel
-    NetworkProcess/NetworkSocketStream
 
     NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask
     NetworkProcess/ServiceWorker/ServiceWorkerFetchTask
@@ -307,7 +306,6 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Network/NetworkProcessConnection
     WebProcess/Network/WebResourceLoader
     WebProcess/Network/WebSocketChannel
-    WebProcess/Network/WebSocketStream
 
     WebProcess/Notifications/WebNotificationManager
 

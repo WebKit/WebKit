@@ -51,8 +51,6 @@
 #include "NetworkSession.h"
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
-#include "NetworkSocketStream.h"
-#include "NetworkSocketStreamMessages.h"
 #include "NetworkStorageManager.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
@@ -234,15 +232,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         RELEASE_ASSERT(decoder.destinationID());
         if (auto* loader = m_networkResourceLoaders.get(makeObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
             loader->didReceiveNetworkResourceLoaderMessage(connection, decoder);
-        return;
-    }
-
-    if (decoder.messageReceiverName() == Messages::NetworkSocketStream::messageReceiverName()) {
-        if (auto* socketStream = m_networkSocketStreams.get(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID()))) {
-            socketStream->didReceiveMessage(connection, decoder);
-            if (decoder.messageName() == Messages::NetworkSocketStream::Close::name())
-                m_networkSocketStreams.remove(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID()));
-        }
         return;
     }
 
@@ -479,21 +468,6 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
 {
     RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), m_webProcessIdentifier.toUInt64());
     m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
-}
-
-void NetworkConnectionToWebProcess::createSocketStream(URL&& url, String cachePartition, WebSocketIdentifier identifier)
-{
-    ASSERT(!m_networkSocketStreams.contains(identifier));
-    WebCore::SourceApplicationAuditToken token = { };
-#if PLATFORM(COCOA)
-    token = { m_networkProcess->sourceApplicationAuditData() };
-#endif
-    auto acceptInsecureCertificates = false;
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    if (auto* session = networkSession())
-        acceptInsecureCertificates = session->shouldAcceptInsecureCertificatesForWebSockets();
-#endif
-    m_networkSocketStreams.add(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), m_sessionID, cachePartition, identifier, m_connection, WTFMove(token), acceptInsecureCertificates));
 }
 
 void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier,  WebPageProxyIdentifier webPageProxyID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
