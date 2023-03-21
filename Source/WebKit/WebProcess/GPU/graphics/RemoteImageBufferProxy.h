@@ -99,7 +99,6 @@ private:
 
     bool prefersPreparationForDisplay() final { return true; }
     
-    void flushContext() final;
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;
 

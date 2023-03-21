@@ -219,7 +219,7 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     auto accelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
     auto fillRect = FloatRect { { }, logicalSize };
     accelerated->context().fillRect(fillRect, Color::green);
-    accelerated->flushContext();
+    accelerated->flushDrawingContext();
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, logicalSizeBytes, footprintError));
 
     auto unaccelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);

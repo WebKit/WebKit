@@ -142,11 +142,10 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> cloneForDifferentThread();
 
     WEBCORE_EXPORT virtual GraphicsContext& context() const;
-    WEBCORE_EXPORT virtual void flushContext();
 
     virtual bool prefersPreparationForDisplay() { return false; }
-    virtual void flushDrawingContext() { }
-    virtual bool flushDrawingContextAsync() { return false; }
+    WEBCORE_EXPORT virtual void flushDrawingContext();
+    WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
 
     WEBCORE_EXPORT std::unique_ptr<ImageBufferBackend> takeBackend();
     WEBCORE_EXPORT IntSize backendSize() const;

@@ -250,16 +250,21 @@ GraphicsContext& ImageBuffer::context() const
     return m_backend->context();
 }
 
-void ImageBuffer::flushContext()
+void ImageBuffer::flushDrawingContext()
 {
     // FIXME: this will be removed and flushDrawingContext will be renamed as flushContext().
     // The direct backend context flush is not part of ImageBuffer abstraction semantics,
     // rather implementation detail of the ImageBufferBackends that need separate management
     // of their context lifetime for purposes of drawing from the image buffer.
-    if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         backend->flushContext();
-    }
+}
+
+bool ImageBuffer::flushDrawingContextAsync()
+{
+    // This function is only really useful for the Remote subclass, where the prefersPreparationForDisplay() == true.
+    flushDrawingContext();
+    return true;
 }
 
 std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
@@ -276,28 +281,22 @@ IntSize ImageBuffer::backendSize() const
 
 RefPtr<NativeImage> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->copyNativeImage(copyBehavior);
-    }
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
-    if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->copyNativeImageForDrawing(destination);
-    }
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage()
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->sinkIntoNativeImage();
-    }
     return nullptr;
 }
 
@@ -322,8 +321,6 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
     auto* backend = ensureBackendCreated();
     if (!backend)
         return nullptr;
-
-    const_cast<ImageBuffer&>(*this).flushDrawingContext();
 
     FilterResults results;
     auto result = filter.apply(this, { { }, logicalSize() }, results);
@@ -462,16 +459,13 @@ void ImageBuffer::drawConsuming(RefPtr<ImageBuffer> imageBuffer, GraphicsContext
 
 void ImageBuffer::convertToLuminanceMask()
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushContext();
+    if (auto* backend = ensureBackendCreated())
         backend->convertToLuminanceMask();
-    }
 }
 
 void ImageBuffer::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
     if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
         backend->transformToColorSpace(newColorSpace);
         m_parameters.colorSpace = newColorSpace;
     }
@@ -505,19 +499,15 @@ Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeT
 
 RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
-    if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->getPixelBuffer(outputFormat, srcRect, allocator);
-    }
     return nullptr;
 }
 
 void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         backend->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
-    }
 }
 
 bool ImageBuffer::copyToPlatformTexture(GraphicsContextGL& context, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const
