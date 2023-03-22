@@ -18,35 +18,12 @@ video = document.getElementById("video");
 canvas = document.getElementById("canvas");
 // FIXME: We should use tracks
 
-function testImage()
-{
-    try {
-        if (!video.videoWidth || !video.videoHeight)
-            throw `Video size invalid: ${video.videoWidth}x${video.videoHeight}`;
-
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-        assert_true(imageData.data.every( (pixel, index) => {
-            return pixel === 0 || (index % 4) === 3;
-        }));
-
-        finishTest();
-    } catch(e) {
-        errorTest(e);
-    }
-}
-
 function testStream(stream)
 {
     video.srcObject = stream;
     video.onplay = setTimeout(() => {
         stream.getTracks()[0].enabled = false;
-        setTimeout(() => {
-            testImage();
-        }, 0);
+        checkVideoIsEntirelyBlack(canvas, video).then(finishTest, errorTest);
     }, 2000);
 }
 
