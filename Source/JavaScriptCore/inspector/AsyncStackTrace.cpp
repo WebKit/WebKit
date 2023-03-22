@@ -207,6 +207,8 @@ void AsyncStackTrace::remove()
     ASSERT(m_parent->m_childCount);
     m_parent->m_childCount--;
     m_parent = nullptr;
+
+    m_callStack->removeParentStackTrace();
 }
 
 } // namespace Inspector
