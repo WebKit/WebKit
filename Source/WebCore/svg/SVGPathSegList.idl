@@ -32,7 +32,7 @@
 
     undefined clear();
     SVGPathSeg initialize(SVGPathSeg newItem);
-    getter SVGPathSeg getItem(unsigned long index);
+    [RaisesException] getter SVGPathSeg getItem(unsigned long index);
     SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
     SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
     SVGPathSeg removeItem(unsigned long index);

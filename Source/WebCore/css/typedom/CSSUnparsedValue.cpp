@@ -130,10 +130,10 @@ void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<Serialization
     }
 }
 
-ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::item(size_t index)
+std::optional<CSSUnparsedSegment> CSSUnparsedValue::item(size_t index)
 {
     if (index >= m_segments.size())
-        return Exception { RangeError, makeString("Index ", index, " exceeds index range for unparsed segments.") };
+        return std::nullopt;
     return CSSUnparsedSegment { m_segments[index] };
 }
 

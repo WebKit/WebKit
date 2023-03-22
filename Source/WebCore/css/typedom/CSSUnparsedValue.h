@@ -45,7 +45,7 @@ public:
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
     size_t length() const { return m_segments.size(); }
     
-    ExceptionOr<CSSUnparsedSegment> item(size_t);
+    std::optional<CSSUnparsedSegment> item(size_t);
     ExceptionOr<CSSUnparsedSegment> setItem(size_t, CSSUnparsedSegment&&);
 
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnparsedValue; }

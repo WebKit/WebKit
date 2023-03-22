@@ -824,9 +824,20 @@ sub GenerateIndexedGetter
     push(@attributes, "JSC::PropertyAttribute::ReadOnly") if !GetIndexedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
 
     my $indexedGetterFunctionName = $indexedGetterOperation->extendedAttributes->{ImplementedAs} || $indexedGetterOperation->name || "item";
-    my $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, "thisObject->wrapped().${indexedGetterFunctionName}(${indexExpression})", "*thisObject->globalObject()");
     
-    return ($nativeToJSConversion, StringifyJSCAttributes(\@attributes));
+    my $itemGetterCondition;
+    my $nativeToJSConversion;
+    if ( $indexedGetterOperation->extendedAttributes->{RaisesException}) {
+        $itemGetterCondition = "$indexExpression < thisObject->wrapped().length()";
+        $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, "thisObject->wrapped().${indexedGetterFunctionName}(${indexExpression})", "*thisObject->globalObject()");
+    } else {
+        # In the common case, the implementation getter will do a bound check and return null if the index is out of range.
+        # We can thus call item() right away and do a null check instead of first checking if `index < length` and then calling
+        # item(). This avoids duplicates bounds check, which is especially useful when `length()` is virtual, like on NodeList.
+        $itemGetterCondition = "auto item = thisObject->wrapped().${indexedGetterFunctionName}(${indexExpression}); LIKELY(!!item)";
+        $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, "WTFMove(item)", "*thisObject->globalObject()");
+    }
+    return ($itemGetterCondition, $nativeToJSConversion, StringifyJSCAttributes(\@attributes));
 }
 
 sub GenerateNamedGetter
@@ -909,11 +920,10 @@ sub GenerateGetOwnPropertySlot
         
         # 1.2. If index is a supported property index, then:
         # FIXME: This should support non-contiguous indices.
-        push(@$outputArray, "        if (index.value() < thisObject->wrapped().length()) {\n");
-        
         # NOTE: GenerateIndexedGetter implements steps 1.2.1 - 1.2.8.
         
-        my ($nativeToJSConversion, $attributeString) = GenerateIndexedGetter($interface, $indexedGetterOperation, "index.value()");
+        my ($itemGetterCondition, $nativeToJSConversion, $attributeString) = GenerateIndexedGetter($interface, $indexedGetterOperation, "index.value()");
+        push(@$outputArray, "        if ($itemGetterCondition) {\n");
         
         push(@$outputArray, "            auto value = ${nativeToJSConversion};\n");
         push(@$outputArray, "            RETURN_IF_EXCEPTION(throwScope, false);\n");
@@ -1020,11 +1030,10 @@ sub GenerateGetOwnPropertySlotByIndex
         
         # 1.2. If index is a supported property index, then:
         # FIXME: This should support non-contiguous indices.
-        push(@$outputArray, "        if (index < thisObject->wrapped().length()) {\n");
-        
         # NOTE: GenerateIndexedGetter implements steps 1.2.1 - 1.2.8.
         
-        my ($nativeToJSConversion, $attributeString) = GenerateIndexedGetter($interface, $indexedGetterOperation, "index");
+        my ($itemGetterCondition, $nativeToJSConversion, $attributeString) = GenerateIndexedGetter($interface, $indexedGetterOperation, "index");
+        push(@$outputArray, "        if ($itemGetterCondition) {\n");
         
         push(@$outputArray, "            auto value = ${nativeToJSConversion};\n");
         push(@$outputArray, "            RETURN_IF_EXCEPTION(throwScope, false);\n");
