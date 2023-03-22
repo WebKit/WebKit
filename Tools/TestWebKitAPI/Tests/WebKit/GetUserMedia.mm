@@ -1354,6 +1354,50 @@ TEST(WebKit2, WebRTCAndRemoteCommands)
 }
 #endif // WK_HAVE_C_SPI
 
+#if PLATFORM(IOS_FAMILY)
+
+TEST(WebKit2, OrientationNotAffectedByCSSOrientation)
+{
+    auto runTestForOrientation = ^(UIInterfaceOrientation orientation) {
+        done = false;
+
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+        initializeMediaCaptureConfiguration(configuration.get());
+
+        auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+        [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+        auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+        [webView setUIDelegate:delegate.get()];
+
+        [webView _setInterfaceOrientationOverride:orientation];
+
+        [webView loadTestPageNamed:@"getUserMedia"];
+        EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
+
+        [delegate waitUntilPrompted];
+
+        done = false;
+        [webView stringByEvaluatingJavaScript:@"captureVideo(true)"];
+        TestWebKitAPI::Util::run(&done);
+
+        NSString *actualOrientation = [webView stringByEvaluatingJavaScript:@"captureOrientation()"];
+
+        // Capture orientation should be landscape regardless of the
+        // CSS orientation override.
+        EXPECT_WK_STREQ(actualOrientation, "landscape");
+    };
+
+    runTestForOrientation(UIInterfaceOrientationLandscapeLeft);
+    runTestForOrientation(UIInterfaceOrientationLandscapeRight);
+    runTestForOrientation(UIInterfaceOrientationPortrait);
+    runTestForOrientation(UIInterfaceOrientationPortraitUpsideDown);
+}
+
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

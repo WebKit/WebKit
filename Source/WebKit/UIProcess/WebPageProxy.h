@@ -3251,6 +3251,8 @@ private:
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
     Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };
 
+    WebCore::IntDegrees m_orientationForMediaCapture { 0 };
+
     bool m_hasHadSelectionChangesFromUserInteraction { false };
 
 #if HAVE(TOUCH_BAR)
