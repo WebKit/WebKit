@@ -26,6 +26,7 @@ import sys
 
 from .command import Command
 from .branch import Branch
+from .install_hooks import InstallHooks
 from .squash import Squash
 
 from webkitbugspy import Tracker, radar
@@ -662,11 +663,15 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args, repository, hooks=None, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1
         if not cls.check_pull_request_args(repository, args):
+            return 1
+        if hooks and InstallHooks.hook_needs_update(repository, os.path.join(hooks, 'pre-push')):
+            sys.stderr.write("Cannot run a command which invokes `git push` with an out-of-date pre-push hook\n")
+            sys.stderr.write("Please re-run `git-webkit setup` to update all local hooks\n")
             return 1
 
         branch_point = cls.pull_request_branch_point(repository, args, **kwargs)

@@ -26,6 +26,7 @@ import re
 import sys
 
 from .command import Command
+from .install_hooks import InstallHooks
 from .track import Track
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import log, local
@@ -109,12 +110,16 @@ class Publish(Command):
             mapping[branch] = commit
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args, repository, hooks=None, **kwargs):
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'publish' branches in a git checkout\n")
+            return 1
+        if hooks and InstallHooks.hook_needs_update(repository, os.path.join(hooks, 'pre-push')):
+            sys.stderr.write("Cannot run a command which invokes `git push` with an out-of-date pre-push hook\n")
+            sys.stderr.write("Please re-run `git-webkit setup` to update all local hooks\n")
             return 1
 
         commits = set()
