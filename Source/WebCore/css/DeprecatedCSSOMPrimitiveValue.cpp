@@ -130,7 +130,7 @@ ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCount
     if (!m_value->isCounter())
         return Exception { InvalidAccessError };
     auto& value = downcast<CSSCounterValue>(m_value.get());
-    return DeprecatedCSSOMCounter::create(value.identifier(), value.separator(), value.listStyle());
+    return DeprecatedCSSOMCounter::create(value.identifier(), value.separator(), value.counterStyleCSSText());
 }
     
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const

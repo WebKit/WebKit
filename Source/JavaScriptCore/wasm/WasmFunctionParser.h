@@ -1824,6 +1824,57 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
             return { };
         }
+        case ExtGCOpType::ArrayNewData: {
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new_data");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new_data type index ", typeIndex, " is out of bounds");
+
+            // Type of result array must be a mutable array type
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new_data type index ", typeIndex, " does not reference an array definition");
+            const FieldType& fieldType = typeDefinition.as<ArrayType>()->elementType();
+
+            // Array element type must be numeric, vector or packed
+            const StorageType storageType = fieldType.type;
+            if (storageType.is<Type>()) {
+                // Check that type is numeric
+                const Type elementType = storageType.as<Type>();
+                switch (elementType.kind) {
+                case Wasm::TypeKind::I32:
+                case Wasm::TypeKind::I64:
+                case Wasm::TypeKind::F32:
+                case Wasm::TypeKind::F64:
+                    break;
+                case Wasm::TypeKind::V128:
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251330
+                    WASM_VALIDATOR_FAIL_IF(true, "array.new_data of vector type not yet implemented");
+                default:
+                    WASM_VALIDATOR_FAIL_IF(true, "array.new_data expected numeric, packed, or vector type; found ", elementType.kind);
+                }
+            }
+            // Otherwise, it's packed, which is type-correct
+
+            uint32_t dataIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(dataIndex), "can't get data segment index for array.new_data");
+            WASM_VALIDATOR_FAIL_IF(!(m_info.numberOfDataSegments.value()), "array.new_data in module with no data segments");
+            WASM_VALIDATOR_FAIL_IF(dataIndex >= m_info.numberOfDataSegments, "array.new_data segment index ",
+                dataIndex, " is out of bounds (maximum data segment index is ", *m_info.numberOfDataSegments -1, ")");
+
+            // Get the array size
+            TypedExpression size;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new_data");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new_data: size has type ", size.type().kind, " expected ", TypeKind::I32);
+
+            // Get the offset into the data segment
+            TypedExpression offset;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "array.new_data");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "array.new_data: offset has type ", offset.type().kind, " expected ", TypeKind::I32);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addArrayNewData(typeIndex, dataIndex, size, offset, result));
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
+            return { };
+        }
         case ExtGCOpType::ArrayGet:
         case ExtGCOpType::ArrayGetS:
         case ExtGCOpType::ArrayGetU: {

@@ -313,10 +313,8 @@ void WebPageProxy::setDeviceOrientation(IntDegrees deviceOrientation)
 {
     if (deviceOrientation != m_deviceOrientation) {
         m_deviceOrientation = deviceOrientation;
-        if (hasRunningProcess()) {
+        if (hasRunningProcess())
             m_process->send(Messages::WebPage::SetDeviceOrientation(deviceOrientation), m_webPageID);
-            setOrientationForMediaCapture(deviceOrientation);
-        }
     }
 }
 
@@ -1013,6 +1011,11 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     pageClient().didNotHandleTapAsClick(point);
     m_uiClient->didNotHandleTapAsClick(point);
+}
+
+void WebPageProxy::didHandleTapAsHover()
+{
+    pageClient().didHandleTapAsHover();
 }
 
 void WebPageProxy::didCompleteSyntheticClick()

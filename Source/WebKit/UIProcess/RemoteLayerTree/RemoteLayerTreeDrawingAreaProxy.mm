@@ -92,11 +92,21 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
     if (!m_webPageProxy.hasRunningProcess())
         return;
+    m_webPageProxy.scrollingCoordinatorProxy()->viewSizeDidChange();
 
     if (m_isWaitingForDidUpdateGeometry)
         return;
-
     sendUpdateGeometry();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::viewWillStartLiveResize()
+{
+    m_webPageProxy.scrollingCoordinatorProxy()->viewWillStartLiveResize();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
+{
+    m_webPageProxy.scrollingCoordinatorProxy()->viewWillEndLiveResize();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()

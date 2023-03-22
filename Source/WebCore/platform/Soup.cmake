@@ -14,7 +14,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/soup/ResourceError.h
     platform/network/soup/ResourceRequest.h
     platform/network/soup/ResourceResponse.h
-    platform/network/soup/SocketStreamHandleImpl.h
     platform/network/soup/SoupNetworkProxySettings.h
     platform/network/soup/SoupNetworkSession.h
     platform/network/soup/SoupVersioning.h

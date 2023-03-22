@@ -229,6 +229,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, SpeculationDump(node->prediction()));
     if (node->hasNumberOfArgumentsToSkip())
         out.print(comma, "numberOfArgumentsToSkip = ", node->numberOfArgumentsToSkip());
+    if (node->hasNumberOfBoundArguments())
+        out.print(comma, "numberOfBoundArguments = ", node->numberOfBoundArguments());
     if (node->hasArrayMode())
         out.print(comma, node->arrayMode());
     if (node->hasArithUnaryType())

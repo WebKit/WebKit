@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+struct ListStyleType;
 class StyleRuleCounterStyle;
 enum CSSValueID : uint16_t;
 
@@ -40,7 +41,7 @@ using CounterStyleMap = HashMap<AtomString, RefPtr<CSSCounterStyle>>;
 class CSSCounterStyleRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RefPtr<CSSCounterStyle> resolvedCounterStyle(const AtomString&);
+    RefPtr<CSSCounterStyle> resolvedCounterStyle(const ListStyleType&);
     static RefPtr<CSSCounterStyle> decimalCounter();
     static void addUserAgentCounterStyle(const CSSCounterStyleDescriptors&);
     void addCounterStyle(const CSSCounterStyleDescriptors&);

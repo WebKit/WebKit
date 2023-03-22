@@ -67,7 +67,7 @@ PASS getSortedOwnPropertyNames(Symbol.prototype) is ['constructor', 'description
 PASS getSortedOwnPropertyNames(Map) is ['length', 'name', 'prototype']
 PASS getSortedOwnPropertyNames(Map.prototype) is ['clear', 'constructor', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values']
 PASS getSortedOwnPropertyNames(Set) is ['length', 'name', 'prototype']
-PASS getSortedOwnPropertyNames(Set.prototype) is ['add', 'clear', 'constructor', 'delete', 'entries', 'forEach', 'has', 'keys', 'size', 'values']
+PASS getSortedOwnPropertyNames(Set.prototype) is ['add', 'clear', 'constructor', 'delete', 'difference', 'entries', 'forEach', 'has', 'intersection', 'isDisjointFrom', 'isSubsetOf', 'isSupersetOf', 'keys', 'size', 'symmetricDifference', 'union', 'values']
 PASS getSortedOwnPropertyNames(WeakMap) is ['length', 'name', 'prototype']
 PASS getSortedOwnPropertyNames(WeakMap.prototype) is ['constructor', 'delete', 'get', 'has', 'set']
 PASS getSortedOwnPropertyNames(WeakSet) is ['length', 'name', 'prototype']

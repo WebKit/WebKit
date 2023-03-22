@@ -35,6 +35,7 @@
 #include "DFGAbstractInterpreterClobberState.h"
 #include "DOMJITGetterSetter.h"
 #include "DOMJITSignature.h"
+#include "FunctionPrototype.h"
 #include "GetByStatus.h"
 #include "GetterSetter.h"
 #include "HashMapImplInlines.h"
@@ -2898,6 +2899,32 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case FunctionBind: {
+        if (m_graph.m_plan.isUnlinked()) {
+            clobberWorld();
+            setTypeForNode(node, SpecFunction);
+            break;
+        }
+
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+        Edge target = m_graph.child(node, 0);
+        AbstractValue& targetValue = forNode(target);
+        auto& structureSet = targetValue.m_structure;
+        if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() == 1) {
+            RegisteredStructure structure = structureSet.onlyStructure();
+            if (JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get())) {
+                m_state.setShouldTryConstantFolding(true);
+                didFoldClobberWorld();
+                setForNode(node, globalObject->boundFunctionStructure());
+                break;
+            }
+        }
+
+        clobberWorld();
+        setTypeForNode(node, SpecFunction);
+        break;
+    }
+
     case NumberToStringWithRadix: {
         JSValue radixValue = forNode(node->child2()).m_value;
         if (radixValue && radixValue.isInt32()) {
@@ -3313,6 +3340,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, 
             m_codeBlock->globalObjectFor(node->origin.semantic)->asyncFunctionStructure());
         break;
+
+    case NewBoundFunction: {
+        setForNode(node, m_codeBlock->globalObjectFor(node->origin.semantic)->boundFunctionStructure());
+        break;
+    }
 
     case NewFunction: {
         JSGlobalObject* globalObject = m_codeBlock->globalObjectFor(node->origin.semantic);

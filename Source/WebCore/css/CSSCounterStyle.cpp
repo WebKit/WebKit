@@ -63,7 +63,6 @@ String CSSCounterStyle::counterForSystemCyclic(int value) const
 // https://www.w3.org/TR/css-counter-styles-3/#fixed-system
 String CSSCounterStyle::counterForSystemFixed(int value) const
 {
-    // Empty string will force value to be handled by fallback.
     if (value < firstSymbolValueForFixedSystem())
         return { };
     unsigned valueOffset = value - firstSymbolValueForFixedSystem();
@@ -209,7 +208,7 @@ String CSSCounterStyle::text(int value)
         return fallbackText(value);
 
     auto result = initialRepresentation(value);
-    if (result.isEmpty())
+    if (result.isNull())
         return fallbackText(value);
     applyPadSymbols(result, value);
     if (shouldApplyNegativeSymbols(value))

@@ -5989,6 +5989,164 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('build_summary'), 'Committed 5dc27962b4c5')
 
 
+class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password')
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        return self.runStep()
+
+    def test_success_security(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'apple/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 1,
+            Expect(
+                'rmdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            )
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to updated working directory')
+        return self.runStep()
+
+
 class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     class MockPreviousStep(object):
         def __init__(self):

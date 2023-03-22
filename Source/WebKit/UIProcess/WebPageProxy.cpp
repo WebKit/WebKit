@@ -2132,6 +2132,9 @@ void WebPageProxy::viewWillStartLiveResize()
         return;
 
     closeOverlayedViews();
+    
+    m_drawingArea->viewWillStartLiveResize();
+    
     send(Messages::WebPage::ViewWillStartLiveResize());
 }
 
@@ -2139,6 +2142,9 @@ void WebPageProxy::viewWillEndLiveResize()
 {
     if (!hasRunningProcess())
         return;
+
+    m_drawingArea->viewWillEndLiveResize();
+
     send(Messages::WebPage::ViewWillEndLiveResize());
 }
 
@@ -9159,7 +9165,7 @@ void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& reque
     gpuProcess.updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_process->coreProcessIdentifier(), WTFMove(callback));
     gpuProcess.updateCaptureOrigin(request.topLevelDocumentSecurityOrigin().data(), m_process->coreProcessIdentifier());
 #if PLATFORM(IOS_FAMILY)
-    gpuProcess.setOrientationForMediaCapture(m_deviceOrientation);
+    gpuProcess.setOrientationForMediaCapture(m_orientationForMediaCapture);
 #endif
 #else
     callback();
@@ -11436,6 +11442,10 @@ void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& com
 
 void WebPageProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
 {
+    m_orientationForMediaCapture = orientation;
+    if (!hasRunningProcess())
+        return;
+
 #if ENABLE(MEDIA_STREAM)
 #if PLATFORM(COCOA)
     if (auto* proxy = m_process->userMediaCaptureManagerProxy())
@@ -11491,7 +11501,7 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
         auto& gpuProcess = process().processPool().ensureGPUProcess();
         gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_process->coreProcessIdentifier(), [] { });
 #if PLATFORM(IOS_FAMILY)
-        gpuProcess.setOrientationForMediaCapture(m_deviceOrientation);
+        gpuProcess.setOrientationForMediaCapture(m_orientationForMediaCapture);
 #endif
     }
 #endif

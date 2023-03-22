@@ -3867,6 +3867,30 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return CallOptimizationResult::Inlined;
         }
 
+        case FunctionBindIntrinsic: {
+#if USE(JSVALUE64)
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            constexpr int numChildren = static_cast<int>((JSBoundFunction::maxEmbeddedArgs + /* boundThis */ 1) + /* this */ 1);
+            if (argumentCountIncludingThis > numChildren)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+
+            int index = 0;
+            for (; index < argumentCountIncludingThis; ++index)
+                addVarArgChild(get(virtualRegisterForArgumentIncludingThis(index, registerOffset)));
+            for (; index < numChildren; ++index)
+                addVarArgChild(jsConstant(jsUndefined()));
+            Node* resultNode = addToGraph(Node::VarArg, FunctionBind, OpInfo(0), OpInfo(static_cast<unsigned>(argumentCountIncludingThis >= 2 ? argumentCountIncludingThis - 2 : 0)));
+            setResult(resultNode);
+            return CallOptimizationResult::Inlined;
+#else
+            return CallOptimizationResult::DidNothing;
+#endif
+        }
+
         case NumberConstructorIntrinsic: {
             insertChecks();
             if (argumentCountIncludingThis <= 1)
@@ -3940,11 +3964,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             // to keep OSR exit correct when we exit in the middle of this stack construction. We exit to the caller side
             // when we failed to construct this frame. And this is totally OK since we are not clobbering values.
 
-            JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
-
             unsigned numberOfParameters = argumentCountIncludingThis;
             numberOfParameters++; // True return PC.
-            numberOfParameters += boundArgs ? boundArgs->length() : 0;
+            numberOfParameters += boundFunction->boundArgsLength();
 
             // Start with a register offset that corresponds to the last in-use register.
             int newRegisterOffset = virtualRegisterForLocal(m_inlineStackTop->m_profiledBlock->numCalleeLocals() - 1).offset();
@@ -3964,10 +3986,10 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             // call the wrapped function, this is OK.
             Vector<Node*> arguments;
             arguments.append(jsConstant(boundFunction->boundThis()));
-            if (boundArgs) {
-                for (unsigned index = 0; index < boundArgs->length(); ++index)
-                    arguments.append(jsConstant(boundArgs->get(index)));
-            }
+            boundFunction->forEachBoundArg([&](JSValue argument) {
+                arguments.append(jsConstant(argument));
+                return IterationStatus::Continue;
+            });
 
             if (argumentCountIncludingThis > 1) {
                 for (int index = 1; index < argumentCountIncludingThis; ++index)
@@ -3991,7 +4013,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
 
             // Bound function itself is completely wiped. And we should behave as if the current caller is directly calling this function.
             // If the current caller is calling the callee in a tail-call form, then it should be a tail-call.
-            Terminality terminality = handleCall(result, callOp, callOp == Call ? InlineCallFrame::BoundFunctionCall : InlineCallFrame::BoundFunctionTailCall, osrExitIndex, jsConstant(boundFunction->flattenedTargetFunction()), numberOfParameters - 1, newRegisterOffset, CallLinkStatus(CallVariant(boundFunction->flattenedTargetFunction())), prediction);
+            Terminality terminality = handleCall(result, callOp, callOp == Call ? InlineCallFrame::BoundFunctionCall : InlineCallFrame::BoundFunctionTailCall, osrExitIndex, jsConstant(boundFunction->targetFunction()), numberOfParameters - 1, newRegisterOffset, CallLinkStatus(CallVariant(boundFunction->targetFunction())), prediction);
             didSetResult = true;
             return terminality == NonTerminal ? CallOptimizationResult::Inlined : CallOptimizationResult::InlinedTerminal;
         }

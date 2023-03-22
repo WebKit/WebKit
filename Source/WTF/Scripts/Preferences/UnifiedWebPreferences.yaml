@@ -782,6 +782,22 @@ BlockIOKitInWebContentSandbox:
     WebKit:
       default: true
 
+BlockMediaLayerRehostingInWebContentProcess:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "GPU Process: Block Media Layer Re-hosting"
+  humanReadableDescription: "GPU Process: Block Media Layer Re-hosting in WebContent process"
+  condition: ENABLE(GPU_PROCESS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+    WebCore:
+      default: false
+
 # We would have to partition BroadcastChannel based on PageGroups if we wanted to enable this for WebKitLegacy.
 BroadcastChannelEnabled:
   type: bool

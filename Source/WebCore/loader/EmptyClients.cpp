@@ -1184,12 +1184,17 @@ private:
     void postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
+class EmptySocketProvider final : public SocketProvider {
+public:
+    RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) final { return nullptr; }
+};
+
 PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
         sessionID,
         makeUniqueRef<EmptyEditorClient>(),
-        SocketProvider::create(),
+        adoptRef(*new EmptySocketProvider),
         WebRTCProvider::create(),
         CacheStorageProvider::create(),
         adoptRef(*new EmptyUserContentProvider),

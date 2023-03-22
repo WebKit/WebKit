@@ -300,9 +300,10 @@ public:
         if (m_track.isVideo()) {
             m_enoughData = false;
             m_needsDiscont = true;
-            flush();
             if (!m_track.enabled())
                 pushBlackFrame();
+            else
+                flush();
         }
     }
 
@@ -406,10 +407,16 @@ private:
     {
         auto width = m_lastKnownSize.width() ? m_lastKnownSize.width() : 320;
         auto height = m_lastKnownSize.height() ? m_lastKnownSize.height() : 240;
+
         if (!m_blackFrameCaps)
             m_blackFrameCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
-        else
-            gst_caps_set_simple(m_blackFrameCaps.get(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr);
+        else {
+            auto* structure = gst_caps_get_structure(m_blackFrameCaps.get(), 0);
+            int currentWidth, currentHeight;
+            gst_structure_get(structure, "width", G_TYPE_INT, &currentWidth, "height", G_TYPE_INT, &currentHeight, nullptr);
+            if (currentWidth != width || currentHeight != height)
+                m_blackFrameCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
+        }
 
         GstVideoInfo info;
         gst_video_info_from_caps(&info, m_blackFrameCaps.get());

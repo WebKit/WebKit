@@ -29,6 +29,7 @@
 #include "APIUIClient.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include "WebScreenOrientationManagerMessages.h"
 #include "WebScreenOrientationManagerProxyMessages.h"
 #include <WebCore/Exception.h>

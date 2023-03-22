@@ -6555,7 +6555,7 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext& c
     return CSSPrimitiveValue::createAttr(WTFMove(attrName));
 }
 
-static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters)
+static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters, const CSSParserContext& context)
 {
     AtomString identifier { consumeCustomIdentRaw(args) };
     if (identifier.isNull())
@@ -6568,18 +6568,19 @@ static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool cou
         separator = args.consumeIncludingWhitespace().value().toAtomString();
     }
 
-    auto listStyle = CSSValueDecimal;
+    RefPtr<CSSValue> listStyleType = CSSPrimitiveValue::create(CSSValueDecimal);
     if (consumeCommaIncludingWhitespace(args)) {
-        listStyle = args.peek().id();
-        if (listStyle != CSSValueNone && !isPredefinedCounterStyle(listStyle))
+        if (args.peek().id() == CSSValueNone || args.peek().type() == StringToken)
             return nullptr;
-        args.consumeIncludingWhitespace();
+        listStyleType = consumeListStyleType(args, context);
+        if (!listStyleType)
+            return nullptr;
     }
 
     if (!args.atEnd())
         return nullptr;
 
-    return CSSCounterValue::create(WTFMove(identifier), WTFMove(separator), listStyle);
+    return CSSCounterValue::create(WTFMove(identifier), WTFMove(separator), WTFMove(listStyleType));
 }
 
 RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -6598,9 +6599,9 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserConte
             if (range.peek().functionId() == CSSValueAttr)
                 parsedValue = consumeAttr(consumeFunction(range), context);
             else if (range.peek().functionId() == CSSValueCounter)
-                parsedValue = consumeCounterContent(consumeFunction(range), false);
+                parsedValue = consumeCounterContent(consumeFunction(range), false, context);
             else if (range.peek().functionId() == CSSValueCounters)
-                parsedValue = consumeCounterContent(consumeFunction(range), true);
+                parsedValue = consumeCounterContent(consumeFunction(range), true, context);
             if (!parsedValue)
                 return nullptr;
         }

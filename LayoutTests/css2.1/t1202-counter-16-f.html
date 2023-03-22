@@ -10,15 +10,14 @@
   body { white-space: nowrap; }
 
 
-  #test { counter-reset: c 0 f 1000; }
-  #test span { counter-increment: c; }
+  #test { counter-reset: success 0 failure 1000; }
+  #test span { counter-increment: success; }
   #test span:before {
-    content: counter(c);
-    content: counter(f, ".");
-    content: counter(f, ".", decimal);
-    content: counter(f, decimal, ".");
-    content: counter(f, decimal, decimal);
-    content: counter(f, unknowntype);
+    content: counter(success, custom-ident);
+    content: counter(failure, ".");
+    content: counter(failure, ".", decimal);
+    content: counter(failure, decimal, ".");
+    content: counter(failure, decimal, decimal);
   }
 
   </style>

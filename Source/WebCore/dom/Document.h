@@ -767,7 +767,7 @@ public:
     static StaticStringImpl& maskedURLStringForBindings();
     static const URL& maskedURLForBindings();
 
-    String userAgent(const URL&) const final;
+    WEBCORE_EXPORT String userAgent(const URL&) const final;
 
     void disableEval(const String& errorMessage) final;
     void disableWebAssembly(const String& errorMessage) final;

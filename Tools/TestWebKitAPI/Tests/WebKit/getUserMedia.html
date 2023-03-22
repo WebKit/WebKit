@@ -217,6 +217,12 @@
                 });
             }
 
+
+            function captureOrientation() {
+                let settings = stream.getVideoTracks()[0].getSettings();
+                return (settings.width > settings.height) ? "landscape" : "portrait";
+            }
+
             function checkConstraintsStatus() {
                 async function doCheckConstraints() {
                     video2.srcObject = stream;

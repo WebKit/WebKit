@@ -131,7 +131,7 @@ void EntryPointRewriter::collectParameters()
     while (m_function.parameters().size()) {
         auto parameter = m_shaderModule.takeLast(m_function.parameters());
         Vector<String> path;
-        visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), WTFMove(parameter->attributes()) });
+        visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), parameter->attributes() });
     }
 }
 
@@ -144,7 +144,7 @@ void EntryPointRewriter::checkReturnType()
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
         if (auto* structType = std::get_if<Types::Struct>(maybeReturnType->resolvedType())) {
             ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
-            structType->structure.setRole(AST::StructureRole::VertexOutput);
+            m_shaderModule.replace(&structType->structure.role(), AST::StructureRole::VertexOutput);
         }
     }
 }

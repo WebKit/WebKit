@@ -19,9 +19,6 @@ h3:before {
 h3:after {
     content: counters(section, ",", upper-roman);
 }
-h3:before {
-    content: counter(section, none);
-}
 </style>
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
@@ -53,10 +50,6 @@ shouldBeEqualToString("counters[2].separator", "");
 shouldBeEqualToString("counters[3].identifier", "section");
 shouldBeEqualToString("counters[3].listStyle", "upper-roman");
 shouldBeEqualToString("counters[3].separator", ",");
-
-shouldBeEqualToString("counters[4].identifier", "section");
-shouldBeEqualToString("counters[4].listStyle", "none");
-shouldBeEqualToString("counters[4].separator", "");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

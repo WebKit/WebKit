@@ -4082,7 +4082,8 @@
       "name" : "Joseph Griego",
       "nicks" : [
          "jgriego"
-      ]
+      ],
+      "status": "committer"
    },
    {
       "aliases" : [
@@ -7622,6 +7623,13 @@
       "nicks" : [
          "yuzo"
       ]
+   },
+   {
+      "emails" : [
+         "yvlai@apple.com"
+      ],
+      "github" : "yvonne-lai1",
+      "name" : "Yvonne Lai"
    },
    {
       "emails" : [

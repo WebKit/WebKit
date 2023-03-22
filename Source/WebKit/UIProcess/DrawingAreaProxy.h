@@ -130,6 +130,8 @@ public:
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }
 
     WebPageProxy& page() const { return m_webPageProxy; }
+    virtual void viewWillStartLiveResize() { };
+    virtual void viewWillEndLiveResize() { };
 
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&);

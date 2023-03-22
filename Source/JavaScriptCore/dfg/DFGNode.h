@@ -827,7 +827,9 @@ public:
 
     void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     void convertToNewArrayWithSize();
-    
+
+    void convertToNewBoundFunction(FrozenValue*);
+
     void convertToDirectCall(FrozenValue*);
 
     void convertToCallWasm(FrozenValue*);
@@ -1917,6 +1919,7 @@ public:
         case NewGeneratorFunction:
         case NewAsyncFunction:
         case NewAsyncGeneratorFunction:
+        case NewBoundFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
         case NewRegexp:
@@ -2273,6 +2276,7 @@ public:
 
     bool isFunctionAllocation()
     {
+        // Do not include NewBoundFunction right now since it is allocating with NativeExecutable.
         switch (op()) {
         case NewFunction:
         case NewGeneratorFunction:
@@ -3207,6 +3211,17 @@ public:
     bool hasBucketOwnerType()
     {
         return op() == GetMapBucketNext || op() == LoadKeyFromMapBucket || op() == LoadValueFromMapBucket;
+    }
+
+    unsigned numberOfBoundArguments()
+    {
+        ASSERT(hasNumberOfBoundArguments());
+        return m_opInfo2.as<unsigned>();
+    }
+
+    bool hasNumberOfBoundArguments()
+    {
+        return op() == FunctionBind || op() == NewBoundFunction;
     }
 
     BucketOwnerType bucketOwnerType()

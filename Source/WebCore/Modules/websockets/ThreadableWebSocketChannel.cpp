@@ -42,7 +42,6 @@
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
 #include "UserContentProvider.h"
-#include "WebSocketChannel.h"
 #include "WebSocketChannelClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"

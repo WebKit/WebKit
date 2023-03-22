@@ -208,21 +208,30 @@ class ArgList {
     friend class Interpreter;
     friend class JIT;
 public:
-    ArgList()
-        : m_args(nullptr)
-        , m_argCount(0)
-    {
-    }
+    ArgList() = default;
 
     ArgList(CallFrame* callFrame)
-        : m_args(reinterpret_cast<JSValue*>(&callFrame[CallFrame::argumentOffset(0)]))
+        : m_args(reinterpret_cast<EncodedJSValue*>(&callFrame[CallFrame::argumentOffset(0)]))
         , m_argCount(callFrame->argumentCount())
     {
     }
 
+    ArgList(CallFrame* callFrame, int startingFrom)
+        : m_args(reinterpret_cast<EncodedJSValue*>(&callFrame[CallFrame::argumentOffset(startingFrom)]))
+        , m_argCount(callFrame->argumentCount() - startingFrom)
+    {
+        ASSERT(static_cast<int>(callFrame->argumentCount()) >= startingFrom);
+    }
+
     ArgList(const MarkedArgumentBuffer& args)
-        : m_args(reinterpret_cast<JSValue*>(args.m_buffer))
+        : m_args(args.m_buffer)
         , m_argCount(args.size())
+    {
+    }
+
+    ArgList(EncodedJSValue* args, int count)
+        : m_args(args)
+        , m_argCount(count)
     {
     }
 
@@ -230,7 +239,7 @@ public:
     {
         if (i >= m_argCount)
             return jsUndefined();
-        return m_args[i];
+        return JSValue::decode(m_args[i]);
     }
 
     bool isEmpty() const { return !m_argCount; }
@@ -239,10 +248,10 @@ public:
     JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
 private:
-    JSValue* data() const { return m_args; }
+    EncodedJSValue* data() const { return m_args; }
 
-    JSValue* m_args;
-    int m_argCount;
+    EncodedJSValue* m_args { nullptr };
+    int m_argCount { 0 };
 };
 
 } // namespace JSC

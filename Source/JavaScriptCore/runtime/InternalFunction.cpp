@@ -189,7 +189,7 @@ JSGlobalObject* getFunctionRealm(JSGlobalObject* globalObject, JSObject* object)
 
     while (true) {
         if (object->inherits<JSBoundFunction>()) {
-            object = jsCast<JSBoundFunction*>(object)->flattenedTargetFunction();
+            object = jsCast<JSBoundFunction*>(object)->targetFunction();
             continue;
         }
         if (object->inherits<JSRemoteFunction>()) {

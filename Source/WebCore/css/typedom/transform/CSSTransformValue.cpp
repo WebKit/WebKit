@@ -117,12 +117,9 @@ ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Vector<RefPtr<CSST
     return adoptRef(*new CSSTransformValue(WTFMove(transforms)));
 }
 
-ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::item(size_t index)
+RefPtr<CSSTransformComponent> CSSTransformValue::item(size_t index)
 {
-    if (index >= m_components.size())
-        return Exception { RangeError, makeString("Index ", index, " exceeds the range of CSSTransformValue.") };
-
-    return RefPtr<CSSTransformComponent> { m_components[index] };
+    return index < m_components.size() ? m_components[index] : nullptr;
 }
 
 ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::setItem(size_t index, Ref<CSSTransformComponent>&& value)

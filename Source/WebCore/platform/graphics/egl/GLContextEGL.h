@@ -36,30 +36,10 @@ struct wl_egl_window;
 struct wpe_renderer_backend_egl_offscreen_target;
 #endif
 
-typedef intptr_t EGLAttrib;
-typedef unsigned EGLBoolean;
-typedef void *EGLClientBuffer;
 typedef void *EGLConfig;
 typedef void *EGLContext;
 typedef void *EGLDisplay;
-typedef void *EGLImage;
-typedef void *EGLImageKHR;
 typedef void *EGLSurface;
-typedef unsigned EGLenum;
-typedef int32_t EGLint;
-
-#if !defined(PFNEGLCREATEIMAGEPROC)
-typedef EGLImage (*PFNEGLCREATEIMAGEPROC) (EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, const EGLAttrib*);
-#endif
-#if !defined(PFNEGLDESTROYIMAGEPROC)
-typedef EGLBoolean (*PFNEGLDESTROYIMAGEPROC) (EGLDisplay, EGLImage);
-#endif
-#if !defined(PFNEGLCREATEIMAGEKHRPROC)
-typedef EGLImageKHR (*PFNEGLCREATEIMAGEKHRPROC) (EGLDisplay, EGLContext, EGLenum target, EGLClientBuffer, const EGLint* attribList);
-#endif
-#if !defined(PFNEGLDESTROYIMAGEKHRPROC)
-typedef EGLBoolean (*PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImageKHR);
-#endif
 
 namespace WebCore {
 
@@ -73,8 +53,6 @@ public:
     static const char* lastErrorString();
 
     EGLConfig config() const { return m_config; }
-    EGLImage createImage(EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
-    bool destroyImage(EGLImage) const;
 
     virtual ~GLContextEGL();
 
@@ -128,10 +106,6 @@ private:
     EGLSurface m_surface { nullptr };
     EGLConfig m_config { nullptr };
     EGLSurfaceType m_type;
-    PFNEGLCREATEIMAGEPROC m_eglCreateImage { nullptr };
-    PFNEGLDESTROYIMAGEPROC m_eglDestroyImage { nullptr };
-    PFNEGLCREATEIMAGEKHRPROC m_eglCreateImageKHR { nullptr };
-    PFNEGLDESTROYIMAGEKHRPROC m_eglDestroyImageKHR { nullptr };
 #if PLATFORM(X11)
     XUniquePixmap m_pixmap;
 #endif

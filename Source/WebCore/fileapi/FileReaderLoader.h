@@ -33,6 +33,7 @@
 #include "BlobResourceHandle.h"
 #include "ExceptionCode.h"
 #include "ThreadableLoaderClient.h"
+#include "URLKeepingBlobAlive.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
@@ -104,7 +105,7 @@ private:
     PAL::TextEncoding m_encoding;
     String m_dataType;
 
-    URL m_urlForReading;
+    URLKeepingBlobAlive m_urlForReading;
     RefPtr<ThreadableLoader> m_loader;
 
     RefPtr<JSC::ArrayBuffer> m_rawData;

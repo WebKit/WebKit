@@ -68,6 +68,9 @@ public:
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     void updateOverlayRegionIDs(const HashSet<WebCore::PlatformLayerIdentifier> &overlayRegionIDs) { m_remoteLayerTreeHost->updateOverlayRegionIDs(overlayRegionIDs); }
 #endif
+    
+    void viewWillStartLiveResize() final;
+    void viewWillEndLiveResize() final;
 
     // For testing.
     unsigned countOfTransactionsWithNonEmptyLayerChanges() const { return m_countOfTransactionsWithNonEmptyLayerChanges; }
@@ -78,6 +81,7 @@ protected:
     bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
 
 private:
+
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;

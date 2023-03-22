@@ -38,6 +38,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
+#include "WebProcessProxy.h"
 
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>

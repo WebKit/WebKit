@@ -722,6 +722,8 @@ Internals::Internals(Document& document)
 #if ENABLE(VP9) && PLATFORM(COCOA)
     VP9TestingOverrides::singleton().resetOverridesToDefaultValues();
 #endif
+
+    Scrollbar::setShouldUseFixedPixelsPerLineStepForTesting(true);
 }
 
 Document* Internals::contextDocument() const

@@ -762,6 +762,7 @@ void JSGlobalObject::init(VM& vm)
     };
     initFunctionStructures(m_builtinFunctions);
     initFunctionStructures(m_ordinaryFunctions);
+    m_boundFunctionStructure.set(vm, this, JSBoundFunction::createStructure(vm, this, m_functionPrototype.get()));
 
     m_customGetterFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -770,10 +771,6 @@ void JSGlobalObject::init(VM& vm)
     m_customSetterFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSCustomSetterFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
-        });
-    m_boundFunctionStructure.initLater(
-        [] (const Initializer<Structure>& init) {
-            init.set(JSBoundFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
         });
     m_nativeStdFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
@@ -2422,10 +2419,10 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     };
     visitFunctionStructures(thisObject->m_builtinFunctions);
     visitFunctionStructures(thisObject->m_ordinaryFunctions);
+    visitor.append(thisObject->m_boundFunctionStructure);
 
     thisObject->m_customGetterFunctionStructure.visit(visitor);
     thisObject->m_customSetterFunctionStructure.visit(visitor);
-    thisObject->m_boundFunctionStructure.visit(visitor);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
     thisObject->m_remoteFunctionStructure.visit(visitor);
     visitor.append(thisObject->m_shadowRealmObjectStructure);

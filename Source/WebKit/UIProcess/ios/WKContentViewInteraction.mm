@@ -33,7 +33,6 @@
 #import "CompletionHandlerCallChecker.h"
 #import "DocumentEditingContext.h"
 #import "ImageAnalysisUtilities.h"
-#import "InputViewUpdateDeferrer.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
@@ -1273,7 +1272,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     }
 #endif
 
-    [self _resetInputViewDeferral];
+    [self stopDeferringInputViewUpdatesForAllSources];
     _focusedElementInformation = { };
     
     [_keyboardScrollingAnimator invalidate];
@@ -1548,7 +1547,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 - (void)_cancelPreviousResetInputViewDeferralRequest
 {
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_resetInputViewDeferral) object:nil];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(stopDeferringInputViewUpdatesForAllSources) object:nil];
 }
 
 - (void)_scheduleResetInputViewDeferralAfterBecomingFirstResponder
@@ -1556,13 +1555,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _cancelPreviousResetInputViewDeferralRequest];
 
     const NSTimeInterval inputViewDeferralWatchdogTimerDuration = 0.5;
-    [self performSelector:@selector(_resetInputViewDeferral) withObject:self afterDelay:inputViewDeferralWatchdogTimerDuration];
-}
-
-- (void)_resetInputViewDeferral
-{
-    [self _cancelPreviousResetInputViewDeferralRequest];
-    _inputViewUpdateDeferrer = nullptr;
+    [self performSelector:@selector(stopDeferringInputViewUpdatesForAllSources) withObject:self afterDelay:inputViewDeferralWatchdogTimerDuration];
 }
 
 - (BOOL)canBecomeFirstResponder
@@ -1589,8 +1582,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     if (_resigningFirstResponder)
         return NO;
 
-    if (!_inputViewUpdateDeferrer)
-        _inputViewUpdateDeferrer = makeUnique<WebKit::InputViewUpdateDeferrer>(self);
+    [self startDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::BecomeFirstResponder];
 
     BOOL didBecomeFirstResponder;
     {
@@ -1604,7 +1596,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
                 return;
 
             auto strongSelf = weakSelf.get();
-            [strongSelf _resetInputViewDeferral];
+            [strongSelf stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::BecomeFirstResponder];
         });
 
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
@@ -1614,7 +1606,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
         [self _scheduleResetInputViewDeferralAfterBecomingFirstResponder];
     } else
-        [self _resetInputViewDeferral];
+        [self stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::BecomeFirstResponder];
 
     return didBecomeFirstResponder;
 }
@@ -1683,7 +1675,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (shouldDeactivateSelection)
         [_textInteractionAssistant deactivateSelection];
 
-    [self _resetInputViewDeferral];
+    [self stopDeferringInputViewUpdatesForAllSources];
 }
 
 - (BOOL)resignFirstResponderForWebView
@@ -3322,12 +3314,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     [self _cancelInteraction];
     
-    [self _resetInputViewDeferral];
+    [self stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::TapGesture];
 }
 
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
-    [self _resetInputViewDeferral];
+    [self stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::TapGesture];
 
     if (!_isDoubleTapPending)
         return;
@@ -3336,21 +3328,28 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _isDoubleTapPending = NO;
 }
 
+- (void)_didHandleTapAsHover
+{
+    [self stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::TapGesture];
+}
+
 - (void)_didCompleteSyntheticClick
 {
     _page->touchWithIdentifierWasRemoved(_commitPotentialTapPointerId);
     _commitPotentialTapPointerId = 0;
 
     RELEASE_LOG(ViewGestures, "Synthetic click completed. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
-    [self _resetInputViewDeferral];
+    [self stopDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::TapGesture];
 }
 
 - (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
-    if (![self isFirstResponder])
+    if (![self isFirstResponder]) {
+        [self startDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::TapGesture];
         [self becomeFirstResponder];
+    }
 
     ASSERT(_potentialTapInProgress);
 
@@ -6935,6 +6934,43 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #endif
 }
 
+- (void)startDeferringInputViewUpdates:(WebKit::InputViewUpdateDeferralSources)sources
+{
+    ASSERT(!sources.isEmpty());
+    if (_inputViewUpdateDeferralSources.isEmpty()) {
+        RELEASE_LOG(TextInput, "Started deferring input view updates (%02x)", sources.toRaw());
+        [self _beginPinningInputViews];
+    }
+
+    _inputViewUpdateDeferralSources.add(sources);
+}
+
+- (void)stopDeferringInputViewUpdates:(WebKit::InputViewUpdateDeferralSources)sources
+{
+    ASSERT(!sources.isEmpty());
+    if (!_inputViewUpdateDeferralSources.containsAny(sources))
+        return;
+
+    _inputViewUpdateDeferralSources.remove(sources);
+
+    if (_inputViewUpdateDeferralSources.isEmpty()) {
+        [self _cancelPreviousResetInputViewDeferralRequest];
+        RELEASE_LOG(TextInput, "Stopped deferring input view updates (%02x)", sources.toRaw());
+        [self _endPinningInputViews];
+    }
+}
+
+- (void)stopDeferringInputViewUpdatesForAllSources
+{
+    if (_inputViewUpdateDeferralSources.isEmpty())
+        return;
+
+    RELEASE_LOG(TextInput, "Stopped deferring all input view updates (%02x)", _inputViewUpdateDeferralSources.toRaw());
+    [self _cancelPreviousResetInputViewDeferralRequest];
+    _inputViewUpdateDeferralSources = { };
+    [self _endPinningInputViews];
+}
+
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
@@ -6945,7 +6981,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
             callback();
     });
 
-    auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
+    auto stopDeferringInputViewUpdatesScope = makeScopeExit([&] {
+        constexpr OptionSet sourcesToStopDeferring {
+            WebKit::InputViewUpdateDeferralSource::ChangingFocusedElement,
+            WebKit::InputViewUpdateDeferralSource::BecomeFirstResponder
+        };
+        [self stopDeferringInputViewUpdates:sourcesToStopDeferring];
+    });
 
     _autocorrectionContextNeedsUpdate = YES;
     _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
@@ -7009,8 +7051,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (blurPreviousNode) {
         // Defer view updates until the end of this function to avoid a noticeable flash when switching focus
         // between elements that require the keyboard.
-        if (!inputViewUpdateDeferrer)
-            inputViewUpdateDeferrer = makeUnique<WebKit::InputViewUpdateDeferrer>(self);
+        [self startDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::ChangingFocusedElement];
         [self _elementDidBlur];
     }
 

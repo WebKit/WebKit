@@ -1,0 +1,40 @@
+<style>
+.container {
+  position: absolute;
+  font-family: Monospace;
+  font-size: 20px;
+}
+.content {
+  height: 100px;
+  white-space: pre;
+}
+</style>
+<div class=container><div class=content id=changeThis>PASS if there are 2 lines</div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  changeThis.innerHTML = "PASS if there are 2 lines\nsecond line";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

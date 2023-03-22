@@ -116,8 +116,6 @@ function intersection(other)
                 result.@add(key);
         } while (true);
     } else {
-        // FIXME: This path needs to have the iteration order of the receiver but we don't have a good way to compare in constant time the relative ordering of two keys.
-        // https://bugs.webkit.org/show_bug.cgi?id=251869
         var iterator = keys.@call(other, keys);
         var wrapper = {
             @@iterator: function () { return iterator; }

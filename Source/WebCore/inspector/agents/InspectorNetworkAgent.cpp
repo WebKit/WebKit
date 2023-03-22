@@ -40,6 +40,7 @@
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
+#include "CookieJar.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -69,10 +70,10 @@
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoaderClient.h"
+#include "ThreadableWebSocketChannel.h"
 #include "WebConsoleAgent.h"
 #include "WebCorePersistentCoders.h"
 #include "WebSocket.h"
-#include "WebSocketChannel.h"
 #include "WebSocketFrame.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/IdentifiersFactory.h>

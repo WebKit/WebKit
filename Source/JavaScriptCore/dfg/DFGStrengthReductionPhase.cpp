@@ -1319,10 +1319,9 @@ private:
             // This also wipes bound-function thunk call which is suboptimal compared to directly calling a wrapped function here.
             if (executable->intrinsic() == BoundFunctionCallIntrinsic && function && (m_node->op() == Call || m_node->op() == TailCall || m_node->op() == TailCallInlinedCaller)) {
                 JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(function);
-                if (JSFunction* targetFunction = jsDynamicCast<JSFunction*>(boundFunction->flattenedTargetFunction())) {
+                if (JSFunction* targetFunction = jsDynamicCast<JSFunction*>(boundFunction->targetFunction())) {
                     auto* targetExecutable = targetFunction->executable();
-                    JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
-                    if (((boundArgs ? boundArgs->length() : 0) + m_node->numChildren()) <= Options::maximumDirectCallStackSize()) {
+                    if ((boundFunction->boundArgsLength() + m_node->numChildren()) <= Options::maximumDirectCallStackSize()) {
                         if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(targetExecutable)) {
                             // We need to update m_parameterSlots before we get to the backend, but we don't
                             // want to do too much of this.
@@ -1335,11 +1334,10 @@ private:
                         m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, targetFunction)); // |callee|.
                         m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, boundFunction->boundThis())); // |this|
 
-                        JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
-                        if (boundArgs) {
-                            for (unsigned index = 0; index < boundArgs->length(); ++index)
-                                m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, boundArgs->get(index)));
-                        }
+                        boundFunction->forEachBoundArg([&](JSValue argument) {
+                            m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, argument));
+                            return IterationStatus::Continue;
+                        });
 
                         // First one is |callee|, second one is |this|.
                         for (unsigned index = 2; index < m_node->numChildren(); ++index)

@@ -570,6 +570,8 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
         return *singleton().m_I32_RefI32I32;
     case LLIntBuiltin::RefCast:
         return *singleton().m_Ref_RefI32I32;
+    case LLIntBuiltin::ArrayNewData:
+        return *singleton().m_Ref_I32I32I32I32;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return *singleton().m_I64_Void;
@@ -854,6 +856,7 @@ TypeInformation::TypeInformation()
     // FIXME: The Ref type here is only used to compute call information, a heap type of "any" would be better once that's added.
     m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) } },  { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Ref_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { arrayrefType() }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
 }
 
 RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 1>& results, const Vector<Type>& args)

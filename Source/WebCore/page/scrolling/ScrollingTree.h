@@ -237,7 +237,11 @@ public:
     WEBCORE_EXPORT float mainFrameScaleFactor() const;
     WEBCORE_EXPORT FloatSize totalContentsSize() const;
     WEBCORE_EXPORT FloatRect layoutViewport() const;
-
+    
+    WEBCORE_EXPORT void viewWillStartLiveResize();
+    WEBCORE_EXPORT void viewWillEndLiveResize();
+    WEBCORE_EXPORT void viewSizeDidChange();
+    
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 

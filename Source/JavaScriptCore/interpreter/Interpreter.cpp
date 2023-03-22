@@ -1027,21 +1027,21 @@ JSValue Interpreter::executeBoundCall(VM& vm, JSBoundFunction* function, const A
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(function->boundArgs());
+    ASSERT(function->boundArgsLength());
 
-    auto* boundArgs = function->boundArgs();
     MarkedArgumentBuffer combinedArgs;
-    combinedArgs.ensureCapacity(boundArgs->length() + args.size());
-
-    for (unsigned i = 0; i < boundArgs->length(); ++i)
-        combinedArgs.append(boundArgs->get(i));
+    combinedArgs.ensureCapacity(function->boundArgsLength() + args.size());
+    function->forEachBoundArg([&](JSValue argument) -> IterationStatus {
+        combinedArgs.append(argument);
+        return IterationStatus::Continue;
+    });
     for (unsigned i = 0; i < args.size(); ++i)
         combinedArgs.append(args.at(i));
 
     if (UNLIKELY(combinedArgs.hasOverflowed()))
         return throwStackOverflowError(function->globalObject(), scope);
 
-    JSObject* targetFunction = function->flattenedTargetFunction();
+    JSObject* targetFunction = function->targetFunction();
     JSValue boundThis = function->boundThis();
     auto callData = JSC::getCallData(targetFunction);
     ASSERT(callData.type != CallData::Type::None);
@@ -1127,10 +1127,10 @@ JSValue Interpreter::executeCall(JSObject* function, const CallData& callData, J
 
     // Only one-level unwrap is enough! We already made JSBoundFunction's nest smaller.
     auto* boundFunction = jsCast<JSBoundFunction*>(function);
-    if (!boundFunction->boundArgs()) {
+    if (!boundFunction->boundArgsLength()) {
         // This is the simplest path, just replacing |this|. We do not need to go to executeBoundCall.
         // Let's just replace and get unwrapped functions again.
-        JSObject* targetFunction = boundFunction->flattenedTargetFunction();
+        JSObject* targetFunction = boundFunction->targetFunction();
         JSValue boundThis = boundFunction->boundThis();
         auto targetFunctionCallData = JSC::getCallData(targetFunction);
         ASSERT(targetFunctionCallData.type != CallData::Type::None);
@@ -1433,12 +1433,12 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
     RefPtr<JITCode> jitCode;
 
     ProtoCallFrame protoCallFrame;
-    JSValue args[numberOfArguments] = {
-        record,
-        record->internalField(JSModuleRecord::Field::State).get(),
-        sentValue,
-        resumeMode,
-        scope,
+    EncodedJSValue args[numberOfArguments] = {
+        JSValue::encode(record),
+        JSValue::encode(record->internalField(JSModuleRecord::Field::State).get()),
+        JSValue::encode(sentValue),
+        JSValue::encode(resumeMode),
+        JSValue::encode(scope),
     };
 
     {

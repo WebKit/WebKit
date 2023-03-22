@@ -1016,9 +1016,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     auto& page = *frame.page();
 
     if (m_documentLoader) {
-        const auto& resourceRequest = request.resourceRequest();
         bool madeHTTPS { false };
 #if ENABLE(CONTENT_EXTENSIONS)
+        const auto& resourceRequest = request.resourceRequest();
         auto results = page.userContentProvider().processContentRuleListsForLoad(page, resourceRequest.url(), ContentExtensions::toResourceType(type, request.resourceRequest().requester()), *m_documentLoader);
         bool blockedLoad = results.summary.blockedLoad;
         madeHTTPS = results.summary.madeHTTPS;

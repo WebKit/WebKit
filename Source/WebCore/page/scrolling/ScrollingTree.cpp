@@ -590,6 +590,27 @@ FloatRect ScrollingTree::layoutViewport() const
     return m_rootNode ? m_rootNode->layoutViewport() : FloatRect();
 }
 
+void ScrollingTree::viewWillStartLiveResize()
+{
+    Locker locker { m_treeLock };
+    if (m_rootNode)
+        m_rootNode->viewWillStartLiveResize();
+}
+
+void ScrollingTree::viewWillEndLiveResize()
+{
+    Locker locker { m_treeLock };
+    if (m_rootNode)
+        m_rootNode->viewWillEndLiveResize();
+}
+
+void ScrollingTree::viewSizeDidChange()
+{
+    Locker locker { m_treeLock };
+    if (m_rootNode)
+        m_rootNode->viewSizeDidChange();
+}
+
 void ScrollingTree::setGestureState(std::optional<WheelScrollGestureState> gestureState)
 {
     Locker locker { m_treeStateLock };

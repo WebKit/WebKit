@@ -108,9 +108,9 @@ private:
     Vector<long long> m_itemLengthList;
     Error m_errorCode { Error::NoError };
     bool m_aborted { false };
-    long long m_rangeOffset { kPositionNotSpecified };
+    bool m_isRangeRequest { false };
+    long long m_rangeStart { kPositionNotSpecified };
     long long m_rangeEnd { kPositionNotSpecified };
-    long long m_rangeSuffixLength { kPositionNotSpecified };
     long long m_totalSize { 0 };
     long long m_totalRemainingSize { 0 };
     long long m_currentItemReadSize { 0 };

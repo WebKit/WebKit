@@ -380,6 +380,21 @@ void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForR
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::StopDeferringScrollingTestCompletionForNode(nodeID, reason));
 }
 
+void RemoteScrollingCoordinatorProxy::viewWillStartLiveResize()
+{
+    m_scrollingTree->viewWillStartLiveResize();
+}
+
+void RemoteScrollingCoordinatorProxy::viewWillEndLiveResize()
+{
+    m_scrollingTree->viewWillEndLiveResize();
+}
+
+void RemoteScrollingCoordinatorProxy::viewSizeDidChange()
+{
+    m_scrollingTree->viewSizeDidChange();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

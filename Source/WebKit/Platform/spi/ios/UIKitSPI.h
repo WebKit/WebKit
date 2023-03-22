@@ -381,7 +381,7 @@ typedef enum {
 @interface UIFont ()
 + (UIFont *)fontWithFamilyName:(NSString *)familyName traits:(UIFontTrait)traits size:(CGFloat)fontSize;
 + (UIFont *)systemFontOfSize:(CGFloat)size weight:(CGFloat)weight design:(NSString *)design;
-
+- (BOOL)isSystemFont;
 - (UIFontTrait)traits;
 @end
 

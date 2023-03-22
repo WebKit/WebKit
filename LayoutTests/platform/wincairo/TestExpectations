@@ -771,38 +771,33 @@ crypto/subtle/rsa-indexeddb.html [ Skip ] # Timeout
 http/tests/appcache [ Skip ]
 http/tests/blink/sendbeacon [ Skip ]
 
-# needs more investigation
+http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
 http/tests/cache/iframe-304-crash.html [ Failure ]
+http/tests/cache/network-error-during-revalidation.html [ Failure ]
 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 http/tests/cache/partitioned-cache.html [ Failure ]
 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+
+# Timeout on Buildbot
+http/tests/cache/memory-cache-pruning.html [ Pass Timeout ]
+http/tests/cache/disk-cache/disk-cache-media-small.html [ Pass Timeout ]
 
 # Second link click interrupts current download
 http/tests/download/anchor-load-after-download.html [ Skip ]
 
 http/tests/cache-storage [ Skip ]
-http/tests/canvas [ Skip ]
+
+http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
+http/tests/canvas/color-fonts [ Skip ]
+
 http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/contentfiltering [ Skip ]
 
-http/tests/cookies/cookie-with-multiple-level-path.html [ Pass Failure ]
 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
-http/tests/cookies/http-get-cookie-set-in-js.html [ Pass Failure ]
-http/tests/cookies/multiple-cookies.html [ Pass Failure ]
 http/tests/cookies/only-accept-first-party-cookies.html [ Pass ]
-http/tests/cookies/private-cookie-storage.html [ Skip ]
-http/tests/cookies/same-site [ Skip ]
-http/tests/cookies/set-cookie-on-redirect.html [ Pass Failure ]
-http/tests/cookies/simple-cookies-expired.html [ Pass Failure ]
-http/tests/cookies/simple-cookies-max-age.html [ Pass Failure ]
-http/tests/cookies/single-quoted-value.html [ Pass Failure ]
-http/tests/cookies/sync-xhr-set-cookie-invalidates-cache.html [ Pass Failure ]
 
-[ Debug ] http/tests/cookies/js-get-and-set-http-only-cookie.html [ Skip ]
+http/tests/dom/document-attributes-null-handling.html [ Failure ]
 
-http/tests/css/cross-fade-reload.html [ Timeout Pass ]
-
-http/tests/dom [ Skip ]
 http/tests/eventsource [ Skip ]
 http/tests/events/touch/ios [ Skip ]
 http/tests/fileapi [ Skip ]
@@ -811,13 +806,32 @@ http/tests/frame-throttling [ Skip ]
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Pass Failure ]
 
-http/tests/history [ Skip ]
-http/tests/images [ Skip ]
-http/tests/incremental [ Skip ]
-http/tests/inspector [ Skip ]
-http/tests/inspector/page/get-cookies.html [ Pass ]
+http/tests/images/hidpi-srcset-copy.html [ Failure ]
+http/tests/images/image-supports-video.html [ Failure ]
+http/tests/images/mp4-partial-load.html [ Failure ]
 
-http/tests/loading [ Skip ]
+http/tests/inspector/network/eventsource-type.html [ Failure ]
+http/tests/inspector/network/fetch-response-body.html [ Failure ]
+http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
+http/tests/inspector/network/har/har-page.html [ Failure ]
+http/tests/inspector/network/intercept-request-properties.html [ Failure ]
+http/tests/inspector/network/intercept-request-subresource.html [ Failure ]
+http/tests/inspector/network/intercept-request-with-response.html [ Failure ]
+http/tests/inspector/network/local-resource-override-basic.html [ Failure ]
+http/tests/inspector/network/resource-initiatorNode.html [ Failure ]
+http/tests/inspector/network/xhr-response-body.html [ Failure ]
+
+http/tests/inspector/network/intercept-request-main-resource.html [ Skip ] # Timeout
+
+http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
+http/tests/loading/oauth.html [ Failure ]
+http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
+http/tests/loading/promote-img-preload-priority.html [ Failure ]
+http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
+
+http/tests/loading/307-after-303-after-post.html [ Skip ] # Timeout
+http/tests/loading/simple-subframe.html [ Skip ] # Missing
+
 http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
 http/tests/local/formdata [ Skip ]
@@ -894,39 +908,50 @@ http/tests/webrtc [ Skip ]
 http/tests/webshare [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
+http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Timeout ]
 
+# Timeout on local PC
 http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
-http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Pass Failure ]
-http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Pass Failure ]
 
-# [Win] Seeing Internal Server Error when running some http websocket tests
-# https://bugs.webkit.org/show_bug.cgi?id=237722
-http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass Failure ]
+# Failure on Buildbot
+http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
+
+http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Pass Failure ]
+http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure Timeout ]
 http/tests/workers/service/service-worker-download.https.html [ Failure Timeout ]
 
-http/tests/xmlhttprequest/access-control-preflight-credential-async.html [ Pass Failure ]
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html [ Pass Failure ]
+http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
+http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
+http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
+http/tests/xmlhttprequest/basic-auth-default.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
-http/tests/xmlhttprequest/cache-override.html [ Pass Failure ]
-http/tests/xmlhttprequest/cookies.html [ Pass Failure ]
-http/tests/xmlhttprequest/cross-origin-authorization.html [ Pass Failure ]
+http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure ]
+http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
+http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
-http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure ]
+http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
+http/tests/xmlhttprequest/logout.html [ Failure ]
+http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
+http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ Failure ]
+http/tests/xmlhttprequest/origin-header-same-origin-get-async.html [ Failure ]
+http/tests/xmlhttprequest/origin-header-same-origin-get-sync.html [ Failure ]
+http/tests/xmlhttprequest/post-blob-content-type-async.html [ Failure ]
+http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
 http/tests/xmlhttprequest/range-test.html [ Pass Failure ]
-http/tests/xmlhttprequest/reentrant-cancel.html [ Timeout Pass ]
-http/tests/xmlhttprequest/referer.html [ Pass Failure Timeout ]
-http/tests/xmlhttprequest/reopen-encoding.html [ Timeout Pass ]
+http/tests/xmlhttprequest/re-login-async.html [ Failure ]
+http/tests/xmlhttprequest/re-login.html [ Failure ]
+http/tests/xmlhttprequest/redirect-credentials-responseURL.html [ Failure ]
 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
-http/tests/xmlhttprequest/response-empty-arraybuffer.html [ Pass Failure ]
+http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure ]
+http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
+http/tests/xmlhttprequest/upload-progress-events-gc.html [ Skip ] # Timeout
 
-[ Release ] http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Failure ]
-[ Debug ] http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Skip ]
-[ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Skip ]
+# Fails on Buildbot
+http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure Pass ]
+http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure Pass ]
 
 http/tests/xmlviewer [ Skip ]
 
@@ -939,6 +964,73 @@ http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
+
+webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure Pass ]
+webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure Pass ]
+
+http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+http/tests/IndexedDB/storage-limit.https.html [ Failure ]
+http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
+http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
+http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
+http/tests/css/css-image-loading.html [ Pass Failure ]
+http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
+http/tests/misc/form-post-textplain.html [ Failure ]
+http/tests/misc/gamepads-insecure.html [ Failure ]
+http/tests/misc/large-js-program.py [ Skip ] # Timeout
+http/wpt/fetch/response-opaque-clone.html [ Skip ]
+http/wpt/fetch/response-status-text.html [ Failure ]
+
+
+http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
+
+http/tests/misc/ftp-eplf-directory.py [ Skip ]
+
+http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
+
+http/tests/is-logged-in/available-in-secure-contexts.https.html [ Failure ]
+http/tests/local/drag-over-remote-content.html [ Failure ]
+http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+http/tests/local/link-stylesheet-load-order.html [ Failure ]
+http/tests/misc/bubble-drag-events.html [ Failure ]
+http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
+http/tests/misc/window-dot-stop.html [ Failure ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Failure ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Failure ]
+http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Failure ]
+http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
+http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
+http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
+http/tests/ssl/upgrade-origin-usage.html [ Failure ]
+http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
+http/tests/workers/service/service-worker-cache-api.https.html [ Failure ]
+http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
+http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
+http/tests/workers/service/serviceworker-websocket.https.html [ Failure ]
+http/tests/workers/service/shownotification-denied.html [ Failure ]
+http/wpt/clear-site-data/partitioning.html [ Failure ]
+http/wpt/push-api/pushManager.any.html [ Failure ]
+http/wpt/push-api/pushManager.any.serviceworker.html [ Failure ]
+http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
+http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Failure ]
+http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ Failure ]
+http/wpt/service-workers/form-data-upload.html [ Failure ]
+http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
+
+http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
+
+http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.html [ Timeout ]
+http/tests/workers/service/service-worker-resource-timing.https.html [ Timeout ]
+http/wpt/service-workers/navigation-timing.https.html [ Timeout ]
+
+http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
+http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
+
+# Needs site isolation drawing implementation
+http/tests/site-isolation [ Skip ]
+
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
+
 
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
@@ -1298,8 +1390,6 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
-webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure Pass ]
-webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure Pass ]
 
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1811,26 +1901,6 @@ fast/url/data-url-mediatype.html [ Failure Pass ]
 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
 fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html [ Failure ]
 fonts/fantasy.html [ Failure Pass ]
-http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
-http/tests/IndexedDB/storage-limit.https.html [ Failure ]
-http/tests/cache/memory-cache-pruning.html [ Timeout ]
-http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
-http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
-http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
-http/tests/css/css-image-loading.html [ Pass Failure ]
-http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
-http/tests/misc/form-post-textplain.html [ Failure ]
-http/tests/misc/gamepads-insecure.html [ Failure ]
-http/tests/misc/large-js-program.py [ Skip ] # Timeout
-http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
-http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]
-http/tests/xmlhttprequest/origin-header-same-origin-get-async.html [ Failure ]
-http/tests/xmlhttprequest/origin-header-same-origin-get-sync.html [ Failure ]
-http/tests/xmlhttprequest/post-blob-content-type-async.html [ Failure ]
-http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
-http/tests/xmlhttprequest/upload-progress-events-gc.html [ Skip ] # Timeout
-http/wpt/fetch/response-opaque-clone.html [ Skip ]
-http/wpt/fetch/response-status-text.html [ Failure ]
 inspector/cpu-profiler/threads.html [ Failure ]
 js/dfg-convert-this-dom-window.html [ Skip ] # Slow
 js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
@@ -1889,7 +1959,6 @@ fast/text/simple-bidi-word-spacing.html [ ImageOnlyFailure ]
 fast/text/word-spacing-rtl.html [ ImageOnlyFailure ]
 
 fast/text/kerning-with-TextLayout.html [ ImageOnlyFailure ]
-http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 
 # Not applicable.
@@ -1900,8 +1969,6 @@ fast/text/collapsible-non-breaking-space.html [ ImageOnlyFailure ]
 fast/text/rtl-pre-wrap-hanging-offset.html [ ImageOnlyFailure ]
 fast/text/synthetic-bold-percentage-word-spacing.html [ ImageOnlyFailure ]
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
-
-http/tests/misc/ftp-eplf-directory.py [ Skip ]
 
 webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/lose-context-after-context-lost.html [ Failure ]
@@ -2265,7 +2332,6 @@ fast/canvas/webgl/colorspaces-test.html [ Failure Pass ]
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
 
 fast/css/child-style-can-override-visited-style.html [ Failure ]
-http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/size/attributes.www.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/size/name-and-value.html [ Failure ]
 
@@ -2349,48 +2415,6 @@ fast/text/font-weight-download.html [ Failure ]
 fast/text/unicode-range-download.html [ Failure ]
 fast/text/web-font-load-fallback-during-loading-no-multiple.html [ Failure ]
 fetch/fetch-url-serialization.html [ Failure ]
-http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
-http/tests/cache/network-error-during-revalidation.html [ Failure ]
-http/tests/is-logged-in/available-in-secure-contexts.https.html [ Failure ]
-http/tests/local/drag-over-remote-content.html [ Failure ]
-http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
-http/tests/local/link-stylesheet-load-order.html [ Failure ]
-http/tests/misc/bubble-drag-events.html [ Failure ]
-http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
-http/tests/misc/window-dot-stop.html [ Failure ]
-http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Failure ]
-http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Failure ]
-http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Failure ]
-http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
-http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ Failure ]
-http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
-http/tests/ssl/upgrade-origin-usage.html [ Failure ]
-http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
-http/tests/workers/service/service-worker-cache-api.https.html [ Failure ]
-http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
-http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
-http/tests/workers/service/serviceworker-websocket.https.html [ Failure ]
-http/tests/workers/service/shownotification-denied.html [ Failure ]
-http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
-http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
-http/tests/xmlhttprequest/basic-auth-default.html [ Failure ]
-http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
-http/tests/xmlhttprequest/logout.html [ Failure ]
-http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
-http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ Failure ]
-http/tests/xmlhttprequest/re-login-async.html [ Failure ]
-http/tests/xmlhttprequest/re-login.html [ Failure ]
-http/tests/xmlhttprequest/redirect-credentials-responseURL.html [ Failure ]
-http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure ]
-http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
-http/wpt/clear-site-data/partitioning.html [ Failure ]
-http/wpt/push-api/pushManager.any.html [ Failure ]
-http/wpt/push-api/pushManager.any.serviceworker.html [ Failure ]
-http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
-http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Failure ]
-http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ Failure ]
-http/wpt/service-workers/form-data-upload.html [ Failure ]
-http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
@@ -2408,7 +2432,6 @@ fast/text/international/bdo-bidi-width.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-fallback-space-glyph.html [ ImageOnlyFailure ]
 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 fast/text/user-installed-canvas.html [ ImageOnlyFailure ]
-http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 
 fast/css/accent-color/checkbox.html [ Pass ]
 fast/css/accent-color/progress.html [ Pass ]
@@ -2431,17 +2454,10 @@ fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
 fast/events/page-visibility-transition-test.html [ Timeout ]
 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout ]
 fast/text/install-font-style-recalc.html [ Timeout ]
-http/tests/cache/disk-cache/disk-cache-media-small.html [ Timeout ]
-http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.html [ Timeout ]
-http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Timeout ]
-http/tests/workers/service/service-worker-resource-timing.https.html [ Timeout ]
-http/wpt/service-workers/navigation-timing.https.html [ Timeout ]
 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
 webgl/many-contexts.html [ Skip ] # Timeout
 webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 
-http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
-http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 
 [ Debug ] js/date-timeClip-large-values.html [ Failure ]
 
@@ -2453,23 +2469,12 @@ storage/indexeddb/modern/get-keyrange.html [ Failure Pass ]
 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure Pass ]
 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure Pass ]
 
-# Needs site isolation drawing implementation
-http/tests/site-isolation [ Skip ]
-
 editing/style/unbold-in-bold.html [ Failure ]
-
-webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
 
 fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
 
-http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Pass Failure ]
-http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
-
 # Fails on Buildbot
 fast/picture/viewport-resize.html [ Pass Failure ]
-http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure Pass ]
-http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure Pass ]
 
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
 

@@ -227,6 +227,18 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/heade
         exporter = WebPlatformTestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
         self.assertFalse(exporter.has_wpt_changes())
 
+    def test_ignore_changes_to_expected_mismatch_file(self):
+        host = TestExporterTest.MyMockHost()
+        host._mockSCM.mock_format_patch_result = b"""
+Subversion Revision: 231920
+diff --git a/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/empty-string-symbol-expected-mismatch.html b/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/empty-string-symbol-expected-mismatch.html
+
++change to expected-mismatch
+"""
+        options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN'])
+        exporter = WebPlatformTestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
+        self.assertFalse(exporter.has_wpt_changes())
+
     def test_ignore_changes_to_w3c_import_log(self):
         host = TestExporterTest.MyMockHost()
         host._mockSCM.mock_format_patch_result = b"""

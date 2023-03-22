@@ -29,10 +29,42 @@
         F_ADDFILESIGS_RETURN
         F_CHECK_LV
         F_GETPATH
-        F_SETFD))
+        F_SETFD
+        F_SETFL
+        F_SETNOSIGPIPE))
 
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 5 67)))
+    (allow system-mac-syscall (mac-syscall-number 5)))
+
+(allow iokit-open-service
+    (iokit-registry-entry-class
+        "AppleM2ScalerCSCDriver"
+        "AppleParavirtGPU"
+        "AppleVideoToolboxParavirtualizationDriver"
+        "IOSurfaceRoot"))
+(allow iokit-open-service
+    (iokit-registry-entry-class-prefix "AGXAcceleratorG"))
+
+(allow darwin-notification-post
+    (notification-name
+        "AppleDatePreferencesChangedNotification"
+        "AppleLanguagePreferencesChangedNotification"
+        "AppleMeasurementSystemPreferencesChangedNotification"
+        "AppleNumberPreferencesChangedNotification"
+        "AppleTemperatureUnitPreferencesChangedNotification"
+        "AppleTextBehaviorPreferencesChangedNotification"
+        "AppleTimePreferencesChangedNotification"
+        "com.apple.CFPreferences._domainsChangedExternally"
+        "com.apple.Metal.AGXEnableOSSignposts"
+        "com.apple.WebKit.LibraryPathDiagnostics"
+        "com.apple.gpumemd.check_in_request"
+        "com.apple.mobile.keybagd.user_changed"
+        "com.apple.system.logging.prefschanged"
+        "org.WebKit.lowMemory"
+        "org.WebKit.lowMemory.begin"
+        "org.WebKit.lowMemory.end"))
+
+(allow process-info-codesignature (target others))
 #endif
 
 ;;;
@@ -371,7 +403,7 @@
         (with-filter
             (extension
                 "com.apple.app-sandbox.read-write")
-            (allow file-write* (with telemetry))
+            (allow file-write*)
             (allow file-issue-extension
                    (extension-class "com.apple.app-sandbox.read-write"
                                     "com.apple.mediaserverd.read-write"))))

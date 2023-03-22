@@ -45,15 +45,15 @@ UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<Documen
     auto platformContext = adoptNS([[UIWKDocumentContext alloc] init]);
 
     if (options.contains(DocumentEditingContextRequest::Options::AttributedText)) {
-        [platformContext setContextBefore:contextBefore.string.get()];
-        [platformContext setSelectedText:selectedText.string.get()];
-        [platformContext setContextAfter:contextAfter.string.get()];
-        [platformContext setMarkedText:markedText.string.get()];
+        [platformContext setContextBefore:contextBefore.nsAttributedString().get()];
+        [platformContext setSelectedText:selectedText.nsAttributedString().get()];
+        [platformContext setContextAfter:contextAfter.nsAttributedString().get()];
+        [platformContext setMarkedText:markedText.nsAttributedString().get()];
     } else if (options.contains(DocumentEditingContextRequest::Options::Text)) {
-        [platformContext setContextBefore:[contextBefore.string string]];
-        [platformContext setSelectedText:[selectedText.string string]];
-        [platformContext setContextAfter:[contextAfter.string string]];
-        [platformContext setMarkedText:[markedText.string string]];
+        [platformContext setContextBefore:[contextBefore.nsAttributedString() string]];
+        [platformContext setSelectedText:[selectedText.nsAttributedString() string]];
+        [platformContext setContextAfter:[contextAfter.nsAttributedString() string]];
+        [platformContext setMarkedText:[markedText.nsAttributedString() string]];
     }
 
     [platformContext setSelectedRangeInMarkedText:toNSRange(selectedRangeInMarkedText)];
@@ -61,7 +61,7 @@ UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<Documen
     for (const auto& rect : textRects)
         [platformContext addTextRect:rect.rect forCharacterRange:toNSRange(rect.range)];
 
-    [platformContext setAnnotatedText:annotatedText.string.get()];
+    [platformContext setAnnotatedText:annotatedText.nsAttributedString().get()];
 
     return platformContext.autorelease();
 #else

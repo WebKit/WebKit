@@ -30,6 +30,7 @@
 #include "NetworkSocketChannel.h"
 #include <WebCore/CurlStreamScheduler.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/WebSocketHandshake.h>
 
 namespace WebKit {
 
@@ -75,7 +76,7 @@ void WebSocketTask::close(int32_t code, const String& reason)
         return;
 
     if (m_state == State::Connecting || m_state == State::Handshaking) {
-        didClose(WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
+        didClose(WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
         return;
     }
 
@@ -131,7 +132,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
         return;
 
     if (!buffer.size()) {
-        didClose(WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
+        didClose(WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
         return;
     }
 
@@ -172,19 +173,19 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
 
         case WebCore::WebSocketFrame::OpCodeClose:
             if (!length)
-                m_closeEventCode = WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeNoStatusRcvd;
+                m_closeEventCode = WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeNoStatusRcvd;
             else if (length == 1) {
-                m_closeEventCode = WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure;
+                m_closeEventCode = WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure;
                 didFail("Received a broken close frame containing an invalid size body."_s);
                 return;
             } else {
                 auto highByte = static_cast<unsigned char>(data[0]);
                 auto lowByte = static_cast<unsigned char>(data[1]);
                 m_closeEventCode = highByte << 8 | lowByte;
-                if (m_closeEventCode == WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeNoStatusRcvd
-                    || m_closeEventCode == WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure
-                    || m_closeEventCode == WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeTLSHandshake) {
-                    m_closeEventCode = WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure;
+                if (m_closeEventCode == WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeNoStatusRcvd
+                    || m_closeEventCode == WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure
+                    || m_closeEventCode == WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeTLSHandshake) {
+                    m_closeEventCode = WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure;
                     didFail("Received a broken close frame containing a reserved status code."_s);
                     return;
                 }
@@ -357,7 +358,7 @@ void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, const String& rea
         return;
 
     Vector<uint8_t> buf;
-    if (!m_receivedClosingHandshake && code != WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeNotSpecified) {
+    if (!m_receivedClosingHandshake && code != WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeNotSpecified) {
         unsigned char highByte = static_cast<unsigned short>(code) >> 8;
         unsigned char lowByte = static_cast<unsigned short>(code);
         buf.append(static_cast<char>(highByte));
@@ -413,7 +414,7 @@ void WebSocketTask::didFail(String&& reason)
     m_continuousFrameData.clear();
 
     m_channel.didReceiveMessageError(WTFMove(reason));
-    didClose(WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
+    didClose(WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
 }
 
 void WebSocketTask::didClose(int32_t code, const String& reason)

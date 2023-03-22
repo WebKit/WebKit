@@ -903,6 +903,7 @@ private:
     RefPtr<TypeDefinition> m_I32_I32;
     RefPtr<TypeDefinition> m_I32_RefI32I32;
     RefPtr<TypeDefinition> m_Ref_RefI32I32;
+    RefPtr<TypeDefinition> m_Ref_I32I32I32I32;
     Lock m_lock;
 };
 

@@ -60,6 +60,11 @@ public:
     WEBCORE_EXPORT ~FetchBody();
     FetchBody& operator=(FetchBody&&) = default;
 
+    explicit FetchBody(String&& data)
+        : m_data(WTFMove(data))
+    {
+    }
+
     WEBCORE_EXPORT static std::optional<FetchBody> fromFormData(ScriptExecutionContext&, Ref<FormData>&&);
 
     void loadingFailed(const Exception&);
@@ -96,7 +101,6 @@ private:
     explicit FetchBody(Ref<const ArrayBuffer>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<const ArrayBufferView>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<FormData>&& data) : m_data(WTFMove(data)) { }
-    explicit FetchBody(String&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<const URLSearchParams>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<ReadableStream>&& stream) : m_data(stream) { m_readableStream = WTFMove(stream); }
     explicit FetchBody(FetchBodyConsumer&& consumer) : m_consumer(WTFMove(consumer)) { }
@@ -128,6 +132,11 @@ private:
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
     RefPtr<ReadableStream> m_readableStream;
+};
+
+struct FetchBodyWithType {
+    FetchBody body;
+    String type;
 };
 
 } // namespace WebCore

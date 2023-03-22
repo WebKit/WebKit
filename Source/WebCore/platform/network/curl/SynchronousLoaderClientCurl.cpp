@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-void SynchronousLoaderClient::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
+void SynchronousLoaderClient::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&)
 {
     ASSERT_NOT_REACHED();
 }

@@ -58,9 +58,18 @@ public:
     TypeStore& types() { return m_types; }
 
     template<typename T>
-    void replace(T* current, T&& replacement)
+    std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
         RELEASE_ASSERT(current->kind() == replacement.kind());
+        std::swap(*current, replacement);
+        m_replacements.append([current, replacement = WTFMove(replacement)]() mutable {
+            std::exchange(*current, WTFMove(replacement));
+        });
+    }
+
+    template<typename T>
+    std::enable_if_t<std::is_fundamental_v<T>, void> replace(T* current, T&& replacement)
+    {
         std::swap(*current, replacement);
         m_replacements.append([current, replacement = WTFMove(replacement)]() mutable {
             std::exchange(*current, WTFMove(replacement));

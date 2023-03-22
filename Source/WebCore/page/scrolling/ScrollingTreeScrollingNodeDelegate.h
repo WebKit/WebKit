@@ -50,6 +50,10 @@ public:
     virtual void handleWheelEventPhase(const PlatformWheelEventPhase) { }
     virtual bool handleMouseEventForScrollbars(const PlatformMouseEvent&) { return false; }
     
+    virtual void viewWillStartLiveResize() { }
+    virtual void viewWillEndLiveResize() { }
+    virtual void viewSizeDidChange() { }
+    
     virtual void updateScrollbarLayers() { }
     virtual void initScrollbars() { }
 

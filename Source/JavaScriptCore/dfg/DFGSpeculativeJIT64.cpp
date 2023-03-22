@@ -4174,7 +4174,11 @@ void SpeculativeJIT::compile(Node* node)
     case FunctionToString:
         compileFunctionToString(node);
         break;
-        
+
+    case FunctionBind:
+        compileFunctionBind(node);
+        break;
+
     case NewStringObject: {
         compileNewStringObject(node);
         break;
@@ -5396,6 +5400,10 @@ void SpeculativeJIT::compile(Node* node)
         compileNewFunction(node);
         break;
 
+    case NewBoundFunction:
+        compileNewBoundFunction(node);
+        break;
+
     case SetFunctionName:
         compileSetFunctionName(node);
         break;
@@ -6549,6 +6557,81 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
     addSlowPathGenerator(WTFMove(slowPath));
 
     jsValueResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileFunctionBind(Node* node)
+{
+    SpeculateCellOperand target(this, m_graph.child(node, 0));
+    JSValueOperand boundThis(this, m_graph.child(node, 1));
+    JSValueOperand arg0(this, m_graph.child(node, 2));
+    JSValueOperand arg1(this, m_graph.child(node, 3));
+    JSValueOperand arg2(this, m_graph.child(node, 4));
+
+    GPRReg targetGPR = target.gpr();
+    JSValueRegs boundThisRegs = boundThis.jsValueRegs();
+    JSValueRegs arg0Regs = arg0.jsValueRegs();
+    JSValueRegs arg1Regs = arg1.jsValueRegs();
+    JSValueRegs arg2Regs = arg2.jsValueRegs();
+
+    speculateObject(m_graph.child(node, 0), targetGPR);
+
+    unsigned boundArgsLength = node->numberOfBoundArguments();
+
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    flushRegisters();
+    callOperation(operationFunctionBind, resultGPR, LinkableConstant::globalObject(*this, node), targetGPR, TrustedImm32(boundArgsLength), boundThisRegs, arg0Regs, arg1Regs, arg2Regs);
+    exceptionCheck();
+    cellResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileNewBoundFunction(Node* node)
+{
+    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+
+    SpeculateCellOperand target(this, m_graph.child(node, 0));
+    JSValueOperand boundThis(this, m_graph.child(node, 1));
+    JSValueOperand arg0(this, m_graph.child(node, 2));
+    JSValueOperand arg1(this, m_graph.child(node, 3));
+    JSValueOperand arg2(this, m_graph.child(node, 4));
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg targetGPR = target.gpr();
+    JSValueRegs boundThisRegs = boundThis.jsValueRegs();
+    JSValueRegs arg0Regs = arg0.jsValueRegs();
+    JSValueRegs arg1Regs = arg1.jsValueRegs();
+    JSValueRegs arg2Regs = arg2.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    speculateObject(m_graph.child(node, 0), targetGPR);
+
+    NativeExecutable* executable = node->castOperand<NativeExecutable*>();
+
+    RegisteredStructure structure = m_graph.registerStructure(globalObject->boundFunctionStructure());
+
+    JumpList slowPath;
+
+    auto butterfly = TrustedImmPtr(nullptr);
+    emitAllocateJSObjectWithKnownSize<JSBoundFunction>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowPath, sizeof(JSBoundFunction));
+    storeLinkableConstant(LinkableConstant::globalObject(*this, node), Address(resultGPR, JSBoundFunction::offsetOfScopeChain()));
+    storeLinkableConstant(LinkableConstant(*this, executable), Address(resultGPR, JSBoundFunction::offsetOfExecutableOrRareData()));
+    storeValue(JSValueRegs { targetGPR }, Address(resultGPR, JSBoundFunction::offsetOfTargetFunction()));
+    storeValue(boundThisRegs, Address(resultGPR, JSBoundFunction::offsetOfBoundThis()));
+    storeValue(arg0Regs, Address(resultGPR, JSBoundFunction::offsetOfBoundArgs() + sizeof(WriteBarrier<Unknown>) * 0));
+    storeValue(arg1Regs, Address(resultGPR, JSBoundFunction::offsetOfBoundArgs() + sizeof(WriteBarrier<Unknown>) * 1));
+    storeValue(arg2Regs, Address(resultGPR, JSBoundFunction::offsetOfBoundArgs() + sizeof(WriteBarrier<Unknown>) * 2));
+    storePtr(TrustedImmPtr(nullptr), Address(resultGPR, JSBoundFunction::offsetOfNameMayBeNull()));
+    store64(TrustedImm64(bitwise_cast<uint64_t>(PNaN)), Address(resultGPR, JSBoundFunction::offsetOfLength()));
+    store32(TrustedImm32(node->numberOfBoundArguments()), Address(resultGPR, JSBoundFunction::offsetOfBoundArgsLength()));
+    store8(TrustedImm32(static_cast<uint8_t>(TriState::Indeterminate)), Address(resultGPR, JSBoundFunction::offsetOfCanConstruct()));
+    mutatorFence(vm());
+
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationNewBoundFunction, resultGPR, LinkableConstant::globalObject(*this, node), targetGPR, TrustedImm32(node->numberOfBoundArguments()), boundThisRegs, arg0Regs, arg1Regs, arg2Regs));
+    cellResult(resultGPR, node);
 }
 
 #endif

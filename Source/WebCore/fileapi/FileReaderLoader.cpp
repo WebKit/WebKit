@@ -41,6 +41,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
@@ -69,9 +70,6 @@ FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* cl
 FileReaderLoader::~FileReaderLoader()
 {
     cancel();
-
-    if (!m_urlForReading.isEmpty())
-        ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
 }
 
 void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blob& blob)
@@ -84,7 +82,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
     ASSERT(scriptExecutionContext);
 
     // The blob is read by routing through the request handling layer given a temporary public url.
-    m_urlForReading = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
+    m_urlForReading = { BlobURL::createPublicURL(scriptExecutionContext->securityOrigin()), scriptExecutionContext->topOrigin().data() };
     if (m_urlForReading.isEmpty()) {
         failed(SecurityError);
         return;

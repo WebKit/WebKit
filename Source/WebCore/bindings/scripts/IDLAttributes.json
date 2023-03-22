@@ -419,6 +419,10 @@
                 "url": "https://webidl.spec.whatwg.org/#PutForwards"
             }
         },
+        "RaisesException": {
+            "contextsAllowed": ["operation"],
+            "notes": "Should only be used on indexed getters that have to throw an exception in some cases"
+        },
         "Reflect": {
             "contextsAllowed": ["attribute"],
             "values": ["*"]

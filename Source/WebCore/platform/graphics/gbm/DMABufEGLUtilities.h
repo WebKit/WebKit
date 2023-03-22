@@ -43,12 +43,12 @@ enum class PlaneModifiersUsage : bool {
     DoNotUse = false,
 };
 
-static inline Vector<EGLint> constructEGLCreateImageAttributes(const DMABufObject& object, unsigned planeIndex, PlaneModifiersUsage planeModifiersUsage)
+static inline Vector<EGLAttrib> constructEGLCreateImageAttributes(const DMABufObject& object, unsigned planeIndex, PlaneModifiersUsage planeModifiersUsage)
 {
-    Vector<EGLint> attributes;
+    Vector<EGLAttrib> attributes;
     attributes.reserveInitialCapacity(12 + 4 + 1);
 
-    attributes.uncheckedAppend(Span<const EGLint>({
+    attributes.uncheckedAppend(Span<const EGLAttrib>({
         EGL_WIDTH, EGLint(object.format.planeWidth(planeIndex, object.width)),
         EGL_HEIGHT, EGLint(object.format.planeHeight(planeIndex, object.height)),
         EGL_LINUX_DRM_FOURCC_EXT, EGLint(object.format.planes[planeIndex].fourcc),
@@ -58,7 +58,7 @@ static inline Vector<EGLint> constructEGLCreateImageAttributes(const DMABufObjec
     }));
 
     if (planeModifiersUsage == PlaneModifiersUsage::Use && object.modifierPresent[planeIndex]) {
-        attributes.uncheckedAppend(Span<const EGLint>({
+        attributes.uncheckedAppend(Span<const EGLAttrib>({
             EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, EGLint(object.modifierValue[planeIndex] >> 32),
             EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, EGLint(object.modifierValue[planeIndex] & 0xffffffff),
         }));

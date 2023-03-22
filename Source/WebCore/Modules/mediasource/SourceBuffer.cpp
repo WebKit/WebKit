@@ -626,6 +626,9 @@ void SourceBuffer::removeTimerFired()
     // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
 
     m_private->removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd, m_source->currentTime(), m_source->isEnded(), [this, protectedThis = Ref { *this }] {
+        if (isRemoved())
+            return;
+
         // 7. Set the updating attribute to false.
         m_updating = false;
         m_pendingRemoveStart = MediaTime::invalidTime();
@@ -1358,11 +1361,12 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-void SourceBuffer::sourceBufferPrivateBufferedChanged()
+void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&& completionHandler)
 {
     setBufferedDirty(true);
     if (isManaged())
         scheduleEvent(eventNames().bufferedchangeEvent);
+    completionHandler();
 }
 
 bool SourceBuffer::isBufferedDirty() const
@@ -1372,7 +1376,11 @@ bool SourceBuffer::isBufferedDirty() const
 
 void SourceBuffer::setBufferedDirty(bool flag)
 {
+    if (m_bufferedDirty == flag)
+        return;
     m_bufferedDirty = flag;
+    if (flag && m_source)
+        m_source->sourceBufferBufferedChanged();
 }
 
 void SourceBuffer::setMediaSourceEnded(bool isEnded)

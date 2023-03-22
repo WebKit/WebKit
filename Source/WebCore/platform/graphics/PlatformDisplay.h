@@ -30,7 +30,12 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(EGL)
+typedef intptr_t EGLAttrib;
+typedef void *EGLClientBuffer;
+typedef void *EGLContext;
 typedef void *EGLDisplay;
+typedef void *EGLImage;
+typedef unsigned EGLenum;
 #endif
 
 #if PLATFORM(GTK)
@@ -93,6 +98,9 @@ public:
         bool EXT_image_dma_buf_import_modifiers { false };
     };
     const EGLExtensions& eglExtensions() const;
+
+    EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
+    bool destroyEGLImage(EGLImage) const;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)

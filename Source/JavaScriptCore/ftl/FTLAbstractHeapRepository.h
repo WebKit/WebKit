@@ -92,6 +92,15 @@ namespace JSC { namespace FTL {
     macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
     macro(JSBigInt_length, JSBigInt::offsetOfLength()) \
+    macro(JSBoundFunction_targetFunction, JSBoundFunction::offsetOfTargetFunction()) \
+    macro(JSBoundFunction_boundThis, JSBoundFunction::offsetOfBoundThis()) \
+    macro(JSBoundFunction_boundArg0, JSBoundFunction::offsetOfBoundArgs() + sizeof(WriteBarrier<Unknown>) * 0) \
+    macro(JSBoundFunction_boundArg1, JSBoundFunction::offsetOfBoundArgs() + sizeof(WriteBarrier<Unknown>) * 1) \
+    macro(JSBoundFunction_boundArg2, JSBoundFunction::offsetOfBoundArgs() + sizeof(WriteBarrier<Unknown>) * 2) \
+    macro(JSBoundFunction_nameMayBeNull, JSBoundFunction::offsetOfNameMayBeNull()) \
+    macro(JSBoundFunction_length, JSBoundFunction::offsetOfLength()) \
+    macro(JSBoundFunction_boundArgsLength, JSBoundFunction::offsetOfBoundArgsLength()) \
+    macro(JSBoundFunction_canConstruct, JSBoundFunction::offsetOfCanConstruct()) \
     macro(JSCell_cellState, JSCell::cellStateOffset()) \
     macro(JSCell_header, 0) \
     macro(JSCell_indexingTypeAndMisc, JSCell::indexingTypeAndMiscOffset()) \

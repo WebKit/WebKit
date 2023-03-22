@@ -59,7 +59,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/ResourceError.h
     platform/network/curl/ResourceRequest.h
     platform/network/curl/ResourceResponse.h
-    platform/network/curl/SocketStreamHandleImpl.h
 )
 
 list(APPEND WebCore_LIBRARIES

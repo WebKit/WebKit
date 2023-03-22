@@ -15,9 +15,6 @@ PASS counters[2].separator is ""
 PASS counters[3].identifier is "section"
 PASS counters[3].listStyle is "upper-roman"
 PASS counters[3].separator is ","
-PASS counters[4].identifier is "section"
-PASS counters[4].listStyle is "none"
-PASS counters[4].separator is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

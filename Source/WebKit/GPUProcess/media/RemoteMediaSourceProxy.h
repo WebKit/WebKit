@@ -64,7 +64,7 @@ public:
     // MediaSourcePrivateClient overrides
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
     MediaTime duration() const final;
-    std::unique_ptr<WebCore::PlatformTimeRanges> buffered() final;
+    std::unique_ptr<WebCore::PlatformTimeRanges> buffered() const final;
     void seekToTime(const MediaTime&) final;
     void monitorSourceBuffers() final;
 
@@ -82,6 +82,7 @@ private:
     using AddSourceBufferCallback = CompletionHandler<void(WebCore::MediaSourcePrivate::AddStatus, std::optional<RemoteSourceBufferIdentifier>)>;
     void addSourceBuffer(const WebCore::ContentType&, AddSourceBufferCallback&&);
     void durationChanged(const MediaTime&);
+    void bufferedChanged(WebCore::PlatformTimeRanges&&);
     void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setIsSeeking(bool);
     void waitForSeekCompleted();

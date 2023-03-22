@@ -177,6 +177,7 @@ editing/SelectionGeometryGatherer.cpp
 editing/SmartReplaceCF.cpp
 editing/cocoa/AlternativeTextContextController.mm
 editing/cocoa/AlternativeTextUIController.mm
+editing/cocoa/AttributedString.mm
 editing/cocoa/AutofillElements.cpp
 editing/cocoa/DataDetection.mm
 editing/cocoa/DictionaryLookup.mm
@@ -199,6 +200,7 @@ fileapi/FileCocoa.mm
 history/mac/HistoryItemMac.mm
 html/canvas/GPUCanvasContextCocoa.cpp
 html/shadow/YouTubeEmbedShadowElement.cpp
+inspector/LegacyWebSocketInspectorInstrumentation.cpp
 inspector/mac/PageDebuggerMac.mm
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm
@@ -640,7 +642,6 @@ platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.cpp
 platform/network/cf/NetworkStorageSessionCFNet.cpp
 platform/network/cf/ResourceRequestCFNet.cpp
-platform/network/cf/SocketStreamHandleImplCFNet.cpp
 platform/network/cocoa/CertificateInfoCocoa.mm
 platform/network/cocoa/CookieCocoa.mm
 platform/network/cocoa/CookieStorageObserver.mm

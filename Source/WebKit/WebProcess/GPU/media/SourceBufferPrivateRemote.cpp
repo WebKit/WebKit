@@ -420,10 +420,9 @@ void SourceBufferPrivateRemote::sourceBufferPrivateAppendError(bool decodeError)
         m_client->sourceBufferPrivateAppendError(decodeError);
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, PlatformTimeRanges&& buffered, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
+void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
 {
     m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
-    setBufferedRanges(WTFMove(buffered));
     if (m_client) {
         setTimestampOffset(timestampOffset);
         m_client->sourceBufferPrivateAppendComplete(appendResult);
@@ -442,6 +441,11 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTi
         m_client->sourceBufferPrivateDurationChanged(duration, WTFMove(completionHandler));
     else
         completionHandler();
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
+{
+    setBufferedRanges(WTFMove(timeRanges), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)

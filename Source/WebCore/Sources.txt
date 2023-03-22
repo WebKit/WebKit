@@ -422,7 +422,6 @@ Modules/websockets/CloseEvent.cpp
 Modules/websockets/ThreadableWebSocketChannel.cpp
 Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
 Modules/websockets/WebSocket.cpp
-Modules/websockets/WebSocketChannel.cpp
 Modules/websockets/WebSocketChannelInspector.cpp
 Modules/websockets/WebSocketDeflateFramer.cpp
 Modules/websockets/WebSocketDeflater.cpp
@@ -1906,7 +1905,6 @@ page/SecurityPolicy.cpp
 page/SettingsBase.cpp
 page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
-page/SocketProvider.cpp
 page/SpatialNavigation.cpp
 page/SuspendableTimer.cpp
 page/TextIndicator.cpp
@@ -2405,8 +2403,6 @@ platform/network/ResourceHandleClient.cpp
 platform/network/ResourceRequestBase.cpp
 platform/network/ResourceResponseBase.cpp
 platform/network/SameSiteInfo.cpp
-platform/network/SocketStreamHandle.cpp
-platform/network/SocketStreamHandleImpl.cpp
 platform/network/SynchronousLoaderClient.cpp
 platform/network/TimingAllowOrigin.cpp
 platform/sql/SQLiteAuthorizer.cpp

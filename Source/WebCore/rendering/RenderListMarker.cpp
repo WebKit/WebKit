@@ -566,8 +566,7 @@ String listMarkerText(ListStyleType::Type type, int value, CSSCounterStyle* coun
         return { &blackDownPointingSmallTriangle, 1 };
 
     case ListStyleType::Type::CounterStyle:
-        if (!counterStyle)
-            return String::number(value);
+        ASSERT(counterStyle);
         return counterStyle->text(value);
     case ListStyleType::Type::Decimal:
         return String::number(value);
@@ -2002,10 +2001,7 @@ StringView RenderListMarker::textWithoutSuffix() const
 
 RefPtr<CSSCounterStyle> RenderListMarker::counterStyle() const
 {
-    auto listStyleType = style().listStyleType();
-    if (listStyleType.type != ListStyleType::Type::CounterStyle)
-        return nullptr;
-    return document().counterStyleRegistry().resolvedCounterStyle(listStyleType.identifier);
+    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleType());
 }
 
 bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const

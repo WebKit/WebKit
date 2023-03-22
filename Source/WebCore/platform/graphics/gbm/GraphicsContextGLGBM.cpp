@@ -307,7 +307,10 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
             auto dmabufObject = m_swapchain.drawBO->createDMABufObject(0);
             auto attributes = DMABufEGLUtilities::constructEGLCreateImageAttributes(dmabufObject, 0,
                 DMABufEGLUtilities::PlaneModifiersUsage { static_cast<GraphicsContextGLGBM&>(*this).eglExtensions().EXT_image_dma_buf_import_modifiers });
-            return EGL_CreateImageKHR(m_swapchain.platformDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, attributes.data());
+            auto intAttributes = attributes.map<Vector<EGLint>>([] (EGLAttrib value) {
+                return value;
+            });
+            return EGL_CreateImageKHR(m_swapchain.platformDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, intAttributes.isEmpty() ? nullptr : intAttributes.data());
         });
 
     GL_BindTexture(textureTarget, m_texture);

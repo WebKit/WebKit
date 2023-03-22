@@ -56,6 +56,7 @@ public:
     };
     virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;
     virtual void durationChanged(const MediaTime&) = 0;
+    virtual void bufferedChanged(const PlatformTimeRanges&) { }
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     virtual void markEndOfStream(EndOfStreamStatus) = 0;
     virtual void unmarkEndOfStream() = 0;

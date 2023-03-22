@@ -696,16 +696,8 @@ const FeatureSchema& prefersColorScheme()
         "prefers-color-scheme"_s,
         Vector { CSSValueLight, CSSValueDark },
         [](auto& context) {
-            bool useDarkAppearance = [&] {
-                auto& frame = *context.document.frame();
-                if (frame.document()->loader()) {
-                    auto colorSchemePreference = frame.document()->loader()->colorSchemePreference();
-                    if (colorSchemePreference != ColorSchemePreference::NoPreference)
-                        return colorSchemePreference == ColorSchemePreference::Dark;
-                }
-
-                return frame.page()->useDarkAppearance();
-            }();
+            auto& frame = *context.document.frame();
+            bool useDarkAppearance = frame.page()->useDarkAppearance();
 
             return MatchingIdentifiers { useDarkAppearance ? CSSValueDark : CSSValueLight };
         }

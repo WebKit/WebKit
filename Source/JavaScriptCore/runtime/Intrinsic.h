@@ -167,6 +167,7 @@ namespace JSC {
     macro(AtomicsXorIntrinsic) \
     macro(ParseIntIntrinsic) \
     macro(FunctionToStringIntrinsic) \
+    macro(FunctionBindIntrinsic) \
     \
     /* Getter intrinsics. */ \
     macro(TypedArrayLengthIntrinsic) \

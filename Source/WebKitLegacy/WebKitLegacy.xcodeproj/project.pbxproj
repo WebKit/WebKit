@@ -144,6 +144,11 @@
 		5C40CD2222D8F9C300E9DAD5 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
 		5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */; };
 		5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */; };
+		5CB05C8129CA0E7000CC1AA0 /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB05C7D29CA0E6F00CC1AA0 /* WebSocketChannel.h */; };
+		5CB05C8229CA0E7000CC1AA0 /* LegacySocketProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB05C7E29CA0E7000CC1AA0 /* LegacySocketProvider.h */; };
+		5CB05C8B29CA18C400CC1AA0 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB05C8529CA18C400CC1AA0 /* SocketStreamHandle.h */; };
+		5CB05C8F29CA18C400CC1AA0 /* SocketStreamHandleImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB05C8929CA18C400CC1AA0 /* SocketStreamHandleImpl.h */; };
+		5CB05C9029CA18C400CC1AA0 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB05C8A29CA18C400CC1AA0 /* SocketStreamHandleClient.h */; };
 		5CE44F4A206D70EA003EFD01 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE44F49206D70E9003EFD01 /* PingHandle.h */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib */; };
@@ -852,6 +857,16 @@
 		5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageStorageSessionProvider.h; path = WebCoreSupport/PageStorageSessionProvider.h; sourceTree = SOURCE_ROOT; };
 		5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkStorageSessionMap.h; path = WebCoreSupport/NetworkStorageSessionMap.h; sourceTree = SOURCE_ROOT; };
 		5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkStorageSessionMap.cpp; path = WebCoreSupport/NetworkStorageSessionMap.cpp; sourceTree = SOURCE_ROOT; };
+		5CB05C7D29CA0E6F00CC1AA0 /* WebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketChannel.h; path = WebCoreSupport/WebSocketChannel.h; sourceTree = SOURCE_ROOT; };
+		5CB05C7E29CA0E7000CC1AA0 /* LegacySocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacySocketProvider.h; path = WebCoreSupport/LegacySocketProvider.h; sourceTree = SOURCE_ROOT; };
+		5CB05C7F29CA0E7000CC1AA0 /* LegacySocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacySocketProvider.cpp; path = WebCoreSupport/LegacySocketProvider.cpp; sourceTree = SOURCE_ROOT; };
+		5CB05C8029CA0E7000CC1AA0 /* WebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketChannel.cpp; path = WebCoreSupport/WebSocketChannel.cpp; sourceTree = SOURCE_ROOT; };
+		5CB05C8529CA18C400CC1AA0 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocketStreamHandle.h; path = WebCoreSupport/SocketStreamHandle.h; sourceTree = SOURCE_ROOT; };
+		5CB05C8629CA18C400CC1AA0 /* SocketStreamHandleImplCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SocketStreamHandleImplCFNet.cpp; path = WebCoreSupport/SocketStreamHandleImplCFNet.cpp; sourceTree = SOURCE_ROOT; };
+		5CB05C8729CA18C400CC1AA0 /* SocketStreamHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SocketStreamHandle.cpp; path = WebCoreSupport/SocketStreamHandle.cpp; sourceTree = SOURCE_ROOT; };
+		5CB05C8829CA18C400CC1AA0 /* SocketStreamHandleImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SocketStreamHandleImpl.cpp; path = WebCoreSupport/SocketStreamHandleImpl.cpp; sourceTree = SOURCE_ROOT; };
+		5CB05C8929CA18C400CC1AA0 /* SocketStreamHandleImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocketStreamHandleImpl.h; path = WebCoreSupport/SocketStreamHandleImpl.h; sourceTree = SOURCE_ROOT; };
+		5CB05C8A29CA18C400CC1AA0 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SocketStreamHandleClient.h; path = WebCoreSupport/SocketStreamHandleClient.h; sourceTree = SOURCE_ROOT; };
 		5CE44F49206D70E9003EFD01 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingHandle.h; path = WebCoreSupport/PingHandle.h; sourceTree = SOURCE_ROOT; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
@@ -2489,6 +2504,8 @@
 				A10C1D4418202FFB0036883A /* ios */,
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
+				5CB05C7F29CA0E7000CC1AA0 /* LegacySocketProvider.cpp */,
+				5CB05C7E29CA0E7000CC1AA0 /* LegacySocketProvider.h */,
 				5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */,
 				5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */,
 				5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */,
@@ -2497,6 +2514,12 @@
 				7C01CB82173435C900C5D807 /* PopupMenuMac.mm */,
 				7C01CB83173435C900C5D807 /* SearchPopupMenuMac.h */,
 				7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */,
+				5CB05C8729CA18C400CC1AA0 /* SocketStreamHandle.cpp */,
+				5CB05C8529CA18C400CC1AA0 /* SocketStreamHandle.h */,
+				5CB05C8A29CA18C400CC1AA0 /* SocketStreamHandleClient.h */,
+				5CB05C8829CA18C400CC1AA0 /* SocketStreamHandleImpl.cpp */,
+				5CB05C8929CA18C400CC1AA0 /* SocketStreamHandleImpl.h */,
+				5CB05C8629CA18C400CC1AA0 /* SocketStreamHandleImplCFNet.cpp */,
 				CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */,
 				CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
@@ -2552,6 +2575,8 @@
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
 				2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */,
 				2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */,
+				5CB05C8029CA0E7000CC1AA0 /* WebSocketChannel.cpp */,
+				5CB05C7D29CA0E6F00CC1AA0 /* WebSocketChannel.h */,
 				C11EBF3F21419CCE00D659E7 /* WebSwitchingGPUClient.cpp */,
 				C11EBF4021419CCE00D659E7 /* WebSwitchingGPUClient.h */,
 				4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */,
@@ -2817,6 +2842,7 @@
 				93D437991D57ABEF00AB85EA /* ExceptionHandlers.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
 				9364006F23996E81001E185E /* InProcessIDBServer.h in Headers */,
+				5CB05C8229CA0E7000CC1AA0 /* LegacySocketProvider.h in Headers */,
 				DD7AF5D1298C53160059E87E /* migrate-headers.py in Headers */,
 				5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */,
 				E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */,
@@ -2828,6 +2854,9 @@
 				7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */,
 				A10C1D621820300E0036883A /* SearchPopupMenuIOS.h in Headers */,
 				7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */,
+				5CB05C8B29CA18C400CC1AA0 /* SocketStreamHandle.h in Headers */,
+				5CB05C9029CA18C400CC1AA0 /* SocketStreamHandleClient.h in Headers */,
+				5CB05C8F29CA18C400CC1AA0 /* SocketStreamHandleImpl.h in Headers */,
 				1A6B31321A51F3A900422975 /* StorageAreaImpl.h in Headers */,
 				1A6B31341A51F3A900422975 /* StorageAreaSync.h in Headers */,
 				1A6B31361A51F3A900422975 /* StorageNamespaceImpl.h in Headers */,
@@ -3032,6 +3061,7 @@
 				A10C1D741820300E0036883A /* WebSelectionRect.h in Headers */,
 				2DD632C219E5D1F0002E9C7B /* WebSelectionServiceController.h in Headers */,
 				2D25396618CE85C200270222 /* WebSharingServicePickerController.h in Headers */,
+				5CB05C8129CA0E7000CC1AA0 /* WebSocketChannel.h in Headers */,
 				3AE15D5012DBDED4009323C8 /* WebStorageManagerInternal.h in Headers */,
 				3AB02B0012C132B200FBB694 /* WebStorageManagerPrivate.h in Headers */,
 				1A591D461A2E91BB000907C4 /* WebStorageNamespaceProvider.h in Headers */,

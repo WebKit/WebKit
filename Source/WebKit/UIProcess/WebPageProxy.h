@@ -943,6 +943,7 @@ public:
     void applicationWillEnterForegroundForMedia();
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
+    void didHandleTapAsHover();
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier);
     void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel);
@@ -3252,6 +3253,8 @@ private:
     RunLoop::Timer m_updateReportedMediaCaptureStateTimer;
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
     Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };
+
+    WebCore::IntDegrees m_orientationForMediaCapture { 0 };
 
     bool m_hasHadSelectionChangesFromUserInteraction { false };
 

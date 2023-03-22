@@ -32,6 +32,7 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutState.h"
+#include "Shape.h"
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 

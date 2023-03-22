@@ -352,15 +352,16 @@ void RenderStyle::fastPathInheritFrom(const RenderStyle& inheritParent)
 {
     ASSERT(!disallowsFastPathInheritance());
 
-    if (m_inheritedData.ptr() == inheritParent.m_inheritedData.ptr())
-        return;
-
     // FIXME: Use this mechanism for other properties too, like variables.
-    if (m_inheritedData->nonFastPathInheritedEqual(*inheritParent.m_inheritedData)) {
-        m_inheritedData = inheritParent.m_inheritedData;
-        return;
+    m_inheritedFlags.visibility = inheritParent.m_inheritedFlags.visibility;
+
+    if (m_inheritedData.ptr() != inheritParent.m_inheritedData.ptr()) {
+        if (m_inheritedData->nonFastPathInheritedEqual(*inheritParent.m_inheritedData)) {
+            m_inheritedData = inheritParent.m_inheritedData;
+            return;
+        }
+        m_inheritedData.access().fastPathInheritFrom(*inheritParent.m_inheritedData);
     }
-    m_inheritedData.access().fastPathInheritFrom(*inheritParent.m_inheritedData);
 }
 
 void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
@@ -454,6 +455,8 @@ bool RenderStyle::inheritedEqual(const RenderStyle& other) const
 
 bool RenderStyle::fastPathInheritedEqual(const RenderStyle& other) const
 {
+    if (m_inheritedFlags.visibility != other.m_inheritedFlags.visibility)
+        return false;
     if (m_inheritedData.ptr() == other.m_inheritedData.ptr())
         return true;
     return m_inheritedData->fastPathInheritedEqual(*other.m_inheritedData);
@@ -461,7 +464,11 @@ bool RenderStyle::fastPathInheritedEqual(const RenderStyle& other) const
 
 bool RenderStyle::nonFastPathInheritedEqual(const RenderStyle& other) const
 {
-    if (m_inheritedFlags != other.m_inheritedFlags)
+    auto withoutFastPathFlags = [](auto flags) {
+        flags.visibility = 0;
+        return flags;
+    };
+    if (withoutFastPathFlags(m_inheritedFlags) != withoutFastPathFlags(other.m_inheritedFlags))
         return false;
     if (m_inheritedData.ptr() != other.m_inheritedData.ptr() && !m_inheritedData->nonFastPathInheritedEqual(*other.m_inheritedData))
         return false;

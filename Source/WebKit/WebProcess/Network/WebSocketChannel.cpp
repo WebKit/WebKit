@@ -41,7 +41,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/Page.h>
-#include <WebCore/WebSocketChannel.h>
+#include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <wtf/CheckedArithmetic.h>
 
@@ -229,7 +229,7 @@ void WebSocketChannel::close(int code, const String& reason)
     if (m_client)
         m_client->didStartClosingHandshake();
 
-    ASSERT(code >= 0 || code == WebCore::WebSocketChannel::CloseEventCodeNotSpecified);
+    ASSERT(code >= 0 || code == WebCore::ThreadableWebSocketChannel::CloseEventCodeNotSpecified);
 
     WebSocketFrame closingFrame(WebSocketFrame::OpCodeClose, true, false, true);
     m_inspector.didSendWebSocketFrame(closingFrame);
@@ -249,8 +249,8 @@ void WebSocketChannel::fail(String&& reason)
     if (m_isClosing)
         return;
 
-    MessageSender::send(Messages::NetworkSocketChannel::Close { WebCore::WebSocketChannel::CloseEventCodeGoingAway, reason });
-    didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, { });
+    MessageSender::send(Messages::NetworkSocketChannel::Close { WebCore::ThreadableWebSocketChannel::CloseEventCodeGoingAway, reason });
+    didClose(WebCore::ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure, { });
 }
 
 void WebSocketChannel::disconnect()
@@ -261,7 +261,7 @@ void WebSocketChannel::disconnect()
 
     m_inspector.didCloseWebSocket();
 
-    MessageSender::send(Messages::NetworkSocketChannel::Close { WebCore::WebSocketChannel::CloseEventCodeGoingAway, { } });
+    MessageSender::send(Messages::NetworkSocketChannel::Close { WebCore::ThreadableWebSocketChannel::CloseEventCodeGoingAway, { } });
 }
 
 void WebSocketChannel::didConnect(String&& subprotocol, String&& extensions)
@@ -307,7 +307,7 @@ void WebSocketChannel::didClose(unsigned short code, String&& reason)
     // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     Ref protectedThis { *this };
 
-    bool receivedClosingHandshake = code != WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure;
+    bool receivedClosingHandshake = code != WebCore::ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure;
     if (receivedClosingHandshake)
         m_client->didStartClosingHandshake();
 

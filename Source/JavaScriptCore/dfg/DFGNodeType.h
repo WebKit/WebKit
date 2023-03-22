@@ -441,6 +441,7 @@ namespace JSC { namespace DFG {
     macro(NumberToStringWithRadix, NodeResultJS | NodeMustGenerate) \
     macro(NumberToStringWithValidRadixConstant, NodeResultJS) \
     macro(FunctionToString, NodeResultJS) \
+    macro(FunctionBind, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(MakeRope, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \
@@ -474,6 +475,7 @@ namespace JSC { namespace DFG {
     macro(NewGeneratorFunction, NodeResultJS) \
     macro(NewAsyncGeneratorFunction, NodeResultJS) \
     macro(NewAsyncFunction, NodeResultJS) \
+    macro(NewBoundFunction, NodeResultJS | NodeHasVarArgs) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate) \

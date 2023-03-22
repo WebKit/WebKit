@@ -395,9 +395,13 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
     }, [protectedThis = Ref(*this), this](const GError* error) {
         if (protectedThis->isStopped())
             return;
-        if (error && error->code == GST_WEBRTC_ERROR_INVALID_STATE)
-            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { InvalidStateError, "Failed to set local answer sdp: no pending remote description."_s });
-        else
+        if (error) {
+            if (error->code == GST_WEBRTC_ERROR_INVALID_STATE) {
+                m_peerConnectionBackend.setLocalDescriptionFailed(Exception { InvalidStateError, "Failed to set local answer sdp: no pending remote description."_s });
+                return;
+            }
+            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, String::fromUTF8(error->message) });
+        } else
             m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, "Unable to apply session local description"_s });
     });
 }
@@ -500,6 +504,13 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
             return;
         }
         sdpType = description->type();
+        if (descriptionType == DescriptionType::Local && sdpType == RTCSdpType::Answer && !gst_sdp_message_get_version(message.get())) {
+            GError error;
+            GUniquePtr<char> errorMessage(g_strdup("Expect line: v="));
+            error.message = errorMessage.get();
+            failureCallback(&error);
+            return;
+        }
         preProcessCallback(*message.get());
     } else if (gst_sdp_message_new(&message.outPtr()) != GST_SDP_OK) {
         failureCallback(nullptr);

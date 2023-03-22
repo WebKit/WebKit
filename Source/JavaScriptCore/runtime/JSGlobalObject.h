@@ -317,6 +317,7 @@ public:
     };
     FunctionStructures m_builtinFunctions;
     FunctionStructures m_ordinaryFunctions;
+    WriteBarrierStructureID m_boundFunctionStructure;
 
     WriteBarrierStructureID m_shadowRealmObjectStructure;
     WriteBarrierStructureID m_regExpStructure;
@@ -333,7 +334,6 @@ public:
     WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
     WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
 
-    LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
@@ -776,7 +776,7 @@ public:
         return m_ordinaryFunctions.strictFunctionStructure.get();
     }
 
-    Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
+    Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(); }
     Structure* customGetterFunctionStructure() const { return m_customGetterFunctionStructure.get(this); }
     Structure* customSetterFunctionStructure() const { return m_customSetterFunctionStructure.get(this); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }

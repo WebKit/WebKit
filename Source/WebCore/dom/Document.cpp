@@ -7887,12 +7887,6 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
     UNUSED_PARAM(style);
 #endif
 
-    if (DocumentLoader* documentLoader = loader()) {
-        auto colorSchemePreference = documentLoader->colorSchemePreference();
-        if (colorSchemePreference != ColorSchemePreference::NoPreference)
-            return colorSchemePreference == ColorSchemePreference::Dark;
-    }
-
     bool pageUsesDarkAppearance = false;
     if (Page* documentPage = page())
         pageUsesDarkAppearance = documentPage->useDarkAppearance();

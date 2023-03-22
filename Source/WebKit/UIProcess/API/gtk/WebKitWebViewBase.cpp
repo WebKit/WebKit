@@ -1319,8 +1319,18 @@ static bool shouldInvertDirectionForScrollEvent(WebHitTestResultData::IsScrollba
 }
 
 #if !USE(GTK4)
-static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, std::optional<WebWheelEvent::Phase> phase = std::nullopt, std::optional<WebWheelEvent::Phase> momentum = std::nullopt)
+static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* eventScroll)
 {
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    auto* event = reinterpret_cast<GdkEvent*>(eventScroll);
+    if (shouldForwardWheelEvent(webViewBase, event))
+        return GDK_EVENT_PROPAGATE;
+
+    if (priv->dialog)
+        return GDK_EVENT_PROPAGATE;
+
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
     if (controller && controller->isSwipeGestureEnabled()) {
         double deltaX, deltaY;
@@ -1336,49 +1346,63 @@ static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, Gd
 
         PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
-            return;
+            return GDK_EVENT_STOP;
     }
 
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    ASSERT(!priv->dialog);
-    if (phase)
-        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, phase.value(), momentum.value_or(WebWheelEvent::Phase::PhaseNone)));
-    else
-        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event));
-}
+    auto phase = gdk_event_is_scroll_stop_event(event) ? WebWheelEvent::Phase::PhaseEnded : WebWheelEvent::Phase::PhaseChanged;
+    double x, y;
+    gdk_event_get_coords(event, &x, &y);
+    IntPoint position(clampToInteger(x), clampToInteger(y));
+    double xRoot, yRoot;
+    gdk_event_get_root_coords(event, &xRoot, &yRoot);
+    IntPoint globalPosition(clampToInteger(xRoot), clampToInteger(yRoot));
 
-static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* event)
-{
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-
-    if (shouldForwardWheelEvent(webViewBase, reinterpret_cast<GdkEvent*>(event)))
-        return GDK_EVENT_PROPAGATE;
-
-    if (priv->dialog)
-        return GDK_EVENT_PROPAGATE;
-
-    if (shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, event->state & GDK_SHIFT_MASK)) {
-        switch (event->direction) {
-        case GDK_SCROLL_UP:
-            event->direction = GDK_SCROLL_LEFT;
-            break;
-        case GDK_SCROLL_LEFT:
-            event->direction = GDK_SCROLL_UP;
-            break;
-        case GDK_SCROLL_DOWN:
-            event->direction = GDK_SCROLL_RIGHT;
-            break;
-        case GDK_SCROLL_RIGHT:
-            event->direction = GDK_SCROLL_DOWN;
-            break;
-        case GDK_SCROLL_SMOOTH:
-            std::swap(event->delta_x, event->delta_y);
-            break;
+    bool hasPreciseScrollingDeltas = false;
+    FloatSize wheelTicks;
+    GdkScrollDirection direction;
+    if (!gdk_event_get_scroll_direction(event, &direction)) {
+        direction = GDK_SCROLL_SMOOTH;
+        double deltaX, deltaY;
+        if (gdk_event_get_scroll_deltas(event, &deltaX, &deltaY)) {
+            wheelTicks = FloatSize(-deltaX, -deltaY);
+            if (auto* device = gdk_event_get_source_device(event))
+                hasPreciseScrollingDeltas = gdk_device_get_source(device) != GDK_SOURCE_MOUSE;
         }
     }
 
-    webkitWebViewBaseHandleWheelEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
+    switch (direction) {
+    case GDK_SCROLL_UP:
+        wheelTicks = FloatSize(0, 1);
+        break;
+    case GDK_SCROLL_LEFT:
+        wheelTicks = FloatSize(1, 0);
+        break;
+    case GDK_SCROLL_DOWN:
+        wheelTicks = FloatSize(0, -1);
+        break;
+    case GDK_SCROLL_RIGHT:
+        wheelTicks = FloatSize(-1, 0);
+        break;
+    case GDK_SCROLL_SMOOTH:
+        break;
+    }
+
+    float stepX, stepY;
+    if (hasPreciseScrollingDeltas)
+        stepX = stepY = static_cast<float>(Scrollbar::pixelsPerLineStep());
+    else {
+        stepX = wheelTicks.width() ? static_cast<float>(Scrollbar::pixelsPerLineStep(priv->viewSize.width())) : 0;
+        stepY = wheelTicks.height() ? static_cast<float>(Scrollbar::pixelsPerLineStep(priv->viewSize.height())) : 0;
+    }
+
+    if (shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, eventScroll->state & GDK_SHIFT_MASK)) {
+        wheelTicks = wheelTicks.transposedSize();
+        std::swap(stepX, stepY);
+    }
+
+    FloatSize delta = wheelTicks.scaled(stepX, stepY);
+
+    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, position, globalPosition, delta, wheelTicks, phase, WebWheelEvent::Phase::PhaseNone, hasPreciseScrollingDeltas));
 
     return GDK_EVENT_STOP;
 }
@@ -1415,11 +1439,46 @@ static gboolean handleScroll(WebKitWebViewBase* webViewBase, double deltaX, doub
             return GDK_EVENT_STOP;
     }
 
-    if (!isEnd && shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK))
-        std::swap(deltaX, deltaY);
+    if (!event)
+        return GDK_EVENT_PROPAGATE;
 
-    if (event)
-        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, priv->lastMotionEvent ? IntPoint(priv->lastMotionEvent->position) : IntPoint(), FloatSize(-deltaX, -deltaY)));
+    auto phase = gdk_event_get_event_type(event) != GDK_SCROLL || gdk_scroll_event_is_stop(event) ? WebWheelEvent::Phase::PhaseEnded : WebWheelEvent::Phase::PhaseChanged;
+    IntPoint position;
+    if (priv->lastMotionEvent)
+        position = IntPoint(priv->lastMotionEvent->position);
+
+    bool hasPreciseScrollingDeltas = false;
+#if GTK_CHECK_VERSION(4, 7, 0)
+    hasPreciseScrollingDeltas = gdk_event_get_event_type(event) != GDK_SCROLL || gdk_scroll_event_get_unit(event) != GDK_SCROLL_UNIT_WHEEL;
+#else
+    if (gdk_scroll_event_get_direction(event) == GDK_SCROLL_SMOOTH) {
+        if (auto* device = gdk_event_get_source_device(event))
+            hasPreciseScrollingDeltas = gdk_device_get_source(device) != GDK_SOURCE_MOUSE;
+    }
+#endif
+
+    FloatSize wheelTicks(-deltaX, -deltaY);
+    float stepX = wheelTicks.width() ? static_cast<float>(Scrollbar::pixelsPerLineStep(priv->viewSize.width())) : 0;
+    float stepY = wheelTicks.height() ? static_cast<float>(Scrollbar::pixelsPerLineStep(priv->viewSize.height())) : 0;
+
+    if (!isEnd && shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK)) {
+        wheelTicks = wheelTicks.transposedSize();
+        std::swap(stepX, stepY);
+    }
+
+    FloatSize delta;
+#if GTK_CHECK_VERSION(4, 7, 0)
+    // Keep in sync with https://gitlab.gnome.org/GNOME/gtk/-/blob/493660a296af3b8a140714988ddece4199818a04/gtk/gtkscrolledwindow.c#L204
+    static const double gtkScrollDeltaMultiplier = 2.5;
+    if (hasPreciseScrollingDeltas)
+        delta = wheelTicks.scaled(gtkScrollDeltaMultiplier);
+    else
+        delta = wheelTicks.scaled(stepX, stepY);
+#else
+    delta = wheelTicks.scaled(stepX, stepY);
+#endif
+
+    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, position, position, delta, wheelTicks, phase, WebWheelEvent::Phase::PhaseNone, hasPreciseScrollingDeltas));
 
     return GDK_EVENT_STOP;
 }

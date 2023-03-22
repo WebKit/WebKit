@@ -782,6 +782,19 @@ WASM_SLOW_PATH_DECL(call_builtin)
         gprStart[0] = reference;
         WASM_END();
     }
+    case Wasm::LLIntBuiltin::ArrayNewData: {
+        uint32_t typeIndex = takeGPR().unboxedUInt32();
+        uint32_t dataSegmentIndex = takeGPR().unboxedUInt32();
+        uint32_t arraySize = takeGPR().unboxedUInt32();
+        uint32_t offset = takeGPR().unboxedUInt32();
+
+        EncodedJSValue result = Wasm::arrayNewData(instance, typeIndex, dataSegmentIndex, arraySize, offset);
+        // arrayNewData returns false iff the segment access is out of bounds
+        if (JSValue::decode(result).isNull())
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsDataSegmentAccess);
+        gprStart[0] = static_cast<EncodedJSValue>(result);
+        WASM_END();
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

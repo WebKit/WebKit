@@ -36,6 +36,6 @@ typedef (USVString or CSSOMVariableReferenceValue) CSSUnparsedSegment;
 
     iterable<CSSUnparsedSegment>;
     readonly attribute unsigned long length;
-    getter CSSUnparsedSegment (unsigned long index);
+    getter CSSUnparsedSegment? (unsigned long index);
     setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
 };

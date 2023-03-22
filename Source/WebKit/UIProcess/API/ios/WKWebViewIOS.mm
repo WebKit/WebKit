@@ -190,7 +190,8 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 
     [self addSubview:_scrollView.get()];
 
-    [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
+    [self _dispatchSetDeviceOrientation:[self _deviceOrientationIgnoringOverrides]];
+    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationIgnoringOverrides]];
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
@@ -267,7 +268,7 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     return _focusPreservationCount || _activeFocusedStateRetainCount;
 }
 
-- (WebCore::IntDegrees)_deviceOrientation
+- (WebCore::IntDegrees)_deviceOrientationIgnoringOverrides
 {
     auto orientation = UIInterfaceOrientationUnknown;
     auto application = UIApplication.sharedApplication;
@@ -1673,7 +1674,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)didMoveToWindow
 {
     if (!_overridesInterfaceOrientation)
-        [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
+        [self _dispatchSetDeviceOrientation:[self _deviceOrientationIgnoringOverrides]];
+    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationIgnoringOverrides]];
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
     [self _presentLockdownModeAlertIfNeeded];
@@ -2117,6 +2119,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     _page->setDeviceOrientation(deviceOrientation);
     _perProcessState.lastSentDeviceOrientation = deviceOrientation;
+}
+
+- (void)_dispatchSetOrientationForMediaCapture:(WebCore::IntDegrees)orientationForMediaCapture
+{
+    if (_perProcessState.lastSentOrientationForMediaCapture && _perProcessState.lastSentOrientationForMediaCapture.value() == orientationForMediaCapture)
+        return;
+
+    _page->setOrientationForMediaCapture(orientationForMediaCapture);
+    _perProcessState.lastSentOrientationForMediaCapture = orientationForMediaCapture;
 }
 
 - (BOOL)_updateScrollViewContentInsetsIfNecessary
@@ -2831,7 +2842,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 - (void)_windowDidRotate:(NSNotification *)notification
 {
     if (!_overridesInterfaceOrientation)
-        [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
+        [self _dispatchSetDeviceOrientation:[self _deviceOrientationIgnoringOverrides]];
+    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationIgnoringOverrides]];
 }
 
 - (void)_contentSizeCategoryDidChange:(NSNotification *)notification

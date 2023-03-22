@@ -32,7 +32,7 @@
 
     undefined clear();
     SVGNumber initialize(SVGNumber newItem);
-    getter SVGNumber getItem(unsigned long index);
+    [RaisesException] getter SVGNumber getItem(unsigned long index);
     SVGNumber insertItemBefore(SVGNumber newItem, unsigned long index);
     SVGNumber replaceItem(SVGNumber newItem, unsigned long index);
     SVGNumber removeItem(unsigned long index);

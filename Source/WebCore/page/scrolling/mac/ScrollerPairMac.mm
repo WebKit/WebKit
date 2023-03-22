@@ -73,8 +73,7 @@
 
 - (BOOL)inLiveResizeForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
-    // FIMXE: Not implemented.
-    return NO;
+    return _scrollerPair->inLiveResize();
 }
 
 - (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
@@ -167,6 +166,38 @@ void ScrollerPairMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
     default:
         break;
     }
+}
+
+void ScrollerPairMac::viewWillStartLiveResize()
+{
+    if (m_inLiveResize)
+        return;
+    
+    m_inLiveResize = true;
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+        return;
+
+    [m_scrollerImpPair startLiveResize];
+}
+
+void ScrollerPairMac::viewWillEndLiveResize()
+{
+    if (!m_inLiveResize)
+        return;
+    
+    m_inLiveResize = false;
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+        return;
+
+    [m_scrollerImpPair endLiveResize];
+}
+
+void ScrollerPairMac::contentsSizeChanged()
+{
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+        return;
+
+    [m_scrollerImpPair contentAreaDidResize];
 }
 
 bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

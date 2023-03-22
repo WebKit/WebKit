@@ -147,6 +147,16 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime
     m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), WTFMove(completionHandler), m_identifier);
 }
 
+void RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_connectionToWebProcess) {
+        completionHandler();
+        return;
+    }
+
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(buffered), WTFMove(completionHandler), m_identifier);
+}
+
 void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDuration)
 {
     if (!m_connectionToWebProcess)
@@ -168,7 +178,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPriv
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, m_sourceBufferPrivate->buffered(), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset()), m_identifier);
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset()), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
