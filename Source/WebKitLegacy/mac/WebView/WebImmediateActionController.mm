@@ -532,7 +532,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + scaledDescent);
     popupInfo.platformData.options = lookupOptions;
 
-    auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No).string;
+    auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No).nsAttributedString();
     auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 

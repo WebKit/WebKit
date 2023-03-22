@@ -3300,8 +3300,8 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     THROW_IF_SUSPENDED;
     _page->getContentsAsAttributedString([handler = makeBlockPtr(completionHandler)](auto& attributedString) {
-        if (attributedString.string)
-            handler(attributedString.string.get(), attributedString.documentAttributes.get(), nil);
+        if (auto string = attributedString.nsAttributedString())
+            handler(string.get(), attributedString.documentAttributesAsNSDictionary().get(), nil);
         else
             handler(nil, nil, createNSError(WKErrorUnknown).get());
     });

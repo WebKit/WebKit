@@ -346,7 +346,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    auto attributedString = editingAttributedString(*range, IncludeImages::No).string;
+    auto attributedString = editingAttributedString(*range, IncludeImages::No).nsAttributedString();
 
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
@@ -361,11 +361,11 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        completionHandler({ WTFMove(attributedString), nil }, EditingRange());
+        completionHandler(WebCore::AttributedString::fromNSAttributedStringAndDocumentAttributes(WTFMove(attributedString), nil), EditingRange());
         return;
     }
 
-    completionHandler({ WTFMove(attributedString), nil }, rangeToSend);
+    completionHandler(WebCore::AttributedString::fromNSAttributedStringAndDocumentAttributes(WTFMove(attributedString), nil), rangeToSend);
 }
 
 #if ENABLE(PDFKIT_PLUGIN)
@@ -748,7 +748,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range).string;
+    auto attributedSelection = attributedString(*range).nsAttributedString();
     if (!attributedSelection)
         return;
 
