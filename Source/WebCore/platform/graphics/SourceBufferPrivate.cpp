@@ -414,11 +414,12 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
     }
 
     // 3.5.9 Coded Frame Removal Algorithm
-    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
+    // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-removal
 
     // 1. Let start be the starting presentation timestamp for the removal range.
     // 2. Let end be the end presentation timestamp for the removal range.
     // 3. For each track buffer in this source buffer, run the following steps:
+
     for (auto& trackBufferKeyValue : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferKeyValue.value;
         AtomString trackID = trackBufferKeyValue.key;
@@ -429,10 +430,9 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
         // and less than the remove end timestamp, and HTMLMediaElement.readyState is greater than HAVE_METADATA, then set
         // the HTMLMediaElement.readyState attribute to HAVE_METADATA and stall playback.
-        if (isActive() && currentTime >= start && currentTime < end && readyState() > MediaPlayer::ReadyState::HaveMetadata)
-            setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        // This step will be performed in SourceBuffer::sourceBufferPrivateBufferedChanged
     }
-    
+
     reenqueueMediaIfNeeded(currentTime);
 
     updateBufferedFromTrackBuffers(isEnded);
@@ -444,10 +444,12 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered).utf8().data());
 
-    if (m_client)
-        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-
-    completionHandler();
+    if (!m_client) {
+        completionHandler();
+        return;
+    }
+    m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+    m_client->sourceBufferPrivateBufferedChanged(buffered(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)

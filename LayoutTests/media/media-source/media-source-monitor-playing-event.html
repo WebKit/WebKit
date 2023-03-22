@@ -67,8 +67,6 @@
         run('sourceBuffer.remove(0,10)');
         await waitFor(sourceBuffer, 'updateend');
 
-        await sleepFor(1000);
-
         consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
         sample = makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 1);
         run('sourceBuffer.appendBuffer(sample)');

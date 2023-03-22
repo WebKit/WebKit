@@ -626,6 +626,9 @@ void SourceBuffer::removeTimerFired()
     // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
 
     m_private->removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd, m_source->currentTime(), m_source->isEnded(), [this, protectedThis = Ref { *this }] {
+        if (isRemoved())
+            return;
+
         // 7. Set the updating attribute to false.
         m_updating = false;
         m_pendingRemoveStart = MediaTime::invalidTime();
