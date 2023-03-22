@@ -270,6 +270,38 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
     }
 }
 
+template<typename T>
+bool Instance::copyDataSegment(uint32_t segmentIndex, uint32_t offset, uint32_t lengthInBytes, FixedVector<T>& values)
+{
+    // Fail if the data segment index is out of bounds
+    RELEASE_ASSERT(segmentIndex < module().moduleInformation().dataSegmentsCount());
+    // Otherwise, get the `segmentIndex`th data segment
+    const Segment::Ptr& segment = module().moduleInformation().data[segmentIndex];
+    const uint32_t segmentSizeInBytes = m_passiveDataSegments.quickGet(segmentIndex) ? segment->sizeInBytes : 0U;
+
+    // Caller checks that the (offset + lengthInBytes) calculation doesn't overflow
+    if ((offset + lengthInBytes) > segmentSizeInBytes) {
+        // The segment access would overflow; the caller must handle this error.
+        return false;
+    }
+    // If size is 0, do nothing
+    if (!lengthInBytes)
+        return true;
+    // Cast the data segment to a pointer
+    const uint8_t* segmentData = &segment->byte(offset);
+
+    // Copy the data from the segment into the out param vector
+    memcpy(reinterpret_cast<uint8_t*>(values.data()), segmentData, lengthInBytes);
+
+    return true;
+}
+
+template bool Instance::copyDataSegment<uint8_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint8_t>&);
+template bool Instance::copyDataSegment<uint16_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint16_t>&);
+template bool Instance::copyDataSegment<uint32_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint32_t>&);
+template bool Instance::copyDataSegment<uint64_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint64_t>&);
+
+
 void Instance::tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex)
 {
     RELEASE_ASSERT(elementIndex < m_module->moduleInformation().elementCount());

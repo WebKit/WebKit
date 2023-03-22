@@ -409,6 +409,7 @@ struct AirIRGeneratorBase {
     // GC (in derived classes)
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
@@ -2463,7 +2464,10 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNew(uint32_t typeIndex
     ASSERT(arraySignature.is<ArrayType>());
 
     ExpressionType tmpForValue;
+    // FIXME: This will need to be changed to support arrays of vectors:
+    // https://bugs.webkit.org/show_bug.cgi?id=251330
     self().emitCoerceToI64(value, tmpForValue);
+
     result = self().tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
     // FIXME: Emit this inline.
     // https://bugs.webkit.org/show_bug.cgi?id=245405
@@ -2495,6 +2499,28 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t ty
     return { };
 }
 
+template<typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+
+    // The result type is a non-nullable reference to an array
+    result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+
+    emitCCall(&operationWasmArrayNewData,
+        result,
+        instanceValue(),
+        self().addConstant(Types::I32, typeIndex),
+        self().addConstant(Types::I32, dataIndex),
+        arraySize,
+        offset);
+
+    // Check for null return value (indicating that this access is out of bounds for the segment)
+    emitThrowOnNullReference(result, ExceptionType::OutOfBoundsDataSegmentAccess);
+    return { };
+}
+
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
@@ -2522,6 +2548,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(ExtGCOpType arrayG
     // https://bugs.webkit.org/show_bug.cgi?id=245405
     emitCCall(&operationWasmArrayGet, getValue, instanceValue(), self().addConstant(Types::I32, typeIndex), arrayref, index);
 
+    // FIXME: This will need to be changed to support arrays of vectors:
+    // https://bugs.webkit.org/show_bug.cgi?id=251330
     self().emitCoerceFromI64(resultType, getValue, result);
 
     if (elementType.is<PackedType>()) {

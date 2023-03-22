@@ -100,6 +100,86 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
     return JSValue::encode(JSValue(array));
 }
 
+template<typename T>
+EncodedJSValue createArrayFromDataSegment(Instance* instance, FieldType elementType, size_t arraySize,
+    unsigned dataSegmentIndex, unsigned offset, FixedVector<T>&& tempValues, RefPtr<const Wasm::RTT> rtt) {
+    JSWebAssemblyInstance* jsInstance = instance->owner();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+
+    VM& vm = globalObject->vm();
+
+    // Determine the array length in bytes from the element type and desired array size
+    size_t elementSize = elementType.type.elementSize();
+
+    // Check for overflow when determining array length in bytes
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize, arraySize)))
+        return JSValue::encode(jsNull());
+
+    uint32_t arrayLengthInBytes = arraySize * elementSize;
+
+    // Check for offset + arrayLengthInBytes overflow
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, arrayLengthInBytes)))
+        return JSValue::encode(jsNull());
+
+    // Copy the data from the segment into the temp `values` vector
+    if (!instance->copyDataSegment(dataSegmentIndex, offset, arrayLengthInBytes, tempValues)) {
+        // If copyDataSegment() returns false, the segment access is out of bounds.
+        // In that case, the caller is responsible for throwing an exception.
+        return JSValue::encode(jsNull());
+    }
+
+    // Finally, return a JS value representing an array of the values from `tempValues`
+    JSWebAssemblyArray* array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), elementType, arraySize, WTFMove(tempValues), rtt);
+
+    return JSValue::encode(JSValue(array));
+}
+
+inline EncodedJSValue arrayNewData(Instance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset)
+{
+    auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
+
+    // Check that the type index is within bounds
+    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
+
+    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    // Get the array element type
+    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+
+    // Finally, allocate the array from the `values` vector
+    if (fieldType.type.is<PackedType>()) {
+        switch (fieldType.type.as<PackedType>()) {
+        case PackedType::I8: {
+            FixedVector<uint8_t> values(arraySize);
+            return createArrayFromDataSegment(instance, fieldType, arraySize, dataSegmentIndex, offset, WTFMove(values), arrayRTT);
+        }
+        case PackedType::I16: {
+            FixedVector<uint16_t> values(arraySize);
+            return createArrayFromDataSegment(instance, fieldType, arraySize, dataSegmentIndex, offset, WTFMove(values), arrayRTT);
+        }
+        default:
+            break;
+        }
+    } else {
+        switch (fieldType.type.as<Type>().kind) {
+        case Wasm::TypeKind::I32:
+        case Wasm::TypeKind::F32: {
+            FixedVector<uint32_t> values(arraySize);
+            return createArrayFromDataSegment(instance, fieldType, arraySize, dataSegmentIndex, offset, WTFMove(values), arrayRTT);
+        }
+        case Wasm::TypeKind::I64:
+        case Wasm::TypeKind::F64: {
+            FixedVector<uint64_t> values(arraySize);
+            return createArrayFromDataSegment(instance, fieldType, arraySize, dataSegmentIndex, offset, WTFMove(values), arrayRTT);
+        }
+        default:
+            break;
+        }
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 inline EncodedJSValue arrayGet(Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index)
 {
 #if ASSERT_ENABLED

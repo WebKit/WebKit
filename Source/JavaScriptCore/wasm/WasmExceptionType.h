@@ -57,7 +57,8 @@ namespace Wasm {
     macro(NullStructSet, "struct.set to a null reference"_s) \
     macro(TypeErrorInvalidV128Use, "an exported wasm function cannot contain a v128 parameter or return value"_s) \
     macro(NullRefAsNonNull, "ref.as_non_null to a null reference"_s) \
-    macro(CastFailure, "ref.cast failed to cast reference to target heap type"_s)
+    macro(CastFailure, "ref.cast failed to cast reference to target heap type"_s) \
+    macro(OutOfBoundsDataSegmentAccess, "Offset + array length would exceed the size of a data segment"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,
@@ -87,6 +88,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     switch (type) {
     case ExceptionType::OutOfBoundsMemoryAccess:
     case ExceptionType::OutOfBoundsTableAccess:
+    case ExceptionType::OutOfBoundsDataSegmentAccess:
     case ExceptionType::OutOfBoundsCallIndirect:
     case ExceptionType::NullTableEntry:
     case ExceptionType::NullReference:

@@ -44,6 +44,7 @@ enum class LLIntBuiltin : uint8_t {
     ElemDrop,
     RefTest,
     RefCast,
+    ArrayNewData,
 };
 
 } } // namespace JSC::Wasm
