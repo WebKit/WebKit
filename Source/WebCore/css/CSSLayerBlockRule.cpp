@@ -61,7 +61,7 @@ String CSSLayerBlockRule::cssText() const
 
 String CSSLayerBlockRule::name() const
 {
-    auto& layer = downcast<StyleRuleLayer>(groupRule());
+    auto& layer = downcast<StyleRuleLayer>(rule());
 
     if (layer.name().isEmpty())
         return emptyString();

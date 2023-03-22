@@ -44,12 +44,12 @@ CSSMediaRule::~CSSMediaRule()
 
 const MQ::MediaQueryList& CSSMediaRule::mediaQueries() const
 {
-    return downcast<StyleRuleMedia>(groupRule()).mediaQueries();
+    return downcast<StyleRuleMedia>(rule()).mediaQueries();
 }
 
 void CSSMediaRule::setMediaQueries(MQ::MediaQueryList&& queries)
 {
-    downcast<StyleRuleMedia>(groupRule()).setMediaQueries(WTFMove(queries));
+    downcast<StyleRuleMedia>(rule()).setMediaQueries(WTFMove(queries));
 }
 
 String CSSMediaRule::cssText() const

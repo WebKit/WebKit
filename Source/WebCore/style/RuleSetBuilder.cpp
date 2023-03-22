@@ -124,7 +124,7 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
     case StyleRuleType::Media: {
         auto& mediaRule = downcast<StyleRuleMedia>(*rule);
         if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
-            addChildRules(mediaRule.childRules());
+            addChildRules(mediaRule.ruleGroup().childRules());
         m_mediaQueryCollector.pop(mediaRule.mediaQueries());
         return;
     }
@@ -136,7 +136,7 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
             m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
             m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
         }
-        addChildRules(containerRule.childRules());
+        addChildRules(containerRule.ruleGroup().childRules());
         if (m_ruleSet)
             m_currentContainerQueryIdentifier = previousContainerQueryIdentifier;
         return;
@@ -154,7 +154,7 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
         }
         // Block syntax.
         pushCascadeLayer(layerRule.name());
-        addChildRules(layerRule.childRules());
+        addChildRules(layerRule.ruleGroup().childRules());
         popCascadeLayer(layerRule.name());
         return;
     }
@@ -171,7 +171,7 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
 
     case StyleRuleType::Supports:
         if (downcast<StyleRuleSupports>(*rule).conditionIsSupported())
-            addChildRules(downcast<StyleRuleSupports>(*rule).childRules());
+            addChildRules(downcast<StyleRuleSupports>(*rule).ruleGroup().childRules());
         return;
 
     case StyleRuleType::Import:

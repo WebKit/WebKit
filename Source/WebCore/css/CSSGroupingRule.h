@@ -42,9 +42,10 @@ public:
     CSSRule* item(unsigned index) const;
 
 protected:
-    CSSGroupingRule(StyleRuleGroup&, CSSStyleSheet* parent);
-    const StyleRuleGroup& groupRule() const { return m_groupRule; }
-    StyleRuleGroup& groupRule() { return m_groupRule; }
+    CSSGroupingRule(StyleRuleBase&, CSSStyleSheet* parent);
+    const StyleRuleGroup& groupRule() const;
+    StyleRuleGroup& groupRule();
+    StyleRuleBase& rule() const { return m_groupRule; }
     void reattach(StyleRuleBase&) override;
     void appendCSSTextForItems(StringBuilder&) const;
 
@@ -52,7 +53,7 @@ protected:
     void cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& rules) const;
 
 private:
-    Ref<StyleRuleGroup> m_groupRule;
+    Ref<StyleRuleBase> m_groupRule;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

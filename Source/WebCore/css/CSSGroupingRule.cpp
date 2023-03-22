@@ -40,16 +40,17 @@
 
 namespace WebCore {
 
-CSSGroupingRule::CSSGroupingRule(StyleRuleGroup& groupRule, CSSStyleSheet* parent)
+CSSGroupingRule::CSSGroupingRule(StyleRuleBase& rule, CSSStyleSheet* parent)
     : CSSRule(parent)
-    , m_groupRule(groupRule)
-    , m_childRuleCSSOMWrappers(groupRule.childRules().size())
+    , m_groupRule(rule)
+    , m_childRuleCSSOMWrappers(groupRule().childRules().size())
 {
+    ASSERT(rule.isGroupRule());
 }
 
 CSSGroupingRule::~CSSGroupingRule()
 {
-    ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
+    ASSERT(m_childRuleCSSOMWrappers.size() == groupRule().childRules().size());
     for (auto& wrapper : m_childRuleCSSOMWrappers) {
         if (wrapper)
             wrapper->setParentRule(nullptr);
@@ -58,9 +59,9 @@ CSSGroupingRule::~CSSGroupingRule()
 
 ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsigned index)
 {
-    ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
+    ASSERT(m_childRuleCSSOMWrappers.size() == groupRule().childRules().size());
 
-    if (index > m_groupRule->childRules().size()) {
+    if (index > groupRule().childRules().size()) {
         // IndexSizeError: Raised if the specified index is not a valid insertion point.
         return Exception { IndexSizeError };
     }
@@ -84,7 +85,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     }
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_groupRule->wrapperInsertRule(index, newRule.releaseNonNull());
+    groupRule().wrapperInsertRule(index, newRule.releaseNonNull());
 
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;
@@ -92,9 +93,9 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
 
 ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
 {
-    ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
+    ASSERT(m_childRuleCSSOMWrappers.size() == groupRule().childRules().size());
 
-    if (index >= m_groupRule->childRules().size()) {
+    if (index >= groupRule().childRules().size()) {
         // IndexSizeError: Raised if the specified index does not correspond to a
         // rule in the media rule list.
         return Exception { IndexSizeError };
@@ -102,7 +103,7 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_groupRule->wrapperRemoveRule(index);
+    groupRule().wrapperRemoveRule(index);
 
     if (m_childRuleCSSOMWrappers[index])
         m_childRuleCSSOMWrappers[index]->setParentRule(0);
@@ -140,7 +141,7 @@ void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
 
 void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rules) const
 {
-    auto& childRules = m_groupRule->childRules();
+    auto& childRules = groupRule().childRules();
 
     for (unsigned index = 0 ; index < childRules.size() ; index++) {
         auto wrappedRule = item(index);
@@ -151,17 +152,17 @@ void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rul
 
 unsigned CSSGroupingRule::length() const
 { 
-    return m_groupRule->childRules().size(); 
+    return groupRule().childRules().size(); 
 }
 
 CSSRule* CSSGroupingRule::item(unsigned index) const
 { 
     if (index >= length())
         return nullptr;
-    ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
+    ASSERT(m_childRuleCSSOMWrappers.size() == groupRule().childRules().size());
     auto& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = m_groupRule->childRules()[index]->createCSSOMWrapper(const_cast<CSSGroupingRule&>(*this));
+        rule = groupRule().childRules()[index]->createCSSOMWrapper(const_cast<CSSGroupingRule&>(*this));
     return rule.get();
 }
 
@@ -174,11 +175,24 @@ CSSRuleList& CSSGroupingRule::cssRules() const
 
 void CSSGroupingRule::reattach(StyleRuleBase& rule)
 {
-    m_groupRule = downcast<StyleRuleGroup>(rule);
+    ASSERT(rule.isGroupRule());
+    m_groupRule = rule;
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->reattach(*m_groupRule.get().childRules()[i]);
+            m_childRuleCSSOMWrappers[i]->reattach(*groupRule().childRules()[i]);
     }
+}
+
+const StyleRuleGroup& CSSGroupingRule::groupRule() const
+{
+    auto group = StyleRuleGroup::fromStyleRuleBase(m_groupRule);
+    ASSERT(group);
+    return *group;
+}
+
+StyleRuleGroup& CSSGroupingRule::groupRule()
+{
+    return const_cast<StyleRuleGroup&>(const_cast<const CSSGroupingRule&>(*this).groupRule());
 }
 
 } // namespace WebCore
