@@ -776,6 +776,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
 
     if (targetNodeWentFromHiddenToVisible) {
         LOG(ContentObservation, "handleSyntheticClick: target node was hidden and now is visible -> hover.");
+        send(Messages::WebPageProxy::DidHandleTapAsHover());
         return;
     }
 
@@ -815,6 +816,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
             if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(protectedThis->corePage()->mainFrame()))
                 dispatchSyntheticMouseMove(*localMainFrame, location, modifiers, pointerId);
             LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
+            protectedThis->send(Messages::WebPageProxy::DidHandleTapAsHover());
             return;
         }
         LOG(ContentObservation, "handleSyntheticClick: calling completeSyntheticClick -> click.");
@@ -835,7 +837,7 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
 
         // Only dispatch the click if the document didn't get changed by any timers started by the move event.
         if (observedContentChange == WKContentNoChange) {
-            LOG(ContentObservation, "No chage was observed -> click.");
+            LOG(ContentObservation, "No change was observed -> click.");
             protectedThis->completeSyntheticClick(targetNode, location, modifiers, WebCore::OneFingerTap, pointerId);
             return;
         }
@@ -843,6 +845,8 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
         LOG(ContentObservation, "Observed meaningful visible change -> hover.");
         if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(protectedThis->corePage()->mainFrame()))
             dispatchSyntheticMouseMove(*localMainFrame, location, modifiers, pointerId);
+
+        protectedThis->send(Messages::WebPageProxy::DidHandleTapAsHover());
     });
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = { };
