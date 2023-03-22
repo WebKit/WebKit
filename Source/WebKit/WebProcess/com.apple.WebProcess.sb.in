@@ -38,22 +38,33 @@
 (with-filter (mac-policy-name "Quarantine")
     (allow system-mac-syscall (mac-syscall-number 180)))
 
+(with-filter (mac-policy-name "AMFI")
+    (allow system-mac-syscall (mac-syscall-number 95)))
+
 (allow process-info-rusage (target self))
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
 (allow iokit-open-service (iokit-registry-entry-class
     "AGPM"
-    "IOAccelerator"
-    "AppleM2ScalerCSCDriver"))
+    "AppleAPFSContainer"
+    "AppleM2ScalerCSCDriver"
+    "AppleVideoToolboxParavirtualizationDriver"
+    "IOAccelerator"))
 
 (deny iokit-open-service (with no-report) (iokit-registry-entry-class "AppleJPEGDriver"))
+
+(allow fs-quota-get)
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow file-map-executable))
 (allow file-map-executable
-    (subpath "/System/Library/Components")
-    (subpath "/System/Library/Video/Plug-Ins"))
+    (subpath
+        "/System/Library/Accessibility/BundlesBase"
+        "/System/Library/Components"
+        "/System/Library/CoreServices"
+        "/System/Library/Extensions"
+        "/System/Library/Video/Plug-Ins"))
 #else
     (allow file-map-executable)
 #endif
@@ -1788,7 +1799,7 @@
 (allow system-fsctl
     (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny file-ioctl)
 (allow file-ioctl (literal "/dev/dtracehelper"))
 (deny socket-ioctl)
@@ -1803,11 +1814,13 @@
             F_GETCONFINED
             F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
             F_GETPATH ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+            F_GETPROTECTIONCLASS
             F_GETSIGSINFO
             F_NOCACHE ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
             F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
             F_SETCONFINED
-            F_SETFD)) ;; libwebrtc.dylib (no backtrace)
+            F_SETFD ;; libwebrtc.dylib (no backtrace)
+            F_SETPROTECTIONCLASS))
 
     (define (appcache-fcntl-commands)
         (fcntl-command
@@ -1825,19 +1838,10 @@
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
-        (deny system-fcntl
-            
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-            
-#endif
-            (appcache-fcntl-commands)))
+        (deny system-fcntl (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif
-
-    (allow system-fcntl
-        (fcntl-command F_GETPROTECTIONCLASS)
-        (fcntl-command F_SETPROTECTIONCLASS))
 )
 
 (when (defined? 'process-codesigning*)

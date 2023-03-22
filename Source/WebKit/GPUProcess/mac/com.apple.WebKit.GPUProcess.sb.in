@@ -38,27 +38,43 @@
     (fcntl-command
         F_ADDFILESIGS_RETURN
         F_CHECK_LV
+        F_GETFL
         F_GETPATH
         F_GETSIGSINFO
         F_NOCACHE
-        F_SETFD))
+        F_SETFD
+        F_SETFL
+        F_SETLKW
+        F_SETNOSIGPIPE))
 
 (allow process-codesigning-entitlements-der-blob-get)
 (allow process-codesigning-identity-get (target self))
+
+(allow process-info-codesignature)
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
 (allow iokit-open-service (iokit-user-client-class "AppleCLCD2"))
 
 (allow iokit-open-service (iokit-registry-entry-class
+    "AGPM"
     "AppleGFXHDAEngineOutputDP"
+    "AppleHDAEngineInput"
+    "AppleHDAEngineOutput"
+    "AppleIntelMEClientController"
+    "AppleMobileADBE0"
     "AppleUpstreamUserClientDriver"
+    "AppleVideoToolboxParavirtualizationDriver"
     "AudioAUUCDriver"
-    "IOAudioSelectorControl"))
+    "IOAudioSelectorControl"
+    "IOMobileFramebufferShim"))
 
 (allow file-map-executable (subpath
     "/System/Library/Components"
+    "/System/Library/CoreServices"
     "/System/Library/Extensions"
     "/System/Library/Video/Plug-Ins"))
+
+(allow fs-quota-get)
 
 (allow iokit-open-user-client (iokit-user-client-class "AGXDeviceUserClient"))
 (allow iokit-open-service
