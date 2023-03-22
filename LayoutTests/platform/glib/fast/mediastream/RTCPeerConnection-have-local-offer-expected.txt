@@ -12,7 +12,7 @@ FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "have-local-offer"
 PASS pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1); did not throw exception.
 PASS setLocalDescription failed.
-FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
+FAIL errorReason.name should be InvalidSessionDescriptionError. Was OperationError.
 PASS pc.localDescription.type is "offer"
 PASS pc.localDescription.sdp is "local"
 FAIL pc.remoteDescription should throw an exception. Was null.
