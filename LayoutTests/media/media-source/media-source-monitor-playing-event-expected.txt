@@ -8,26 +8,27 @@ EVENT(loadedmetadata)
 EVENT(updateend)
 video.readyState : HAVE_METADATA
 RUN(sourceBuffer.appendBuffer(sample))
-EVENT(updateend)
-video.readyState : HAVE_FUTURE_DATA
-RUN(sourceBuffer.appendBuffer(sample))
 EVENT(loadeddata)
 EVENT(canplay)
 EVENT(updateend)
+video.readyState : HAVE_FUTURE_DATA
+RUN(sourceBuffer.appendBuffer(sample))
 EVENT(canplaythrough)
 EVENT(playing)
+EVENT(updateend)
 video.readyState : HAVE_ENOUGH_DATA
 RUN(sourceBuffer.remove(0,10))
-EVENT(updateend)
 EVENT(waiting)
-video.readyState : HAVE_METADATA
-RUN(sourceBuffer.appendBuffer(sample))
 EVENT(updateend)
 video.readyState : HAVE_METADATA
 RUN(sourceBuffer.appendBuffer(sample))
 EVENT(updateend)
+video.readyState : HAVE_METADATA
+RUN(sourceBuffer.appendBuffer(sample))
 EVENT(canplay)
 EVENT(playing)
+EVENT(canplaythrough)
+EVENT(updateend)
 video.readyState : HAVE_ENOUGH_DATA
 END OF TEST
 

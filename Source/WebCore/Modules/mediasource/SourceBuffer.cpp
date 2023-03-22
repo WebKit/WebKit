@@ -1358,11 +1358,12 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-void SourceBuffer::sourceBufferPrivateBufferedChanged()
+void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&& completionHandler)
 {
     setBufferedDirty(true);
     if (isManaged())
         scheduleEvent(eventNames().bufferedchangeEvent);
+    completionHandler();
 }
 
 bool SourceBuffer::isBufferedDirty() const
@@ -1372,7 +1373,11 @@ bool SourceBuffer::isBufferedDirty() const
 
 void SourceBuffer::setBufferedDirty(bool flag)
 {
+    if (m_bufferedDirty == flag)
+        return;
     m_bufferedDirty = flag;
+    if (flag && m_source)
+        m_source->sourceBufferBufferedChanged();
 }
 
 void SourceBuffer::setMediaSourceEnded(bool isEnded)

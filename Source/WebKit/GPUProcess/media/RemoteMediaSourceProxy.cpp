@@ -68,7 +68,7 @@ MediaTime RemoteMediaSourceProxy::duration() const
     return m_duration;
 }
 
-std::unique_ptr<PlatformTimeRanges> RemoteMediaSourceProxy::buffered()
+std::unique_ptr<PlatformTimeRanges> RemoteMediaSourceProxy::buffered() const
 {
     notImplemented();
     return nullptr;

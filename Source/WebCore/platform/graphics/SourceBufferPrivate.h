@@ -159,7 +159,7 @@ protected:
     void reenqueSamples(const AtomString& trackID);
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
-    WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&);
+    WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&, CompletionHandler<void()>&& completionHandler = [] { });
     void provideMediaData(const AtomString& trackID);
 
     // Must be called once all samples have been processed.

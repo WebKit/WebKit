@@ -113,8 +113,9 @@ private:
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResult)>&&);
     void sourceBufferPrivateStreamEndedWithDecodeError();
     void sourceBufferPrivateAppendError(bool decodeError);
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, WebCore::PlatformTimeRanges&& buffered, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset);
+    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
+    void sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&&, CompletionHandler<void()>&&);
     void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
     void sourceBufferPrivateDidParseSample(double sampleDuration);
     void sourceBufferPrivateDidDropSample();

@@ -56,6 +56,7 @@
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -106,15 +107,15 @@ Ref<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 
 MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
+    , m_sourceBuffers(SourceBufferList::create(scriptExecutionContext()))
+    , m_activeSourceBuffers(SourceBufferList::create(scriptExecutionContext()))
+    , m_buffered(makeUniqueRef<PlatformTimeRanges>())
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif
 {
-    m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
-    m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext());
-    m_buffered = makeUnique<PlatformTimeRanges>();
 }
 
 MediaSource::~MediaSource()
@@ -178,10 +179,9 @@ MediaTime MediaSource::currentTime() const
     return m_mediaElement ? m_mediaElement->currentMediaTime() : MediaTime::zeroTime();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaSource::buffered()
+std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
-    updateBufferedIfNeeded();
-    return makeUnique<PlatformTimeRanges>(*m_buffered);
+    return makeUnique<PlatformTimeRanges>(m_buffered);
 }
 
 void MediaSource::seekToTime(const MediaTime& time)
@@ -1057,9 +1057,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         // We need to force the recalculation of the buffered range as its value depends
         // on the readyState.
         // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
-        // It will be recalculated when read again.
-        m_buffered = nullptr;
-        monitorSourceBuffers();
+        updateBufferedIfNeeded(true /* force */);
         return;
     }
 
@@ -1150,14 +1148,26 @@ void MediaSource::notifyElementUpdateMediaState() const
     mediaElement()->updateMediaState();
 }
 
-void MediaSource::updateBufferedIfNeeded()
+void MediaSource::sourceBufferBufferedChanged()
 {
-    if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
+    updateBufferedIfNeeded();
+}
+
+void MediaSource::updateBufferedIfNeeded(bool force)
+{
+    if (!force && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
         return;
 
-    m_buffered = makeUnique<PlatformTimeRanges>();
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(false);
+
+    auto buffered = WTFMove(m_buffered);
+    m_buffered = makeUniqueRef<PlatformTimeRanges>();
+    auto updatePrivate = makeScopeExit([&] {
+        if (!m_private || buffered.get() == m_buffered.get())
+            return;
+        monitorSourceBuffers();
+    });
 
     // Implements MediaSource algorithm for HTMLMediaElement.buffered.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions

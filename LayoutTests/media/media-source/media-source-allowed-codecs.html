@@ -22,7 +22,6 @@
 
         run('internals.settings.setAllowedMediaVideoCodecIDs(null)');
         testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', true);
-        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=mp4v")', true);
 
         run('internals.settings.setAllowedMediaVideoCodecIDs("avc1")');
         run('internals.settings.setAllowedMediaAudioCodecIDs("aac ")');
@@ -64,11 +63,9 @@
         consoleWrite('Append a media segment.')
         run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
         await waitFor(sourceBuffer, 'update');
-
         run('video.playbackRate = 0.01');
         run('video.play()');
         await waitFor(video, 'playing');
-
         endTest();
     });
     </script>

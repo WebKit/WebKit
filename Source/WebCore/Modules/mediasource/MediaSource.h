@@ -40,6 +40,7 @@
 #include "URLRegistry.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -80,7 +81,7 @@ public:
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
     MediaTime duration() const final;
-    std::unique_ptr<PlatformTimeRanges> buffered() final;
+    std::unique_ptr<PlatformTimeRanges> buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
@@ -107,6 +108,8 @@ public:
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 
     ScriptExecutionContext* scriptExecutionContext() const final;
+
+    void sourceBufferBufferedChanged();
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -137,8 +140,6 @@ protected:
     void scheduleEvent(const AtomString& eventName);
     void notifyElementUpdateMediaState() const;
 
-    std::unique_ptr<PlatformTimeRanges> m_buffered;
-
 private:
     // ActiveDOMObject.
     void stop() final;
@@ -163,7 +164,7 @@ private:
     ExceptionOr<Ref<SourceBufferPrivate>> createSourceBufferPrivate(const ContentType&);
 
     void regenerateActiveSourceBuffers();
-    void updateBufferedIfNeeded();
+    void updateBufferedIfNeeded(bool forced = false);
 
     void completeSeek();
 
@@ -172,6 +173,7 @@ private:
     RefPtr<MediaSourcePrivate> m_private;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
+    UniqueRef<PlatformTimeRanges> m_buffered;
     std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     MediaTime m_duration;

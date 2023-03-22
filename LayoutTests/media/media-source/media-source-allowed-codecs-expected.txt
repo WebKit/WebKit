@@ -1,6 +1,5 @@
 RUN(internals.settings.setAllowedMediaVideoCodecIDs(null))
 EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=avc1") == 'true') OK
-EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=mp4v") == 'true') OK
 RUN(internals.settings.setAllowedMediaVideoCodecIDs("avc1"))
 RUN(internals.settings.setAllowedMediaAudioCodecIDs("aac "))
 RUN(internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40"))

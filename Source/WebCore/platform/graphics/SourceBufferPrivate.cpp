@@ -91,13 +91,17 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
         m_client->sourceBufferPrivateHighestPresentationTimestampChanged(m_highestPresentationTimestamp);
 }
 
-void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges)
+void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_buffered == timeRanges)
+    if (m_buffered == timeRanges) {
+        completionHandler();
         return;
+    }
     m_buffered = WTFMove(timeRanges);
     if (m_client)
-        m_client->sourceBufferPrivateBufferedChanged();
+        m_client->sourceBufferPrivateBufferedChanged(buffered(), WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
@@ -156,29 +160,34 @@ void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded, F
 
     preAppendCompletedTask();
 
-    auto completionHandler = CompletionHandler<void()>([self = Ref { *this }, this, parsingSucceeded, isEnded]() {
-        if (!m_isAttached)
+    // Resolve the changes in TrackBuffers' buffered ranges
+    // into the SourceBuffer's buffered ranges
+    updateBufferedFromTrackBuffers(isEnded);
+
+    m_client->sourceBufferPrivateBufferedChanged(buffered(), [weakSelf = WeakPtr { *this }, this, parsingSucceeded] () mutable {
+        if (!weakSelf || !m_isAttached)
             return;
 
-        // Resolve the changes in TrackBuffers' buffered ranges
-        // into the SourceBuffer's buffered ranges
-        updateBufferedFromTrackBuffers(isEnded);
+        auto completionHandler = CompletionHandler<void()>([weakSelf = WTFMove(weakSelf), this, parsingSucceeded] {
+            if (!weakSelf || !m_isAttached)
+                return;
 
-        if (m_client) {
-            if (!m_didReceiveSampleErrored)
-                m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::Succeeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
-            m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+            if (m_client) {
+                if (!m_didReceiveSampleErrored)
+                    m_client->sourceBufferPrivateAppendComplete(parsingSucceeded ? SourceBufferPrivateClient::AppendResult::Succeeded : SourceBufferPrivateClient::AppendResult::ParsingFailed);
+                m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+            }
+        });
+
+        // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
+        // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
+        // duration set to the maximum of the current duration and the group end timestamp.
+        if (m_groupEndTimestamp > duration()) {
+            m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp, WTFMove(completionHandler));
+            return;
         }
+        completionHandler();
     });
-
-    // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
-    // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
-    // duration set to the maximum of the current duration and the group end timestamp.
-    if (m_groupEndTimestamp > duration()) {
-        m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp, WTFMove(completionHandler));
-        return;
-    }
-    completionHandler();
 }
 
 void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
