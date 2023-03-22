@@ -1423,7 +1423,7 @@ TEST(TextManipulation, StartTextManipulationFindsContentInIframeInsertedLater)
     };
 
     [webView objectByEvaluatingJavaScript:@"frame = document.createElement('iframe');"
-        "document.body.appendChild(frame); frame.contentDocument.body.innerHTML = '<p>WebKit</p>';"];
+        "frame.srcdoc = '<!DOCTYPE html><div>WebKit</div>'; document.body.appendChild(frame); true"];
 
     TestWebKitAPI::Util::run(&done);
 
