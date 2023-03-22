@@ -415,6 +415,7 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 
 void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime, bool timeIsProgressing)
 {
+    auto oldCachedTime = m_cachedMediaTime;
     auto reverseJump = mediaTime < m_cachedMediaTime;
     if (reverseJump)
         ALWAYS_LOG(LOGIDENTIFIER, "time jumped backwards, was ", m_cachedMediaTime, ", is now ", mediaTime);
@@ -423,7 +424,7 @@ void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, co
     m_cachedMediaTime = mediaTime;
     m_cachedMediaTimeQueryTime = queryTime;
 
-    if (reverseJump) {
+    if (reverseJump || (!oldCachedTime && !!mediaTime)) {
         if (RefPtr player = m_player.get())
             player->timeChanged();
     }
