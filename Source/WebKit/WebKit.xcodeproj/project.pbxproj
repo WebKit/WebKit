@@ -5023,8 +5023,6 @@
 		52D5A1B21C5749F200DE34A3 /* VideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManager.h; sourceTree = "<group>"; };
 		52D5A1B31C5749F200DE34A3 /* VideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManager.messages.in; sourceTree = "<group>"; };
 		52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManager.mm; sourceTree = "<group>"; };
-		52EB68CB279E2145005C98D9 /* ARKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitSoftLink.h; sourceTree = "<group>"; };
-		52EB68CC279E2145005C98D9 /* ARKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitSoftLink.mm; sourceTree = "<group>"; };
 		52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		52F4B46727E1197700FFD129 /* VirtualAuthenticatorUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorUtils.h; sourceTree = "<group>"; };
 		52F4B46827E1197700FFD129 /* VirtualAuthenticatorUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualAuthenticatorUtils.mm; sourceTree = "<group>"; };
@@ -10092,8 +10090,6 @@
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */,
 				A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */,
-				52EB68CB279E2145005C98D9 /* ARKitSoftLink.h */,
-				52EB68CC279E2145005C98D9 /* ARKitSoftLink.mm */,
 				1A698F171E4910220064E881 /* AuxiliaryProcessCocoa.mm */,
 				413E5C9129B0CF7B002F4987 /* BackgroundFetchStateCocoa.mm */,
 				4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */,
