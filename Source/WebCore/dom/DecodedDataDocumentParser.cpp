@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DecodedDataDocumentParser.h"
 
+#include "Document.h"
 #include "DocumentWriter.h"
 #include "SegmentedString.h"
 #include "TextResourceDecoder.h"

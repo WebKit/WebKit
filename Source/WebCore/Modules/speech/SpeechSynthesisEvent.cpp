@@ -28,6 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

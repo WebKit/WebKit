@@ -27,7 +27,7 @@
 #pragma once
 
 #include <memory>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 

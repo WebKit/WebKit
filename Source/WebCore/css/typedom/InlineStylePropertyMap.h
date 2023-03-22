@@ -26,8 +26,11 @@
 #pragma once
 
 #include "StylePropertyMap.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class WeakPtrImplWithEventTargetData;
 
 class InlineStylePropertyMap final : public StylePropertyMap {
 public:

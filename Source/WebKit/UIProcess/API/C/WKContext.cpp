@@ -44,6 +44,7 @@
 #include "WKString.h"
 #include "WKWebsiteDataStoreRef.h"
 #include "WebContextInjectedBundleClient.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/GamepadProvider.h>

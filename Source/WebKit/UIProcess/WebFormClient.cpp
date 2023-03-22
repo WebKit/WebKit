@@ -30,6 +30,7 @@
 #include "APIString.h"
 #include "WKAPICast.h"
 #include "WebFormSubmissionListenerProxy.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
