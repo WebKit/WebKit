@@ -214,7 +214,6 @@ Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
 Shared/LayerTreeContext.cpp
-Shared/LoadParameters.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
@@ -255,7 +254,6 @@ Shared/WebKeyboardEvent.cpp
 Shared/WebKit2Initialize.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp
-Shared/WebPageCreationParameters.cpp
 Shared/WebPageGroupData.cpp
 Shared/WebPageNetworkParameters.cpp
 Shared/WebPlatformTouchPoint.cpp

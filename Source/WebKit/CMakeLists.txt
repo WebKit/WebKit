@@ -538,6 +538,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameTreeNodeData.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/LayerTreeContext.serialization.in
+    Shared/LoadParameters.serialization.in
     Shared/Model.serialization.in
     Shared/NavigationActionData.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in
@@ -554,6 +555,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebHitTestResultData.serialization.in
+    Shared/WebPageCreationParameters.serialization.in
     Shared/WebPopupItem.serialization.in
     Shared/WebProcessDataStoreParameters.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in

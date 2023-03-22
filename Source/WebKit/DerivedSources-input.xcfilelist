@@ -191,6 +191,7 @@ $(PROJECT_DIR)/Shared/IPCStreamTesterProxy.messages.in
 $(PROJECT_DIR)/Shared/IPCTester.messages.in
 $(PROJECT_DIR)/Shared/IPCTesterReceiver.messages.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
+$(PROJECT_DIR)/Shared/LoadParameters.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
 $(PROJECT_DIR)/Shared/NavigationActionData.serialization.in
 $(PROJECT_DIR)/Shared/NetworkProcessConnectionParameters.serialization.in
@@ -284,6 +285,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexAttribute.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in
 $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
+$(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPushDaemonConnectionConfiguration.serialization.in

@@ -496,6 +496,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ios/WebAutocorrectionContext.serialization.in \
 	Shared/ios/WebAutocorrectionData.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
+	Shared/LoadParameters.serialization.in \
 	Shared/Model.serialization.in \
 	Shared/NavigationActionData.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
@@ -515,6 +516,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebEvent.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
+	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPopupItem.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \
 	Shared/WebPushDaemonConnectionConfiguration.serialization.in \

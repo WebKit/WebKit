@@ -64,7 +64,7 @@ static CGRect squareCropRectForSize(CGSize size)
     return cropRect;
 }
 
-static PlatformImagePtr squareImage(CGImageRef image)
+static WebCore::PlatformImagePtr squareImage(CGImageRef image)
 {
     if (!image)
         return nil;
