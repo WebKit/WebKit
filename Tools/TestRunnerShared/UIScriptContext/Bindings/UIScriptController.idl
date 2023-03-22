@@ -85,6 +85,7 @@ interface UIScriptController {
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setSpellCheckerResults(object results);
 
+    readonly attribute unsigned long keyboardWillHideCount;
     readonly attribute boolean keyboardIsAutomaticallyShifted;
 
     undefined rawKeyDown(DOMString key);

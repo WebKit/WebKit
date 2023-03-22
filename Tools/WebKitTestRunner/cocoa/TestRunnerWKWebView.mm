@@ -110,6 +110,7 @@ IGNORE_WARNINGS_END
 #else
         [center addObserver:self selector:@selector(_invokeShowKeyboardCallbackIfNecessary) name:UIKeyboardDidShowNotification object:nil];
         [center addObserver:self selector:@selector(_invokeHideKeyboardCallbackIfNecessary) name:UIKeyboardDidHideNotification object:nil];
+        [center addObserver:self selector:@selector(_keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [center addObserver:self selector:@selector(_didShowMenu) name:UIMenuControllerDidShowMenuNotification object:nil];
         [center addObserver:self selector:@selector(_willHideMenu) name:UIMenuControllerWillHideMenuNotification object:nil];
@@ -297,6 +298,11 @@ IGNORE_WARNINGS_END
 
     self.zoomToScaleCompletionHandler = completionHandler;
     [self.scrollView setZoomScale:scale animated:animated];
+}
+
+- (void)_keyboardWillHide
+{
+    _keyboardWillHideCount++;
 }
 
 - (void)_invokeShowKeyboardCallbackIfNecessary

@@ -176,6 +176,11 @@ public:
     virtual void toggleCapsLock(JSValueRef) { notImplemented(); }
     virtual void setContinuousSpellCheckingEnabled(bool) { notImplemented(); }
     virtual void setSpellCheckerResults(JSValueRef) { notImplemented(); }
+    virtual unsigned keyboardWillHideCount() const
+    {
+        notImplemented();
+        return 0;
+    }
     virtual bool keyboardIsAutomaticallyShifted() const
     {
         notImplemented();
