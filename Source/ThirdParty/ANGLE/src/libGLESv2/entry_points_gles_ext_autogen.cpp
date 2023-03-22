@@ -1249,6 +1249,31 @@ void GL_APIENTRY GL_ImportMemoryZirconHandleANGLE(GLuint memory,
     }
 }
 
+// GL_ANGLE_metal_schedule
+void GL_APIENTRY GL_ScheduleANGLE()
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLScheduleANGLE, "context = %d", CID(context));
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLScheduleANGLE) &&
+              ValidateScheduleANGLE(context, angle::EntryPoint::GLScheduleANGLE)));
+        if (isCallValid)
+        {
+            context->schedule();
+        }
+        ANGLE_CAPTURE_GL(ScheduleANGLE, isCallValid, context);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
 // GL_ANGLE_multi_draw
 void GL_APIENTRY GL_MultiDrawArraysANGLE(GLenum mode,
                                          const GLint *firsts,

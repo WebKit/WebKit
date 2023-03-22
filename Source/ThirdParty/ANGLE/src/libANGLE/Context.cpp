@@ -2814,6 +2814,11 @@ void Context::finish()
     ANGLE_CONTEXT_TRY(mImplementation->finish(this));
 }
 
+void Context::schedule()
+{
+    ANGLE_CONTEXT_TRY(mImplementation->schedule(this));
+}
+
 void Context::insertEventMarker(GLsizei length, const char *marker)
 {
     ASSERT(mImplementation);

@@ -4830,6 +4830,11 @@ bool ValidateSampleCoverage(const Context *context,
     return true;
 }
 
+bool ValidateScheduleANGLE(const Context *context, angle::EntryPoint entryPoint)
+{
+    return true;
+}
+
 bool ValidateScissor(const Context *context,
                      angle::EntryPoint entryPoint,
                      GLint x,

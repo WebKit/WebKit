@@ -281,6 +281,9 @@ class ContextImpl : public GLImplFactory
                                                           const gl::PixelLocalStoragePlane[],
                                                           const GLenum storeops[]);
 
+    // GL_ANGLE_metal_schedule
+    virtual angle::Result schedule(const gl::Context *);
+
   protected:
     const gl::State &mState;
     gl::MemoryProgramCache *mMemoryProgramCache;

@@ -655,6 +655,9 @@ struct Extensions
     // GL_ANGLE_memory_size
     bool memorySizeANGLE = false;
 
+    // GL_ANGLE_metal_schedule
+    bool metalScheduleANGLE = false;
+
     // GL_ANGLE_multi_draw
     bool multiDrawANGLE = false;
 

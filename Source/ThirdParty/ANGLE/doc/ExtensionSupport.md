@@ -221,6 +221,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_memory_object_flags](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_object_flags.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_memory_object_fuchsia](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_object_fuchsia.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_memory_size](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_size.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_ANGLE_metal_schedule](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_metal_schedule.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_multi_draw](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_multi_draw.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_multiview_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_multiview_multisample.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_program_binary](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_binary.txt) |  |  |  |  |  |  |  |

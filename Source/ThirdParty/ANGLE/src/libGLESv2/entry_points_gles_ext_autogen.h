@@ -232,6 +232,9 @@ ANGLE_EXPORT void GL_APIENTRY GL_ImportMemoryZirconHandleANGLE(GLuint memory,
                                                                GLenum handleType,
                                                                GLuint handle);
 
+// GL_ANGLE_metal_schedule
+ANGLE_EXPORT void GL_APIENTRY GL_ScheduleANGLE();
+
 // GL_ANGLE_multi_draw
 ANGLE_EXPORT void GL_APIENTRY GL_MultiDrawArraysANGLE(GLenum mode,
                                                       const GLint *firsts,

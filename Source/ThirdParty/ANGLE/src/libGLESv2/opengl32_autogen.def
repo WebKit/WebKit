@@ -521,6 +521,9 @@ EXPORTS
     ; GL_ANGLE_memory_object_fuchsia
     glImportMemoryZirconHandleANGLE
 
+    ; GL_ANGLE_metal_schedule
+    glScheduleANGLE
+
     ; GL_ANGLE_multi_draw
     glMultiDrawArraysANGLE
     glMultiDrawArraysInstancedANGLE

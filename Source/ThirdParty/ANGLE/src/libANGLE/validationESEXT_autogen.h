@@ -297,6 +297,9 @@ bool ValidateImportMemoryZirconHandleANGLE(const Context *context,
                                            HandleType handleTypePacked,
                                            GLuint handle);
 
+// GL_ANGLE_metal_schedule
+bool ValidateScheduleANGLE(const Context *context, angle::EntryPoint entryPoint);
+
 // GL_ANGLE_multi_draw
 bool ValidateMultiDrawArraysANGLE(const Context *context,
                                   angle::EntryPoint entryPoint,

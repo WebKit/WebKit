@@ -58,6 +58,7 @@ angle_requestable_extensions = [
     "GL_ANGLE_memory_object_flags",
     "GL_ANGLE_memory_object_fuchsia",
     "GL_ANGLE_memory_size",
+    "GL_ANGLE_metal_schedule",
     "GL_ANGLE_multi_draw",
     "GL_ANGLE_multiview_multisample",
     "GL_ANGLE_provoking_vertex",

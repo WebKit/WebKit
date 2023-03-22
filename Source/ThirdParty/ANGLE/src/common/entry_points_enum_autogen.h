@@ -1327,6 +1327,7 @@ enum class EntryPoint
     GLScaled,
     GLScalef,
     GLScalex,
+    GLScheduleANGLE,
     GLScissor,
     GLScissorArrayv,
     GLScissorIndexed,

@@ -2642,6 +2642,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glScalef";
         case EntryPoint::GLScalex:
             return "glScalex";
+        case EntryPoint::GLScheduleANGLE:
+            return "glScheduleANGLE";
         case EntryPoint::GLScissor:
             return "glScissor";
         case EntryPoint::GLScissorArrayv:

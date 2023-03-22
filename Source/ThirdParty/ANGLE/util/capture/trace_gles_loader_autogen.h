@@ -496,6 +496,7 @@
 #define glTexStorageMemFlags3DANGLE t_glTexStorageMemFlags3DANGLE
 #define glTexStorageMemFlags3DMultisampleANGLE t_glTexStorageMemFlags3DMultisampleANGLE
 #define glImportMemoryZirconHandleANGLE t_glImportMemoryZirconHandleANGLE
+#define glScheduleANGLE t_glScheduleANGLE
 #define glMultiDrawArraysANGLE t_glMultiDrawArraysANGLE
 #define glMultiDrawArraysInstancedANGLE t_glMultiDrawArraysInstancedANGLE
 #define glMultiDrawElementsANGLE t_glMultiDrawElementsANGLE
@@ -1348,6 +1349,7 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLTEXSTORAGEMEMFLAGS3DMULTISAMPLEANGLEPROC
     t_glTexStorageMemFlags3DMultisampleANGLE;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLIMPORTMEMORYZIRCONHANDLEANGLEPROC
     t_glImportMemoryZirconHandleANGLE;
+ANGLE_TRACE_LOADER_EXPORT extern PFNGLSCHEDULEANGLEPROC t_glScheduleANGLE;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLMULTIDRAWARRAYSANGLEPROC t_glMultiDrawArraysANGLE;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLMULTIDRAWARRAYSINSTANCEDANGLEPROC
     t_glMultiDrawArraysInstancedANGLE;

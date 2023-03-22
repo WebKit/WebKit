@@ -1121,6 +1121,7 @@ const ProcEntry g_procTable[] = {
     {"glScaled", P(GL_Scaled)},
     {"glScalef", P(GL_Scalef)},
     {"glScalex", P(GL_Scalex)},
+    {"glScheduleANGLE", P(GL_ScheduleANGLE)},
     {"glScissor", P(GL_Scissor)},
     {"glScissorArrayv", P(GL_ScissorArrayv)},
     {"glScissorIndexed", P(GL_ScissorIndexed)},

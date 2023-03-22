@@ -714,4 +714,13 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
 #endif
 #endif /* GL_ANGLE_logic_op */
 
+#ifndef GL_ANGLE_metal_schedule
+#define GL_ANGLE_metal_schedule
+
+typedef void (GL_APIENTRYP PFNGLSCHEDULEANGLEPROC) ();
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glScheduleANGLE ();
+#endif
+#endif /* GL_ANGLE_metal_schedule */
+
 #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_

@@ -298,6 +298,9 @@ angle::CallCapture CaptureImportMemoryZirconHandleANGLE(const State &glState,
                                                         HandleType handleTypePacked,
                                                         GLuint handle);
 
+// GL_ANGLE_metal_schedule
+angle::CallCapture CaptureScheduleANGLE(const State &glState, bool isCallValid);
+
 // GL_ANGLE_multi_draw
 angle::CallCapture CaptureMultiDrawArraysANGLE(const State &glState,
                                                bool isCallValid,

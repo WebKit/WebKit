@@ -106,4 +106,11 @@ angle::Result ContextImpl::drawPixelLocalStorageEXTDisable(gl::Context *,
     UNREACHABLE();
     return angle::Result::Stop;
 }
+
+angle::Result ContextImpl::schedule(const gl::Context *)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
 }  // namespace rx

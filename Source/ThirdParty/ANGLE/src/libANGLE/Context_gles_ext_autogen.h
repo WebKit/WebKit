@@ -407,6 +407,8 @@
     void importMemoryZirconHandle(MemoryObjectID memoryPacked, GLuint64 size,                      \
                                   HandleType handleTypePacked, GLuint handle);                     \
     /* GL_ANGLE_memory_size */                                                                     \
+    /* GL_ANGLE_metal_schedule */                                                                  \
+    void schedule();                                                                               \
     /* GL_ANGLE_multi_draw */                                                                      \
     void multiDrawArrays(PrimitiveMode modePacked, const GLint *firsts, const GLsizei *counts,     \
                          GLsizei drawcount);                                                       \

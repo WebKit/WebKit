@@ -1,0 +1,58 @@
+Name
+
+    ANGLE_metal_schedule
+
+Name Strings
+
+    GL_ANGLE_metal_schedule
+
+Contributors
+
+    Dan Glastonbury, Apple
+
+Contact
+
+    Dan Glastonbury, Apple (djg 'at' apple.com)
+
+Status
+
+    Draft
+
+Version
+
+    Last Modified Date: Mar 22, 2023
+    Revision: 1
+
+Number
+
+    TBD
+
+Dependencies
+
+    Written against the OpenGL ES 2.0 specifications
+
+Overview
+
+    This extension provides a way to ensure that all queued operations currently
+    in the pipeline have had their resources readied and are waiting for the GPU
+    to process them.
+
+    The motivation is to allow for the interoperation with multiple APIs through
+    shared resources, where the system needs to observe the dependencies to
+    sequence operations correctly. Currently, Finish() is required to ensure
+    these dependencies are met where Schedule() would suffice.
+ 
+New Procedures and Functions
+
+    The following commands are added:
+
+        void ScheduleANGLE(void);
+
+New Tokens
+
+    None
+
+Revision History
+
+    Revision 1, 2023-03-22 (Dan Glastonbury)
+        - Initial draft

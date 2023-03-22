@@ -1241,6 +1241,7 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glScaled", GL_Scaled)
     {"glScalef", P(GL_Scalef)},
     {"glScalex", P(GL_Scalex)},
+    {"glScheduleANGLE", P(GL_ScheduleANGLE)},
     {"glScissor", P(GL_Scissor)},
     DESKTOP_ONLY("glScissorArrayv", GL_ScissorArrayv)
     DESKTOP_ONLY("glScissorIndexed", GL_ScissorIndexed)

@@ -1260,6 +1260,13 @@ CallCapture CaptureImportMemoryZirconHandleANGLE(const State &glState,
     return CallCapture(angle::EntryPoint::GLImportMemoryZirconHandleANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureScheduleANGLE(const State &glState, bool isCallValid)
+{
+    ParamBuffer paramBuffer;
+
+    return CallCapture(angle::EntryPoint::GLScheduleANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureMultiDrawArraysANGLE(const State &glState,
                                         bool isCallValid,
                                         PrimitiveMode modePacked,

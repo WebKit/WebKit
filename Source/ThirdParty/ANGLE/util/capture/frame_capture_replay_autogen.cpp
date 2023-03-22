@@ -3101,6 +3101,9 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
             glScalex(captures[0].value.GLfixedVal, captures[1].value.GLfixedVal,
                      captures[2].value.GLfixedVal);
             break;
+        case angle::EntryPoint::GLScheduleANGLE:
+            glScheduleANGLE();
+            break;
         case angle::EntryPoint::GLScissor:
             glScissor(captures[0].value.GLintVal, captures[1].value.GLintVal,
                       captures[2].value.GLsizeiVal, captures[3].value.GLsizeiVal);

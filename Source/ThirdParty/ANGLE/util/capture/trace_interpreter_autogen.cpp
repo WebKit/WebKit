@@ -5140,6 +5140,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNGLSCALEXPROC>::type>(paramTokens, strings);
         return CallCapture(EntryPoint::GLScalex, std::move(params));
     }
+    if (strcmp(nameToken, "glScheduleANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLSCHEDULEANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLScheduleANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "glScissor") == 0)
     {
         ParamBuffer params =

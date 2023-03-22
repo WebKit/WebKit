@@ -233,6 +233,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_memory_object_flags"] = enableableExtension(&Extensions::memoryObjectFlagsANGLE);
         map["GL_ANGLE_memory_object_fuchsia"] = enableableExtension(&Extensions::memoryObjectFuchsiaANGLE);
         map["GL_ANGLE_memory_size"] = enableableExtension(&Extensions::memorySizeANGLE);
+        map["GL_ANGLE_metal_schedule"] = enableableExtension(&Extensions::metalScheduleANGLE);
         map["GL_ANGLE_multi_draw"] = enableableExtension(&Extensions::multiDrawANGLE);
         map["GL_ANGLE_multiview_multisample"] = enableableExtension(&Extensions::multiviewMultisampleANGLE);
         map["GL_ANGLE_program_binary"] = esOnlyExtension(&Extensions::programBinaryANGLE);

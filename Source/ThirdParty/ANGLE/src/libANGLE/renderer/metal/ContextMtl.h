@@ -50,6 +50,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Flush and finish.
     angle::Result flush(const gl::Context *context) override;
     angle::Result finish(const gl::Context *context) override;
+    angle::Result schedule(const gl::Context *context) override;
 
     // Drawing methods.
     angle::Result drawArrays(const gl::Context *context,

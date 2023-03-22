@@ -309,9 +309,16 @@ angle::Result ContextMtl::flush(const gl::Context *context)
     }
     return angle::Result::Continue;
 }
+
 angle::Result ContextMtl::finish(const gl::Context *context)
 {
     ANGLE_TRY(finishCommandBuffer());
+    return angle::Result::Continue;
+}
+
+angle::Result ContextMtl::schedule(const gl::Context *context)
+{
+    flushCommandBuffer(mtl::WaitUntilScheduled);
     return angle::Result::Continue;
 }
 

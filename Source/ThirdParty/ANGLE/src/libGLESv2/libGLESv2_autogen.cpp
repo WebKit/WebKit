@@ -3061,6 +3061,12 @@ void GL_APIENTRY glImportMemoryZirconHandleANGLE(GLuint memory,
     return GL_ImportMemoryZirconHandleANGLE(memory, size, handleType, handle);
 }
 
+// GL_ANGLE_metal_schedule
+void GL_APIENTRY glScheduleANGLE()
+{
+    return GL_ScheduleANGLE();
+}
+
 // GL_ANGLE_multi_draw
 void GL_APIENTRY glMultiDrawArraysANGLE(GLenum mode,
                                         const GLint *firsts,

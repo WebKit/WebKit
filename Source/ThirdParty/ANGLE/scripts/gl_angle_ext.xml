@@ -1025,6 +1025,9 @@
             <proto>void <name>glLogicOpANGLE</name></proto>
             <param group="LogicOp"><ptype>GLenum</ptype> <name>opcode</name></param>
         </command>
+        <command>
+            <proto>void <name>glScheduleANGLE</name></proto>
+        </command>
     </commands>
 
     <!-- SECTION: ANGLE extension interface definitions -->
@@ -1318,6 +1321,11 @@
                 <enum name="GL_LOGIC_OP_NAND_ANGLE"/>
                 <enum name="GL_LOGIC_OP_SET_ANGLE"/>
                 <command name="glLogicOpANGLE"/>
+            </require>
+        </extension>
+        <extension name="GL_ANGLE_metal_schedule" supported="gles2">
+            <require>
+                <command name="glScheduleANGLE"/>
             </require>
         </extension>
     </extensions>
