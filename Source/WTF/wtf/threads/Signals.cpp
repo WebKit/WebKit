@@ -123,7 +123,16 @@ void initMachExceptionHandlerThread(bool enable)
 
         Config::AssertNotFrozenScope assertScope;
         SignalHandlers& handlers = g_wtfConfig.signalHandlers;
-        kern_return_t kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &handlers.exceptionPort);
+
+        uint16_t flags = 0;
+#ifdef MPO_PROVISIONAL_ID_PROT_OPTOUT
+        flags |= MPO_PROVISIONAL_ID_PROT_OPTOUT;
+#endif
+        mach_port_options_t opts = {
+            .flags = flags
+        };
+
+        kern_return_t kr = mach_port_construct(mach_task_self(), &opts, 0, &handlers.exceptionPort);
         RELEASE_ASSERT(kr == KERN_SUCCESS);
         kr = mach_port_insert_right(mach_task_self(), handlers.exceptionPort, handlers.exceptionPort, MACH_MSG_TYPE_MAKE_SEND);
         RELEASE_ASSERT(kr == KERN_SUCCESS);
