@@ -26,9 +26,12 @@
 #if USE(SANDBOX_VERSION_3)
 (allow system-fcntl
     (fcntl-command
+        F_ADDFILESIGS_RETURN
         F_BARRIERFSYNC
         F_CHECK_LV
+        F_DUPFD_CLOEXEC
         F_GETCONFINED
+        F_GETFD
         F_GETFL
         F_GETPATH
         F_GETPROTECTIONCLASS
@@ -38,7 +41,8 @@
         F_RDADVISE
         F_SETCONFINED
         F_SETFD
-        F_SETFL))
+        F_SETFL
+        F_SETPROTECTIONCLASS))
 
 (allow file-link)
 
@@ -67,6 +71,50 @@
 
 (with-filter (mac-policy-name "vnguard")
     (allow system-mac-syscall (mac-syscall-number 1)))
+
+(allow file-link
+    (subpath "/private/var/mobile/Containers/Data/Application"))
+
+(allow iokit-open-service
+    (iokit-registry-entry-class "AppleKeyStore"))
+
+(allow darwin-notification-post
+    (notification-name-prefix
+        "com.apple.CFNetwork"))
+(allow darwin-notification-post
+    (notification-name
+        "AppleDatePreferencesChangedNotification"
+        "AppleLanguagePreferencesChangedNotification"
+        "AppleMeasurementSystemPreferencesChangedNotification"
+        "AppleNumberPreferencesChangedNotification"
+        "AppleTemperatureUnitPreferencesChangedNotification"
+        "AppleTextBehaviorPreferencesChangedNotification"
+        "AppleTimePreferencesChangedNotification"
+        "com.apple.CFPreferences._domainsChangedExternally"
+        "com.apple.LaunchServices.database"
+        "com.apple.WebKit.Cache.dump"
+        "com.apple.WebKit.LibraryPathDiagnostics"
+        "com.apple.analyticsd.running"
+        "com.apple.mobile.keybagd.user_changed"
+        "com.apple.mobile.usermanagerd.foregrounduser_changed"
+        "com.apple.neconfigurationchanged"
+        "com.apple.networkextension.uuidcache"
+        "com.apple.runningboard.daemonstartup"
+        "com.apple.system.logging.prefschanged"
+        "com.apple.system.lowpowermode"
+        "com.apple.system.networkd.settings"
+        "com.apple.system.timezone"
+        "org.WebKit.lowMemory"
+        "org.WebKit.lowMemory.begin"
+        "org.WebKit.lowMemory.end"))
+
+(allow file-clone
+    (subpath
+        "/private/var/mobile/Containers/Data"
+        "/private/var/mobile/Library/Caches"
+        "/private/var/mobile/Library/WebClips"))
+
+(allow process-info-codesignature (target others))
 #endif
 
 (allow system-privilege (with grant)

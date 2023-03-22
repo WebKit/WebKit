@@ -32,7 +32,9 @@
     (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 65 67)))
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
+
+(allow process-info-codesignature)
 #endif
 
 ;;;
