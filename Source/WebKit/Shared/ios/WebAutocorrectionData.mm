@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
 #if PLATFORM(IOS_FAMILY)
+#import "WebAutocorrectionData.h"
 
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
-namespace WebCore {
-class FloatRect;
-}
-
-OBJC_CLASS UIFont;
+#import "UIKitSPI.h"
+#import <UIKit/UIKit.h>
+#import <WebCore/FloatRect.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 namespace WebKit {
 
-struct WebAutocorrectionData {
-    WebAutocorrectionData() = default;
-    WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight);
-    WebAutocorrectionData(const Vector<WebCore::FloatRect>& textRects, const RetainPtr<UIFont>&);
+WebAutocorrectionData::WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight)
+{
+    this->textRects = WTFMove(textRects);
+    if (fontName.has_value())
+        this->font = [UIFont fontWithName:WTFMove(*fontName) size:pointSize];
+    else
+        this->font = [UIFont systemFontOfSize:pointSize weight:weight];
+}
 
-    std::optional<String> fontName() const;
-    double fontPointSize() const;
-    double fontWeight() const;
+WebAutocorrectionData::WebAutocorrectionData(const Vector<WebCore::FloatRect>& textRects, const RetainPtr<UIFont>& font)
+{
+    this->textRects = textRects;
+    this->font = font;
+}
 
-    Vector<WebCore::FloatRect> textRects;
-    RetainPtr<UIFont> font;
-};
+std::optional<String> WebAutocorrectionData::fontName() const
+{
+    if ([font isSystemFont])
+        return std::nullopt;
+    return { { [font fontName] } };
+}
+
+double WebAutocorrectionData::fontPointSize() const
+{
+    return [font pointSize];
+}
+
+double WebAutocorrectionData::fontWeight() const
+{
+    return [[[font fontDescriptor] objectForKey:UIFontWeightTrait] doubleValue];
+}
 
 } // namespace WebKit
 
