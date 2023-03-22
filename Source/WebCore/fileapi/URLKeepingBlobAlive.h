@@ -35,7 +35,7 @@ class URLKeepingBlobAlive {
 public:
     URLKeepingBlobAlive() = default;
     URLKeepingBlobAlive(const URL&, const SecurityOriginData&);
-    ~URLKeepingBlobAlive();
+    WEBCORE_EXPORT ~URLKeepingBlobAlive();
 
     URLKeepingBlobAlive(URLKeepingBlobAlive&&) = default;
     URLKeepingBlobAlive(const URLKeepingBlobAlive&);
@@ -44,6 +44,8 @@ public:
 
     operator const URL&() const { return m_url; }
     const URL& url() const { return m_url; }
+    bool isEmpty() const { return m_url.isEmpty(); }
+    const SecurityOriginData& topOrigin() const { return m_topOrigin; }
 
     void clear();
 
