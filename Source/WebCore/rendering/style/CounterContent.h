@@ -33,28 +33,28 @@ namespace WebCore {
 class CounterContent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CounterContent(const AtomString& identifier, ListStyleType::Type style, const AtomString& separator)
+    CounterContent(const AtomString& identifier, ListStyleType style, const AtomString& separator)
         : m_identifier(identifier)
         , m_listStyle(style)
         , m_separator(separator)
     {
-        ASSERT(style != ListStyleType::Type::String);
+        ASSERT(style.type != ListStyleType::Type::String);
     }
 
     const AtomString& identifier() const { return m_identifier; }
-    ListStyleType::Type listStyle() const { return m_listStyle; }
+    ListStyleType listStyleType() const { return m_listStyle; }
     const AtomString& separator() const { return m_separator; }
 
 private:
     AtomString m_identifier;
-    ListStyleType::Type m_listStyle;
+    ListStyleType m_listStyle;
     AtomString m_separator;
 };
 
 static inline bool operator==(const CounterContent& a, const CounterContent& b)
 {
     return a.identifier() == b.identifier()
-        && a.listStyle() == b.listStyle()
+        && a.listStyleType() == b.listStyleType()
         && a.separator() == b.separator();
 }
 

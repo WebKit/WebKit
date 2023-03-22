@@ -30,6 +30,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
+#include "ListStyleType.h"
 
 namespace WebCore {
 
@@ -147,10 +148,12 @@ RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& 
     return userAgentCounter ? userAgentCounter : decimalCounter();
 }
 
-RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(const AtomString& name)
+RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(const ListStyleType& listStyleType)
 {
+    if (listStyleType.type != ListStyleType::Type::CounterStyle)
+        return nullptr;
     resolveReferencesIfNeeded();
-    return counterStyle(name, &m_authorCounterStyles);
+    return counterStyle(listStyleType.identifier, &m_authorCounterStyles);
 }
 
 CounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()

@@ -34,26 +34,26 @@ enum CSSValueID : uint16_t;
 
 class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
 public:
-    static Ref<DeprecatedCSSOMCounter> create(String identifier, String separator, CSSValueID listStyle)
+    static Ref<DeprecatedCSSOMCounter> create(String identifier, String separator, String listStyleType)
     {
-        return adoptRef(*new DeprecatedCSSOMCounter(WTFMove(identifier), WTFMove(separator), listStyle));
+        return adoptRef(*new DeprecatedCSSOMCounter(WTFMove(identifier), WTFMove(separator), WTFMove(listStyleType)));
     }
 
     String identifier() const { return m_identifier; }
     String separator() const { return m_separator; }
-    String listStyle() const { return nameString(m_listStyle); }
+    String listStyle() const { return m_listStyleType; }
 
 private:
-    DeprecatedCSSOMCounter(String identifier, String separator, CSSValueID listStyle)
+    DeprecatedCSSOMCounter(String identifier, String separator, String listStyleType)
         : m_identifier(WTFMove(identifier))
         , m_separator(WTFMove(separator))
-        , m_listStyle(listStyle)
+        , m_listStyleType(listStyleType)
     {
     }
 
     String m_identifier;
     String m_separator;
-    CSSValueID m_listStyle;
+    String m_listStyleType;
 };
 
 } // namespace WebCore

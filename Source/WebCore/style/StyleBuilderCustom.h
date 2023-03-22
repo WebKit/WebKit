@@ -1562,10 +1562,11 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             // Register the fact that the attribute value affects the style.
             builderState.registerContentAttribute(attr.localName());
         } else if (item.isCounter()) {
-            // FIXME: counter-style: we probably want to review this for custom counter-style.
             auto& counter = downcast<CSSCounterValue>(item);
-            auto listStyle = fromCSSValueID<ListStyleType::Type>(counter.listStyle());
-            builderState.style().setContent(makeUnique<CounterContent>(counter.identifier(), listStyle, counter.separator()), didSet);
+            ListStyleType listStyleType;
+            if (counter.counterStyle())
+                listStyleType = BuilderConverter::convertListStyleType(builderState, *counter.counterStyle());
+            builderState.style().setContent(makeUnique<CounterContent>(counter.identifier(), listStyleType, counter.separator()), didSet);
             didSet = true;
         } else {
             switch (item.valueID()) {

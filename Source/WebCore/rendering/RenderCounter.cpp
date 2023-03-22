@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RenderCounter.h"
 
+#include "CSSCounterStyleRegistry.h"
 #include "CounterNode.h"
 #include "Document.h"
 #include "Element.h"
@@ -463,13 +464,14 @@ String RenderCounter::originalText() const
     CheckedPtr child = m_counterNode;
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
-    String text = listMarkerText(m_counter.listStyle(), value);
+    auto counterStyle = this->counterStyle();
+    String text = listMarkerText(m_counter.listStyleType().type, value, counterStyle.get());
 
     if (!m_counter.separator().isNull()) {
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = listMarkerText(m_counter.listStyle(), child->countInParent())
+            text = listMarkerText(m_counter.listStyleType().type, child->countInParent(), counterStyle.get())
                 + m_counter.separator() + text;
             child = parent;
         }
@@ -650,6 +652,11 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
             }
         }
     }
+}
+
+RefPtr<CSSCounterStyle> RenderCounter::counterStyle() const
+{
+    return document().counterStyleRegistry().resolvedCounterStyle(m_counter.listStyleType());
 }
 
 } // namespace WebCore

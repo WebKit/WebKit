@@ -10,16 +10,15 @@
   body { white-space: nowrap; }
 
 
-  body, #test { counter-reset: c 0 f 1000; }
-  p, #test span { counter-increment: c; }
+  body, #test { counter-reset: success 0 failure 1000; }
+  p, #test span { counter-increment: success; }
   #test span:before {
-    content: counters(c, ".");
-    content: counters(f);
-    content: counters(f, decimal);
-    content: counters(f, decimal, ".");
-    content: counters(f, ".", decimal, decimal);
-    content: counters(f, ".", decimal, ".");
-    content: counters(f, ".", unknowntype);
+    content: counters(success, ".", custom-ident);
+    content: counters(failure);
+    content: counters(failure, decimal);
+    content: counters(failure, decimal, ".");
+    content: counters(failure, ".", decimal, decimal);
+    content: counters(failure, ".", decimal, ".");
   }
 
   </style>
