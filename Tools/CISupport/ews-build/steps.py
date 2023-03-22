@@ -704,6 +704,7 @@ class CheckOutSource(git.Git):
     haltOnFailure = False
 
     def __init__(self, repourl=f'{GITHUB_URL}{GITHUB_PROJECTS[0]}.git', **kwargs):
+        self.default_repourl = repourl
         super().__init__(
             repourl=repourl,
             retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
@@ -735,9 +736,18 @@ class CheckOutSource(git.Git):
         with mock.patch('buildbot.process.remotecommand.RemoteShellCommand', ScrubbedRemoteCommand):
             return super()._dovccmd(*args, **kwargs)
 
-    def run(self):
+    @defer.inlineCallbacks
+    def _fetch(self, _):
         project = self.getProperty('project', '') or GITHUB_PROJECTS[0]
         self.repourl = f'{GITHUB_URL}{project}.git'
+
+        try:
+            rc = yield super()._fetch(_)
+        finally:
+            self.repourl = self.default_repourl
+        defer.returnValue(rc)
+
+    def run(self):
         self.branch = self.getProperty('github.base.ref') or self.branch
 
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
