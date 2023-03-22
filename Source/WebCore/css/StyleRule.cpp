@@ -412,19 +412,22 @@ StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, c
 {
 }
     
-StyleRuleGroup::StyleRuleGroup(StyleRuleType type, Vector<RefPtr<StyleRuleBase>>&& rules)
-    : StyleRuleBase(type)
-    , m_childRules(WTFMove(rules))
+StyleRuleGroup::StyleRuleGroup(Vector<RefPtr<StyleRuleBase>>&& rules)
+    : m_childRules(WTFMove(rules))
 {
 }
 
 StyleRuleGroup::StyleRuleGroup(const StyleRuleGroup& other)
-    : StyleRuleBase(other)
-    , m_childRules(other.childRules().map([](auto& rule) -> RefPtr<StyleRuleBase> { return rule->copy(); }))
+    : m_childRules(other.childRules().map([](auto& rule) -> RefPtr<StyleRuleBase> { return rule->copy(); }))
 {
 }
 
 const Vector<RefPtr<StyleRuleBase>>& StyleRuleGroup::childRules() const
+{
+    return m_childRules;
+}
+
+Vector<RefPtr<StyleRuleBase>>& StyleRuleGroup::childRules()
 {
     return m_childRules;
 }
@@ -439,17 +442,34 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
     m_childRules.remove(index);
 }
 
+StyleRuleGroup* StyleRuleGroup::fromStyleRuleBase(StyleRuleBase& rule)
+{
+    ASSERT(rule.isGroupRule());
+    switch (rule.type()) {
+    case StyleRuleType::Media:
+        return &downcast<StyleRuleMedia>(rule).ruleGroup();
+    case StyleRuleType::Supports:
+        return &downcast<StyleRuleSupports>(rule).ruleGroup();
+    case StyleRuleType::LayerBlock:
+        return &downcast<StyleRuleLayer>(rule).ruleGroup();
+    case StyleRuleType::Container:
+        return &downcast<StyleRuleContainer>(rule).ruleGroup();
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+
 StyleRuleMedia::StyleRuleMedia(MQ::MediaQueryList&& mediaQueries, Vector<RefPtr<StyleRuleBase>>&& rules)
-    : StyleRuleGroup(StyleRuleType::Media, WTFMove(rules))
+    : StyleRuleBase(StyleRuleType::Media)
+    , m_ruleGroup(WTFMove(rules))
     , m_mediaQueries(WTFMove(mediaQueries))
 {
 }
 
-StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& other)
-    : StyleRuleGroup(other)
-    , m_mediaQueries(other.m_mediaQueries)
-{
-}
+StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia&) = default;
 
 Ref<StyleRuleMedia> StyleRuleMedia::create(MQ::MediaQueryList&& mediaQueries, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
@@ -462,7 +482,8 @@ Ref<StyleRuleMedia> StyleRuleMedia::copy() const
 }
 
 StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&& rules)
-    : StyleRuleGroup(StyleRuleType::Supports, WTFMove(rules))
+    : StyleRuleBase(StyleRuleType::Supports)
+    , m_ruleGroup(WTFMove(rules))
     , m_conditionText(conditionText)
     , m_conditionIsSupported(conditionIsSupported)
 {
@@ -474,13 +495,15 @@ Ref<StyleRuleSupports> StyleRuleSupports::create(const String& conditionText, bo
 }
 
 StyleRuleLayer::StyleRuleLayer(Vector<CascadeLayerName>&& nameList)
-    : StyleRuleGroup(StyleRuleType::LayerStatement, Vector<RefPtr<StyleRuleBase>> { })
+    : StyleRuleBase(StyleRuleType::LayerStatement)
+    , m_ruleGroup(Vector<RefPtr<StyleRuleBase>> { })
     , m_nameVariant(WTFMove(nameList))
 {
 }
 
 StyleRuleLayer::StyleRuleLayer(CascadeLayerName&& name, Vector<RefPtr<StyleRuleBase>>&& rules)
-    : StyleRuleGroup(StyleRuleType::LayerBlock, WTFMove(rules))
+    : StyleRuleBase(StyleRuleType::LayerBlock)
+    , m_ruleGroup(WTFMove(rules))
     , m_nameVariant(WTFMove(name))
 {
 }
@@ -496,7 +519,8 @@ Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, Vector<
 }
 
 StyleRuleContainer::StyleRuleContainer(CQ::ContainerQuery&& query, Vector<RefPtr<StyleRuleBase>>&& rules)
-    : StyleRuleGroup(StyleRuleType::Container, WTFMove(rules))
+    : StyleRuleBase(StyleRuleType::Container)
+    , m_ruleGroup(WTFMove(rules))
     , m_containerQuery(WTFMove(query))
 {
 }

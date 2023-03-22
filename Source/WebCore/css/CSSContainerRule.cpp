@@ -46,7 +46,7 @@ Ref<CSSContainerRule> CSSContainerRule::create(StyleRuleContainer& rule, CSSStyl
 
 const StyleRuleContainer& CSSContainerRule::styleRuleContainer() const
 {
-    return downcast<StyleRuleContainer>(groupRule());
+    return downcast<StyleRuleContainer>(rule());
 }
 
 String CSSContainerRule::cssText() const

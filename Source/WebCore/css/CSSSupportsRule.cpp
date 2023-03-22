@@ -58,7 +58,7 @@ String CSSSupportsRule::cssText() const
 
 String CSSSupportsRule::conditionText() const
 {
-    return downcast<StyleRuleSupports>(groupRule()).conditionText();
+    return downcast<StyleRuleSupports>(rule()).conditionText();
 }
 
 } // namespace WebCore

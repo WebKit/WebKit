@@ -66,12 +66,12 @@ public:
     bool isPageRule() const { return type() == StyleRuleType::Page; }
     bool isStyleRule() const { return type() == StyleRuleType::Style || type() == StyleRuleType::StyleWithNesting; }
     bool isStyleRuleWithNesting() const { return type() == StyleRuleType::StyleWithNesting; }
-    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock || type() == StyleRuleType::Container; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
     bool isImportRule() const { return type() == StyleRuleType::Import; }
     bool isLayerRule() const { return type() == StyleRuleType::LayerBlock || type() == StyleRuleType::LayerStatement; }
     bool isContainerRule() const { return type() == StyleRuleType::Container; }
     bool isPropertyRule() const { return type() == StyleRuleType::Property; }
+    bool isGroupRule() const { return isMediaRule() || isSupportsRule() || type() == StyleRuleType::LayerBlock || isContainerRule(); }
 
     Ref<StyleRuleBase> copy() const;
 
@@ -101,6 +101,23 @@ private:
 
     // This is only needed to support getMatchedCSSRules.
     unsigned m_hasDocumentSecurityOrigin : 1;
+};
+
+class StyleRuleGroup {
+public:
+    static StyleRuleGroup* fromStyleRuleBase(StyleRuleBase&);
+    StyleRuleGroup() = default;
+    StyleRuleGroup(const StyleRuleGroup&);
+    StyleRuleGroup(Vector<RefPtr<StyleRuleBase>>&&);
+
+    const Vector<RefPtr<StyleRuleBase>>& childRules() const;
+    Vector<RefPtr<StyleRuleBase>>& childRules();
+
+    void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
+    void wrapperRemoveRule(unsigned);
+
+private:
+    mutable Vector<RefPtr<StyleRuleBase>> m_childRules;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
@@ -274,53 +291,42 @@ private:
     CSSSelectorList m_selectorList;
 };
 
-class StyleRuleGroup : public StyleRuleBase {
-public:
-    const Vector<RefPtr<StyleRuleBase>>& childRules() const;
-
-    void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
-    void wrapperRemoveRule(unsigned);
-
-protected:
-    StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&&);
-    StyleRuleGroup(const StyleRuleGroup&);
-    
-private:
-    mutable Vector<RefPtr<StyleRuleBase>> m_childRules;
-};
-
-class StyleRuleMedia final : public StyleRuleGroup {
+class StyleRuleMedia final : public StyleRuleBase {
 public:
     static Ref<StyleRuleMedia> create(MQ::MediaQueryList&&, Vector<RefPtr<StyleRuleBase>>&&);
     Ref<StyleRuleMedia> copy() const;
 
     const MQ::MediaQueryList& mediaQueries() const { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTFMove(queries); }
+    StyleRuleGroup& ruleGroup() { return m_ruleGroup; }
 
 private:
     StyleRuleMedia(MQ::MediaQueryList&&, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleMedia(const StyleRuleMedia&);
 
+    StyleRuleGroup m_ruleGroup;
     MQ::MediaQueryList m_mediaQueries;
 };
 
-class StyleRuleSupports final : public StyleRuleGroup {
+class StyleRuleSupports final : public StyleRuleBase {
 public:
     static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&&);
     Ref<StyleRuleSupports> copy() const { return adoptRef(*new StyleRuleSupports(*this)); }
 
     String conditionText() const { return m_conditionText; }
     bool conditionIsSupported() const { return m_conditionIsSupported; }
+    StyleRuleGroup& ruleGroup() { return m_ruleGroup; }
 
 private:
     StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleSupports(const StyleRuleSupports&) = default;
 
+    StyleRuleGroup m_ruleGroup;
     String m_conditionText;
     bool m_conditionIsSupported;
 };
 
-class StyleRuleLayer final : public StyleRuleGroup {
+class StyleRuleLayer final : public StyleRuleBase {
 public:
     static Ref<StyleRuleLayer> createStatement(Vector<CascadeLayerName>&&);
     static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
@@ -330,26 +336,30 @@ public:
 
     auto& name() const { return std::get<CascadeLayerName>(m_nameVariant); }
     auto& nameList() const { return std::get<Vector<CascadeLayerName>>(m_nameVariant); }
+    StyleRuleGroup& ruleGroup() { return m_ruleGroup; }
 
 private:
     StyleRuleLayer(Vector<CascadeLayerName>&&);
     StyleRuleLayer(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleLayer(const StyleRuleLayer&) = default;
 
+    StyleRuleGroup m_ruleGroup;
     std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
 };
 
-class StyleRuleContainer final : public StyleRuleGroup {
+class StyleRuleContainer final : public StyleRuleBase {
 public:
     static Ref<StyleRuleContainer> create(CQ::ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
     Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
 
     const CQ::ContainerQuery& containerQuery() const { return m_containerQuery; }
+    StyleRuleGroup& ruleGroup() { return m_ruleGroup; }
 
 private:
     StyleRuleContainer(CQ::ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
     StyleRuleContainer(const StyleRuleContainer&) = default;
 
+    StyleRuleGroup m_ruleGroup;
     CQ::ContainerQuery m_containerQuery;
 };
 
