@@ -50,6 +50,24 @@ Ref<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, 
     return adoptRef(*new Scrollbar(scrollableArea, orientation, size));
 }
 
+static bool s_shouldUseFixedPixelsPerLineStepForTesting;
+
+void Scrollbar::setShouldUseFixedPixelsPerLineStepForTesting(bool useFixedPixelsPerLineStep)
+{
+    s_shouldUseFixedPixelsPerLineStepForTesting = useFixedPixelsPerLineStep;
+}
+
+int Scrollbar::pixelsPerLineStep(int viewWidthOrHeight)
+{
+#if PLATFORM(GTK)
+    if (!s_shouldUseFixedPixelsPerLineStepForTesting && viewWidthOrHeight > 0)
+        return std::pow(viewWidthOrHeight, 2. / 3.);
+#else
+    UNUSED_PARAM(viewWidthOrHeight);
+#endif
+    return pixelsPerLineStep();
+}
+
 int Scrollbar::maxOverlapBetweenPages()
 {
     static int maxOverlapBetweenPages = ScrollbarTheme::theme().maxOverlapBetweenPages();

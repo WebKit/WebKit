@@ -798,9 +798,9 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 void ScrollView::updateScrollbarSteps()
 {
     if (m_horizontalScrollbar)
-        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), Scrollbar::pageStep(visibleWidth()));
+        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(visibleWidth()), Scrollbar::pageStep(visibleWidth()));
     if (m_verticalScrollbar)
-        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), Scrollbar::pageStep(visibleHeight()));
+        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(visibleHeight()), Scrollbar::pageStep(visibleHeight()));
 }
 
 const int panIconSizeLength = 16;
