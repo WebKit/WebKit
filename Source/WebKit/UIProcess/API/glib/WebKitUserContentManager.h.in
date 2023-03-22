@@ -123,7 +123,7 @@ webkit_user_content_manager_unregister_script_message_handler          (WebKitUs
  * webkit_user_content_manager_register_script_message_handler:
  * @manager: A #WebKitUserContentManager
  * @name: Name of the script message channel
- * @world_name (nullable): the name of a #WebKitScriptWorld
+ * @world_name: (nullable): the name of a #WebKitScriptWorld
  *
  * Registers a new user script message handler in script world.
  *
