@@ -33,7 +33,6 @@
 #import "Connection.h"
 #import "FullscreenClient.h"
 #import "GPUProcessProxy.h"
-#import "InputViewUpdateDeferrer.h"
 #import "Logging.h"
 #import "PageClientImplIOS.h"
 #import "PrintInfo.h"

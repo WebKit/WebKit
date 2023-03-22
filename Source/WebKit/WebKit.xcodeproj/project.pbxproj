@@ -751,7 +751,6 @@
 		2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC18FB2218A6E9E0025A88D /* RemoteLayerTreeViews.mm */; };
 		2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */; };
 		2DD12A081A8177F3002C74E6 /* WKPageRenderingProgressEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD12A071A8177F3002C74E6 /* WKPageRenderingProgressEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2DD45ADE1E5F8972006C355F /* InputViewUpdateDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */; };
 		2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */; };
 		2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */; };
 		2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */; };
@@ -4443,8 +4442,6 @@
 		2DC8D39425F2E16500CFCBAB /* PlatformCALayerRemoteModelHosting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteModelHosting.h; sourceTree = "<group>"; };
 		2DD12A071A8177F3002C74E6 /* WKPageRenderingProgressEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageRenderingProgressEvents.h; sourceTree = "<group>"; };
 		2DD13BD318F7DADD00E130A1 /* FindControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindControllerIOS.mm; path = ios/FindControllerIOS.mm; sourceTree = "<group>"; };
-		2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputViewUpdateDeferrer.h; path = ios/InputViewUpdateDeferrer.h; sourceTree = "<group>"; };
-		2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InputViewUpdateDeferrer.mm; path = ios/InputViewUpdateDeferrer.mm; sourceTree = "<group>"; };
 		2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleWebPageCounter.h; sourceTree = "<group>"; };
 		2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HiddenPageThrottlingAutoIncreasesCounter.h; sourceTree = "<group>"; };
 		2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKKeyboardScrollingAnimator.mm; path = ios/WKKeyboardScrollingAnimator.mm; sourceTree = "<group>"; };
@@ -9971,8 +9968,6 @@
 				CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */,
 				F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */,
 				F4CF1E9C25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.mm */,
-				2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */,
-				2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */,
 				0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */,
 				0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */,
 				93E05E3E282CD55D000B69EB /* ProcessStateMonitor.h */,
@@ -15129,7 +15124,6 @@
 				BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */,
 				BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */,
 				BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */,
-				2DD45ADE1E5F8972006C355F /* InputViewUpdateDeferrer.h in Headers */,
 				CE550E152283752200D28791 /* InsertTextOptions.h in Headers */,
 				9197940523DBC4BB00257892 /* InspectorBrowserAgent.h in Headers */,
 				996B2B9D25E257FF00719379 /* InspectorExtensionDelegate.h in Headers */,
