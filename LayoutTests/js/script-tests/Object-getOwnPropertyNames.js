@@ -76,7 +76,7 @@ var expectedPropertyNamesSet = {
     "Map": "['length', 'name', 'prototype']",
     "Map.prototype": "['clear', 'constructor', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values']",
     "Set": "['length', 'name', 'prototype']",
-    "Set.prototype": "['add', 'clear', 'constructor', 'delete', 'entries', 'forEach', 'has', 'keys', 'size', 'values']",
+    "Set.prototype": "['add', 'clear', 'constructor', 'delete', 'difference', 'entries', 'forEach', 'has', 'intersection', 'isDisjointFrom', 'isSubsetOf', 'isSupersetOf', 'keys', 'size', 'symmetricDifference', 'union', 'values']",
     "WeakMap": "['length', 'name', 'prototype']",
     "WeakMap.prototype": "['constructor', 'delete', 'get', 'has', 'set']",
     "WeakSet": "['length', 'name', 'prototype']",

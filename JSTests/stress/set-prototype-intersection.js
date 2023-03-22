@@ -26,6 +26,8 @@ assertArrayContent(Array.from(set1.intersection(set3)), [1]);
 assertArrayContent(Array.from(set2.intersection(set3)), [1]);
 assertArrayContent(Array.from(set2.intersection(set4)), [2, 1]);
 assertArrayContent(Array.from(set3.intersection(set4)), [3, 1]);
+assertArrayContent(Array.from(set4.intersection(set2)), [2, 1]);
+assertArrayContent(Array.from(set4.intersection(set3)), [3, 1]);
 assertArrayContent(Array.from(set5.intersection(set3)), [3, 1]);
 assertArrayContent(Array.from(set5.intersection(map1)), [obj1]);
 
