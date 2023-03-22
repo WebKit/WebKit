@@ -554,12 +554,23 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
         return true;
 
     SetForScope isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.clip(damageRect);
-    context.translate(scrollbar.frameRect().location());
-    LocalCurrentGraphicsContext localContext(context);
-    scrollerImpPaint(scrollbarMap().get(&scrollbar).get(), scrollbar.enabled());
+    
+    if (!context.platformContext()) {
+        auto localBuffer = ImageBuffer::create(damageRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        auto& localContext = localBuffer->context();
+        GraphicsContextStateSaver stateSaver(localContext);
+        LocalCurrentGraphicsContext lc(localContext);
+        scrollerImpPaint(scrollbarMap().get(&scrollbar).get(), scrollbar.enabled());
+        auto paintRect = damageRect;
+        paintRect.move(paintRect.width() - scrollbar.width(), 0);
+        context.drawImageBuffer(*localBuffer, paintRect);
+    } else {
+        GraphicsContextStateSaver stateSaver(context);
+        context.clip(damageRect);
+        context.translate(scrollbar.frameRect().location());
+        LocalCurrentGraphicsContext localContext(context);
+        scrollerImpPaint(scrollbarMap().get(&scrollbar).get(), scrollbar.enabled());
+    }
 
     return true;
 }
