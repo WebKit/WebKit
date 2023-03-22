@@ -402,7 +402,6 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/FormDataStreamCFNet.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
-    platform/network/cf/SocketStreamHandleImplCFNet.cpp
 
     platform/network/cocoa/CookieCocoa.mm
     platform/network/cocoa/CookieStorageObserver.mm
@@ -748,7 +747,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/cf/ResourceRequest.h
     platform/network/cf/ResourceRequestCFNet.h
     platform/network/cf/ResourceResponse.h
-    platform/network/cf/SocketStreamHandleImpl.h
 
     platform/network/cocoa/CookieStorageObserver.h
     platform/network/cocoa/CredentialCocoa.h

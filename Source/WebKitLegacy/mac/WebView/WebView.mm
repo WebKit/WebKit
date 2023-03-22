@@ -37,7 +37,9 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "LegacySocketProvider.h"
 #import "PageStorageSessionProvider.h"
+#import "SocketStreamHandleImpl.h"
 #import "StorageThread.h"
 #import "WebAlternativeTextClient.h"
 #import "WebApplicationCacheInternal.h"
@@ -215,8 +217,6 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
 #import <WebCore/ShouldTreatAsContinuingLoad.h>
-#import <WebCore/SocketProvider.h>
-#import <WebCore/SocketStreamHandleImpl.h>
 #import <WebCore/StringUtilities.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
@@ -1521,7 +1521,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     WebCore::PageConfiguration pageConfiguration(
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
-        WebCore::SocketProvider::create(),
+        LegacySocketProvider::create(),
         WebCore::WebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         _private->group->userContentController(),
@@ -1791,7 +1791,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     WebCore::PageConfiguration pageConfiguration(
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
-        WebCore::SocketProvider::create(),
+        LegacySocketProvider::create(),
         WebCore::WebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
         _private->group->userContentController(),

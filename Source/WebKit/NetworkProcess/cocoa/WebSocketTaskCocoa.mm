@@ -34,7 +34,7 @@
 #import <WebCore/ClientOrigin.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
-#import <WebCore/WebSocketChannel.h>
+#import <WebCore/ThreadableWebSocketChannel.h>
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -79,7 +79,7 @@ void WebSocketTask::readNextMessage()
             }
 
             m_channel.didReceiveMessageError([error localizedDescription]);
-            didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
+            didClose(WebCore::ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
             return;
         }
         if (message.type == NSURLSessionWebSocketMessageTypeString)
@@ -146,7 +146,7 @@ void WebSocketTask::sendData(const IPC::DataReference& data, CompletionHandler<v
 
 void WebSocketTask::close(int32_t code, const String& reason)
 {
-    if (code == WebCore::WebSocketChannel::CloseEventCodeNotSpecified)
+    if (code == WebCore::ThreadableWebSocketChannel::CloseEventCodeNotSpecified)
         code = NSURLSessionWebSocketCloseCodeInvalid;
     auto utf8 = reason.utf8();
     auto nsData = adoptNS([[NSData alloc] initWithBytes:utf8.data() length:utf8.length()]);

@@ -34,8 +34,8 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
+#include "ThreadableWebSocketChannel.h"
 #include "WebSocket.h"
-#include "WebSocketChannel.h"
 
 namespace WebCore {
 

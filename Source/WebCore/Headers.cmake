@@ -443,7 +443,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/webdatabase/OriginLock.h
 
     Modules/websockets/ThreadableWebSocketChannel.h
-    Modules/websockets/WebSocketChannel.h
     Modules/websockets/WebSocketChannelClient.h
     Modules/websockets/WebSocketChannelInspector.h
     Modules/websockets/WebSocketDeflateFramer.h
@@ -2020,8 +2019,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/SameSiteInfo.h
     platform/network/ShouldRelaxThirdPartyCookieBlocking.h
     platform/network/SocketStreamError.h
-    platform/network/SocketStreamHandle.h
-    platform/network/SocketStreamHandleClient.h
     platform/network/StorageSessionProvider.h
     platform/network/StoredCredentialsPolicy.h
     platform/network/SynchronousLoaderClient.h

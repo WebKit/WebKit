@@ -39,7 +39,6 @@
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
-#include "WebSocketChannel.h"
 #include "WebSocketChannelClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
