@@ -82,6 +82,7 @@ private:
     using AddSourceBufferCallback = CompletionHandler<void(WebCore::MediaSourcePrivate::AddStatus, std::optional<RemoteSourceBufferIdentifier>)>;
     void addSourceBuffer(const WebCore::ContentType&, AddSourceBufferCallback&&);
     void durationChanged(const MediaTime&);
+    void bufferedChanged(WebCore::PlatformTimeRanges&&);
     void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setIsSeeking(bool);
     void waitForSeekCompleted();

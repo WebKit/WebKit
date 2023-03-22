@@ -1166,6 +1166,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
     auto updatePrivate = makeScopeExit([&] {
         if (!m_private || buffered.get() == m_buffered.get())
             return;
+        m_private->bufferedChanged(m_buffered);
         monitorSourceBuffers();
     });
 

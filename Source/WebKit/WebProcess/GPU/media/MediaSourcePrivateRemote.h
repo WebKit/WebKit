@@ -63,6 +63,7 @@ public:
     // MediaSourcePrivate overrides
     AddStatus addSourceBuffer(const WebCore::ContentType&, bool webMParserEnabled, RefPtr<WebCore::SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
+    void bufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void markEndOfStream(EndOfStreamStatus) final;
     void unmarkEndOfStream() final;
     bool isEnded() const final;
