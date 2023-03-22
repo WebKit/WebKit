@@ -29,6 +29,7 @@ import time
 from .canonicalize import Canonicalize
 from .command import Command
 from .branch import Branch
+from .install_hooks import InstallHooks
 from .pull_request import PullRequest
 from .squash import Squash
 from argparse import Namespace
@@ -119,7 +120,7 @@ class Land(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, identifier_template=None, canonical_svn=False, **kwargs):
+    def main(cls, args, repository, identifier_template=None, canonical_svn=False, hooks=None, **kwargs):
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -137,6 +138,11 @@ class Land(Command):
             return 1
 
         if not PullRequest.check_pull_request_args(repository, args):
+            return 1
+
+        if hooks and InstallHooks.hook_needs_update(repository, os.path.join(hooks, 'pre-push')):
+            sys.stderr.write("Cannot run a command which invokes `git push` with an out-of-date pre-push hook\n")
+            sys.stderr.write("Please re-run `git-webkit setup` to update all local hooks\n")
             return 1
 
         modified_files = [] if args.will_add is False else repository.modified()

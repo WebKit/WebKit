@@ -26,7 +26,7 @@ import sys
 
 from .command import Command
 from webkitbugspy import radar
-from webkitcorepy import run, string_utils
+from webkitcorepy import run, string_utils, Version
 from webkitscmpy import log, local, remote
 
 
@@ -35,7 +35,34 @@ class InstallHooks(Command):
     help = 'Re-install all hooks from this repository into this checkout'
 
     REMOTE_RE = re.compile(r'(?P<protcol>[^@:]+://)?(?P<user>[^:@]+@)?(?P<host>[^:/@]+)(/|:)(?P<path>[^\.]+[^\./])(\.git)?/?')
+    VERSION_RE = re.compile(r'^VERSION\s+=\s+\'(?P<number>\d+(\.\d+)*)\'$')
     MODES = ('default', 'publish', 'no-radar')
+
+    @classmethod
+    def version_for(cls, path):
+        if not os.path.isfile(path):
+            return None
+        with open(path, 'r') as f:
+            for line in f.readlines():
+                match = cls.VERSION_RE.match(line)
+                if match:
+                    return Version.from_string(match.group('number'))
+        return None
+
+    @classmethod
+    def hook_needs_update(cls, repository, path):
+        if not os.path.isfile(path):
+            return False
+        hook_path = os.path.join(repository.path, '.git', 'hooks', os.path.basename(path))
+        if not os.path.isfile(hook_path):
+            return True
+        repo_version = cls.version_for(path)
+        if not repo_version:
+            return False
+        installed_version = cls.version_for(hook_path)
+        if not repo_version:
+            return True
+        return repo_version > installed_version
 
     @classmethod
     def parser(cls, parser, loggers=None):

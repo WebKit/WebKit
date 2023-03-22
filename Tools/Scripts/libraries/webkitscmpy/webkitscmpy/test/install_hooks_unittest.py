@@ -32,9 +32,11 @@ class TestInstallHooks(testing.PathTestCase):
     basepath = 'mock/repository'
 
     @classmethod
-    def write_hook(cls, path, security_levels=False):
+    def write_hook(cls, path, version=None, security_levels=False):
         with open(path, 'w') as f:
             f.write('#!/usr/bin/env {{ python }}\n')
+            if version:
+                f.write("VERSION = '{}'\n".format(version))
             if security_levels:
                 f.write('SECURITY_LEVELS = { {% for item in security_levels|dictsort %}\n')
                 f.write("    '{{ item[0] }}': {{ item[1] }},{% endfor %}\n")
@@ -226,3 +228,62 @@ print('Hello, world!\\n')
 
         resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-push')
         self.assertFalse(os.path.isfile(resolved_hook))
+
+    def test_svn(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path):
+            self.assertEqual(1, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), 'Can only install hooks in a native git repository\n')
+
+    def test_none(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), 'Can only install hooks in a native git repository\n')
+
+    def test_no_file(self):
+        hook = os.path.join(self.path, 'invalid-hook')
+        self.assertEqual(program.InstallHooks.version_for(hook), None)
+
+    def test_no_version(self):
+        hook = os.path.join(self.path, 'hook')
+        self.write_hook(hook)
+        self.assertEqual(program.InstallHooks.version_for(hook), None)
+
+    def test_version(self):
+        hook = os.path.join(self.path, 'hook')
+        self.write_hook(hook, '1.0')
+        self.assertEqual(program.InstallHooks.version_for(hook), Version(1, 0))
+
+    def test_equal_version(self):
+        template = os.path.join(self.path, 'hook')
+        hook = os.path.join(self.path, '.git', 'hooks', 'hook')
+        self.write_hook(template, '1.0')
+        self.write_hook(hook, '1.0')
+        with mocks.local.Git(self.path):
+            self.assertFalse(program.InstallHooks.hook_needs_update(local.Git(self.path), template))
+
+    def test_no_hook(self):
+        template = os.path.join(self.path, 'hook')
+        self.write_hook(template)
+        with mocks.local.Git(self.path):
+            self.assertTrue(program.InstallHooks.hook_needs_update(local.Git(self.path), template))
+
+    def test_old_hook(self):
+        template = os.path.join(self.path, 'hook')
+        hook = os.path.join(self.path, '.git', 'hooks', 'hook')
+        self.write_hook(template, '1.1')
+        self.write_hook(hook, '1.0')
+        with mocks.local.Git(self.path):
+            self.assertTrue(program.InstallHooks.hook_needs_update(local.Git(self.path), template))
+
+    def test_no_template(self):
+        template = os.path.join(self.path, 'invalid-hook')
+        hook = os.path.join(self.path, '.git', 'hooks', 'invalid-hook')
+        self.write_hook(hook, '1.0')
+        with mocks.local.Git(self.path):
+            self.assertFalse(program.InstallHooks.hook_needs_update(local.Git(self.path), template))
