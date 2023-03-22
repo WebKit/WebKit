@@ -159,11 +159,6 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
         break;
     }
 
-    if (firstDamagedLineIndex) {
-        // Repaint the new content boundary.
-        adjustDamagedRectWithLineRange(*firstDamagedLineIndex, numberOfNewLines, inlineContent.displayContent().lines);
-    }
-
     auto updateIfTextRenderersNeedVisualReordering = [&] {
         // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content. 
         for (auto& displayBox : inlineContent.displayContent().boxes) {
@@ -176,6 +171,8 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
     };
     updateIfTextRenderersNeedVisualReordering();
     adjustDisplayLines(inlineContent);
+    // Repaint the new content boundary.
+    adjustDamagedRectWithLineRange(firstDamagedLineIndex.value_or(0), numberOfNewLines, inlineContent.displayContent().lines);
     computeIsFirstIsLastBoxForInlineContent(inlineContent);
 
     return damagedRect;
