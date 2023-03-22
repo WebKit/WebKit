@@ -71,6 +71,21 @@ bool ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent(const PlatformMo
     return m_delegate->handleMouseEventForScrollbars(mouseEvent);
 }
 
+void ScrollingTreeFrameScrollingNodeRemoteMac::viewWillStartLiveResize()
+{
+    m_delegate->viewWillStartLiveResize();
+}
+
+void ScrollingTreeFrameScrollingNodeRemoteMac::viewWillEndLiveResize()
+{
+    m_delegate->viewWillEndLiveResize();
+}
+
+void ScrollingTreeFrameScrollingNodeRemoteMac::viewSizeDidChange()
+{
+    m_delegate->viewSizeDidChange();
+}
+
 }
 
 #endif

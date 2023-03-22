@@ -147,6 +147,10 @@ public:
     int footerHeight() const;
     float mainFrameScaleFactor() const;
     WebCore::FloatSize totalContentsSize() const;
+    
+    void viewWillStartLiveResize();
+    void viewWillEndLiveResize();
+    void viewSizeDidChange();
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

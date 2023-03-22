@@ -54,7 +54,9 @@ public:
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
     float topContentInset() const { return m_topContentInset; }
-
+    virtual void viewWillStartLiveResize() { }
+    virtual void viewWillEndLiveResize() { }
+    virtual void viewSizeDidChange() { }
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 

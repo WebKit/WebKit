@@ -47,6 +47,11 @@ private:
     void handleWheelEventPhase(const PlatformWheelEventPhase) override;
 
     void repositionRelatedLayers() override;
+    
+    void viewWillStartLiveResize() override;
+    void viewWillEndLiveResize() override;
+    void viewSizeDidChange() override;
+
 };
 
 }

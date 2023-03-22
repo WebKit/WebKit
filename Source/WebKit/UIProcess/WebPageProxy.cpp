@@ -2132,6 +2132,9 @@ void WebPageProxy::viewWillStartLiveResize()
         return;
 
     closeOverlayedViews();
+    
+    m_drawingArea->viewWillStartLiveResize();
+    
     send(Messages::WebPage::ViewWillStartLiveResize());
 }
 
@@ -2139,6 +2142,9 @@ void WebPageProxy::viewWillEndLiveResize()
 {
     if (!hasRunningProcess())
         return;
+
+    m_drawingArea->viewWillEndLiveResize();
+
     send(Messages::WebPage::ViewWillEndLiveResize());
 }
 

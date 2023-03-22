@@ -77,19 +77,24 @@ public:
     void releaseReferencesToScrollerImpsOnTheMainThread();
     
     bool hasScrollerImp();
+    
+    void viewWillStartLiveResize();
+    void viewWillEndLiveResize();
+    void contentsSizeChanged();
+    bool inLiveResize() const { return m_inLiveResize; }
 
     // Only for use by WebScrollerImpPairDelegateMac. Do not use elsewhere!
     ScrollerMac& verticalScroller() { return m_verticalScroller; }
     ScrollerMac& horizontalScroller() { return m_horizontalScroller; }
 
 private:
-
     NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
     NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
     
     NSScrollerImpPair *scrollerImpPair() { return m_scrollerImpPair.get(); }
     Lock& scrollerImpPairLock() WTF_RETURNS_LOCK(m_scrollerImpPairLock) { return m_scrollerImpPairLock; }
 
+    bool m_inLiveResize;
     WebCore::ScrollingTreeScrollingNode& m_scrollingNode;
 
     ScrollerMac m_verticalScroller;
