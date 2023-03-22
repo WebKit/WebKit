@@ -1760,7 +1760,6 @@ imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 
 # Pending investigation.
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure ]
-webkit.org/b/187064 webkit.org/b/235885 webrtc/video-disabled-black.html [ Failure ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Pass ]
