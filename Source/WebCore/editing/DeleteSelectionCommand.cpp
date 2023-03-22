@@ -313,7 +313,7 @@ bool DeleteSelectionCommand::initializePositionData()
     m_downstreamStart = start.downstream();
     m_upstreamEnd = end.upstream();
     m_downstreamEnd = end.downstream();
-    
+
     m_startRoot = editableRootForPosition(start);
     m_endRoot = editableRootForPosition(end);
     
@@ -359,7 +359,7 @@ bool DeleteSelectionCommand::initializePositionData()
     
         // skip smart delete if the selection to delete already starts or ends with whitespace
         Position pos = VisiblePosition(m_upstreamStart, m_selectionToDelete.affinity()).deepEquivalent();
-        bool skipSmartDelete = pos.trailingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
+        bool skipSmartDelete = isEditablePosition(pos) && pos.trailingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
         if (!skipSmartDelete)
             skipSmartDelete = m_downstreamEnd.leadingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
 
