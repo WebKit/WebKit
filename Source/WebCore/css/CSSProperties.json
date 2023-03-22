@@ -6265,7 +6265,8 @@
                 "collapse"
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "fast-path-inherited": true
             },
             "specification": {
                 "category": "css-22",
