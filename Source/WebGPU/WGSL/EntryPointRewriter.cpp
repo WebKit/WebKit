@@ -131,7 +131,7 @@ void EntryPointRewriter::collectParameters()
     while (m_function.parameters().size()) {
         auto parameter = m_shaderModule.takeLast(m_function.parameters());
         Vector<String> path;
-        visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), WTFMove(parameter->attributes()) });
+        visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), parameter->attributes() });
     }
 }
 
