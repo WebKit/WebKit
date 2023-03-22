@@ -61,8 +61,10 @@ public:
     WEBCORE_EXPORT static Ref<FetchResponse> create(ScriptExecutionContext*, std::optional<FetchBody>&&, FetchHeaders::Guard, ResourceResponse&&);
 
     static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, std::optional<FetchBody::Init>&&, Init&&);
+    static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, std::optional<FetchBodyWithType>&&, Init&&);
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, const String& url, int status);
+    static ExceptionOr<Ref<FetchResponse>> jsonForBindings(ScriptExecutionContext&, JSC::JSValue data, Init&&);
 
     using NotificationCallback = Function<void(ExceptionOr<Ref<FetchResponse>>&&)>;
     static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&, const String& initiator);

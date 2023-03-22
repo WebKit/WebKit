@@ -65,70 +65,49 @@ Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::o
     return fetchResponse;
 }
 
-ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody::Init>&& body, Init&& init)
+ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBodyWithType>&& bodyWithType, Init&& init)
 {
-    // 1. If init’s status member is not in the range 200 to 599, inclusive, then throw a RangeError.
-    if (init.status < 200  || init.status > 599)
+    // https://fetch.spec.whatwg.org/#initialize-a-response
+    // 1. If init["status"] is not in the range 200 to 599, inclusive, then throw a RangeError.
+    if (init.status < 200 || init.status > 599)
         return Exception { RangeError, "Status must be between 200 and 599"_s };
 
-    // 2. If init’s statusText member does not match the reason-phrase token production, then throw a TypeError.
+    // 2. If init["statusText"] does not match the reason-phrase token production, then throw a TypeError.
     if (!isValidReasonPhrase(init.statusText))
         return Exception { TypeError, "Status text must be a valid reason-phrase."_s };
 
-    // 3. Let r be a new Response object associated with a new response.
-    // NOTE: Creation of the Response object is delayed until all potential exceptional cases are handled.
-    
-    // 4. Set r’s headers to a new Headers object, whose header list is r’s response’s header list, and guard is "response".
+    // Both uses of "initialize a response" (the Response constructor and Response.json) create the
+    // Response object with the "response" header guard.
     auto headers = FetchHeaders::create(FetchHeaders::Guard::Response);
 
-    // 5. Set r’s response’s status to init’s status member.
-    auto status = init.status;
-    
-    // 6. Set r’s response’s status message to init’s statusText member.
-    auto statusText = init.statusText;
-    
-    // 7. If init’s headers member is present, then fill r’s headers with init’s headers member.
+    // 5. If init["headers"] exists, then fill response’s headers with init["headers"].
     if (init.headers) {
         auto result = headers->fill(*init.headers);
         if (result.hasException())
             return result.releaseException();
     }
 
-    std::optional<FetchBody> extractedBody;
+    std::optional<FetchBody> body;
 
-    // 8. If body is non-null, run these substeps:
-    if (body) {
-        // 8.1 If init’s status member is a null body status, then throw a TypeError.
-        //     (NOTE: 101 is included in null body status due to its use elsewhere. It does not affect this step.)
+    // 6. If body was given, then:
+    if (bodyWithType) {
+        // 6.1 If response’s status is a null body status, then throw a TypeError.
+        //     (NOTE: 101 and 103 are included in null body status due to their use elsewhere. It does not affect this step.)
         if (isNullBodyStatus(init.status))
             return Exception { TypeError, "Response cannot have a body with the given status."_s };
 
-        // 8.2 Let Content-Type be null.
-        String contentType;
+        // 6.2 Set response’s body to body’s body.
+        body = WTFMove(bodyWithType->body);
 
-        // 8.3 Set r’s response’s body and Content-Type to the result of extracting body.
-        auto result = FetchBody::extract(WTFMove(*body), contentType);
-        if (result.hasException())
-            return result.releaseException();
-        extractedBody = result.releaseReturnValue();
-
-        // 8.4 If Content-Type is non-null and r’s response’s header list does not contain `Content-Type`, then append
-        //     `Content-Type`/Content-Type to r’s response’s header list.
-        if (!contentType.isNull() && !headers->fastHas(HTTPHeaderName::ContentType))
-            headers->fastSet(HTTPHeaderName::ContentType, contentType);
+        // 6.3 If body’s type is non-null and response’s header list does not contain `Content-Type`, then append
+        //     (`Content-Type`, body’s type) to response’s header list.
+        if (!bodyWithType->type.isNull() && !headers->fastHas(HTTPHeaderName::ContentType))
+            headers->fastSet(HTTPHeaderName::ContentType, bodyWithType->type);
     }
 
-    // 9. Set r’s MIME type to the result of extracting a MIME type from r’s response’s header list.
     auto contentType = headers->fastGet(HTTPHeaderName::ContentType);
 
-    // 10. Set r’s response’s HTTPS state to current settings object’s HTTPS state.
-    // FIXME: Implement.
-
-    // 11. Resolve r’s trailer promise with a new Headers object whose guard is "immutable".
-    // FIXME: Implement.
-    
-    // 12. Return r.
-    auto r = adoptRef(*new FetchResponse(&context, WTFMove(extractedBody), WTFMove(headers), { }));
+    auto r = adoptRef(*new FetchResponse(&context, WTFMove(body), WTFMove(headers), { }));
     r->suspendIfNeeded();
 
     r->m_contentType = contentType;
@@ -136,10 +115,26 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     r->m_internalResponse.setMimeType(mimeType.isEmpty() ? AtomString { defaultMIMEType() } : mimeType);
     r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
 
-    r->m_internalResponse.setHTTPStatusCode(status);
-    r->m_internalResponse.setHTTPStatusText(statusText);
+    // 3. Set response’s response’s status to init["status"].
+    r->m_internalResponse.setHTTPStatusCode(init.status);
+    // 4. Set response’s response’s status message to init["statusText"].
+    r->m_internalResponse.setHTTPStatusText(init.statusText);
 
     return r;
+}
+
+ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody::Init>&& body, Init&& init)
+{
+    std::optional<FetchBodyWithType> bodyWithType;
+    if (body) {
+        String type;
+        auto result = FetchBody::extract(WTFMove(*body), type);
+        if (result.hasException())
+            return result.releaseException();
+        bodyWithType = { result.releaseReturnValue(), WTFMove(type) };
+    }
+
+    return FetchResponse::create(context, WTFMove(bodyWithType), WTFMove(init));
 }
 
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
@@ -166,6 +161,16 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
     redirectResponse->m_internalResponse.setHTTPHeaderField(HTTPHeaderName::Location, requestURL.string());
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return redirectResponse;
+}
+
+ExceptionOr<Ref<FetchResponse>> FetchResponse::jsonForBindings(ScriptExecutionContext& context, JSC::JSValue data, Init&& init)
+{
+    String jsonString = JSC::JSONStringify(context.globalObject(), data, 0);
+    if (jsonString.isNull())
+        return Exception { TypeError, "Value doesn't have a JSON representation"_s };
+
+    FetchBodyWithType body { FetchBody(WTFMove(jsonString)), "application/json"_s };
+    return FetchResponse::create(context, WTFMove(body), WTFMove(init));
 }
 
 FetchResponse::FetchResponse(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
