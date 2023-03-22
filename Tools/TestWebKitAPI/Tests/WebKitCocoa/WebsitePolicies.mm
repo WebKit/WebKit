@@ -1722,6 +1722,35 @@ TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeLight)
     [webView waitForMessage:@"light-detected"];
 }
 
+TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDark)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    configuration.get().defaultWebpagePreferences._colorSchemePreference = _WKWebsiteColorSchemePreferenceDark;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadTestPageNamed:@"color-scheme"];
+    [webView waitForMessage:@"dark-detected"];
+}
+
+TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDarkForContentThatDoesNotSupportDarkMode)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"color-scheme"];
+
+    NSString *backgroundColorWithoutPreference = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).backgroundColor"];
+
+    configuration.get().defaultWebpagePreferences._colorSchemePreference = _WKWebsiteColorSchemePreferenceDark;
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"color-scheme"];
+
+    NSString *backgroundColorWithPreference = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).backgroundColor"];
+
+    EXPECT_WK_STREQ(backgroundColorWithoutPreference, backgroundColorWithPreference);
+}
+
 TEST(WebpagePreferences, ContentRuleListEnablement)
 {
     [TestProtocol registerWithScheme:@"https"];
@@ -1791,18 +1820,6 @@ TEST(WebpagePreferences, ContentRuleListEnablement)
     EXPECT_TRUE(canLoadImage(@"./400x400-green.png"));
     EXPECT_FALSE(canLoadImage(@"./sunset-in-cupertino-200px.png"));
     EXPECT_TRUE(canLoadImage(@"./sunset-in-cupertino-100px.tiff"));
-}
-
-TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDark)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    configuration.get().defaultWebpagePreferences._colorSchemePreference = _WKWebsiteColorSchemePreferenceDark;
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    [webView loadTestPageNamed:@"color-scheme"];
-    [webView waitForMessage:@"dark-detected"];
 }
 
 TEST(WebpagePreferences, ToggleNetworkConnectionIntegrity)
