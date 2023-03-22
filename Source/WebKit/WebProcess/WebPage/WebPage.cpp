@@ -8699,9 +8699,14 @@ void WebPage::setLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSa
 void WebPage::setAllowedLookalikeCharacterStrings(Vector<LookalikeCharactersSanitizationData>&& allowStrings)
 {
     m_allowedLookalikeCharacterStrings.clear();
-    m_allowedLookalikeCharacterStrings.reserveInitialCapacity(allowStrings.size());
-    for (auto& data : allowStrings)
-        m_allowedLookalikeCharacterStrings.add(data.domain, data.lookalikeCharacters);
+    for (auto& data : allowStrings) {
+        if (!m_allowedLookalikeCharacterStrings.isValidKey(data.domain))
+            continue;
+
+        m_allowedLookalikeCharacterStrings.ensure(data.domain, [&] {
+            return HashSet<String> { };
+        }).iterator->value.add(data.lookalikeCharacters);
+    }
 }
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 

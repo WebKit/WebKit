@@ -2589,7 +2589,7 @@ private:
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     HashSet<String> m_lookalikeCharacterStrings;
     HashMap<WebCore::RegistrableDomain, HashSet<String>> m_domainScopedLookalikeCharacterStrings;
-    HashMap<WebCore::RegistrableDomain, String> m_allowedLookalikeCharacterStrings;
+    HashMap<WebCore::RegistrableDomain, HashSet<String>> m_allowedLookalikeCharacterStrings;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
