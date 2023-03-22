@@ -721,6 +721,8 @@ Internals::Internals(Document& document)
     VP9TestingOverrides::singleton().setVP9DecoderDisabled(std::nullopt);
     VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(std::nullopt);
 #endif
+
+    Scrollbar::setShouldUseFixedPixelsPerLineStepForTesting(true);
 }
 
 Document* Internals::contextDocument() const

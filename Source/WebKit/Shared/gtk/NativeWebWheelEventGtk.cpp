@@ -37,24 +37,6 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
-    , m_nativeEvent(constructNativeEvent(event))
-{
-}
-
-NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase, momentumPhase))
-    , m_nativeEvent(constructNativeEvent(event))
-{
-}
-
-NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoint& position, const WebCore::FloatSize& wheelTicks)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, position, wheelTicks))
-    , m_nativeEvent(constructNativeEvent(event))
-{
-}
-
 NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent *event, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas)
     : WebWheelEvent({ WebEventType::Wheel, { }, WallTime::now() }, position, globalPosition, delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, momentumPhase, hasPreciseDeltas)
     , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)

@@ -1271,12 +1271,12 @@ void RenderLayerScrollableArea::updateScrollbarSteps()
 
     // Set up the  page step/line step.
     if (m_hBar) {
-        int pageStep = Scrollbar::pageStep(roundToInt(paddedLayerBounds.width()));
-        m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+        int width = roundToInt(paddedLayerBounds.width());
+        m_hBar->setSteps(Scrollbar::pixelsPerLineStep(width), Scrollbar::pageStep(width));
     }
     if (m_vBar) {
-        int pageStep = Scrollbar::pageStep(roundToInt(paddedLayerBounds.height()));
-        m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+        int height = roundToInt(paddedLayerBounds.height());
+        m_vBar->setSteps(Scrollbar::pixelsPerLineStep(height), Scrollbar::pageStep(height));
     }
 }
 
