@@ -164,12 +164,14 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
         if (found) {
             JSValue lengthValue = target->get(globalObject, vm.propertyNames->length);
             RETURN_IF_EXCEPTION(scope, { });
-            length = lengthValue.toIntegerOrInfinity(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (length > numBoundArgs)
-                length -= numBoundArgs;
-            else
-                length = 0;
+            if (lengthValue.isNumber()) {
+                length = lengthValue.toIntegerOrInfinity(globalObject);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (length > numBoundArgs)
+                    length -= numBoundArgs;
+                else
+                    length = 0;
+            }
         }
         JSValue nameValue = target->get(globalObject, vm.propertyNames->name);
         RETURN_IF_EXCEPTION(scope, { });

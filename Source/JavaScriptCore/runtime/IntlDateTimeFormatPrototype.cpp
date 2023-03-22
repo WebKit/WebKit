@@ -153,7 +153,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
         RETURN_IF_EXCEPTION(scope, { });
         boundFormat->reifyLazyPropertyIfNeeded(vm, globalObject, vm.propertyNames->name);
         RETURN_IF_EXCEPTION(scope, { });
-        boundFormat->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm));
+        boundFormat->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);
     }

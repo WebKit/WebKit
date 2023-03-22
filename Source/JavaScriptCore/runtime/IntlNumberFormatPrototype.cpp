@@ -134,7 +134,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
         RETURN_IF_EXCEPTION(scope, { });
         boundFormat->reifyLazyPropertyIfNeeded(vm, globalObject, vm.propertyNames->name);
         RETURN_IF_EXCEPTION(scope, { });
-        boundFormat->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm));
+        boundFormat->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         // d. Set nf.[[boundFormat]] to bf.
         nf->setBoundFormat(vm, boundFormat);
     }
