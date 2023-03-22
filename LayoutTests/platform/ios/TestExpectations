@@ -4384,7 +4384,7 @@ webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [
 
 webkit.org/b/252191 imported/w3c/web-platform-tests/editing/other/edit-in-textcontrol-immediately-after-hidden.tentative.html [ Skip ]
 
-webkit.org/b/252504 http/tests/site-isolation/basic-iframe.html [ Pass Timeout ImageOnlyFailure ]
+webkit.org/b/252504 http/tests/site-isolation [ Skip ]
 
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
 
