@@ -1,0 +1,18 @@
+<style>
+div {
+  width: 50px;
+  height: 50px;
+  outline: 5px dashed rgba(0, 255, 0, 0.5);
+  margin-bottom: 30px;
+}
+</style>
+<!-- PASS if outline is never solid -->
+<div></div>
+<div style="outline-style: dotted;"></div>
+<div style="outline-style: inset;"></div>
+<div style="outline-style: outset;"></div>
+
+<div style="border-radius: 10px;"></div>
+<div style="border-radius: 10px; outline-style: dotted;"></div>
+<div style="border-radius: 10px; outline-style: inset;"></div>
+<div style="border-radius: 10px; outline-style: outset;"></div>
