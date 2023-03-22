@@ -640,6 +640,7 @@ platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.cpp
 platform/network/cf/NetworkStorageSessionCFNet.cpp
 platform/network/cf/ResourceRequestCFNet.cpp
+platform/network/cf/SocketStreamHandleImpl.cpp
 platform/network/cf/SocketStreamHandleImplCFNet.cpp
 platform/network/cocoa/CertificateInfoCocoa.mm
 platform/network/cocoa/CookieCocoa.mm

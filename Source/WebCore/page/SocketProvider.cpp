@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SocketProvider.h"
 
-#include "SocketStreamHandleImpl.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
 
@@ -34,8 +33,14 @@ namespace WebCore {
 
 RefPtr<ThreadableWebSocketChannel> SocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client)
 {
+#if PLATFORM(COCOA)
     // FIXME: Move this to WebKitLegacy.
     return WebCore::WebSocketChannel::create(document, client, *this);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(client);
+    return nullptr;
+#endif
 }
 
 }

@@ -2405,7 +2405,6 @@ platform/network/ResourceRequestBase.cpp
 platform/network/ResourceResponseBase.cpp
 platform/network/SameSiteInfo.cpp
 platform/network/SocketStreamHandle.cpp
-platform/network/SocketStreamHandleImpl.cpp
 platform/network/SynchronousLoaderClient.cpp
 platform/network/TimingAllowOrigin.cpp
 platform/sql/SQLiteAuthorizer.cpp

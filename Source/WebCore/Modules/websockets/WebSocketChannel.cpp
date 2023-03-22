@@ -32,6 +32,8 @@
 #include "config.h"
 #include "WebSocketChannel.h"
 
+#if PLATFORM(COCOA)
+
 #include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -862,3 +864,5 @@ const ResourceResponse& WebSocketChannel::serverHandshakeResponse() const
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(COCOA)
