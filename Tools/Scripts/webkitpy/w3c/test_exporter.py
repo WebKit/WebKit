@@ -52,7 +52,7 @@ WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
 WPT_PR_URL = "%s/pull/" % WPT_GH_URL
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
-EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '.worker.html', '.any.html', '.any.worker.html', 'w3c-import.log']
+EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected-mismatch.html', '.worker.html', '.any.html', '.any.worker.html', 'w3c-import.log']
 
 
 class WebPlatformTestExporter(object):
