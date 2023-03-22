@@ -23,7 +23,7 @@ a=ssrc:{ssrc:OK} cname:{cname:OK}
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
-a=fingerprint:sha-256 8B:87:09:8A:5D:C2:F3:33:EF:C5:B1:F6:84:3A:3D:D6:A3:E2:9C:17:4C:E7:46:3B:1B:CE:84:98:DD:8E:AF:7B
+a=fingerprint:sha-256 {fingerprint:OK}
 a=setup:actpass
 ===
 
@@ -47,7 +47,7 @@ a=ssrc:{ssrc:OK} cname:{cname:OK}
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
-a=fingerprint:sha-256 8B:87:09:8A:5D:C2:F3:33:EF:C5:B1:F6:84:3A:3D:D6:A3:E2:9C:17:4C:E7:46:3B:1B:CE:84:98:DD:8E:AF:7B
+a=fingerprint:sha-256 {fingerprint:OK}
 a=setup:actpass
 m=video 9 UDP/TLS/RTP/SAVPF 103 100 120
 c=IN IP4 0.0.0.0
@@ -68,7 +68,7 @@ a=ssrc:{ssrc:OK} cname:{cname:OK}
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
-a=fingerprint:sha-256 8B:87:09:8A:5D:C2:F3:33:EF:C5:B1:F6:84:3A:3D:D6:A3:E2:9C:17:4C:E7:46:3B:1B:CE:84:98:DD:8E:AF:7B
+a=fingerprint:sha-256 {fingerprint:OK}
 a=setup:actpass
 ===
 
