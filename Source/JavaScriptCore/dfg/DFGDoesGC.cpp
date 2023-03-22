@@ -292,6 +292,7 @@ bool doesGC(Graph& graph, Node* node)
     case CallWasm:
     case ForceOSRExit:
     case FunctionToString:
+    case FunctionBind:
     case GetById:
     case GetByIdDirect:
     case GetByIdDirectFlush:
@@ -388,6 +389,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewGeneratorFunction:
     case NewAsyncGeneratorFunction:
     case NewAsyncFunction:
+    case NewBoundFunction:
     case NewTypedArray:
     case ThrowStaticError:
     case GetPropertyEnumerator:

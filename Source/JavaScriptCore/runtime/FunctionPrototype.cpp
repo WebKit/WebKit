@@ -66,7 +66,7 @@ void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObje
 
     *applyFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().applyPublicName(), functionPrototypeApplyCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
     *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->bind, functionProtoFuncBind, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->bind, functionProtoFuncBind, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, FunctionBindIntrinsic);
 
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->arguments, CustomGetterSetter::create(vm, argumentsGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->caller, CustomGetterSetter::create(vm, callerGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
@@ -116,48 +116,17 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
     JSValue boundThis = callFrame->argument(0);
     unsigned argumentCount = callFrame->argumentCount();
     unsigned numBoundArgs = 0;
-    JSImmutableButterfly* butterfly = nullptr;
-    if (argumentCount > 1) {
-        numBoundArgs = argumentCount - 1;
-        CheckedInt32 totalCount = argumentCount - 1;
-        int32_t additionalCount = 0;
-        JSImmutableButterfly* boundArgs = nullptr;
-        if (target->inherits<JSBoundFunction>()) {
-            JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
-            if (boundFunction->canCloneBoundArgs()) {
-                boundArgs = boundFunction->boundArgs();
-                additionalCount = boundArgs ? boundArgs->length() : 0;
-                totalCount += additionalCount;
-                if (UNLIKELY(totalCount.hasOverflowed())) {
-                    throwOutOfMemoryError(globalObject, scope);
-                    return { };
-                }
-            }
-        }
+    ArgList boundArgs { };
+    if (argumentCount > 1)
+        boundArgs = ArgList(callFrame, 1);
 
-        butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), totalCount.value());
-        if (UNLIKELY(!butterfly)) {
-            throwOutOfMemoryError(globalObject, scope);
-            return { };
-        }
-        if (additionalCount) {
-            ASSERT(boundArgs);
-            for (int32_t index = 0; index < additionalCount; ++index)
-                butterfly->setIndex(vm, index, boundArgs->get(index));
-        }
-        for (int32_t index = 0; index < static_cast<int32_t>(argumentCount - 1); ++index)
-            butterfly->setIndex(vm, index + additionalCount, callFrame->uncheckedArgument(index + 1));
-    }
-
-    double length = 0;
+    double length = PNaN;
     JSString* name = nullptr;
     JSFunction* function = jsDynamicCast<JSFunction*>(target);
     if (LIKELY(function && function->canAssumeNameAndLengthAreOriginal(vm))) {
-        length = function->originalLength(vm);
-        if (length > numBoundArgs)
-            length -= numBoundArgs;
-        else
-            length = 0;
+        // Do nothing! 'length' and 'name' computation are lazily done.
+        // And this is totally OK since we know that wrapped functions have canAssumeNameAndLengthAreOriginal condition
+        // at the time of creation of JSBoundFunction.
     } else {
         bool found = target->hasOwnProperty(globalObject, vm.propertyNames->length);
         RETURN_IF_EXCEPTION(scope, { });
@@ -181,20 +150,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
             name = jsEmptyString(vm);
     }
 
-    JSObject* flattenedTarget = target;
-
-    // Unwrap JSBoundFunction by configuring butterfly and target. The larger Butterfly is already allocated for that purpose.
-    if (target->inherits<JSBoundFunction>()) {
-        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
-        if (boundFunction->canCloneBoundArgs()) {
-            boundThis = boundFunction->boundThis();
-            flattenedTarget = boundFunction->flattenedTargetFunction();
-            if (!butterfly && boundFunction->boundArgs())
-                butterfly = boundFunction->boundArgs();
-        }
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, flattenedTarget, boundThis, butterfly, length, name)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, name)));
 }
 
 // https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#isallowedreceiverfunctionforcallerandargumentsfunc-expectedrealm (except step 3)

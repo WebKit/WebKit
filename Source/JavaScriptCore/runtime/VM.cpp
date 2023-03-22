@@ -372,6 +372,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
         m_sharedJITStubs = makeUnique<SharedJITStubSet>();
+        getBoundFunction(/* isJSFunction */ true);
     }
 #endif // ENABLE(JIT)
 
@@ -673,30 +674,25 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
     return NativeExecutable::create(*this, jitCodeForCallTrampoline(), toTagged(function), jitCodeForConstructTrampoline(), toTagged(constructor), implementationVisibility, name);
 }
 
-NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
+NativeExecutable* VM::getBoundFunction(bool isJSFunction)
 {
     bool slowCase = !isJSFunction;
 
-    auto getOrCreate = [&] (Weak<NativeExecutable>& slot) -> NativeExecutable* {
+    auto getOrCreate = [&](Strong<NativeExecutable>& slot) -> NativeExecutable* {
         if (auto* cached = slot.get())
             return cached;
         NativeExecutable* result = getHostFunction(
             slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
             ImplementationVisibility::Private, // Bound function's visibility is private on the stack.
             slowCase ? NoIntrinsic : BoundFunctionCallIntrinsic,
-            canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor, nullptr, String());
-        slot = Weak<NativeExecutable>(result);
+            boundFunctionConstruct, nullptr, String());
+        slot.set(*this, result);
         return result;
     };
 
-    if (slowCase) {
-        if (canConstruct)
-            return getOrCreate(m_slowCanConstructBoundExecutable);
-        return getOrCreate(m_slowBoundExecutable);
-    }
-    if (canConstruct)
-        return getOrCreate(m_fastCanConstructBoundExecutable);
-    return getOrCreate(m_fastBoundExecutable);
+    if (slowCase)
+        return getOrCreate(m_slowCanConstructBoundExecutable);
+    return getOrCreate(m_fastCanConstructBoundExecutable);
 }
 
 NativeExecutable* VM::getRemoteFunction(bool isJSFunction)

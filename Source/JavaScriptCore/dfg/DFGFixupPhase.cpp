@@ -2007,6 +2007,11 @@ private:
             break;
         }
 
+        case FunctionBind: {
+            fixEdge<ObjectUse>(m_graph.child(node, 0));
+            break;
+        }
+
         case SetPrivateBrand: {
             fixEdge<CellUse>(node->child1());
             fixEdge<SymbolUse>(node->child2());
@@ -3016,6 +3021,7 @@ private:
         case FilterSetPrivateBrandStatus:
         case InvalidationPoint:
         case GetWebAssemblyInstanceExports:
+        case NewBoundFunction:
             break;
 #else // not ASSERT_ENABLED
         default:

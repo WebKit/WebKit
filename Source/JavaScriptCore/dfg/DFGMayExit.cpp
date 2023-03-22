@@ -132,6 +132,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewGeneratorFunction:
     case NewAsyncFunction:
     case NewAsyncGeneratorFunction:
+    case NewBoundFunction:
     case NewStringObject:
     case NewInternalFieldObject:
     case NewRegexp:

@@ -543,10 +543,8 @@ public:
     Strong<JSCell> m_sentinelSetBucket;
     Strong<JSCell> m_sentinelMapBucket;
 
-    Weak<NativeExecutable> m_fastBoundExecutable;
-    Weak<NativeExecutable> m_fastCanConstructBoundExecutable;
-    Weak<NativeExecutable> m_slowBoundExecutable;
-    Weak<NativeExecutable> m_slowCanConstructBoundExecutable;
+    Strong<NativeExecutable> m_fastCanConstructBoundExecutable;
+    Strong<NativeExecutable> m_slowCanConstructBoundExecutable;
 
     Weak<NativeExecutable> m_fastRemoteFunctionExecutable;
     Weak<NativeExecutable> m_slowRemoteFunctionExecutable;
@@ -660,7 +658,7 @@ public:
     NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, NativeFunction constructor, const String& name);
     NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
 
-    NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
+    NativeExecutable* getBoundFunction(bool isJSFunction);
     NativeExecutable* getRemoteFunction(bool isJSFunction);
 
     CodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);

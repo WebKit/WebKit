@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 
-    Vector<JSValue, MarkedArgumentBuffer::inlineCapacity> boxedArgs;
+    Vector<EncodedJSValue, MarkedArgumentBuffer::inlineCapacity> boxedArgs;
     JSWebAssemblyInstance* jsInstance = wasmFunction->instance();
     Wasm::Instance* wasmInstance = &jsInstance->instance();
 
@@ -83,10 +83,10 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
         uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->argument(argIndex));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        boxedArgs.append(JSValue::decode(value));
+        boxedArgs.append(value);
     }
 
-    JSValue* args = boxedArgs.data();
+    EncodedJSValue* args = boxedArgs.data();
     int argCount = boxedArgs.size() + 1;
 
     // Note: we specifically use the WebAssemblyFunction as the callee to begin with in the ProtoCallFrame.

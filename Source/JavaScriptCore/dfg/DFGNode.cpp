@@ -265,6 +265,12 @@ void Node::convertToNewArrayWithSize()
     m_opInfo = indexingType;
 }
 
+void Node::convertToNewBoundFunction(FrozenValue* executable)
+{
+    m_op = NewBoundFunction;
+    m_opInfo = executable;
+}
+
 void Node::convertToDirectCall(FrozenValue* executable)
 {
     NodeType newOp = LastNodeType;

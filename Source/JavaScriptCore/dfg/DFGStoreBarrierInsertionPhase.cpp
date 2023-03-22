@@ -389,6 +389,7 @@ private:
             case NewGeneratorFunction:
             case NewAsyncGeneratorFunction:
             case NewAsyncFunction:
+            case NewBoundFunction:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
                 // Nodes that allocate get to set their epoch because for those nodes we know
