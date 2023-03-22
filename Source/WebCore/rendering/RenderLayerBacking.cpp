@@ -1141,10 +1141,14 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
         auto& videoElement = downcast<HTMLVideoElement>(*renderer().element());
-        if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::PlatformLayer)
-            m_graphicsLayer->setContentsToPlatformLayer(videoElement.platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
-        else
+        if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::LayerHostingContextId
+#if ENABLE(GPU_PROCESS)
+            && videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess()
+#endif
+            )
             m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
+        else
+            m_graphicsLayer->setContentsToPlatformLayer(videoElement.platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();
     }
 #endif
