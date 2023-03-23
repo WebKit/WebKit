@@ -412,8 +412,7 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
     }
 #endif
 
-    auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
-    m_acceleratedAnimationsPendingRunningStateChange.clear();
+    auto acceleratedAnimationsPendingRunningStateChange = std::exchange(m_acceleratedAnimationsPendingRunningStateChange, { });
 
     bool hasForcedLayout = false;
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
