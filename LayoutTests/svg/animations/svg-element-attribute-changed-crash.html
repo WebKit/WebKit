@@ -1,0 +1,17 @@
+<script>
+  onload = async () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let svg0 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    let svgAnimatedLength = svg0.width;
+    let observation = internals.observeGC(svgAnimatedLength)
+    let baseVal = svgAnimatedLength.baseVal;
+    let clipPath0 = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+    svg0.append(clipPath0);
+    clipPath0.append('');
+    await undefined;
+    GCController.collect();
+    baseVal.value = 0;
+    document.body.innerHTML = 'PASS if no crash';
+  };
+</script>
