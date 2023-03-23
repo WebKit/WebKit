@@ -57,13 +57,6 @@ private:
     void reference(DOMCacheIdentifier) final;
     void dereference(DOMCacheIdentifier) final;
 
-    void doOpen(uint64_t requestIdentifier, const ClientOrigin&, const String& cacheName);
-    void doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier);
-    void doRetrieveCaches(uint64_t requestIdentifier, const ClientOrigin&, uint64_t updateCounter);
-    void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const URL&);
-    void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&);
-    void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&);
-
     void openCompleted(uint64_t requestIdentifier, const DOMCacheEngine::CacheIdentifierOrError&);
     void removeCompleted(uint64_t requestIdentifier, const DOMCacheEngine::RemoveCacheIdentifierOrError&);
     void retrieveCachesCompleted(uint64_t requestIdentifier, DOMCacheEngine::CacheInfosOrError&&);
