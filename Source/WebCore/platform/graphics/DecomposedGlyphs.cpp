@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,22 +39,16 @@ Ref<DecomposedGlyphs> DecomposedGlyphs::create(PositionedGlyphs&& positionedGlyp
 }
 
 DecomposedGlyphs::DecomposedGlyphs(const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
-    : m_positionedGlyphs({ glyphs, count }, { advances, count }, localAnchor, mode)
-    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+    : RenderingResource(renderingResourceIdentifier)
+    , m_positionedGlyphs({ glyphs, count }, { advances, count }, localAnchor, mode)
 {
 }
 
 DecomposedGlyphs::DecomposedGlyphs(PositionedGlyphs&& positionedGlyphs, RenderingResourceIdentifier renderingResourceIdentifier)
-    : m_positionedGlyphs(WTFMove(positionedGlyphs))
-    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+    : RenderingResource(renderingResourceIdentifier)
+    , m_positionedGlyphs(WTFMove(positionedGlyphs))
 {
     ASSERT(m_positionedGlyphs.glyphs.size() == m_positionedGlyphs.advances.size());
-}
-
-DecomposedGlyphs::~DecomposedGlyphs()
-{
-    for (auto observer : m_observers)
-        observer->releaseDecomposedGlyphs(m_renderingResourceIdentifier);
 }
 
 } // namespace WebCore

@@ -31,31 +31,16 @@
 #include "ImagePaintingOptions.h"
 #include "IntSize.h"
 #include "PlatformImage.h"
-#include "RenderingResourceIdentifier.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include "RenderingResource.h"
 
 namespace WebCore {
 
 class GraphicsContext;
 
-class NativeImage final
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NativeImage> {
+class NativeImage final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Observer {
-    public:
-        virtual ~Observer() = default;
-        virtual void releaseNativeImage(RenderingResourceIdentifier) = 0;
-    protected:
-        Observer() = default;
-    };
-
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
-
-    WEBCORE_EXPORT ~NativeImage();
 
     WEBCORE_EXPORT void setPlatformImage(PlatformImagePtr&&);
     const PlatformImagePtr& platformImage() const { return m_platformImage; }
@@ -69,18 +54,12 @@ public:
 
     void draw(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
-    void addObserver(Observer& observer) { m_observers.add(&observer); }
-    void removeObserver(Observer& observer) { m_observers.remove(&observer); }
-    
     void clearSubimages();
 
 private:
-    NativeImage(PlatformImagePtr&&);
     NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier);
 
     PlatformImagePtr m_platformImage;
-    HashSet<Observer*> m_observers;
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
 } // namespace WebCore

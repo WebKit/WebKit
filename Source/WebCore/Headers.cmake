@@ -1776,6 +1776,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PlatformVideoTransferCharacteristics.h
     platform/graphics/PositionedGlyphs.h
     platform/graphics/Region.h
+    platform/graphics/RenderingResource.h
     platform/graphics/RenderingResourceIdentifier.h
     platform/graphics/RenderingMode.h
     platform/graphics/RoundedRect.h

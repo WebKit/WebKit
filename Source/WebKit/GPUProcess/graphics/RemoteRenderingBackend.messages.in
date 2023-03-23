@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CacheFont(Ref<WebCore::Font> font) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     ReleaseAllResources()
-    ReleaseResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 
 #if PLATFORM(COCOA)
     PrepareBuffersForDisplay(Vector<WebKit::PrepareBackingStoreBuffersInputData> swapBuffersInput) -> (Vector<WebKit::PrepareBackingStoreBuffersOutputData> swapBuffersOutput) Synchronous NotStreamEncodable NotStreamEncodableReply

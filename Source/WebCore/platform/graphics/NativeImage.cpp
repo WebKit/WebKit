@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NativeImage.h"
 
-#include <wtf/NeverDestroyed.h>
-
 namespace WebCore {
 
 RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -38,16 +36,10 @@ RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, Render
 }
 
 NativeImage::NativeImage(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
-    : m_platformImage(WTFMove(platformImage))
-    , m_renderingResourceIdentifier(renderingResourceIdentifier)
+    : RenderingResource(renderingResourceIdentifier)
+    , m_platformImage(WTFMove(platformImage))
 {
     ASSERT(m_platformImage);
-}
-
-NativeImage::~NativeImage()
-{
-    for (auto observer : m_observers)
-        observer->releaseNativeImage(m_renderingResourceIdentifier);
 }
 
 void NativeImage::setPlatformImage(PlatformImagePtr&& platformImage)

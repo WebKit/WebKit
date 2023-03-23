@@ -62,7 +62,7 @@ struct MockStreamTestMessageWithAsyncReply1 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
-    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseResource; }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseRenderingResource; }
     // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }

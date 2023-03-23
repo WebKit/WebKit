@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,7 @@ public:
     void cacheFont(Ref<WebCore::Font>&&);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void releaseAllRemoteResources();
-    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
     void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
 
     struct BufferSet {
