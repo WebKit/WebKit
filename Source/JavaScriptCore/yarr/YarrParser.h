@@ -1124,7 +1124,7 @@ private:
             if (!atEndOfPattern()) {
                 UChar32 nextCh = peek();
                 if (ch == nextCh && strchr("&!#$%*+,.:;<=>?@^`~", ch)) {
-                    m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                    m_errorCode = ErrorCode::InvalidClassSetOperation;
                     return -1;
                 }
             }
@@ -1252,6 +1252,10 @@ private:
                 consume();
                 if (peek() == '-') {
                     consume();
+                    if (peek() == '-') {
+                        m_errorCode = ErrorCode::InvalidClassSetCharacter;
+                        return;
+                    }
                     classSetConstructor.setSubtractOp();
                     break;
                 }
@@ -1266,7 +1270,7 @@ private:
                 if (peek() == '&') {
                     consume();
                     if (peek() == '&') {
-                        m_errorCode = ErrorCode::InvalidClassSetOperation;
+                        m_errorCode = ErrorCode::InvalidClassSetCharacter;
                         return;
                     }
                     classSetConstructor.setIntersectionOp();
