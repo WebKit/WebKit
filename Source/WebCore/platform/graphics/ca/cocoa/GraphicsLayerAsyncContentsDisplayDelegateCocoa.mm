@@ -47,7 +47,6 @@ bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer&
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_layer setFrame:CGRectMake(0, 0, native->size().width(), native->size().height())];
     [m_layer setContents:(__bridge id)native->platformImage().get()];
 
     [CATransaction commit];
