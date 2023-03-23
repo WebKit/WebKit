@@ -62,8 +62,8 @@ WK_APPLE_PUSH_SERVICE_LDFLAGS_macosx = $(WK_APPLE_PUSH_SERVICE_LDFLAGS$(WK_MACOS
 WK_APPLE_PUSH_SERVICE_LDFLAGS_MACOS_SINCE_1300 = -framework ApplePushService;
 
 WK_ARKIT_LDFLAGS = $(WK_ARKIT_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_ARKIT_LDFLAGS_iphoneos = -weak_framework ARKit;
-WK_ARKIT_LDFLAGS_iphonesimulator = -weak_framework ARKit;
+WK_ARKIT_LDFLAGS_iphoneos = -Wl,-upward_framework,ARKit;
+WK_ARKIT_LDFLAGS_iphonesimulator = -Wl,-upward_framework,ARKit;
 
 WK_BACKBOARD_SERVICES_LDFLAGS = $(WK_BACKBOARD_SERVICES_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_BACKBOARD_SERVICES_LDFLAGS_iphoneos = -framework BackBoardServices;
