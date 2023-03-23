@@ -45,7 +45,6 @@ public:
 
     const AnimationCollection& relevantAnimations() const { return m_animations; }
 
-    void forgetAnimation(WebAnimation*);
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 
@@ -55,7 +54,6 @@ public:
 protected:
     AnimationTimeline();
 
-    Vector<WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData>> m_allAnimations;
     AnimationCollection m_animations;
 
 private:

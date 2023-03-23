@@ -283,38 +283,39 @@ void DocumentTimeline::removeReplacedAnimations()
 {
     // https://drafts.csswg.org/web-animations/#removing-replaced-animations
 
-    Vector<RefPtr<WebAnimation>> animationsToRemove;
+    Vector<Ref<WebAnimation>> animationsToRemove;
 
     // When asked to remove replaced animations for a Document, doc, then for every animation, animation
-    for (auto& animation : m_allAnimations) {
-        if (animation && animationCanBeRemoved(*animation)) {
-            // perform the following steps:
-            // 1. Set animation's replace state to removed.
-            animation->setReplaceState(WebAnimation::ReplaceState::Removed);
-            // 2. Create an AnimationPlaybackEvent, removeEvent.
-            // 3. Set removeEvent's type attribute to remove.
-            // 4. Set removeEvent's currentTime attribute to the current time of animation.
-            // 5. Set removeEvent's timelineTime attribute to the current time of the timeline with which animation is associated.
-            // 6. If animation has a document for timing, then append removeEvent to its document for timing's pending animation
-            //    event queue along with its target, animation. For the scheduled event time, use the result of applying the procedure
-            //    to convert timeline time to origin-relative time to the current time of the timeline with which animation is associated.
-            //    Otherwise, queue a task to dispatch removeEvent at animation. The task source for this task is the DOM manipulation task source.
-            auto scheduledTime = [&]() -> std::optional<Seconds> {
-                if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(animation->timeline())) {
-                    if (auto currentTime = documentTimeline->currentTime())
-                        return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
-                }
-                return std::nullopt;
-            }();
-            animation->enqueueAnimationPlaybackEvent(eventNames().removeEvent, animation->currentTime(), scheduledTime);
+    for (auto& animation : m_animations) {
+        if (!animationCanBeRemoved(animation))
+            continue;
 
-            animationsToRemove.append(animation.get());
-        }
+        // perform the following steps:
+        // 1. Set animation's replace state to removed.
+        animation->setReplaceState(WebAnimation::ReplaceState::Removed);
+        // 2. Create an AnimationPlaybackEvent, removeEvent.
+        // 3. Set removeEvent's type attribute to remove.
+        // 4. Set removeEvent's currentTime attribute to the current time of animation.
+        // 5. Set removeEvent's timelineTime attribute to the current time of the timeline with which animation is associated.
+        // 6. If animation has a document for timing, then append removeEvent to its document for timing's pending animation
+        //    event queue along with its target, animation. For the scheduled event time, use the result of applying the procedure
+        //    to convert timeline time to origin-relative time to the current time of the timeline with which animation is associated.
+        //    Otherwise, queue a task to dispatch removeEvent at animation. The task source for this task is the DOM manipulation task source.
+        auto scheduledTime = [&]() -> std::optional<Seconds> {
+            if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(animation->timeline())) {
+                if (auto currentTime = documentTimeline->currentTime())
+                    return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
+            }
+            return std::nullopt;
+        }();
+        animation->enqueueAnimationPlaybackEvent(eventNames().removeEvent, animation->currentTime(), scheduledTime);
+
+        animationsToRemove.append(animation.get());
     }
 
     for (auto& animation : animationsToRemove) {
         if (auto* timeline = animation->timeline())
-            timeline->removeAnimation(*animation);
+            timeline->removeAnimation(animation);
     }
 }
 

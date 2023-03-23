@@ -113,9 +113,6 @@ WebAnimation::~WebAnimation()
 {
     InspectorInstrumentation::willDestroyWebAnimation(*this);
 
-    if (m_timeline)
-        m_timeline->forgetAnimation(this);
-
     ASSERT(instances().contains(this));
     instances().remove(this);
 }
