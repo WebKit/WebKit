@@ -705,28 +705,6 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 
         if (element->parentNode() && element->parentNode()->hasRichlyEditableStyle())
             removeNodeAttribute(*element, contenteditableAttr);
-
-        // WebKit used to not add display: inline and float: none on copy.
-        // Keep this code around for backward compatibility
-        if (isLegacyAppleStyleSpan(element)) {
-            if (!element->firstChild()) {
-                insertedNodes.willRemoveNodePreservingChildren(element);
-                removeNodePreservingChildren(*element);
-                continue;
-            }
-            // There are other styles that style rules can give to style spans,
-            // but these are the two important ones because they'll prevent
-            // inserted content from appearing in the right paragraph.
-            // FIXME: Hyatt is concerned that selectively using display:inline will give inconsistent
-            // results. We already know one issue because td elements ignore their display property
-            // in quirks mode (which Mail.app is always in). We should look for an alternative.
-
-            // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
-            if (isBlock(element))
-                element->cssomStyle().setPropertyInternal(CSSPropertyDisplay, "inline"_s, false);
-            if (element->renderer() && element->renderer()->style().isFloating())
-                element->cssomStyle().setPropertyInternal(CSSPropertyFloat, noneAtom(), false);
-        }
     }
 }
 
@@ -916,19 +894,14 @@ VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent() cons
 
 // Remove style spans before insertion if they are unnecessary.  It's faster because we'll 
 // avoid doing a layout.
-static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const Position& insertionPos)
+static void handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const Position& insertionPos)
 {
     RefPtr topNode { fragment.firstChild() };
 
     // Handling the case where we are doing Paste as Quotation or pasting into quoted content is more complicated (see handleStyleSpans)
     // and doesn't receive the optimization.
     if (isMailPasteAsQuotationNode(topNode.get()) || enclosingNodeOfType(firstPositionInOrBeforeNode(topNode.get()), isMailBlockquote, CanCrossEditingBoundary))
-        return false;
-
-    // Either there are no style spans in the fragment or a WebKit client has added content to the fragment
-    // before inserting it.  Look for and handle style spans after insertion.
-    if (!isLegacyAppleStyleSpan(topNode.get()))
-        return false;
+        return;
 
     auto& wrappingStyleSpan = downcast<HTMLElement>(*topNode);
     auto styleAtInsertionPos = EditingStyle::create(insertionPos.parentAnchoredEquivalent());
@@ -937,67 +910,8 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
     // FIXME: This string comparison is a naive way of comparing two styles.
     // We should be taking the diff and check that the diff is empty.
     if (styleText != wrappingStyleSpan.getAttribute(styleAttr))
-        return false;
-
-    fragment.removeNodePreservingChildren(wrappingStyleSpan);
-    return true;
-}
-
-// At copy time, WebKit wraps copied content in a span that contains the source document's 
-// default styles.  If the copied Range inherits any other styles from its ancestors, we put 
-// those styles on a second span.
-// This function removes redundant styles from those spans, and removes the spans if all their 
-// styles are redundant. 
-// We should remove the Apple-style-span class when we're done, see <rdar://problem/5685600>.
-// We should remove styles from spans that are overridden by all of their children, either here
-// or at copy time.
-void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
-{
-    RefPtr<HTMLElement> wrappingStyleSpan;
-    // The style span that contains the source document's default style should be at
-    // the top of the fragment, but Mail sometimes adds a wrapper (for Paste As Quotation),
-    // so search for the top level style span instead of assuming it's at the top.
-    for (RefPtr node = insertedNodes.firstNodeInserted(); node; node = NodeTraversal::next(*node)) {
-        if (isLegacyAppleStyleSpan(node.get())) {
-            wrappingStyleSpan = static_pointer_cast<HTMLElement>(WTFMove(node));
-            break;
-        }
-    }
-    
-    // There might not be any style spans if we're pasting from another application or if 
-    // we are here because of a document.execCommand("InsertHTML", ...) call.
-    if (!wrappingStyleSpan)
         return;
-
-    auto style = EditingStyle::create(wrappingStyleSpan->inlineStyle());
-    RefPtr context { wrappingStyleSpan->parentNode() };
-
-    // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
-    // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
-    RefPtr<Node> blockquoteNode;
-    if (isMailPasteAsQuotationNode(context.get()))
-        blockquoteNode = context;
-    else
-        blockquoteNode = enclosingNodeOfType(firstPositionInNode(context.get()), isMailBlockquote, CanCrossEditingBoundary);
-
-    if (blockquoteNode)
-        context = document().documentElement();
-
-    // This operation requires that only editing styles to be removed from sourceDocumentStyle.
-    style->prepareToApplyAt(firstPositionInNode(context.get()));
-
-    // Remove block properties in the span's style. This prevents properties that probably have no effect 
-    // currently from affecting blocks later if the style is cloned for a new block element during a future 
-    // editing operation.
-    // FIXME: They *can* have an effect currently if blocks beneath the style span aren't individually marked
-    // with block styles by the editing engine used to style them.  WebKit doesn't do this, but others might.
-    style->removeBlockProperties();
-
-    if (style->isEmpty() || !wrappingStyleSpan->firstChild()) {
-        insertedNodes.willRemoveNodePreservingChildren(wrappingStyleSpan.get());
-        removeNodePreservingChildren(*wrappingStyleSpan);
-    } else
-        setNodeAttribute(*wrappingStyleSpan, styleAttr, style->style()->asTextAtom());
+    fragment.removeNodePreservingChildren(wrappingStyleSpan);
 }
 
 void ReplaceSelectionCommand::mergeEndIfNeeded()
@@ -1256,7 +1170,7 @@ void ReplaceSelectionCommand::doApply()
     insertionPos = positionOutsideTabSpan(insertionPos);
 
     bool hasBlankLinesBetweenParagraphs = hasBlankLineBetweenParagraphs(insertionPos);
-    bool handledStyleSpans = handleStyleSpansBeforeInsertion(fragment, insertionPos);
+    handleStyleSpansBeforeInsertion(fragment, insertionPos);
     bool needsColorTransformed = fragmentNeedsColorTransformed(fragment, insertionPos);
 
     // We're finished if there is nothing to add.
@@ -1310,7 +1224,7 @@ void ReplaceSelectionCommand::doApply()
         fragment.removeNode(*refNode);
 
     RefPtr blockStart { enclosingBlock(insertionPos.deprecatedNode()) };
-    bool isInsertingIntoList = (isListHTMLElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListHTMLElement(refNode->firstChild())))
+    bool isInsertingIntoList = (isListHTMLElement(refNode.get()) || isListHTMLElement(refNode->firstChild()))
     && blockStart && blockStart->renderer()->isListItem();
     if (isInsertingIntoList)
         refNode = insertAsListItems(downcast<HTMLElement>(*refNode), blockStart.get(), insertionPos, insertedNodes);
@@ -1344,9 +1258,6 @@ void ReplaceSelectionCommand::doApply()
     if (insertedNodes.isEmpty())
         return;
     removeUnrenderedTextNodesAtEnds(insertedNodes);
-
-    if (!handledStyleSpans)
-        handleStyleSpans(insertedNodes);
 
     // Mutation events (bug 20161) may have already removed the inserted content
     if (insertedNodes.isEmpty())

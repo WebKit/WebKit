@@ -1130,9 +1130,6 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement& elemen
 
     if (!elementIsSpanOrElementEquivalent && !matchedAttributes)
         return false; // element is not a span, a html element equivalent, or font element.
-    
-    if (element.attributeWithoutSynchronization(HTMLNames::classAttr) == AppleStyleSpanClass)
-        matchedAttributes++;
 
     if (element.hasAttribute(HTMLNames::styleAttr)) {
         if (const auto* style = element.inlineStyle()) {

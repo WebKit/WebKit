@@ -59,28 +59,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static String& styleSpanClassString()
-{
-    static NeverDestroyed<String> styleSpanClassString = String::fromLatin1(AppleStyleSpanClass);
-    return styleSpanClassString;
-}
-
-bool isLegacyAppleStyleSpan(const Node* node)
-{
-    if (!is<HTMLSpanElement>(node))
-        return false;
-
-    return downcast<HTMLSpanElement>(*node).attributeWithoutSynchronization(classAttr) == styleSpanClassString();
-}
-
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
     if (!element.hasAttributes())
         return true;
 
     unsigned matchedAttributes = 0;
-    if (element.attributeWithoutSynchronization(classAttr) == styleSpanClassString())
-        matchedAttributes++;
     if (element.hasAttribute(styleAttr) && (shouldStyleAttributeBeEmpty == AllowNonEmptyStyleAttribute
         || !element.inlineStyle() || element.inlineStyle()->isEmpty()))
         matchedAttributes++;

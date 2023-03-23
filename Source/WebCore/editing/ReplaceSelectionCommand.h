@@ -107,7 +107,6 @@ private:
     void inverseTransformColor(InsertedNodes&);
     void makeInsertedContentRoundTrippableWithHTMLTreeBuilder(InsertedNodes&);
     void moveNodeOutOfAncestor(Node&, Node& ancestor, InsertedNodes&);
-    void handleStyleSpans(InsertedNodes&);
     void handlePasteAsQuotationNode();
     
     VisiblePosition positionAtStartOfInsertedContent() const;

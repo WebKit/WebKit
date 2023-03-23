@@ -37,7 +37,6 @@ class Text;
 constexpr auto WebKitMSOListQuirksStyle = "WebKit-mso-list-quirks-style"_s;
 
 constexpr auto ApplePasteAsQuotation = "Apple-paste-as-quotation"_s;
-constexpr auto AppleStyleSpanClass = "Apple-style-span"_s;
 constexpr auto AppleTabSpanClass = "Apple-tab-span"_s;
 
 // Controls whether a special BR which is removed upon paste in ReplaceSelectionCommand needs to be inserted

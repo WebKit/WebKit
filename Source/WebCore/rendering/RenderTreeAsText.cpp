@@ -134,22 +134,6 @@ static String getTagName(Node* n)
     return n->nodeName();
 }
 
-static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
-{
-    if (!is<HTMLSpanElement>(node))
-        return false;
-
-    const HTMLElement& element = downcast<HTMLSpanElement>(*node);
-    if (element.getAttribute(classAttr) != "Apple-style-span"_s)
-        return false;
-
-    if (!node->hasChildNodes())
-        return true;
-
-    const StyleProperties* inlineStyleDecl = element.inlineStyle();
-    return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
-}
-
 String quoteAndEscapeNonPrintables(StringView s)
 {
     StringBuilder result;
@@ -238,13 +222,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // FIXME: Temporary hack to make tests pass by simulating the old generated content output.
         if (o.isPseudoElement() || (o.parent() && o.parent()->isPseudoElement()))
             tagName = emptyAtom();
-        if (!tagName.isEmpty()) {
+        if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
-            // flag empty or unstyled AppleStyleSpan because we never
-            // want to leave them in the DOM
-            if (isEmptyOrUnstyledAppleStyleSpan(o.node()))
-                ts << " *empty or unstyled AppleStyleSpan*";
-        }
     }
     
     RenderBlock* cb = o.containingBlock();
