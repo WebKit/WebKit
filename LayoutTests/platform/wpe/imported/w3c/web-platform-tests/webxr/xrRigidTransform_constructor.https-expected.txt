@@ -1,4 +1,0 @@
-
-PASS XRRigidTransform constructor works - webgl
-PASS XRRigidTransform constructor works - webgl2
-

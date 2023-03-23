@@ -1,4 +1,0 @@
-
-PASS Navigator.xr meets [SameObject] requirement - webgl
-PASS Navigator.xr meets [SameObject] requirement - webgl2
-

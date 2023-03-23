@@ -1,5 +1,0 @@
-
-
-PASS Feature policy "autoplay" can be enabled in same-origin iframe using allow="autoplay" attribute
-PASS Feature policy "autoplay" can be enabled in cross-origin iframe using allow="autoplay" attribute
-

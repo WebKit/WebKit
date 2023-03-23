@@ -1,4 +1,0 @@
-
-PASS RequestAnimationFrame resolves with good data - webgl
-PASS RequestAnimationFrame resolves with good data - webgl2
-
