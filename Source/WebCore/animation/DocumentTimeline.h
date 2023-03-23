@@ -62,7 +62,7 @@ public:
 
     void enqueueAnimationEvent(AnimationEventBase&);
     
-    enum class ShouldUpdateAnimationsAndSendEvents : uint8_t { Yes, No };
+    enum class ShouldUpdateAnimationsAndSendEvents : bool { No, Yes };
     ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents();
     void removeReplacedAnimations();
     AnimationEvents prepareForPendingAnimationEventsDispatch();
