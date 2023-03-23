@@ -48,8 +48,6 @@ public:
     static Ref<DocumentTimeline> create(Document&);
     static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);
 
-    bool isDocumentTimeline() const final { return true; }
-
     Document* document() const { return m_document.get(); }
 
     std::optional<Seconds> currentTime() override;
