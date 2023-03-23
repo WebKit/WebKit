@@ -52,7 +52,7 @@ public:
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
 
 protected:
-    explicit AnimationTimeline();
+    AnimationTimeline();
 
     Vector<WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData>> m_allAnimations;
     AnimationCollection m_animations;

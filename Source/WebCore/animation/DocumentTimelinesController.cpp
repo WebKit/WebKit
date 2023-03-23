@@ -95,8 +95,6 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
 
     LOG_WITH_STREAM(Animations, stream << "DocumentTimelinesController::updateAnimationsAndSendEvents for time " << timestamp);
 
-    ASSERT(!m_timelines.hasNullReferences());
-
     // We need to copy m_timelines before iterating over its members since the steps in this procedure may mutate m_timelines.
     auto protectedTimelines = copyToVectorOf<Ref<DocumentTimeline>>(m_timelines);
 

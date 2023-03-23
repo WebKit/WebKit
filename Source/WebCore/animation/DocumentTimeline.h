@@ -47,7 +47,6 @@ class DocumentTimeline final : public AnimationTimeline
 public:
     static Ref<DocumentTimeline> create(Document&);
     static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);
-    ~DocumentTimeline();
 
     bool isDocumentTimeline() const final { return true; }
 

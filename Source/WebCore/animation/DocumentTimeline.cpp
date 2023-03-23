@@ -65,19 +65,11 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, DocumentTimel
 }
 
 DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
-    : AnimationTimeline()
-    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
+    : m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
     , m_document(document)
     , m_originTime(originTime)
 {
-    if (auto* controller = this->controller())
-        controller->addTimeline(*this);
-}
-
-DocumentTimeline::~DocumentTimeline()
-{
-    if (auto* controller = this->controller())
-        controller->removeTimeline(*this);
+    document.ensureTimelinesController().addTimeline(*this);
 }
 
 DocumentTimelinesController* DocumentTimeline::controller() const
