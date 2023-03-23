@@ -35,7 +35,7 @@ namespace WebCore {
 class FrameRateAligner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FrameRateAligner();
+    FrameRateAligner();
     ~FrameRateAligner();
 
     void beginUpdate(ReducedResolutionSeconds, std::optional<FramesPerSecond>);

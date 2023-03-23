@@ -44,7 +44,6 @@ namespace WebCore {
 
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
     : m_document(document)
-    , m_frameRateAligner()
 {
     if (auto* page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
@@ -250,11 +249,6 @@ void DocumentTimelinesController::resumeAnimations()
 
     for (auto& timeline : m_timelines)
         timeline.resumeAnimations();
-}
-
-bool DocumentTimelinesController::animationsAreSuspended() const
-{
-    return m_isSuspended;
 }
 
 ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const
