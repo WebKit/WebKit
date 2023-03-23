@@ -3590,7 +3590,6 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
 ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, ImageBitmap& source)
 {
     const char* functionName = texImageFunctionName(functionID);
-
     auto validationResult = validateImageBitmap(functionName, source);
     if (validationResult.hasException())
         return validationResult.releaseException();
@@ -3789,6 +3788,32 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!image)
         return { };
     texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
+    return { };
+}
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS)
+ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, OffscreenCanvas& source)
+{
+    const char* functionName = texImageFunctionName(functionID);
+
+    auto validationResult = validateOffscreenCanvas(functionName, source);
+    if (validationResult.hasException())
+        return validationResult.releaseException();
+    if (!validationResult.returnValue())
+        return { };
+    auto texture = validateTexImageBinding(functionID, target);
+    if (!texture)
+        return { };
+    IntRect sourceImageRect = inputSourceImageRect;
+    if (sourceImageRect == sentinelEmptyRect()) {
+        // Simply measure the input for WebGL 1.0, which doesn't support sub-rectangle selection.
+        sourceImageRect = texImageSourceSize(source);
+    }
+    if (!validateTexFunc(functionID, SourceOffscreenCanvas, target, level, internalformat, sourceImageRect.width(), sourceImageRect.height(), depth, border, format, type, xoffset, yoffset, zoffset))
+        return { };
+
+    texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, source.copiedImage(), GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     return { };
 }
 #endif
@@ -5536,7 +5561,6 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(const cha
 }
 
 #if ENABLE(VIDEO)
-
 ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(const char* functionName, HTMLVideoElement& video)
 {
     if (!video.videoWidth() || !video.videoHeight()) {
@@ -5547,7 +5571,19 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(const char
         return Exception { SecurityError };
     return true;
 }
+#endif
 
+#if ENABLE(OFFSCREEN_CANVAS)
+ExceptionOr<bool> WebGLRenderingContextBase::validateOffscreenCanvas(const char* functionName, OffscreenCanvas& canvas)
+{
+    if (!canvas.buffer()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no canvas");
+        return false;
+    }
+    if (taintsOrigin(&canvas))
+        return Exception { SecurityError };
+    return true;
+}
 #endif
 
 ExceptionOr<bool> WebGLRenderingContextBase::validateImageBitmap(const char* functionName, ImageBitmap& bitmap)
