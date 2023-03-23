@@ -1357,11 +1357,13 @@ void PDFPlugin::updateScrollbars()
     
     if (m_verticalScrollbarLayer) {
         m_verticalScrollbarLayer.get().frame = verticalScrollbar()->frameRect();
+        [m_verticalScrollbarLayer setContents:nil];
         [m_verticalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_horizontalScrollbarLayer) {
         m_horizontalScrollbarLayer.get().frame = horizontalScrollbar()->frameRect();
+        [m_horizontalScrollbarLayer setContents:nil];
         [m_horizontalScrollbarLayer setNeedsDisplay];
     }
     
