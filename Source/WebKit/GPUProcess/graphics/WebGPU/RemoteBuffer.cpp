@@ -97,11 +97,6 @@ void RemoteBuffer::destroy()
     m_backing->destroy();
 }
 
-void RemoteBuffer::destruct()
-{
-    m_objectHeap.removeObject(m_identifier);
-}
-
 void RemoteBuffer::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));

@@ -73,7 +73,6 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void destroy();
-    void destruct();
 
     void setLabel(String&&);
 

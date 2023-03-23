@@ -24,7 +24,6 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderPipeline NotRefCounted Stream {
-    void Destruct()
     void GetBindGroupLayout(uint32_t index, WebKit::WebGPUIdentifier identifier);
     void SetLabel(String label)
 }

@@ -24,7 +24,6 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteCommandBuffer NotRefCounted Stream {
-    void Destruct()
     void SetLabel(String label)
 }
 

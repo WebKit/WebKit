@@ -557,7 +557,7 @@ RefPtr<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
     auto bindGroupLayout = m_device->createBindGroupLayout(bindGroupLayoutDescriptor);
     m_cachedBindGroupLayouts.add(groupIndex + 1, bindGroupLayout);
 
-    return WebGPU::releaseToAPI(WTFMove(bindGroupLayout));
+    return bindGroupLayout.ptr();
 #else
     UNUSED_PARAM(groupIndex);
     // FIXME: Return an invalid object instead of nullptr.

@@ -102,7 +102,6 @@ private:
         const WebGPU::Extent3D& copySize);
 
     void setLabel(String&&);
-    void destruct();
 
     Ref<PAL::WebGPU::Queue> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

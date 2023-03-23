@@ -42,8 +42,6 @@ RemoteCommandBufferProxy::RemoteCommandBufferProxy(RemoteDeviceProxy& parent, Co
 
 RemoteCommandBufferProxy::~RemoteCommandBufferProxy()
 {
-    auto sendResult = send(Messages::RemoteCommandBuffer::Destruct());
-    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteCommandBufferProxy::setLabelInternal(const String& label)

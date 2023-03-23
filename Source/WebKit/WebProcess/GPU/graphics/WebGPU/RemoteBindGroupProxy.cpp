@@ -42,8 +42,6 @@ RemoteBindGroupProxy::RemoteBindGroupProxy(RemoteDeviceProxy& parent, ConvertToB
 
 RemoteBindGroupProxy::~RemoteBindGroupProxy()
 {
-    auto sendResult = send(Messages::RemoteBindGroup::Destruct());
-    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteBindGroupProxy::setLabelInternal(const String& label)

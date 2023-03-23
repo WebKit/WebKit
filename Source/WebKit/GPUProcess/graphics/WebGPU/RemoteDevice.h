@@ -92,7 +92,6 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void destroy();
-    void destruct();
 
     void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);

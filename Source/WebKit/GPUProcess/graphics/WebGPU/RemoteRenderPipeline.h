@@ -75,7 +75,6 @@ private:
     void getBindGroupLayout(uint32_t index, WebGPUIdentifier);
 
     void setLabel(String&&);
-    void destruct();
 
     Ref<PAL::WebGPU::RenderPipeline> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

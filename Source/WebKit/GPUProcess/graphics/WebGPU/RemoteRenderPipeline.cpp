@@ -48,11 +48,6 @@ RemoteRenderPipeline::RemoteRenderPipeline(PAL::WebGPU::RenderPipeline& renderPi
 
 RemoteRenderPipeline::~RemoteRenderPipeline() = default;
 
-void RemoteRenderPipeline::destruct()
-{
-    m_objectHeap.removeObject(m_identifier);
-}
-
 void RemoteRenderPipeline::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderPipeline::messageReceiverName(), m_identifier.toUInt64());

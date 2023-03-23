@@ -42,8 +42,6 @@ RemoteQuerySetProxy::RemoteQuerySetProxy(RemoteDeviceProxy& parent, ConvertToBac
 
 RemoteQuerySetProxy::~RemoteQuerySetProxy()
 {
-    auto sendResult = send(Messages::RemoteQuerySet::Destruct());
-    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQuerySetProxy::destroy()

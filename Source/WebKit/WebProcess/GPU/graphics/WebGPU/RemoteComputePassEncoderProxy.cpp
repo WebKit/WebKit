@@ -42,8 +42,6 @@ RemoteComputePassEncoderProxy::RemoteComputePassEncoderProxy(RemoteCommandEncode
 
 RemoteComputePassEncoderProxy::~RemoteComputePassEncoderProxy()
 {
-    auto sendResult = send(Messages::RemoteComputePassEncoder::Destruct());
-    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteComputePassEncoderProxy::setPipeline(const PAL::WebGPU::ComputePipeline& computePipeline)

@@ -76,7 +76,6 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void requestDevice(const WebGPU::DeviceDescriptor&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&&);
-    void destruct();
 
     Ref<PAL::WebGPU::Adapter> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

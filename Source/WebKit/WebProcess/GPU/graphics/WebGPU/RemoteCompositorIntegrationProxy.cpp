@@ -41,11 +41,7 @@ RemoteCompositorIntegrationProxy::RemoteCompositorIntegrationProxy(RemoteGPUProx
 {
 }
 
-RemoteCompositorIntegrationProxy::~RemoteCompositorIntegrationProxy()
-{
-    auto sendResult = send(Messages::RemoteCompositorIntegration::Destruct());
-    UNUSED_VARIABLE(sendResult);
-}
+RemoteCompositorIntegrationProxy::~RemoteCompositorIntegrationProxy() = default;
 
 #if PLATFORM(COCOA)
 Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(int height, int width)
