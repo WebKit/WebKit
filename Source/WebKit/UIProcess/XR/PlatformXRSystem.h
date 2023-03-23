@@ -56,6 +56,8 @@ public:
 
     void invalidate();
 
+    bool hasActiveSession() const { return !!m_immersiveSessionActivity; }
+
 private:
     static PlatformXRCoordinator* xrCoordinator();
 

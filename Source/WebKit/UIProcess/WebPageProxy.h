@@ -2231,6 +2231,10 @@ public:
     void isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanPlay) { m_allowsAnyAnimationToPlay = anyAnimationCanPlay; }
 #endif
 
+#if ENABLE(WEBXR) && !USE(OPENXR)
+    PlatformXRSystem* xrSystem() const { return m_xrSystem.get(); }
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
