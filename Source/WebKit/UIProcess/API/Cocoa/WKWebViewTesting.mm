@@ -117,6 +117,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (layer.opacity != 1.0)
         ts.dumpProperty("layer opacity", makeString(layer.opacity));
 
+    if (layer.cornerRadius != 0.0)
+        ts.dumpProperty("layer cornerRadius", makeString(layer.cornerRadius));
+    
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "sublayers";

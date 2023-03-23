@@ -3175,22 +3175,22 @@ InteractionRegionInlinePadding:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      default: 3
+      default: 4
     WebKit:
-      default: 3
+      default: 4
     WebCore:
-      default: 3
+      default: 4
 
 InteractionRegionMinimumCornerRadius:
   type: double
   status: embedder
   defaultValue:
     WebKitLegacy:
-      default: 4
+      default: 8
     WebKit:
-      default: 4
+      default: 8
     WebCore:
-      default: 4
+      default: 8
 
 InteractionRegionsEnabled:
   type: bool

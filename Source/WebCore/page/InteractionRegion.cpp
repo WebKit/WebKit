@@ -220,6 +220,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
             bounds.expand(IntSize(borderBoxRect.size() - contentBoxRect.size()));
         }
     }
+    borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
 
     Region boundsRegion;
     boundsRegion.unite(bounds);

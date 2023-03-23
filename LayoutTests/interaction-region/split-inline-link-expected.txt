@@ -14,13 +14,13 @@ short second line.
 
       (interaction regions [
         (interaction
-            (rect (198,-3) width=31 height=25)
+            (rect (197,-4) width=33 height=27)
 )
-        (borderRadius 0.00),
+        (borderRadius 8.00),
         (interaction
-            (rect (-3,17) width=115 height=25)
+            (rect (-4,16) width=117 height=27)
 )
-        (borderRadius 0.00)])
+        (borderRadius 8.00)])
       )
     )
   )
