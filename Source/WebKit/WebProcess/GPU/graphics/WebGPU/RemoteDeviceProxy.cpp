@@ -59,6 +59,8 @@ RemoteDeviceProxy::RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&& featu
 
 RemoteDeviceProxy::~RemoteDeviceProxy()
 {
+    auto sendResult = send(Messages::RemoteDevice::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 Ref<PAL::WebGPU::Queue> RemoteDeviceProxy::queue()

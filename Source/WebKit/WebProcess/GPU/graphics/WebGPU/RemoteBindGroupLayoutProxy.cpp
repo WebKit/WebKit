@@ -42,6 +42,8 @@ RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteDeviceProxy& parent
 
 RemoteBindGroupLayoutProxy::~RemoteBindGroupLayoutProxy()
 {
+    auto sendResult = send(Messages::RemoteBindGroupLayout::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteBindGroupLayoutProxy::setLabelInternal(const String& label)

@@ -43,6 +43,8 @@ RemoteComputePipelineProxy::RemoteComputePipelineProxy(RemoteDeviceProxy& parent
 
 RemoteComputePipelineProxy::~RemoteComputePipelineProxy()
 {
+    auto sendResult = send(Messages::RemoteComputePipeline::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 Ref<PAL::WebGPU::BindGroupLayout> RemoteComputePipelineProxy::getBindGroupLayout(uint32_t index)

@@ -31,6 +31,7 @@ messages -> RemoteCommandEncoder NotRefCounted Stream {
     void CopyTextureToBuffer(WebKit::WebGPU::ImageCopyTexture source, WebKit::WebGPU::ImageCopyBuffer destination, WebKit::WebGPU::Extent3D copySize)
     void CopyTextureToTexture(WebKit::WebGPU::ImageCopyTexture source, WebKit::WebGPU::ImageCopyTexture destination, WebKit::WebGPU::Extent3D copySize)
     void ClearBuffer(WebKit::WebGPUIdentifier buffer, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size)
+    void Destruct()
     void PushDebugGroup(String groupLabel)
     void PopDebugGroup()
     void InsertDebugMarker(String markerLabel)

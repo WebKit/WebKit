@@ -46,6 +46,11 @@ RemoteCompositorIntegration::RemoteCompositorIntegration(PAL::WebGPU::Compositor
 
 RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
 
+void RemoteCompositorIntegration::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteCompositorIntegration::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());

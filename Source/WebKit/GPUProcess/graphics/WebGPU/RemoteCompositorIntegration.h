@@ -77,6 +77,7 @@ private:
     PAL::WebGPU::CompositorIntegration& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void destruct();
 
 #if PLATFORM(COCOA)
     void recreateRenderBuffers(int width, int height, CompletionHandler<void(Vector<MachSendRight>&&)>&&);

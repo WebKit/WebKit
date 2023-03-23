@@ -24,6 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteQueue NotRefCounted Stream {
+    void Destruct()
     void Submit(Vector<WebKit::WebGPUIdentifier> commandBuffers)
     void OnSubmittedWorkDone() -> () Synchronous NotStreamEncodableReply
     void WriteBuffer(WebKit::WebGPUIdentifier identifier, PAL::WebGPU::Size64 bufferOffset, Vector<uint8_t> data)

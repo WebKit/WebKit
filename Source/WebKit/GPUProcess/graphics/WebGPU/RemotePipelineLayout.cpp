@@ -46,6 +46,11 @@ RemotePipelineLayout::RemotePipelineLayout(PAL::WebGPU::PipelineLayout& pipeline
 
 RemotePipelineLayout::~RemotePipelineLayout() = default;
 
+void RemotePipelineLayout::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemotePipelineLayout::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemotePipelineLayout::messageReceiverName(), m_identifier.toUInt64());

@@ -76,6 +76,11 @@ void RemoteTexture::destroy()
     m_backing->destroy();
 }
 
+void RemoteTexture::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteTexture::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));
