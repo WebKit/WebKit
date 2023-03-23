@@ -144,7 +144,7 @@ list(APPEND WebKitGTK_FAKE_API_HEADERS
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkitdom
 )
 
-list(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM"
 )

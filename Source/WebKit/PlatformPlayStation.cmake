@@ -135,7 +135,7 @@ list(APPEND WebKit_SOURCES
     WebProcess/playstation/WebProcessPlayStation.cpp
 )
 
-list(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/curl"
     "${WEBKIT_DIR}/Platform/IPC/unix"
     "${WEBKIT_DIR}/Platform/classifier"
@@ -201,7 +201,7 @@ if (USE_GRAPHICS_LAYER_WC)
         WebProcess/WebPage/wc/WCTileGrid.cpp
     )
 
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBKIT_DIR}/GPUProcess/graphics/wc"
         "${WEBKIT_DIR}/Shared/wc"
         "${WEBKIT_DIR}/UIProcess/wc"
@@ -220,7 +220,7 @@ if (USE_WPE_BACKEND_PLAYSTATION)
 
         UIProcess/Launcher/playstation/ProcessProviderPlayStation.cpp
     )
-    list(APPEND WebKit_INCLUDE_DIRECTORIES "${WEBKIT_DIR}/UIProcess/Launcher/libwpe")
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES "${WEBKIT_DIR}/UIProcess/Launcher/libwpe")
 endif ()
 
 # PlayStation specific

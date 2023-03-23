@@ -129,7 +129,7 @@ list(APPEND WebKit_SOURCES
     WebProcess/win/WebProcessWin.cpp
 )
 
-list(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/graphics/wc"
     "${WEBKIT_DIR}/NetworkProcess/curl"
     "${WEBKIT_DIR}/Platform/IPC/win"
@@ -193,7 +193,7 @@ if (ENABLE_REMOTE_INSPECTOR)
         UIProcess/Inspector/win/RemoteWebInspectorUIProxyWin.cpp
     )
 
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBKIT_DIR}/UIProcess/socket"
     )
 endif ()
