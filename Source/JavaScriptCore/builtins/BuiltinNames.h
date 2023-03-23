@@ -35,8 +35,8 @@
 namespace JSC {
 
 #define DECLARE_BUILTIN_NAMES_IN_JSC(name) const JSC::Identifier m_##name;
-#define DECLARE_BUILTIN_SYMBOLS_IN_JSC(name) const JSC::Identifier m_##name##Symbol; const JSC::Identifier m_##name##SymbolPrivateIdentifier;
-#define DECLARE_BUILTIN_SYMBOL_ACCESSOR(name) \
+#define DECLARE_BUILTIN_SYMBOLS_IN_JSC(name, flags) const JSC::Identifier m_##name##Symbol; const JSC::Identifier m_##name##SymbolPrivateIdentifier;
+#define DECLARE_BUILTIN_SYMBOL_ACCESSOR(name, flags) \
     const JSC::Identifier& name##Symbol() const { return m_##name##Symbol; }
 #define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR_IN_JSC(name) \
     const JSC::Identifier& name##PublicName() const { return m_##name; } \
@@ -216,7 +216,7 @@ namespace JSC {
 
 
 namespace Symbols {
-#define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##Symbol;
+#define DECLARE_BUILTIN_STATIC_SYMBOLS(name, flags) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##Symbol;
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_STATIC_SYMBOLS)
 #undef DECLARE_BUILTIN_STATIC_SYMBOLS
 

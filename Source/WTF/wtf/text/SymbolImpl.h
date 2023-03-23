@@ -36,15 +36,19 @@ class RegisteredSymbolImpl;
 class SymbolImpl : public UniquedStringImpl {
 public:
     using Flags = unsigned;
-    static constexpr Flags s_flagDefault = 0u;
-    static constexpr Flags s_flagIsNullSymbol = 0b001u;
-    static constexpr Flags s_flagIsRegistered = 0b010u;
-    static constexpr Flags s_flagIsPrivate = 0b100u;
+    static constexpr Flags s_flagDefault             = 0b00000u;
+    static constexpr Flags s_flagIsNullSymbol        = 0b00001u;
+    static constexpr Flags s_flagIsRegistered        = 0b00010u;
+    static constexpr Flags s_flagIsPrivate           = 0b00100u;
+    static constexpr Flags s_flagIsWellKnownSymbol   = 0b01000u;
+    static constexpr Flags s_flagIsInterestingSymbol = 0b10000u;
 
     unsigned hashForSymbol() const { return m_hashForSymbolShiftedWithFlagCount >> s_flagCount; }
     bool isNullSymbol() const { return m_flags & s_flagIsNullSymbol; }
     bool isRegistered() const { return m_flags & s_flagIsRegistered; }
     bool isPrivate() const { return m_flags & s_flagIsPrivate; }
+    bool isWellKnownSymbol() const { return m_flags & s_flagIsWellKnownSymbol; }
+    bool isInterestingSymbol() const { return m_flags & s_flagIsInterestingSymbol; }
 
     SymbolRegistry* symbolRegistry() const;
 

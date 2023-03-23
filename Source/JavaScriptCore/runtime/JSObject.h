@@ -988,6 +988,7 @@ public:
 
     bool mayBePrototype() const;
     void didBecomePrototype();
+    bool mayHaveInterestingSymbols() const;
 
     std::optional<Structure::PropertyHashEntry> findPropertyHashEntry(PropertyName) const;
 

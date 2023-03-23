@@ -31,84 +31,82 @@
 
 namespace JSC {
 
-#if PLATFORM(IOS)
-bool isPokerBros();
-#endif
-
-inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
-{
-    VM& vm = getVM(globalObject);
-#if PLATFORM(IOS)
-    static bool needsOldBuiltinTag = isPokerBros();
-    if (UNLIKELY(needsOldBuiltinTag))
-        return object->className();
-#endif
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    bool objectIsArray = isArray(globalObject, object);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (objectIsArray)
-        return "Array"_s;
-    if (object->isCallable())
-        return "Function"_s;
-    JSType type = object->type();
-    if (TypeInfo::isArgumentsType(type)
-        || type == ErrorInstanceType
-        || type == BooleanObjectType
-        || type == NumberObjectType
-        || type == StringObjectType
-        || type == DerivedStringObjectType
-        || type == JSDateType
-        || type == RegExpObjectType)
-        return object->className();
-    return "Object"_s;
-}
-
-ALWAYS_INLINE JSString* objectPrototypeToStringSlow(JSGlobalObject* globalObject, JSObject* thisObject)
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    ASCIILiteral tag = inferBuiltinTag(globalObject, thisObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    JSString* jsTag = nullptr;
-
-    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::Get);
-    bool hasProperty = thisObject->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (hasProperty) {
-        JSValue tagValue = slot.getValue(globalObject, vm.propertyNames->toStringTagSymbol);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        if (tagValue.isString())
-            jsTag = asString(tagValue);
-    }
-
-    if (!jsTag)
-        jsTag = jsString(vm, AtomStringImpl::add(tag));
-
-    JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    thisObject->structure()->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
-    return jsResult;
-}
-
 ALWAYS_INLINE JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValue)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (thisValue.isUndefined())
-        return vm.smallStrings.undefinedObjectString();
+        return vm.smallStrings.objectUndefinedString();
     if (thisValue.isNull())
-        return vm.smallStrings.nullObjectString();
+        return vm.smallStrings.objectNullString();
+
+    // BigIntPrototype and SymbolPrototype have @@toStringTag.
+    JSString* tag = nullptr;
+    JSObject* startingPoint = nullptr;
+    if (thisValue.isNumber()) {
+        tag = vm.smallStrings.objectNumberString();
+        startingPoint = globalObject->numberPrototype();
+    } else if (thisValue.isString()) {
+        tag = vm.smallStrings.objectStringString();
+        startingPoint = globalObject->stringPrototype();
+    } else if (thisValue.isBoolean()) {
+        tag = vm.smallStrings.objectBooleanString();
+        startingPoint = globalObject->booleanPrototype();
+    } else if (thisValue.isObject()) {
+        startingPoint = asObject(thisValue);
+        switch (startingPoint->type()) {
+        case ArrayType:
+        case DerivedArrayType:
+            tag = vm.smallStrings.objectArrayString();
+            break;
+        case DirectArgumentsType:
+        case ScopedArgumentsType:
+        case ClonedArgumentsType:
+            tag = vm.smallStrings.objectArgumentsString();
+            break;
+        case JSFunctionType:
+        case InternalFunctionType:
+            tag = vm.smallStrings.objectFunctionString();
+            break;
+        case ErrorInstanceType:
+            tag = vm.smallStrings.objectErrorString();
+            break;
+        case JSDateType:
+            tag = vm.smallStrings.objectDateString();
+            break;
+        case RegExpObjectType:
+            tag = vm.smallStrings.objectRegExpString();
+            break;
+        case BooleanObjectType:
+            tag = vm.smallStrings.objectBooleanString();
+            break;
+        case NumberObjectType:
+            tag = vm.smallStrings.objectNumberString();
+            break;
+        case StringObjectType:
+        case DerivedStringObjectType:
+            tag = vm.smallStrings.objectStringString();
+            break;
+        case FinalObjectType:
+            tag = vm.smallStrings.objectObjectString();
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (tag) {
+        if (LIKELY(!startingPoint->mayHaveInterestingSymbols()))
+            return tag;
+    }
 
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Integrity::auditStructureID(thisObject->structureID());
     auto result = thisObject->structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
     if (result)
         return asString(result);
-
     RELEASE_AND_RETURN(scope, objectPrototypeToStringSlow(globalObject, thisObject));
 }
 

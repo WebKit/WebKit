@@ -15347,52 +15347,16 @@ void SpeculativeJIT::compileObjectCreate(Node* node)
 
 void SpeculativeJIT::compileObjectToString(Node* node)
 {
-    switch (node->child1().useKind()) {
-    case UntypedUse: {
-        JSValueOperand argument(this, node->child1());
-        JSValueRegs argumentRegs = argument.jsValueRegs();
+    JSValueOperand argument(this, node->child1());
+    JSValueRegs argumentRegs = argument.jsValueRegs();
 
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        callOperation(operationObjectToStringUntyped, resultGPR, LinkableConstant::globalObject(*this, node), argumentRegs);
-        exceptionCheck();
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationObjectToStringUntyped, resultGPR, LinkableConstant::globalObject(*this, node), argumentRegs);
+    exceptionCheck();
 
-        cellResult(resultGPR, node);
-        break;
-    }
-    case ObjectUse: {
-        SpeculateCellOperand argument(this, node->child1());
-        GPRTemporary result(this);
-
-        GPRReg argumentGPR = argument.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        speculateObject(node->child1(), argumentGPR);
-
-        JumpList slowCases;
-        emitLoadStructure(vm(), argumentGPR, resultGPR);
-        loadPtr(Address(resultGPR, Structure::previousOrRareDataOffset()), resultGPR);
-
-        slowCases.append(branchTestPtr(Zero, resultGPR));
-        slowCases.append(branchIfStructure(resultGPR));
-
-        loadPtr(Address(resultGPR, StructureRareData::offsetOfSpecialPropertyCache()), resultGPR);
-        slowCases.append(branchTestPtr(Zero, resultGPR));
-
-        loadPtr(Address(resultGPR, SpecialPropertyCache::offsetOfCache(CachedSpecialPropertyKey::ToStringTag) + SpecialPropertyCacheEntry::offsetOfValue()), resultGPR);
-        ASSERT(bitwise_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects()) == 1);
-        slowCases.append(branchPtr(BelowOrEqual, resultGPR, TrustedImmPtr(bitwise_cast<void*>(JSCell::seenMultipleCalleeObjects()))));
-
-        addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectToStringObjectSlow, resultGPR, LinkableConstant::globalObject(*this, node), argumentGPR));
-
-        cellResult(resultGPR, node);
-        break;
-    }
-    default:
-        DFG_CRASH(m_graph, node, "Bad UseKind");
-        break;
-    }
+    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileCreateThis(Node* node)

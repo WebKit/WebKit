@@ -485,9 +485,13 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
     checkConsistency();
-    if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
+    if (attributes & PropertyAttribute::DontEnum)
         setIsQuickPropertyAccessAllowedForEnumeration(false);
-    if (propertyName == vm.propertyNames->underscoreProto)
+    if (propertyName.isSymbol()) {
+        setIsQuickPropertyAccessAllowedForEnumeration(false);
+        if (static_cast<SymbolImpl&>(*propertyName.uid()).isInterestingSymbol())
+            setHasInterestingSymbols(true);
+    } else if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
 
     auto rep = propertyName.uid();
