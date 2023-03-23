@@ -44,6 +44,7 @@ namespace Types {
     f(F32, "f32") \
     f(Void, "void") \
     f(Bool, "bool") \
+    f(Sampler, "sampler") \
 
 struct Primitive {
     enum Kind : uint8_t {

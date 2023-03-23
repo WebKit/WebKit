@@ -53,6 +53,7 @@ public:
 
     Type* abstractFloatType() const { return m_abstractFloat; }
     Type* f32Type() const { return m_f32; }
+    Type* samplerType() const { return m_sampler; }
 
     Type* structType(AST::Structure&);
     Type* arrayType(Type*, std::optional<unsigned>);
@@ -96,6 +97,7 @@ private:
     Type* m_i32;
     Type* m_u32;
     Type* m_f32;
+    Type* m_sampler;
 };
 
 } // namespace WGSL
