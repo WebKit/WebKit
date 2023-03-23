@@ -93,6 +93,7 @@ private:
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     WeakPtr<WebCore::MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
+    bool m_ended { false };
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSourcePrivateRemote"; }

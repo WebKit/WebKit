@@ -96,6 +96,15 @@ struct LogArgument<WebCore::MediaSourcePrivate::AddStatus> {
     }
 };
 
+template<> struct EnumTraits<WebCore::MediaSourcePrivate::AddStatus> {
+    using values = EnumValues<
+        WebCore::MediaSourcePrivate::AddStatus,
+        WebCore::MediaSourcePrivate::AddStatus::Ok,
+        WebCore::MediaSourcePrivate::AddStatus::NotSupported,
+        WebCore::MediaSourcePrivate::AddStatus::ReachedIdLimit
+    >;
+};
+
 template <>
 struct LogArgument<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
     static String toString(const WebCore::MediaSourcePrivate::EndOfStreamStatus status)
@@ -104,12 +113,12 @@ struct LogArgument<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
     }
 };
 
-template<> struct EnumTraits<WebCore::MediaSourcePrivate::AddStatus> {
+template<> struct EnumTraits<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
     using values = EnumValues<
-        WebCore::MediaSourcePrivate::AddStatus,
-        WebCore::MediaSourcePrivate::AddStatus::Ok,
-        WebCore::MediaSourcePrivate::AddStatus::NotSupported,
-        WebCore::MediaSourcePrivate::AddStatus::ReachedIdLimit
+        WebCore::MediaSourcePrivate::EndOfStreamStatus,
+        WebCore::MediaSourcePrivate::EndOfStreamStatus::EosNoError,
+        WebCore::MediaSourcePrivate::EndOfStreamStatus::EosNetworkError,
+        WebCore::MediaSourcePrivate::EndOfStreamStatus::EosDecodeError
     >;
 };
 

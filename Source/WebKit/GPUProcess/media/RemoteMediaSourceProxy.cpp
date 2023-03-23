@@ -134,6 +134,19 @@ void RemoteMediaSourceProxy::bufferedChanged(WebCore::PlatformTimeRanges&& buffe
         m_private->bufferedChanged(m_buffered);
 }
 
+void RemoteMediaSourceProxy::markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status )
+{
+    if (m_private)
+        m_private->markEndOfStream(status);
+}
+
+void RemoteMediaSourceProxy::unmarkEndOfStream()
+{
+    if (m_private)
+        m_private->unmarkEndOfStream();
+}
+
+
 void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
 {
     if (m_private)
