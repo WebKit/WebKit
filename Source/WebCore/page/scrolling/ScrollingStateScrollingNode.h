@@ -79,7 +79,7 @@ public:
     WEBCORE_EXPORT void setKeyboardScrollData(const RequestedKeyboardScrollData&);
 
     const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
-    WEBCORE_EXPORT void setRequestedScrollData(const RequestedScrollData&);
+    WEBCORE_EXPORT void setRequestedScrollData(RequestedScrollData&&);
 
     WEBCORE_EXPORT bool hasScrollPositionRequest() const;
 

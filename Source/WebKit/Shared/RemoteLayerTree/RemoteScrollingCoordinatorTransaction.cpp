@@ -220,7 +220,7 @@ void ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::encode(Encoder& encod
         type decodedValue; \
         if (!decoder.decode(decodedValue)) \
             return false; \
-        node.setter(decodedValue); \
+        node.setter(WTFMove(decodedValue)); \
     }
 
 #define SCROLLING_NODE_DECODE_ENUM(property, type, setter) \

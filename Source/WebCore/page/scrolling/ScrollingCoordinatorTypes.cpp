@@ -28,6 +28,21 @@
 
 namespace WebCore {
 
+void RequestedScrollData::merge(RequestedScrollData&& other)
+{
+    if (requestType == other.requestType && other.animated == ScrollIsAnimated::Yes) {
+        switch (animated) {
+        case ScrollIsAnimated::No:
+            other.requestedDataBeforeAnimatedScroll = { scrollPosition, scrollType, clamping };
+            break;
+        case ScrollIsAnimated::Yes:
+            other.requestedDataBeforeAnimatedScroll = requestedDataBeforeAnimatedScroll;
+            break;
+        }
+    }
+    *this = WTFMove(other);
+}
+
 TextStream& operator<<(TextStream& ts, SynchronousScrollingReason reason)
 {
     switch (reason) {
