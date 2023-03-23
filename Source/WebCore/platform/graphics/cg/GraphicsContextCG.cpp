@@ -214,6 +214,18 @@ bool GraphicsContextCG::hasPlatformContext() const
 
 CGContextRef GraphicsContextCG::platformContext() const
 {
+    return const_cast<GraphicsContextCG*>(this)->contextForDraw(); // Conservative estimate.
+}
+
+CGContextRef GraphicsContextCG::contextForDraw()
+{
+    ASSERT(m_cgContext);
+    m_hasDrawn = true;
+    return m_cgContext.get();
+}
+
+CGContextRef GraphicsContextCG::contextForState() const
+{
     ASSERT(m_cgContext);
     return m_cgContext.get();
 }
@@ -242,7 +254,7 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
 void GraphicsContextCG::save()
 {
     GraphicsContext::save();
-    CGContextSaveGState(platformContext());
+    CGContextSaveGState(contextForState());
 }
 
 void GraphicsContextCG::restore()
@@ -251,7 +263,7 @@ void GraphicsContextCG::restore()
         return;
 
     GraphicsContext::restore();
-    CGContextRestoreGState(platformContext());
+    CGContextRestoreGState(contextForState());
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
@@ -1569,6 +1581,11 @@ void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoi
 bool GraphicsContextCG::canUseShadowBlur() const
 {
     return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms();
+}
+
+bool GraphicsContextCG::consumeHasDrawn()
+{
+    return std::exchange(m_hasDrawn, false);
 }
 
 }

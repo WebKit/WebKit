@@ -188,6 +188,27 @@ TEST(GraphicsContextTests, LargeLayerRenderingModeIsExpected)
     }
 }
 
+TEST(GraphicsContextTests, DrawsReportHasDrawn)
+{
+    auto srgb = DestinationColorSpace::SRGB();
+    IntSize size { 3, 3 };
+    auto surface = WebCore::IOSurface::create(nullptr, size, srgb);
+    ASSERT_NE(surface, nullptr);
+    auto bitsPerPixel = 32;
+    auto bitsPerComponent = 8;
+    auto bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
+    auto cgContext = adoptCF(CGIOSurfaceContextCreate(surface->surface(), size.width(), size.height(), bitsPerComponent, bitsPerPixel, srgb.platformColorSpace(), bitmapInfo));
+    GraphicsContextCG context(cgContext.get());
+
+    // Context starts saying has drawn, conservative estimate.
+    EXPECT_TRUE(context.consumeHasDrawn());
+    EXPECT_FALSE(context.consumeHasDrawn());
+
+    context.fillRect({ 0, 0, 1, 1 });
+    EXPECT_TRUE(context.consumeHasDrawn());
+    EXPECT_FALSE(context.consumeHasDrawn());
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)
