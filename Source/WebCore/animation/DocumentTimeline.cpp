@@ -482,7 +482,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
         return customEffectResult.releaseException();
 
     auto animation = WebAnimation::create(*document(), &customEffectResult.returnValue().get());
-    animation->setId(id);
+    animation->setId(WTFMove(id));
     animation->setBindingsFrameRate(WTFMove(frameRate));
 
     auto animationPlayResult = animation->play();

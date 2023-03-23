@@ -5221,7 +5221,7 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
         return keyframeEffectResult.releaseException();
 
     auto animation = WebAnimation::create(document(), &keyframeEffectResult.returnValue().get());
-    animation->setId(id);
+    animation->setId(WTFMove(id));
     if (timeline)
         animation->setTimeline(timeline->get());
     animation->setBindingsFrameRate(WTFMove(frameRate));

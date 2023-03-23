@@ -156,9 +156,9 @@ void WebAnimation::effectTimingDidChange()
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
 }
 
-void WebAnimation::setId(const String& id)
+void WebAnimation::setId(String&& id)
 {
-    m_id = id;
+    m_id = WTFMove(id);
 
     InspectorInstrumentation::didChangeWebAnimationName(*this);
 }
@@ -516,7 +516,7 @@ double WebAnimation::effectivePlaybackRate() const
 {
     // https://drafts.csswg.org/web-animations/#effective-playback-rate
     // The effective playback rate of an animation is its pending playback rate, if set, otherwise it is the animation's playback rate.
-    return (m_pendingPlaybackRate ? m_pendingPlaybackRate.value() : m_playbackRate);
+    return m_pendingPlaybackRate ? m_pendingPlaybackRate.value() : m_playbackRate;
 }
 
 void WebAnimation::setPlaybackRate(double newPlaybackRate)
@@ -647,8 +647,8 @@ void WebAnimation::setEffectiveFrameRate(std::optional<FramesPerSecond> effectiv
         return;
 
     std::optional<FramesPerSecond> maximumFrameRate = std::nullopt;
-    if (is<DocumentTimeline>(m_timeline))
-        maximumFrameRate = downcast<DocumentTimeline>(*m_timeline).maximumFrameRate();
+    if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get()))
+        maximumFrameRate = timeline->maximumFrameRate();
 
     std::optional<FramesPerSecond> adjustedEffectiveFrameRate;
     if (maximumFrameRate && effectiveFrameRate)
@@ -781,13 +781,13 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::op
 
 void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
 {
-    if (is<DocumentTimeline>(m_timeline)) {
+    if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
         // If animation has a document for timing, then append event to its document for timing's pending animation event queue along
         // with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
         // to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
         // scheduled event time is an unresolved time value.
         m_hasScheduledEventsDuringTick = true;
-        downcast<DocumentTimeline>(*m_timeline).enqueueAnimationEvent(WTFMove(event));
+        timeline->enqueueAnimationEvent(WTFMove(event));
     } else {
         // Otherwise, queue a task to dispatch event at animation. The task source for this task is the DOM manipulation task source.
         queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, WTFMove(event));
@@ -898,7 +898,10 @@ void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchron
 
 void WebAnimation::invalidateEffect()
 {
-    if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()); !isEffectInvalidationSuspended() && keyframeEffect)
+    if (isEffectInvalidationSuspended())
+        return;
+
+    if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
         keyframeEffect->invalidate();
 }
 
