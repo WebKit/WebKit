@@ -10,7 +10,7 @@ PASS A linear function on a keyframe affects the resulting style
 PASS A ease function on a keyframe affects the resulting style
 PASS A ease-in function on a keyframe affects the resulting style
 PASS A ease-in-out function on a keyframe affects the resulting style
-FAIL A ease-out function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 116.05721544376388 at 1100ms expected 116.05721544376388 +/- 0.02 but got 116.078125
+PASS A ease-out function on a keyframe affects the resulting style
 PASS A easing function which produces values greater than 1 on a keyframe affects the resulting style
 PASS A easing function which produces values less than 1 on a keyframe affects the resulting style
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a step-start function does not alter the result
