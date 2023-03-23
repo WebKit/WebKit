@@ -1759,6 +1759,40 @@ TEST(TextManipulation, CompleteTextManipulationReplaceParagraphsSeparatedByWrapp
     EXPECT_WK_STREQ("<p><b>Hello, </b>World<b><br></b>WebKit</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationPreservesWhitespacesBetweenItems)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><head><style> a { white-space: nowrap; } div { width: 10px; } </style></head>"
+        "<body><div><a>helllo</a> <a>worrld</a></div></body></html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("helllo", items[0].tokens[0].content.UTF8String);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_STREQ("worrld", items[1].tokens[0].content.UTF8String);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        (_WKTextManipulationItem *)createItem(items[0].identifier, { { items[0].tokens[0].identifier, @"hello" } }),
+        (_WKTextManipulationItem *)createItem(items[1].identifier, { { items[1].tokens[0].identifier, @"world" } })
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("<div><a>hello</a> <a>world</a></div>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationFailWhenBRIsInserted)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
