@@ -441,6 +441,7 @@ void MarkedBlock::Handle::sweepSpeculativelyToFreeList()
     FreeCell* head = nullptr;
     uintptr_t secret = static_cast<uintptr_t>(vm().heapRandom().getUint64());
     bool isEmpty = true;
+    (void) isEmpty;
     size_t count = 0;
     auto handleDeadCell = [&] (size_t i) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block().atoms()[i]);
