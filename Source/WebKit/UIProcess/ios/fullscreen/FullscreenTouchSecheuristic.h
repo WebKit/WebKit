@@ -25,7 +25,9 @@
 
 #pragma once
 
-#include "FullscreenTouchSecheuristicParameters.h"
+#ifdef __cplusplus
+
+#include <WebKit/FullscreenTouchSecheuristicParameters.h>
 
 namespace WebKit {
 
@@ -59,3 +61,5 @@ private:
 };
 
 }
+
+#endif

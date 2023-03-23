@@ -25,7 +25,9 @@
 
 #pragma once
 
-#include "WKDeclarationSpecifiers.h"
+#ifdef __cplusplus
+
+#include <WebKit/WKDeclarationSpecifiers.h>
 #include <wtf/Seconds.h>
 
 namespace WebKit {
@@ -43,3 +45,5 @@ struct FullscreenTouchSecheuristicParameters {
 };
 
 }
+
+#endif

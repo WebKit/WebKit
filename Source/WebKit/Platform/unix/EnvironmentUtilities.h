@@ -26,7 +26,9 @@
 
 #pragma once
 
-#include "WKDeclarationSpecifiers.h"
+#ifdef __cplusplus
+
+#include <WebKit/WKDeclarationSpecifiers.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -39,3 +41,5 @@ WK_EXPORT void removeValuesEndingWith(const char* environmentVariable, const cha
 } // namespace EnvironmentUtilities
 
 } // namespace WebKit
+
+#endif

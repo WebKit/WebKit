@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
 #if TARGET_OS_IPHONE
-#import "WKWebViewPrivateForTestingIOS.h"
+#import <WebKit/WKWebViewPrivateForTestingIOS.h>
 #else
-#import "WKWebViewPrivateForTestingMac.h"
+#import <WebKit/WKWebViewPrivateForTestingMac.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
