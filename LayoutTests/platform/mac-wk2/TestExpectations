@@ -1829,3 +1829,7 @@ webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ Ima
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]
+
+# webkit.org/b/254364 REGRESSION(261998@main): [ Monterey+ wk2 ] 2X http/tests/webgpu/webgpu/ap i/operation (layout-tests) are flaky crashes (254364)
+[ Monterey+ ] http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html [ Pass Crash ]
+[ Monterey+ ] http/tests/webgpu/webgpu/api/operation/texture_view/read.html [ Pass Crash ]
