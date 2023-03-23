@@ -12,8 +12,8 @@ PASS @counter-style name inherit is invalid
 PASS @counter-style name unset is invalid
 PASS @counter-style name decimal is invalid
 PASS @counter-style name disc is invalid
-FAIL @counter-style name square is invalid assert_equals: expected (undefined) undefined but got (object) object "[object CSSCounterStyleRule]"
-FAIL @counter-style name circle is invalid assert_equals: expected (undefined) undefined but got (object) object "[object CSSCounterStyleRule]"
-FAIL @counter-style name disclosure-open is invalid assert_equals: expected (undefined) undefined but got (object) object "[object CSSCounterStyleRule]"
-FAIL @counter-style name disclosure-closed is invalid assert_equals: expected (undefined) undefined but got (object) object "[object CSSCounterStyleRule]"
+PASS @counter-style name square is invalid
+PASS @counter-style name circle is invalid
+PASS @counter-style name disclosure-open is invalid
+PASS @counter-style name disclosure-closed is invalid
 
