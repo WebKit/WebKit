@@ -26,45 +26,15 @@
 #pragma once
 
 #import <wtf/RetainPtr.h>
-#import <wtf/URL.h>
-#import <wtf/Vector.h>
 
 OBJC_CLASS NSAttributedString;
-OBJC_CLASS NSParagraphStyle;
-#if PLATFORM(MAC)
-OBJC_CLASS NSColor;
-OBJC_CLASS NSFont;
-OBJC_CLASS NSTextAttachment;
-#else
-OBJC_CLASS UIColor;
-OBJC_CLASS UIFont;
-#endif
+OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
 struct AttributedString {
-    struct Range {
-        size_t location { 0 };
-        size_t length { 0 };
-    };
-    struct AttributeValue {
-        std::variant<double, String, URL, RetainPtr<NSParagraphStyle>,
-#if PLATFORM(MAC)
-            RetainPtr<NSFont>, RetainPtr<NSColor>, RetainPtr<NSTextAttachment>
-#else
-            RetainPtr<UIFont>, RetainPtr<UIColor>
-#endif
-        > value;
-    };
-
-    String string;
-    Vector<std::pair<Range, HashMap<String, AttributeValue>>> attributes;
-    HashMap<String, AttributeValue> documentAttributes;
-
-    WEBCORE_EXPORT static AttributedString fromNSAttributedStringAndDocumentAttributes(RetainPtr<NSAttributedString>&&, RetainPtr<NSDictionary>&& documentAttributes);
-    WEBCORE_EXPORT static bool rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
-    WEBCORE_EXPORT RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
-    WEBCORE_EXPORT RetainPtr<NSAttributedString> nsAttributedString() const;
+    RetainPtr<NSAttributedString> string;
+    RetainPtr<NSDictionary> documentAttributes;
 };
 
 } // namespace WebCore

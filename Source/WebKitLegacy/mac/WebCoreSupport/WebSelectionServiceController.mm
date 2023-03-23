@@ -50,7 +50,7 @@ void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSe
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range).nsAttributedString();
+    auto attributedSelection = attributedString(*range).string;
     if (!attributedSelection)
         return;
 
