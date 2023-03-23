@@ -98,7 +98,7 @@ public:
 
     WebCore::FrameIdentifier frameID() const;
 
-    enum class ForNavigationAction { No, Yes };
+    enum class ForNavigationAction : bool { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);

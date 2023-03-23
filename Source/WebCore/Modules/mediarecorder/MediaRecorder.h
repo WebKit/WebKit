@@ -102,7 +102,7 @@ private:
     void stopRecordingInternal(CompletionHandler<void()>&& = [] { });
     void dispatchError(Exception&&);
 
-    enum class TakePrivateRecorder { No, Yes };
+    enum class TakePrivateRecorder : bool { No, Yes };
     using FetchDataCallback = Function<void(RefPtr<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
     void fetchData(FetchDataCallback&&, TakePrivateRecorder);
 

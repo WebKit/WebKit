@@ -3714,7 +3714,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& range, co
     }
 }
 
-enum class SupportsColorHints : bool { Yes, No };
+enum class SupportsColorHints : bool { No, Yes };
 
 template<typename Consumer>
 static std::optional<CSSGradientColorStopList> consumeColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints, Consumer&& consumeStopPosition)

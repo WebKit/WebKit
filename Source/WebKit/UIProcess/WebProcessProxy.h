@@ -609,7 +609,7 @@ private:
     bool shouldTakeSuspendedAssertion() const;
     bool shouldDropSuspendedAssertionAfterDelay() const;
 
-    enum class IsWeak { No, Yes };
+    enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
         WeakOrStrongPtr(T& object, IsWeak isWeak)

@@ -240,7 +240,7 @@ public:
     void setTainting(Tainting tainting) { m_tainting = tainting; }
     Tainting tainting() const { return m_tainting; }
 
-    enum class PerformExposeAllHeadersCheck : uint8_t { Yes, No };
+    enum class PerformExposeAllHeadersCheck : bool { No, Yes };
     static ResourceResponse filter(const ResourceResponse&, PerformExposeAllHeadersCheck);
 
     WEBCORE_EXPORT static ResourceResponse syntheticRedirectResponse(const URL& fromURL, const URL& toURL);

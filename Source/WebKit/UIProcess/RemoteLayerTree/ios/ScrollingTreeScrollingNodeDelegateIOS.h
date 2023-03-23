@@ -50,7 +50,7 @@ class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTre
     WTF_MAKE_FAST_ALLOCATED;
 public:
     
-    enum class AllowOverscrollToPreventScrollPropagation : bool { Yes, No };
+    enum class AllowOverscrollToPreventScrollPropagation : bool { No, Yes };
     
     explicit ScrollingTreeScrollingNodeDelegateIOS(WebCore::ScrollingTreeScrollingNode&);
     ~ScrollingTreeScrollingNodeDelegateIOS() final;

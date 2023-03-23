@@ -416,7 +416,7 @@ enum class Command {
 }
 @end
 
-enum class ShouldRaiseException { No, Yes };
+enum class ShouldRaiseException : bool { No, Yes };
 
 static void checkCallSequence(Vector<Command>&& commands, ShouldRaiseException shouldRaiseException)
 {

@@ -1044,7 +1044,7 @@ public:
     JS_EXPORT_PRIVATE void clearPendingImportMaps();
 
 protected:
-    enum class HasSpeciesProperty : bool { Yes, No };
+    enum class HasSpeciesProperty : bool { No, Yes };
     template<typename SpeciesWatchpoint>
     void tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* constructor, std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& constructorWatchpoint, std::unique_ptr<SpeciesWatchpoint>&, InlineWatchpointSet&, HasSpeciesProperty);
 

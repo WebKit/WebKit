@@ -69,7 +69,7 @@ private:
     void recursiveBuildDisplayTree(const Layout::LayoutState&, const Layout::Box&, InsertionPosition&);
     void buildInlineDisplayTree(const Layout::LayoutState&, const Layout::ElementBox&, InsertionPosition&);
 
-    enum class WillTraverseDescendants { Yes, No };
+    enum class WillTraverseDescendants : bool { No, Yes };
     StackingItem* insertIntoTree(std::unique_ptr<Box>&&, InsertionPosition&, WillTraverseDescendants);
     void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 

@@ -72,7 +72,7 @@ private:
     bool isAXIsolatedObjectInstance() const override { return true; }
     AccessibilityObject* associatedAXObject() const;
 
-    enum class IsRoot : bool { Yes, No };
+    enum class IsRoot : bool { No, Yes };
     void initializeProperties(const Ref<AccessibilityObject>&, IsRoot);
     void initializePlatformProperties(const Ref<const AccessibilityObject>&);
 

@@ -70,7 +70,7 @@ public:
     static void invalidateHostAndSlottedStyleIfNeeded(ShadowRoot&);
 
 private:
-    enum class CheckDescendants { Yes, No };
+    enum class CheckDescendants : bool { No, Yes };
     CheckDescendants invalidateIfNeeded(Element&, SelectorMatchingState*);
     void invalidateStyleForTree(Element&, SelectorMatchingState*);
     void invalidateStyleForDescendants(Element&, SelectorMatchingState*);

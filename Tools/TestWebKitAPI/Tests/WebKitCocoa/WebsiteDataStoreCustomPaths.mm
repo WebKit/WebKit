@@ -69,7 +69,7 @@
 
 @end
 
-enum class ShouldEnableProcessPrewarming { No, Yes };
+enum class ShouldEnableProcessPrewarming : bool { No, Yes };
 
 static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldEnableProcessPrewarming)
 {

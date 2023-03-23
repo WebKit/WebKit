@@ -108,7 +108,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
-    enum class IgnoreTouchCallout { No, Yes };
+    enum class IgnoreTouchCallout : bool { No, Yes };
     bool willRespondToMouseClickEventsWithEditability(Editability, IgnoreTouchCallout) const;
 #endif
 

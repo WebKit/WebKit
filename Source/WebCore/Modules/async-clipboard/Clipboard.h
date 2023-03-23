@@ -76,7 +76,7 @@ private:
 
     Pasteboard& activePasteboard();
 
-    enum class SessionIsValid { No, Yes };
+    enum class SessionIsValid : bool { No, Yes };
     SessionIsValid updateSessionValidity();
 
     class ItemWriter : public RefCounted<ItemWriter> {

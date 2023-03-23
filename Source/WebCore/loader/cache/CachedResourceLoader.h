@@ -175,7 +175,7 @@ public:
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
-    enum class ForPreload { Yes, No };
+    enum class ForPreload : bool { No, Yes };
 
     ResourceErrorOr<CachedResourceHandle<CachedResource>> requestResource(CachedResource::Type, CachedResourceRequest&&, ForPreload = ForPreload::No, ImageLoading = ImageLoading::Immediate);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);

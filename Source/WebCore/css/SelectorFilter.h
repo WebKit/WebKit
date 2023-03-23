@@ -65,7 +65,7 @@ public:
 
 private:
     void initializeParentStack(Element& parent);
-    enum class IncludeRightmost : bool { Yes, No };
+    enum class IncludeRightmost : bool { No, Yes };
     static void collectSelectorHashes(CollectedSelectorHashes&, const CSSSelector& rightmostSelector, IncludeRightmost);
     static Hashes chooseSelectorHashesForFilter(const CollectedSelectorHashes&);
 

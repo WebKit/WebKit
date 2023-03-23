@@ -406,7 +406,7 @@ static bool containsIncludingHostElements(const Node& possibleAncestor, const No
     return false;
 }
 
-enum class ShouldValidateChildParent { No, Yes };
+enum class ShouldValidateChildParent : bool { No, Yes };
 static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation, ShouldValidateChildParent shouldValidateChildParent)
 {
     if (containsIncludingHostElements(newChild, newParent))

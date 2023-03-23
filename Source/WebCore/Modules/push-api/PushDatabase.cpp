@@ -176,7 +176,7 @@ PushTopics PushTopics::isolatedCopy() &&
     return { crossThreadCopy(WTFMove(enabledTopics)), crossThreadCopy(WTFMove(ignoredTopics)) };
 }
 
-enum class ShouldDeleteAndRetry { No, Yes };
+enum class ShouldDeleteAndRetry : bool { No, Yes };
 
 static Expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMigrateDatabaseImpl(const String& path)
 {

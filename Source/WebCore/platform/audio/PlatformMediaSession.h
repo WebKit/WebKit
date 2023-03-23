@@ -44,7 +44,7 @@ class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
 class PlatformMediaSessionManager;
-enum class DelayCallingUpdateNowPlaying { No, Yes };
+enum class DelayCallingUpdateNowPlaying : bool { No, Yes };
 struct NowPlayingInfo;
 
 class PlatformMediaSession

@@ -52,7 +52,7 @@ enum MarkingBehavior {
     MarkContainingBlockChain,
 };
 
-enum class ScheduleRelayout { No, Yes };
+enum class ScheduleRelayout : bool { No, Yes };
 
 enum MapCoordinatesMode {
     IsFixed             = 1 << 0,

@@ -474,7 +474,7 @@ RefPtr<StyleRuleCharset> CSSParserImpl::consumeCharsetRule(CSSParserTokenRange p
     return StyleRuleCharset::create();
 }
 
-enum class AllowAnonymous { Yes, No };
+enum class AllowAnonymous : bool { No, Yes };
 static std::optional<CascadeLayerName> consumeCascadeLayerName(CSSParserTokenRange& range, AllowAnonymous allowAnonymous)
 {
     CascadeLayerName name;

@@ -74,7 +74,7 @@ private:
     TransformResult decryptFrame(Span<const uint8_t>);
     TransformResult encryptFrame(Span<const uint8_t>);
 
-    enum class ShouldUpdateKeys { No, Yes };
+    enum class ShouldUpdateKeys : bool { No, Yes };
     ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes) WTF_REQUIRES_LOCK(m_keyLock);
 
     ExceptionOr<Vector<uint8_t>> computeSaltKey(const Vector<uint8_t>&);

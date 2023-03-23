@@ -41,7 +41,7 @@ public:
     void beginUpdate(ReducedResolutionSeconds, std::optional<FramesPerSecond>);
     void finishUpdate();
 
-    enum class ShouldUpdate { Yes, No };
+    enum class ShouldUpdate : bool { No, Yes };
     ShouldUpdate updateFrameRate(FramesPerSecond);
 
     std::optional<Seconds> timeUntilNextUpdateForFrameRate(FramesPerSecond, ReducedResolutionSeconds) const;

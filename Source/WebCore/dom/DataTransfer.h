@@ -135,7 +135,7 @@ private:
     String readStringFromPasteboard(Document&, const String& lowercaseType, WebContentReadingPolicy) const;
     bool shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const;
 
-    enum class AddFilesType { No, Yes };
+    enum class AddFilesType : bool { No, Yes };
     Vector<String> types(AddFilesType) const;
     Vector<Ref<File>> filesFromPasteboardAndItemList(ScriptExecutionContext*) const;
 

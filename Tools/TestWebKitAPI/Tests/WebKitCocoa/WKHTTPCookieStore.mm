@@ -514,7 +514,7 @@ static bool finished;
 }
 @end
 
-enum class ShouldEnableProcessPrewarming { No, Yes };
+enum class ShouldEnableProcessPrewarming : bool { No, Yes };
 void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming shouldEnableProcessPrewarming)
 {
     RetainPtr<NSHTTPCookie> sessionCookie = [NSHTTPCookie cookieWithProperties:@{

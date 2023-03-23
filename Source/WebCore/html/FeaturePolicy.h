@@ -94,7 +94,7 @@ private:
 #endif
 };
 
-enum class LogFeaturePolicyFailure { No, Yes };
+enum class LogFeaturePolicyFailure : bool { No, Yes };
 extern bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type, const Document&, LogFeaturePolicyFailure = LogFeaturePolicyFailure::Yes);
 
 } // namespace WebCore

@@ -99,7 +99,7 @@ public:
 
     void addTextNode(Text&, float size);
 
-    enum class StillHasNodes { No, Yes };
+    enum class StillHasNodes : bool { No, Yes };
     StillHasNodes adjustTextNodeSizes();
 
 private:

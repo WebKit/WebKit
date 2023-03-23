@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLSelectElement;
 
-enum class AllowStyleInvalidation { Yes, No };
+enum class AllowStyleInvalidation : bool { No, Yes };
 
 class HTMLOptionElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLOptionElement);

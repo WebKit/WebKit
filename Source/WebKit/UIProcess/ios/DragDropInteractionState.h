@@ -80,7 +80,7 @@ public:
     void stageDragItem(const WebCore::DragItem&, UIImage *);
     bool hasStagedDragSource() const;
     const DragSourceState& stagedDragSource() const { return m_stagedDragSource.value(); }
-    enum class DidBecomeActive { No, Yes };
+    enum class DidBecomeActive : bool { No, Yes };
     void clearStagedDragSource(DidBecomeActive = DidBecomeActive::No);
     UITargetedDragPreview *previewForDragItem(UIDragItem *, UIView *contentView, UIView *previewContainer) const;
     void dragSessionWillDelaySetDownAnimation(dispatch_block_t completion);

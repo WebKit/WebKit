@@ -37,7 +37,7 @@ class ContentSecurityPolicySourceListDirective : public ContentSecurityPolicyDir
 public:
     ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 
-    enum class ShouldAllowEmptyURLIfSourceListIsNotNone { No, Yes };
+    enum class ShouldAllowEmptyURLIfSourceListIsNotNone : bool { No, Yes };
     bool allows(const URL&, bool didReceiveRedirectResponse, ShouldAllowEmptyURLIfSourceListIsNotNone);
     bool allows(const Vector<ContentSecurityPolicyHash>&) const;
     bool containsAllHashes(const Vector<ContentSecurityPolicyHash>&) const;

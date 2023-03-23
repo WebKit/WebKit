@@ -63,7 +63,7 @@ public:
 
     PlatformLayer* displayLayer();
 
-    enum class ShouldUpdateRootLayer { No, Yes };
+    enum class ShouldUpdateRootLayer : bool { No, Yes };
     void updateRootLayerBoundsAndPosition(CGRect, VideoFrameRotation, ShouldUpdateRootLayer);
     void updateRootLayerAffineTransform(CGAffineTransform);
 

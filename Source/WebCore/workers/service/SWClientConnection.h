@@ -163,7 +163,7 @@ protected:
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
 
-    enum class IsJobComplete { No, Yes };
+    enum class IsJobComplete : bool { No, Yes };
     bool postTaskForJob(ServiceWorkerJobIdentifier, IsJobComplete, Function<void(ServiceWorkerJob&)>&&);
 
     bool m_isClosed { false };

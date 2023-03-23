@@ -1322,7 +1322,7 @@ public:
     void compilePutByVal(Node*);
 
     // We use a scopedLambda to placate register allocation validation.
-    enum class CanUseFlush { Yes, No };
+    enum class CanUseFlush : bool { No, Yes };
     void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
 
     void compileGetCharCodeAt(Node*);

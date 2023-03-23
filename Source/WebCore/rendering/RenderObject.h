@@ -783,7 +783,7 @@ public:
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
     // FIXME: Renderers should not need to be notified about internal reparenting (webkit.org/b/224143).
-    enum class IsInternalMove { No, Yes };
+    enum class IsInternalMove : bool { No, Yes };
     virtual void insertedIntoTree(IsInternalMove = IsInternalMove::No);
     virtual void willBeRemovedFromTree(IsInternalMove = IsInternalMove::No);
 
@@ -826,8 +826,8 @@ protected:
 
     bool isSetNeedsLayoutForbidden() const;
 
-    enum class ClipRepaintToLayer : uint8_t { No, Yes };
-    enum class ForceRepaint : uint8_t { No, Yes };
+    enum class ClipRepaintToLayer : bool { No, Yes };
+    enum class ForceRepaint : bool { No, Yes };
     void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No) const;
 
 private:

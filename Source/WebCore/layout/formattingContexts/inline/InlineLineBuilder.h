@@ -112,7 +112,7 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox);
-    enum MayOverConstrainLine : uint8_t { Yes, No };
+    enum MayOverConstrainLine : bool { No, Yes };
     bool tryPlacingFloatBox(const InlineItem&, MayOverConstrainLine);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;

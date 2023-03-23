@@ -58,7 +58,7 @@ public:
     void horizontalConstraintChanged();
 
 private:
-    enum class ShouldApplyRangeLayout : uint8_t { Yes, No };
+    enum class ShouldApplyRangeLayout : bool { No, Yes };
     void updateInlineDamage(InlineDamage::Type, std::optional<DamagedLine>, ShouldApplyRangeLayout = ShouldApplyRangeLayout::No);
     bool applyFullDamageIfNeeded(const Box&);
     const InlineDisplay::Boxes& displayBoxes() const { return m_displayContent.boxes; }

@@ -66,7 +66,7 @@ private:
     String valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
-    enum class RequestIcon { Yes, No };
+    enum class RequestIcon : bool { No, Yes };
     void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
     String displayString() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;

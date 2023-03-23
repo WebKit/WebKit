@@ -56,7 +56,7 @@ private:
     SelectionGeometryGatherer m_selectionGeometryGatherer;
 #endif
     bool m_selectionWasCaret { false };
-    enum class ClipToVisibleContent { Yes, No };
+    enum class ClipToVisibleContent : bool { No, Yes };
     IntRect collectBounds(ClipToVisibleContent) const;
     void apply(const RenderRange&, RepaintMode);
 };

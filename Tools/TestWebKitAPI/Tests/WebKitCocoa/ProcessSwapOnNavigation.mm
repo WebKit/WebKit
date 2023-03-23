@@ -1418,7 +1418,7 @@ TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
     EXPECT_NE(pid1, pid2);
 }
 
-enum class ExpectSwap { No, Yes };
+enum class ExpectSwap : bool { No, Yes };
 enum class WindowHasName : bool { No, Yes };
 static void runSameSiteWindowOpenNoOpenerTest(WindowHasName windowHasName, ExpectSwap expectSwap)
 {
@@ -1798,7 +1798,7 @@ TEST(ProcessSwap, ServerRedirect2)
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
 }
 
-enum class ShouldCacheProcessFirst { No, Yes };
+enum class ShouldCacheProcessFirst : bool { No, Yes };
 static void runSameOriginServerRedirectTest(ShouldCacheProcessFirst shouldCacheProcessFirst)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -2107,7 +2107,7 @@ TEST(ProcessSwap, CrossOriginSystemPreview)
 
 #endif
 
-enum class ShouldEnablePSON { No, Yes };
+enum class ShouldEnablePSON : bool { No, Yes };
 static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -2973,7 +2973,7 @@ setInterval(() => {
 </body>
 )PSONRESOURCE";
 
-enum class RetainPageInBundle { No, Yes };
+enum class RetainPageInBundle : bool { No, Yes };
 
 void testReuseSuspendedProcessForRegularNavigation(RetainPageInBundle retainPageInBundle)
 {

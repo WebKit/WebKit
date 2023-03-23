@@ -99,7 +99,7 @@ struct ImageBitmapOptions;
 struct WindowFeatures;
 
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
-enum class IncludeTargetOrigin { No, Yes };
+enum class IncludeTargetOrigin : bool { No, Yes };
 
 struct WindowPostMessageOptions : public StructuredSerializeOptions {
     WindowPostMessageOptions() = default;
