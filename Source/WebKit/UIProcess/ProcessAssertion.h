@@ -51,6 +51,7 @@ enum class ProcessAssertionType {
     Foreground,
     MediaPlayback,
     FinishTaskInterruptable,
+    BoostedJetsam,
 };
 
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);

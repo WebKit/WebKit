@@ -219,6 +219,7 @@ private:
     MonotonicTime m_processStart;
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
+    RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
 #endif
 };
 
