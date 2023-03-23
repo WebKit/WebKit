@@ -386,6 +386,94 @@ Subspace* MarkedBlock::Handle::subspace() const
     return directory()->subspace();
 }
 
+void MarkedBlock::Handle::sweepSpeculativelyToFreeList()
+{
+    if (!m_directory)
+        return;
+
+    if (m_directory->isUnswept(NoLockingNecessary, this)) {
+        // dataLog("FATAL(p): ", RawPointer(this), "->sweep: block has not already been swept.\n");
+        // ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (m_isFreeListed) {
+        // dataLog("FATAL(p): ", RawPointer(this), "->sweep: block is free-listed.\n");
+        // ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (isAllocated()) {
+        // dataLog("FATAL(p): ", RawPointer(this), "->sweep: block is allocated.\n");
+        // ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto markingVersion = space()->markingVersion();
+    auto allocVersion = space()->newlyAllocatedVersion();
+    EmptyMode emptyMode = this->emptyMode();
+    ScribbleMode scribbleMode = this->scribbleMode();
+    NewlyAllocatedMode newlyAllocatedMode = this->newlyAllocatedMode();
+    MarksMode marksMode = this->marksMode();
+    auto cellSize = this->cellSize();
+
+    // We have already swept this.
+    if ((blockHeader().m_sweepListMarkingVersion == markingVersion && blockHeader().m_sweepListAllocVersion == allocVersion)
+            || newlyAllocatedMode == HasNewlyAllocated
+            || marksMode == MarksStale
+            || emptyMode == IsEmpty)
+        return;
+
+    // FIXME: Why do we check isDestructible?
+    bool needsDestruction = m_attributes.destruction == NeedsDestruction
+        || m_directory->isDestructible(NoLockingNecessary, this);
+
+    if (needsDestruction) {
+        // Our directory shouldn't need destruction since the incremental sweeper should have swept it.
+        // dataLog("FATAL(p): ", RawPointer(this), "->sweep: block has destructors.\n");
+        // ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (false)
+        dataLogLn("Building freelist for sweeping in parallel: ", RawPointer(atomAt(0)));
+
+    FreeCell* head = nullptr;
+    uintptr_t secret = static_cast<uintptr_t>(vm().heapRandom().getUint64());
+    bool isEmpty = true;
+    size_t count = 0;
+    auto handleDeadCell = [&] (size_t i) {
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block().atoms()[i]);
+
+        FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
+        if (scribbleMode == Scribble)
+            scribble(freeCell, cellSize);
+        freeCell->setNext(head, secret);
+        head = freeCell;
+        ++count;
+    };
+
+    for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
+        if (emptyMode == NotEmpty
+            && ((marksMode == MarksNotStale && blockHeader().m_marks.get(i))
+                || (newlyAllocatedMode == HasNewlyAllocated && blockHeader().m_newlyAllocated.get(i)))) {
+            isEmpty = false;
+            continue;
+        }
+
+        handleDeadCell(i);
+    }
+
+    blockHeader().m_sweepListHead = head;
+    blockHeader().m_sweepListSecret = secret;
+    blockHeader().m_sweepListMarkingVersion = markingVersion;
+    blockHeader().m_sweepListAllocVersion = allocVersion;
+    blockHeader().m_sweepListCount = count;
+
+    if (false)
+        dataLogLn("Built freelist for sweeping in parallel: atom 0:", RawPointer(atomAt(0)), " head: ", RawPointer(head), " version: ", markingVersion, " count: ", count);
+}
+
 void MarkedBlock::Handle::sweep(FreeList* freeList)
 {
     SweepingScope sweepingScope(*heap());

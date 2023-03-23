@@ -94,7 +94,7 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
     return m_blocks[m_emptyCursor];
 }
 
-MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
+MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator, bool speculative)
 {
     for (;;) {
         allocator.m_allocationCursor = (m_bits.canAllocateButNotEmpty() | m_bits.empty()).findBit(allocator.m_allocationCursor, true);
@@ -103,7 +103,8 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allo
         
         unsigned blockIndex = allocator.m_allocationCursor++;
         MarkedBlock::Handle* result = m_blocks[blockIndex];
-        setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
+        if (LIKELY(!speculative))
+            setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
         return result;
     }
 }

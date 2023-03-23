@@ -325,18 +325,61 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             ++count;
         }
     };
-    for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
-        if (emptyMode == NotEmpty
-            && ((marksMode == MarksNotStale && header.m_marks.get(i))
-                || (newlyAllocatedMode == HasNewlyAllocated && header.m_newlyAllocated.get(i)))) {
-            isEmpty = false;
-            continue;
+
+    if (sweepMode == SweepToFreeList 
+        && newlyAllocatedMode == DoesNotHaveNewlyAllocated 
+        && header.m_sweepListMarkingVersion == space()->markingVersion()
+        && header.m_sweepListAllocVersion == space()->newlyAllocatedVersion()) {
+        if (true)
+            // dataLogLn("Sweep is stealing from speculative freelist sweeper! ", RawPointer(atomAt(0)));
+        ASSERT(destructionMode == BlockHasNoDestructors);
+        secret = header.m_sweepListSecret;
+        head = header.m_sweepListHead;
+        isEmpty = head == nullptr;
+        count = header.m_sweepListCount;
+        header.m_sweepListMarkingVersion = MarkedSpace::nullVersion;
+        header.m_sweepListAllocVersion = MarkedSpace::nullVersion;
+        header.m_sweepListHead = nullptr;
+        header.m_sweepListSecret = 0;
+        header.m_sweepListCount = 0;
+
+#if ASSERT_ENABLED
+        FreeCell* h = nullptr;
+        size_t s = 0;
+        for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
+            if (emptyMode == NotEmpty
+                && ((marksMode == MarksNotStale && header.m_marks.get(i))
+                    || (newlyAllocatedMode == HasNewlyAllocated && header.m_newlyAllocated.get(i)))) {
+                ASSERT(!isEmpty);
+                continue;
+            }
+            
+            ASSERT(destructionMode != BlockHasDestructorsAndCollectorIsRunning);
+            HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
+            ASSERT(destructionMode == BlockHasNoDestructors);
+            ASSERT(sweepMode == SweepToFreeList);
+            FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
+            ASSERT(freeCell->next(secret) == h);
+            h = freeCell;
+            ++s;
         }
-        
-        if (destructionMode == BlockHasDestructorsAndCollectorIsRunning)
-            deadCells.append(i);
-        else
-            handleDeadCell(i);
+        ASSERT(s == count);
+        ASSERT(h == head);
+#endif
+    } else {
+        for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
+            if (emptyMode == NotEmpty
+                && ((marksMode == MarksNotStale && header.m_marks.get(i))
+                    || (newlyAllocatedMode == HasNewlyAllocated && header.m_newlyAllocated.get(i)))) {
+                isEmpty = false;
+                continue;
+            }
+            
+            if (destructionMode == BlockHasDestructorsAndCollectorIsRunning)
+                deadCells.append(i);
+            else
+                handleDeadCell(i);
+        }
     }
     
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,

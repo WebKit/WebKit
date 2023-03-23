@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BlockDirectory.h"
 #include "JSRunLoopTimer.h"
 
 namespace JSC {
@@ -45,11 +46,14 @@ public:
 
 private:
     bool sweepNextBlock(VM&);
+    bool constructNextSpeculativeFreeList(VM&);
     void doSweep(VM&, MonotonicTime startTime);
     void scheduleTimer();
     
     BlockDirectory* m_currentDirectory;
+    std::optional<decltype(m_currentDirectory->m_localAllocators.end())> m_currentAllocator;
     bool m_shouldFreeFastMallocMemoryAfterSweeping { false };
+    bool doneSweeping { false };
 };
 
 } // namespace JSC

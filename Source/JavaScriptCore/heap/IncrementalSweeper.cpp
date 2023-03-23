@@ -30,6 +30,7 @@
 #include "HeapInlines.h"
 #include "MarkedBlock.h"
 #include "VM.h"
+#include "BlockDirectoryInlines.h"
 
 namespace JSC {
 
@@ -45,6 +46,8 @@ void IncrementalSweeper::scheduleTimer()
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : Base(heap->vm())
     , m_currentDirectory(nullptr)
+    , m_currentAllocator(nullptr)
+    , doneSweeping(false)
 {
 }
 
@@ -55,7 +58,26 @@ void IncrementalSweeper::doWork(VM& vm)
 
 void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
 {
-    while (sweepNextBlock(vm)) {
+    if (!doneSweeping) {
+        while (sweepNextBlock(vm)) {
+            Seconds elapsedTime = MonotonicTime::now() - sweepBeginTime;
+            if (elapsedTime < sweepTimeSlice)
+                continue;
+
+            scheduleTimer();
+            return;
+        }
+
+        if (m_shouldFreeFastMallocMemoryAfterSweeping) {
+            WTF::releaseFastMallocFreeMemory();
+            m_shouldFreeFastMallocMemoryAfterSweeping = false;
+        }
+
+        doneSweeping = true;
+        m_currentDirectory = vm.heap.objectSpace().firstDirectory();
+    }
+
+    while (constructNextSpeculativeFreeList(vm)) {
         Seconds elapsedTime = MonotonicTime::now() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
             continue;
@@ -63,12 +85,51 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
         scheduleTimer();
         return;
     }
+}
 
-    if (m_shouldFreeFastMallocMemoryAfterSweeping) {
-        WTF::releaseFastMallocFreeMemory();
-        m_shouldFreeFastMallocMemoryAfterSweeping = false;
+bool IncrementalSweeper::constructNextSpeculativeFreeList(VM& vm)
+{
+    vm.heap.stopIfNecessary();
+
+    // MarkedBlock::Handle* block = nullptr;
+
+    int iterations = 0;
+    DeferGCForAWhile deferGC(vm);
+    
+    for (; m_currentDirectory; m_currentDirectory = m_currentDirectory->nextDirectory()) {
+        if (iterations)
+            break;
+        // auto allocator = m_currentAllocator ? *m_currentAllocator : m_currentDirectory->m_localAllocators.begin();
+
+        // for (; allocator != m_currentDirectory->m_localAllocators.end(); ++allocator) {
+        //     block = m_currentDirectory->findBlockForAllocation(*allocator, true);
+        //     if (block)
+        //         break;
+            
+        //     ++iterations;
+        //     if (iterations > 1000) {
+        //         m_currentAllocator = { allocator };
+        //         return true;
+        //     }
+        // }
+
+        // m_currentAllocator = { allocator };
+        // if (block)
+        //     break;
+
+        // m_currentAllocator = { };
+        m_currentDirectory->forEachBlock([&] (MarkedBlock::Handle* block) {
+            ++iterations;
+            block->sweepSpeculativelyToFreeList();
+        });
     }
-    cancelTimer();
+    
+    if (!iterations) {
+        // dataLogLn("no block to sweep");
+        return false;
+    }
+    
+    return true;
 }
 
 bool IncrementalSweeper::sweepNextBlock(VM& vm)
@@ -96,12 +157,15 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm)
 void IncrementalSweeper::startSweeping(Heap& heap)
 {
     scheduleTimer();
+    doneSweeping = false;
     m_currentDirectory = heap.objectSpace().firstDirectory();
+    m_currentAllocator = { };
 }
 
 void IncrementalSweeper::stopSweeping()
 {
     m_currentDirectory = nullptr;
+    m_currentAllocator = { };
     cancelTimer();
 }
 

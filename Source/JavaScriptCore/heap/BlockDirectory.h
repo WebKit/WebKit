@@ -145,7 +145,9 @@ private:
     friend class LocalSideAllocator;
     friend class MarkedBlock;
     
-    MarkedBlock::Handle* findBlockForAllocation(LocalAllocator&);
+public:
+    MarkedBlock::Handle* findBlockForAllocation(LocalAllocator&, bool isSpecilative = false);
+private:
     
     MarkedBlock::Handle* tryAllocateBlock(Heap&);
     
@@ -173,7 +175,7 @@ private:
     BlockDirectory* m_nextDirectory { nullptr };
     BlockDirectory* m_nextDirectoryInSubspace { nullptr };
     BlockDirectory* m_nextDirectoryInAlignedMemoryAllocator { nullptr };
-    
+public:
     SentinelLinkedList<LocalAllocator, BasicRawSentinelNode<LocalAllocator>> m_localAllocators;
 };
 
