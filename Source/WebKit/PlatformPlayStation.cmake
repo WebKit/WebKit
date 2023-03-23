@@ -146,6 +146,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
+    "${WEBKIT_DIR}/UIProcess/API/libwpe"
     "${WEBKIT_DIR}/UIProcess/API/playstation"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/playstation"
@@ -216,6 +217,8 @@ endif ()
 
 if (USE_WPE_BACKEND_PLAYSTATION)
     list(APPEND WebKit_SOURCES
+        UIProcess/API/libwpe/TouchGestureController.cpp
+
         UIProcess/Launcher/libwpe/ProcessProviderLibWPE.cpp
 
         UIProcess/Launcher/playstation/ProcessProviderPlayStation.cpp

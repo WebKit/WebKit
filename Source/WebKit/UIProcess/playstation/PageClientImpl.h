@@ -102,6 +102,9 @@ private:
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
 
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
+#if ENABLE(TOUCH_EVENTS)
+    void doneWithTouchEvent(const NativeWebTouchEvent&, bool) override;
+#endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
 
