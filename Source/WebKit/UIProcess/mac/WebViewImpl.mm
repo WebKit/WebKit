@@ -4561,7 +4561,7 @@ void WebViewImpl::scrollWheel(NSEvent *event)
         return;
 
     NativeWebWheelEvent webEvent = NativeWebWheelEvent(event, m_view.getAutoreleased());
-    m_page->handleWheelEvent(webEvent);
+    m_page->handleNativeWheelEvent(webEvent);
 }
 
 void WebViewImpl::swipeWithEvent(NSEvent *event)

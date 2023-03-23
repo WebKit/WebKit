@@ -1090,8 +1090,8 @@ public:
     void flushPendingMouseEventCallbacks();
 
     bool isProcessingWheelEvents() const;
-    void handleWheelEvent(const NativeWebWheelEvent&);
-    void continueWheelEventHandling(const NativeWebWheelEvent&, const WebCore::WheelEventHandlingResult&);
+    void handleNativeWheelEvent(const NativeWebWheelEvent&);
+    void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&);
 
     bool isProcessingKeyboardEvents() const;
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
@@ -2628,8 +2628,13 @@ private:
 
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
+    void handleWheelEvent(const WebWheelEvent&);
     void sendWheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<bool> rubberBandableEdges);
-    void wheelEventWasNotHandled(const NativeWebWheelEvent&);
+
+    void wheelEventHandlingCompleted(bool wasHandled);
+
+    void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
+    void sendWheelEventScrollingAccelerationCurveIfNecessary(const WebWheelEvent&);
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 

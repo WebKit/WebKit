@@ -149,31 +149,35 @@ void RemoteLayerTreeEventDispatcher::hasNodeWithAnimatedScrollChanged(bool hasAn
     startOrStopDisplayLink();
 }
 
-void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const NativeWebWheelEvent& wheelEvent)
+void RemoteLayerTreeEventDispatcher::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& wheelEvent)
+{
+    ASSERT(isMainRunLoop());
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (wheelEvent.momentumPhase() != WebWheelEvent::PhaseBegan)
+        return;
+
+    auto curve = ScrollingAccelerationCurve::fromNativeWheelEvent(wheelEvent);
+    m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, curve);
+#endif
+}
+
+void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const WebWheelEvent& wheelEvent)
 {
     ASSERT(isMainRunLoop());
     
     m_wheelEventActivityHysteresis.impulse();
     m_wheelEventsBeingProcessed.append(wheelEvent);
-
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseBegan) {
-        auto curve = ScrollingAccelerationCurve::fromNativeWheelEvent(wheelEvent);
-        m_momentumEventDispatcher->setScrollingAccelerationCurve(m_pageIdentifier, curve);
-    }
-#else
-    UNUSED_PARAM(wheelEvent);
-#endif
 }
 
-void RemoteLayerTreeEventDispatcher::handleWheelEvent(const NativeWebWheelEvent& nativeWheelEvent, RectEdges<bool> rubberBandableEdges)
+void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
     ASSERT(isMainRunLoop());
 
-    willHandleWheelEvent(nativeWheelEvent);
+    willHandleWheelEvent(wheelEvent);
 
-    ScrollingThread::dispatch([dispatcher = Ref { *this }, webWheelEvent = WebWheelEvent { nativeWheelEvent }, rubberBandableEdges] {
-        auto handlingResult = dispatcher->scrollingThreadHandleWheelEvent(webWheelEvent, rubberBandableEdges);
+    ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent, rubberBandableEdges] {
+        auto handlingResult = dispatcher->scrollingThreadHandleWheelEvent(wheelEvent, rubberBandableEdges);
         RunLoop::main().dispatch([dispatcher, handlingResult] {
             dispatcher->wheelEventWasHandledByScrollingThread(handlingResult);
         });

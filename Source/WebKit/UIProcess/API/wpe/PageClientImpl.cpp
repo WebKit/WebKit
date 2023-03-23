@@ -241,7 +241,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
             auto* event = &axisEvent.event;
 #endif
             if (event->type != wpe_input_axis_event_type_null) {
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
                     axisEvent.phase, WebWheelEvent::Phase::PhaseNone));
             }
         });
