@@ -631,6 +631,8 @@ struct WebCore::ApplePayDateComponentsRange {
 #endif // ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 
 #if ENABLE(APPLE_PAY)
+[Nested] enum class WebCore::ApplePayLineItem::Type : bool;
+
 struct WebCore::ApplePayLineItem {
     WebCore::ApplePayLineItem::Type type
     String label
