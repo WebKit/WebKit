@@ -1,0 +1,13 @@
+Tests for the HTML entity parsing by our HTML fast parser.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div.innerHTML is "Genius Nicer Dicer Plus | 18&nbsp;…"
+PASS div.innerHTML is "&nbsp;&amp;a"
+PASS div.innerHTML is "&nbsp;&amp;"
+PASS div.innerHTML is "&nbsp;-"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ -

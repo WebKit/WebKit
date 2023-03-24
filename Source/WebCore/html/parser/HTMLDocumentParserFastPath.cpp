@@ -733,6 +733,13 @@ private:
             bool notEnoughCharacters = false;
             if (!consumeHTMLEntity(inputSegmented, out, notEnoughCharacters) || notEnoughCharacters)
                 return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
+            // consumeHTMLEntity() may not have consumed all the input.
+            if (auto remainingLength = inputSegmented.length()) {
+                if (*(m_parsingBuffer.position() - 1) == ';')
+                    m_parsingBuffer.setPosition(m_parsingBuffer.position() - remainingLength - 1);
+                else
+                    m_parsingBuffer.setPosition(m_parsingBuffer.position() - remainingLength);
+            }
         }
     }
 
