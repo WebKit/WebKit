@@ -219,19 +219,20 @@ imported/w3c/web-platform-tests/touch-events [ Skip ]
 imported/blink/fast/events/touch/touch-action-double-remove.html [ Skip ]
 
 # WinCairo bots have a problem of running Media Foundation
-compositing/geometry/clipped-video-controller.html [ Timeout ]
-compositing/geometry/video-fixed-scrolling.html [ Timeout ]
-compositing/geometry/video-opacity-overlay.html [ Timeout ]
-compositing/layers-inside-overflow-scroll.html [ Timeout ]
-compositing/overflow/overflow-compositing-descendant.html [ Timeout ]
-compositing/overflow/scroll-ancestor-update.html [ Timeout ]
-compositing/reflections/load-video-in-reflection.html [ Timeout ]
-compositing/self-painting-layers.html [ Timeout ]
-compositing/self-painting-layers2.html [ Timeout ]
-compositing/shared-backing/clipping-and-shared-backing.html [ Timeout ]
-compositing/video-page-visibility.html [ Timeout ]
-compositing/visibility/visibility-simple-video-layer.html [ Timeout ]
-fast/canvas/canvas-drawImage-hdr-video.html [ Timeout ]
+compositing/geometry/clipped-video-controller.html [ Skip ] # Timeout
+compositing/geometry/video-fixed-scrolling.html [ Skip ] # Timeout
+compositing/geometry/video-opacity-overlay.html [ Skip ] # Timeout
+compositing/layers-inside-overflow-scroll.html [ Skip ] # Timeout
+compositing/overflow/overflow-compositing-descendant.html [ Skip ] # Timeout
+compositing/overflow/scroll-ancestor-update.html [ Skip ] # Timeout
+compositing/reflections/load-video-in-reflection.html [ Skip ] # Timeout
+compositing/self-painting-layers.html [ Skip ] # Timeout
+compositing/self-painting-layers2.html [ Skip ] # Timeout
+compositing/shared-backing/clipping-and-shared-backing.html [ Skip ] # Timeout
+compositing/video-page-visibility.html [ Skip ] # Timeout
+compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
+fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
+http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 media/audio-data-url.html [ Skip ]
 media/audio-mpeg-supported.html [ Skip ]
 media/invalid-media-url-crash.html [ Skip ]
@@ -809,6 +810,8 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html [ Pass Failur
 http/tests/images/hidpi-srcset-copy.html [ Failure ]
 http/tests/images/image-supports-video.html [ Failure ]
 http/tests/images/mp4-partial-load.html [ Failure ]
+
+webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
 
 http/tests/inspector/network/eventsource-type.html [ Failure ]
 http/tests/inspector/network/fetch-response-body.html [ Failure ]
@@ -2459,7 +2462,7 @@ webgl/many-contexts.html [ Skip ] # Timeout
 webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 
 
-[ Debug ] js/date-timeClip-large-values.html [ Failure ]
+js/date-timeClip-large-values.html [ Failure Pass ]
 
 # Tests depend on the system timezone.
 storage/indexeddb/modern/date-basic-private.html [ Failure Pass ]
@@ -2513,3 +2516,7 @@ webkit.org/b/253868 js/ShadowRealm-iframe-sandboxed.html [ Timeout Pass ]
 webkit.org/b/253868 http/tests/misc/iframe-shadow-realm.html [ Timeout Pass ]
 
 fast/text/bidi-with-non-preserved-tab.html [ ImageOnlyFailure ]
+
+webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Skip ] # Crash Timeout only on Buildbot
+
+webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure Timeout ]
