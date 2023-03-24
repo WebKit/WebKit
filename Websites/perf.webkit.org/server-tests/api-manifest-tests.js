@@ -190,7 +190,7 @@ describe('/api/manifest', function () {
             db.insert('test_metrics', {id: 9, test: 4, name: 'Time'}),
             db.insert('platform_groups', {id: 1, name: 'ios'}),
             db.insert('platform_groups', {id: 2, name: 'mac'}),
-            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', group: 1}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', label: 'iOS 9 iPhone 5s (2013)', group: 1}),
             db.insert('platforms', {id: 46, name: 'Trunk Mavericks', group: 2}),
             db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
             db.insert('test_configurations', {id: 102, metric: 6, platform: 46, type: 'current'}),
@@ -245,6 +245,7 @@ describe('/api/manifest', function () {
             assert(macGroup);
 
             assert.strictEqual(mavericks.name(), 'Trunk Mavericks');
+            assert.strictEqual(mavericks.label(), 'Trunk Mavericks');
             assert(mavericks.hasTest(someTest));
             assert(mavericks.hasTest(someOtherTest));
             assert(mavericks.hasTest(childTest));
@@ -256,6 +257,7 @@ describe('/api/manifest', function () {
             assert.strictEqual(mavericks.group(), macGroup);
 
             assert.strictEqual(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
+            assert.strictEqual(ios9iphone5s.label(), 'iOS 9 iPhone 5s (2013)');
             assert(ios9iphone5s.hasTest(someTest));
             assert(!ios9iphone5s.hasTest(someOtherTest));
             assert(!ios9iphone5s.hasTest(childTest));

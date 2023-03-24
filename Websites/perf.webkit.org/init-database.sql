@@ -45,6 +45,7 @@ CREATE TABLE platform_groups (
 CREATE TABLE platforms (
     platform_id serial PRIMARY KEY,
     platform_name varchar(64) NOT NULL,
+    platform_label varchar(128) DEFAULT NULL UNIQUE,
     platform_group integer REFERENCES platform_groups DEFAULT NULL,
     platform_hidden boolean NOT NULL DEFAULT FALSE);
 

@@ -297,7 +297,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
                 const matchingTestNames = [...matchingTests].map((test) => test.fullName()).sort().join('", "');
                 const mismathingTestNames = [...mismatchingTests].map((test) => test.fullName()).sort().join('", "');
                 error = `Tests "${matchingTestNames}" and "${mismathingTestNames}" cannot be scheduled
-                    simultenosuly on "${platform.name()}". Please select one of them at a time.`;
+                    simultenosuly on "${platform.label()}". Please select one of them at a time.`;
             }
         }
 

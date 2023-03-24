@@ -251,7 +251,7 @@ class TestFreshnessPage extends PageWithHeading {
         let tableContent = [element('tr', element('td', {colspan: 2}, buildSummary))];
 
         if (chartURL) {
-            const linkDescription = `${metric.test().name()} on ${platform.name()}`;
+            const linkDescription = `${metric.test().name()} on ${platform.label()}`;
             tableContent.push(element('tr', [
                 element('td', 'Chart'),
                 element('td', {colspan: 2}, link(linkDescription, linkDescription, chartURL, true, tabIndex))

@@ -127,6 +127,7 @@ class ManifestGenerator {
                 if (array_key_exists($id, $platform_metrics)) {
                     $platforms[$id] = array(
                         'name' => $platform_row['platform_name'],
+                        'label' => $platform_row['platform_label'],
                         'metrics' => $platform_metrics[$id]['metrics'],
                         'group' => $platform_row['platform_group'],
                         'hidden' => Database::is_true($platform_row['platform_hidden']),
