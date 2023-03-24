@@ -147,7 +147,7 @@ void Font::platformInit()
         }
     }
 
-    if (!xHeight) {
+    if (!xHeight.has_value() || !xHeight.value()) {
         cairo_text_extents_t textExtents;
         cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &textExtents);
         xHeight = narrowPrecisionToFloat((platformData().orientation() == FontOrientation::Horizontal) ? textExtents.height : textExtents.width);
