@@ -576,8 +576,6 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         teardownStack.append(&element);
     };
 
-    auto& document = root.document();
-
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
@@ -595,10 +593,10 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                     styleable.willChangeRenderer();
                     break;
                 }
-                FALLTHROUGH;
+                element.clearHoverAndActiveStatusBeforeDetachingRenderer();
+                break;
             case TeardownType::Full:
-                if (document.renderTreeBeingDestroyed())
-                    styleable.cancelDeclarativeAnimations();
+                styleable.cancelDeclarativeAnimations();
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
                 break;
             case TeardownType::RendererUpdateCancelingAnimations:
