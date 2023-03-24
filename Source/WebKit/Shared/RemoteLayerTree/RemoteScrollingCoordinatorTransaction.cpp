@@ -249,8 +249,14 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
 #endif
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::IsMonitoringWheelEvents, bool, setIsMonitoringWheelEvents);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
-    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::RequestedScrollPosition, RequestedScrollData, setRequestedScrollData);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::KeyboardScrollData, RequestedKeyboardScrollData, setKeyboardScrollData);
+
+    if (node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
+        RequestedScrollData requestedScrollData;
+        if (!decoder.decode(requestedScrollData))
+            return false;
+        node.setRequestedScrollData(WTFMove(requestedScrollData), ScrollingStateScrollingNode::CanMergeScrollData::No);
+    }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
         std::optional<PlatformLayerIdentifier> layerID;

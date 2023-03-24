@@ -891,6 +891,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-
 webkit.org/b/212202 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
 webkit.org/b/212202 fast/events/wheel/redispatched-wheel-event.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/programmatic-smooth-scroll-after-focus.html [ Skip ]
+webkit.org/b/212202 fast/scrolling/programmatic-smooth-scroll-from-nonzero-offset.html [ Skip ]
 
 webkit.org/b/218931 fast/events/wheel/first-wheel-event-cancelable.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Timeout ]

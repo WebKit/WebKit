@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroll-container {
+            height: 250px;
+            width: 300px;
+            border: 1px solid black;
+            overflow-y: scroll;
+        }
+
+        .contents {
+            height: 100%;
+            width: 4000px;
+            background-image: repeating-linear-gradient(to right, white, silver 250px);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        observedScrollLeftBelow1000 = false;
+
+        addEventListener("load", async () => {
+            scrollContainer = document.querySelector(".scroll-container");
+            scrollContainer.scrollTo(1000, 0);
+            await UIHelper.ensurePresentationUpdate();
+
+            scrollContainer.addEventListener("scroll", () => {
+                if (scrollContainer.scrollLeft < 1000)
+                    observedScrollLeftBelow1000 = true;
+            });
+
+            await UIHelper.startMonitoringWheelEvents();
+            scrollContainer.scrollBy({ top: 0, left: 1000, behavior: "smooth" });
+            await UIHelper.waitForScrollCompletion();
+
+            shouldBeFalse("observedScrollLeftBelow1000");
+            shouldBe("scrollContainer.scrollLeft", "2000");
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <div class="scroll-container">
+        <div class="contents"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

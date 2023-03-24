@@ -207,10 +207,10 @@ void ScrollingStateScrollingNode::setKeyboardScrollData(const RequestedKeyboardS
     setPropertyChanged(Property::KeyboardScrollData);
 }
 
-void ScrollingStateScrollingNode::setRequestedScrollData(RequestedScrollData&& scrollData)
+void ScrollingStateScrollingNode::setRequestedScrollData(RequestedScrollData&& scrollData, CanMergeScrollData canMergeScrollData)
 {
     // Scroll position requests are imperative, not stateful, so we can't early return here.
-    if (hasChangedProperty(Property::RequestedScrollPosition)) {
+    if (hasChangedProperty(Property::RequestedScrollPosition) && canMergeScrollData == CanMergeScrollData::Yes) {
         m_requestedScrollData.merge(WTFMove(scrollData));
         return;
     }
