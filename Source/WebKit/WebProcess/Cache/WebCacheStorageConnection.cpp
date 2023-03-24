@@ -77,7 +77,16 @@ void WebCacheStorageConnection::retrieveCaches(const WebCore::ClientOrigin& orig
 
 void WebCacheStorageConnection::retrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRetrieveRecords(cacheIdentifier, options), WTFMove(callback));
+    auto newCallback = [callback = WTFMove(callback)](auto&& result) mutable {
+        if (!result.has_value())
+            return callback(makeUnexpected(result.error()));
+
+        auto records = WTF::map(result.value(), [](auto&& record) {
+            return fromCrossThreadRecord(WTFMove(record));
+        });
+        return callback(WTFMove(records));
+    };
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStorageRetrieveRecords(cacheIdentifier, options), WTFMove(newCallback));
 }
 
 void WebCacheStorageConnection::batchDeleteOperation(WebCore::DOMCacheIdentifier cacheIdentifier, const WebCore::ResourceRequest& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
@@ -87,7 +96,10 @@ void WebCacheStorageConnection::batchDeleteOperation(WebCore::DOMCacheIdentifier
 
 void WebCacheStorageConnection::batchPutOperation(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStoragePutRecords(cacheIdentifier, records), WTFMove(callback));
+    auto crossThreadRecords = WTF::map(records, [](auto&& record) {
+        return toCrossThreadRecord(WTFMove(record));
+    });
+    connection().sendWithAsyncReply(Messages::NetworkStorageManager::CacheStoragePutRecords(cacheIdentifier, crossThreadRecords), WTFMove(callback));
 }
 
 void WebCacheStorageConnection::reference(WebCore::DOMCacheIdentifier cacheIdentifier)

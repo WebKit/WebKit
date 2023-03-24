@@ -83,9 +83,9 @@
     CacheStorageAllCaches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
     CacheStorageReference(WebCore::DOMCacheIdentifier cacheIdentifier)
     CacheStorageDereference(WebCore::DOMCacheIdentifier cacheIdentifier)
-    CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::RecordsOrError result)
+    CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::CrossThreadRecordsOrError result)
     CacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
-    CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
+    CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord> records) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
     CacheStorageClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::DOMCacheEngine::Error> error)
     CacheStorageRepresentation() -> (String representation)
 }
