@@ -7,8 +7,8 @@ PASS WritableStream should be writable and ready should fulfill immediately if t
 PASS WritableStream should be constructible with no arguments
 PASS underlyingSink argument should be converted after queuingStrategy argument
 PASS WritableStream instances should have standard methods and properties
-FAIL WritableStreamDefaultController constructor should throw assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController({})" did not throw
-FAIL WritableStreamDefaultController constructor should throw when passed an initialised WritableStream assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController(stream)" did not throw
+PASS WritableStreamDefaultController constructor should throw
+PASS WritableStreamDefaultController constructor should throw when passed an initialised WritableStream
 PASS WritableStreamDefaultWriter should throw unless passed a WritableStream
 PASS WritableStreamDefaultWriter constructor should throw when stream argument is locked
 
