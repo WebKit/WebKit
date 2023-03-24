@@ -462,6 +462,28 @@ window.sectionsManager =
     }
 };
 
+window.suitesManager = {
+    constructSuitesFromTestList: function(testNames)
+    {
+        var suites = [];
+        for (const testName of testNames) {
+            var testRegExp = new RegExp(testName, "i");
+            for (const suite of Suites) {
+                var test;
+                for (const suiteTest of suite.tests) {
+                    if (Utilities.stripUnwantedCharactersForURL(suiteTest.name).match(testRegExp)) {
+                        test = new Suite(suite.name, [suiteTest]);
+                        break;
+                    }
+                }
+            }
+            if (test)
+                suites.push(test)
+        }
+        return suites
+    }
+};
+
 window.benchmarkController = {
     benchmarkDefaultParameters: {
         "test-interval": 30,
@@ -549,8 +571,19 @@ window.benchmarkController = {
 
     startBenchmark: function()
     {
-        var options = this.benchmarkDefaultParameters;
-        this._startBenchmark(Suites, options, "test-container");
+        var suites;
+        if (typeof(URLSearchParams) !== "undefined") {
+            const urlParameters = new URLSearchParams(window.location.search);
+            if (urlParameters.has('test-name')) {
+                customTestList = urlParameters.getAll("test-name");
+                var suites = suitesManager.constructSuitesFromTestList(customTestList);
+            }
+        }
+
+        if (!suites || suites.length === 0)
+            suites = Suites
+        var options = this.benchmarkDefaultParameters
+        this._startBenchmark(suites, options, "test-container");
     },
 
     showResults: function()
@@ -665,4 +698,3 @@ window.benchmarkController = {
 };
 
 window.addEventListener("load", function() { benchmarkController.initialize(); });
-
