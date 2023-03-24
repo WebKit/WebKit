@@ -978,6 +978,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
             _page->computePagesForPrinting(frameID, printInfo, [&pageCount, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& /* computedPageMargin */) mutable {
                 ASSERT(pageRects.size() >= 1);
                 pageCount = pageRects.size();
+                RELEASE_LOG(Printing, "Computed pages for printing on background thread. Page count = %zu", pageCount);
                 computePagesSemaphore.signal();
             });
         });
@@ -997,6 +998,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         return nil;
 
     auto attributes = adoptNS([[_WKPrintFormattingAttributes alloc] initWithPageCount:pageCount frameID:frameID printInfo:printInfo]);
+
+    RELEASE_LOG(Printing, "Computed attributes for print formatter. Computed page count = %zu", pageCount);
+
     return attributes;
 }
 
@@ -1014,6 +1018,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     bool isPrintingOnBackgroundThread = !isMainRunLoop();
 
     ensureOnMainRunLoop([formatterAttributes = retainPtr(formatterAttributes), isPrintingOnBackgroundThread, printFormatter = retainPtr(printFormatter), retainedSelf = retainPtr(self)] {
+        RELEASE_LOG(Printing, "Beginning to generate print preview image. Page count = %zu", [formatterAttributes pageCount]);
+
         // Begin generating the image in expectation of a (eventual) request for the drawn data.
         auto callbackID = retainedSelf->_page->drawToImage([formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](WebKit::ShareableBitmapHandle&& imageHandle) mutable {
             if (!isPrintingOnBackgroundThread)

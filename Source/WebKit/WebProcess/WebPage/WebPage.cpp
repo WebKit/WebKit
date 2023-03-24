@@ -5806,6 +5806,8 @@ void WebPage::unfreezeLayerTreeDueToSwipeAnimation()
 
 void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 {
+    RELEASE_LOG(Printing, "Begin printing.");
+
     PrintContextAccessScope scope { *this };
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
@@ -5851,6 +5853,8 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 
 void WebPage::endPrinting()
 {
+    RELEASE_LOG(Printing, "End printing.");
+
     if (m_inActivePrintContextAccessScope) {
         m_shouldEndPrintingImmediately = true;
         return;

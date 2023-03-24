@@ -27,6 +27,7 @@
 #include "LengthBox.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "Logging.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -50,6 +51,8 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
 {
     if (!frame())
         return;
+
+    RELEASE_LOG(Printing, "Computing page rects and clearing existing page rects. Existing page rects size = %zu", m_pageRects.size());
 
     auto& frame = *this->frame();
     m_pageRects.clear();
@@ -109,6 +112,7 @@ FloatSize PrintContext::computedPageSize(FloatSize pageSize, FloatBoxExtent prin
 
 void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling)
 {
+    RELEASE_LOG(Printing, "Computing page rects with page size and clearing existing page rects. Existing page rects size = %zu", m_pageRects.size());
     m_pageRects.clear();
     computePageRectsWithPageSizeInternal(pageSizeInPixels, allowHorizontalTiling);
 }
@@ -184,6 +188,8 @@ void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSiz
             m_pageRects.append(pageRect);
         }
     }
+
+    RELEASE_LOG(Printing, "Computed page rects with page size. Page rects count = %zu pageCount = %u", m_pageRects.size(), pageCount);
 }
 
 void PrintContext::begin(float width, float height)
@@ -232,6 +238,8 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
     auto& frame = *this->frame();
     if (!frame.view())
         return;
+
+    RELEASE_LOG(Printing, "Spooling page. pageNumber = %d pageRects size = %zu", pageNumber, m_pageRects.size());
 
     // FIXME: Not correct for vertical text.
     IntRect pageRect = m_pageRects[pageNumber];
