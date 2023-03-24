@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "GLContextEGL.h"
+#include "GLContext.h"
 
 #if USE(EGL) && PLATFORM(X11)
 
@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, XUniquePixmap&& pixmap)
-    : GLContext(display)
+GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, XUniquePixmap&& pixmap)
+    : m_display(display)
     , m_context(context)
     , m_surface(surface)
     , m_config(config)
@@ -39,12 +39,12 @@ GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurf
 {
 }
 
-EGLSurface GLContextEGL::createWindowSurfaceX11(EGLDisplay display, EGLConfig config, GLNativeWindowType window)
+EGLSurface GLContext::createWindowSurfaceX11(EGLDisplay display, EGLConfig config, GLNativeWindowType window)
 {
     return eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
+std::unique_ptr<GLContext> GLContext::createPixmapContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
     EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
@@ -92,7 +92,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(PlatformDisplay&
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, WTFMove(pixmap)));
+    return makeUnique<GLContext>(platformDisplay, context, surface, config, WTFMove(pixmap));
 }
 
 } // namespace WebCore

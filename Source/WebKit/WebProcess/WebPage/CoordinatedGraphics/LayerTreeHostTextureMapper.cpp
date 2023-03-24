@@ -128,7 +128,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     applyDeviceScaleFactor();
 
     // The creation of the TextureMapper needs an active OpenGL context.
-    m_context = GLContext::createContextForWindow(window());
+    m_context = GLContext::create(window(), PlatformDisplay::sharedDisplay());
 
     if (!m_context)
         return;

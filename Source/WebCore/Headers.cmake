@@ -1675,7 +1675,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontTaggedSettings.h
     platform/graphics/FourCC.h
     platform/graphics/GCGLSpan.h
-    platform/graphics/GLContext.h
     platform/graphics/GeometryUtilities.h
     platform/graphics/Glyph.h
     platform/graphics/GlyphBuffer.h
@@ -1845,6 +1844,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/displaylists/InMemoryDisplayList.h
 
     platform/graphics/cv/ImageTransferSessionVT.h
+
+    platform/graphics/egl/GLContext.h
 
     platform/graphics/filters/DistantLightSource.h
     platform/graphics/filters/FEBlend.h

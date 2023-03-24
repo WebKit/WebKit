@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "GLContextEGL.h"
+#include "GLContext.h"
 
 #if USE(EGL) && USE(WPE_RENDERER)
 #include "PlatformDisplayLibWPE.h"
@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, struct wpe_renderer_backend_egl_offscreen_target* target)
-    : GLContext(display)
+GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, struct wpe_renderer_backend_egl_offscreen_target* target)
+    : m_display(display)
     , m_context(context)
     , m_surface(surface)
     , m_config(config)
@@ -50,12 +50,12 @@ GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurf
 {
 }
 
-EGLSurface GLContextEGL::createWindowSurfaceWPE(EGLDisplay display, EGLConfig config, GLNativeWindowType window)
+EGLSurface GLContext::createWindowSurfaceWPE(EGLDisplay display, EGLConfig config, GLNativeWindowType window)
 {
     return eglCreateWindowSurface(display, config, reinterpret_cast<EGLNativeWindowType>(window), nullptr);
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
+std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
     EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
@@ -90,10 +90,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& pl
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, target));
+    return makeUnique<GLContext>(platformDisplay, context, surface, config, target);
 }
 
-void GLContextEGL::destroyWPETarget()
+void GLContext::destroyWPETarget()
 {
     if (m_wpeTarget)
         wpe_renderer_backend_egl_offscreen_target_destroy(m_wpeTarget);

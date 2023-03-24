@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia, S.L.
+ * Copyright (C) 2012,2023 Igalia, S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,20 @@
  */
 
 #include "config.h"
-#include "GLContextEGL.h"
+#include "GLContext.h"
 
 #if USE(EGL)
-
 #include "GraphicsContextGL.h"
 #include "Logging.h"
-#include "PlatformDisplay.h"
+#include <wtf/ThreadSpecific.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(LIBEPOXY)
 #include "EpoxyEGL.h"
 #else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
-#endif
-
-#if USE(CAIRO)
-#include <cairo.h>
 #endif
 
 #if USE(LIBEPOXY)
@@ -52,9 +49,32 @@
 #include <X11/Xutil.h>
 #endif
 
-#include <wtf/Vector.h>
-
 namespace WebCore {
+
+static ThreadSpecific<GLContext*>& currentContext()
+{
+    static ThreadSpecific<GLContext*>* context;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        context = new ThreadSpecific<GLContext*>();
+    });
+    return *context;
+}
+
+static bool initializeOpenGLShimsIfNeeded()
+{
+#if USE(OPENGL_ES) || USE(LIBEPOXY) || USE(ANGLE)
+    return true;
+#else
+    static bool initialized = false;
+    static bool success = true;
+    if (!initialized) {
+        success = initializeOpenGLShims();
+        initialized = true;
+    }
+    return success;
+#endif
+}
 
 #if USE(OPENGL_ES)
 static const char* gEGLAPIName = "OpenGL ES";
@@ -64,7 +84,7 @@ static const char* gEGLAPIName = "OpenGL";
 static const EGLenum gEGLAPIVersion = EGL_OPENGL_API;
 #endif
 
-const char* GLContextEGL::errorString(int statusCode)
+const char* GLContext::errorString(int statusCode)
 {
     static_assert(sizeof(int) >= sizeof(EGLint), "EGLint must not be wider than int");
     switch (statusCode) {
@@ -90,12 +110,12 @@ const char* GLContextEGL::errorString(int statusCode)
     }
 }
 
-const char* GLContextEGL::lastErrorString()
+const char* GLContext::lastErrorString()
 {
     return errorString(eglGetError());
 }
 
-bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType, Function<bool(int)>&& checkCompatibleVisuals)
+bool GLContext::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType, Function<bool(int)>&& checkCompatibleVisuals)
 {
 #if !PLATFORM(X11)
     UNUSED_PARAM(checkCompatibleVisuals);
@@ -125,14 +145,14 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
     };
 
     switch (surfaceType) {
-    case GLContextEGL::PbufferSurface:
+    case GLContext::PbufferSurface:
         attributeList[13] = EGL_PBUFFER_BIT;
         break;
-    case GLContextEGL::PixmapSurface:
+    case GLContext::PixmapSurface:
         attributeList[13] = EGL_PIXMAP_BIT;
         break;
-    case GLContextEGL::WindowSurface:
-    case GLContextEGL::Surfaceless:
+    case GLContext::WindowSurface:
+    case GLContext::Surfaceless:
         attributeList[13] = EGL_WINDOW_BIT;
         break;
     }
@@ -179,7 +199,7 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
     return false;
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, EGLContext sharingContext)
+std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
     Function<bool(int)> checkCompatibleVisuals = nullptr;
 #if PLATFORM(X11)
@@ -257,10 +277,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowTy
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, WindowSurface));
+    return makeUnique<GLContext>(platformDisplay, context, surface, config, WindowSurface);
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
+std::unique_ptr<GLContext> GLContext::createPbufferContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
     EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
@@ -283,10 +303,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(PlatformDisplay
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, PbufferSurface));
+    return makeUnique<GLContext>(platformDisplay, context, surface, config, PbufferSurface);
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createSurfacelessContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
+std::unique_ptr<GLContext> GLContext::createSurfacelessContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
     EGLDisplay display = platformDisplay.eglDisplay();
     if (display == EGL_NO_DISPLAY) {
@@ -312,11 +332,14 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSurfacelessContext(PlatformDis
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, EGL_NO_SURFACE, config, Surfaceless));
+    return makeUnique<GLContext>(platformDisplay, context, EGL_NO_SURFACE, config, Surfaceless);
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createContext(GLNativeWindowType window, PlatformDisplay& platformDisplay)
+std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, PlatformDisplay& platformDisplay)
 {
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
     if (platformDisplay.eglDisplay() == EGL_NO_DISPLAY) {
         WTFLogAlways("Cannot create EGL context: invalid display (last error: %s)\n", lastErrorString());
         return nullptr;
@@ -327,7 +350,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(GLNativeWindowType win
         return nullptr;
     }
 
-    EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContextEGL*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
+    EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContext*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
     auto context = window ? createWindowContext(window, platformDisplay, eglSharingContext) : nullptr;
     if (!context)
         context = createSurfacelessContext(platformDisplay, eglSharingContext);
@@ -362,8 +385,19 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(GLNativeWindowType win
     return context;
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay& platformDisplay)
+std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformDisplay)
 {
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
+    return create(0, platformDisplay);
+}
+
+std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDisplay)
+{
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
     if (platformDisplay.eglDisplay() == EGL_NO_DISPLAY) {
         WTFLogAlways("Cannot create EGL sharing context: invalid display (last error: %s)", lastErrorString());
         return nullptr;
@@ -406,8 +440,8 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay
     return context;
 }
 
-GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, EGLSurfaceType type)
-    : GLContext(display)
+GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, EGLSurfaceType type)
+    : m_display(display)
     , m_context(context)
     , m_surface(surface)
     , m_config(config)
@@ -419,7 +453,7 @@ GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurf
     RELEASE_ASSERT(context != EGL_NO_CONTEXT);
 }
 
-GLContextEGL::~GLContextEGL()
+GLContext::~GLContext()
 {
     EGLDisplay display = m_display.eglDisplay();
     if (m_context) {
@@ -437,28 +471,12 @@ GLContextEGL::~GLContextEGL()
 #if USE(WPE_RENDERER)
     destroyWPETarget();
 #endif
+
+    if (this == *currentContext())
+        *currentContext() = nullptr;
 }
 
-bool GLContextEGL::canRenderToDefaultFramebuffer()
-{
-    return m_type == WindowSurface;
-}
-
-IntSize GLContextEGL::defaultFrameBufferSize()
-{
-    if (!canRenderToDefaultFramebuffer())
-        return IntSize();
-
-    EGLDisplay display = m_display.eglDisplay();
-    EGLint width, height;
-    if (!eglQuerySurface(display, m_surface, EGL_WIDTH, &width)
-        || !eglQuerySurface(display, m_surface, EGL_HEIGHT, &height))
-        return IntSize();
-
-    return IntSize(width, height);
-}
-
-EGLContext GLContextEGL::createContextForEGLVersion(PlatformDisplay& platformDisplay, EGLConfig config, EGLContext sharingContext)
+EGLContext GLContext::createContextForEGLVersion(PlatformDisplay& platformDisplay, EGLConfig config, EGLContext sharingContext)
 {
     static EGLint contextAttributes[7];
     static bool contextAttributesInitialized = false;
@@ -517,18 +535,23 @@ EGLContext GLContextEGL::createContextForEGLVersion(PlatformDisplay& platformDis
     return eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);
 }
 
-bool GLContextEGL::makeContextCurrent()
+bool GLContext::makeContextCurrent()
 {
     ASSERT(m_context);
 
-    GLContext::makeContextCurrent();
+    *currentContext() = this;
     if (eglGetCurrentContext() == m_context)
         return true;
 
     return eglMakeCurrent(m_display.eglDisplay(), m_surface, m_surface, m_context);
 }
 
-void GLContextEGL::swapBuffers()
+GLContext* GLContext::current()
+{
+    return *currentContext();
+}
+
+void GLContext::swapBuffers()
 {
     if (m_type == Surfaceless)
         return;
@@ -537,20 +560,51 @@ void GLContextEGL::swapBuffers()
     eglSwapBuffers(m_display.eglDisplay(), m_surface);
 }
 
-void GLContextEGL::waitNative()
-{
-    eglWaitNative(EGL_CORE_NATIVE_ENGINE);
-}
-
-void GLContextEGL::swapInterval(int interval)
-{
-    ASSERT(m_surface);
-    eglSwapInterval(m_display.eglDisplay(), interval);
-}
-
-GCGLContext GLContextEGL::platformContext()
+GCGLContext GLContext::platformContext() const
 {
     return m_context;
+}
+
+bool GLContext::isExtensionSupported(const char* extensionList, const char* extension)
+{
+    if (!extensionList)
+        return false;
+
+    ASSERT(extension);
+    int extensionLen = strlen(extension);
+    const char* extensionListPtr = extensionList;
+    while ((extensionListPtr = strstr(extensionListPtr, extension))) {
+        if (extensionListPtr[extensionLen] == ' ' || extensionListPtr[extensionLen] == '\0')
+            return true;
+        extensionListPtr += extensionLen;
+    }
+    return false;
+}
+
+unsigned GLContext::version()
+{
+    if (!m_version) {
+        // Version string can start with the version number (all versions except GLES 1 and 2) or with
+        // "OpenGL". Different fields inside the version string are separated by spaces.
+        auto versionString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_VERSION)));
+        Vector<String> versionStringComponents = versionString.split(' ');
+
+        Vector<String> versionDigits;
+        if (versionStringComponents[0] == "OpenGL"_s) {
+            // If the version string starts with "OpenGL" it can be GLES 1 or 2. In GLES1 version string starts
+            // with "OpenGL ES-<profile> major.minor" and in GLES2 with "OpenGL ES major.minor". Version is the
+            // third component in both cases.
+            versionDigits = versionStringComponents[2].split('.');
+        } else {
+            // Version is the first component. The version number is always "major.minor" or
+            // "major.minor.release". Ignore the release number.
+            versionDigits = versionStringComponents[0].split('.');
+        }
+
+        m_version = parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).value_or(0) * 100
+            + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).value_or(0) * 10;
+    }
+    return m_version;
 }
 
 } // namespace WebCore

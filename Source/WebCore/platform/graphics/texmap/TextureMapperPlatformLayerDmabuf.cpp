@@ -29,7 +29,7 @@
 
 #if USE(ANGLE) && USE(NICOSIA)
 
-#include "GLContextEGL.h"
+#include "GLContext.h"
 
 #if USE(LIBEPOXY)
 #include "EpoxyEGL.h"
@@ -84,7 +84,6 @@ void TextureMapperPlatformLayerDmabuf::validateTexture()
         return;
 
     auto* context = GLContext::current();
-    ASSERT(context->isEGLContext());
     auto& display = context->display();
 
     context->makeContextCurrent();
