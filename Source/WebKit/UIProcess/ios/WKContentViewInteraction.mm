@@ -5655,9 +5655,6 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
     Vector<WebCore::CompositionHighlight> highlights;
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        if (!attributes[NSMarkedClauseSegmentAttributeName])
-            return;
-
         WebCore::Color backgroundHighlightColor { WebCore::CompositionHighlight::defaultCompositionFillColor };
         if (UIColor *backgroundColor = attributes[NSBackgroundColorAttributeName])
             backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor);
