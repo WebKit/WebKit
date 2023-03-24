@@ -880,7 +880,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-    m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort));
+    m_linkBuffer = makeUnique<LinkBuffer>(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort);
     link();
 }
 
