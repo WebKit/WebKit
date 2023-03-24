@@ -2566,7 +2566,7 @@ static Color parseColorFunctionForRGBTypesRaw(CSSParserTokenRange& args, Consume
     for (auto& channel : channels) {
         auto value = rgbConsumer(args);
         if (!value)
-            break;
+            return { };
 
         channel = WTF::switchOn(*value,
             [] (NumberRaw number) { return number.value; },
@@ -2633,7 +2633,7 @@ static Color parseColorFunctionForXYZTypesRaw(CSSParserTokenRange& args, Consume
     for (auto& channel : channels) {
         auto value = xyzConsumer(args);
         if (!value)
-            break;
+            return { };
 
         channel = WTF::switchOn(*value,
             [] (NumberRaw number) { return number.value; },

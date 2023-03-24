@@ -31,15 +31,6 @@ PASS declaration.getPropertyValue('color') is 'color(srgb 1 1 1 / 0.5)'
 TEST: sRGB white with 0% alpha --> color(srgb 1 1 1 / 0%)
 PASS declaration.getPropertyValue('color') is 'color(srgb 1 1 1 / 0)'
 
-TEST: One missing component is 0 --> color(srgb 1 1)
-PASS declaration.getPropertyValue('color') is 'color(srgb 1 1 0)'
-
-TEST: Two missing components are 0 --> color(srgb 1)
-PASS declaration.getPropertyValue('color') is 'color(srgb 1 0 0)'
-
-TEST: All components missing --> color(srgb)
-PASS declaration.getPropertyValue('color') is 'color(srgb 0 0 0)'
-
 TEST: Display P3 color --> color(display-p3 0.6 0.7 0.8)
 PASS declaration.getPropertyValue('color') is 'color(display-p3 0.6 0.7 0.8)'
 
@@ -104,6 +95,15 @@ TEST: Bad alpha --> color(srgb 1 1 1 / bacon)
 PASS declaration.getPropertyValue('color') is ''
 
 TEST: Junk after alpha --> color(srgb 1 1 1 / 1 cucumber)
+PASS declaration.getPropertyValue('color') is ''
+
+TEST: One missing component is 0 --> color(srgb 1 1)
+PASS declaration.getPropertyValue('color') is ''
+
+TEST: Two missing components are 0 --> color(srgb 1)
+PASS declaration.getPropertyValue('color') is ''
+
+TEST: All components missing --> color(srgb)
 PASS declaration.getPropertyValue('color') is ''
 
 PASS successfullyParsed is true

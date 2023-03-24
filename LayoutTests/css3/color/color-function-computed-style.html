@@ -34,10 +34,6 @@ testColorFunction("sRGB white with 0 alpha", "color(srgb 1 1 1 / 0)", "color(srg
 testColorFunction("sRGB white with 50% alpha", "color(srgb 1 1 1 / 50%)", "color(srgb 1 1 1 / 0.5)");
 testColorFunction("sRGB white with 0% alpha", "color(srgb 1 1 1 / 0%)", "color(srgb 1 1 1 / 0)");
 
-testColorFunction("One missing component is 0", "color(srgb 1 1)", "color(srgb 1 1 0)");
-testColorFunction("Two missing components are 0", "color(srgb 1)", "color(srgb 1 0 0)");
-testColorFunction("All components missing", "color(srgb)", "color(srgb 0 0 0)");
-
 testColorFunction("Display P3 color", "color(display-p3 0.6 0.7 0.8)", "color(display-p3 0.6 0.7 0.8)");
 testColorFunction("Different case for Display P3", "color(dIspLaY-P3 0.6 0.7 0.8)", "color(display-p3 0.6 0.7 0.8)");
 
@@ -76,6 +72,9 @@ testColorFunction("Way too many parameters", "color(srgb 1 1 1 1 1)", "rgb(0, 0,
 testColorFunction("Bad parameters", "color(srgb 1 eggs 1)", "rgb(0, 0, 0)");
 testColorFunction("Bad alpha", "color(srgb 1 1 1 / bacon)", "rgb(0, 0, 0)");
 testColorFunction("Junk after alpha", "color(srgb 1 1 1 / 1 cucumber)", "rgb(0, 0, 0)");
+testColorFunction("One missing component is 0", "color(srgb 1 1)", "rgb(0, 0, 0)");
+testColorFunction("Two missing components are 0", "color(srgb 1)", "rgb(0, 0, 0)");
+testColorFunction("All components missing", "color(srgb)", "rgb(0, 0, 0)");
 
 debug("");
 
