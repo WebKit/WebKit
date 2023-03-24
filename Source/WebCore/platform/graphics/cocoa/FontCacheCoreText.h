@@ -67,10 +67,7 @@ enum class FontTypeForPreparation : bool {
     SystemFont,
     NonSystemFont
 };
-enum class ApplyTraitsVariations : bool {
-    No,
-    Yes
-};
+enum class ApplyTraitsVariations : bool { No, Yes };
 RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&&, const FontDescription&, const FontCreationContext&, FontTypeForPreparation = FontTypeForPreparation::NonSystemFont, ApplyTraitsVariations = ApplyTraitsVariations::Yes);
 enum class ShouldComputePhysicalTraits : bool { No, Yes };
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);

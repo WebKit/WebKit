@@ -59,7 +59,7 @@ public:
 
     enum class FindElementsMode { Single, Multiple };
     enum class ExecuteScriptMode { Sync, Async };
-    enum class ElementIsShadowRoot { No, Yes };
+    enum class ElementIsShadowRoot : bool { No, Yes };
 
     struct Cookie {
         String name;

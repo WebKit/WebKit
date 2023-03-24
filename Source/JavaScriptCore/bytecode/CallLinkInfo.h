@@ -180,10 +180,7 @@ public:
     bool isLinked() const { return stub() || m_calleeOrCodeBlock; }
     void unlink(VM&);
 
-    enum class UseDataIC : uint8_t {
-        Yes,
-        No
-    };
+    enum class UseDataIC : bool { No, Yes };
 
 #if ENABLE(JIT)
 protected:

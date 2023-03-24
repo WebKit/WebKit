@@ -71,10 +71,7 @@ enum SelectionFlags : uint8_t {
     PhraseBoundaryChanged = 1 << 2,
 };
 
-enum class RespectSelectionAnchor : bool {
-    No,
-    Yes
-};
+enum class RespectSelectionAnchor : bool { No, Yes };
 
 } // namespace WebKit
 

@@ -37,15 +37,9 @@ class DeferredPromise;
 class Document;
 class UserGestureIndicator;
 
-enum class StorageAccessWasGranted : bool {
-    No,
-    Yes
-};
+enum class StorageAccessWasGranted : bool { No, Yes };
 
-enum class StorageAccessPromptWasShown : bool {
-    No,
-    Yes
-};
+enum class StorageAccessPromptWasShown : bool { No, Yes };
 
 enum class StorageAccessScope : bool {
     PerFrame,

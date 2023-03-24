@@ -77,10 +77,7 @@ enum LocalPolicyCheckIdentifierType { };
 using LocalPolicyCheckIdentifier = ObjectIdentifier<LocalPolicyCheckIdentifierType>;
 using PolicyCheckIdentifier = ProcessQualified<LocalPolicyCheckIdentifier>;
 
-enum class ShouldContinuePolicyCheck : bool {
-    Yes,
-    No
-};
+enum class ShouldContinuePolicyCheck : bool { No, Yes };
 
 enum class NewFrameOpenerPolicy : uint8_t {
     Suppress,
@@ -107,10 +104,7 @@ enum class InitiatedByMainFrame : uint8_t {
     Unknown,
 };
 
-enum class ClearProvisionalItem : bool {
-    Yes,
-    No
-};
+enum class ClearProvisionalItem : bool { No, Yes };
 
 enum class StopLoadingPolicy {
     PreventDuringUnloadEvents,

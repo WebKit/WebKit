@@ -40,10 +40,7 @@ enum class NonBreakingSpaceBehavior {
     TreatNonBreakingSpaceAsBreak,
 };
 
-enum class CanUseShortcut {
-    Yes,
-    No
-};
+enum class CanUseShortcut : bool { No, Yes };
 
 template<NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
 static inline bool isBreakableSpace(UChar character)

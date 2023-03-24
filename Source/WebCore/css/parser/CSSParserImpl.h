@@ -158,10 +158,7 @@ private:
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     ParsedPropertyVector consumeDeclarationListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
 
-    enum class OnlyDeclarations {
-        Yes,
-        No
-    };
+    enum class OnlyDeclarations : bool { No, Yes };
 
     enum class ParsingStyleDeclarationsInRuleList : bool { No, Yes };
 

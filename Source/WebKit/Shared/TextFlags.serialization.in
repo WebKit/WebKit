@@ -43,10 +43,7 @@ enum class WebCore::FontStyleAxis : uint8_t {
     ital
 };
 
-enum class WebCore::AllowUserInstalledFonts : uint8_t {
-    No,
-    Yes
-};
+enum class WebCore::AllowUserInstalledFonts : bool;
 
 enum class WebCore::FontVariantEastAsianVariant : uint8_t {
     Normal,

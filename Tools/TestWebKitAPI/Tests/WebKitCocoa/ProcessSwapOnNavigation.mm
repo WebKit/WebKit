@@ -567,7 +567,7 @@ static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()
     return processPoolConfiguration;
 }
 
-enum class SchemeHandlerShouldBeAsync { No, Yes };
+enum class SchemeHandlerShouldBeAsync : bool { No, Yes };
 static void runBasicTest(SchemeHandlerShouldBeAsync schemeHandlerShouldBeAsync)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();

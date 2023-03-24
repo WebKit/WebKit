@@ -1019,10 +1019,7 @@ public:
         DOMSourceNone,
     };
 
-    enum class FlipY : bool {
-        No,
-        Yes
-    };
+    enum class FlipY : bool { No, Yes };
 
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() = 0;
 

@@ -66,7 +66,7 @@ public:
     void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
     void start(Ref<RTCRtpTransformBackend>&&);
 
-    enum class ClearCallback { No, Yes};
+    enum class ClearCallback : bool { No, Yes };
     void clear(ClearCallback);
 
 private:

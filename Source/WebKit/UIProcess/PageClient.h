@@ -115,7 +115,7 @@ enum class TextIndicatorLifetime : uint8_t;
 enum class TextIndicatorDismissalAnimation : uint8_t;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
-enum class ScrollIsAnimated : uint8_t;
+enum class ScrollIsAnimated : bool;
 
 struct AppHighlight;
 struct DataDetectorElementInfo;

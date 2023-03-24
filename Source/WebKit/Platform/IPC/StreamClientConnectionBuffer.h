@@ -40,10 +40,7 @@ public:
     std::optional<Span<uint8_t>> tryAcquire(Timeout);
     std::optional<Span<uint8_t>> tryAcquireAll(Timeout);
 
-    enum class WakeUpServer : bool {
-        No,
-        Yes
-    };
+    enum class WakeUpServer : bool { No, Yes };
     WakeUpServer release(size_t writeSize);
     void resetClientOffset();
     Span<uint8_t> alignedSpan(size_t offset, size_t limit);

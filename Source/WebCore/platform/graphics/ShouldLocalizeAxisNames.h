@@ -29,9 +29,6 @@
 
 namespace WebCore {
 
-enum class ShouldLocalizeAxisNames : uint8_t {
-    No,
-    Yes
-};
+enum class ShouldLocalizeAxisNames : bool { No, Yes };
 
 }

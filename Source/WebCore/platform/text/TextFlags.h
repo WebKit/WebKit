@@ -486,10 +486,7 @@ enum class FontStyleAxis : uint8_t {
     ital
 };
 
-enum class AllowUserInstalledFonts : uint8_t {
-    No,
-    Yes
-};
+enum class AllowUserInstalledFonts : bool { No, Yes };
 
 using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
 FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&, RefPtr<FontFeatureValues>);

@@ -303,10 +303,7 @@ public:
     WEBCORE_EXPORT LayoutPoint minStableLayoutViewportOrigin() const;
     WEBCORE_EXPORT LayoutPoint maxStableLayoutViewportOrigin() const;
 
-    enum class TriggerLayoutOrNot {
-        No,
-        Yes
-    };
+    enum class TriggerLayoutOrNot : bool { No, Yes };
     // This origin can be overridden by setLayoutViewportOverrideRect.
     void setBaseLayoutViewportOrigin(LayoutPoint, TriggerLayoutOrNot = TriggerLayoutOrNot::Yes);
     // This size can be overridden by setLayoutViewportOverrideRect.

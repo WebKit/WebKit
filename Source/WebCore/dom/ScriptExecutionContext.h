@@ -79,7 +79,7 @@ class RTCDataChannelRemoteHandlerConnection;
 class ResourceRequest;
 class SocketProvider;
 class WebCoreOpaqueRoot;
-enum class LoadedFromOpaqueSource : uint8_t;
+enum class LoadedFromOpaqueSource : bool;
 enum class TaskSource : uint8_t;
 
 #if ENABLE(NOTIFICATIONS)

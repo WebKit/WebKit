@@ -152,16 +152,10 @@ enum class PreflightPolicy : uint8_t {
 };
 static constexpr unsigned bitWidthOfPreflightPolicy = 2;
 
-enum class LoadedFromOpaqueSource : uint8_t {
-    Yes,
-    No
-};
+enum class LoadedFromOpaqueSource : bool { No, Yes };
 static constexpr unsigned bitWidthOfLoadedFromOpaqueSource = 1;
 
-enum class LoadedFromPluginElement : bool {
-    No,
-    Yes
-};
+enum class LoadedFromPluginElement : bool { No, Yes };
 static constexpr unsigned bitWidthOfLoadedFromPluginElement = 1;
 
 struct ResourceLoaderOptions : public FetchOptions {

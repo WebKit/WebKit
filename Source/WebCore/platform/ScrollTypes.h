@@ -73,10 +73,7 @@ enum class ScrollAnimationStatus : uint8_t {
     Animating,
 };
 
-enum class ScrollIsAnimated : uint8_t {
-    No,
-    Yes
-};
+enum class ScrollIsAnimated : bool { No, Yes };
 
 enum class OverflowAnchor : uint8_t {
     Auto,
