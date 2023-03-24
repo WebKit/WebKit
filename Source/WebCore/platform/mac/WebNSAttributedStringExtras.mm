@@ -49,8 +49,8 @@ NSAttributedString *attributedStringByStrippingAttachmentCharacters(NSAttributed
 
     attachmentRange = [originalString rangeOfString:attachmentCharString.get().get()];
     if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-        auto newAttributedString = adoptNS([attributedString mutableCopyWithZone:NULL]);
-        
+        auto newAttributedString = adoptNS([attributedString mutableCopy]);
+
         while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
             [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
             attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString.get().get()];
