@@ -7121,9 +7121,9 @@ WebAuthenticationEnabled:
 WebCodecsAV1Enabled:
   type: bool
   status: preview
-  category: dom
+  category: media
   humanReadableName: "WebCodecs AV1 codec"
-  humanReadableDescription: WebCodecs
+  humanReadableDescription: "Enable WebCodecs AV1 codec"
   condition: ENABLE(WEB_CODECS)
   defaultValue:
     WebKitLegacy:
@@ -7136,9 +7136,9 @@ WebCodecsAV1Enabled:
 WebCodecsEnabled:
   type: bool
   status: stable
-  category: dom
-  humanReadableName: "Web Codecs"
-  humanReadableDescription: "Web Codecs"
+  category: media
+  humanReadableName: "WebCodecs API"
+  humanReadableDescription: "Enable WebCodecs API"
   condition: ENABLE(WEB_CODECS)
   defaultValue:
     WebKitLegacy:
