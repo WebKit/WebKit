@@ -382,17 +382,20 @@ void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForR
 
 void RemoteScrollingCoordinatorProxy::viewWillStartLiveResize()
 {
-    m_scrollingTree->viewWillStartLiveResize();
+    if (m_scrollingTree)
+        m_scrollingTree->viewWillStartLiveResize();
 }
 
 void RemoteScrollingCoordinatorProxy::viewWillEndLiveResize()
 {
-    m_scrollingTree->viewWillEndLiveResize();
+    if (m_scrollingTree)
+        m_scrollingTree->viewWillEndLiveResize();
 }
 
 void RemoteScrollingCoordinatorProxy::viewSizeDidChange()
 {
-    m_scrollingTree->viewSizeDidChange();
+    if (m_scrollingTree)
+        m_scrollingTree->viewSizeDidChange();
 }
 
 String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID scrollingNodeID, bool isVertical)
