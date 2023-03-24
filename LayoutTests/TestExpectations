@@ -6333,3 +6333,5 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/254259 http/tests/priority-hints/fetch-api-priority.html [ Failure Pass ]
