@@ -1,5 +1,7 @@
 /* https://html.spec.whatwg.org/#flow-content-3 */
 
+@namespace "http://www.w3.org/1999/xhtml";
+
 [popover]:closed:not(dialog[open]) {
     display: none;
 }
