@@ -221,9 +221,6 @@ template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute
 // - Fails if an <img> is encountered. Image elements request the image early
 //   on, resulting in network connections. Additionally, loading the image
 //   may consume preloaded resources.
-// - Fails if Document::isDirAttributeDirty() is true and CSSPseudoDirEnabled is
-//   enabled. This is necessary as state needed to support css-pseudo dir is set
-//   in HTMLElement::beginParsingChildren(), which this does not call.
 template<class Char>
 class HTMLFastPathParser {
     using CharSpan = Span<const Char>;
@@ -932,6 +929,7 @@ private:
         parseAttributes(element);
         if (m_parsingFailed)
             return WTFMove(element);
+        element->beginParsingChildren();
         parseChildren<Tag>(element);
         if (m_parsingFailed || m_parsingBuffer.atEnd())
             return didFail(HTMLFastPathResult::FailedEndOfInputReachedForContainer, element);
@@ -946,17 +944,22 @@ private:
                 return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);
         } else
             return didFail(HTMLFastPathResult::FailedEndTagNameMismatch, element);
+        element->finishParsingChildren();
         return WTFMove(element);
     }
 
     Ref<Element> parseVoidElement(Ref<Element>&& element)
     {
         parseAttributes(element);
+        if (!m_parsingFailed) {
+            element->beginParsingChildren();
+            element->finishParsingChildren();
+        }
         return WTFMove(element);
     }
 };
 
-static bool canUseFastPath(Document& document, Element& contextElement, OptionSet<ParserContentPolicy> policy)
+static bool canUseFastPath(Element& contextElement, OptionSet<ParserContentPolicy> policy)
 {
     // We could probably allow other content policies too, as we do not support scripts or plugins anyway.
     if (!policy.contains(ParserContentPolicy::AllowScriptingContent))
@@ -968,10 +971,6 @@ static bool canUseFastPath(Document& document, Element& contextElement, OptionSe
     if (!contextElement.document().isTemplateDocument() && lineageOfType<HTMLFormElement>(contextElement).first())
         return false;
 
-    // State used for this is updated in BeginParsingChildren() and FinishParsingChildren(), which this does not call.
-    if (document.isDirAttributeDirty() && document.settings().dirPseudoEnabled())
-        return false;
-
     return true;
 }
 
@@ -980,9 +979,6 @@ static bool tryFastParsingHTMLFragmentImpl(const Span<const Char>& source, Docum
 {
     HTMLFastPathParser parser { source, document, fragment };
     bool success = parser.parse(contextElement);
-    // The direction attribute may change as a result of parsing. Check again.
-    if (document.isDirAttributeDirty() && document.settings().dirPseudoEnabled())
-        success = false;
     if (!success && fragment.hasChildNodes())
         fragment.removeChildren();
     return success;
@@ -990,7 +986,7 @@ static bool tryFastParsingHTMLFragmentImpl(const Span<const Char>& source, Docum
 
 bool tryFastParsingHTMLFragment(const String& source, Document& document, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> policy)
 {
-    if (!canUseFastPath(document, contextElement, policy))
+    if (!canUseFastPath(contextElement, policy))
         return false;
 
     if (source.is8Bit())

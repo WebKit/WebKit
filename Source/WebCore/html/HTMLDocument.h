@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class HTMLDocument : public Document {
-    WTF_MAKE_ISO_ALLOCATED(HTMLDocument);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLDocument, WEBCORE_EXPORT);
 public:
     static Ref<HTMLDocument> create(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
     static Ref<HTMLDocument> createSynthesizedDocument(LocalFrame&, const URL&);
@@ -54,7 +54,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, unsigned constructionFlags = 0);
+    WEBCORE_EXPORT HTMLDocument(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, unsigned constructionFlags = 0);
 
 private:
     bool isFrameSet() const final;

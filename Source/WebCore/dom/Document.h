@@ -618,7 +618,7 @@ public:
     void updateElementsAffectedByMediaQueries();
     void evaluateMediaQueriesAndReportChanges();
 
-    FormController& formController();
+    WEBCORE_EXPORT FormController& formController();
     Vector<AtomString> formElementsState() const;
     void setStateForNewFormElements(const Vector<AtomString>&);
 

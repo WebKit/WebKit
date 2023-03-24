@@ -26,7 +26,14 @@
 #include "config.h"
 
 #include "Test.h"
+#include <WebCore/HTMLBodyElement.h>
+#include <WebCore/HTMLDivElement.h>
+#include <WebCore/HTMLDocument.h>
+#include <WebCore/HTMLHtmlElement.h>
+#include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLParserIdioms.h>
+#include <WebCore/ProcessWarming.h>
+#include <WebCore/Settings.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -159,6 +166,34 @@ TEST(WebCoreHTMLParserIdioms, parseHTMLNonNegativeInteger)
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-a123"_s));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(".1"_s));
     EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("infinity"_s));
+}
+
+TEST(WebCoreHTMLParser, HTMLInputElementCheckedState)
+{
+    ProcessWarming::initializeNames();
+
+    auto settings = Settings::create(nullptr);
+    auto document = HTMLDocument::create(nullptr, settings.get(), aboutBlankURL());
+    auto documentElement = HTMLHtmlElement::create(document);
+    document->appendChild(documentElement);
+    auto body = HTMLBodyElement::create(document);
+    documentElement->appendChild(body);
+
+    auto div1 = HTMLDivElement::create(document);
+    auto div2 = HTMLDivElement::create(document);
+    document->body()->appendChild(div1);
+    document->body()->appendChild(div2);
+
+    // Set the state for new controls, which triggers a different code path in
+    // HTMLInputElement::parseAttribute.
+    div1->setInnerHTML("<select form='ff'></select>"_s);
+    auto documentState = document->formController().formElementsState(document.get());
+    document->formController().setStateForNewFormElements(documentState);
+    EXPECT_TRUE(!document->formController().formElementsState(document.get()).isEmpty());
+    div2->setInnerHTML("<input checked='true'>"_s);
+    auto inputElement = downcast<HTMLInputElement>(div2->firstChild());
+    ASSERT_TRUE(inputElement);
+    EXPECT_TRUE(inputElement->checked());
 }
 
 } // namespace TestWebKitAPI
