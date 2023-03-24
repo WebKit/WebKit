@@ -45,6 +45,7 @@ public:
     void popParentsUntil(Element* parent);
     bool parentStackIsEmpty() const { return m_parentStack.isEmpty(); }
     bool parentStackIsConsistent(const ContainerNode* parentNode) const;
+    void parentStackReserveInitialCapacity(size_t initialCapacity) { m_parentStack.reserveInitialCapacity(initialCapacity); }
 
     using Hashes = std::array<unsigned, 4>;
     bool fastRejectSelector(const Hashes&) const;

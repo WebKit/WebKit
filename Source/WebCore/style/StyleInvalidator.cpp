@@ -315,6 +315,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
             ancestors.append(parent);
 
         SelectorMatchingState selectorMatchingState;
+        selectorMatchingState.selectorFilter.parentStackReserveInitialCapacity(ancestors.size());
         for (auto* ancestor : makeReversedRange(ancestors)) {
             invalidateIfNeeded(*ancestor, &selectorMatchingState);
             selectorMatchingState.selectorFilter.pushParent(ancestor);
@@ -338,6 +339,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
             elementAndAncestors.append(parent);
 
         SelectorMatchingState selectorMatchingState;
+        selectorMatchingState.selectorFilter.parentStackReserveInitialCapacity(elementAndAncestors.size());
         for (auto* elementOrAncestor : makeReversedRange(elementAndAncestors)) {
             for (auto* sibling = elementOrAncestor->previousElementSibling(); sibling; sibling = sibling->previousElementSibling())
                 invalidateIfNeeded(*sibling, &selectorMatchingState);
