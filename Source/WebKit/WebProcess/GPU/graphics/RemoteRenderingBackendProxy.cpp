@@ -264,11 +264,15 @@ void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& 
 
 void RemoteRenderingBackendProxy::releaseAllRemoteResources()
 {
+    if (!m_streamConnection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseAllResources());
 }
 
 void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    if (!m_streamConnection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseRenderingResource(renderingResourceIdentifier));
 }
 
