@@ -142,19 +142,6 @@ DEFINE_VISIT_CHILDREN(JSString);
 static constexpr unsigned maxLengthForOnStackResolve = 2048;
 
 template<typename CharacterType>
-void JSRopeString::resolveRopeInternal(CharacterType* buffer) const
-{
-    if (isSubstring()) {
-        // It is possible underlying string is now 8-bit/16-bit even if wrapper substring says it is 16-bit/8-bit.
-        // But it's guaranteed substring characters can be represented in parent rope's character width, passed as CharacterType.
-        StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).getCharacters(buffer);
-        return;
-    }
-
-    resolveRopeInternalNoSubstring(buffer);
-}
-
-template<typename CharacterType>
 void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
 {
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
@@ -190,20 +177,25 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
         }));
     }
 
-    if (is8Bit()) {
-        LChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal(buffer);
-        convertToNonRope(AtomStringImpl::add(buffer, length()));
-    } else {
-        UChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal(buffer);
-        convertToNonRope(AtomStringImpl::add(buffer, length()));
-    }
+    AtomString atomString;
+    if (!isSubstring()) {
+        if (is8Bit()) {
+            LChar buffer[maxLengthForOnStackResolve];
+            resolveRopeInternalNoSubstring(buffer);
+            atomString = AtomString(buffer, length());
+        } else {
+            UChar buffer[maxLengthForOnStackResolve];
+            resolveRopeInternalNoSubstring(buffer);
+            atomString = AtomString(buffer, length());
+        }
+    } else
+        atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
 
+    convertToNonRope(String { atomString });
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (valueInternal().impl()->hasOneRef())
         vm.heap.reportExtraMemoryAllocated(valueInternal().impl()->cost());
-    return convertToAtomString(valueInternal());
+    return atomString;
 }
 
 inline void JSRopeString::convertToNonRope(String&& string) const
@@ -235,23 +227,23 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
         return existingAtomString;
     }
     
-    if (is8Bit()) {
-        LChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal(buffer);
-        if (RefPtr<AtomStringImpl> existingAtomString = AtomStringImpl::lookUp(buffer, length())) {
-            convertToNonRope(*existingAtomString);
-            return existingAtomString;
+    RefPtr<AtomStringImpl> existingAtomString;
+    if (!isSubstring()) {
+        if (is8Bit()) {
+            LChar buffer[maxLengthForOnStackResolve];
+            resolveRopeInternalNoSubstring(buffer);
+            existingAtomString = AtomStringImpl::lookUp(buffer, length());
+        } else {
+            UChar buffer[maxLengthForOnStackResolve];
+            resolveRopeInternalNoSubstring(buffer);
+            existingAtomString = AtomStringImpl::lookUp(buffer, length());
         }
-    } else {
-        UChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal(buffer);
-        if (RefPtr<AtomStringImpl> existingAtomString = AtomStringImpl::lookUp(buffer, length())) {
-            convertToNonRope(*existingAtomString);
-            return existingAtomString;
-        }
-    }
+    } else
+        existingAtomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
 
-    return nullptr;
+    if (existingAtomString)
+        convertToNonRope(*existingAtomString);
+    return existingAtomString;
 }
 
 template<typename Function>

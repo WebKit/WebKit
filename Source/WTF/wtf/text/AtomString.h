@@ -58,11 +58,12 @@ public:
     unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
 
     operator const String&() const { return m_string; }
-    const String& string() const { return m_string; };
+    const String& string() const { return m_string; }
     String releaseString() { return WTFMove(m_string); }
 
     // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
     AtomStringImpl* impl() const { return static_cast<AtomStringImpl*>(m_string.impl()); }
+    RefPtr<AtomStringImpl> releaseImpl() { return static_pointer_cast<AtomStringImpl>(m_string.releaseImpl()); }
 
     bool is8Bit() const { return m_string.is8Bit(); }
     const LChar* characters8() const { return m_string.characters8(); }

@@ -620,7 +620,6 @@ private:
     template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*) const;
     Identifier toIdentifier(JSGlobalObject*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
-    template<typename CharacterType> void resolveRopeInternal(CharacterType*) const;
     StringView unsafeView(JSGlobalObject*) const;
     StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
 
