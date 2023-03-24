@@ -36,7 +36,6 @@
 #include "LegacySchemeRegistry.h"
 #include "Page.h"
 #include "ResourceRequest.h"
-#include "ResourceResponse.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -309,15 +308,15 @@ Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const
 }
 
 // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-internal-check
-static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedderPolicyValue coep, const SecurityOrigin& origin, const ResourceResponse& response, ForNavigation forNavigation)
+static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedderPolicyValue coep, const SecurityOrigin& origin, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation forNavigation)
 {
     if (forNavigation == ForNavigation::Yes && coep != CrossOriginEmbedderPolicyValue::RequireCORP)
         return false;
 
-    if (response.isNull() || origin.canRequest(response.url()))
+    if (isResponseNull || origin.canRequest(responseURL))
         return false;
 
-    auto policy = parseCrossOriginResourcePolicyHeader(response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy));
+    auto policy = parseCrossOriginResourcePolicyHeader(crossOriginResourcePolicyHeaderValue);
 
     // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-internal-check (step 4).
     if ((policy == CrossOriginResourcePolicy::None || policy == CrossOriginResourcePolicy::Invalid) && coep == CrossOriginEmbedderPolicyValue::RequireCORP)
@@ -330,21 +329,29 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
         if (origin.isOpaque())
             return true;
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-        if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(response.url()))
+        if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(responseURL))
             return true;
 #endif
-        if (origin.protocol() == "http"_s && response.url().protocol() == "https"_s)
+        if (origin.protocol() == "http"_s && responseURL.protocol() == "https"_s)
             return true;
     }
 
     return false;
 }
 
+std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue coep, const SecurityOrigin& origin, const URL& requestURL, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation forNavigation)
+{
+    if (shouldCrossOriginResourcePolicyCancelLoad(coep, origin, isResponseNull, responseURL, crossOriginResourcePolicyHeaderValue, forNavigation))
+        return ResourceError { errorDomainWebKitInternal, 0, requestURL, makeString("Cancelled load to ", responseURL.stringCenterEllipsizedToLength(), " because it violates the resource's Cross-Origin-Resource-Policy response header."), ResourceError::Type::AccessControl };
+    return std::nullopt;
+}
+
 std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue coep, const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response, ForNavigation forNavigation)
 {
-    if (shouldCrossOriginResourcePolicyCancelLoad(coep, origin, response, forNavigation))
-        return ResourceError { errorDomainWebKitInternal, 0, requestURL, makeString("Cancelled load to ", response.url().stringCenterEllipsizedToLength(), " because it violates the resource's Cross-Origin-Resource-Policy response header."), ResourceError::Type::AccessControl };
-    return std::nullopt;
+    bool isReponseNull = response.isNull();
+    String crossOriginResourcePolicyHeaderValue = isReponseNull ? nullString() : response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy);
+    URL responseURL = isReponseNull ? URL { } : response.url();
+    return validateCrossOriginResourcePolicy(coep, origin, requestURL, isReponseNull, responseURL, crossOriginResourcePolicyHeaderValue, forNavigation);
 }
 
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest& request, const ResourceResponse& response)

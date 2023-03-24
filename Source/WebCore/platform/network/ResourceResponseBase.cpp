@@ -34,8 +34,12 @@
 #include "MIMETypeRegistry.h"
 #include "ParsedContentRange.h"
 #include "ResourceResponse.h"
+#include "WebCorePersistentCoders.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -97,33 +101,40 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::CrossThreadData::iso
     result.httpHeaderFields = httpHeaderFields.isolatedCopy();
     if (networkLoadMetrics)
         result.networkLoadMetrics = networkLoadMetrics->isolatedCopy();
+    result.source = source;
     result.type = type;
     result.tainting = tainting;
     result.isRedirected = isRedirected;
+    result.usedLegacyTLS = usedLegacyTLS;
+    result.wasPrivateRelayed = wasPrivateRelayed;
     result.isRangeRequested = isRangeRequested;
+    if (certificateInfo)
+        result.certificateInfo = certificateInfo->isolatedCopy();
     return result;
 }
 
 ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() const
 {
     CrossThreadData data;
-
     data.url = url().isolatedCopy();
     data.mimeType = mimeType().string().isolatedCopy();
     data.expectedContentLength = expectedContentLength();
     data.textEncodingName = textEncodingName().string().isolatedCopy();
-
     data.httpStatusCode = httpStatusCode();
     data.httpStatusText = httpStatusText().string().isolatedCopy();
     data.httpVersion = httpVersion().string().isolatedCopy();
-
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     if (m_networkLoadMetrics)
         data.networkLoadMetrics = m_networkLoadMetrics->isolatedCopy();
+    data.source = m_source;
     data.type = m_type;
     data.tainting = m_tainting;
     data.isRedirected = m_isRedirected;
+    data.usedLegacyTLS = m_usedLegacyTLS;
+    data.wasPrivateRelayed = m_wasPrivateRelayed;
     data.isRangeRequested = m_isRangeRequested;
+    if (m_certificateInfo)
+        data.certificateInfo = m_certificateInfo->isolatedCopy();
 
     return data;
 }
@@ -146,10 +157,14 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
         response.m_networkLoadMetrics = Box<NetworkLoadMetrics>::create(WTFMove(data.networkLoadMetrics.value()));
     else
         response.m_networkLoadMetrics = nullptr;
+    response.m_source = data.source;
     response.m_type = data.type;
     response.m_tainting = data.tainting;
     response.m_isRedirected = data.isRedirected;
+    response.m_usedLegacyTLS =  data.usedLegacyTLS;
+    response.m_wasPrivateRelayed = data.wasPrivateRelayed;
     response.m_isRangeRequested = data.isRangeRequested;
+    response.m_certificateInfo = WTFMove(data.certificateInfo);
 
     return response;
 }
@@ -891,4 +906,131 @@ std::optional<ResourceResponseBase::ResponseData> ResourceResponseBase::getRespo
     } };
 }
 
+} // namespace WebCore
+
+namespace WTF::Persistence {
+
+void Coder<WebCore::ResourceResponseBase::CrossThreadData>::encode(Encoder& encoder, const WebCore::ResourceResponseBase::CrossThreadData& data)
+{
+    encoder << data.url;
+    encoder << data.mimeType;
+    encoder << static_cast<int64_t>(data.expectedContentLength);
+    encoder << data.textEncodingName;
+    encoder << data.httpStatusText;
+    encoder << data.httpVersion;
+    encoder << data.httpHeaderFields;
+    encoder << data.httpStatusCode;
+    encoder << data.certificateInfo;
+    encoder << data.source;
+    encoder << data.type;
+    encoder << data.tainting;
+    encoder << data.isRedirected;
+    encoder << data.usedLegacyTLS;
+    encoder << data.wasPrivateRelayed;
+    encoder << data.isRangeRequested;
 }
+
+std::optional<WebCore::ResourceResponseBase::CrossThreadData> Coder<WebCore::ResourceResponseBase::CrossThreadData>::decode(Decoder& decoder)
+{
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+
+    std::optional<String> mimeType;
+    decoder >> mimeType;
+    if (!mimeType)
+        return std::nullopt;
+
+    std::optional<int64_t> expectedContentLength;
+    decoder >> expectedContentLength;
+    if (!expectedContentLength)
+        return std::nullopt;
+
+    std::optional<String> textEncodingName;
+    decoder >> textEncodingName;
+    if (!textEncodingName)
+        return std::nullopt;
+
+    std::optional<String> httpStatusText;
+    decoder >> httpStatusText;
+    if (!httpStatusText)
+        return std::nullopt;
+
+    std::optional<String> httpVersion;
+    decoder >> httpVersion;
+    if (!httpVersion)
+        return std::nullopt;
+
+    std::optional<WebCore::HTTPHeaderMap> httpHeaderFields;
+    decoder >> httpHeaderFields;
+    if (!httpHeaderFields)
+        return std::nullopt;
+
+    std::optional<short> httpStatusCode;
+    decoder >> httpStatusCode;
+    if (!httpStatusCode)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::CertificateInfo>> certificateInfo;
+    decoder >> certificateInfo;
+    if (!certificateInfo)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceResponseBase::Source> source;
+    decoder >> source;
+    if (!source)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceResponseBase::Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceResponseBase::Tainting> tainting;
+    decoder >> tainting;
+    if (!tainting)
+        return std::nullopt;
+
+    std::optional<bool> isRedirected;
+    decoder >> isRedirected;
+    if (!isRedirected)
+        return std::nullopt;
+
+    std::optional<WebCore::UsedLegacyTLS> usedLegacyTLS;
+    decoder >> usedLegacyTLS;
+    if (!usedLegacyTLS)
+        return std::nullopt;
+
+    std::optional<WebCore::WasPrivateRelayed> wasPrivateRelayed;
+    decoder >> wasPrivateRelayed;
+    if (!wasPrivateRelayed)
+        return std::nullopt;
+
+    std::optional<bool> isRangeRequested;
+    decoder >> isRangeRequested;
+    if (!isRangeRequested)
+        return std::nullopt;
+
+    return WebCore::ResourceResponseBase::CrossThreadData {
+        WTFMove(*url),
+        WTFMove(*mimeType),
+        *expectedContentLength,
+        WTFMove(*textEncodingName),
+        *httpStatusCode,
+        WTFMove(*httpStatusText),
+        WTFMove(*httpVersion),
+        WTFMove(*httpHeaderFields),
+        std::nullopt,
+        *source,
+        *type,
+        *tainting,
+        *isRedirected,
+        *usedLegacyTLS,
+        *wasPrivateRelayed,
+        *isRangeRequested,
+        WTFMove(*certificateInfo)
+    };
+}
+
+} // namespace WTF::Persistence
