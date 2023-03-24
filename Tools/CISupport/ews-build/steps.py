@@ -334,27 +334,32 @@ class GitHubMixin(object):
             return defer.returnValue(False)
         return defer.returnValue(True)
 
+    @defer.inlineCallbacks
     def add_label(self, pr_number, label, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return False
+            return defer.returnValue(False)
 
         pr_label_url = '{}/issues/{}/labels'.format(api_url, pr_number)
         try:
+            headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.request(
-                'POST', pr_label_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(labels=[label]),
+            if username and access_token:
+                auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+                headers['Authorization'] = ['Basic {}'.format(auth_header)]
+
+            response = yield TwistedAdditions.request(
+                pr_label_url, type=b'POST', timeout=60,
+                headers=headers, json=dict(labels=[label]),
+                logger=lambda content: self._addToLog('stdio', content),
             )
             if response.status_code // 100 != 2:
-                self._addToLog('stdio', f"Unable to add '{label}' label on PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
-                return False
+                yield self._addToLog('stdio', f"Unable to add '{label}' label on PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                return defer.returnValue(False)
+            defer.returnValue(True)
         except Exception as e:
-            self._addToLog('stdio', f"Error in adding '{label}' label on PR {pr_number}\n")
-            return False
-        return True
+            yield self._addToLog('stdio', f"Error in adding '{label}' label on PR {pr_number}\n")
+            defer.returnValue(False)
 
     @defer.inlineCallbacks
     def remove_labels(self, pr_number, labels=None, repository_url=None):
@@ -2069,9 +2074,10 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                 repository_url = self.getProperty('repository', '')
                 rc = SUCCESS
                 did_remove_labels = yield self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
+                did_add_label = yield self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url)
                 if any((
                     not did_remove_labels,
-                    not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
+                    not did_add_label,
                 )):
                     rc = FAILURE
         if build_finish_summary:
