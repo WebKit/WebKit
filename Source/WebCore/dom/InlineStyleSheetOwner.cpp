@@ -86,7 +86,7 @@ InlineStyleSheetOwner::~InlineStyleSheetOwner()
 
 void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 {
-    m_styleScope = &Style::Scope::forNode(element);
+    m_styleScope = Style::Scope::forNode(element);
     m_styleScope->addStyleSheetCandidateNode(element, m_isParsingChildren);
 
     if (m_isParsingChildren)
@@ -96,11 +96,11 @@ void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 
 void InlineStyleSheetOwner::removedFromDocument(Element& element)
 {
-    if (m_styleScope) {
-        if (m_styleScope->hasPendingSheet(element))
-            m_styleScope->removePendingSheet(element);
-        m_styleScope->removeStyleSheetCandidateNode(element);
-        m_styleScope = nullptr;
+    if (auto* scope = m_styleScope.get()) {
+        if (scope->hasPendingSheet(element))
+            scope->removePendingSheet(element);
+        scope->removeStyleSheetCandidateNode(element);
+        scope = nullptr;
     }
     if (m_sheet)
         clearSheet();
@@ -111,9 +111,9 @@ void InlineStyleSheetOwner::clearDocumentData(Element& element)
     if (m_sheet)
         m_sheet->clearOwnerNode();
 
-    if (m_styleScope) {
-        m_styleScope->removeStyleSheetCandidateNode(element);
-        m_styleScope = nullptr;
+    if (auto* scope = m_styleScope.get()) {
+        scope->removeStyleSheetCandidateNode(element);
+        scope = nullptr;
     }
 }
 
@@ -177,8 +177,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     auto mediaQueries = MQ::MediaQueryParser::parse(m_media, MediaQueryParserContext(document));
 
-    if (m_styleScope)
-        m_styleScope->addPendingSheet(element);
+    if (auto* scope = m_styleScope.get())
+        scope->addPendingSheet(element);
 
     auto cacheKey = makeInlineStyleSheetCacheKey(text, element);
     if (cacheKey) {
@@ -236,16 +236,16 @@ bool InlineStyleSheetOwner::sheetLoaded(Element& element)
     if (isLoading())
         return false;
 
-    if (m_styleScope)
-        m_styleScope->removePendingSheet(element);
+    if (auto* scope = m_styleScope.get())
+        scope->removePendingSheet(element);
 
     return true;
 }
 
 void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
 {
-    if (m_styleScope && !m_styleScope->hasPendingSheet(element))
-        m_styleScope->addPendingSheet(element);
+    if (auto* scope = m_styleScope.get(); scope && !scope->hasPendingSheet(element))
+        scope->addPendingSheet(element);
 }
 
 void InlineStyleSheetOwner::clearCache()

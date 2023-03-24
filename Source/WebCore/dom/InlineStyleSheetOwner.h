@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSStyleSheet.h"
+#include "StyleScope.h"
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ public:
     void childrenChanged(Element&);
     void finishParsingChildren(Element&);
 
-    Style::Scope* styleScope() { return m_styleScope; }
+    Style::Scope* styleScope() { return m_styleScope.get(); }
 
     static void clearCache();
 
@@ -64,7 +65,7 @@ private:
     AtomString m_contentType;
     AtomString m_media;
     RefPtr<CSSStyleSheet> m_sheet;
-    Style::Scope* m_styleScope { nullptr };
+    WeakPtr<Style::Scope> m_styleScope;
 };
 
 } // namespace WebCore
