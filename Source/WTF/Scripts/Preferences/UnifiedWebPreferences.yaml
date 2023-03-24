@@ -1715,7 +1715,7 @@ DOMPasteAccessRequestsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(IOS) || PLATFORM(MAC)": true
+      "PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(GTK)": true
       default: false
     WebCore:
       default: false
