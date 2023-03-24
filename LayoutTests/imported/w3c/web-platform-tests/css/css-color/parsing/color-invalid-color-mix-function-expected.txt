@@ -25,6 +25,7 @@ PASS e.style['color'] = "color-mix(in hwb hwb(120deg 10% 20%), hwb(30deg 30% 40%
 PASS e.style['color'] = "color-mix(in hwb, hwb(120deg 10% 20%) hwb(30deg 30% 40%))" should not set the property value
 PASS e.style['color'] = "color-mix(hwb(120deg 10% 20%), hwb(30deg 30% 40%), in hwb)" should not set the property value
 PASS e.style['color'] = "color-mix(hwb(120deg 10% 20%), hwb(30deg 30% 40%))" should not set the property value
+PASS e.style['color'] = "color-mix(in srgb, red, blue blue)" should not set the property value
 PASS e.style['color'] = "color-mix(in lch, lch(10% 20 30deg) -10%, lch(50% 60 70deg))" should not set the property value
 PASS e.style['color'] = "color-mix(in lch, lch(10% 20 30deg) 150%, lch(50% 60 70deg))" should not set the property value
 PASS e.style['color'] = "color-mix(in lch, lch(10% 20 30deg) 0%, lch(50% 60 70deg) 0%)" should not set the property value

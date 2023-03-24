@@ -31,12 +31,6 @@ for (const colorSpace of [ "srgb", "srgb-linear", "a98-rgb", "rec2020", "prophot
     test_computed_value("color", `color(${colorSpace} 0 0 0 / -10%)`, `color(${colorSpace} 0 0 0 / 0)`);
     test_computed_value("color", `color(${colorSpace} 0 0 0 / 110%)`, `color(${colorSpace} 0 0 0)`);
     test_computed_value("color", `color(${colorSpace} 0 0 0 / 300%)`, `color(${colorSpace} 0 0 0)`);
-    test_computed_value("color", `color(${colorSpace} 50% -200)`, `color(${colorSpace} 0.5 -200 0)`);
-    test_computed_value("color", `color(${colorSpace} 50%)`, `color(${colorSpace} 0.5 0 0)`);
-    test_computed_value("color", `color(${colorSpace})`, `color(${colorSpace} 0 0 0)`);
-    test_computed_value("color", `color(${colorSpace} 50% -200 / 0.5)`, `color(${colorSpace} 0.5 -200 0 / 0.5)`);
-    test_computed_value("color", `color(${colorSpace} 50% / 0.5)`, `color(${colorSpace} 0.5 0 0 / 0.5)`);
-    test_computed_value("color", `color(${colorSpace} / 0.5)`, `color(${colorSpace} 0 0 0 / 0.5)`);
     test_computed_value("color", `color(${colorSpace} 200 200 200)`, `color(${colorSpace} 200 200 200)`);
     test_computed_value("color", `color(${colorSpace} 200 200 200 / 200)`, `color(${colorSpace} 200 200 200)`);
     test_computed_value("color", `color(${colorSpace} -200 -200 -200)`, `color(${colorSpace} -200 -200 -200)`);
@@ -52,6 +46,9 @@ for (const colorSpace of [ "srgb", "srgb-linear", "a98-rgb", "rec2020", "prophot
     test_computed_value("color", `color(${colorSpace} 10% none none / none)`, `color(${colorSpace} 0.1 none none / none)`);
     test_computed_value("color", `color(${colorSpace} none none none / 0.5)`, `color(${colorSpace} none none none / 0.5)`);
     test_computed_value("color", `color(${colorSpace} 0 0 0 / none)`, `color(${colorSpace} 0 0 0 / none)`);
+
+    test_computed_value("color", `color(${colorSpace} calc(NaN) 0 0)`, `color(${colorSpace} 0 0 0)`);
+    test_computed_value("color", `color(${colorSpace} calc(0 / 0) 0 0)`, `color(${colorSpace} 0 0 0)`);
 }
 
 for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
@@ -71,12 +68,6 @@ for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
     test_computed_value("color", `color(${colorSpace} 0 0 0 / -10%)`, `color(${resultColorSpace} 0 0 0 / 0)`);
     test_computed_value("color", `color(${colorSpace} 0 0 0 / 110%)`, `color(${resultColorSpace} 0 0 0)`);
     test_computed_value("color", `color(${colorSpace} 0 0 0 / 300%)`, `color(${resultColorSpace} 0 0 0)`);
-    test_computed_value("color", `color(${colorSpace} 1 1)`, `color(${resultColorSpace} 1 1 0)`);
-    test_computed_value("color", `color(${colorSpace} 1)`, `color(${resultColorSpace} 1 0 0)`);
-    test_computed_value("color", `color(${colorSpace})`, `color(${resultColorSpace} 0 0 0)`);
-    test_computed_value("color", `color(${colorSpace} 1 1 / .5)`, `color(${resultColorSpace} 1 1 0 / 0.5)`);
-    test_computed_value("color", `color(${colorSpace} 1 / 0.5)`, `color(${resultColorSpace} 1 0 0 / 0.5)`);
-    test_computed_value("color", `color(${colorSpace} / 50%)`, `color(${resultColorSpace} 0 0 0 / 0.5)`);
     test_computed_value("color", `color(${colorSpace} calc(0.5 + 1) calc(0.5 - 1) calc(0.5) / calc(-0.5 + 1))`, `color(${resultColorSpace} 1.5 -0.5 0.5 / 0.5)`);
 
     test_computed_value("color", `color(${colorSpace} none none none / none)`, `color(${resultColorSpace} none none none / none)`);
@@ -84,6 +75,9 @@ for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
     test_computed_value("color", `color(${colorSpace} 0.2 none none / none)`, `color(${resultColorSpace} 0.2 none none / none)`);
     test_computed_value("color", `color(${colorSpace} none none none / 0.5)`, `color(${resultColorSpace} none none none / 0.5)`);
     test_computed_value("color", `color(${colorSpace} 0 0 0 / none)`, `color(${resultColorSpace} 0 0 0 / none)`);
+
+    test_computed_value("color", `color(${colorSpace} calc(NaN) 0 0)`, `color(${resultColorSpace} 0 0 0)`);
+    test_computed_value("color", `color(${colorSpace} calc(0 / 0) 0 0)`, `color(${resultColorSpace} 0 0 0)`);
 }
 
 // Opaque sRGB in color()
@@ -276,16 +270,13 @@ test_computed_value("color", "color(srgb 1 1 1 / 0.5)", "color(srgb 1 1 1 / 0.5)
 test_computed_value("color", "color(srgb 1 1 1 / 0)", "color(srgb 1 1 1 / 0)", "[sRGB white with 0 alpha]");
 test_computed_value("color", "color(srgb 1 1 1 / 50%)", "color(srgb 1 1 1 / 0.5)", "[sRGB white with 50% alpha]");
 test_computed_value("color", "color(srgb 1 1 1 / 0%)", "color(srgb 1 1 1 / 0)", "[sRGB white with 0% alpha]");
-test_computed_value("color", "color(srgb 1 1)", "color(srgb 1 1 0)", "[One missing component is 0]");
-test_computed_value("color", "color(srgb 1)", "color(srgb 1 0 0)", "[Two missing components are 0]");
-test_computed_value("color", "color(srgb)", "color(srgb 0 0 0)", "[All components missing]");
 test_computed_value("color", "color(display-p3 0.6 0.7 0.8)", "color(display-p3 0.6 0.7 0.8)", "[Display P3 color]");
 test_computed_value("color", "color(dIspLaY-P3 0.6 0.7 0.8)", "color(display-p3 0.6 0.7 0.8)", "[Different case for Display P3]");
 
 test_computed_value("color", "color(srgb -0.25 0.5 0.75)", "color(srgb -0.25 0.5 0.75)", "[sRGB color with negative component should not clamp to 0]");
 test_computed_value("color", "color(srgb 0.25 1.5 0.75)", "color(srgb 0.25 1.5 0.75)", "[sRGB color with component > 1 should not clamp]");
 test_computed_value("color", "color(display-p3 0.5 -199 0.75)", "color(display-p3 0.5 -199 0.75)", "[Display P3 color with negative component should not clamp to 0]");
-test_computed_value("color", "color(display-p3 184 1.00001 2347329746587)", "color(display-p3 184 1.00001 2347329700000)", "[Display P3 color with component > 1 should not clamp]");
+test_computed_value("color", "color(display-p3 184 1.00001 1103)", "color(display-p3 184 1.00001 1103)", "[Display P3 color with component > 1 should not clamp]");
 test_computed_value("color", "color(srgb 0.1 0.2 0.3 / 1.9)", "color(srgb 0.1 0.2 0.3)", "[Alpha > 1 should clamp]");
 test_computed_value("color", "color(srgb 1 1 1 / -0.2)", "color(srgb 1 1 1 / 0)", "[Negative alpha should clamp]");
 </script>
