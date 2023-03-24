@@ -305,6 +305,7 @@ bool GStreamerElementHarness::Stream::sendEvent(GstEvent* event)
 
 const GRefPtr<GstCaps>& GStreamerElementHarness::Stream::outputCaps()
 {
+    Locker locker { m_sinkEventQueueLock };
     if (m_outputCaps)
         return m_outputCaps;
 
@@ -324,6 +325,11 @@ GstFlowReturn GStreamerElementHarness::Stream::chainBuffer(GstBuffer* outputBuff
 bool GStreamerElementHarness::Stream::sinkEvent(GstEvent* event)
 {
     Locker locker { m_sinkEventQueueLock };
+
+    // Clear cached output caps when the pad receives a new caps event.
+    if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS)
+        m_outputCaps = nullptr;
+
     m_sinkEventQueue.prepend(GRefPtr<GstEvent>(event));
     return true;
 }
