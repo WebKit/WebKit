@@ -397,18 +397,30 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
         RELEASE_AND_RETURN(scope, joiner.join(globalObject));
     }
     case ALL_CONTIGUOUS_INDEXING_TYPES: {
-        auto& butterfly = *thisObject->butterfly();
-        if (UNLIKELY(length > butterfly.publicLength()))
-            break;
         JSStringJoiner joiner(globalObject, separator, length);
         RETURN_IF_EXCEPTION(scope, { });
-        auto data = butterfly.contiguous().data();
+
+        auto* butterfly = thisObject->butterfly();
+        if (UNLIKELY(length > butterfly->publicLength()))
+            break;
+        auto data = butterfly->contiguous().data();
+
         bool holesKnownToBeOK = false;
         for (unsigned i = 0; i < length; ++i) {
             if (JSValue value = data[i].get()) {
-                if (!joiner.appendWithoutSideEffects(globalObject, value))
-                    goto generalCase;
+                bool hadSideEffect = !joiner.append(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
+                if (hadSideEffect) {
+                    genericCase = true;
+                    holesKnownToBeOK = false;
+                    if (LIKELY(hasContiguous(thisObject->indexingType()))) {
+                        butterfly = thisObject->butterfly();
+                        data = butterfly->contiguous().data();
+                        if (LIKELY(length <= butterfly->publicLength()))
+                            continue;
+                    }
+                    goto generalCase;
+                }
             } else {
                 sawHoles = true;
                 if (!holesKnownToBeOK) {

@@ -37,7 +37,7 @@ public:
     JSStringJoiner(JSGlobalObject*, StringView separator, size_t stringCount);
     ~JSStringJoiner();
 
-    void append(JSGlobalObject*, JSValue);
+    bool append(JSGlobalObject*, JSValue);
     void appendNumber(VM&, int32_t);
     void appendNumber(VM&, double);
     bool appendWithoutSideEffects(JSGlobalObject*, JSValue);
@@ -146,18 +146,20 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
     return true;
 }
 
-ALWAYS_INLINE void JSStringJoiner::append(JSGlobalObject* globalObject, JSValue value)
+ALWAYS_INLINE bool JSStringJoiner::append(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     bool success = appendWithoutSideEffects(globalObject, value);
-    RETURN_IF_EXCEPTION(scope, void());
-    if (!success) {
-        JSString* jsString = value.toString(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-        RELEASE_AND_RETURN(scope, append(jsString->viewWithUnderlyingString(globalObject)));
-    }
+    RETURN_IF_EXCEPTION(scope, false);
+    if (success)
+        return true;
+    JSString* jsString = value.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+    scope.release();
+    append(jsString->viewWithUnderlyingString(globalObject));
+    return false;
 }
 
 ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, int32_t value)
