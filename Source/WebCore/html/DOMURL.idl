@@ -33,7 +33,8 @@
     LegacyWindowAlias=webkitURL,
 ] interface DOMURL {
     constructor(USVString url, optional USVString base);
-    constructor(USVString url, DOMURL base);
+
+    static boolean canParse(USVString url, optional USVString base);
 
     [URL] stringifier attribute USVString href;
     readonly attribute USVString origin;
