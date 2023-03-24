@@ -1,4 +1,4 @@
-pkg_check_modules(PC_BREAKPAD breakpad-client)
+pkg_check_modules(PC_BREAKPAD QUIET breakpad-client)
 
 find_path(BREAKPAD_INCLUDE_DIRS
     NAMES client/linux/handler/exception_handler.h

@@ -45,7 +45,7 @@
 # framework doesn't provide a .pc file. But alternate (swap-in) implementations might, so try with
 # pkg-config first.
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_THUNDER QUIET thunder)
 
 find_path(THUNDER_INCLUDE_DIR

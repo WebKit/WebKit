@@ -28,7 +28,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_ATK atk)
+pkg_check_modules(PC_ATK QUIET atk)
 
 find_path(ATK_INCLUDE_DIRS
     NAMES atk/atk.h

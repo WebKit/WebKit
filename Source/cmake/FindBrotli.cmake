@@ -86,7 +86,7 @@ else ()
 endif ()
 
 if ("dec" IN_LIST Brotli_FIND_COMPONENTS)
-    pkg_check_modules(PC_Brotli_DEC brotlidec)
+    pkg_check_modules(PC_Brotli_DEC QUIET brotlidec)
 
     find_path(Brotli_INCLUDE_DIR
         NAMES brotli/decode.h
