@@ -2104,9 +2104,9 @@ DiagnosticLoggingEnabled:
 DialogElementEnabled:
   type: bool
   status: stable
-  category: dom
-  humanReadableName: "Dialog Element"
-  humanReadableDescription: "Enable the Dialog Element"
+  category: html
+  humanReadableName: "HTML <dialog> element"
+  humanReadableDescription: "Enable HTML <dialog> element"
   defaultValue:
     WebKitLegacy:
       default: true
@@ -2993,8 +2993,8 @@ IndexedDBAPIEnabled:
 InertAttributeEnabled:
   type: bool
   status: stable
-  category: css
-  humanReadableName: "inert attribute"
+  category: html
+  humanReadableName: "HTML inert attribute"
   humanReadableDescription: "Enable inert attribute support"
   defaultValue:
     WebKitLegacy:
@@ -3531,7 +3531,7 @@ LayoutViewportHeightExpansionFactor:
 LazyIframeLoadingEnabled:
   type: bool
   status: stable
-  category: dom
+  category: html
   humanReadableName: "Lazy iframe loading"
   humanReadableDescription: "Enable lazy iframe loading support"
   defaultValue:
@@ -3545,7 +3545,7 @@ LazyIframeLoadingEnabled:
 LazyImageLoadingEnabled:
   type: bool
   status: stable
-  category: dom
+  category: html
   humanReadableName: "Lazy image loading"
   humanReadableDescription: "Enable lazy image loading support"
   defaultValue:
@@ -4369,9 +4369,9 @@ MockScrollbarsEnabled:
 ModelDocumentEnabled:
   type: bool
   status: testable
-  category: dom
+  category: html
   humanReadableName: "HTML <model> elements for stand-alone document"
-  humanReadableDescription: "HTML <model> element for model documents"
+  humanReadableDescription: "Enable HTML <model> element for model documents"
   condition: ENABLE(MODEL_ELEMENT)
   webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
@@ -4383,9 +4383,9 @@ ModelDocumentEnabled:
 ModelElementEnabled:
   type: bool
   status: testable
-  category: dom
+  category: html
   humanReadableName: "HTML <model> element"
-  humanReadableDescription: "HTML <model> element"
+  humanReadableDescription: "Enable HTML <model> element"
   condition: ENABLE(MODEL_ELEMENT)
   defaultValue:
     WebKitLegacy:
@@ -4753,7 +4753,7 @@ PasswordEchoEnabled:
 PdfJSViewerEnabled:
   type: bool
   status: testable
-  category: dom
+  category: html
   humanReadableName: "Enable PDF.js viewer"
   humanReadableDescription: "Enable PDF.js viewer"
   condition: ENABLE(PDFJS)
@@ -4898,7 +4898,7 @@ PluginsEnabled:
 PopoverAttributeEnabled:
   type: bool
   status: stable
-  category: dom
+  category: html
   humanReadableName: "HTML popover attribute"
   humanReadableDescription: "Enable HTML popover attribute support"
   defaultValue:
@@ -6807,7 +6807,7 @@ VerifyWindowOpenUserGestureFromUIProcess:
 VerticalFormControlsEnabled:
   type: bool
   status: testable
-  category: dom
+  category: html
   humanReadableName: "Vertical form control support"
   humanReadableDescription: "Enable support for form controls in vertical writing mode"
   defaultValue:

@@ -50,6 +50,7 @@ enum class FeatureCategory : uint8_t {
     Animation,
     CSS,
     DOM,
+    HTML,
     Javascript,
     Media,
     Networking,
