@@ -42,7 +42,7 @@ class Code;
 
 Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
-size_t cCallResultCount(CCallValue*);
+size_t cCallResultCount(Code&, CCallValue*);
 
 /*
  * On some platforms (well, on 32-bit platforms,) C functions can take arguments
@@ -54,9 +54,9 @@ size_t cCallResultCount(CCallValue*);
 // Return the number of Air::Args needed to marshall this Value to the C function
 size_t cCallArgumentRegisterCount(const Value*);
 // Return the width of the individual Air::Args needed to marshall this value
-Width cCallArgumentRegisterWidth(const Value*);
+Width cCallArgumentRegisterWidth(Type);
 
-Tmp cCallResult(CCallValue*, unsigned);
+Tmp cCallResult(Code&, CCallValue*, unsigned);
 
 Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
 

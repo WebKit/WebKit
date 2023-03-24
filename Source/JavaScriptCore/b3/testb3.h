@@ -959,6 +959,8 @@ void testCallSimplePure(int, int);
 void testCallFunctionWithHellaArguments();
 void testCallFunctionWithHellaArguments2();
 void testCallFunctionWithHellaArguments3();
+void testCallPairResult(int, int);
+void testCallPairResultRare(int, int);
 void testReturnDouble(double value);
 void testReturnFloat(float value);
 void testMulNegArgArg(int, int);

@@ -36,12 +36,14 @@ namespace JSC { namespace DFG {
 AtTailAbstractState::AtTailAbstractState(Graph& graph)
     : m_graph(graph)
     , m_valuesAtTailMap(m_graph)
+    , m_tupleAbstractValues(m_graph)
 {
     for (BasicBlock* block : graph.blocksInNaturalOrder()) {
         auto& valuesAtTail = m_valuesAtTailMap.at(block);
         valuesAtTail.clear();
         for (auto& valueAtTailPair : block->ssa->valuesAtTail)
             valuesAtTail.add(valueAtTailPair.node, valueAtTailPair.value);
+        m_tupleAbstractValues.at(block).grow(m_graph.m_tupleData.size());
     }
 }
 

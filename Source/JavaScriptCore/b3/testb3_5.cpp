@@ -2124,6 +2124,75 @@ void testCallFunctionWithHellaArguments3()
     CHECK(invoke<int>(*compilation) == 7967500);
 }
 
+struct IntPtrPair {
+    intptr_t a;
+    intptr_t b;
+};
+extern "C" {
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(simplePairFunction, IntPtrPair, (int, int));
+}
+JSC_DEFINE_JIT_OPERATION(simplePairFunction, IntPtrPair, (int a, int b))
+{
+    return { a - b, a * b };
+}
+
+void testCallPairResult(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    auto tupleType = proc.addTuple({ registerType(), registerType() });
+
+    CCallValue* call = root->appendNew<CCallValue>(proc, tupleType, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simplePairFunction)),
+        root->appendNew<Const32Value>(proc, Origin(), a),
+        root->appendNew<Const32Value>(proc, Origin(), b));
+
+    Value* sum = root->appendNew<Value>(proc, Sub, Origin(),
+        root->appendNew<ExtractValue>(proc, Origin(), registerType(), call, 0),
+        root->appendNew<ExtractValue>(proc, Origin(), registerType(), call, 1));
+    root->appendNewControlValue(proc, Return, Origin(), sum);
+
+    CHECK(isIdentical(compileAndRun<uintptr_t>(proc), (a - b) - (a * b)));
+}
+
+void testCallPairResultRare(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* call = proc.addBlock();
+    BasicBlock* ret0 = proc.addBlock();
+
+
+    {
+        root->appendNewControlValue(
+            proc, Branch, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            FrequentedBlock(call, FrequencyClass::Rare),
+            FrequentedBlock(ret0));
+    }
+
+    {
+        auto tupleType = proc.addTuple({ registerType(), registerType() });
+        CCallValue* cCall = call->appendNew<CCallValue>(proc, tupleType, Origin(),
+            call->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simplePairFunction)),
+            call->appendNew<Const32Value>(proc, Origin(), a),
+            call->appendNew<Const32Value>(proc, Origin(), b));
+
+        Value* sum = call->appendNew<Value>(proc, Sub, Origin(),
+            call->appendNew<ExtractValue>(proc, Origin(), registerType(), cCall, 0),
+            call->appendNew<ExtractValue>(proc, Origin(), registerType(), cCall, 1));
+        call->appendNewControlValue(proc, Return, Origin(), sum);
+    }
+
+    {
+        ret0->appendNewControlValue(proc, Return, Origin(),
+            ret0->appendNew<Const32Value>(proc, Origin(), 0));
+    }
+
+    CHECK(isIdentical(compileAndRun<uintptr_t>(proc, 1), (a - b) - (a * b)));
+}
+
 void testReturnDouble(double value)
 {
     Procedure proc;

@@ -55,6 +55,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Phantom:
     case Flush:
     case PhantomLocal:
+    case ExtractFromTuple:
     case SetArgumentDefinitely:
     case SetArgumentMaybe:
     case Return:
@@ -299,8 +300,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ResolveRope:
     case GetPropertyEnumerator:
     case EnumeratorNextUpdateIndexAndMode:
-    case EnumeratorNextExtractMode:
-    case EnumeratorNextExtractIndex:
     case EnumeratorNextUpdatePropertyName:
     case EnumeratorGetByVal:
     case EnumeratorInByVal:

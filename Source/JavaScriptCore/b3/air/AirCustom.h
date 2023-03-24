@@ -134,7 +134,10 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
     {
         CCallValue* value = inst.origin->as<CCallValue>();
 
-        unsigned index = 0;
+        Code& code = inst.args[0].special()->code();
+
+        // Skip the CCallSpecial Arg.
+        unsigned index = 1;
 
         auto next = [&](Arg::Role role, Bank bank, Width width) {
             functor(inst.args[index++], role, bank, width);
@@ -142,11 +145,13 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
 
         next(Arg::Use, GP, pointerWidth()); // callee
 
-        for (size_t n = cCallResultCount(value); n; --n) {
+        size_t resultCount = cCallResultCount(code, value);
+        for (size_t n = 0; n < resultCount; ++n) {
+            Type type = value->type().isTuple() ? code.proc().typeAtOffset(value->type(), n) : value->type();
             next(
                 Arg::Def,
-                bankForType(value->type()),
-                cCallArgumentRegisterWidth(value)
+                bankForType(type),
+                cCallArgumentRegisterWidth(type)
             );
         }
 
@@ -156,7 +161,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
                 next(
                     Arg::Use,
                     bankForType(child->type()),
-                    cCallArgumentRegisterWidth(child)
+                    cCallArgumentRegisterWidth(child->type())
                 );
             }
         }
