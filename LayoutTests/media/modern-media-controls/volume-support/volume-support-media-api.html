@@ -15,8 +15,13 @@ const mediaController = createControls(shadowRoot, media, null);
 
 shouldBe("mediaController.controls.volumeSlider.value", "1");
 
-media.addEventListener("volumechange", () => {
-    shouldBe("mediaController.controls.volumeSlider.value", "0.5");
+media.addEventListener("volumechange", async () => {
+    // We'll animate the volume slider when setting the volume, so we still be at 1 initially.
+    shouldBe("mediaController.controls.volumeSlider.value", "1");
+
+    // But animate to 0.5 eventually.
+    await new Promise(resolve => shouldBecomeEqual("mediaController.controls.volumeSlider.value", "0.5", resolve));
+
     debug("");
     shadowRoot.host.remove();
     media.remove();
