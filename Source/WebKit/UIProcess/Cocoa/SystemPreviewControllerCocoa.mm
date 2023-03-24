@@ -291,7 +291,6 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
 void SystemPreviewController::setDestinationURL(URL url)
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    url.removeFragmentIdentifier();
     NSURL *nsurl = (NSURL *)url;
     NSURL *originatingPageURL = (NSURL *)m_originatingPageURL;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
@@ -317,7 +316,6 @@ void SystemPreviewController::finish(URL url)
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, url));
-    url.removeFragmentIdentifier();
     NSURL *nsurl = (NSURL *)url;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
         [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];
