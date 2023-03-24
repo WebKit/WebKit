@@ -56,6 +56,25 @@ struct Primitive {
     Kind kind;
 };
 
+struct Texture {
+    enum class Kind : uint8_t {
+        Texture1d = 1,
+        Texture2d,
+        Texture2dArray,
+        Texture3d,
+        TextureCube,
+        TextureCubeArray,
+        TextureMultisampled2d,
+        TextureStorage1d,
+        TextureStorage2d,
+        TextureStorage2dArray,
+        TextureStorage3d,
+    };
+
+    Type* element;
+    Kind kind;
+};
+
 struct Vector {
     Type* element;
     uint8_t size;
@@ -93,7 +112,8 @@ struct Type : public std::variant<
     Types::Array,
     Types::Struct,
     Types::Function,
-    Types::Bottom
+    Types::Bottom,
+    Types::Texture
 > {
     using std::variant<
         Types::Primitive,
@@ -102,7 +122,8 @@ struct Type : public std::variant<
         Types::Array,
         Types::Struct,
         Types::Function,
-        Types::Bottom
+        Types::Bottom,
+        Types::Texture
         >::variant;
     void dump(PrintStream&) const;
     String toString() const;

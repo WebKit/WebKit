@@ -69,6 +69,44 @@ void Type::dump(PrintStream& out) const
             // Bottom is an implementation detail and should never leak, but we
             // keep the ability to print it in debug to help when dumping types
             out.print("⊥");
+        },
+        [&](const Texture& texture) {
+            switch (texture.kind) {
+            case Texture::Kind::Texture1d:
+                out.print("texture_1d");
+                break;
+            case Texture::Kind::Texture2d:
+                out.print("texture_2d");
+                break;
+            case Texture::Kind::Texture2dArray:
+                out.print("texture_2d_array");
+                break;
+            case Texture::Kind::Texture3d:
+                out.print("texture_3d");
+                break;
+            case Texture::Kind::TextureCube:
+                out.print("texture_cube");
+                break;
+            case Texture::Kind::TextureCubeArray:
+                out.print("texture_cube_array");
+                break;
+            case Texture::Kind::TextureMultisampled2d:
+                out.print("texture_multisampled_2d");
+                break;
+            case Texture::Kind::TextureStorage1d:
+                out.print("texture_storage_1d");
+                break;
+            case Texture::Kind::TextureStorage2d:
+                out.print("texture_storage_2d");
+                break;
+            case Texture::Kind::TextureStorage2dArray:
+                out.print("texture_storage_2d_array");
+                break;
+            case Texture::Kind::TextureStorage3d:
+                out.print("texture_storage_3d");
+                break;
+            }
+            out.print("<", *texture.element, ">");
         });
 }
 
