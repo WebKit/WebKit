@@ -264,6 +264,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
+    , m_webGPUEnabled(parameters.isWebGPUEnabled)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -623,6 +624,8 @@ RemoteRenderingBackend* GPUConnectionToWebProcess::remoteRenderingBackend(Render
 
 void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
+    MESSAGE_CHECK(m_webGPUEnabled);
+
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
         return;

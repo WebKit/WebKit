@@ -37,6 +37,7 @@ struct GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
     Vector<String> overrideLanguages;
     bool isLockdownModeEnabled { false };
+    bool isWebGPUEnabled { false };
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
@@ -53,6 +54,7 @@ struct GPUProcessConnectionParameters {
         encoder << webProcessIdentity;
         encoder << overrideLanguages;
         encoder << isLockdownModeEnabled;
+        encoder << isWebGPUEnabled;
 #if ENABLE(IPC_TESTING_API)
         encoder << ignoreInvalidMessageForTesting;
 #endif
@@ -70,6 +72,7 @@ struct GPUProcessConnectionParameters {
         auto webProcessIdentity = decoder.decode<WebCore::ProcessIdentity>();
         auto overrideLanguages = decoder.decode<Vector<String>>();
         auto isLockdownModeEnabled = decoder.decode<bool>();
+        auto isWebGPUEnabled = decoder.decode<bool>();
 #if ENABLE(IPC_TESTING_API)
         auto ignoreInvalidMessageForTesting = decoder.decode<bool>();
 #endif
@@ -87,6 +90,7 @@ struct GPUProcessConnectionParameters {
             WTFMove(*webProcessIdentity),
             WTFMove(*overrideLanguages),
             *isLockdownModeEnabled,
+            *isWebGPUEnabled,
 #if ENABLE(IPC_TESTING_API)
             *ignoreInvalidMessageForTesting,
 #endif
