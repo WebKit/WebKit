@@ -494,6 +494,11 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 #endif
 
     parameters.isLockdownModeEnabled = webProcessProxy.lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
+    
+    parameters.isWebGPUEnabled = WTF::anyOf(webProcessProxy.pages(), [](const auto& page) {
+        return page && page->preferences().webGPU();
+    });
+
     ensureGPUProcess().createGPUProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 #endif

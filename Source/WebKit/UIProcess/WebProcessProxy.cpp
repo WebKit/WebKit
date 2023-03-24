@@ -717,6 +717,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
+    updateWebGPUEnabledStateInGPUProcess();
 }
 
 void WebProcessProxy::markIsNoLongerInPrewarmedPool()
@@ -747,7 +748,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-
+    updateWebGPUEnabledStateInGPUProcess();
     maybeShutDown();
 }
 
@@ -1786,6 +1787,14 @@ void WebProcessProxy::didExceedCPULimit()
 void WebProcessProxy::updateBackgroundResponsivenessTimer()
 {
     m_backgroundResponsivenessTimer.updateState();
+}
+
+void WebProcessProxy::updateWebGPUEnabledStateInGPUProcess()
+{
+    bool webGPUEnabled = WTF::anyOf(pages(), [](const auto& page) {
+        return page && page->preferences().webGPU();
+    });
+    processPool().ensureGPUProcess().updateWebGPUEnabled(*this, webGPUEnabled);
 }
 
 #if !PLATFORM(COCOA)

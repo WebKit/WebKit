@@ -539,6 +539,8 @@ private:
 
     void updateBackgroundResponsivenessTimer();
 
+    void updateWebGPUEnabledStateInGPUProcess();
+
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
     // IPC::Connection::Client
