@@ -3040,6 +3040,19 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
     return false;
 }
 
+void RenderBlock::setTrimmedMarginForChild(RenderBox &child, MarginTrimType marginTrimType)
+{
+    switch (marginTrimType) {
+    case MarginTrimType::BlockStart: {
+        setMarginBeforeForChild(child, 0_lu);
+        child.markMarginAsTrimmed(MarginTrimType::BlockStart);
+        break;
+    }
+    default:
+        ASSERT_NOT_IMPLEMENTED_YET();
+    }
+}
+
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox& child) const
 {
     // If the child has the same directionality as we do, then we can just return its

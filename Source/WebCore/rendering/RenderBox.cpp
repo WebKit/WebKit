@@ -1394,6 +1394,84 @@ void RenderBox::clearOverridingLogicalWidthLength()
         gOverridingLogicalWidthLengthMap->remove(this);
 }
 
+FlowRelativeDirection RenderBox::physicalToFlowRelativeDirectionMapping(PhysicalDirection direction) const
+{
+    auto isHorizontalWritingMode = style().isHorizontalWritingMode();
+    auto isLeftToRightDirection = style().isLeftToRightDirection();
+
+    if (isHorizontalWritingMode == containingBlock()->style().isHorizontalWritingMode()) {
+        switch (direction) {
+        case PhysicalDirection::Top:
+            return isHorizontalWritingMode ? FlowRelativeDirection::BlockStart : (isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd);
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+        } 
+    } else
+        ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
+
+static MarginTrimType flowRelativeDirectionToMarginTrimType(FlowRelativeDirection direction)
+{
+    switch (direction) {
+    case FlowRelativeDirection::BlockStart:
+        return MarginTrimType::BlockStart;
+    case FlowRelativeDirection::BlockEnd:
+        return MarginTrimType::BlockEnd;
+    case FlowRelativeDirection::InlineStart:
+        return MarginTrimType::InlineStart;
+    case FlowRelativeDirection::InlineEnd:
+        return MarginTrimType::InlineEnd;
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+void RenderBox::markMarginAsTrimmed(MarginTrimType newTrimmedMargin)
+{
+    ensureRareData().setTrimmedMargins(rareData().trimmedMargins() | static_cast<unsigned>(newTrimmedMargin));
+}
+
+void RenderBox::clearTrimmedMarginsMarkings()
+{
+    ASSERT(hasRareData());
+    ensureRareData().setTrimmedMargins(0);
+}
+
+bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) const
+{
+#if ASSERT_ENABLED
+    // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
+    // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
+    if (auto* containingBlock = this->containingBlock(); containingBlock && !containingBlock->isFlexibleBox() &&  (containingBlock->isBlockContainer() || containingBlock->isRenderGrid())) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return false;
+    }
+#endif
+    if (!hasRareData())
+        return false;
+    return marginTrimType ? (rareData().trimmedMargins() & static_cast<unsigned>(*marginTrimType)) : rareData().trimmedMargins();
+}
+
+bool RenderBox::hasTrimmedMargin(PhysicalDirection physicalDirection) const
+{
+#if ASSERT_ENABLED
+    // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
+    // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
+    if (auto* containingBlock = this->containingBlock(); containingBlock && !containingBlock->isFlexibleBox() &&  (containingBlock->isBlockContainer() || containingBlock->isRenderGrid())) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return false;
+    }
+#endif
+    ASSERT(!needsLayout());
+
+    if (physicalDirection == PhysicalDirection::Top)
+        return hasTrimmedMargin(flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirectionMapping(physicalDirection)));
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return false;
+}
+
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const
 {
     auto width = LayoutUnit { logicalWidth.value() };

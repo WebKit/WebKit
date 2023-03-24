@@ -1002,6 +1002,7 @@ private:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         ADD_BOOLEAN_BITFIELD(hasSVGTransform, HasSVGTransform);
 #endif
+        ADD_ENUM_BITFIELD(trimmedMargins, TrimmedMargins, unsigned, 4);
 
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;

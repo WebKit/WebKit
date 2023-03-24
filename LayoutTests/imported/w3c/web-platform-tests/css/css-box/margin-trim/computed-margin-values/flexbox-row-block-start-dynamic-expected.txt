@@ -1,0 +1,8 @@
+
+FAIL flexbox > item 1 assert_equals:
+<item data-expected-margin-top="10" data-offset-y="18"></item>
+offsetTop expected 18 but got 8
+FAIL flexbox > item 2 assert_equals:
+<item data-expected-margin-top="10" data-offset-y="78"></item>
+offsetTop expected 78 but got 68
+
