@@ -14,8 +14,11 @@ EXPECTED (quality.droppedVideoFrames == '1') OK
 EXPECTED (quality.totalFrameDelay == '0') OK
 RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
+RUN(source.endOfStream())
+RUN(video.play())
+EVENT(ended)
 RUN(quality = video.getVideoPlaybackQuality())
-EXPECTED (quality.totalVideoFrames == '8') OK
+EXPECTED (quality.totalVideoFrames == '9') OK
 EXPECTED (quality.corruptedVideoFrames == '1') OK
 EXPECTED (quality.droppedVideoFrames == '2') OK
 EXPECTED (quality.totalFrameDelay == '3') OK
