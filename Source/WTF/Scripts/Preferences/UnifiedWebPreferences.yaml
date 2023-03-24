@@ -2887,9 +2887,9 @@ ImageAnalysisDuringFindInPageEnabled:
 ImageAnimationControlEnabled:
   type: bool
   status: stable
-  category: dom
-  humanReadableName: "Image Animation Control Enabled"
-  humanReadableDescription: "Control image animations."
+  category: animation
+  humanReadableName: "Image Animation Control"
+  humanReadableDescription: "Enable controls for image animations"
   condition: ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
   defaultValue:
     WebKitLegacy:
