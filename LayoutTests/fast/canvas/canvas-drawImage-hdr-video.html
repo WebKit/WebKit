@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <script src="../../resources/js-test-pre.js"></script>
 <script src="../../media/utilities.js"></script>
-<pre id=log></pre>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+    description("Ensure the hdr video frames are rendered correctly.");
+    jsTestIsAsync = true;
 
-let video = document.createElement("video");
+    let video = document.createElement("video");
 
-waitForVideoFrame(video, async function() {
     let canvas = document.createElement("canvas");
     canvas.width = 3840;
     canvas.height = 2160;
 
     let ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0);
 
-    let x = 1920;
-    let y = 540;
+    function pixelColor(x, y) {
+        return ctx.getImageData(x, y, 1, 1).data;
+    }
 
-    let data = ctx.getImageData(x, y, 1, 1).data;
-    log.textContent = `Pixel at ${x},${y}: ${[...data]}`;
+    waitForVideoFrame(video, async function() {
+        ctx.drawImage(video, 0, 0);
 
-    if (window.testRunner)
-        testRunner.notifyDone();
-});
+        let x = 1920;
+        let y = 540;
+        let sigma = 5;
 
-video.src = "resources/hdr.mp4";
+        let pixel = "pixelColor(" + x + " ," + y + ")";
+        let expectedColor = [0, 174, 0, 255];
+
+        shouldBeCloseTo(pixel + "[0]", expectedColor[0], sigma);
+        shouldBeCloseTo(pixel + "[1]", expectedColor[1], sigma);
+        shouldBeCloseTo(pixel + "[2]", expectedColor[2], sigma);
+        shouldBeCloseTo(pixel + "[3]", expectedColor[3], sigma);
+
+        finishJSTest();
+    });
+
+    video.src = "resources/hdr.mp4";
 </script>
+<script src="../../resources/js-test-post.js"></script>

@@ -2747,6 +2747,8 @@ svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
 svg/filters/feDiffuseLighting-bottomRightPixel.html [ ImageOnlyFailure ]
 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
+webkit.org/b/254415 fast/canvas/canvas-drawImage-hdr-video.html [ Failure ]
+
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
 # UIScriptController
