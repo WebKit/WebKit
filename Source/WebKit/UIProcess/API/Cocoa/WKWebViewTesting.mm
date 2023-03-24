@@ -397,6 +397,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return _page && _page->process().hasSleepDisabler();
 }
 
+- (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical
+{
+    if (_page)
+        return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
+    return @"";
+}
+
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus
 {
 #if ENABLE(ROUTING_ARBITRATION)

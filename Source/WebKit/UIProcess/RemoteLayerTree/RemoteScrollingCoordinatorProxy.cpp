@@ -395,6 +395,15 @@ void RemoteScrollingCoordinatorProxy::viewSizeDidChange()
     m_scrollingTree->viewSizeDidChange();
 }
 
+String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID scrollingNodeID, bool isVertical)
+{
+    if (auto node = m_scrollingTree->nodeForID(scrollingNodeID)) {
+        if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(*node))
+            return scrollingNode->scrollbarStateForOrientation(isVertical ? ScrollbarOrientation::Vertical : ScrollbarOrientation::Horizontal);
+    }
+    return ""_s;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

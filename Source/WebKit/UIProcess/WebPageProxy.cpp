@@ -12054,6 +12054,17 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatPoint& scrollPositio
 #endif
 }
 
+String WebPageProxy::scrollbarStateForScrollingNodeID(int scrollingNodeID, bool isVertical)
+{
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    if (!m_scrollingCoordinatorProxy)
+        return ""_s;
+    return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
+#else
+    return ""_s;
+#endif
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

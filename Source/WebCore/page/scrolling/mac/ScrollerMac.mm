@@ -372,6 +372,26 @@ FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
     return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
 }
 
+String ScrollerMac::scrollbarState() const
+{
+    StringBuilder result;
+    result.append([m_scrollerImp isEnabled] ? "enabled"_s: "disabled"_s);
+
+    if (!m_scrollerImp)
+        return result.toString();
+
+    if ([m_scrollerImp isExpanded])
+        result.append(",expanded"_s);
+
+    if ([m_scrollerImp trackAlpha] > 0)
+        result.append(",visible_track"_s);
+
+    if ([m_scrollerImp knobAlpha] > 0)
+        result.append(",visible_thumb"_s);
+
+    return result.toString();
+}
+
 }
 
 #endif

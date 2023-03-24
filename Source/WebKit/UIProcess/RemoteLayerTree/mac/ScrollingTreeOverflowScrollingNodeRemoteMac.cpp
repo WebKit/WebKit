@@ -73,6 +73,11 @@ bool ScrollingTreeOverflowScrollingNodeRemoteMac::handleMouseEvent(const Platfor
     return m_delegate->handleMouseEventForScrollbars(mouseEvent);
 }
 
+String ScrollingTreeOverflowScrollingNodeRemoteMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    return m_delegate->scrollbarStateForOrientation(orientation);
+}
+
 }
 
 #endif

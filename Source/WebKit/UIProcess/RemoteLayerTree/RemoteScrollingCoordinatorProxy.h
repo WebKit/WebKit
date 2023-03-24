@@ -153,6 +153,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
     void viewSizeDidChange();
+    String scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID, bool isVertical);
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
