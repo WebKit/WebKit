@@ -241,7 +241,7 @@ static inline bool pas_lock_try_lock(pas_lock* lock)
     bool unnamed;
     unnamed = (lock->mutex == PTHREAD_MUTEX_INITIALIZER);
     error = pthread_mutex_trylock(&lock->mutex);
-    PAS_ASSERT(!error || errno == EBUSY);
+    PAS_ASSERT(!error || error == EBUSY);
     if (!error) {
         pas_race_test_did_try_lock(lock);
         if (PAS_UNLIKELY(unnamed))
