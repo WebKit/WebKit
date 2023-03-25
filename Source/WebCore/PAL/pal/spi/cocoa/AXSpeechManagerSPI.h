@@ -38,6 +38,7 @@
 
 @interface AVSpeechSynthesisVoice (PrivateAttributes)
 @property (nonatomic, readonly) BOOL isSystemVoice SPI_AVAILABLE(macos(11.3), ios(13.3), tvos(13.3), watchos(6.3));
++ (nonnull NSArray<AVSpeechSynthesisVoice *> *)speechVoicesIncludingSuperCompact SPI_AVAILABLE(macos(13.4), ios(16.5), tvos(16.5), watchos(9.5));
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

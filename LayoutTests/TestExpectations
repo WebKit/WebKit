@@ -68,6 +68,7 @@ fast/scrolling/gtk [ Skip ]
 fast/scrolling/ios [ Skip ]
 fast/scrolling/mac [ Skip ]
 fast/scrolling/ipad [ Skip ]
+fast/speechsynthesis/mac [ Skip ]
 fast/text/mac [ Skip ]
 scrollingcoordinator [ Skip ]
 media/media-vp8-hiddenframes.html [ Skip ] # Requires MediaFormatReader and VP8 decoder
