@@ -336,7 +336,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
             WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup)
             .then((remoteObject) => {
                 let text = domNode.nodeType() === Node.ELEMENT_NODE ? WI.UIString("Dropped Element") : WI.UIString("Dropped Node");
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true, shouldRevealConsole: true});
 
                 this.prompt.focus();
             });

@@ -29,7 +29,7 @@
 
 WI.ConsoleCommandResultMessage = class ConsoleCommandResult extends WI.ConsoleMessage
 {
-    constructor(target, result, wasThrown, savedResultIndex, shouldRevealConsole = true)
+    constructor(target, result, wasThrown, savedResultIndex, { shouldRevealConsole } ={})
     {
         let source = WI.ConsoleMessage.MessageSource.JS;
         let level = wasThrown ? WI.ConsoleMessage.MessageLevel.Error : WI.ConsoleMessage.MessageLevel.Log;
@@ -38,7 +38,7 @@ WI.ConsoleCommandResultMessage = class ConsoleCommandResult extends WI.ConsoleMe
         super(target, source, level, "", type, undefined, undefined, undefined, 0, [result], undefined, undefined);
 
         this._savedResultIndex = savedResultIndex;
-        this._shouldRevealConsole = shouldRevealConsole;
+        this._shouldRevealConsole = !!shouldRevealConsole;
 
         if (this._savedResultIndex && this._savedResultIndex > WI.ConsoleCommandResultMessage.maximumSavedResultIndex)
             WI.ConsoleCommandResultMessage.maximumSavedResultIndex = this._savedResultIndex;
