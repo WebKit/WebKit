@@ -279,7 +279,15 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    for (AVSpeechSynthesisVoice *voice in [PAL::getAVSpeechSynthesisVoiceClass() speechVoices]) {
+    NSArray<AVSpeechSynthesisVoice *> *voices = nil;
+    // SpeechSynthesis replaces on-device compact with higher quality compact voices. These
+    // are not available to WebKit so we're losing these default voices for WebSpeech.
+    if ([PAL::getAVSpeechSynthesisVoiceClass() respondsToSelector:@selector(speechVoicesIncludingSuperCompact)])
+        voices = [PAL::getAVSpeechSynthesisVoiceClass() speechVoicesIncludingSuperCompact];
+    else
+        voices = [PAL::getAVSpeechSynthesisVoiceClass() speechVoices];
+
+    for (AVSpeechSynthesisVoice *voice in voices) {
         NSString *language = [voice language];
         bool isDefault = true;
         NSString *voiceURI = [voice identifier];

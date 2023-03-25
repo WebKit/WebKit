@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<script>
+description("This tests that we can get Samantha.");
+var list = window.speechSynthesis.getVoices();
+
+var foundSamantha = false;
+for (let k = 0; k < list.length; k++) {
+    let voice = list[k];
+    if (voice.name == "Samantha")
+        foundSamantha = true;
+}
+
+shouldBeTrue("foundSamantha");
+
+</script>
+</body>
+</html>
