@@ -109,7 +109,7 @@ public:
 
     const Font* variantFont(const FontDescription& description, FontVariant variant) const
     {
-#if PLATFORM(COCOA)
+#if USE(FONT_VARIANT_VIA_FEATURES)
         ASSERT(variant != SmallCapsVariant);
 #endif
         switch (variant) {
