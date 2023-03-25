@@ -33,7 +33,6 @@ namespace JSC {
 
 class JSStringJoiner {
 public:
-    JSStringJoiner(JSGlobalObject*, LChar separator, size_t stringCount);
     JSStringJoiner(JSGlobalObject*, StringView separator, size_t stringCount);
     ~JSStringJoiner();
 
@@ -50,7 +49,6 @@ private:
     void append8Bit(const String&);
     unsigned joinedLength(JSGlobalObject*) const;
 
-    LChar m_singleCharacterSeparator;
     StringView m_separator;
     Vector<StringViewWithUnderlyingString> m_strings;
     CheckedUint32 m_accumulatedStringsLength;
@@ -60,16 +58,6 @@ private:
 inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView separator, size_t stringCount)
     : m_separator(separator)
     , m_isAll8Bit(m_separator.is8Bit())
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    if (UNLIKELY(!m_strings.tryReserveCapacity(stringCount)))
-        throwOutOfMemoryError(globalObject, scope);
-}
-
-inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, LChar separator, size_t stringCount)
-    : m_singleCharacterSeparator(separator)
-    , m_separator { &m_singleCharacterSeparator, 1 }
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

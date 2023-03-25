@@ -577,7 +577,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
         return JSValue::encode(result);
     }
 
-    JSStringJoiner joiner(globalObject, ',', length);
+    JSStringJoiner joiner(globalObject, ","_s, length);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     for (unsigned i = 0; i < length; ++i) {

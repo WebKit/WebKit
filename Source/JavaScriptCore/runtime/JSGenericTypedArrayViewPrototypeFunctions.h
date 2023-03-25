@@ -489,10 +489,8 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
     };
 
     JSValue separatorValue = callFrame->argument(0);
-    if (separatorValue.isUndefined()) {
-        const LChar* comma = reinterpret_cast<const LChar*>(",");
-        return joinWithSeparator({ comma, 1 });
-    }
+    if (separatorValue.isUndefined())
+        return joinWithSeparator(","_s);
 
     JSString* separatorString = separatorValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
