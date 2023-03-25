@@ -184,6 +184,7 @@ public:
     bool handleKeyboardEvent(const WebKeyboardEvent&);
     bool handleEditingCommand(StringView commandName);
     bool isEditingCommandEnabled(StringView commandName);
+    WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
     WebCore::Scrollbar* horizontalScrollbar() { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() { return m_verticalScrollbar.get(); }
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;

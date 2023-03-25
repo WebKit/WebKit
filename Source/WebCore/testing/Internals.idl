@@ -1080,6 +1080,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setUseSystemAppearance(boolean value);
 
     unsigned long pluginCount();
+    unsigned long pluginScrollPositionX(Element element);
+    unsigned long pluginScrollPositionY(Element element);
 
     undefined notifyResourceLoadObserver();
 
