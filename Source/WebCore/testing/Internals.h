@@ -1129,6 +1129,8 @@ public:
     void setUseSystemAppearance(bool);
 
     size_t pluginCount();
+    ExceptionOr<unsigned> pluginScrollPositionX(Element&);
+    ExceptionOr<unsigned> pluginScrollPositionY(Element&);
 
     void notifyResourceLoadObserver();
 

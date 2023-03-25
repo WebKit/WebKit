@@ -384,6 +384,13 @@ bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity
     return m_isInitialized && m_plugin->scroll(direction, granularity);
 }
 
+ScrollPosition PluginView::scrollPositionForTesting() const
+{
+    if (!m_isInitialized)
+        return { };
+    return m_plugin->scrollPositionForTesting();
+}
+
 Scrollbar* PluginView::horizontalScrollbar()
 {
     if (!m_isInitialized)

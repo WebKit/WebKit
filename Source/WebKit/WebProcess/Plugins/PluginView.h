@@ -122,6 +122,7 @@ private:
     // WebCore::PluginViewBase
     PlatformLayer* platformLayer() const final;
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
+    WebCore::ScrollPosition scrollPositionForTesting() const final;
     WebCore::Scrollbar* horizontalScrollbar() final;
     WebCore::Scrollbar* verticalScrollbar() final;
     bool wantsWheelEvents() final;

@@ -48,6 +48,7 @@ public:
 #endif
 
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }
+    virtual ScrollPosition scrollPositionForTesting() const { return { }; }
 
     virtual Scrollbar* horizontalScrollbar() { return nullptr; }
     virtual Scrollbar* verticalScrollbar() { return nullptr; }
