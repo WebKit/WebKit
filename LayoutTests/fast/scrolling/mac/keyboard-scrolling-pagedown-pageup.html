@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    if (window.eventSender) {
+        await UIHelper.startMonitoringWheelEvents();
+        eventSender.keyDown("pageDown");
+        await UIHelper.waitForScrollCompletion();
+
+        scrollOffsetAfterPageDown = scrollY;
+
+        await UIHelper.startMonitoringWheelEvents();
+        eventSender.keyDown("pageUp");
+        await UIHelper.waitForScrollCompletion();
+
+        scrollOffsetAfterPageUp = scrollY;
+
+        shouldBeTrue("scrollOffsetAfterPageDown > scrollOffsetAfterPageUp");
+        finishJSTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<div style="height: 5000px;"></div>
+</body>
+</html>
