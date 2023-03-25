@@ -330,7 +330,7 @@ Total elements to be tested: 122.
 <img src="data:image/gif..." alt="x" aria-hidden="true">
     exists: true
     label: x
-    role: presentation
+    role: none
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -345,7 +345,7 @@ Total elements to be tested: 122.
 <img src="data:image/gif..." alt="">
     exists: true
     label:
-    role: presentation
+    role: none
     ignored: true
     parentNodeId: exists
 
@@ -358,7 +358,7 @@ Total elements to be tested: 122.
 <img src="./404.gif">
     exists: true
     label:
-    role: presentation
+    role: none
     ignored: true
     parentNodeId: exists
 
@@ -963,7 +963,7 @@ Total elements to be tested: 122.
 <div role="presentation"><div></div></div>
     exists: true
     label:
-    role: presentation
+    role: none
     ignored: true
     parentNodeId: exists
 
