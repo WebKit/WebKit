@@ -342,6 +342,9 @@ bool MediaSource::contentTypeShouldGenerateTimestamps(const ContentType& content
 
 bool MediaSource::hasBufferedTime(const MediaTime& time)
 {
+    if (isClosed())
+        return false;
+
     if (time > duration())
         return false;
 
@@ -349,7 +352,7 @@ bool MediaSource::hasBufferedTime(const MediaTime& time)
     if (!ranges->length())
         return false;
 
-    return abs(ranges->nearest(time) - time) <= currentTimeFudgeFactor();
+    return abs(ranges->nearest(time) - time) <= m_private->timeFudgeFactor();
 }
 
 bool MediaSource::hasCurrentTime()
@@ -359,26 +362,13 @@ bool MediaSource::hasCurrentTime()
 
 bool MediaSource::hasFutureTime()
 {
+    if (isClosed())
+        return false;
+
     MediaTime currentTime = this->currentTime();
     MediaTime duration = this->duration();
 
-    if (currentTime >= duration)
-        return true;
-
-    auto ranges = buffered();
-    MediaTime nearest = ranges->nearest(currentTime);
-    if (abs(nearest - currentTime) > currentTimeFudgeFactor())
-        return false;
-
-    size_t found = ranges->find(nearest);
-    if (found == notFound)
-        return false;
-
-    MediaTime localEnd = ranges->end(found);
-    if (localEnd == duration)
-        return true;
-
-    return localEnd - currentTime > currentTimeFudgeFactor();
+    return m_private->hasFutureTime(currentTime, duration, m_buffered);
 }
 
 void MediaSource::monitorSourceBuffers()
