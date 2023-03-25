@@ -234,18 +234,11 @@ static CSSValueID valueForRepeatRule(NinePieceImageRule rule)
 
 static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
 {
-    // These values can be percentages, numbers, or while an animation of mixed types is in progress,
-    // a calculation that combines a percentage and a number.
+    // These values can be percentages or numbers.
     if (length.isPercent())
         return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    if (length.isFixed())
-        return CSSPrimitiveValue::create(length.value());
-
-    // Calculating the actual length currently in use would require most of the code from RenderBoxModelObject::paintNinePieceImage.
-    // And even if we could do that, it's not clear if that's exactly what we'd want during animation.
-    // FIXME: For now, just return 0.
-    ASSERT(length.isCalculated());
-    return CSSPrimitiveValue::create(0);
+    ASSERT(length.isFixed());
+    return CSSPrimitiveValue::create(length.value());
 }
 
 static inline Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image)
