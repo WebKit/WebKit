@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -190,7 +190,7 @@ public:
 
     // A characteristic of the media file, eg. video, audio, closed captions, etc, has changed.
     virtual void mediaPlayerCharacteristicChanged() { }
-    
+
     // whether the rendering system can accelerate the display of this MediaPlayer.
     virtual bool mediaPlayerRenderingCanBeAccelerated() { return false; }
 
@@ -213,7 +213,7 @@ public:
     virtual void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) { }
     virtual void mediaPlayerWaitingForKeyChanged() { }
 #endif
-    
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) { };
 #endif
@@ -421,6 +421,7 @@ public:
 
     using CurrentTimeDidChangeCallback = std::function<void(const MediaTime&)>;
     bool setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&&);
+    bool currentTimeMayProgress() const;
 
     MediaTime startTime() const;
     MediaTime initialTime() const;
@@ -494,7 +495,7 @@ public:
     NetworkState networkState();
 
     using MediaPlayerEnums::ReadyState;
-    ReadyState readyState();
+    ReadyState readyState() const;
 
     using MediaPlayerEnums::MovieLoadType;
     MovieLoadType movieLoadType() const;

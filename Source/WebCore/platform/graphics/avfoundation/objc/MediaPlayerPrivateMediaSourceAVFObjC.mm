@@ -37,6 +37,7 @@
 #import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSessionManagerCocoa.h"
+#import "MediaSourcePrivate.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
@@ -103,7 +104,7 @@ static bool isCopyDisplayedPixelBufferAvailable()
 }
 
 #endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    
+
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
@@ -236,7 +237,7 @@ private:
 
     std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);        
+        return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);
     }
 
     void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
@@ -470,6 +471,15 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
     if (synchronizerTime < m_lastSeekTime)
         return m_lastSeekTime;
     return synchronizerTime;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTimeMayProgress() const
+{
+    if (!m_mediaSourcePrivate)
+        return false;
+    if (auto ranges = buffered())
+        return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), *ranges);
+    return false;
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime(const MediaTime& time) const
@@ -1409,12 +1419,12 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation() con
 {
     return m_videoLayerManager->videoFullscreenLayer();
 }
-    
+
 void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
 {
     m_videoLayerManager->syncTextTrackBounds();
 }
-    
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
     auto* representationLayer = representation ? representation->platformLayer() : nil;

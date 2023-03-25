@@ -51,6 +51,7 @@ public:
 
     void advanceCurrentTime();
     MediaTime currentMediaTime() const override;
+    bool currentMediaTimeMayProgress() const override;
     void updateDuration(const MediaTime&);
 
     MediaPlayer::ReadyState readyState() const override;

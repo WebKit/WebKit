@@ -111,6 +111,7 @@ public:
     void characteristicsChanged();
 
     MediaTime currentMediaTime() const override;
+    bool currentMediaTimeMayProgress() const override;
     AVSampleBufferDisplayLayer* sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 

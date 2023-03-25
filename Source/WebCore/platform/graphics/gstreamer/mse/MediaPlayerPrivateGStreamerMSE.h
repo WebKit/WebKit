@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE) 
+#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
@@ -65,6 +65,7 @@ public:
 
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     MediaTime maxMediaTimeSeekable() const override;
+    bool currentMediaTimeMayProgress() const override;
 
     void sourceSetup(GstElement*) override;
 

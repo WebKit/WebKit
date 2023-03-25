@@ -70,9 +70,11 @@ public:
     virtual void seekCompleted() = 0;
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
-
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
+
     bool isSeeking() const { return m_isSeeking; }
+
+    bool hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges&) const;
 
 private:
     MediaTime m_timeFudgeFactor;

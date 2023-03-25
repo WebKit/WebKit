@@ -913,7 +913,7 @@ void RemoteMediaPlayerProxy::timerFired()
 
 bool RemoteMediaPlayerProxy::mediaPlayerPausedOrStalled() const
 {
-    return m_player->paused() || m_player->readyState() < MediaPlayer::ReadyState::HaveFutureData;
+    return m_player->paused() || !m_player->currentTimeMayProgress();
 }
 
 void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)

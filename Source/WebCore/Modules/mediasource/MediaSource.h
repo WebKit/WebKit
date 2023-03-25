@@ -140,6 +140,7 @@ protected:
     void scheduleEvent(const AtomString& eventName);
     void notifyElementUpdateMediaState() const;
 
+    RefPtr<MediaSourcePrivate> m_private;
 private:
     // ActiveDOMObject.
     void stop() final;
@@ -170,7 +171,6 @@ private:
 
     static URLRegistry* s_registry;
 
-    RefPtr<MediaSourcePrivate> m_private;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
     UniqueRef<PlatformTimeRanges> m_buffered;
