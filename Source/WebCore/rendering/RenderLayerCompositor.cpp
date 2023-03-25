@@ -3621,9 +3621,6 @@ static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer,
         if (isContainingBlockChain && isPaintOrderAncestor)
             return AncestorTraversal::Stop;
 
-        if (!ancestorLayer.isComposited())
-            return AncestorTraversal::Stop;
-
         if (seenPaintOrderAncestor && !isContainingBlockChain && ancestorLayer.hasCompositedScrollableOverflow())
             appendOverflowLayerNodeID(ancestorLayer);
 

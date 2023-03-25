@@ -1,0 +1,40 @@
+Fixed inside scroller
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 5021)
+  (scrollable area parameters
+    (horizontal scroll elasticity 1)
+    (vertical scroll elasticity 1)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (allows vertical scrolling 1))
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,4421))
+  (behavior for fixed 1)
+  (children 1
+    (Overflow scrolling node
+      (scroll position 0 50)
+      (scrollable area size 425 425)
+      (contents size 425 1965)
+      (requested scroll position 0 50)
+      (requested scroll position represents programmatic scroll 1)
+      (scrollable area parameters
+        (horizontal scroll elasticity 1)
+        (vertical scroll elasticity 1)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows vertical scrolling 1))
+      (children 1
+        (Positioned node
+          (layout constraints
+            (layer-position-at-last-layout (10,160)))
+          (related overflow nodes 1)
+        )
+      )
+    )
+  )
+)
+
+
