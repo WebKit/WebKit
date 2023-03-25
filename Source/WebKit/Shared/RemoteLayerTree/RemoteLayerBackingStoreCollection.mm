@@ -140,11 +140,13 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     ASSERT(m_inLayerFlush);
     m_reachableBackingStoreInLatestFlush.add(&backingStore);
 
-    if (backingStore.needsDisplay())
+    auto backingStoreIter = m_unparentedBackingStore.find(&backingStore);
+    bool wasUnparented = backingStoreIter != m_unparentedBackingStore.end();
+
+    if (backingStore.needsDisplay() || wasUnparented)
         m_backingStoresNeedingDisplay.add(&backingStore);
 
-    auto backingStoreIter = m_unparentedBackingStore.find(&backingStore);
-    if (backingStoreIter == m_unparentedBackingStore.end())
+    if (!wasUnparented)
         return false;
 
     m_liveBackingStore.add(&backingStore);
