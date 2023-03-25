@@ -389,13 +389,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setShouldTryConstantFolding(true);
         break;
     }
-
-    case ExtractFromTuple: {
-        setForNode(node, m_state.forTupleNode(node->child1(), node->extractOffset()));
-        if (forNode(node).value())
-            m_state.setShouldTryConstantFolding(true);
-        break;
-    }
         
     case ExtractCatchLocal:
     case ExtractOSREntryLocal: {
@@ -4531,13 +4524,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case EnumeratorNextUpdateIndexAndMode: {
         ArrayMode arrayMode = node->arrayMode();
-        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node, 0).useKind() == CellUse)
-            setTupleConstant(node, 1, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::OwnStructureMode)));
-        else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode) {
-            m_state.setNonCellTypeForTupleNode(node, 1, SpecInt32Only);
+        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node, 0).useKind() == CellUse) {
+            // Do nothing.
+        } else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode)
             clobberWorld();
-        } else {
-            setTupleConstant(node, 1, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::IndexedMode)));
+        else {
             switch (arrayMode.type()) {
             case Array::Int32:
             case Array::Double:
@@ -4553,7 +4544,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             }
         }
-        m_state.setNonCellTypeForTupleNode(node, 0, SpecInt32Only);
+        setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
+    case EnumeratorNextExtractMode: {
+        if (node->child1()->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode) {
+            setConstant(node, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::IndexedMode)));
+            break;
+        }
+
+        if (node->child1()->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node->child1().node(), 0).useKind() == CellUse) {
+            setConstant(node, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::OwnStructureMode)));
+            break;
+        }
+
+        FALLTHROUGH;
+    }
+    case EnumeratorNextExtractIndex: {
+        setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
 

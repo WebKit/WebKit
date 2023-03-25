@@ -159,7 +159,6 @@ public:
         , m_ftlState(state)
         , m_out(state)
         , m_proc(*state.proc)
-        , m_tupleValues(m_graph.m_tupleData.size())
         , m_availabilityCalculator(m_graph)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
@@ -736,9 +735,6 @@ private:
             break;
         case DFG::Phi:
             compilePhi();
-            break;
-        case ExtractFromTuple:
-            compileExtractFromTuple();
             break;
         case JSConstant:
             break;
@@ -1575,6 +1571,12 @@ private:
             break;
         case EnumeratorNextUpdateIndexAndMode:
             compileEnumeratorNextUpdateIndexAndMode();
+            break;
+        case EnumeratorNextExtractIndex:
+            compileEnumeratorNextExtractIndex();
+            break;
+        case EnumeratorNextExtractMode:
+            compileEnumeratorNextExtractMode();
             break;
         case EnumeratorNextUpdatePropertyName:
             compileEnumeratorNextUpdatePropertyName();
@@ -14226,8 +14228,7 @@ IGNORE_CLANG_WARNINGS_END
 
             m_out.appendTo(continuation);
             LValue finalIndex = m_out.phi(Int32, finalIncrementedIndex, finalPropertyIndex);
-            setTuple(0, finalIndex);
-            setTuple(1, m_out.constInt32(static_cast<uint32_t>(JSPropertyNameEnumerator::IndexedMode)));
+            setJSValue(m_out.bitOr(m_out.zeroExt(finalIndex, Int64), m_out.constInt64(JSValue::NumberTag | static_cast<uint64_t>(JSPropertyNameEnumerator::IndexedMode) << 32)));
             return;
         }
 
@@ -14250,47 +14251,27 @@ IGNORE_CLANG_WARNINGS_END
 
             m_out.appendTo(continuation);
             index = m_out.phi(Int32, initialIndex, incrementedIndex);
-            setTuple(0, index);
-            setTuple(1, m_out.constInt32(static_cast<uint32_t>(JSPropertyNameEnumerator::OwnStructureMode)));
+            setJSValue(m_out.bitOr(m_out.zeroExt(index, Int64), m_out.constInt64(JSValue::DoubleEncodeOffset | static_cast<uint64_t>(JSPropertyNameEnumerator::OwnStructureMode) << 32)));
             return;
         }
 
         LValue base = lowJSValue(baseEdge);
-        LValue tuple = vmCall(registerPair(), operationEnumeratorNextUpdateIndexAndMode, weakPointer(globalObject), base, index, mode, enumerator);
-
-        setTuple(0, m_out.castToInt32(m_out.extract(tuple, 0)));
-        setTuple(1, m_out.castToInt32(m_out.extract(tuple, 1)));
+        setJSValue(vmCall(Int64, operationEnumeratorNextUpdateIndexAndMode, weakPointer(globalObject), base, index, mode, enumerator));
     }
 
-    void compileExtractFromTuple()
+    void compileEnumeratorNextExtractIndex()
     {
-        auto& loweredNodeValue = m_tupleValues.at(m_node->tupleIndex());
-        ASSERT(isValid(loweredNodeValue));
-        LValue result = loweredNodeValue.value();
+        LValue boxedPair = lowJSValue(m_node->child1());
 
-        switch (m_graph.m_tupleData.at(m_node->tupleIndex()).resultFlags) {
-        case NodeResultJS:
-        case NodeResultNumber:
-            setJSValue(result);
-            break;
-        case NodeResultDouble:
-            setDouble(result);
-            break;
-        case NodeResultInt32:
-            setInt32(result);
-            break;
-        case NodeResultBoolean:
-            setBoolean(result);
-            break;
-        case NodeResultStorage:
-            setStorage(result);
-            break;
+        setInt32(m_out.castToInt32(boxedPair));
+    }
 
-        // FIXME: These are not supported because it wasn't exactly clear how to implement them and they are not currently used.
-        case NodeResultInt52:
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+    void compileEnumeratorNextExtractMode()
+    {
+        LValue boxedPair = lowJSValue(m_node->child1());
+
+        LValue highBits = m_out.castToInt32(m_out.lShr(boxedPair, m_out.constInt32(32)));
+        setInt32(m_out.bitAnd(highBits, m_out.constInt32(JSPropertyNameEnumerator::enumerationModeMask)));
     }
 
     // FIXME: We should probably have a method of value recovery for this node since it's "effect" free but always live in bytecode.
@@ -21664,11 +21645,6 @@ IGNORE_CLANG_WARNINGS_END
     {
         m_doubleValues.set(node, LoweredNodeValue(value, m_highBlock));
     }
-    void setTuple(Node* tuple, unsigned index, LValue value)
-    {
-        ASSERT(index < tuple->tupleSize());
-        m_tupleValues.at(tuple->tupleOffset() + index) = LoweredNodeValue(value, m_highBlock);
-    }
 
     void setInt32(LValue value)
     {
@@ -21701,10 +21677,6 @@ IGNORE_CLANG_WARNINGS_END
     void setDouble(LValue value)
     {
         setDouble(m_node, value);
-    }
-    void setTuple(unsigned index, LValue value)
-    {
-        setTuple(m_node, index, value);
     }
     
     bool isValid(const LoweredNodeValue& value)
@@ -21859,13 +21831,6 @@ IGNORE_CLANG_WARNINGS_END
         return abstractStructure(edge.node());
     }
 
-    LType registerPair()
-    {
-        if (!m_registerPair.isTuple())
-            m_registerPair = m_proc.addTuple({ registerType(), registerType() });
-        return m_registerPair;
-    }
-
     void crash()
     {
         crash(m_highBlock, m_node);
@@ -21952,8 +21917,6 @@ IGNORE_CLANG_WARNINGS_END
     HashMap<Node*, LoweredNodeValue> m_storageValues;
     HashMap<Node*, LoweredNodeValue> m_doubleValues;
     
-    Vector<LoweredNodeValue> m_tupleValues;
-
     HashMap<Node*, LValue> m_phis;
     
     LocalOSRAvailabilityCalculator m_availabilityCalculator;
@@ -21972,8 +21935,6 @@ IGNORE_CLANG_WARNINGS_END
     HashMap<Node*, NodeSet> m_liveInToNode;
     HashMap<Node*, AbstractValue> m_aiCheckedNodes;
     String m_graphDump;
-
-    LType m_registerPair;
 };
 
 } // anonymous namespace

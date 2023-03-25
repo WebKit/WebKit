@@ -56,7 +56,7 @@ void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, uns
         // In the rare case when the Arg width does not match the argument width
         // (32-bit arm passing a 64-bit argument), we respect the width needed
         // for each stack access:
-        slotSize = bytesForWidth(cCallArgumentRegisterWidth(child->type()));
+        slotSize = bytesForWidth(cCallArgumentRegisterWidth(child));
 
         // but the logical stack slot uses the natural alignment of the argument
         slotAlignment = sizeofType(child->type());
@@ -103,7 +103,7 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
     return result;
 }
 
-size_t cCallResultCount(Code& code, CCallValue* value)
+size_t cCallResultCount(CCallValue* value)
 {
     switch (value->type().kind()) {
     case Void:
@@ -113,12 +113,7 @@ size_t cCallResultCount(Code& code, CCallValue* value)
             return 2;
         return 1;
     case Tuple:
-        // We only support tuples that return exactly two register sized ints.
-        UNUSED_PARAM(code);
-        ASSERT(code.proc().resultCount(value->type()) == 2);
-        ASSERT(code.proc().typeAtOffset(value->type(), 0) == pointerType());
-        ASSERT(code.proc().typeAtOffset(value->type(), 1) == pointerType());
-        return 2;
+        RELEASE_ASSERT_NOT_REACHED();
     default:
         return 1;
 
@@ -141,19 +136,19 @@ size_t cCallArgumentRegisterCount(const Value* value)
     }
 }
 
-Width cCallArgumentRegisterWidth(Type type)
+Width cCallArgumentRegisterWidth(const Value* value)
 {
     if constexpr (is32Bit()) {
-        if (type == Int64)
+        if (value->type() == Int64)
             return Width32;
     }
 
-    return widthForType(type);
+    return widthForType(value->type());
 }
 
-Tmp cCallResult(Code& code, CCallValue* value, unsigned index)
+Tmp cCallResult(CCallValue* value, unsigned index)
 {
-    ASSERT(index < 2);
+    ASSERT_UNUSED(index, index <= (is64Bit() ? 1 : 2));
     switch (value->type().kind()) {
     case Void:
         return Tmp();
@@ -165,15 +160,9 @@ Tmp cCallResult(Code& code, CCallValue* value, unsigned index)
         return Tmp(GPRInfo::returnValueGPR);
     case Float:
     case Double:
-        ASSERT(!index);
         return Tmp(FPRInfo::returnValueFPR);
-    case Tuple:
-        ASSERT_UNUSED(code, code.proc().resultCount(value->type()) == 2);
-        // We only support functions that return each parameter in its own register for now.
-        ASSERT(code.proc().typeAtOffset(value->type(), 0) == registerType());
-        ASSERT(code.proc().typeAtOffset(value->type(), 1) == registerType());
-        return index ? Tmp(GPRInfo::returnValueGPR2) : Tmp(GPRInfo::returnValueGPR);
     case V128:
+    case Tuple:
         break;
     }
 

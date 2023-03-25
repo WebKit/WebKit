@@ -359,8 +359,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
-    case ExtractFromTuple: {
-        def(PureValue(node, node->extractOffset()));
+    case EnumeratorNextExtractMode:
+    case EnumeratorNextExtractIndex: {
+        def(PureValue(node));
         return;
     }
 

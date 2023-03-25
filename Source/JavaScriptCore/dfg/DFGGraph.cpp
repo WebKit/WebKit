@@ -391,8 +391,6 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, *node->putByStatus());
     if (node->hasEnumeratorMetadata())
         out.print(comma, "enumeratorModes = ", node->enumeratorMetadata().toRaw());
-    if (node->hasExtractOffset())
-        out.print(comma, "<<", node->extractOffset());
     if (node->isJump())
         out.print(comma, "T:", *node->targetBlock());
     if (node->isBranch())
@@ -767,9 +765,7 @@ public:
             for (unsigned phiIndex = block->phis.size(); phiIndex--;)
                 block->phis[phiIndex]->setRefCount(0);
         }
-        for (auto& tupleData : m_graph.m_tupleData)
-            tupleData.refCount = 0;
-
+    
         // Now find the roots:
         // - Nodes that are must-generate.
         // - Nodes that are reachable from type checks.
@@ -824,7 +820,8 @@ private:
         // will just not have gotten around to it.
         if (edge.isProved() || edge.willNotHaveCheck())
             return;
-        countNode(edge.node());
+        if (!edge->postfixRef())
+            m_worklist.append(edge.node());
     }
     
     void countNode(Node* node)
@@ -834,14 +831,11 @@ private:
         m_worklist.append(node);
     }
     
-    void countEdge(Node* node, Edge edge)
+    void countEdge(Node*, Edge edge)
     {
         // Don't count edges that are already counted for their type checks.
         if (!(edge.isProved() || edge.willNotHaveCheck()))
             return;
-        // Tuples are special and have a reference count for each result.
-        if (node->op() == ExtractFromTuple)
-            m_graph.m_tupleData.at(node->tupleIndex()).refCount++;
         countNode(edge.node());
     }
     

@@ -501,7 +501,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     }
 
     case EnumeratorNextUpdateIndexAndMode:
-    case ExtractFromTuple:
+    // These technically don't have effects but they'll only ever follow a EnumeratorNextUpdateIndexAndMode so we might as well return false.
+    case EnumeratorNextExtractMode:
+    case EnumeratorNextExtractIndex:
     case EnumeratorNextUpdatePropertyName:
     case ToThis:
     case CreateThis:

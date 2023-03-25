@@ -221,14 +221,13 @@ public:
     template<typename... Params>
     Node* addNode(Params... params)
     {
-        Node* node = m_nodes.addNew(params...);
-        return node;
+        return m_nodes.addNew(params...);
     }
 
     template<typename... Params>
     Node* addNode(SpeculatedType type, Params... params)
     {
-        Node* node = addNode(params...);
+        Node* node = m_nodes.addNew(params...);
         node->predict(type);
         return node;
     }
@@ -1176,14 +1175,6 @@ public:
     Vector<RefPtr<BasicBlock>, 8> m_blocks;
     Vector<BasicBlock*, 1> m_roots;
     Vector<Edge, 16> m_varArgChildren;
-
-    struct TupleData {
-        uint16_t refCount { 0 };
-        uint16_t resultFlags { 0 };
-        VirtualRegister virtualRegister;
-    };
-
-    Vector<TupleData> m_tupleData;
 
     // UnlinkedSimpleJumpTable/UnlinkedStringJumpTable are kept by UnlinkedCodeBlocks retained by baseline CodeBlocks handled by DFG / FTL.
     Vector<const UnlinkedSimpleJumpTable*> m_unlinkedSwitchJumpTables;

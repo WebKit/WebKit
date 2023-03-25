@@ -3999,10 +3999,7 @@ void addCallTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testCallFunctionWithHellaArguments());
     RUN(testCallFunctionWithHellaArguments2());
     RUN(testCallFunctionWithHellaArguments3());
-
-    RUN(testCallPairResult(1, 100));
-    RUN(testCallPairResultRare(1, 100));
-
+    
     RUN(testReturnDouble(0.0));
     RUN(testReturnDouble(negativeZero()));
     RUN(testReturnDouble(42.5));

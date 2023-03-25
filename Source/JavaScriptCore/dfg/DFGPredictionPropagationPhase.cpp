@@ -42,9 +42,7 @@ class PredictionPropagationPhase : public Phase {
 public:
     PredictionPropagationPhase(Graph& graph)
         : Phase(graph, "prediction propagation")
-        , m_tupleSpeculations(graph.m_tupleData.size())
     {
-        m_tupleSpeculations.fill(SpecNone);
     }
     
     bool run()
@@ -129,37 +127,6 @@ private:
         ASSERT(m_currentNode->hasResult());
         
         return m_currentNode->predict(prediction);
-    }
-
-    bool setTuplePrediction(SpeculatedType prediction, unsigned index)
-    {
-        ASSERT(index < m_currentNode->tupleSize());
-
-        SpeculatedType& speculation = m_tupleSpeculations[m_currentNode->tupleOffset() + index];
-        // setTuplePrediction() is used when we know that there is no way that we can change
-        // our minds about what the prediction is going to be. There is no semantic
-        // difference between setTuplePrediction() and mergeTupleSpeculation() other than the
-        // increased checking to validate this property.
-        ASSERT(speculation == SpecNone || speculation == prediction);
-        return mergeSpeculation(speculation, prediction);
-    }
-
-    bool mergeTuplePrediction(SpeculatedType prediction, unsigned index)
-    {
-        ASSERT(index < m_currentNode->tupleSize());
-
-        SpeculatedType& speculation = m_tupleSpeculations[m_currentNode->tupleOffset() + index];
-        return mergeSpeculation(speculation, prediction);
-    }
-
-    template<typename... SpeculatedTypes>
-    bool setTuplePredictions(SpeculatedTypes... predictions)
-    {
-        unsigned index = 0;
-        bool updatedPrediction = false;
-        for (SpeculatedType prediction : { predictions... })
-            updatedPrediction |= setTuplePrediction(prediction, index++);
-        return updatedPrediction;
     }
     
     SpeculatedType speculatedDoubleTypeForPrediction(SpeculatedType value)
@@ -1283,9 +1250,9 @@ private:
             setPrediction(SpecObjectOther);
             break;
 
-        case ExtractFromTuple: {
-            // Use mergePrediction because ExtractFromTuple doesn't know if the prediction could change.
-            mergePrediction(m_tupleSpeculations[m_currentNode->tupleIndex()]);
+        case EnumeratorNextExtractMode:
+        case EnumeratorNextExtractIndex: {
+            setPrediction(SpecInt32Only);
             break;
         }
 
@@ -1306,7 +1273,7 @@ private:
         }
 
         case EnumeratorNextUpdateIndexAndMode: {
-            setTuplePredictions(SpecInt32Only, SpecInt32Only);
+            setPrediction(SpecFullNumber);
             break;
         }
 
@@ -1592,7 +1559,6 @@ private:
     }
 
     Vector<Node*> m_dependentNodes;
-    Vector<SpeculatedType, 16> m_tupleSpeculations;
     Node* m_currentNode;
     bool m_changed { false };
     PredictionPass m_pass { PrimaryPass }; // We use different logic for considering predictions depending on how far along we are in propagation.

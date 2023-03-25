@@ -1558,52 +1558,6 @@ public:
         return Edge(this, defaultUseKind());
     }
 
-    bool isTuple() const
-    {
-        return op() == EnumeratorNextUpdateIndexAndMode;
-    }
-
-    void setTupleOffset(unsigned tupleOffset)
-    {
-        m_virtualRegister = virtualRegisterForLocal(tupleOffset);
-    }
-
-    // This is the start of the tuple in the graph's/phases' various tuple buffers.
-    unsigned tupleOffset() const
-    {
-        ASSERT(isTuple());
-        return m_virtualRegister.toLocal();
-    }
-
-    bool hasExtractOffset() const
-    {
-        return op() == ExtractFromTuple;
-    }
-
-    unsigned extractOffset() const
-    {
-        ASSERT(hasExtractOffset());
-        ASSERT(m_opInfo.as<unsigned>() < const_cast<Node*>(this)->child1()->tupleSize());
-        return m_opInfo.as<unsigned>();
-    }
-
-    unsigned tupleIndex() const
-    {
-        return const_cast<Node*>(this)->child1()->tupleOffset() + extractOffset();
-    }
-
-    unsigned tupleSize() const
-    {
-        ASSERT(isTuple());
-        switch (op()) {
-        case EnumeratorNextUpdateIndexAndMode:
-            return 2;
-        default:
-            break;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
     bool isJump()
     {
         return op() == Jump;
@@ -2559,20 +2513,20 @@ public:
     
     bool hasVirtualRegister()
     {
-        return m_virtualRegister.isValid() && !isTuple();
+        return m_virtualRegister.isValid();
     }
 
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());
-        ASSERT(hasVirtualRegister());
+        ASSERT(m_virtualRegister.isValid());
         return m_virtualRegister;
     }
     
     void setVirtualRegister(VirtualRegister virtualRegister)
     {
         ASSERT(hasResult());
-        ASSERT(!m_virtualRegister.isValid() && !isTuple());
+        ASSERT(!m_virtualRegister.isValid());
         m_virtualRegister = virtualRegister;
     }
     
@@ -3430,7 +3384,7 @@ private:
     unsigned m_index { std::numeric_limits<unsigned>::max() };
     unsigned m_op : 10; // real type is NodeType
     unsigned m_flags : 21;
-    // The virtual register number (spill location) associated with this node. For tuples this is the offset into the graph's out of line tuple buffers.
+    // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;

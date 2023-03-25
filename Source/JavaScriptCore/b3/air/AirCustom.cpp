@@ -31,7 +31,6 @@
 #include "AirCCallingConvention.h"
 #include "AirInstInlines.h"
 #include "B3CCallValue.h"
-#include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 
@@ -66,14 +65,8 @@ bool CCallCustom::isValidForm(Inst& inst)
     if (!value)
         return false;
 
-    if (!inst.args[0].isSpecial())
-        return false;
-
-    Special* special = inst.args[0].special();
-    Code& code = special->code();
-
-    size_t resultCount = cCallResultCount(code, value);
-    size_t expectedArgCount = resultCount + 1; // first Arg is always CCallSpecial.
+    size_t resultCount = cCallResultCount(value);
+    size_t expectedArgCount = resultCount;
     for (Value* child : value->children()) {
         ASSERT(child->type() != Tuple);
         expectedArgCount += cCallArgumentRegisterCount(child);
@@ -83,28 +76,22 @@ bool CCallCustom::isValidForm(Inst& inst)
         return false;
 
     // The arguments can only refer to the stack, tmps, or immediates.
-    for (unsigned i = inst.args.size() - 1; i; --i) {
-        Arg arg = inst.args[i];
+    for (Arg& arg : inst.args) {
         if (!arg.isTmp() && !arg.isStackMemory() && !arg.isSomeImm())
             return false;
     }
 
     // Callee
-    if (!inst.args[1].isGP())
+    if (!inst.args[0].isGP())
         return false;
 
-    unsigned offset = 2;
+    unsigned offset = 1;
 
     // If there is a result then it cannot be an immediate.
-    for (size_t i = 0; i < resultCount; ++i) {
+    for (size_t i = 0 ; i < resultCount; ++i) {
         if (inst.args[offset].isSomeImm())
             return false;
-
-        if (value->type().isTuple()) {
-            Type type = code.proc().typeAtOffset(value->type(), i);
-            if (!inst.args[offset].canRepresent(type))
-                return false;
-        } else if (!inst.args[offset].canRepresent(value))
+        if (!inst.args[offset].canRepresent(value))
             return false;
         offset++;
     }

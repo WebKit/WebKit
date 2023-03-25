@@ -41,7 +41,6 @@ InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
     : m_graph(graph)
     , m_abstractValues(*graph.m_abstractValuesCache)
     , m_variables(OperandsLike, graph.block(0)->variablesAtHead)
-    , m_tupleAbstractValues(graph.m_tupleData.size())
     , m_block(nullptr)
 {
 }

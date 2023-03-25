@@ -36,7 +36,6 @@
 #include "AirRegLiveness.h"
 #include "AirPhaseScope.h"
 #include "B3CCallValue.h"
-#include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 #include "RegisterSet.h"
 #include <wtf/HashMap.h>
@@ -194,17 +193,13 @@ void lowerAfterRegAlloc(Code& code)
                 ScalarRegisterSet preUsed = liveRegs.buildScalarRegisterSet();
                 ScalarRegisterSet postUsed = preUsed;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
-                Vector<Tmp, 2> results;
-                Vector<Arg, 2> originalResults;
-                for (unsigned i = 0; i < cCallResultCount(code, value); ++i) {
-                    results.append(cCallResult(code, value, i));
-                    originalResults.append(inst.args[i + 2]);
-                }
+                Tmp result = cCallResult(value, 0);
+                Arg originalResult = result ? inst.args[1] : Arg();
                 
                 Vector<ShufflePair> pairs;
                 for (unsigned i = 0; i < destinations.size(); ++i) {
                     Value* child = value->child(i);
-                    Arg src = inst.args[i >= 1 ? i + results.size() + 1 : i + 1];
+                    Arg src = inst.args[result ? (i >= 1 ? i + 1 : i) : i ];
                     Arg dst = destinations[i];
                     Width width = widthForType(child->type());
                     pairs.append(ShufflePair(src, dst, width));
@@ -222,10 +217,8 @@ void lowerAfterRegAlloc(Code& code)
                 
                 // Also need to save all live registers. Don't need to worry about the result
                 // register.
-                for (Arg originalResult : originalResults) {
-                    if (originalResult.isReg())
-                        regsToSave.remove(originalResult.reg());
-                }
+                if (originalResult.isReg())
+                    regsToSave.remove(originalResult.reg());
                 Vector<StackSlot*> stackSlots;
                 regsToSave.forEachWithWidth(
                     [&] (Reg reg, Width width) {
@@ -258,16 +251,15 @@ void lowerAfterRegAlloc(Code& code)
                         ASSERT(stackSlot->byteSize() >= bytesForWidth(width));
                         pairs.append(ShufflePair(Arg::stack(stackSlot), arg, width));
                     });
-                for (unsigned i = 0; i < results.size(); ++i) {
-                    Type type = value->type().isTuple() ? code.proc().typeAtOffset(value->type(), i) : value->type();
-                    ShufflePair pair(results[i], originalResults[i], widthForType(type));
+                if (result) {
+                    ShufflePair pair(result, originalResult, widthForType(value->type()));
                     pairs.append(pair);
-
-                    // For finding scratch registers, we need to account for the possibility that
-                    // the result is dead.
-                    if (originalResults[i].isReg())
-                        postUsed.add(originalResults[i].reg(), IgnoreVectors);
                 }
+
+                // For finding scratch registers, we need to account for the possibility that
+                // the result is dead.
+                if (originalResult.isReg())
+                    postUsed.add(originalResult.reg(), IgnoreVectors);
 
                 gpScratch = getScratches(postUsed, GP);
                 fpScratch = getScratches(postUsed, FP);

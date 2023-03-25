@@ -248,14 +248,6 @@ private:
         m_state.setShouldTryConstantFolding(true);
     }
     
-    void setTupleConstant(Node* node, unsigned index, FrozenValue value)
-    {
-        AbstractValue& abstractValue = m_state.forTupleNode(node, index);
-        abstractValue.set(m_graph, value, m_state.structureClobberState());
-        abstractValue.fixTypeForRepresentation(m_graph, node);
-        m_state.setShouldTryConstantFolding(true);
-    }
-
     ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type);
     
     void verifyEdge(Node*, Edge);

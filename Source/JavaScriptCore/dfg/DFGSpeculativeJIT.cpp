@@ -14453,88 +14453,118 @@ void SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode(Node* node)
     GPRReg enumeratorGPR = enumerator.gpr();
 
     if (node->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode) {
-        GPRTemporary newIndex(this, Reuse, index);
-        GPRTemporary scratch(this);
+        JSValueRegsTemporary result(this);
+        GPRTemporary scratch(this, Reuse, index);
+        JSValueRegs resultRegs = result.regs();
 
         speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, Address(enumeratorGPR, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()), TrustedImm32(0)));
 
         Label incrementLoop;
         Jump done;
         compileHasIndexedProperty(node, operationHasEnumerableIndexedProperty, scopedLambda<std::tuple<GPRReg, GPRReg>()>([&] {
-            GPRReg newIndexGPR = newIndex.gpr();
-            GPRReg scratchGPR = scratch.gpr();
 
-            // This should always be elided because index is UseDef in the bytecode for enumerator_next but we leave the move here for clarity.
-            move(indexGPR, newIndexGPR);
+            move(indexGPR, scratch.gpr());
             Jump initMode = branchTest32(Zero, modeGPR);
 
             incrementLoop = label();
-            add32(TrustedImm32(1), newIndexGPR);
+            add32(TrustedImm32(1), scratch.gpr());
 
             initMode.link(this);
-            done = branch32(AboveOrEqual, newIndexGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::indexedLengthOffset()));
-            return std::make_pair(newIndexGPR, scratchGPR);
+            done = branch32(AboveOrEqual, scratch.gpr(), Address(enumeratorGPR, JSPropertyNameEnumerator::indexedLengthOffset()));
+            return std::make_pair(scratch.gpr(), resultRegs.payloadGPR());
         }));
-        branchTest32(Zero, scratch.gpr()).linkTo(incrementLoop, this);
+        branchTest32(Zero, resultRegs.payloadGPR()).linkTo(incrementLoop, this);
 
         done.link(this);
-        if (m_graph.m_tupleData.at(node->tupleOffset() + 1).refCount)
-            move(TrustedImm32(static_cast<unsigned>(JSPropertyNameEnumerator::IndexedMode)), scratch.gpr());
 
-        useChildren(node);
-        strictInt32TupleResultWithoutUsingChildren(newIndex.gpr(), node, 0);
-        strictInt32TupleResultWithoutUsingChildren(scratch.gpr(), node, 1);
+#if USE(JSVALUE64)
+        move(TrustedImm64(JSValue::DoubleEncodeOffset | static_cast<uint64_t>(JSPropertyNameEnumerator::IndexedMode) << 32), resultRegs.payloadGPR());
+        or64(scratch.gpr(), resultRegs.payloadGPR());
+#else
+        move(TrustedImm32(JSPropertyNameEnumerator::IndexedMode), resultRegs.tagGPR());
+        move(scratch.gpr(), resultRegs.payloadGPR());
+#endif
+
+        jsValueResult(resultRegs, node);
         return;
     }
 
     if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && baseEdge.useKind() == CellUse) {
         SpeculateCellOperand base(this, baseEdge);
-        GPRTemporary newIndex(this);
-        GPRTemporary newMode(this, Reuse, mode);
+        JSValueRegsTemporary result(this);
         GPRReg baseGPR = base.gpr();
-
+        JSValueRegs resultRegs = result.regs();
 
         // Has the same structure as the enumerator.
-        load32(Address(baseGPR, JSCell::structureIDOffset()), newIndex.gpr());
-        speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, newIndex.gpr(), Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+        load32(Address(baseGPR, JSCell::structureIDOffset()), resultRegs.payloadGPR());
+        speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, resultRegs.payloadGPR(), Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
 
-        load32(Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), newIndex.gpr());
-        and32(TrustedImm32(JSPropertyNameEnumerator::enumerationModeMask), newIndex.gpr());
-        speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode), newIndex.gpr()));
+        load32(Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), resultRegs.payloadGPR());
+        and32(TrustedImm32(JSPropertyNameEnumerator::enumerationModeMask), resultRegs.payloadGPR());
+        speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode), resultRegs.payloadGPR()));
 
-        move(indexGPR, newIndex.gpr());
+        move(indexGPR, resultRegs.payloadGPR());
         Jump initMode = branchTest32(Zero, modeGPR);
 
-        add32(TrustedImm32(1), newIndex.gpr());
+        add32(TrustedImm32(1), resultRegs.payloadGPR());
 
         initMode.link(this);
+#if USE(JSVALUE64)
+        or64(TrustedImm64(JSValue::DoubleEncodeOffset | static_cast<uint64_t>(JSPropertyNameEnumerator::OwnStructureMode) << 32), resultRegs.payloadGPR());
+#else
+        move(TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode), resultRegs.tagGPR());
+#endif
 
-        if (m_graph.m_tupleData.at(node->tupleOffset() + 1).refCount)
-            move(TrustedImm32(static_cast<unsigned>(JSPropertyNameEnumerator::OwnStructureMode)), newMode.gpr());
-
-        useChildren(node);
-        strictInt32TupleResultWithoutUsingChildren(newIndex.gpr(), node, 0);
-        strictInt32TupleResultWithoutUsingChildren(newMode.gpr(), node, 1);
+        jsValueResult(resultRegs, node);
         return;
     }
 
     JSValueOperand base(this, baseEdge);
-#if USE(JSVALUE64)
-    GPRTemporary newMode(this, Reuse, mode);
-#endif
     JSValueRegs baseRegs = base.regs();
 
-
     flushRegisters();
-    GPRFlushedCallResult indexResult(this);
-    GPRFlushedCallResult2 modeResult(this);
-    setupArguments<decltype(operationEnumeratorNextUpdateIndexAndMode)>(LinkableConstant::globalObject(*this, node), baseRegs, indexGPR, modeGPR, enumeratorGPR);
-    appendCallSetResult(operationEnumeratorNextUpdateIndexAndMode, indexResult.gpr(), modeResult.gpr());
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(operationEnumeratorNextUpdateIndexAndMode, resultRegs, LinkableConstant::globalObject(*this, node), baseRegs, indexGPR, modeGPR, enumeratorGPR);
     exceptionCheck();
+    jsValueResult(resultRegs, node);
+}
 
-    useChildren(node);
-    strictInt32TupleResultWithoutUsingChildren(indexResult.gpr(), node, 0);
-    strictInt32TupleResultWithoutUsingChildren(modeResult.gpr(), node, 1);
+void SpeculativeJIT::compileEnumeratorNextExtractIndex(Node* node)
+{
+    JSValueOperand updatedPair(this, node->child1());
+    JSValueRegs pairRegs = updatedPair.jsValueRegs();
+    GPRReg payloadGPR = pairRegs.payloadGPR();
+
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+
+    and32(TrustedImm32(std::numeric_limits<uint32_t>::max()), payloadGPR, resultGPR);
+
+    strictInt32Result(resultGPR, node);
+}
+
+void SpeculativeJIT::compileEnumeratorNextExtractMode(Node* node)
+{
+    JSValueOperand updatedPair(this, node->child1());
+    JSValueRegs pairRegs = updatedPair.jsValueRegs();
+    GPRReg pairGPR = is64Bit() ? pairRegs.payloadGPR() : pairRegs.tagGPR();
+
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+
+#if CPU(ARM64) && USE(JSVALUE64)
+    extractUnsignedBitfield64(pairGPR, TrustedImm32(32), TrustedImm32(WTF::fastLog2(static_cast<unsigned>(JSPropertyNameEnumerator::enumerationModeMask + 1))), resultGPR);
+#else
+#if USE(JSVALUE64)
+    rshift64(pairGPR, TrustedImm32(32), resultGPR);
+#else
+    move(pairGPR, resultGPR);
+#endif
+    and32(TrustedImm32(JSPropertyNameEnumerator::enumerationModeMask), resultGPR);
+#endif
+
+    strictInt32Result(resultGPR, node);
 }
 
 void SpeculativeJIT::compileEnumeratorNextUpdatePropertyName(Node* node)
@@ -16130,42 +16160,6 @@ void SpeculativeJIT::compileIdentity(Node* node)
         break;
     }
     }
-}
-
-void SpeculativeJIT::compileExtractFromTuple(Node* node)
-{
-    RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
-
-    ASSERT(m_graph.m_tupleData.at(node->tupleIndex()).virtualRegister == node->virtualRegister());
-    VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-#if ASSERT_ENABLED
-    ASSERT(m_graph.m_tupleData.at(node->tupleIndex()).resultFlags == node->result());
-    switch (node->result()) {
-    case NodeResultJS:
-    case NodeResultNumber:
-        ASSERT(info.isFormat(DataFormatJS));
-        break;
-    case NodeResultDouble:
-        ASSERT(info.isFormat(DataFormatDouble) || info.isFormat(DataFormatJSDouble));
-        break;
-    case NodeResultInt32:
-        ASSERT(info.isFormat(DataFormatInt32) || info.isFormat(DataFormatJSInt32));
-        break;
-    case NodeResultBoolean:
-        ASSERT(info.isFormat(DataFormatBoolean) || info.isFormat(DataFormatJSBoolean));
-        break;
-    case NodeResultStorage:
-        ASSERT(info.isFormat(DataFormatStorage));
-        break;
-
-    // FIXME: These are not supported because it wasn't exactly clear how to implement them and they are not currently used.
-    case NodeResultInt52:
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-#endif
-    info.initFromTupleResult(node);
 }
 
 void SpeculativeJIT::compileMiscStrictEq(Node* node)

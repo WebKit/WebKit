@@ -111,7 +111,8 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:
     case FilterSetPrivateBrandStatus:
-    case ExtractFromTuple:
+    case EnumeratorNextExtractMode:
+    case EnumeratorNextExtractIndex:
         break;
 
     case EnumeratorNextUpdatePropertyName:

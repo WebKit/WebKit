@@ -103,7 +103,6 @@ public:
         if (!child)
             return;
 
-        ASSERT(!child->isTuple());
         // Find the virtual register number for this child, increment its use count.
         uint32_t index = child->virtualRegister().toLocal();
         ASSERT(m_used[index] != max());

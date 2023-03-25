@@ -47,9 +47,7 @@ public:
         : m_graph(graph)
         , m_graphDumpMode(graphDumpMode)
         , m_graphDumpBeforePhase(graphDumpBeforePhase)
-        , m_myTupleRefCounts(m_graph.m_tupleData.size())
     {
-        m_myTupleRefCounts.fill(0);
     }
     
     #define VALIDATE(context, assertion) do { \
@@ -140,14 +138,6 @@ public:
                     
                     m_myRefCounts.find(edge.node())->value++;
 
-                    if (node->op() == ExtractFromTuple) {
-                        VALIDATE((node, edge), edge->isTuple());
-                        VALIDATE((node, edge), node->child1() == edge);
-                        m_myTupleRefCounts.at(node->tupleIndex())++;
-                        // Tuples edges don't obey the normal hasResult() rules for nodes so skip that logic below.
-                        continue;
-                    }
-
                     validateEdgeWithDoubleResultIfNecessary(node, edge);
                     validateEdgeWithInt52ResultIfNecessary(node, edge);
                     
@@ -189,13 +179,8 @@ public:
                 continue;
             for (size_t i = 0; i < block->numNodes(); ++i) {
                 Node* node = block->node(i);
-                if (m_graph.m_refCountState == ExactRefCount) {
+                if (m_graph.m_refCountState == ExactRefCount)
                     V_EQUAL((node), m_myRefCounts.get(node), node->adjustedRefCount());
-                    if (node->isTuple()) {
-                        for (unsigned j = 0; j < node->tupleSize(); ++j)
-                            V_EQUAL((node), m_myTupleRefCounts.at(node->tupleOffset() + j), m_graph.m_tupleData.at(node->tupleOffset() + j).refCount);
-                    }
-                }
             }
             
             bool foundTerminal = false;
@@ -503,6 +488,13 @@ public:
     }
     
 private:
+    Graph& m_graph;
+    GraphDumpMode m_graphDumpMode;
+    CString m_graphDumpBeforePhase;
+    
+    HashMap<Node*, unsigned> m_myRefCounts;
+    HashSet<Node*> m_acceptableNodes;
+    
     void validateCPS()
     {
         VALIDATE((), !m_graph.m_rootToArguments.isEmpty()); // We should have at least one root.
@@ -1094,14 +1086,6 @@ private:
         dataLog("At time of failure:\n");
         m_graph.dump();
     }
-
-    Graph& m_graph;
-    GraphDumpMode m_graphDumpMode;
-    CString m_graphDumpBeforePhase;
-
-    HashMap<Node*, unsigned> m_myRefCounts;
-    Vector<uint32_t> m_myTupleRefCounts;
-    HashSet<Node*> m_acceptableNodes;
 };
 
 } // End anonymous namespace.
