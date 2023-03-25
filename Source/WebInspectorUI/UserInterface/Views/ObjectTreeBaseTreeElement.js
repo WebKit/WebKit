@@ -196,7 +196,7 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
             return;
 
         var text = WI.UIString("Selected Symbol");
-        WI.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol, {addSpecialUserLogClass: true});
+        WI.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol, {addSpecialUserLogClass: true, shouldRevealConsole: true});
     }
 
     _logValue(value)
@@ -212,7 +212,7 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
         if (!isImpossible)
             WI.quickConsole.prompt.pushHistoryItem(text);
 
-        WI.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue, {addSpecialUserLogClass: isImpossible});
+        WI.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue, {addSpecialUserLogClass: isImpossible, shouldRevealConsole: true});
     }
 
     _appendMenusItemsForObject(contextMenu, resolvedValue)

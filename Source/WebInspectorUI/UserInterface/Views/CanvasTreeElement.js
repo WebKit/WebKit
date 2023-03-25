@@ -93,7 +93,7 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
                     return;
 
                 const text = WI.UIString("Selected Canvas Context");
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true, shouldRevealConsole: true});
             });
         });
 

@@ -51,7 +51,7 @@ WI.WebSocketResourceTreeElement = class WebSocketResourceTreeElement extends WI.
                     return;
 
                 const text = WI.UIString("Selected WebSocket");
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true, shouldRevealConsole: true});
             });
         });
 
