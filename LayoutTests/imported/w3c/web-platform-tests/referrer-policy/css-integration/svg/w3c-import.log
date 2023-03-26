@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/external-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/inline-style-with-differentorigin-base-tag.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/inline-style.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/internal-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/presentation-attribute.html

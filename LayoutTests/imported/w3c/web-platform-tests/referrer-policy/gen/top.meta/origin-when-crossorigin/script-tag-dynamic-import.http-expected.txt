@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: Failed to set referrer policy: The value 'origin-when-crossorigin' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'.
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=GENERATED_KEY&path=/mixed-content
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Importing a module script failed.
+
+Harness Error (FAIL), message = Unhandled rejection: Importing a module script failed.
+
+TIMEOUT Referrer Policy: Expects origin for script-tag-dynamic-import to cross-http origin and keep-origin redirection from http context. Test timed out
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to cross-http origin and no-redirect redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to cross-http origin and swap-origin redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to cross-https origin and keep-origin redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to cross-https origin and no-redirect redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to cross-https origin and swap-origin redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to same-http origin and swap-origin redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to same-https origin and keep-origin redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to same-https origin and no-redirect redirection from http context.
+NOTRUN Referrer Policy: Expects origin for script-tag-dynamic-import to same-https origin and swap-origin redirection from http context.
+NOTRUN Referrer Policy: Expects stripped-referrer for script-tag-dynamic-import to same-http origin and keep-origin redirection from http context.
+NOTRUN Referrer Policy: Expects stripped-referrer for script-tag-dynamic-import to same-http origin and no-redirect redirection from http context.
+

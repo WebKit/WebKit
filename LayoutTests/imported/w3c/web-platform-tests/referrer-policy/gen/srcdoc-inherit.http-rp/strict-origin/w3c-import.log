@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/a-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/a-tag.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/fetch.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/fetch.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/iframe-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/iframe-tag.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/img-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/img-tag.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/script-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/script-tag.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/sharedworker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/sharedworker-classic.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/sharedworker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/sharedworker-module.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/worker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/worker-classic.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/worker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/worker-module.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/xhr.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/srcdoc-inherit.http-rp/strict-origin/xhr.http.html.headers

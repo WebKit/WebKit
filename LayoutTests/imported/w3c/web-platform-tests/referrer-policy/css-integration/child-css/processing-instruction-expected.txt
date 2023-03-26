@@ -1,5 +1,0 @@
-Check that child css are loaded with the referrer and referrer policy the external stylesheet(referenced from a ProcessingInstruction).
-
-
-FAIL Child css via a ProcessingInstruction. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'server_data.headers')"
-

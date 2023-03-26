@@ -1,7 +1,0 @@
-Referrer Policy: multiple Referrer-Policy headers with one invalid
-
-Running...
-
-
-FAIL Referrer policy header parsing fails if one header is invalid assert_equals: expected "http://localhost:8800/referrer-policy/generic/multiple-headers-one-invalid.html" but got "http://localhost:8800/"
-

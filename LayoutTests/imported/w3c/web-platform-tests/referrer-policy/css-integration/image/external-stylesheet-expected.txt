@@ -1,5 +1,0 @@
-Check that resources from external stylesheets are loaded with the referrer and referrer policy from the external stylesheet.
-
-
-FAIL Image from external stylesheet. assert_equals: expected (string) "http://127.0.0.1:8800/common/security-features/subresource/stylesheet.py?id=513401ea-6826-42d7-997e-a8a565a7718c" but got (undefined) undefined
-

@@ -1,0 +1,4 @@
+
+PASS Dedicated worker with local scheme inherits referrer policy from the creating document.
+PASS Shared worker with local scheme inherits referrer policy from the creating document.
+

@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/external-import-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/external-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/inline-style-with-differentorigin-base-tag.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/inline-style.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/internal-import-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/image/internal-stylesheet.html

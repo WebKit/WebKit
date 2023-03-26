@@ -1,0 +1,3 @@
+
+PASS removing <meta name="referrer"> should not change referrer policy
+

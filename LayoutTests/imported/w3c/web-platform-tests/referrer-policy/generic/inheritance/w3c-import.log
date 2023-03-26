@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-data.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-document-write.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-history-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-history-about-srcdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-javascript-child.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-javascript.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-srcdoc-child.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/iframe-inheritance-srcdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/popup-inheritance-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/popup-inheritance-form-submission.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/inheritance/workers.html

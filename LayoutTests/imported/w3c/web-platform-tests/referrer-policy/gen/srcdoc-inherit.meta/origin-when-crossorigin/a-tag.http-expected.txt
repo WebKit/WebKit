@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Failed to set referrer policy: The value 'origin-when-crossorigin' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'.
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/document.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Referrer Policy: Expects origin for a-tag to cross-http origin and no-redirect redirection from http context. Test timed out
+NOTRUN Referrer Policy: Expects origin for a-tag to cross-https origin and no-redirect redirection from http context.
+NOTRUN Referrer Policy: Expects origin for a-tag to same-https origin and no-redirect redirection from http context.
+NOTRUN Referrer Policy: Expects stripped-referrer for a-tag to same-http origin and no-redirect redirection from http context.
+

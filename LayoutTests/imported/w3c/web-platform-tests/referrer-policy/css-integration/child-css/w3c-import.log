@@ -15,5 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/external-import-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet-with-differentorigin-base-url-from-preload.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet-with-differentorigin-base-url.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/processing-instruction.html

@@ -1,0 +1,4 @@
+
+PASS History navigation reuses original policy.
+PASS New srcdoc iframe uses new policy.
+

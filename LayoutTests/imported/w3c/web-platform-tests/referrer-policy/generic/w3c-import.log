@@ -14,8 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/iframe-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/first-meta-changed-after-second-added.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/iframe-src-change.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-cross-origin.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-same-origin.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/iframe-upgrade-request-to-same-origin.sub.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/link-rel-prefetch.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/meta-referrer-outofhead-fetch.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/meta-referrer-removed-1.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/meta-referrer-removed-2.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/meta-tag-in-svg-image.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/multiple-headers-and-values.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/multiple-headers-and-values.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/multiple-headers-combined.html
@@ -26,7 +35,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/multiple-headers-one-unknown-token.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/multiple-headers.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/multiple-headers.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/referrer-policy-test-case.js
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/sandboxed-iframe-with-opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/sanity-checker.js
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/second-meta-referrer-added-before-first.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/test-case.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer-directive.html
