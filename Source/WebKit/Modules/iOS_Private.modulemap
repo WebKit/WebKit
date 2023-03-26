@@ -1864,6 +1864,16 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module WKView {
+    header "WKView.h"
+    export *
+  }
+
+  explicit module WKViewPrivate {
+    header "WKViewPrivate.h"
+    export *
+  }
+
   explicit module WKWebArchive {
     header "WKWebArchive.h"
     export *

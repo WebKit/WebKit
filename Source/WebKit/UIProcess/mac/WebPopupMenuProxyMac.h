@@ -32,6 +32,7 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSPopUpButtonCell;
+OBJC_CLASS WKView;
 
 namespace WebKit {
 

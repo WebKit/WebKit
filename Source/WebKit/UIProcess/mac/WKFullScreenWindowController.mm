@@ -33,6 +33,8 @@
 #import "NativeWebMouseEvent.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKAPICast.h"
+#import "WKViewInternal.h"
+#import "WKViewPrivate.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>

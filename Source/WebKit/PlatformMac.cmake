@@ -381,6 +381,8 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKUserContentControllerPrivate.h
     UIProcess/API/Cocoa/WKUserScript.h
     UIProcess/API/Cocoa/WKUserScriptPrivate.h
+    UIProcess/API/Cocoa/WKView.h
+    UIProcess/API/Cocoa/WKViewPrivate.h
     UIProcess/API/Cocoa/WKWebArchive.h
     UIProcess/API/Cocoa/WKWebView.h
     UIProcess/API/Cocoa/WKWebViewConfiguration.h

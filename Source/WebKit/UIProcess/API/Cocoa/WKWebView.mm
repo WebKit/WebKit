@@ -190,6 +190,7 @@
 #if PLATFORM(MAC)
 #import "AppKitSPI.h"
 #import "WKTextFinderClient.h"
+#import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 #endif
 

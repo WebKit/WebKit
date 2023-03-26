@@ -46,6 +46,7 @@
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKStringCF.h"
+#import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivateForTesting.h"
 #import "WebColorPickerMac.h"

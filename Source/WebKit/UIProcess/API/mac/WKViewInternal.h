@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "UIGamepadProvider.h"
+#if !TARGET_OS_IPHONE
 
-#if ENABLE(GAMEPAD) && PLATFORM(MAC)
+#import "WKViewPrivate.h"
 
-#import "WebPageProxy.h"
-#import "WKAPICast.h"
-#import "WKViewInternal.h"
-#import "WKWebViewInternal.h"
-#import <wtf/ProcessPrivilege.h>
+#import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
-namespace WebKit {
+@class _WKThumbnailView;
 
-WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
-{
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    auto responder = [[NSApp keyWindow] firstResponder];
-
-    if ([responder isKindOfClass:[WKWebView class]])
-        return ((WKWebView *)responder)->_page.get();
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if ([responder isKindOfClass:[WKView class]])
-        return toImpl(((WKView *)responder).pageRef);
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    return nullptr;
-}
-
-}
-
-#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)
+@interface WKView ()
+@property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
+@end
+#endif
