@@ -31,7 +31,6 @@
 #import "WKAPICast.h"
 #import "WKNSURLExtras.h"
 #import "WKNavigationInternal.h"
-#import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"

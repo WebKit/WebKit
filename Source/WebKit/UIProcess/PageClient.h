@@ -81,9 +81,8 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
 OBJC_CLASS NSWindow;
-OBJC_CLASS WKView;
 #endif
-#endif
+#endif // PLATFORM(COCOA)
 
 namespace API {
 class Attachment;

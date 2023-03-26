@@ -39,7 +39,6 @@ namespace WebCore {
 class IntRect;
 }
 
-@class WKView;
 @class WebCoreFullScreenPlaceholderView;
 
 typedef enum FullScreenState : NSInteger FullScreenState;
