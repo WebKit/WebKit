@@ -159,6 +159,9 @@ public:
 
     bool disableFontHintingForTesting() const { return m_disableFontHintingForTesting; }
     void setDisableFontHintingForTesting(bool override) { m_disableFontHintingForTesting = override; }
+
+    void setApplicationIdentifier(const WTF::String& applicationIdentifier) { m_applicationIdentifier = applicationIdentifier; }
+    const WTF::String& applicationIdentifier() const { return m_applicationIdentifier; }
 #endif
 
     void setTimeZoneOverride(const WTF::String& timeZoneOverride) { m_timeZoneOverride = timeZoneOverride; }
@@ -201,6 +204,7 @@ private:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<MemoryPressureHandler::Configuration> m_memoryPressureHandlerConfiguration;
     bool m_disableFontHintingForTesting { false };
+    WTF::String m_applicationIdentifier;
 #endif
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_presentingApplicationProcessToken;

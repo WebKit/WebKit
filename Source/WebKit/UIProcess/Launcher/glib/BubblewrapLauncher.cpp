@@ -123,23 +123,7 @@ int argumentsToFileDescriptor(const Vector<CString>& args, const char* name)
     return memfd;
 }
 
-static const char* applicationId(GError** error)
-{
-    GApplication* app = g_application_get_default();
-    if (!app) {
-        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication is required.");
-        return nullptr;
-    }
-
-    const char* appID = g_application_get_application_id(app);
-    if (!appID) {
-        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication must have a valid ID.");
-        return nullptr;
-    }
-    return appID;
-}
-
-static int createFlatpakInfo()
+static int createFlatpakInfo(const char* appID)
 {
     static NeverDestroyed<GUniquePtr<char>> data;
     static size_t size;
@@ -148,7 +132,6 @@ static int createFlatpakInfo()
         // xdg-desktop-portal relates your name to certain permissions so we want
         // them to be application unique which is best done via GApplication.
         GUniqueOutPtr<GError> error;
-        const char* appID = applicationId(&error.outPtr());
         if (!appID)
             g_error("Unable to configure xdg-desktop-portal access in the WebKit sandbox: %s", error->message);
 
@@ -765,7 +748,8 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     // full permissions unless it can identify you as a snap or flatpak.
     // The easiest method is for us to pretend to be a flatpak and if that
     // fails just blocking portals entirely as it just becomes a sandbox escape.
-    int flatpakInfoFd = createFlatpakInfo();
+    auto appID = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("application-id"_s);
+    int flatpakInfoFd = createFlatpakInfo(appID.ascii().data());
     if (flatpakInfoFd != -1) {
         g_subprocess_launcher_take_fd(launcher, flatpakInfoFd, flatpakInfoFd);
         GUniquePtr<char> flatpakInfoFdStr(g_strdup_printf("%d", flatpakInfoFd));

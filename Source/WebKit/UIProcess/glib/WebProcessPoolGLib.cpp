@@ -111,9 +111,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.disableFontHintingForTesting = m_configuration->disableFontHintingForTesting();
 
-    GApplication* app = g_application_get_default();
-    if (app)
-        parameters.applicationID = String::fromLatin1(g_application_get_application_id(app));
+    parameters.applicationID = m_configuration->applicationIdentifier();
     parameters.applicationName = String::fromLatin1(g_get_application_name());
 
 #if ENABLE(REMOTE_INSPECTOR)

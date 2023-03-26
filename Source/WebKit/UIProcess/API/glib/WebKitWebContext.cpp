@@ -134,6 +134,7 @@ enum {
 #endif
     PROP_MEMORY_PRESSURE_SETTINGS,
     PROP_TIME_ZONE_OVERRIDE,
+    PROP_APPLICATION_ID,
     N_PROPERTIES,
 };
 
@@ -263,6 +264,7 @@ struct _WebKitWebContextPrivate {
     WebKitMemoryPressureSettings* memoryPressureSettings;
 
     CString timeZoneOverride;
+    CString applicationIdentifier;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -367,6 +369,9 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     case PROP_TIME_ZONE_OVERRIDE:
         g_value_set_string(value, webkit_web_context_get_time_zone_override(context));
         break;
+    case PROP_APPLICATION_ID:
+        g_value_set_string(value, webkit_web_context_get_application_id(context));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -408,6 +413,10 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
             context->priv->timeZoneOverride = timeZone;
         break;
     }
+    case PROP_APPLICATION_ID: {
+        context->priv->applicationIdentifier = g_value_get_string(value);
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -437,6 +446,14 @@ static void webkitWebContextConstructed(GObject* object)
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
     configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.data(), priv->timeZoneOverride.length()));
+
+    if (priv->applicationIdentifier.isNull()) {
+        GApplication* app = g_application_get_default();
+        if (app)
+            priv->applicationIdentifier = g_application_get_application_id(app);
+    }
+    if (!priv->applicationIdentifier.isNull())
+        configuration.setApplicationIdentifier(String::fromUTF8(priv->applicationIdentifier.data(), priv->applicationIdentifier.length()));
 
 #if !ENABLE(2022_GLIB_API)
     if (!priv->websiteDataManager)
@@ -615,6 +632,28 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
     sObjProperties[PROP_TIME_ZONE_OVERRIDE] =
         g_param_spec_string(
             "time-zone-override",
+            nullptr, nullptr,
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    /**
+     * WebKitWebContext:application-id:
+     *
+     * The reverse DNS application ID for this web context. Setting this property is specially
+     * required when the Application creating WebViews is not spawned using #GApplication nor
+     * Flatpak. In this scenario the internal WebKit process launcher spawns its sub-processes in a
+     * Bubblewrap sandbox that requires some form of application identifier.
+     *
+     * If no application ID is provided the WebContext will attempt to use the #GApplication
+     * identifier. If that fails and the WebProcess sandbox remains enabled (which is the default
+     * behavior since 2.40) the UIProcess will crash, unless the user has explicitly opted-out of
+     * sandboxing using the `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1` environment variable.
+     *
+     * Since: 2.40.1
+     */
+    sObjProperties[PROP_APPLICATION_ID] =
+        g_param_spec_string(
+            "application-id",
             nullptr, nullptr,
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
@@ -1977,6 +2016,21 @@ const gchar* webkit_web_context_get_time_zone_override(WebKitWebContext* context
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
     return context->priv->timeZoneOverride.data();
+}
+
+/**
+ * webkit_web_context_get_application_id:
+ * @context: a #WebKitWebContext
+ *
+ * Get the #WebKitWebContext:application-id property.
+ *
+ * Since: 2.40.1
+ */
+const gchar* webkit_web_context_get_application_id(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
+
+    return context->priv->applicationIdentifier.data();
 }
 
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)

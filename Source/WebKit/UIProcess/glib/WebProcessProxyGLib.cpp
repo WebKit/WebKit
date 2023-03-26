@@ -40,6 +40,7 @@ using namespace WebCore;
 void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.extraInitializationData.set("enable-sandbox"_s, m_processPool->sandboxEnabled() ? "true"_s : "false"_s);
+    launchOptions.extraInitializationData.set("application-id"_s, m_processPool->configuration().applicationIdentifier());
 
     if (m_processPool->sandboxEnabled()) {
         WebsiteDataStore* dataStore = websiteDataStore();
