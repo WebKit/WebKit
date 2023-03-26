@@ -142,6 +142,16 @@ DEFINE_VISIT_CHILDREN(JSString);
 static constexpr unsigned maxLengthForOnStackResolve = 2048;
 
 template<typename CharacterType>
+static ALWAYS_INLINE void copyCharactersTo(CharacterType*& position, StringView view)
+{
+    if constexpr (std::is_same_v<CharacterType, LChar>) {
+        ASSERT(view.is8Bit());
+        view.getCharacters8(position);
+    } else
+        view.getCharacters(position);
+}
+
+template<typename CharacterType>
 void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
 {
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
@@ -154,7 +164,7 @@ void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
     CharacterType* position = buffer;
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
         StringView view = *fiber(i)->valueInternal().impl();
-        view.getCharacters(position);
+        copyCharactersTo(position, view);
         position += view.length();
     }
     ASSERT((buffer + length()) == position);
@@ -324,7 +334,7 @@ void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
                 unsigned offset = currentFiberAsRope->substringOffset();
                 unsigned length = currentFiberAsRope->length();
                 position -= length;
-                view.substring(offset, length).getCharacters(position);
+                copyCharactersTo(position, view.substring(offset, length));
                 continue;
             }
             for (size_t i = 0; i < s_maxInternalRopeLength && currentFiberAsRope->fiber(i); ++i)
@@ -334,7 +344,7 @@ void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
 
         StringView view = *currentFiber->valueInternal().impl();
         position -= view.length();
-        view.getCharacters(position);
+        copyCharactersTo(position, view);
     }
 
     ASSERT(buffer == position);
