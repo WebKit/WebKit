@@ -96,6 +96,7 @@ namespace WebKit {
 class AudioSessionRoutingArbitratorProxy;
 class ObjCObjectGraph;
 class PageClient;
+class PeriodicalResponsivenessTimer;
 class ProvisionalFrameProxy;
 class ProvisionalPageProxy;
 class UserMediaCaptureManagerProxy;
@@ -491,6 +492,9 @@ public:
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
     void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
+    void restartPeriodicalResponsivenessTimer();
+    void startOrStopPeriodicalResponsivenessTimer();
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
@@ -639,6 +643,7 @@ private:
     };
 
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
+    std::unique_ptr<PeriodicalResponsivenessTimer> m_periodicalResponsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
     WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.

@@ -30,3 +30,5 @@ WK_EXPORT void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView
 typedef void (*ForceRepaintCallback) (gpointer userData);
 WK_EXPORT void webkitWebViewForceRepaintForTesting(WebKitWebView*, ForceRepaintCallback, gpointer userData);
 WK_EXPORT void webkitSetCachedProcessSuspensionDelayForTesting(double seconds);
+
+WK_EXPORT void webkitWebViewRestartWebProcessResponsivenessTimerForTesting(WebKitWebView*);
