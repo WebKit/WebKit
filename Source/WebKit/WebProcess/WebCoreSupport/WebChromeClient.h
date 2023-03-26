@@ -478,6 +478,8 @@ private:
     void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&) final;
 
     const AtomString& searchStringForModalContainerObserver() const final;
+    
+    bool isUsingUISideCompositing() const;
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
