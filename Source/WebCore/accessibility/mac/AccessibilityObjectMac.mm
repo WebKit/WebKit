@@ -549,18 +549,16 @@ AXTextMarkerRangeRef AccessibilityObject::textMarkerRangeForNSRange(const NSRang
 
 static void attributedStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor *color, const NSRange& range)
 {
-    if (!attributedStringContainsRange(attrString, range))
-        return;
-
-    if (color)
-        [attrString addAttribute:attribute value:(__bridge id)color range:range];
-    else
+    if (color) {
+        // Use the CGColor instead of the NSColor directly because the NSColor is not retained and the AT client gets a nil NSAttributedString.
+        [attrString addAttribute:attribute value:(__bridge id)color.CGColor range:range];
+    } else
         [attrString removeAttribute:attribute range:range];
 }
 
 static void attributedStringSetStyle(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
 {
-    if (!renderer)
+    if (!renderer || !attributedStringContainsRange(attrString, range))
         return;
 
     const auto& style = renderer->style();

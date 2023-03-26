@@ -8,16 +8,16 @@ String with range: ello
 worl
 Attributed string with range: ello
 {
-    AXBackgroundColor = "sRGB IEC61966-2.1 colorspace 0 0 0 0";
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
     AXFont =     {
         AXFontFamily = Times;
         AXFontName = "Times-Roman";
         AXFontSize = 16;
         AXVisibleName = "Times Roman";
     };
-    AXForegroundColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
 }worl{
-    AXBackgroundColor = "sRGB IEC61966-2.1 colorspace 0 0 0 0";
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
     AXFont =     {
         AXFontBold = 1;
         AXFontFamily = Times;
@@ -25,7 +25,7 @@ Attributed string with range: ello
         AXFontSize = 16;
         AXVisibleName = "Times Bold";
     };
-    AXForegroundColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
     AXMarkedMisspelled = 1;
     AXMisspelled = 1;
 }
