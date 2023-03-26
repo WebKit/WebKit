@@ -550,7 +550,7 @@ AXTextMarkerRangeRef AccessibilityObject::textMarkerRangeForNSRange(const NSRang
 static void attributedStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor *color, const NSRange& range)
 {
     if (color) {
-        // Use the CGColor instead of the NSColor directly because the NSColor is not retained and the AT client gets a nil NSAttributedString.
+        // Use the CGColor instead of the passed NSColor because that's what the AX system framework expects. Using the NSColor causes that the AX client gets nil instead of a valid NSAttributedString.
         [attrString addAttribute:attribute value:(__bridge id)color.CGColor range:range];
     } else
         [attrString removeAttribute:attribute range:range];
