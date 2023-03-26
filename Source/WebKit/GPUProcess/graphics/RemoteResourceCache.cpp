@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ void RemoteResourceCache::releaseAllResources()
     m_resourceHeap.releaseAllResources();
 }
 
-bool RemoteResourceCache::releaseResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
         || m_resourceHeap.removeNativeImage(renderingResourceIdentifier)

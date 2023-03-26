@@ -249,6 +249,21 @@ bool RenderText::computeUseBackslashAsYenSymbol() const
     return false;
 }
 
+static void initiateFontLoadingByAccessingGlyphDataIfApplicable(const String& textContent, const FontCascade& fontCascade)
+{
+    // See webkit.org/b/252668
+    auto fontVariant = AutoVariant;
+#if USE(FONT_VARIANT_VIA_FEATURES)
+    if (fontCascade.fontDescription().variantCaps() == FontVariantCaps::Small) {
+        // This matches the behavior of ComplexTextController::collectComplexTextRuns(): that function doesn't perform font fallback
+        // on the capitalized characters when small caps is enabled, so we shouldn't here either.
+        fontVariant = NormalVariant;
+    }
+#endif
+    for (size_t i = 0; i < textContent.length(); ++i)
+        fontCascade.glyphDataForCharacter(textContent[i], false, fontVariant);
+}
+
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // There is no need to ever schedule repaints from a style change of a text run, since
@@ -261,6 +276,9 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     }
 
     const RenderStyle& newStyle = style();
+    if (!oldStyle)
+        initiateFontLoadingByAccessingGlyphDataIfApplicable(m_text, newStyle.fontCascade());
+
     bool needsResetText = false;
     if (!oldStyle) {
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();

@@ -138,7 +138,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         function saveResultCallback(savedResultIndex)
         {
-            let commandResultMessage = new WI.ConsoleCommandResultMessage(result.target, result, false, savedResultIndex, shouldRevealConsole);
+            let commandResultMessage = new WI.ConsoleCommandResultMessage(result.target, result, false, savedResultIndex, { shouldRevealConsole });
             let commandResultMessageView = new WI.ConsoleMessageView(commandResultMessage);
             this._appendConsoleMessageView(commandResultMessageView, true);
         }
@@ -242,8 +242,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             if (!result || this._cleared)
                 return;
 
-            let shouldRevealConsole = true;
-            let commandResultMessage = new WI.ConsoleCommandResultMessage(result.target, result, wasThrown, savedResultIndex, shouldRevealConsole);
+            let commandResultMessage = new WI.ConsoleCommandResultMessage(result.target, result, wasThrown, savedResultIndex, { shouldRevealConsole: true });
             let commandResultMessageView = new WI.ConsoleMessageView(commandResultMessage);
             this._appendConsoleMessageView(commandResultMessageView, true);
         }

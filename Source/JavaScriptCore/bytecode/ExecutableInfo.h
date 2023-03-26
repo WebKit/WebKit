@@ -31,7 +31,7 @@ namespace JSC {
     
 enum class DerivedContextType : uint8_t { None, DerivedConstructorContext, DerivedMethodContext };
 enum class EvalContextType    : uint8_t { None, FunctionEvalContext, InstanceFieldEvalContext };
-enum class NeedsClassFieldInitializer : uint8_t { No, Yes };
+enum class NeedsClassFieldInitializer : bool { No, Yes };
 
 // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
 // https://bugs.webkit.org/show_bug.cgi?id=151547

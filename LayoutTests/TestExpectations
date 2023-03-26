@@ -29,6 +29,7 @@ editing/selection/ios [ Skip ]
 editing/deleting/ios [ Skip ]
 editing/undo-manager [ Skip ]
 tiled-drawing [ Skip ]
+fast/attachment/cocoa [ Skip ]
 fast/attachment/mac [ Skip ]
 fast/css/ios [ Skip ]
 fast/css/watchos [ Skip ]
@@ -67,6 +68,7 @@ fast/scrolling/gtk [ Skip ]
 fast/scrolling/ios [ Skip ]
 fast/scrolling/mac [ Skip ]
 fast/scrolling/ipad [ Skip ]
+fast/speechsynthesis/mac [ Skip ]
 fast/text/mac [ Skip ]
 scrollingcoordinator [ Skip ]
 media/media-vp8-hiddenframes.html [ Skip ] # Requires MediaFormatReader and VP8 decoder
@@ -3697,7 +3699,6 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
-webkit.org/b/252668 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-012.html [ Pass ImageOnlyFailure ]
 
 # Untriaged font-style/font-face @font-face descriptor bugs
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-style-auto-variable.html [ ImageOnlyFailure ]
@@ -3911,7 +3912,7 @@ webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass ]
 
 webgl/1.0.x/conformance/attribs [ Pass ]
 webgl/1.0.x/conformance/buffers [ Pass ]
-
+webgl/1.0.x/conformance/textures/canvas/ [ Pass ]
 
 # Debug builds on slower machines run close to the time out especially with GPUP enabled
 webkit.org/b/238691 [ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Slow ]
@@ -3942,17 +3943,19 @@ webgl/2.0.y/conformance/offscreencanvas [ Pass ]
 webgl/2.0.y/conformance2/offscreencanvas [ Pass ]
 
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
-webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/webgl-provoking-vertex.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
-webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Pass ]
-webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass ]
-webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass ]
 webgl/2.0.y/conformance/attribs [ Pass ]
 webgl/2.0.y/conformance/buffers [ Pass ]
+webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
+webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass ]
+webgl/2.0.y/conformance/textures/canvas/ [ Pass ]
+webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-provoking-vertex.html [ Pass ]
+webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
+webgl/2.0.y/conformance2/textures/canvas/ [ Pass ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
@@ -3971,8 +3974,9 @@ webgl/2.0.0/conformance/glsl/misc/shader-with-define-line-continuation.frag.html
 webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/2.0.0/conformance/programs/program-test.html [ Skip ]
 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Skip ]
+webgl/2.0.0/conformance/textures/canvas/ [ Skip ]
 webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Skip ]
-
+webgl/2.0.0/conformance2/textures/canvas/ [ Skip ]
 
 # https://github.com/KhronosGroup/WebGL/issues/3341
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
@@ -4629,6 +4633,9 @@ webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/out-of-range-
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ ImageOnlyFailure ]
 
 webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/254390 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-2.html [ ImageOnlyFailure ]
+webkit.org/b/254390 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering.html [ ImageOnlyFailure ]
 
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/change-list-descendant-display.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/counter-set-001.html [ ImageOnlyFailure ]
@@ -6319,3 +6326,5 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/254259 http/tests/priority-hints/fetch-api-priority.html [ Failure Pass ]

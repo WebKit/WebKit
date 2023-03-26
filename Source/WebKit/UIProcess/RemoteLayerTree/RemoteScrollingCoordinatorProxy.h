@@ -52,6 +52,7 @@ class RemoteLayerTreeHost;
 class RemoteScrollingCoordinatorTransaction;
 class RemoteScrollingTree;
 class WebPageProxy;
+class WebWheelEvent;
 
 class RemoteScrollingCoordinatorProxy : public CanMakeWeakPtr<RemoteScrollingCoordinatorProxy> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -93,8 +94,9 @@ public:
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
-    virtual void handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
-    void continueWheelEventHandling(const NativeWebWheelEvent&, WebCore::WheelEventHandlingResult);
+    virtual void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&) { }
+    virtual void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    void continueWheelEventHandling(const WebWheelEvent&, WebCore::WheelEventHandlingResult);
 
     void handleMouseEvent(const WebCore::PlatformMouseEvent&);
     
@@ -151,6 +153,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
     void viewSizeDidChange();
+    String scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID, bool isVertical);
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

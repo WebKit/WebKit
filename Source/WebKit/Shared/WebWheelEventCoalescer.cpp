@@ -37,53 +37,40 @@ namespace WebKit {
 constexpr unsigned wheelEventQueueSizeThreshold = 10;
 
 #if !LOG_DISABLED
-static WTF::TextStream& operator<<(WTF::TextStream& ts, const WebWheelEventAndSteps& eventAndSteps)
+static TextStream& operator<<(TextStream& ts, const NativeWebWheelEvent& nativeWheelEvent)
 {
-    ts << platform(eventAndSteps.event) << " " << eventAndSteps.processingSteps;
-    return ts;
-}
-
-static WTF::TextStream& operator<<(WTF::TextStream& ts, const NativeWebWheelEventAndSteps& eventAndSteps)
-{
-    ts << platform(eventAndSteps.event) << " " << eventAndSteps.processingSteps;
+    ts << platform(nativeWheelEvent);
     return ts;
 }
 #endif
 
-bool WebWheelEventCoalescer::canCoalesce(const WebWheelEventAndSteps& a, const WebWheelEventAndSteps& b)
+bool WebWheelEventCoalescer::canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
 {
-    auto canCoalesceEvents = [](const WebWheelEvent& a, const WebWheelEvent& b) {
-        if (a.position() != b.position())
-            return false;
-        if (a.globalPosition() != b.globalPosition())
-            return false;
-        if (a.modifiers() != b.modifiers())
-            return false;
-        if (a.granularity() != b.granularity())
-            return false;
+    if (a.position() != b.position())
+        return false;
+    if (a.globalPosition() != b.globalPosition())
+        return false;
+    if (a.modifiers() != b.modifiers())
+        return false;
+    if (a.granularity() != b.granularity())
+        return false;
 #if PLATFORM(COCOA)
-        if (a.phase() != b.phase())
-            return false;
-        if (a.momentumPhase() != b.momentumPhase())
-            return false;
+    if (a.phase() != b.phase())
+        return false;
+    if (a.momentumPhase() != b.momentumPhase())
+        return false;
 #endif
 #if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
-        if (a.hasPreciseScrollingDeltas() != b.hasPreciseScrollingDeltas())
-            return false;
+    if (a.hasPreciseScrollingDeltas() != b.hasPreciseScrollingDeltas())
+        return false;
 #endif
 
-        return true;
-    };
-
-    return a.processingSteps == b.processingSteps && canCoalesceEvents(a.event, b.event);
+    return true;
 }
 
-WebWheelEventAndSteps WebWheelEventCoalescer::coalesce(const WebWheelEventAndSteps& aEventAndSteps, const WebWheelEventAndSteps& bEventAndSteps)
+WebWheelEvent WebWheelEventCoalescer::coalesce(const WebWheelEvent& a, const WebWheelEvent& b)
 {
-    ASSERT(canCoalesce(aEventAndSteps, bEventAndSteps));
-    
-    auto& a = aEventAndSteps.event;
-    auto& b = bEventAndSteps.event;
+    ASSERT(canCoalesce(a, b));
 
     auto mergedDelta = a.delta() + b.delta();
     auto mergedWheelTicks = a.wheelTicks() + b.wheelTicks();
@@ -100,7 +87,7 @@ WebWheelEventAndSteps WebWheelEventCoalescer::coalesce(const WebWheelEventAndSte
 #else
     auto event = WebWheelEvent({ WebEventType::Wheel, b.modifiers(), b.timestamp() }, b.position(), b.globalPosition(), mergedDelta, mergedWheelTicks, b.granularity());
 #endif
-    return { event, aEventAndSteps.processingSteps };
+    return event;
 }
 
 bool WebWheelEventCoalescer::shouldDispatchEventNow(const WebWheelEvent& event) const
@@ -123,41 +110,41 @@ bool WebWheelEventCoalescer::shouldDispatchEventNow(const WebWheelEvent& event) 
     return m_wheelEventQueue.size() >= wheelEventQueueSizeThreshold;
 }
 
-std::optional<WebWheelEventAndSteps> WebWheelEventCoalescer::nextEventToDispatch()
+std::optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
 {
     if (m_wheelEventQueue.isEmpty())
         return std::nullopt;
 
-    auto coalescedNativeEventAndSteps = m_wheelEventQueue.takeFirst();
+    auto coalescedNativeEvent = m_wheelEventQueue.takeFirst();
 
     auto coalescedSequence = makeUnique<CoalescedEventSequence>();
-    coalescedSequence->append(coalescedNativeEventAndSteps);
+    coalescedSequence->append(coalescedNativeEvent);
 
-    auto coalescedWebEventAndSteps = WebWheelEventAndSteps { coalescedNativeEventAndSteps };
+    auto coalescedWebEvent = WebWheelEvent { coalescedNativeEvent };
 
-    while (!m_wheelEventQueue.isEmpty() && canCoalesce(coalescedWebEventAndSteps, WebWheelEventAndSteps { m_wheelEventQueue.first() })) {
+    while (!m_wheelEventQueue.isEmpty() && canCoalesce(coalescedWebEvent, m_wheelEventQueue.first())) {
         auto firstEvent = m_wheelEventQueue.takeFirst();
         coalescedSequence->append(firstEvent);
-        coalescedWebEventAndSteps = coalesce(coalescedWebEventAndSteps, WebWheelEventAndSteps { firstEvent });
+        coalescedWebEvent = coalesce(coalescedWebEvent, WebWheelEvent { firstEvent });
     }
 
 #if !LOG_DISABLED
     if (coalescedSequence->size() > 1)
-        LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::wheelEventWithCoalescing coalesced " << *coalescedSequence << " into " << coalescedWebEventAndSteps);
+        LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::wheelEventWithCoalescing coalesced " << *coalescedSequence << " into " << platform(coalescedWebEvent));
 #endif
 
     m_eventsBeingProcessed.append(WTFMove(coalescedSequence));
-    return coalescedWebEventAndSteps;
+    return coalescedWebEvent;
 }
 
-bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
+bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& event)
 {
     LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::shouldDispatchEvent " << platform(event) << " (" << m_wheelEventQueue.size() << " events in the queue, " << m_eventsBeingProcessed.size() << " event sequences being processed)");
 
-    m_wheelEventQueue.append({ event, processingSteps });
+    m_wheelEventQueue.append(event);
 
     if (!m_eventsBeingProcessed.isEmpty()) {
-        if (!shouldDispatchEventNow(m_wheelEventQueue.last().event)) {
+        if (!shouldDispatchEventNow(m_wheelEventQueue.last())) {
             LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::shouldDispatchEvent -  " << m_wheelEventQueue.size() << " events queued; not dispatching");
             return false;
         }
@@ -172,7 +159,7 @@ NativeWebWheelEvent WebWheelEventCoalescer::takeOldestEventBeingProcessed()
 {
     ASSERT(hasEventsBeingProcessed());
     auto oldestSequence = m_eventsBeingProcessed.takeFirst();
-    return oldestSequence->last().event;
+    return oldestSequence->last();
 }
 
 void WebWheelEventCoalescer::clear()

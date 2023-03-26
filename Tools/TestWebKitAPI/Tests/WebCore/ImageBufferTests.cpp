@@ -260,10 +260,7 @@ void PrintTo(TestImageBufferOptions value, ::std::ostream* o)
         *o << "Unknown";
 }
 
-enum class TestPreserveResolution {
-    No,
-    Yes
-};
+enum class TestPreserveResolution : bool { No, Yes };
 
 void PrintTo(TestPreserveResolution value, ::std::ostream* o)
 {

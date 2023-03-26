@@ -47,6 +47,9 @@ enum ShouldComputePreferred { ComputeActual, ComputePreferred };
 
 enum class StretchingMode { Any, Explicit };
 
+using PhysicalDirection = BoxSide;
+using FlowRelativeDirection = LogicalBoxSide;
+
 class RenderBox : public RenderBoxModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderBox);
 public:
@@ -86,7 +89,7 @@ public:
     LayoutUnit logicalWidth() const { return style().isHorizontalWritingMode() ? width() : height(); }
     LayoutUnit logicalHeight() const { return style().isHorizontalWritingMode() ? height() : width(); }
 
-    enum class AllowIntrinsic { Yes, No };
+    enum class AllowIntrinsic : bool { No, Yes };
     LayoutUnit constrainLogicalWidthInFragmentByMinMax(LayoutUnit, LayoutUnit, RenderBlock&, RenderFragmentContainer*, AllowIntrinsic = AllowIntrinsic::Yes) const;
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
@@ -364,6 +367,17 @@ public:
     void clearOverridingLogicalHeightLength();
     void clearOverridingLogicalWidthLength();
 
+    // Mapping is done according to the table in section 6.4 (Abstract-to-Physical Mappings)
+    // in CSS Writing Modes Level 4. It the writing-mode of the box establishes an orthogonal flow,
+    // then the writing-mode that is used for the mapping is determined on the value of LayoutCalculationPhase
+    // as specified in section 7.3 (Orhotonal Flows) in CSS Writing Modes Level 4.
+    FlowRelativeDirection physicalToFlowRelativeDirectionMapping(PhysicalDirection) const;
+
+    void markMarginAsTrimmed(MarginTrimType);
+    void clearTrimmedMarginsMarkings();
+    bool hasTrimmedMargin(std::optional<MarginTrimType>) const;
+    bool hasTrimmedMargin(PhysicalDirection) const;
+
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const;
@@ -486,7 +500,7 @@ public:
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const;
     virtual LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const;
 
-    enum class UpdatePercentageHeightDescendants { Yes , No };
+    enum class UpdatePercentageHeightDescendants : bool { No, Yes };
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
     LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
@@ -757,7 +771,7 @@ protected:
     std::pair<LayoutUnit, LayoutUnit> computeMinMaxLogicalWidthFromAspectRatio() const;
     std::pair<LayoutUnit, LayoutUnit> computeMinMaxLogicalHeightFromAspectRatio() const;
     enum class ConstrainDimension { Width, Height };
-    enum class MinimumSizeIsAutomaticContentBased { Yes, No };
+    enum class MinimumSizeIsAutomaticContentBased : bool { No, Yes };
     void constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& minSize, LayoutUnit& maxSize, LayoutUnit computedSize, MinimumSizeIsAutomaticContentBased, ConstrainDimension) const;
 
     static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize, AspectRatioType aspectRatioType, bool isRenderReplaced)

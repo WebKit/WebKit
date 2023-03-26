@@ -60,6 +60,7 @@ public:
     virtual void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&) { }
 
     virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
+    virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
 
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;

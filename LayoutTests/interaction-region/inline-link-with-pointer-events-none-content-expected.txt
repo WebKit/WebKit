@@ -13,9 +13,9 @@ Link Child Disabled Link
 
       (interaction regions [
         (interaction
-            (rect (-3,-3) width=76 height=25)
+            (rect (-4,-4) width=78 height=27)
 )
-        (borderRadius 0.00)])
+        (borderRadius 8.00)])
       )
     )
   )

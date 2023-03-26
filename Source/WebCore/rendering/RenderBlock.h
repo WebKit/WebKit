@@ -252,6 +252,7 @@ public:
     void setMarginEndForChild(RenderBox& child, LayoutUnit value) const { child.setMarginEnd(value, &style()); }
     void setMarginBeforeForChild(RenderBox& child, LayoutUnit value) const { child.setMarginBefore(value, &style()); }
     void setMarginAfterForChild(RenderBox& child, LayoutUnit value) const { child.setMarginAfter(value, &style()); }
+    void setTrimmedMarginForChild(RenderBox& child, MarginTrimType);
     LayoutUnit collapsedMarginBeforeForChild(const RenderBox& child) const;
     LayoutUnit collapsedMarginAfterForChild(const RenderBox& child) const;
 

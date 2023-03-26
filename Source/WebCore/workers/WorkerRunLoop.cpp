@@ -117,7 +117,7 @@ static String debuggerMode()
 class RunLoopSetup {
     WTF_MAKE_NONCOPYABLE(RunLoopSetup);
 public:
-    enum class IsForDebugging { No, Yes };
+    enum class IsForDebugging : bool { No, Yes };
     RunLoopSetup(WorkerDedicatedRunLoop& runLoop, IsForDebugging isForDebugging)
         : m_runLoop(runLoop)
         , m_isForDebugging(isForDebugging)

@@ -30,7 +30,7 @@
 #include "RenderingUpdateID.h"
 #include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/NativeImage.h>
-#include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/RenderingResource.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ namespace WebKit {
 class RemoteImageBufferProxy;
 class RemoteRenderingBackendProxy;
 
-class RemoteResourceCacheProxy : public WebCore::NativeImage::Observer, public WebCore::DecomposedGlyphs::Observer {
+class RemoteResourceCacheProxy : public WebCore::RenderingResource::Observer {
 public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
@@ -73,8 +73,7 @@ private:
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
     using DecomposedGlyphsHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::DecomposedGlyphs>>;
     
-    void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
-    void releaseDecomposedGlyphs(WebCore::RenderingResourceIdentifier) override;
+    void releaseRenderingResource(WebCore::RenderingResourceIdentifier) override;
     void clearNativeImageMap();
     void clearDecomposedGlyphsMap();
 

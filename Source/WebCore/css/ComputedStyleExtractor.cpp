@@ -234,18 +234,11 @@ static CSSValueID valueForRepeatRule(NinePieceImageRule rule)
 
 static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
 {
-    // These values can be percentages, numbers, or while an animation of mixed types is in progress,
-    // a calculation that combines a percentage and a number.
+    // These values can be percentages or numbers.
     if (length.isPercent())
         return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    if (length.isFixed())
-        return CSSPrimitiveValue::create(length.value());
-
-    // Calculating the actual length currently in use would require most of the code from RenderBoxModelObject::paintNinePieceImage.
-    // And even if we could do that, it's not clear if that's exactly what we'd want during animation.
-    // FIXME: For now, just return 0.
-    ASSERT(length.isCalculated());
-    return CSSPrimitiveValue::create(0);
+    ASSERT(length.isFixed());
+    return CSSPrimitiveValue::create(length.value());
 }
 
 static inline Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image)
@@ -2285,6 +2278,34 @@ static inline bool isNonReplacedInline(RenderObject& renderer)
     return renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 }
 
+static bool isFlexItem(const RenderObject* renderer)
+{
+    if (auto* box = dynamicDowncast<RenderBox>(renderer))
+        return box->isFlexItem();
+    return false;
+}
+
+static bool rendererContainingBlockHasMarginTrim(const RenderBox& renderer, std::optional<MarginTrimType> marginTrimType)
+{
+    auto* containingBlock = renderer.containingBlock();
+    if (!containingBlock || containingBlock->isRenderView())
+        return false;
+
+    // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
+    // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
+    if (!renderer.isFlexItem() && (containingBlock->isRenderGrid() || containingBlock->isBlockContainer())) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return false;
+    }
+
+    if (containingBlock->isFlexibleBox()) {
+        ASSERT(!marginTrimType || *marginTrimType == MarginTrimType::BlockStart);
+        return marginTrimType ? containingBlock->style().marginTrim().contains(*marginTrimType) : !containingBlock->style().marginTrim().isEmpty();
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, RenderObject* renderer)
 {
     switch (propertyID) {
@@ -2314,10 +2335,11 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
         if (!renderer || !renderer->isBox())
             return false;
         return !(style && style->marginTop().isFixed() && style->marginRight().isFixed()
-            && style->marginBottom().isFixed() && style->marginLeft().isFixed());
+            && style->marginBottom().isFixed() && style->marginLeft().isFixed())
+            || (isFlexItem(renderer) && rendererContainingBlockHasMarginTrim(downcast<RenderBox>(*renderer), { }));
     }
     case CSSPropertyMarginTop:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer);
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (isFlexItem(renderer) && rendererContainingBlockHasMarginTrim(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart));
     case CSSPropertyMarginRight:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer);
     case CSSPropertyMarginBottom:
@@ -3250,8 +3272,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.specifiedLocale().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createCustomIdent(style.specifiedLocale());
-    case CSSPropertyMarginTop:
+    case CSSPropertyMarginTop: {
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box && box->isFlexItem() && box->hasTrimmedMargin(PhysicalDirection::Top))
+            return zoomAdjustedPixelValue(box->marginTop(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
+    }
     case CSSPropertyMarginRight: {
         Length marginRight = style.marginRight();
         if (marginRight.isFixed() || !is<RenderBox>(renderer))

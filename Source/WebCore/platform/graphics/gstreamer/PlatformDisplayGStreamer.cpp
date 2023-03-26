@@ -23,7 +23,7 @@
 #include "GStreamerCommon.h"
 
 #if USE(EGL)
-#include "GLContextEGL.h"
+#include "GLContext.h"
 #endif
 
 #if PLATFORM(X11)

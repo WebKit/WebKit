@@ -293,7 +293,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     bool isBefore = currentPhase == AnimationEffectPhase::Before;
     bool isIdle = currentPhase == AnimationEffectPhase::Idle;
 
-    if (is<CSSAnimation>(this)) {
+    if (is<CSSAnimation>(*this)) {
         // https://drafts.csswg.org/css-animations-2/#events
         if ((wasIdle || wasBefore) && isActive)
             enqueueDOMEvent(eventNames().animationstartEvent, intervalStart, effectTimeAtStart());
@@ -317,7 +317,7 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
             enqueueDOMEvent(eventNames().animationendEvent, intervalStart, effectTimeAtEnd());
         } else if ((!wasIdle && !wasAfter) && isIdle)
             enqueueDOMEvent(eventNames().animationcancelEvent, elapsedTime, elapsedTime);
-    } else if (is<CSSTransition>(this)) {
+    } else if (is<CSSTransition>(*this) && m_owningElement->document().hasListenerType(Document::TRANSITION_ANIMATION_LISTENER)) {
         // https://drafts.csswg.org/css-transitions-2/#transition-events
         if (wasIdle && (isPending || isBefore))
             enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, effectTimeAtStart());

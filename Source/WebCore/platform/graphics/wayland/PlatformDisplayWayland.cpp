@@ -28,7 +28,7 @@
 
 #if PLATFORM(WAYLAND)
 
-#include "GLContextEGL.h"
+#include "GLContext.h"
 #include <cstring>
 #include <wtf/Assertions.h>
 

@@ -363,7 +363,7 @@ static std::optional<uint64_t> unsignedValue(JSON::Value& value)
     return intValue;
 }
 
-enum class IgnoreUnknownTimeout { No, Yes };
+enum class IgnoreUnknownTimeout : bool { No, Yes };
 
 static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject, IgnoreUnknownTimeout ignoreUnknownTimeout)
 {

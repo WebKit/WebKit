@@ -46,6 +46,8 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
         return "media-playback"_s;
     case ProcessAssertionType::FinishTaskInterruptable:
         return "finish-task-interruptible"_s;
+    case ProcessAssertionType::BoostedJetsam:
+        return "boosted-jetsam"_s;
     }
     return "unknown"_s;
 }

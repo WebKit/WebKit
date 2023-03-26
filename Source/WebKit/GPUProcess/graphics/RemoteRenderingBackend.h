@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,8 +100,6 @@ public:
 
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
 
-    void releaseResource(WebCore::RenderingResourceIdentifier);
-
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
 private:
@@ -126,6 +124,7 @@ private:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheFont(Ref<WebCore::Font>&&);
     void releaseAllResources();
+    void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
 #if PLATFORM(COCOA)
@@ -137,7 +136,7 @@ private:
     void getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
     void cacheNativeImageWithQualifiedIdentifier(const ShareableBitmapHandle&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphsWithQualifiedIdentifier(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
-    void releaseResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
+    void releaseRenderingResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
     void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
 
 #if PLATFORM(COCOA)

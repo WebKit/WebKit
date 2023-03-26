@@ -76,7 +76,7 @@ public:
 
     void objectStoreRecordsChanged();
 
-    enum class ShouldIncludePrefetchedRecords { No, Yes };
+    enum class ShouldIncludePrefetchedRecords : bool { No, Yes };
     void currentData(IDBGetResult&, const std::optional<IDBKeyPath>&, ShouldIncludePrefetchedRecords = ShouldIncludePrefetchedRecords::No);
 
 private:

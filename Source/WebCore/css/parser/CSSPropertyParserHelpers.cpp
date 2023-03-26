@@ -2566,7 +2566,7 @@ static Color parseColorFunctionForRGBTypesRaw(CSSParserTokenRange& args, Consume
     for (auto& channel : channels) {
         auto value = rgbConsumer(args);
         if (!value)
-            break;
+            return { };
 
         channel = WTF::switchOn(*value,
             [] (NumberRaw number) { return number.value; },
@@ -2633,7 +2633,7 @@ static Color parseColorFunctionForXYZTypesRaw(CSSParserTokenRange& args, Consume
     for (auto& channel : channels) {
         auto value = xyzConsumer(args);
         if (!value)
-            break;
+            return { };
 
         channel = WTF::switchOn(*value,
             [] (NumberRaw number) { return number.value; },
@@ -3714,7 +3714,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& range, co
     }
 }
 
-enum class SupportsColorHints : bool { Yes, No };
+enum class SupportsColorHints : bool { No, Yes };
 
 template<typename Consumer>
 static std::optional<CSSGradientColorStopList> consumeColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints, Consumer&& consumeStopPosition)
@@ -4775,10 +4775,10 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSPar
     if (nameToken.type() != IdentToken || !isValidCustomIdentifier(nameToken.id()))
         return AtomString();
     // In the context of the prelude of an @counter-style rule, a <counter-style-name> must not be an ASCII
-    // case-insensitive match for "decimal" or "disc". No <counter-style-name>, prelude or not, may be an ASCII
+    // case-insensitive match for "decimal", "disc", "square", "circle", "disclosure-open" and "disclosure-closed". No <counter-style-name>, prelude or not, may be an ASCII
     // case-insensitive match for "none".
     auto id = nameToken.id();
-    if (identMatches<CSSValueNone>(id) || (mode != CSSParserMode::UASheetMode && identMatches<CSSValueDecimal, CSSValueDisc>(id)))
+    if (identMatches<CSSValueNone>(id) || (mode != CSSParserMode::UASheetMode && identMatches<CSSValueDecimal, CSSValueDisc, CSSValueCircle, CSSValueSquare, CSSValueDisclosureOpen, CSSValueDisclosureClosed>(id)))
         return AtomString();
     auto name = nameToken.value();
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();

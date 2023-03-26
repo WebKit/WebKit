@@ -474,7 +474,7 @@ protected:
     UChar32 characterBefore(const CharacterOffset&);
     CharacterOffset characterOffsetForNodeAndOffset(Node&, int, TraverseOption = TraverseOptionDefault);
 
-    enum class NeedsContextAtParagraphStart { Yes, No };
+    enum class NeedsContextAtParagraphStart : bool { No, Yes };
     CharacterOffset previousBoundary(const CharacterOffset&, BoundarySearchFunction, NeedsContextAtParagraphStart = NeedsContextAtParagraphStart::No);
     CharacterOffset nextBoundary(const CharacterOffset&, BoundarySearchFunction);
     CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);

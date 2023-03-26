@@ -84,6 +84,9 @@ public:
 #if ENABLE(VIDEO)
         , RefPtr<HTMLVideoElement>
 #endif
+#if ENABLE(OFFSCREEN_CANVAS)
+        , RefPtr<OffscreenCanvas>
+#endif
 #if ENABLE(WEB_CODECS)
         , RefPtr<WebCodecsVideoFrame>
 #endif

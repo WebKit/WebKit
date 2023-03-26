@@ -153,6 +153,7 @@
 {
     [self _invalidatePrintRenderingState];
     NSUInteger pageCount = [self._webView._printProvider _wk_pageCountForPrintFormatter:self];
+    RELEASE_LOG(Printing, "Recalculated page count. Page count = %zu", pageCount);
     return std::min<NSUInteger>(pageCount, NSIntegerMax);
 }
 

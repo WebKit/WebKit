@@ -69,7 +69,7 @@ public:
     virtual bool isCSSTransition() const { return false; }
 
     const String& id() const { return m_id; }
-    void setId(const String&);
+    void setId(String&&);
 
     AnimationEffect* bindingsEffect() const { return effect(); }
     virtual void setBindingsEffect(RefPtr<AnimationEffect>&&);
@@ -169,11 +169,11 @@ protected:
     virtual void animationDidFinish();
 
 private:
-    enum class DidSeek : uint8_t { Yes, No };
-    enum class SynchronouslyNotify : uint8_t { Yes, No };
-    enum class Silently : uint8_t { Yes, No };
-    enum class RespectHoldTime : uint8_t { Yes, No };
-    enum class AutoRewind : uint8_t { Yes, No };
+    enum class DidSeek : bool { No, Yes };
+    enum class SynchronouslyNotify : bool { No, Yes };
+    enum class Silently : bool { No, Yes };
+    enum class RespectHoldTime : bool { No, Yes };
+    enum class AutoRewind : bool { No, Yes };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
 
     ExceptionOr<std::optional<Seconds>> validateCSSNumberishValue(const std::optional<CSSNumberish>&) const;
@@ -200,6 +200,18 @@ private:
     void applyPendingPlaybackRate();
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
 
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    void stop() final;
+    bool virtualHasPendingActivity() const final;
+
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     UniqueRef<ReadyPromise> m_readyPromise;
@@ -224,18 +236,6 @@ private:
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };
     uint64_t m_globalPosition { 0 };
-
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
-    void stop() final;
-    bool virtualHasPendingActivity() const final;
-
-    // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
 };
 
 } // namespace WebCore

@@ -454,7 +454,7 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
                 @readableStreamDefaultControllerEnqueue(teeState.branch1.@readableStreamController, result.value);
             if (!teeState.canceled2)
                 @readableStreamDefaultControllerEnqueue(teeState.branch2.@readableStreamController, shouldClone ? @structuredCloneForStream(result.value) : result.value);
-        });
+        }, () => { });
     }
 }
 

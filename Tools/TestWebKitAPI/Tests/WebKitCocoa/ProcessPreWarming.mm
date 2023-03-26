@@ -49,7 +49,7 @@ TEST(WKProcessPool, WarmInitialProcess)
     EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
 }
 
-enum class ShouldUseEphemeralStore { No, Yes };
+enum class ShouldUseEphemeralStore : bool { No, Yes };
 static void runInitialWarmedProcessUsedTest(ShouldUseEphemeralStore shouldUseEphemeralStore)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

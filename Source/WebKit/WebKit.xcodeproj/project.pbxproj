@@ -1521,6 +1521,7 @@
 		83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F1A0781F96E7710045B94E /* WebSWOriginTable.h */; };
 		83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
+		84AF2C7C2952374800563FA5 /* module.private.modulemap in Copy Private Module Map */ = {isa = PBXBuildFile; fileRef = 843FD167295234DC00476A01 /* module.private.modulemap */; };
 		8644890B27B47020007A1C66 /* _WKSystemPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890A27B47020007A1C66 /* _WKSystemPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8644890F27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */; };
 		866623F929C2248E0029405A /* WebAutocorrectionData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 866623F829C2248D0029405A /* WebAutocorrectionData.mm */; };
@@ -2640,6 +2641,17 @@
 				7BEDA69E28B396BB00B41C7C /* WebCore.framework in Product Dependencies */,
 			);
 			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84AF2C7A2952366300563FA5 /* Copy Private Module Map */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(WK_FRAMEWORK_VERSION_PREFIX)Modules";
+			dstSubfolderSpec = 1;
+			files = (
+				84AF2C7C2952374800563FA5 /* module.private.modulemap in Copy Private Module Map */,
+			);
+			name = "Copy Private Module Map";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A15797632582B1A500528236 /* Copy Plug-ins */ = {
@@ -5020,6 +5032,8 @@
 		52D5A1B21C5749F200DE34A3 /* VideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManager.h; sourceTree = "<group>"; };
 		52D5A1B31C5749F200DE34A3 /* VideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManager.messages.in; sourceTree = "<group>"; };
 		52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManager.mm; sourceTree = "<group>"; };
+		52EB68CB279E2145005C98D9 /* ARKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKitSoftLink.h; sourceTree = "<group>"; };
+		52EB68CC279E2145005C98D9 /* ARKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ARKitSoftLink.mm; sourceTree = "<group>"; };
 		52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkContentRuleListManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		52F4B46727E1197700FFD129 /* VirtualAuthenticatorUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorUtils.h; sourceTree = "<group>"; };
 		52F4B46827E1197700FFD129 /* VirtualAuthenticatorUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualAuthenticatorUtils.mm; sourceTree = "<group>"; };
@@ -5803,7 +5817,10 @@
 		84120B2928258B82002988E2 /* iOS.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = iOS.modulemap; sourceTree = "<group>"; };
 		84120B2A28258B82002988E2 /* OSX.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OSX.modulemap; sourceTree = "<group>"; };
 		84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MacCatalyst.modulemap; sourceTree = "<group>"; };
+		843FD167295234DC00476A01 /* module.private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.private.modulemap; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
+		848A33AE294AA847002DD640 /* OSX_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OSX_Private.modulemap; sourceTree = "<group>"; };
+		849944302943E2550086CDBB /* iOS_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = iOS_Private.modulemap; sourceTree = "<group>"; };
 		861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ShareableBitmap.serialization.in; sourceTree = "<group>"; };
 		863551D229647AB400C2BE98 /* NetworkResourceLoadParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkResourceLoadParameters.serialization.in; sourceTree = "<group>"; };
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
@@ -10087,6 +10104,8 @@
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */,
 				A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */,
+				52EB68CB279E2145005C98D9 /* ARKitSoftLink.h */,
+				52EB68CC279E2145005C98D9 /* ARKitSoftLink.mm */,
 				1A698F171E4910220064E881 /* AuxiliaryProcessCocoa.mm */,
 				413E5C9129B0CF7B002F4987 /* BackgroundFetchStateCocoa.mm */,
 				4413795F2964F0C2003C34C6 /* CacheStoragePolicy.h */,
@@ -11373,8 +11392,10 @@
 			isa = PBXGroup;
 			children = (
 				84120B2928258B82002988E2 /* iOS.modulemap */,
+				849944302943E2550086CDBB /* iOS_Private.modulemap */,
 				84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */,
 				84120B2A28258B82002988E2 /* OSX.modulemap */,
+				848A33AE294AA847002DD640 /* OSX_Private.modulemap */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -13158,6 +13179,7 @@
 				9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */,
 				0F5562E927EE28D200953585 /* MessageNames.cpp */,
 				0F5562E227EE28D100953585 /* MessageNames.h */,
+				843FD167295234DC00476A01 /* module.private.modulemap */,
 				51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */,
 				51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */,
 				52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */,
@@ -15546,6 +15568,7 @@
 				8DC2EF500486A6940098B216 /* Headers */,
 				DDA0A42827EA3435005E086E /* (Legacy) Install Headers */,
 				DDC907B5298B2DE800ECA4D6 /* Migrate WebCore and WebKitLegacy Headers */,
+				84AF2C7A2952366300563FA5 /* Copy Private Module Map */,
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
@@ -17953,7 +17976,7 @@
 		};
 		C0CE72861247E66800BC0EC4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */;
+			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -17964,7 +17987,7 @@
 		};
 		C0CE72871247E66800BC0EC4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */;
+			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -17974,7 +17997,7 @@
 		};
 		C0CE72881247E66800BC0EC4 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */;
+			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources";
 			};

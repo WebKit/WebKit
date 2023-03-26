@@ -37,7 +37,7 @@ namespace WTF {
 
 namespace FileSystemImpl {
 
-enum class ShouldFollowSymbolicLinks { No, Yes };
+enum class ShouldFollowSymbolicLinks : bool { No, Yes };
 static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     CString fsRep = fileSystemRepresentation(path);

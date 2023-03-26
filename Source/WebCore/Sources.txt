@@ -2205,6 +2205,7 @@ platform/graphics/LayoutSize.cpp
 platform/graphics/MIMETypeCache.cpp
 platform/graphics/MediaPlayer.cpp
 platform/graphics/MediaPlayerPrivate.cpp
+platform/graphics/MediaSourcePrivate.cpp
 platform/graphics/Model.cpp
 platform/graphics/NamedImageGeneratedImage.cpp
 platform/graphics/NativeImage.cpp
@@ -3100,7 +3101,7 @@ JSAudioWorkletGlobalScope.cpp
 JSAudioWorkletNode.cpp
 JSAudioWorkletNodeOptions.cpp
 JSAudioWorkletProcessor.cpp
-JSAudioWorkletProcessorConstructor.cpp 
+JSAudioWorkletProcessorConstructor.cpp
 JSAuthenticationExtensionsClientInputs.cpp
 JSAuthenticationExtensionsClientOutputs.cpp
 JSAuthenticatorAssertionResponse.cpp

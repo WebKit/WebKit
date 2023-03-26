@@ -31,7 +31,7 @@ Nested  Nested  Nested Secondary
         (interaction
             (rect (293,20) width=69 height=20)
 )
-        (borderRadius 5.00)])
+        (borderRadius 8.00)])
       )
     )
   )

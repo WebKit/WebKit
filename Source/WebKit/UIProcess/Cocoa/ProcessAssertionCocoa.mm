@@ -330,6 +330,8 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
         return @"MediaPlayback";
     case ProcessAssertionType::FinishTaskInterruptable:
         return @"FinishTaskInterruptable";
+    case ProcessAssertionType::BoostedJetsam:
+        return @"BoostedJetsam";
     }
 }
 
@@ -341,6 +343,7 @@ static NSString *runningBoardDomainForAssertionType(ProcessAssertionType asserti
     case ProcessAssertionType::UnboundedNetworking:
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
+    case ProcessAssertionType::BoostedJetsam:
         return @"com.apple.webkit";
     case ProcessAssertionType::FinishTaskInterruptable:
         return @"com.apple.common";

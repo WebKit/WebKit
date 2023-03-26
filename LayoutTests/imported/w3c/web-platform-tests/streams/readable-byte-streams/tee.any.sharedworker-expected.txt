@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection
-
 PASS ReadableStream teeing with byte source: rs.tee() returns an array of two ReadableStreams
 FAIL ReadableStream teeing with byte source: should be able to read one branch to the end without affecting the other promise_test: Unhandled rejection with value: object "TypeError: ReadableStreamBYOBReader needs a ReadableByteStreamController"
 FAIL ReadableStream teeing with byte source: chunks should be cloned for each branch assert_not_equals: chunks should have different buffers got disallowed value object "[object ArrayBuffer]"

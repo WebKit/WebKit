@@ -48,6 +48,9 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     or HTMLVideoElement
 #endif
+#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
+    or OffscreenCanvas
+#endif
 #if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
     or WebCodecsVideoFrame
 #endif

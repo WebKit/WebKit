@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
 #if TARGET_OS_IPHONE
-#import "WKWebViewPrivateForTestingIOS.h"
+#import <WebKit/WKWebViewPrivateForTestingIOS.h>
 #else
-#import "WKWebViewPrivateForTestingMac.h"
+#import <WebKit/WKWebViewPrivateForTestingMac.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -48,6 +50,8 @@ struct WKAppPrivacyReportTestingData {
 @interface WKWebView (WKTesting)
 
 @property (nonatomic, readonly) NSString *_caLayerTreeAsText;
+
+- (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical;
 
 - (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(nullable NSString *)nonce applicationBundleID:(NSString *)bundleID ephemeral:(BOOL)ephemeral WK_API_AVAILABLE(macos(13.0), ios(16.0));
 

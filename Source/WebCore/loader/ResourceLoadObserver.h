@@ -43,7 +43,7 @@ public:
     using SubResourceDomain = WebCore::RegistrableDomain;
 
     // https://fetch.spec.whatwg.org/#request-destination-script-like
-    enum class FetchDestinationIsScriptLike : bool { Yes, No };
+    enum class FetchDestinationIsScriptLike : bool { No, Yes };
 
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
     WEBCORE_EXPORT static ResourceLoadObserver* sharedIfExists();

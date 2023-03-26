@@ -155,7 +155,7 @@ public:
     bool computeTransformedExtentViaMatrix(const FloatRect&, const RenderStyle&, LayoutRect&) const;
     bool forceLayoutIfNeeded();
 
-    enum class Accelerated : uint8_t { Yes, No };
+    enum class Accelerated : bool { No, Yes };
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
     bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
     bool isRunningAcceleratedTransformRelatedAnimation() const;

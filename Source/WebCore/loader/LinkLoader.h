@@ -63,7 +63,7 @@ public:
     virtual ~LinkLoader();
 
     void loadLink(const LinkLoadParameters&, Document&);
-    enum class ShouldLog { No, Yes };
+    enum class ShouldLog : bool { No, Yes };
     static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
+#include "Clipboard.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -50,7 +51,9 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
 #include <wtf/text/CString.h>
@@ -546,9 +549,17 @@ void PageClientImpl::derefView()
     g_object_unref(m_viewWidget);
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+    auto& clipboard = Clipboard::get("CLIPBOARD"_s);
+    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [originIdentifier, completionHandler = WTFMove(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
+        if (PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
+            completionHandler(DOMPasteAccessResponse::GrantedForGesture);
+            return;
+        }
+
+        completionHandler(DOMPasteAccessResponse::DeniedForGesture);
+    });
 }
 
 UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()

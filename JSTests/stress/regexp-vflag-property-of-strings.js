@@ -203,8 +203,8 @@ testRegExpSyntaxError("[1-3&&a--\\q{XYZ}]", "v", "SyntaxError: Invalid regular e
 // Test 31
 testRegExpSyntaxError("[a-z&&1--\\q{XYZ}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 testRegExpSyntaxError("[a-z&&1--\\p{White_Space}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
-testRegExpSyntaxError("[a&&&\\p{White_Space}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
-testRegExpSyntaxError("[a&&&]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&&\\p{White_Space}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&&]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExpSyntaxError("[a&&-]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 
 // Test 36
@@ -218,33 +218,33 @@ testRegExpSyntaxError("[a&&{]", "v", "SyntaxError: Invalid regular expression: i
 testRegExpSyntaxError("[a&&}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExpSyntaxError("[a&&/]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExpSyntaxError("[a&&|]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&&&]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
-testRegExpSyntaxError("[a&&!!]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&&&]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&!!]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 46
-testRegExpSyntaxError("[a&&##]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&$$]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&%%]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&**]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&++]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&##]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&$$]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&%%]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&**]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&++]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 51
-testRegExpSyntaxError("[a&&,,]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&..]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&::]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&;;]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&<<]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&,,]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&..]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&::]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&;;]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&<<]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 56
-testRegExpSyntaxError("[a&&==]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&>>]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&??]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&@@]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&^^]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&==]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&>>]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&??]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&@@]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&^^]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 61
-testRegExpSyntaxError("[a&&``]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a&&~~]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a&&``]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a&&~~]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 testRegExpSyntaxError("[a--(]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExpSyntaxError("[a--)]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExpSyntaxError("[a--[]", "v", "SyntaxError: Invalid regular expression: missing terminating ] for character class");
@@ -258,30 +258,30 @@ testRegExpSyntaxError("[a--|]", "v", "SyntaxError: Invalid regular expression: i
 
 // Test 71
 testRegExpSyntaxError("[a--&&]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
-testRegExpSyntaxError("[a--!!]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--##]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--$$]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--%%]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a--!!]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--##]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--$$]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--%%]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 76
-testRegExpSyntaxError("[a--**]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--++]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--,,]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--..]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--::]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a--**]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--++]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--,,]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--..]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--::]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 81
-testRegExpSyntaxError("[a--;;]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--<<]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--==]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a-->>]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--??]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a--;;]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--<<]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--==]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a-->>]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--??]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 86
-testRegExpSyntaxError("[a--@@]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--^^]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--``]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a--~~]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a--@@]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--^^]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--``]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a--~~]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 testRegExpSyntaxError("[a&&b-c]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 91
@@ -293,31 +293,31 @@ testRegExpSyntaxError("[a-z&&k]", "v", "SyntaxError: Invalid regular expression:
 
 // Test 96
 testRegExpSyntaxError("[a---]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a&&b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a!!b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a##b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a$$b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a\\q{a&&b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a!!b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a##b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a$$b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 101
-testRegExpSyntaxError("[a\\q{a%%b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a**b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a++b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a,,b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a..b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a\\q{a%%b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a**b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a++b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a,,b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a..b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 106
-testRegExpSyntaxError("[a\\q{a::b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a;;b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a<<b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a==b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a>>b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a\\q{a::b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a;;b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a<<b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a==b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a>>b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 111
-testRegExpSyntaxError("[a\\q{a??b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a@@b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a^^b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a``b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
-testRegExpSyntaxError("[a\\q{a~~b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[a\\q{a??b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a@@b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a^^b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a``b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
+testRegExpSyntaxError("[a\\q{a~~b}]", "v", "SyntaxError: Invalid regular expression: invalid operation in class set");
 
 // Test 116
 testRegExpSyntaxError("[a\\q{a(b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
@@ -329,14 +329,14 @@ testRegExpSyntaxError("[a\\q{a{b}]", "v", "SyntaxError: Invalid regular expressi
 // Test 121
 testRegExpSyntaxError("[a\\q{a/b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExpSyntaxError("[a\\q{a-b}]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
+testRegExpSyntaxError("[\p{ASCII}---]", "v", "SyntaxError: Invalid regular expression: invalid class set character");
 testRegExp(/[\p{ASCII}&&\&]/v, "a&b", ["&"]);
 testRegExp(/[\p{ASCII}&&\-]/v, "a-b", ["-"]);
-testRegExp(/[\p{ASCII}--\&]/v, "&b", ["b"]);
 
 // Test 126
+testRegExp(/[\p{ASCII}--\&]/v, "&b", ["b"]);
 testRegExp(/[\p{ASCII}--&]/v, "&b", ["b"]);
 testRegExp(/[\p{ASCII}--\-]/v, "-b", ["b"]);
-testRegExp(/[\p{ASCII}---]/v, "-b", ["b"]);
 testRegExp(/[\p{RGI_Emoji_Tag_Sequence}a]/, "a", ["a"]);
 testRegExp(/[\p{RGI_Emoji_Tag_Sequence}a]/v, "a", ["a"]);
 
@@ -394,4 +394,3 @@ testRegExp(/[a\(\)]+/v, "a()", ["a()"]);
 testRegExp(/[a\q{\(\)}]{2}/v, "()a()", ["()a"]);
 testRegExp(/[a\q{\(\)}]+/v, "()a()", ["()a()"]);
 testRegExp(/[a\q{\=\=}]+/v, "==a==", ["==a=="]);
-

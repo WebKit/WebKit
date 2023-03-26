@@ -156,10 +156,7 @@ protected:
     bool isDetached() const override { return !m_node; }
 
     virtual AccessibilityRole determineAccessibilityRole();
-    enum class TreatStyleFormatGroupAsInline {
-        No,
-        Yes
-    };
+    enum class TreatStyleFormatGroupAsInline : bool { No, Yes };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
     AccessibilityRole ariaRoleAttribute() const override { return m_ariaRole; }
     virtual AccessibilityRole determineAriaRoleAttribute() const;

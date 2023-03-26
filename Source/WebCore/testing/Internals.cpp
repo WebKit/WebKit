@@ -169,6 +169,7 @@
 #include "PlatformScreen.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
+#include "PluginViewBase.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "PushSubscription.h"
@@ -3108,6 +3109,15 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
 
     auto* backing = layerModelObject.layer()->backing();
     return backing->graphicsLayer()->primaryLayerID().object().toUInt64();
+}
+
+ExceptionOr<uint64_t> Internals::scrollingNodeIDForNode(Node* node)
+{
+    auto areaOrException = scrollableAreaForNode(node);
+    if (areaOrException.hasException())
+        return areaOrException.releaseException();
+    auto* scrollableArea = areaOrException.releaseReturnValue();
+    return scrollableArea->scrollingNodeID();
 }
 
 static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)
@@ -6271,6 +6281,28 @@ size_t Internals::pluginCount()
         return 0;
 
     return contextDocument()->page()->pluginData().webVisiblePlugins().size();
+}
+
+static std::optional<ScrollPosition> scrollPositionForPlugin(Element& element)
+{
+    auto* pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (auto* pluginViewBase = pluginElement ? pluginElement->pluginWidget() : nullptr)
+        return pluginViewBase->scrollPositionForTesting();
+    return std::nullopt;
+}
+
+ExceptionOr<unsigned> Internals::pluginScrollPositionX(Element& element)
+{
+    if (std::optional scrollPosition = scrollPositionForPlugin(element))
+        return scrollPosition->x();
+    return Exception { InvalidAccessError };
+}
+
+ExceptionOr<unsigned> Internals::pluginScrollPositionY(Element& element)
+{
+    if (std::optional scrollPosition = scrollPositionForPlugin(element))
+        return scrollPosition->y();
+    return Exception { InvalidAccessError };
 }
 
 void Internals::notifyResourceLoadObserver()

@@ -3468,9 +3468,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutClosureVar:
         break;
 
-    case GetInternalField:
+    case GetInternalField: {
+        AbstractValue& child = forNode(node->child1());
+        if (child.m_type && !(child.m_type & ~SpecProxyObject)) {
+            if (node->internalFieldIndex() == static_cast<unsigned>(ProxyObject::Field::Target)) {
+                setTypeForNode(node, SpecObject);
+                break;
+            }
+            if (node->internalFieldIndex() == static_cast<unsigned>(ProxyObject::Field::Handler)) {
+                setTypeForNode(node, SpecObject | SpecOther);
+                break;
+            }
+        }
+
         makeBytecodeTopForNode(node);
         break;
+    }
 
     case PutInternalField:
         break;

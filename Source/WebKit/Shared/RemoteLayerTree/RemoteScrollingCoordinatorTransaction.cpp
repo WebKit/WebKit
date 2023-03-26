@@ -220,7 +220,7 @@ void ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::encode(Encoder& encod
         type decodedValue; \
         if (!decoder.decode(decodedValue)) \
             return false; \
-        node.setter(decodedValue); \
+        node.setter(WTFMove(decodedValue)); \
     }
 
 #define SCROLLING_NODE_DECODE_ENUM(property, type, setter) \
@@ -249,7 +249,12 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
 #endif
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::IsMonitoringWheelEvents, bool, setIsMonitoringWheelEvents);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
-    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::RequestedScrollPosition, RequestedScrollData, setRequestedScrollData);
+    if (node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
+        RequestedScrollData requestedScrollData;
+        if (!decoder.decode(requestedScrollData))
+            return false;
+        node.setRequestedScrollData(WTFMove(requestedScrollData), ScrollingStateScrollingNode::CanMergeScrollData::No);
+    }
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::KeyboardScrollData, RequestedKeyboardScrollData, setKeyboardScrollData);
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {

@@ -79,7 +79,9 @@ public:
     WEBCORE_EXPORT void setKeyboardScrollData(const RequestedKeyboardScrollData&);
 
     const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
-    WEBCORE_EXPORT void setRequestedScrollData(const RequestedScrollData&);
+
+    enum class CanMergeScrollData : bool { No, Yes };
+    WEBCORE_EXPORT void setRequestedScrollData(RequestedScrollData&&, CanMergeScrollData = CanMergeScrollData::Yes);
 
     WEBCORE_EXPORT bool hasScrollPositionRequest() const;
 

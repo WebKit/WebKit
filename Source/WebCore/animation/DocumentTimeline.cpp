@@ -65,19 +65,11 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, DocumentTimel
 }
 
 DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
-    : AnimationTimeline()
-    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
+    : m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
     , m_document(document)
     , m_originTime(originTime)
 {
-    if (auto* controller = this->controller())
-        controller->addTimeline(*this);
-}
-
-DocumentTimeline::~DocumentTimeline()
-{
-    if (auto* controller = this->controller())
-        controller->removeTimeline(*this);
+    document.ensureTimelinesController().addTimeline(*this);
 }
 
 DocumentTimelinesController* DocumentTimeline::controller() const
@@ -290,23 +282,26 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
 void DocumentTimeline::removeReplacedAnimations()
 {
     // https://drafts.csswg.org/web-animations/#removing-replaced-animations
-
-    Vector<RefPtr<WebAnimation>> animationsToRemove;
+    auto& eventNames = WebCore::eventNames();
+    Vector<Ref<WebAnimation>> animationsToRemove;
 
     // When asked to remove replaced animations for a Document, doc, then for every animation, animation
-    for (auto& animation : m_allAnimations) {
-        if (animation && animationCanBeRemoved(*animation)) {
-            // perform the following steps:
-            // 1. Set animation's replace state to removed.
-            animation->setReplaceState(WebAnimation::ReplaceState::Removed);
-            // 2. Create an AnimationPlaybackEvent, removeEvent.
-            // 3. Set removeEvent's type attribute to remove.
-            // 4. Set removeEvent's currentTime attribute to the current time of animation.
-            // 5. Set removeEvent's timelineTime attribute to the current time of the timeline with which animation is associated.
-            // 6. If animation has a document for timing, then append removeEvent to its document for timing's pending animation
-            //    event queue along with its target, animation. For the scheduled event time, use the result of applying the procedure
-            //    to convert timeline time to origin-relative time to the current time of the timeline with which animation is associated.
-            //    Otherwise, queue a task to dispatch removeEvent at animation. The task source for this task is the DOM manipulation task source.
+    for (auto& animation : m_animations) {
+        if (!animationCanBeRemoved(animation))
+            continue;
+
+        // perform the following steps:
+        // 1. Set animation's replace state to removed.
+        animation->setReplaceState(WebAnimation::ReplaceState::Removed);
+        // 2. Create an AnimationPlaybackEvent, removeEvent.
+        // 3. Set removeEvent's type attribute to remove.
+        // 4. Set removeEvent's currentTime attribute to the current time of animation.
+        // 5. Set removeEvent's timelineTime attribute to the current time of the timeline with which animation is associated.
+        // 6. If animation has a document for timing, then append removeEvent to its document for timing's pending animation
+        //    event queue along with its target, animation. For the scheduled event time, use the result of applying the procedure
+        //    to convert timeline time to origin-relative time to the current time of the timeline with which animation is associated.
+        //    Otherwise, queue a task to dispatch removeEvent at animation. The task source for this task is the DOM manipulation task source.
+        if (animation->hasEventListeners(eventNames.removeEvent)) {
             auto scheduledTime = [&]() -> std::optional<Seconds> {
                 if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(animation->timeline())) {
                     if (auto currentTime = documentTimeline->currentTime())
@@ -314,15 +309,15 @@ void DocumentTimeline::removeReplacedAnimations()
                 }
                 return std::nullopt;
             }();
-            animation->enqueueAnimationPlaybackEvent(eventNames().removeEvent, animation->currentTime(), scheduledTime);
-
-            animationsToRemove.append(animation.get());
+            animation->enqueueAnimationPlaybackEvent(eventNames.removeEvent, animation->currentTime(), scheduledTime);
         }
+
+        animationsToRemove.append(animation.get());
     }
 
     for (auto& animation : animationsToRemove) {
         if (auto* timeline = animation->timeline())
-            timeline->removeAnimation(*animation);
+            timeline->removeAnimation(animation);
     }
 }
 
@@ -420,8 +415,7 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
     }
 #endif
 
-    auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
-    m_acceleratedAnimationsPendingRunningStateChange.clear();
+    auto acceleratedAnimationsPendingRunningStateChange = std::exchange(m_acceleratedAnimationsPendingRunningStateChange, { });
 
     bool hasForcedLayout = false;
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
@@ -490,7 +484,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
         return customEffectResult.releaseException();
 
     auto animation = WebAnimation::create(*document(), &customEffectResult.returnValue().get());
-    animation->setId(id);
+    animation->setId(WTFMove(id));
     animation->setBindingsFrameRate(WTFMove(frameRate));
 
     auto animationPlayResult = animation->play();

@@ -103,7 +103,7 @@ public:
         InheritedForPluginDocument,
     };
     WEBCORE_EXPORT ContentSecurityPolicyResponseHeaders responseHeaders() const;
-    enum ReportParsingErrors { No, Yes };
+    enum ReportParsingErrors : bool { No, Yes };
     WEBCORE_EXPORT void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&, String&& referrer, ReportParsingErrors = ReportParsingErrors::Yes);
     void didReceiveHeaders(const ContentSecurityPolicy&, ReportParsingErrors = ReportParsingErrors::Yes);
     void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom, String&& referrer, int httpStatusCode = 0);
@@ -125,7 +125,7 @@ public:
     WEBCORE_EXPORT bool allowFrameAncestors(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins, const URL&, bool overrideContentSecurityPolicy = false) const;
     WEBCORE_EXPORT bool overridesXFrameOptions() const;
 
-    enum class RedirectResponseReceived { No, Yes };
+    enum class RedirectResponseReceived : bool { No, Yes };
     WEBCORE_EXPORT bool allowScriptFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL(), const String& = nullString(), const String& nonce = nullString()) const;
     WEBCORE_EXPORT bool allowWorkerFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;
     bool allowImageFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;

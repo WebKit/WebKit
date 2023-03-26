@@ -340,6 +340,10 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
             if (parent->hasTagName(HTMLNames::navTag) || role(*parent) == AccessibilityRole::LandmarkNavigation)
                 return true;
         }
+
+        // Treat a or li with white-space: nowrap as its own paragraph so that wrapping whitespace between them will be preserved.
+        if (renderer->style().whiteSpace() == WhiteSpace::NoWrap)
+            return true;
     }
 
     if (displayType == DisplayType::TableCell)

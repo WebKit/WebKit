@@ -252,7 +252,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
 
 #if USE(EGL)
-    auto glContext = GLContext::createOffscreenContext();
+    auto glContext = GLContext::createOffscreen(PlatformDisplay::sharedDisplay());
     glContext->makeContextCurrent();
 
     addTableRow(hardwareAccelerationObject, "API"_s, makeString(openGLAPI()));

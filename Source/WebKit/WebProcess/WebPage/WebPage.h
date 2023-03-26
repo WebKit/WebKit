@@ -1691,7 +1691,7 @@ private:
 
 #if ENABLE(META_VIEWPORT)
     void resetViewportDefaultConfiguration(WebFrame* mainFrame, bool hasMobileDocType = false);
-    enum class ZoomToInitialScale { No, Yes };
+    enum class ZoomToInitialScale : bool { No, Yes };
     void viewportConfigurationChanged(ZoomToInitialScale = ZoomToInitialScale::No);
     bool shouldIgnoreMetaViewport() const;
 #endif
@@ -1800,7 +1800,7 @@ private:
     void loadURLInFrame(URL&&, const String& referrer, WebCore::FrameIdentifier);
     void loadDataInFrame(IPC::DataReference&&, String&& MIMEType, String&& encodingName, URL&& baseURL, WebCore::FrameIdentifier);
 
-    enum class WasRestoredByAPIRequest { No, Yes };
+    enum class WasRestoredByAPIRequest : bool { No, Yes };
     void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
     void restoreSession(const Vector<BackForwardListItemState>&);
     void didRemoveBackForwardItem(const WebCore::BackForwardItemIdentifier&);

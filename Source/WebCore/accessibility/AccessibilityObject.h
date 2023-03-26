@@ -504,7 +504,7 @@ public:
     bool childrenInitialized() const { return m_childrenInitialized; }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     virtual void addChildren() { }
-    enum class DescendIfIgnored : uint8_t { No, Yes };
+    enum class DescendIfIgnored : bool { No, Yes };
     virtual void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes);
     virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes);
     virtual bool canHaveChildren() const { return true; }

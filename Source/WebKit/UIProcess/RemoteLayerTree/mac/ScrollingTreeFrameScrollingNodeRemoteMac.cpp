@@ -86,6 +86,11 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::viewSizeDidChange()
     m_delegate->viewSizeDidChange();
 }
 
+String ScrollingTreeFrameScrollingNodeRemoteMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    return m_delegate->scrollbarStateForOrientation(orientation);
+}
+
 }
 
 #endif

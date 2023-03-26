@@ -850,7 +850,7 @@ private:
     
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind, DeferredStructureTransitionWatchpointFire* = nullptr);
 
-    enum class ShouldPin { No, Yes };
+    enum class ShouldPin : bool { No, Yes };
     template<ShouldPin, typename Func>
     PropertyOffset add(VM&, PropertyName, unsigned attributes, const Func&);
     PropertyOffset add(VM&, PropertyName, unsigned attributes);

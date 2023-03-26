@@ -225,22 +225,23 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 
 void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
 {
-    CGFloat currentScale = [m_window backingScaleFactor];
-    if (currentScale == newScale)
-        return;
+    if (m_view._overrideDeviceScaleFactor != newScale)
+        m_view._overrideDeviceScaleFactor = newScale;
 
-    if ([m_window respondsToSelector:@selector(_setWindowResolution:)])
-        [m_window _setWindowResolution:newScale];
-    else
-        [m_window _setWindowResolution:newScale displayIfChanged:YES];
-    [m_view _setOverrideDeviceScaleFactor:newScale];
+    CGFloat currentScale = m_window.backingScaleFactor;
+    if (currentScale != newScale) {
+        if ([m_window respondsToSelector:@selector(_setWindowResolution:)])
+            [m_window _setWindowResolution:newScale];
+        else
+            [m_window _setWindowResolution:newScale displayIfChanged:YES];
 
-    // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
-    forceWindowFramesChanged();
+        // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
+        forceWindowFramesChanged();
 
-    // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.
-    NSDictionary *userInfo = @{ NSBackingPropertyOldScaleFactorKey: @(currentScale) };
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:userInfo];
+        // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.
+        NSDictionary *userInfo = @{ NSBackingPropertyOldScaleFactorKey: @(currentScale) };
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:userInfo];
+    }
 }
 
 void PlatformWebView::forceWindowFramesChanged()

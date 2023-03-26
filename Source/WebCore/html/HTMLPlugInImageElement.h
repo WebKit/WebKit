@@ -26,7 +26,7 @@ namespace WebCore {
 
 class HTMLImageLoader;
 
-enum class CreatePlugins { No, Yes };
+enum class CreatePlugins : bool { No, Yes };
 
 // Base class for HTMLEmbedElement and HTMLObjectElement.
 // FIXME: This is the only class that derives from HTMLPlugInElement, so we could merge the two classes.

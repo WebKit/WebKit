@@ -47,9 +47,6 @@ class DocumentTimeline final : public AnimationTimeline
 public:
     static Ref<DocumentTimeline> create(Document&);
     static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);
-    ~DocumentTimeline();
-
-    bool isDocumentTimeline() const final { return true; }
 
     Document* document() const { return m_document.get(); }
 
@@ -65,7 +62,7 @@ public:
 
     void enqueueAnimationEvent(AnimationEventBase&);
     
-    enum class ShouldUpdateAnimationsAndSendEvents : uint8_t { Yes, No };
+    enum class ShouldUpdateAnimationsAndSendEvents : bool { No, Yes };
     ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents();
     void removeReplacedAnimations();
     AnimationEvents prepareForPendingAnimationEventsDispatch();

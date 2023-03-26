@@ -533,7 +533,7 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
     case Object::Type::Int64:
         return adoptNS([[NSNumber alloc] initWithLongLong:static_cast<API::Int64&>(*this).value()]);
     case Object::Type::Data:
-        return API::wrapper(static_cast<API::String&>(*this));
+        return API::wrapper(static_cast<API::Data&>(*this));
     case Object::Type::String:
         return (NSString *)static_cast<API::String&>(*this).string();
     default:

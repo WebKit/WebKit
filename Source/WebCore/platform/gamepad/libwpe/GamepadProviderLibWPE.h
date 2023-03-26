@@ -55,8 +55,7 @@ public:
     void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
 
-    enum class ShouldMakeGamepadsVisible : bool { No,
-        Yes };
+    enum class ShouldMakeGamepadsVisible : bool { No, Yes };
     void scheduleInputNotification(GamepadLibWPE&, ShouldMakeGamepadsVisible);
 
     struct wpe_view_backend* inputView();

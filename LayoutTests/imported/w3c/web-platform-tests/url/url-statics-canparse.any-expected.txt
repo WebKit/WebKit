@@ -1,0 +1,9 @@
+
+PASS URL.canParse(undefined, undefined)
+PASS URL.canParse(a:b, undefined)
+PASS URL.canParse(undefined, a:b)
+PASS URL.canParse(a:/b, undefined)
+PASS URL.canParse(undefined, a:/b)
+PASS URL.canParse(https://test:test, undefined)
+PASS URL.canParse(a, https://b/)
+

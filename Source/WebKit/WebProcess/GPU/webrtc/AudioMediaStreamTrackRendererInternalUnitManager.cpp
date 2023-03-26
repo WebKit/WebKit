@@ -53,7 +53,7 @@ public:
 
     AudioMediaStreamTrackRendererInternalUnitIdentifier identifier() const { return m_identifier; }
 
-    enum class IsClosed { No, Yes };
+    enum class IsClosed : bool { No, Yes };
     void reset(IsClosed);
 
 private:

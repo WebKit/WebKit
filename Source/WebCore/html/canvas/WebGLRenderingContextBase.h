@@ -102,9 +102,6 @@ class OESTextureFloatLinear;
 class OESTextureHalfFloat;
 class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
-#if ENABLE(OFFSCREEN_CANVAS)
-class OffscreenCanvas;
-#endif
 class WebCodecsVideoFrame;
 class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
@@ -139,6 +136,7 @@ class HTMLVideoElement;
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS)
+class OffscreenCanvas;
 using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
 #else
 using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
@@ -326,6 +324,9 @@ public:
     using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>
 #if ENABLE(VIDEO)
         , RefPtr<HTMLVideoElement>
+#endif
+#if ENABLE(OFFSCREEN_CANVAS)
+        , RefPtr<OffscreenCanvas>
 #endif
 #if ENABLE(WEB_CODECS)
         , RefPtr<WebCodecsVideoFrame>
@@ -831,6 +832,9 @@ protected:
 #if ENABLE(VIDEO)
         SourceHTMLVideoElement,
 #endif
+#if ENABLE(OFFSCREEN_CANVAS)
+        SourceOffscreenCanvas,
+#endif
 #if ENABLE(WEB_CODECS)
         SourceWebCodecsVideoFrame,
 #endif
@@ -1003,6 +1007,9 @@ protected:
 #if ENABLE(VIDEO)
     ExceptionOr<bool> validateHTMLVideoElement(const char* functionName, HTMLVideoElement&);
 #endif
+#if ENABLE(OFFSCREEN_CANVAS)
+    ExceptionOr<bool> validateOffscreenCanvas(const char* functionName, OffscreenCanvas&);
+#endif
     ExceptionOr<bool> validateImageBitmap(const char* functionName, ImageBitmap&);
 
     // Helper functions for vertexAttribNf{v}.
@@ -1082,6 +1089,9 @@ private:
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLCanvasElement& source);
 #if ENABLE(VIDEO)
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLVideoElement& source);
+#endif
+#if ENABLE(OFFSCREEN_CANVAS)
+    ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, OffscreenCanvas& source);
 #endif
 #if ENABLE(WEB_CODECS)
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, WebCodecsVideoFrame& source);

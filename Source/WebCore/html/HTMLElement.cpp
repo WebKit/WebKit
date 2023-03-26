@@ -1344,7 +1344,7 @@ ExceptionOr<void> HTMLElement::showPopover()
         document().hideAllPopoversUntil(ancestor.get(), FocusPreviousElement::No, FireEvents::Yes);
 
         if (popoverState() != originalState)
-            return { };
+            return Exception { InvalidStateError, "The value of the popover attribute was changed while hiding the popover."_s };
 
         if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
             return check.releaseException();

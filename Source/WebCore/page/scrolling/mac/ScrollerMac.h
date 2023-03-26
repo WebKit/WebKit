@@ -62,6 +62,8 @@ public:
     FloatPoint convertFromContent(const FloatPoint&) const;
 
     void updateValues();
+    
+    String scrollbarState() const;
 
 private:
     ScrollerPairMac& m_pair;

@@ -44,6 +44,7 @@ namespace Types {
     f(F32, "f32") \
     f(Void, "void") \
     f(Bool, "bool") \
+    f(Sampler, "sampler") \
 
 struct Primitive {
     enum Kind : uint8_t {
@@ -52,6 +53,25 @@ struct Primitive {
 #undef PRIMITIVE_KIND
     };
 
+    Kind kind;
+};
+
+struct Texture {
+    enum class Kind : uint8_t {
+        Texture1d = 1,
+        Texture2d,
+        Texture2dArray,
+        Texture3d,
+        TextureCube,
+        TextureCubeArray,
+        TextureMultisampled2d,
+        TextureStorage1d,
+        TextureStorage2d,
+        TextureStorage2dArray,
+        TextureStorage3d,
+    };
+
+    Type* element;
     Kind kind;
 };
 
@@ -92,7 +112,8 @@ struct Type : public std::variant<
     Types::Array,
     Types::Struct,
     Types::Function,
-    Types::Bottom
+    Types::Bottom,
+    Types::Texture
 > {
     using std::variant<
         Types::Primitive,
@@ -101,7 +122,8 @@ struct Type : public std::variant<
         Types::Array,
         Types::Struct,
         Types::Function,
-        Types::Bottom
+        Types::Bottom,
+        Types::Texture
         >::variant;
     void dump(PrintStream&) const;
     String toString() const;

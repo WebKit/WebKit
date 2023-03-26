@@ -57,6 +57,8 @@ public:
 
 protected:
     CGContextRef ensurePlatformContext();
+    // Returns true if flush happened.
+    bool flushContextDraws();
     IntSize backendSize() const override;
     
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) override;
@@ -84,11 +86,14 @@ protected:
     void prepareForExternalRead();
     void prepareForExternalWrite();
 
+    RetainPtr<CGImageRef> createImage();
+    RetainPtr<CGImageRef> createImageReference();
+
     std::unique_ptr<IOSurface> m_surface;
     RetainPtr<CGContextRef> m_platformContext;
+    const PlatformDisplayID m_displayID;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
-    const PlatformDisplayID m_displayID;
     RefPtr<IOSurfacePool> m_ioSurfacePool;
 };
 

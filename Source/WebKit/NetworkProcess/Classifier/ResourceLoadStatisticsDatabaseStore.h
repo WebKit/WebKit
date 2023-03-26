@@ -204,7 +204,7 @@ private:
     Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() override;
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded() override;
-    enum class AddedRecord { No, Yes };
+    enum class AddedRecord : bool { No, Yes };
     std::pair<AddedRecord, std::optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&) WARN_UNUSED_RETURN;
     bool shouldRemoveAllWebsiteDataFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);

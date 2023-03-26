@@ -1284,7 +1284,7 @@ void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection,
     cacheStorageManager->dereference(connection.uniqueID(), cacheIdentifier);
 }
 
-void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
 {
     auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
@@ -1302,7 +1302,7 @@ void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifie
     cache->removeRecords(WTFMove(request), WTFMove(options), WTFMove(callback));
 }
 
-void NetworkStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void NetworkStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)

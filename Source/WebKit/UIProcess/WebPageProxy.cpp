@@ -3030,45 +3030,52 @@ void WebPageProxy::dispatchWheelEventWithoutScrolling(const WebWheelEvent& event
 }
 #endif
 
-void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
+void WebPageProxy::handleNativeWheelEvent(const NativeWebWheelEvent& nativeWheelEvent)
 {
     if (!hasRunningProcess())
         return;
 
     closeOverlayedViews();
 
+    cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
+
+    if (!wheelEventCoalescer().shouldDispatchEvent(nativeWheelEvent))
+        return;
+
+    auto eventToDispatch = *wheelEventCoalescer().nextEventToDispatch();
+    handleWheelEvent(eventToDispatch);
+}
+
+void WebPageProxy::handleWheelEvent(const WebWheelEvent& wheelEvent)
+{
+    if (!hasRunningProcess())
+        return;
+
     if (drawingArea()->shouldSendWheelEventsToEventDispatcher()) {
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-        // FIXME: We should not have to look this up repeatedly, but it can also change occasionally.
-        if (event.momentumPhase() == WebWheelEvent::PhaseBegan && preferences().momentumScrollingAnimatorEnabled())
-            m_scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(event);
-#endif
-        continueWheelEventHandling(event, { WheelEventProcessingSteps::SynchronousScrolling, false });
+        continueWheelEventHandling(wheelEvent, { WheelEventProcessingSteps::SynchronousScrolling, false });
         return;
     }
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
     if (m_scrollingCoordinatorProxy) {
         auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
-        m_scrollingCoordinatorProxy->handleWheelEvent(event, rubberBandableEdges);
+        m_scrollingCoordinatorProxy->handleWheelEvent(wheelEvent, rubberBandableEdges);
         // continueWheelEventHandling() will get called after the event has been handled by the scrolling thread.
     }
 #endif
 }
 
-void WebPageProxy::continueWheelEventHandling(const NativeWebWheelEvent& wheelEvent, const WheelEventHandlingResult& result)
+void WebPageProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, const WheelEventHandlingResult& result)
 {
+    LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::continueWheelEventHandling - " << result);
+
     if (!result.needsMainThreadProcessing()) {
-        if (!result.wasHandled)
-            wheelEventWasNotHandled(wheelEvent);
+        wheelEventHandlingCompleted(result.wasHandled);
         return;
     }
 
-    if (wheelEventCoalescer().shouldDispatchEvent(wheelEvent, result.steps)) {
-        auto eventAndSteps = wheelEventCoalescer().nextEventToDispatch();
-        auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
-        sendWheelEvent(eventAndSteps->event, eventAndSteps->processingSteps, rubberBandableEdges);
-    }
+    auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
+    sendWheelEvent(wheelEvent, result.steps, rubberBandableEdges);
 }
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, RectEdges<bool> rubberBandableEdges)
@@ -3082,12 +3089,7 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore:
         return;
 
     if (drawingArea()->shouldSendWheelEventsToEventDispatcher()) {
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-        if (event.momentumPhase() == WebWheelEvent::PhaseBegan && m_scrollingAccelerationCurve != m_lastSentScrollingAccelerationCurve) {
-            connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(m_webPageID, m_scrollingAccelerationCurve), 0, { }, Thread::QOS::UserInteractive);
-            m_lastSentScrollingAccelerationCurve = m_scrollingAccelerationCurve;
-        }
-#endif
+        sendWheelEventScrollingAccelerationCurveIfNecessary(event);
         connection->send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
     } else
         send(Messages::WebPage::HandleWheelEvent(event, processingSteps));
@@ -3095,6 +3097,66 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore:
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
     m_process->isResponsiveWithLazyStop();
+}
+
+void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
+{
+    auto oldestProcessedEvent = wheelEventCoalescer().takeOldestEventBeingProcessed();
+
+    LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::wheelEventHandlingCompleted - taking " << platform(oldestProcessedEvent) << " handled " << wasHandled);
+
+    if (!wasHandled) {
+        m_uiClient->didNotHandleWheelEvent(this, oldestProcessedEvent);
+        pageClient().wheelEventWasNotHandledByWebCore(oldestProcessedEvent);
+    }
+
+    if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch()) {
+        handleWheelEvent(*eventToSend);
+        return;
+    }
+    
+    if (auto* automationSession = process().processPool().automationSession())
+        automationSession->wheelEventsFlushedForPage(*this);
+}
+
+void WebPageProxy::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
+{
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (m_scrollingCoordinatorProxy) {
+        m_scrollingCoordinatorProxy->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
+        return;
+    }
+
+    ASSERT(drawingArea()->shouldSendWheelEventsToEventDispatcher());
+
+    if (nativeWheelEvent.momentumPhase() != WebWheelEvent::PhaseBegan)
+        return;
+
+    if (!preferences().momentumScrollingAnimatorEnabled())
+        return;
+
+    // FIXME: We should not have to fetch the curve repeatedly, but it can also change occasionally.
+    m_scrollingAccelerationCurve = ScrollingAccelerationCurve::fromNativeWheelEvent(nativeWheelEvent);
+#endif
+}
+
+void WebPageProxy::sendWheelEventScrollingAccelerationCurveIfNecessary(const WebWheelEvent& event)
+{
+    ASSERT(drawingArea()->shouldSendWheelEventsToEventDispatcher());
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (event.momentumPhase() != WebWheelEvent::PhaseBegan)
+        return;
+        
+    if (m_scrollingAccelerationCurve == m_lastSentScrollingAccelerationCurve)
+        return;
+
+    auto* connection = messageSenderConnection();
+    if (!connection)
+        return;
+
+    connection->send(Messages::EventDispatcher::SetScrollingAccelerationCurve(m_webPageID, m_scrollingAccelerationCurve), 0, { }, Thread::QOS::UserInteractive);
+    m_lastSentScrollingAccelerationCurve = m_scrollingAccelerationCurve;
+#endif
 }
 
 #if HAVE(CVDISPLAYLINK)
@@ -3121,12 +3183,6 @@ void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 #if HAVE(CVDISPLAYLINK)
     updateDisplayLinkFrequency();
 #endif
-}
-
-void WebPageProxy::wheelEventWasNotHandled(const NativeWebWheelEvent& event)
-{
-    m_uiClient->didNotHandleWheelEvent(this, event);
-    pageClient().wheelEventWasNotHandledByWebCore(event);
 }
 
 WebWheelEventCoalescer& WebPageProxy::wheelEventCoalescer()
@@ -7906,16 +7962,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
 
     case WebEventType::Wheel: {
         MESSAGE_CHECK(m_process, wheelEventCoalescer().hasEventsBeingProcessed());
-        auto oldestProcessedEvent = wheelEventCoalescer().takeOldestEventBeingProcessed();
-
-        // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
-        if (!handled)
-            wheelEventWasNotHandled(oldestProcessedEvent);
-
-        if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch())
-            sendWheelEvent(eventToSend->event, eventToSend->processingSteps, rubberBandableEdgesRespectingHistorySwipe());
-        else if (auto* automationSession = process().processPool().automationSession())
-            automationSession->wheelEventsFlushedForPage(*this);
+        wheelEventHandlingCompleted(handled);
         break;
     }
 
@@ -12004,6 +12051,17 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatPoint& scrollPositio
         return;
 
     m_scrollingCoordinatorProxy->viewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale);
+#endif
+}
+
+String WebPageProxy::scrollbarStateForScrollingNodeID(int scrollingNodeID, bool isVertical)
+{
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    if (!m_scrollingCoordinatorProxy)
+        return ""_s;
+    return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
+#else
+    return ""_s;
 #endif
 }
 

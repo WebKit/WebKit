@@ -99,7 +99,7 @@ static ExceptionOr<void> checkAndCanonicalizeAmount(PaymentCurrencyAmount& amoun
     return { };
 }
 
-enum class NegativeAmountAllowed { Yes, No };
+enum class NegativeAmountAllowed : bool { No, Yes };
 static ExceptionOr<void> checkAndCanonicalizePaymentItem(PaymentItem& item, NegativeAmountAllowed negativeAmountAllowed)
 {
     auto exception = checkAndCanonicalizeAmount(item.amount);

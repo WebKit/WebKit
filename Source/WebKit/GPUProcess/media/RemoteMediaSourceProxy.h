@@ -83,6 +83,8 @@ private:
     void addSourceBuffer(const WebCore::ContentType&, AddSourceBufferCallback&&);
     void durationChanged(const MediaTime&);
     void bufferedChanged(WebCore::PlatformTimeRanges&&);
+    void markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus);
+    void unmarkEndOfStream();
     void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setIsSeeking(bool);
     void waitForSeekCompleted();

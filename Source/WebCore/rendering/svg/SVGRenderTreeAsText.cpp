@@ -412,10 +412,7 @@ static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& tex
     }
 }
 
-enum class WriteIndentOrNot {
-    No,
-    Yes
-};
+enum class WriteIndentOrNot : bool { No, Yes };
 
 static void writeStandardPrefix(TextStream& ts, const RenderObject& object, OptionSet<RenderAsTextFlag> behavior, WriteIndentOrNot writeIndent = WriteIndentOrNot::Yes)
 {

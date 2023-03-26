@@ -48,6 +48,7 @@ using namespace Types;
 // Vector: size in the least significant byte.
 // Matrix: rows in byte 1 and columns in byte 2
 // Array: 0 for dynamic array or 32-bit size in the upper 32-bits
+// Texture: kind << 16
 struct VectorKey {
     Type* elementType;
     uint8_t size;
@@ -68,6 +69,13 @@ struct ArrayKey {
     std::optional<unsigned> size;
 
     uint64_t extra() const { return size.has_value() ? static_cast<uint64_t>(*size) << 32 : 0; }
+};
+
+struct TextureKey {
+    Type* elementType;
+    Texture::Kind kind;
+
+    uint64_t extra() const { return static_cast<uint64_t>(kind) << 16; }
 };
 
 template<typename Key>
@@ -97,6 +105,7 @@ TypeStore::TypeStore()
     m_i32 = allocateType<Primitive>(Primitive::I32);
     m_u32 = allocateType<Primitive>(Primitive::U32);
     m_f32 = allocateType<Primitive>(Primitive::F32);
+    m_sampler = allocateType<Primitive>(Primitive::Sampler);
 
     allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec2, 2);
     allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec3, 3);
@@ -110,6 +119,18 @@ TypeStore::TypeStore()
     allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x2, 4, 2);
     allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x3, 4, 3);
     allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x4, 4, 4);
+
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture1d, Texture::Kind::Texture1d);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture2d, Texture::Kind::Texture2d);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture2dArray, Texture::Kind::Texture2dArray);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture3d, Texture::Kind::Texture3d);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureCube, Texture::Kind::TextureCube);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureCubeArray, Texture::Kind::TextureCubeArray);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureMultisampled2d, Texture::Kind::TextureMultisampled2d);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage1d, Texture::Kind::TextureStorage1d);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage2d, Texture::Kind::TextureStorage2d);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage2dArray, Texture::Kind::TextureStorage2dArray);
+    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage3d, Texture::Kind::TextureStorage3d);
 }
 
 Type* TypeStore::structType(AST::Structure& structure)
@@ -152,6 +173,17 @@ Type* TypeStore::matrixType(Type* elementType, uint8_t columns, uint8_t rows)
     if (type)
         return type;
     type = allocateType<Matrix>(elementType, columns, rows);
+    m_cache.insert(key, type);
+    return type;
+}
+
+Type* TypeStore::textureType(Type* elementType, Texture::Kind kind)
+{
+    TextureKey key { elementType, kind };
+    Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Texture>(elementType, kind);
     m_cache.insert(key, type);
     return type;
 }

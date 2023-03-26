@@ -76,7 +76,6 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #endif
-#include "GLContextEGL.h"
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #endif
@@ -231,7 +230,7 @@ PlatformDisplay::~PlatformDisplay()
 GLContext* PlatformDisplay::sharingGLContext()
 {
     if (!m_sharingGLContext)
-        m_sharingGLContext = GLContext::createSharingContext(*this);
+        m_sharingGLContext = GLContext::createSharing(*this);
     return m_sharingGLContext.get();
 }
 
@@ -277,14 +276,14 @@ void PlatformDisplay::initializeEGLDisplay()
     if (m_eglDisplay == EGL_NO_DISPLAY) {
         m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
         if (m_eglDisplay == EGL_NO_DISPLAY) {
-            WTFLogAlways("Cannot get default EGL display: %s\n", GLContextEGL::lastErrorString());
+            WTFLogAlways("Cannot get default EGL display: %s\n", GLContext::lastErrorString());
             return;
         }
     }
 
     EGLint majorVersion, minorVersion;
     if (eglInitialize(m_eglDisplay, &majorVersion, &minorVersion) == EGL_FALSE) {
-        WTFLogAlways("EGLDisplay Initialization failed: %s\n", GLContextEGL::lastErrorString());
+        WTFLogAlways("EGLDisplay Initialization failed: %s\n", GLContext::lastErrorString());
         terminateEGLDisplay();
         return;
     }

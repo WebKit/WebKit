@@ -102,14 +102,13 @@ void OpenXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginD
         RETURN_IF_FAILED(result, "xrGetOpenGLGraphicsRequirementsKHR", m_instance);
 
         m_graphicsBinding = createStructure<XrGraphicsBindingEGLMNDX, XR_TYPE_GRAPHICS_BINDING_EGL_MNDX>();
-        m_egl = GLContextEGL::createSharingContext(PlatformDisplay::sharedDisplay());
+        m_egl = GLContext::createSharing(PlatformDisplay::sharedDisplay());
         if (!m_egl) {
             LOG(XR, "Failed to create EGL context");
             return;
         }
 
-        auto& context = static_cast<GLContext&>(*m_egl);
-        context.makeContextCurrent();
+        m_egl->makeContextCurrent();
 
         GraphicsContextGLAttributes attributes;
         attributes.depth = false;
@@ -123,7 +122,7 @@ void OpenXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginD
         }
 
         m_graphicsBinding.display = PlatformDisplay::sharedDisplay().eglDisplay();
-        m_graphicsBinding.context = context.platformContext();
+        m_graphicsBinding.context = m_egl->platformContext();
         m_graphicsBinding.config = m_egl->config();
         m_graphicsBinding.getProcAddress = m_extensions.methods().getProcAddressFunc;
 

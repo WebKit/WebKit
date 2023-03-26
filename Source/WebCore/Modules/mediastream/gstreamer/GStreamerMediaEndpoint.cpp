@@ -322,7 +322,7 @@ static GstWebRTCSignalingState fetchSignalingState(GstElement* webrtcBin)
     return state;
 }
 
-enum class GatherSignalingState { No, Yes };
+enum class GatherSignalingState : bool { No, Yes };
 static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromWebRTCBin(GstElement* webrtcBin, GatherSignalingState gatherSignalingState = GatherSignalingState::No)
 {
     std::optional<RTCSdpType> currentLocalDescriptionSdpType, pendingLocalDescriptionSdpType, currentRemoteDescriptionSdpType, pendingRemoteDescriptionSdpType;

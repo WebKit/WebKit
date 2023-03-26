@@ -165,8 +165,13 @@ void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, co
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         downloadProxy.setDestinationFilename(destination);
-        if (auto* controller = systemPreviewController(downloadProxy))
-            controller->setDestinationURL(URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename()));
+        if (auto* controller = systemPreviewController(downloadProxy)) {
+            auto destinationURL = URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
+            auto& downloadURL = downloadProxy.request().url();
+            if (!destinationURL.hasFragmentIdentifier() && downloadURL.hasFragmentIdentifier())
+                destinationURL.setFragmentIdentifier(downloadURL.fragmentIdentifier());
+            controller->setDestinationURL(destinationURL);
+        }
         return;
     }
 #endif
@@ -227,9 +232,10 @@ void LegacyDownloadClient::didFinish(DownloadProxy& downloadProxy)
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* controller = systemPreviewController(downloadProxy)) {
-            auto destinationURL = WTF::URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
-            if (!destinationURL.hasFragmentIdentifier())
-                destinationURL.setFragmentIdentifier(downloadProxy.request().url().fragmentIdentifier());
+            auto destinationURL = URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
+            auto& downloadURL = downloadProxy.request().url();
+            if (!destinationURL.hasFragmentIdentifier() && downloadURL.hasFragmentIdentifier())
+                destinationURL.setFragmentIdentifier(downloadURL.fragmentIdentifier());
             controller->finish(destinationURL);
         }
         releaseActivityTokenIfNecessary(downloadProxy);

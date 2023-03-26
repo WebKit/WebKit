@@ -191,8 +191,10 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
 
-    if (auto* model = _fullscreenInterface ? _fullscreenInterface->videoFullscreenModel() : nullptr)
-        model->setVideoLayerFrame(_targetVideoFrame);
+    if (auto* model = _fullscreenInterface ? _fullscreenInterface->videoFullscreenModel() : nullptr) {
+        FloatRect targetVideoBounds { { }, _targetVideoFrame.size() };
+        model->setVideoLayerFrame(targetVideoBounds);
+    }
 
     _previousVideoGravity = _videoGravity;
 

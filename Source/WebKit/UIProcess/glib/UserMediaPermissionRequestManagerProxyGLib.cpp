@@ -38,15 +38,9 @@ void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestCon
     });
 }
 
-void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool /* revealIdsAndLabels */, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
+void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
 {
-    // FIXME: Set capabilities if revealIdsAndLabels is true.
-    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(), [completionHandler = WTFMove(completionHandler)](auto&& devices) mutable {
-        auto deviceWithCapabilities = map(devices, [](auto&& device) -> CaptureDeviceWithCapabilities {
-            return { WTFMove(device), { } };
-        });
-        completionHandler(WTFMove(deviceWithCapabilities));
-    });
+    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(revealIdsAndLabels), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

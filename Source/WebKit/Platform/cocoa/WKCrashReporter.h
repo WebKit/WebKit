@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <WebKit/WKBase.h>
 
 namespace WebKit {
@@ -32,3 +34,5 @@ namespace WebKit {
 WK_EXPORT void logAndSetCrashLogMessage(const char*);
 
 }
+
+#endif

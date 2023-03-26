@@ -95,7 +95,7 @@ private:
     template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
 
     void failure();
-    enum class ReportSyntaxViolation { No, Yes };
+    enum class ReportSyntaxViolation : bool { No, Yes };
     template<typename CharacterType, ReportSyntaxViolation reportSyntaxViolation = ReportSyntaxViolation::Yes>
     void advance(CodePointIterator<CharacterType>& iterator) { advance<CharacterType, reportSyntaxViolation>(iterator, iterator); }
     template<typename CharacterType, ReportSyntaxViolation = ReportSyntaxViolation::Yes>

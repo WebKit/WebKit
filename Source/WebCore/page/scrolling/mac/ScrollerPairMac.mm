@@ -297,6 +297,11 @@ void ScrollerPairMac::releaseReferencesToScrollerImpsOnTheMainThread()
     }
 }
 
+String ScrollerPairMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    return orientation == ScrollbarOrientation::Vertical ? m_verticalScroller.scrollbarState() : m_horizontalScroller.scrollbarState();
+}
+
 }
 
 #endif

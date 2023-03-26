@@ -68,7 +68,7 @@ const uint32_t kSsrc3 = 0x3333;
 const uint32_t kSsrc4 = 0x4444;
 const int kAudioPts[] = {0, 8};
 const int kVideoPts[] = {97, 99};
-enum class NetworkIsWorker { Yes, No };
+enum class NetworkIsWorker : bool { No, Yes };
 
 }  // namespace
 

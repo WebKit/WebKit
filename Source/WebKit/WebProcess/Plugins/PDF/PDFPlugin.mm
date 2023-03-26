@@ -448,7 +448,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // so dispatch to the main runloop to allow safe access to main-thread-only timers downstream of
     // notifyScrollPositionChanged (avoiding a crash). The timer causing the crash at the time of
     // this change was ScrollbarsControllerMac::m_sendContentAreaScrolledTimer.
-    callOnMainRunLoop([protectedPlugin = Ref { *_pdfPlugin }, newPosition] {
+    //
+    // This must be run on the main run loop synchronously. If it were dispatched asynchronously,
+    // updates to the scroll position could happen between the time the request is dispatched and when
+    // it is serviced, meaning we would overwrite the scroll position to a stale value.
+    callOnMainRunLoopAndWait([protectedPlugin = Ref { *_pdfPlugin }, newPosition] {
         protectedPlugin->notifyScrollPositionChanged(WebCore::IntPoint(newPosition));
     });
 }
@@ -1357,11 +1361,13 @@ void PDFPlugin::updateScrollbars()
     
     if (m_verticalScrollbarLayer) {
         m_verticalScrollbarLayer.get().frame = verticalScrollbar()->frameRect();
+        [m_verticalScrollbarLayer setContents:nil];
         [m_verticalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_horizontalScrollbarLayer) {
         m_horizontalScrollbarLayer.get().frame = horizontalScrollbar()->frameRect();
+        [m_horizontalScrollbarLayer setContents:nil];
         [m_horizontalScrollbarLayer setNeedsDisplay];
     }
     

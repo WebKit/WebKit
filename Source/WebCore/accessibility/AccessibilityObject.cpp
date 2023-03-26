@@ -2508,8 +2508,11 @@ static void initializeRoleMap()
         gAriaRoleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
         gAriaReverseRoleMap->set(static_cast<int>(roles[i].webcoreRole), roles[i].ariaRole);
     }
+
+    // Create specific synonyms for the computedRole which is used in WPT tests and the accessibility inspector.
     gAriaReverseRoleMap->set(static_cast<int>(AccessibilityRole::Image), "image"_s);
     gAriaReverseRoleMap->set(static_cast<int>(AccessibilityRole::TextArea), "textbox"_s);
+    gAriaReverseRoleMap->set(static_cast<int>(AccessibilityRole::Presentational), "none"_s);
 }
 
 static ARIARoleMap& ariaRoleMap()

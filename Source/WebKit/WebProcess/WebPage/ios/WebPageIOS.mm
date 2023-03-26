@@ -4376,6 +4376,8 @@ void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const
     auto margin = printInfo.margin;
     computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
 
+    RELEASE_LOG(Printing, "Computing pages for printing. Page rects size = %zu", pageRects.size());
+
     ASSERT(pageRects.size() >= 1);
     reply(pageRects.size());
 }
@@ -4386,6 +4388,8 @@ void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& pri
     double totalScaleFactor;
     auto margin = printInfo.margin;
     computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
+
+    RELEASE_LOG(Printing, "Drawing to image. Page rects size = %zu", pageRects.size());
 
     ASSERT(pageRects.size() >= 1);
 
@@ -4766,7 +4770,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         if (!range || range->collapsed())
             return { };
         // FIXME: This should return editing-offset-compatible attributed strings if that option is requested.
-        return WebCore::AttributedString::fromNSAttributedStringAndDocumentAttributes(adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range, TextIteratorBehavior::EmitsOriginalText)]), nil);
+        return { adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range, TextIteratorBehavior::EmitsOriginalText)]), nil };
     };
 
     DocumentEditingContext context;

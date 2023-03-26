@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class ShouldParseLegacyKeywords { No, Yes };
+enum class ShouldParseLegacyKeywords : bool { No, Yes };
 
 static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy, ShouldParseLegacyKeywords shouldParseLegacyKeywords)
 {

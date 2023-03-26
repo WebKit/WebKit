@@ -790,7 +790,7 @@ private:
     void updateNameForTreeScope(TreeScope&, const AtomString& oldName, const AtomString& newName);
     void updateNameForDocument(HTMLDocument&, const AtomString& oldName, const AtomString& newName);
 
-    enum class NotifyObservers { No, Yes };
+    enum class NotifyObservers : bool { No, Yes };
     void updateId(const AtomString& oldId, const AtomString& newId, NotifyObservers = NotifyObservers::Yes);
     void updateIdForTreeScope(TreeScope&, const AtomString& oldId, const AtomString& newId, NotifyObservers = NotifyObservers::Yes);
 

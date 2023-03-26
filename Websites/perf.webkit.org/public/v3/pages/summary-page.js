@@ -137,7 +137,7 @@ class SummaryPage extends PageWithHeading {
     {
         function mapAndSortByName(platforms)
         {
-            return platforms && platforms.map(function (platform) { return platform.name(); }).sort();
+            return platforms && platforms.map(function (platform) { return platform.label(); }).sort();
         }
 
         function pluralizeIfNeeded(singularWord, platforms) { return singularWord + (platforms.length > 1 ? 's' : ''); }

@@ -51,7 +51,7 @@ private:
     void viewWillStartLiveResize() override;
     void viewWillEndLiveResize() override;
     void viewSizeDidChange() override;
-
+    String scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;
 };
 
 }

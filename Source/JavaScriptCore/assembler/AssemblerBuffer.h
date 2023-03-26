@@ -204,10 +204,7 @@ namespace JSC {
     };
 
 #if CPU(ARM64E)
-    enum class ShouldSign {
-        Yes,
-        No
-    };
+    enum class ShouldSign : bool { No, Yes };
     template <ShouldSign shouldSign>
     class ARM64EHash {
         WTF_MAKE_NONCOPYABLE(ARM64EHash);

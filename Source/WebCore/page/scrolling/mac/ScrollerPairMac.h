@@ -86,6 +86,8 @@ public:
     // Only for use by WebScrollerImpPairDelegateMac. Do not use elsewhere!
     ScrollerMac& verticalScroller() { return m_verticalScroller; }
     ScrollerMac& horizontalScroller() { return m_horizontalScroller; }
+    
+    String scrollbarStateForOrientation(ScrollbarOrientation) const;
 
 private:
     NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }

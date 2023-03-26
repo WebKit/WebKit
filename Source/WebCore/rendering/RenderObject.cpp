@@ -1720,7 +1720,7 @@ void RenderObject::willBeDestroyed()
     removeRareData();
 }
 
-enum class IsRemoval : uint8_t { Yes, No };
+enum class IsRemoval : bool { No, Yes };
 static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer, IsRemoval isRemoval)
 {
     auto* container = LayoutIntegration::LineLayout::blockContainer(renderer);

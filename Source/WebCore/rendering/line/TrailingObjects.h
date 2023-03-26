@@ -56,7 +56,7 @@ public:
             m_boxes.append(box);
     }
 
-    enum class CollapseFirstSpace { No, Yes };
+    enum class CollapseFirstSpace : bool { No, Yes };
     void updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState&, const LegacyInlineIterator& lBreak, CollapseFirstSpace);
 
 private:

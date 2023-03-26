@@ -29,10 +29,19 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 INFOPLIST_FILE = Info.plist;
 
 DEFINES_MODULE = YES;
+CLANG_MODULES_ENABLE_VERIFIER_TOOL = $(CLANG_MODULES_ENABLE_VERIFIER_TOOL_$(USE_INTERNAL_SDK));
+CLANG_MODULES_ENABLE_VERIFIER_TOOL_YES = $(WK_NOT_$(WK_XCODE_VERSION_BEFORE_14_3_$(XCODE_VERSION_MAJOR)));
+
 MODULEMAP_FILE = $(MODULEMAP_FILE_$(WK_COCOA_TOUCH)_$(WK_IS_CATALYST));
 MODULEMAP_FILE_cocoatouch_NO = Modules/iOS.modulemap;
 MODULEMAP_FILE_cocoatouch_YES = Modules/MacCatalyst.modulemap;
 MODULEMAP_FILE__NO = Modules/OSX.modulemap;
+// The private module map needs to be unifdef'ed, so the standard MODULEMAP_PRIVATE_FILE can't
+// be used. The "Derived Sources" target does the unifdef and the "Copy Private Module Map" Copy
+// Files build phase copies them into the framework.
+WK_MODULEMAP_PRIVATE_FILE = $(WK_MODULEMAP_PRIVATE_FILE_$(WK_COCOA_TOUCH));
+WK_MODULEMAP_PRIVATE_FILE_cocoatouch = Modules/iOS_Private.modulemap;
+WK_MODULEMAP_PRIVATE_FILE_ = Modules/OSX_Private.modulemap;
 
 INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR);
 
@@ -60,10 +69,6 @@ WK_APPLE_PUSH_SERVICE_LDFLAGS_iphonesimulator = $(WK_APPLE_PUSH_SERVICE_LDFLAGS$
 WK_APPLE_PUSH_SERVICE_LDFLAGS_IOS_SINCE_16 = -framework ApplePushService;
 WK_APPLE_PUSH_SERVICE_LDFLAGS_macosx = $(WK_APPLE_PUSH_SERVICE_LDFLAGS$(WK_MACOS_1300));
 WK_APPLE_PUSH_SERVICE_LDFLAGS_MACOS_SINCE_1300 = -framework ApplePushService;
-
-WK_ARKIT_LDFLAGS = $(WK_ARKIT_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_ARKIT_LDFLAGS_iphoneos = -weak_framework ARKit;
-WK_ARKIT_LDFLAGS_iphonesimulator = -weak_framework ARKit;
 
 WK_BACKBOARD_SERVICES_LDFLAGS = $(WK_BACKBOARD_SERVICES_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_BACKBOARD_SERVICES_LDFLAGS_iphoneos = -framework BackBoardServices;
@@ -177,7 +182,7 @@ WK_FRONTBOARDSERVICES_LDFLAGS_iphonesimulator = $(WK_FRONTBOARDSERVICES_LDFLAGS_
 WK_POWERLOG_LDFLAGS = $(WK_POWERLOG_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_POWERLOG_LDFLAGS_macosx = -weak_framework PowerLog;
 
-FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework IOSurface -framework WebKitLegacy -lnetwork -framework Metal $(WK_ACCESSIBILITY_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPLE_PUSH_SERVICE_LDFLAGS) $(WK_ARKIT_LDFLAGS) $(WK_BACKBOARD_SERVICES_LDFLAGS) $(WK_RUNNINGBOARD_SERVICES_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CONTACTS_LDFLAGS) $(WK_CORE_PREDICTION_LDFLAGS) $(WK_CORE_SERVICES_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_LIBNETWORKEXTENSION_LDFLAGS) $(WK_LIBSANDBOX_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_PROTOTYPE_TOOLS_LDFLAGS) $(WK_SAFE_BROWSING_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_UIKIT_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(WK_COORDINATOR_LDFLAGS) $(WK_INSTALL_COORDINATION_LDFLAGS) $(WK_APP_STORE_DAEMON_LDFLAGS) $(WK_POWERLOG_LDFLAGS) $(WK_FRONTBOARDSERVICES_LDFLAGS);
+FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework IOSurface -framework WebKitLegacy -lnetwork -framework Metal $(WK_ACCESSIBILITY_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPLE_PUSH_SERVICE_LDFLAGS) $(WK_BACKBOARD_SERVICES_LDFLAGS) $(WK_RUNNINGBOARD_SERVICES_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CONTACTS_LDFLAGS) $(WK_CORE_PREDICTION_LDFLAGS) $(WK_CORE_SERVICES_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_LIBNETWORKEXTENSION_LDFLAGS) $(WK_LIBSANDBOX_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_PROTOTYPE_TOOLS_LDFLAGS) $(WK_SAFE_BROWSING_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_UIKIT_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(WK_COORDINATOR_LDFLAGS) $(WK_INSTALL_COORDINATION_LDFLAGS) $(WK_APP_STORE_DAEMON_LDFLAGS) $(WK_POWERLOG_LDFLAGS) $(WK_FRONTBOARDSERVICES_LDFLAGS);
 
 // Prevent C++ standard library basic_stringstream, operator new, delete and their related exception types from being exported as weak symbols.
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol -Wl,__ZTVNSt3__117bad_function_callE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE;
@@ -230,6 +235,7 @@ WK_MAC_PUBLIC_IOS_PRIVATE_HEADERS_DIR_cocoatouch = $(PRIVATE_HEADERS_FOLDER_PATH
 EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.webpushd.mac.sb com.apple.WebProcess.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
+INSTALLHDRS_COPY_PHASE = YES;
 APPLY_RULES_IN_COPY_HEADERS = $(WK_USE_NEW_BUILD_SYSTEM);
 
 WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED = YES;

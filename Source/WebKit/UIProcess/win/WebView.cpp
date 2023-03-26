@@ -379,7 +379,7 @@ LRESULT WebView::onWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         return 0;
     }
 
-    m_page->handleWheelEvent(wheelEvent);
+    m_page->handleNativeWheelEvent(wheelEvent);
 
     handled = true;
     return 0;

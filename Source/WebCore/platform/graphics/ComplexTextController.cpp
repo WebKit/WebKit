@@ -359,6 +359,9 @@ void ComplexTextController::collectComplexTextRuns()
     if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
         return;
 
+    // We don't perform font fallback on the capitalized characters when small caps is synthesized.
+    // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
+    // would need to be updated accordingly too.
     nextFont = m_font.fontForCombiningCharacterSequence(baseOfString, currentIndex);
 
     bool isSmallCaps = false;

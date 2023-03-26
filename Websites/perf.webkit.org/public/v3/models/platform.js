@@ -4,6 +4,7 @@ class Platform extends LabeledObject {
     constructor(id, object)
     {
         super(id, object);
+        this._label = object.label;
         this._metrics = object.metrics;
         this._lastModifiedByMetric = object.lastModifiedByMetric;
         this._isHidden = object.hidden;
@@ -23,6 +24,11 @@ class Platform extends LabeledObject {
     {
         var map = this.namedStaticMap('name');
         return map ? map[name] : null;
+    }
+
+    label()
+    {
+        return this._label || this.name();
     }
 
     isInSameGroupAs(other)

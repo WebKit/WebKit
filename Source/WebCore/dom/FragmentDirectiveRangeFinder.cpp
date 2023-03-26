@@ -51,7 +51,7 @@
 namespace WebCore {
 namespace FragmentDirectiveRangeFinder {
 
-enum class BoundaryPointIsAtEnd { No, Yes };
+enum class BoundaryPointIsAtEnd : bool { No, Yes };
 enum class WordBounded : bool { No, Yes };
 
 // https://wicg.github.io/scroll-to-text-fragment/#search-invisible

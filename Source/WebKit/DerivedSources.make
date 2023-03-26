@@ -325,13 +325,22 @@ GENERATE_MESSAGE_RECEIVER_SCRIPTS = \
     $(WebKit2)/DerivedSources.make \
 #
 
+ifneq ($(SDKROOT),)
+	SDK_FLAGS=-isysroot $(SDKROOT)
+endif
+
+WK_CURRENT_ARCH=$(word 1, $(ARCHS))
+TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
+
 FRAMEWORK_FLAGS := $(addprefix -F, $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS))
 HEADER_FLAGS := $(addprefix -I, $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS))
 EXTERNAL_FLAGS := -DRELEASE_WITHOUT_OPTIMIZATIONS $(addprefix -D, $(GCC_PREPROCESSOR_DEFINITIONS))
 
 platform_h_compiler_command = $(CC) -std=c++2a -x c++ $(1) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(EXTERNAL_FLAGS) -include "wtf/Platform.h" /dev/null
 
-FEATURE_AND_PLATFORM_DEFINES := $(shell $(call platform_h_compiler_command,-E -P -dM) | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
+FEATURE_AND_PLATFORM_FLAGS := $(shell $(call platform_h_compiler_command,-E -P -dM) | $(PERL) -ne "print if s/\#define ((?:HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) (1|0)/\1=\2/")
+FEATURE_AND_PLATFORM_DEFINES := $(patsubst %=1, %, $(filter %=1, $(FEATURE_AND_PLATFORM_FLAGS)))
+FEATURE_AND_PLATFORM_UNDEFINES := $(patsubst %=0, %, $(filter %=0, $(FEATURE_AND_PLATFORM_FLAGS)))
 
 PLATFORM_HEADER_DIR := $(realpath $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH))
 PLATFORM_HEADER_DEPENDENCIES := $(filter $(PLATFORM_HEADER_DIR)/%,$(realpath $(shell $(call platform_h_compiler_command,-M) | $(PERL) -e "local \$$/; my (\$$target, \$$deps) = split(/:/, <>); print split(/\\\\/, \$$deps);")))
@@ -353,13 +362,6 @@ $(GENERATED_MESSAGES_FILES_AS_PATTERNS) : $(MESSAGES_IN_FILES) $(GENERATE_MESSAG
 	$(PYTHON) $(GENERATE_MESSAGE_RECEIVER_SCRIPT) $(WebKit2) $(MESSAGE_RECEIVERS)
 
 TEXT_PREPROCESSOR_FLAGS=-E -P -w
-
-ifneq ($(SDKROOT),)
-	SDK_FLAGS=-isysroot $(SDKROOT)
-endif
-
-WK_CURRENT_ARCH=$(word 1, $(ARCHS))
-TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
 
 ifeq ($(USE_SYSTEM_CONTENT_PATH),YES)
 	SANDBOX_DEFINES = -DUSE_SYSTEM_CONTENT_PATH=1 -DSYSTEM_CONTENT_PATH=$(SYSTEM_CONTENT_PATH)
@@ -640,3 +642,8 @@ JS%.h JS%.mm : %.idl $(BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PL
 	$(PERL) -I $(WebCorePrivateHeaders) -I $(EXTENSIONS_SCRIPTS_DIR) $(WebCorePrivateHeaders)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --include $(EXTENSIONS_INTERFACES_DIR) --outputDir . --generator Extensions --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
 
 all : $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm)
+
+module.private.modulemap : $(WK_MODULEMAP_PRIVATE_FILE)
+	unifdef $(addprefix -D, $(FEATURE_AND_PLATFORM_DEFINES)) $(addprefix -U, $(FEATURE_AND_PLATFORM_UNDEFINES)) -o $@ $< || [ $$? -eq 1 ]
+
+all : module.private.modulemap

@@ -92,7 +92,7 @@ public:
     void resetScope() { m_scope = GestureScope::All; }
 
     // Expand the following methods if more propagation sources are added later.
-    enum class IsPropagatedFromFetch { Yes, No };
+    enum class IsPropagatedFromFetch : bool { No, Yes };
     void setIsPropagatedFromFetch(IsPropagatedFromFetch is) { m_isPropagatedFromFetch = is; }
     void resetIsPropagatedFromFetch() { m_isPropagatedFromFetch = IsPropagatedFromFetch::No; }
     bool isPropagatedFromFetch() const { return m_isPropagatedFromFetch == IsPropagatedFromFetch::Yes; }

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -221,9 +221,11 @@ void MediaPlayerPrivateRemote::play()
 void MediaPlayerPrivateRemote::pause()
 {
     m_cachedState.paused = true;
-    auto now = MonotonicTime::now();
-    m_cachedMediaTime += MediaTime::createWithDouble(m_rate * (now - m_cachedMediaTimeQueryTime).value());
-    m_cachedMediaTimeQueryTime = now;
+    if (m_timeIsProgressing) {
+        auto now = MonotonicTime::now();
+        m_cachedMediaTime += MediaTime::createWithDouble(m_rate * (now - m_cachedMediaTimeQueryTime).value());
+        m_cachedMediaTimeQueryTime = now;
+    }
     connection().send(Messages::RemoteMediaPlayerProxy::Pause(), m_id);
 }
 
@@ -415,16 +417,16 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 
 void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime, bool timeIsProgressing)
 {
-    auto oldCachedTime = m_cachedMediaTime;
     auto reverseJump = mediaTime < m_cachedMediaTime;
     if (reverseJump)
         ALWAYS_LOG(LOGIDENTIFIER, "time jumped backwards, was ", m_cachedMediaTime, ", is now ", mediaTime);
 
-    m_timeIsProgressing = timeIsProgressing;
-    m_cachedMediaTime = mediaTime;
+    std::swap(timeIsProgressing, m_timeIsProgressing);
+    auto oldCachedTime = std::exchange(m_cachedMediaTime, mediaTime);
     m_cachedMediaTimeQueryTime = queryTime;
 
-    if (reverseJump || (!oldCachedTime && !!mediaTime)) {
+    if (reverseJump
+        || (timeIsProgressing != m_timeIsProgressing && m_cachedMediaTime != oldCachedTime && !m_cachedState.paused)) {
         if (RefPtr player = m_player.get())
             player->timeChanged();
     }

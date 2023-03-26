@@ -117,6 +117,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (layer.opacity != 1.0)
         ts.dumpProperty("layer opacity", makeString(layer.opacity));
 
+    if (layer.cornerRadius != 0.0)
+        ts.dumpProperty("layer cornerRadius", makeString(layer.cornerRadius));
+    
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "sublayers";
@@ -392,6 +395,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (BOOL)_hasSleepDisabler
 {
     return _page && _page->process().hasSleepDisabler();
+}
+
+- (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical
+{
+    if (_page)
+        return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
+    return @"";
 }
 
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus

@@ -68,7 +68,7 @@ enum class GammaAndColorProfileOption {
     Ignored
 };
 
-enum class ImageAnimatingState { Yes, No };
+enum class ImageAnimatingState : bool { No, Yes };
 
 enum class EncodedDataStatus {
     Error,

@@ -215,7 +215,7 @@ private:
     bool shouldInterruptNavigationForCrossOriginEmbedderPolicy(const WebCore::ResourceResponse&);
     bool shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy(const WebCore::ResourceResponse&);
 
-    enum class FirstLoad { No, Yes };
+    enum class FirstLoad : bool { No, Yes };
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
     void restartNetworkLoad(WebCore::ResourceRequest&&);
     void continueDidReceiveResponse();

@@ -853,6 +853,8 @@ TypeInformation::TypeInformation()
     m_Void_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Void_I32I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
+    if (!Options::useWebAssemblyGC())
+        return;
     // FIXME: The Ref type here is only used to compute call information, a heap type of "any" would be better once that's added.
     m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) } },  { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;

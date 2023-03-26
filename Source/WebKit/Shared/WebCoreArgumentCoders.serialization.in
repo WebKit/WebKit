@@ -36,6 +36,19 @@ header: <WebCore/DOMCacheEngine.h>
     bool hadStorageError;
 };
 
+[CustomHeader] struct WebCore::DOMCacheEngine::CrossThreadRecord {
+    uint64_t identifier;
+    uint64_t updateResponseCounter;
+    WebCore::FetchHeadersGuard requestHeadersGuard;
+    WebCore::ResourceRequest request;
+    WebCore::FetchOptions options;
+    String referrer;
+    WebCore::FetchHeadersGuard responseHeadersGuard;
+    WebCore::ResourceResponse::CrossThreadData response;
+    std::variant<std::nullptr_t, Ref<WebCore::FormData>, Ref<WebCore::SharedBuffer>> responseBody;
+    uint64_t responseBodySize;
+};
+
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::TransformationMatrix {
     double m11()
     double m12()
@@ -631,6 +644,8 @@ struct WebCore::ApplePayDateComponentsRange {
 #endif // ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 
 #if ENABLE(APPLE_PAY)
+[Nested] enum class WebCore::ApplePayLineItem::Type : bool;
+
 struct WebCore::ApplePayLineItem {
     WebCore::ApplePayLineItem::Type type
     String label
@@ -2360,6 +2375,27 @@ class WebCore::ResourceResponseBase {
 class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
 }
 
+header: <WebCore/ResourceResponseBase.h>
+[CustomHeader, NoForwardDeclaration=<WebCore/ResourceResponseBase.h>] struct WebCore::ResourceResponseBase::CrossThreadData {
+    URL url;
+    String mimeType;
+    long long expectedContentLength;
+    String textEncodingName;
+    short httpStatusCode;
+    String httpStatusText;
+    String httpVersion;
+    WebCore::HTTPHeaderMap httpHeaderFields;
+    std::optional<WebCore::NetworkLoadMetrics> networkLoadMetrics;
+    WebCore::ResourceResponseBase::Source source;
+    WebCore::ResourceResponseBase::Type type;
+    WebCore::ResourceResponseBase::Tainting tainting;
+    bool isRedirected;
+    WebCore::UsedLegacyTLS usedLegacyTLS;
+    WebCore::WasPrivateRelayed wasPrivateRelayed;
+    bool isRangeRequested;
+    std::optional<WebCore::CertificateInfo> certificateInfo;
+};
+
 enum class WebCore::ReferrerPolicy : uint8_t {
     EmptyString,
     NoReferrer,
@@ -3002,6 +3038,7 @@ header: <WebCore/ScrollingStateNode.h>
     WebCore::ScrollType scrollType;
     WebCore::ScrollClamping clamping;
     WebCore::ScrollIsAnimated animated;
+    std::optional<std::tuple<WebCore::FloatPoint, WebCore::ScrollType, WebCore::ScrollClamping>> requestedDataBeforeAnimatedScroll;
 }
 
 [Alias=struct ScrollSnapOffsetsInfo<float,WebCore::FloatRect>, CustomHeader] alias WebCore::FloatScrollSnapOffsetsInfo {

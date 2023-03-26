@@ -41,7 +41,7 @@ struct MouseRelatedEventInit : public EventModifierInit {
 class MouseRelatedEvent : public UIEventWithKeyState {
     WTF_MAKE_ISO_ALLOCATED(MouseRelatedEvent);
 public:
-    enum class IsSimulated : uint8_t { Yes, No };
+    enum class IsSimulated : bool { No, Yes };
 
     // Note that these values are adjusted to counter the effects of zoom, so that values
     // exposed via DOM APIs are invariant under zooming.

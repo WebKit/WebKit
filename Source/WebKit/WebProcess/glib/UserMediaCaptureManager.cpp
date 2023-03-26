@@ -30,7 +30,7 @@
 
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebProcess.h"
-#include <WebCore/CaptureDevice.h>
+#include <WebCore/CaptureDeviceWithCapabilities.h>
 #include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
@@ -65,11 +65,19 @@ void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::Media
     RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), request, WTFMove(deviceIdentifierHashSalts));
 }
 
-void UserMediaCaptureManager::getMediaStreamDevices(GetMediaStreamDevicesCallback&& completionHandler)
+void UserMediaCaptureManager::getMediaStreamDevices(bool revealIdsAndLabels, GetMediaStreamDevicesCallback&& completionHandler)
 {
-    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices(WTFMove(completionHandler));
+    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([completionHandler = WTFMove(completionHandler), revealIdsAndLabels](auto&& devices) mutable {
+        auto deviceWithCapabilities = map(devices, [revealIdsAndLabels](auto&& device) -> CaptureDeviceWithCapabilities {
+            RealtimeMediaSourceCapabilities capabilities;
+            if (revealIdsAndLabels)
+                capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
+            return { WTFMove(device), WTFMove(capabilities) };
+        });
+        completionHandler(WTFMove(deviceWithCapabilities));
+    });
 }
 
-}
+} // namespace WebKit
 
 #endif

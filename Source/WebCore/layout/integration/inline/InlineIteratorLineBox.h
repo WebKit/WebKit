@@ -75,7 +75,7 @@ public:
     const RenderStyle& style() const { return isFirst() ? formattingContextRoot().firstLineStyle() : formattingContextRoot().style(); }
 
     bool hasEllipsis() const;
-    enum AdjustedForSelection : uint8_t { No, Yes };
+    enum AdjustedForSelection : bool { No, Yes };
     FloatRect ellipsisVisualRect(AdjustedForSelection = AdjustedForSelection::No) const;
     TextRun ellipsisText() const;
     RenderObject::HighlightState ellipsisSelectionState() const;

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #import <WebKit/_WKWebAuthenticationPanel.h>
 
 namespace WebCore {
@@ -47,3 +49,5 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @property (nonatomic, copy) NSDictionary *mockConfiguration;
 
 @end
+
+#endif

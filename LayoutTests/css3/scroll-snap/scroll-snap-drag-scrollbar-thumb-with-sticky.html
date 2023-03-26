@@ -73,6 +73,8 @@
                 eventSender.mouseMoveTo(20, 190);
                 eventSender.mouseDown();
                 eventSender.mouseMoveTo(100, 190);
+
+                await UIHelper.ensurePresentationUpdate();
                 eventSender.mouseUp();
 
                 let horizontalContainer = document.getElementById("horizontal-container");

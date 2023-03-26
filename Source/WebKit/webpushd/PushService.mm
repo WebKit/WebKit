@@ -267,7 +267,7 @@ protected:
     void finish() final { m_service.didCompleteSubscribeRequest(*this); }
 
 private:
-    enum class IsRetry { No, Yes };
+    enum class IsRetry : bool { No, Yes };
     void startImpl(IsRetry);
     void attemptToRecoverFromTopicAlreadyInFilterError(String&&);
     Vector<uint8_t> m_vapidPublicKey;

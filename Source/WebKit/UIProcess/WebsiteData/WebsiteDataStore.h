@@ -470,7 +470,7 @@ private:
 
     // FIXME: Only Cocoa ports respect ShouldCreateDirectory, so you cannot rely on it to create
     // directories. This is confusing.
-    enum class ShouldCreateDirectory { No, Yes };
+    enum class ShouldCreateDirectory : bool { No, Yes };
     static String tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
     static String cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory = nullString(), ShouldCreateDirectory = ShouldCreateDirectory::Yes);
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String& baseDataDirectory = nullString(), ShouldCreateDirectory = ShouldCreateDirectory::Yes);

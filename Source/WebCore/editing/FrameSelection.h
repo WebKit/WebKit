@@ -246,7 +246,7 @@ public:
     void setTypingStyle(RefPtr<EditingStyle>&& style) { m_typingStyle = WTFMove(style); }
     void clearTypingStyle();
 
-    enum class ClipToVisibleContent : uint8_t { No, Yes };
+    enum class ClipToVisibleContent : bool { No, Yes };
     WEBCORE_EXPORT FloatRect selectionBounds(ClipToVisibleContent = ClipToVisibleContent::Yes);
 
     enum class TextRectangleHeight { TextHeight, SelectionHeight };

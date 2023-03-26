@@ -28,6 +28,7 @@
 
 #include "HTTPHeaderNames.h"
 #include "ReferrerPolicy.h"
+#include "ResourceResponse.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
@@ -59,7 +60,7 @@ void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const String&);
 WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentialsPolicy);
 
 WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&, bool includeFetchMetadata);
-enum class SameOriginFlag { No, Yes };
+enum class SameOriginFlag : bool { No, Yes };
 CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, ResourceLoaderOptions&&, Document&, const String& crossOriginAttribute, SameOriginFlag = SameOriginFlag::No);
 
 enum class HTTPHeadersToKeepFromCleaning : uint8_t {
@@ -89,6 +90,7 @@ WEBCORE_EXPORT Expected<void, String> validatePreflightResponse(PAL::SessionID, 
 
 enum class ForNavigation : bool { No, Yes };
 WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation);
+WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, const SecurityOrigin&, const URL&, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation);
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
 String validateCrossOriginRedirectionURL(const URL&);
 

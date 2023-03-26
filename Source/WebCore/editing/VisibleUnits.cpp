@@ -537,7 +537,7 @@ unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<UChar
     return next;
 }
 
-enum class NeedsContextAtParagraphStart { Yes, No };
+enum class NeedsContextAtParagraphStart : bool { No, Yes };
 static VisiblePosition previousBoundary(const VisiblePosition& position, BoundarySearchFunction searchFunction,
     NeedsContextAtParagraphStart needsContextAtParagraphStart = NeedsContextAtParagraphStart::No)
 {

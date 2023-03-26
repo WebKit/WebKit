@@ -92,7 +92,8 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
     if (!m_webPageProxy.hasRunningProcess())
         return;
-    m_webPageProxy.scrollingCoordinatorProxy()->viewSizeDidChange();
+    if (auto scrollingCoordinator = m_webPageProxy.scrollingCoordinatorProxy())
+        scrollingCoordinator->viewSizeDidChange();
 
     if (m_isWaitingForDidUpdateGeometry)
         return;
@@ -101,12 +102,14 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 
 void RemoteLayerTreeDrawingAreaProxy::viewWillStartLiveResize()
 {
-    m_webPageProxy.scrollingCoordinatorProxy()->viewWillStartLiveResize();
+    if (auto scrollingCoordinator = m_webPageProxy.scrollingCoordinatorProxy())
+        scrollingCoordinator->viewWillStartLiveResize();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
 {
-    m_webPageProxy.scrollingCoordinatorProxy()->viewWillEndLiveResize();
+    if (auto scrollingCoordinator = m_webPageProxy.scrollingCoordinatorProxy())
+        scrollingCoordinator->viewWillEndLiveResize();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()

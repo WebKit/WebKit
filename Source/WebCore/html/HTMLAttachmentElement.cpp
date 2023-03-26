@@ -211,7 +211,14 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     // code, and the old Legacy/ImageOnly code should be removed; this element could be an image (with a different data member name). See rdar://105252742.
     m_innerLegacyAttachment = adoptRef(*new HTMLAttachmentElement(HTMLNames::attachmentTag, document()));
     m_innerLegacyAttachment->m_implementation = Implementation::ImageOnly;
-    m_innerLegacyAttachment->cloneAttributesFromElement(*this);
+    auto copyAttribute = [this](const QualifiedName& attr) {
+        m_innerLegacyAttachment->setAttributeWithoutSynchronization(attr, attributeWithoutSynchronization(attr));
+    };
+    copyAttribute(actionAttr);
+    copyAttribute(progressAttr);
+    copyAttribute(subtitleAttr());
+    copyAttribute(titleAttr);
+    copyAttribute(typeAttr);
     m_innerLegacyAttachment->m_file = m_file;
     m_innerLegacyAttachment->m_thumbnail = m_thumbnail;
     m_innerLegacyAttachment->m_icon = m_icon;
@@ -357,6 +364,8 @@ URL HTMLAttachmentElement::blobURL() const
 void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes updateAttributes)
 {
     m_file = WTFMove(file);
+    if (m_innerLegacyAttachment)
+        m_innerLegacyAttachment->setFile(m_file.copyRef(), updateAttributes);
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
@@ -416,8 +425,11 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == actionAttr || name == progressAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr)
+    if (name == actionAttr || name == progressAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr) {
+        if (m_innerLegacyAttachment)
+            m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, value);
         invalidateRendering();
+    }
 
     HTMLElement::parseAttribute(name, value);
 
@@ -432,9 +444,6 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
             m_subtitleElement->setTextContent(String(value.string()));
     } else if (name == saveAttr())
         updateSaveButton(!value.isNull());
-
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, value);
 
 #if ENABLE(SERVICE_CONTROLS)
     if (name == typeAttr && attachmentType() == "application/pdf"_s) {

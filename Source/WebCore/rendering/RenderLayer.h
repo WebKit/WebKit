@@ -88,7 +88,7 @@ class TransformationMatrix;
 
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
-enum CrossFrameBoundaries { No, Yes };
+enum CrossFrameBoundaries : bool { No, Yes };
 
 enum RepaintStatus {
     NeedsNormalRepaint,
@@ -135,7 +135,7 @@ enum class IndirectCompositingReason {
     Preserve3D
 };
 
-enum class ShouldAllowCrossOriginScrolling { No, Yes };
+enum class ShouldAllowCrossOriginScrolling : bool { No, Yes };
 
 struct ScrollRectToVisibleOptions {
     SelectionRevealMode revealMode { SelectionRevealMode::Reveal };

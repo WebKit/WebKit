@@ -542,7 +542,7 @@ static RTCSignalingState toRTCSignalingState(webrtc::PeerConnectionInterface::Si
     return RTCSignalingState::Stable;
 }
 
-enum class GatherSignalingState { No, Yes };
+enum class GatherSignalingState : bool { No, Yes };
 static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromPeerConnection(webrtc::PeerConnectionInterface* connection, GatherSignalingState gatherSignalingState = GatherSignalingState::No)
 {
     if (!connection)

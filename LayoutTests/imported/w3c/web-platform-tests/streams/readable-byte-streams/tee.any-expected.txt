@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'c.byobRequest.view')
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'c.byobRequest.view')
-CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
-
-Harness Error (FAIL), message = Unhandled rejection
 
 PASS ReadableStream teeing with byte source: rs.tee() returns an array of two ReadableStreams
 FAIL ReadableStream teeing with byte source: should be able to read one branch to the end without affecting the other promise_test: Unhandled rejection with value: object "TypeError: ReadableStreamBYOBReader needs a ReadableByteStreamController"

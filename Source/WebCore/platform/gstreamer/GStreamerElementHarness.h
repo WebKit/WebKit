@@ -67,13 +67,14 @@ public:
         RefPtr<GStreamerElementHarness> m_downstreamHarness;
 
         GRefPtr<GstPad> m_targetPad;
-        GRefPtr<GstCaps> m_outputCaps;
 
         Lock m_bufferQueueLock;
         Deque<GRefPtr<GstBuffer>> m_bufferQueue WTF_GUARDED_BY_LOCK(m_bufferQueueLock);
 
         Lock m_sinkEventQueueLock;
         Deque<GRefPtr<GstEvent>> m_sinkEventQueue WTF_GUARDED_BY_LOCK(m_sinkEventQueueLock);
+
+        GRefPtr<GstCaps> m_outputCaps WTF_GUARDED_BY_LOCK(m_sinkEventQueueLock);
     };
 
     using PadLinkCallback = Function<RefPtr<GStreamerElementHarness>(const GRefPtr<GstPad>&)>;

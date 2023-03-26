@@ -490,6 +490,15 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
     return result;
 }
 
+bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
+{
+    if (!m_mediaSourcePrivate)
+        return false;
+    if (auto ranges = buffered())
+        return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), *ranges);
+    return false;
+}
+
 } // namespace WebCore.
 
 #endif // USE(GSTREAMER)

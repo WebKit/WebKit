@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class CaptureDevice;
+struct CaptureDeviceWithCapabilities;
 struct MediaDeviceHashSalts;
 struct MediaStreamRequest;
 }
@@ -59,8 +60,8 @@ private:
     void validateUserMediaRequestConstraints(WebCore::MediaStreamRequest, WebCore::MediaDeviceHashSalts&&, ValidateUserMediaRequestConstraintsCallback&&);
     ValidateUserMediaRequestConstraintsCallback m_validateUserMediaRequestConstraintsCallback;
 
-    using GetMediaStreamDevicesCallback = CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>;
-    void getMediaStreamDevices(GetMediaStreamDevicesCallback&&);
+    using GetMediaStreamDevicesCallback = CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>;
+    void getMediaStreamDevices(bool revealIdsAndLabels, GetMediaStreamDevicesCallback&&);
 
     WebProcess& m_process;
 };

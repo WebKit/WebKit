@@ -87,6 +87,8 @@
         return WebFeatureCategoryCSS;
     case API::FeatureCategory::DOM:
         return WebFeatureCategoryDOM;
+    case API::FeatureCategory::HTML:
+        return WebFeatureCategoryHTML;
     case API::FeatureCategory::Javascript:
         return WebFeatureCategoryJavascript;
     case API::FeatureCategory::Media:

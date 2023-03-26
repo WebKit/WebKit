@@ -58,7 +58,7 @@ enum class AnimationImpact : uint8_t {
     ForcesStackingContext   = 1 << 1
 };
 
-enum class UseAcceleratedAction : uint8_t { Yes, No };
+enum class UseAcceleratedAction : bool { No, Yes };
 
 enum class WebAnimationType : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
 

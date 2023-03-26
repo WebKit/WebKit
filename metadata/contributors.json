@@ -4083,7 +4083,7 @@
       "nicks" : [
          "jgriego"
       ],
-      "status": "committer"
+      "status" : "committer"
    },
    {
       "aliases" : [
@@ -5683,7 +5683,8 @@
       "name" : "Olivier Blin",
       "nicks" : [
          "blino"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

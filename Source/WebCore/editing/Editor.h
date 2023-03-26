@@ -141,7 +141,7 @@ public:
     WEBCORE_EXPORT void invalidate();
 
 private:
-    enum class IsTemporarySelection { No, Yes };
+    enum class IsTemporarySelection : bool { No, Yes };
 
     void setSelection(const VisibleSelection&, IsTemporarySelection);
 
@@ -418,7 +418,7 @@ public:
     // is a frame-specific concept, because executing an editing command can run JavaScript that can do
     // anything, including changing the focused frame. That is, it is not enough to set this setting on
     // one Editor to disallow selection changes in all frames.
-    enum class RevealSelection { No, Yes };
+    enum class RevealSelection : bool { No, Yes };
     WEBCORE_EXPORT void setIgnoreSelectionChanges(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
     bool ignoreSelectionChanges() const { return m_ignoreSelectionChanges; }
 

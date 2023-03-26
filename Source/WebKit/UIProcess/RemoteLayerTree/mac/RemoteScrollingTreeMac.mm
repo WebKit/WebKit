@@ -130,12 +130,17 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
 
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::startPendingScrollAnimations() - " << nodesWithPendingScrollAnimations.size() << " nodes with pending animations");
 
-    for (const auto& it : nodesWithPendingScrollAnimations) {
-        RefPtr targetNode = nodeForID(it.key);
-        if (!is<ScrollingTreeScrollingNode>(targetNode))
+    for (auto& [nodeID, data] : nodesWithPendingScrollAnimations) {
+        RefPtr targetNode = dynamicDowncast<ScrollingTreeScrollingNode>(nodeForID(nodeID));
+        if (!targetNode)
             continue;
 
-        downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
+        if (auto previousData = std::exchange(data.requestedDataBeforeAnimatedScroll, std::nullopt)) {
+            auto& [positionBeforeAnimatedScroll, scrollType, clamping] = *previousData;
+            targetNode->scrollTo(positionBeforeAnimatedScroll, scrollType, clamping);
+        }
+
+        targetNode->startAnimatedScrollToPosition(data.scrollPosition);
     }
 
     auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });

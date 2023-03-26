@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT URL blobURL() const;
     WEBCORE_EXPORT File* file() const;
 
-    enum class UpdateDisplayAttributes { No, Yes };
+    enum class UpdateDisplayAttributes : bool { No, Yes };
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
 
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }

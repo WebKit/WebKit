@@ -319,6 +319,12 @@ void FunctionDefinitionWriter::visit(AST::ParameterizedTypeName& type)
         m_stringBuilder.append(", ", columns, ", ", rows, ">");
     };
 
+    const auto& texture = [&](const char* name, const char* mode = "sample") {
+        m_stringBuilder.append(name, "<");
+        visit(type.elementType());
+        m_stringBuilder.append(", access::", mode, ">");
+    };
+
     switch (type.base()) {
     case AST::ParameterizedTypeName::Base::Vec2:
         vec(2);
@@ -357,6 +363,41 @@ void FunctionDefinitionWriter::visit(AST::ParameterizedTypeName& type)
         break;
     case AST::ParameterizedTypeName::Base::Mat4x4:
         matrix(4, 4);
+        break;
+
+    case AST::ParameterizedTypeName::Base::Texture1d:
+        texture("texture1d");
+        break;
+    case AST::ParameterizedTypeName::Base::Texture2d:
+        texture("texture2d");
+        break;
+    case AST::ParameterizedTypeName::Base::Texture2dArray:
+        texture("texture2d_array");
+        break;
+    case AST::ParameterizedTypeName::Base::Texture3d:
+        texture("texture3d");
+        break;
+    case AST::ParameterizedTypeName::Base::TextureCube:
+        texture("texturecube");
+        break;
+    case AST::ParameterizedTypeName::Base::TextureCubeArray:
+        texture("texturecube_array");
+        break;
+    case AST::ParameterizedTypeName::Base::TextureMultisampled2d:
+        texture("texture2d_ms");
+        break;
+
+    case AST::ParameterizedTypeName::Base::TextureStorage1d:
+        texture("texture1d", "write");
+        break;
+    case AST::ParameterizedTypeName::Base::TextureStorage2d:
+        texture("texture2d", "write");
+        break;
+    case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
+        texture("texture2d_aray", "write");
+        break;
+    case AST::ParameterizedTypeName::Base::TextureStorage3d:
+        texture("texture3d", "write");
         break;
     }
 }

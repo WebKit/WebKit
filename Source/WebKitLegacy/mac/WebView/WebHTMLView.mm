@@ -6416,7 +6416,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     }
 
-    auto result = editingAttributedString(*range).nsAttributedString();
+    auto result = editingAttributedString(*range).string;
     
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
@@ -7003,7 +7003,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!startContainer || !endContainer)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
-        { *core(endContainer), static_cast<unsigned>(endOffset) } }).nsAttributedString().autorelease();
+        { *core(endContainer), static_cast<unsigned>(endOffset) } }).string.autorelease();
 }
 
 - (NSAttributedString *)attributedString
@@ -7012,9 +7012,9 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!document)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = makeRangeSelectingNodeContents(*document);
-    if (auto result = attributedString(range).nsAttributedString())
+    if (auto result = attributedString(range).string)
         return result.autorelease();
-    return editingAttributedString(range).nsAttributedString().autorelease();
+    return editingAttributedString(range).string.autorelease();
 }
 
 - (NSAttributedString *)selectedAttributedString
@@ -7025,9 +7025,9 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto range = frame->selection().selection().firstRange();
     if (!range)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
-    if (auto result = attributedString(*range).nsAttributedString())
+    if (auto result = attributedString(*range).string)
         return result.autorelease();
-    return editingAttributedString(*range).nsAttributedString().autorelease();
+    return editingAttributedString(*range).string.autorelease();
 }
 
 #endif

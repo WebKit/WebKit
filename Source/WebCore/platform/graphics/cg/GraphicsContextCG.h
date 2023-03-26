@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -43,6 +43,8 @@ public:
     ~GraphicsContextCG();
 
     bool hasPlatformContext() const final;
+
+    // Returns the platform context for any purpose, including draws.
     CGContextRef platformContext() const final;
 
     const DestinationColorSpace& colorSpace() const final;
@@ -129,19 +131,30 @@ public:
 
     virtual FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) const;
 
+    // Returns the platform context for draws.
+    CGContextRef contextForDraw();
+
+    // Returns false if there has not been any potential draws since last call.
+    // Returns true if there has been potential draws since last call.
+    bool consumeHasDrawn();
 protected:
     virtual void setCGShadow(RenderingMode, const FloatSize& offset, float blur, const Color&, bool shadowsIgnoreTransforms);
+
 
 private:
     void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);
     void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
 
     void clearCGShadow();
+    // Returns the platform context for purposes of context state change, not draws.
+    CGContextRef contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
-    const RenderingMode m_renderingMode : 1; // NOLINT
-    const bool m_isLayerCGContext : 1;
-    mutable bool m_userToDeviceTransformKnownToBeIdentity : 1 { false };
+    const RenderingMode m_renderingMode;
+    const bool m_isLayerCGContext;
+    mutable bool m_userToDeviceTransformKnownToBeIdentity { false };
+    // Flag for pending draws. Start with true because we do not know what commands have been scheduled to the context.
+    bool m_hasDrawn { true };
     mutable std::optional<DestinationColorSpace> m_colorSpace;
 };
 

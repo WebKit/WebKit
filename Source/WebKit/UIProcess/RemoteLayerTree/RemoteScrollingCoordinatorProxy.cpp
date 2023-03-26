@@ -100,7 +100,7 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
     return std::exchange(m_requestedScroll, { });
 }
 
-void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
+void RemoteScrollingCoordinatorProxy::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
 #if !(PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING))
     if (!m_scrollingTree)
@@ -132,7 +132,7 @@ void RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent
 #endif
 }
 
-void RemoteScrollingCoordinatorProxy::continueWheelEventHandling(const NativeWebWheelEvent& wheelEvent, WheelEventHandlingResult result)
+void RemoteScrollingCoordinatorProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, WheelEventHandlingResult result)
 {
     webPageProxy().continueWheelEventHandling(wheelEvent, result);
 }
@@ -382,17 +382,29 @@ void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForR
 
 void RemoteScrollingCoordinatorProxy::viewWillStartLiveResize()
 {
-    m_scrollingTree->viewWillStartLiveResize();
+    if (m_scrollingTree)
+        m_scrollingTree->viewWillStartLiveResize();
 }
 
 void RemoteScrollingCoordinatorProxy::viewWillEndLiveResize()
 {
-    m_scrollingTree->viewWillEndLiveResize();
+    if (m_scrollingTree)
+        m_scrollingTree->viewWillEndLiveResize();
 }
 
 void RemoteScrollingCoordinatorProxy::viewSizeDidChange()
 {
-    m_scrollingTree->viewSizeDidChange();
+    if (m_scrollingTree)
+        m_scrollingTree->viewSizeDidChange();
+}
+
+String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID scrollingNodeID, bool isVertical)
+{
+    if (auto node = m_scrollingTree->nodeForID(scrollingNodeID)) {
+        if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(*node))
+            return scrollingNode->scrollbarStateForOrientation(isVertical ? ScrollbarOrientation::Vertical : ScrollbarOrientation::Horizontal);
+    }
+    return ""_s;
 }
 
 } // namespace WebKit

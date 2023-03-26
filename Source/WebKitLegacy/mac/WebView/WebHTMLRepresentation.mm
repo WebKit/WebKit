@@ -271,7 +271,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
     if (!startNode || !endNode)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = SimpleRange { { *core(startNode), static_cast<unsigned>(startOffset) }, { *core(endNode), static_cast<unsigned>(endOffset) } };
-    return editingAttributedString(range).nsAttributedString().autorelease();
+    return editingAttributedString(range).string.autorelease();
 }
 
 #endif

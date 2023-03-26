@@ -49,10 +49,9 @@ list(APPEND WebCore_SOURCES
     platform/generic/KeyedDecoderGeneric.cpp
     platform/generic/KeyedEncoderGeneric.cpp
 
-    platform/graphics/GLContext.cpp
     platform/graphics/PlatformDisplay.cpp
 
-    platform/graphics/egl/GLContextEGL.cpp
+    platform/graphics/egl/GLContext.cpp
 
     platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 

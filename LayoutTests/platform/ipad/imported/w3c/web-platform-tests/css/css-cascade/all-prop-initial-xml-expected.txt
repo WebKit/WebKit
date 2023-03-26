@@ -134,8 +134,8 @@ PASS font-kerning
 PASS font-optical-sizing
 PASS font-palette
 PASS font-size
-PASS font-stretch
 PASS font-size-adjust
+PASS font-stretch
 PASS font-style
 PASS font-synthesis-small-caps
 PASS font-synthesis-style
@@ -176,6 +176,7 @@ PASS justify-items
 PASS justify-self
 PASS justify-tracks
 PASS kerning
+PASS leading-trim
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -192,6 +193,7 @@ PASS margin-inline-start
 PASS margin-left
 PASS margin-right
 PASS margin-top
+PASS margin-trim
 PASS marker-end
 PASS marker-mid
 PASS marker-start
@@ -203,6 +205,7 @@ PASS mask-origin
 PASS mask-repeat
 PASS mask-size
 PASS mask-type
+PASS masonry-auto-flow
 PASS math-style
 PASS max-block-size
 PASS max-height
@@ -282,7 +285,6 @@ PASS shape-image-threshold
 PASS shape-margin
 PASS shape-outside
 PASS shape-rendering
-PASS size
 PASS speak-as
 PASS stop-color
 PASS stop-opacity
@@ -307,6 +309,7 @@ PASS text-decoration-line
 PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness
+PASS text-edge
 PASS text-emphasis-color
 PASS text-emphasis-position
 PASS text-emphasis-style

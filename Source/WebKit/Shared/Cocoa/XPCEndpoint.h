@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "WKDeclarationSpecifiers.h"
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -53,3 +55,5 @@ private:
 };
 
 }
+
+#endif

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="offscreen" width="200" height="200" style="width: 100px; height: 100px"></canvas>
+<script>
+const canvas = document.getElementById('offscreen');
+
+// Draw on the off-screen canvas
+const offscreenCanvas = canvas.transferControlToOffscreen();
+const offscreenContext = offscreenCanvas.getContext('2d');
+
+const square = new Path2D();
+square.rect(50, 50, 100, 100);
+offscreenContext.fillStyle = 'red';
+offscreenContext.fill(square);
+offscreenContext.commit();
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function finishTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+requestAnimationFrame(finishTest);
+
+</script>
+</body>
+</html>

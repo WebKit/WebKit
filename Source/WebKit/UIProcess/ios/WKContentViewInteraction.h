@@ -259,10 +259,7 @@ struct RemoveBackgroundData {
     String preferredMIMEType;
 };
 
-enum class ProceedWithTextSelectionInImage : bool {
-    No,
-    Yes
-};
+enum class ProceedWithTextSelectionInImage : bool { No, Yes };
 
 enum ImageAnalysisRequestIdentifierType { };
 using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;

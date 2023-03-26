@@ -204,7 +204,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                     phase = WebWheelEvent::Phase::PhaseEnded;
 
                 auto& page = view.page();
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
                 return;
             }
 #endif
@@ -226,7 +226,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
 
             if (shouldDispatch) {
                 auto& page = view.page();
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
             }
         },
         // handle_touch_event
@@ -256,7 +256,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                         auto* event = &axisEvent.event;
 #endif
                         if (event->type != wpe_input_axis_event_type_null) {
-                            page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
+                            page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
                                 axisEvent.phase, WebWheelEvent::Phase::PhaseNone));
                             handledThroughGestureController = true;
                         }

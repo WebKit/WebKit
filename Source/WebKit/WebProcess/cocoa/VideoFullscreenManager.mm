@@ -335,8 +335,23 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     interface->setAnimationState(VideoFullscreenInterfaceContext::AnimationType::IntoFullscreen);
 
     bool allowsPictureInPicture = videoElement.webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
+    
+    if (videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess())
+        m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, videoElement.layerHostingContextID(), videoRect, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby, videoElement.document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+    else {
+        if (!interface->layerHostingContext()->rootLayer()) {
+            auto videoLayer = model->createVideoFullscreenLayer();
+            [videoLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+            [videoLayer setName:@"Web Video Fullscreen Layer"];
+            [videoLayer setAnchorPoint:CGPointMake(0, 0)];
+            [videoLayer setPosition:CGPointMake(0, 0)];
+            [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack).get()];
 
-    m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, videoElement.layerHostingContextID(), videoRect, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby, videoElement.document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+            interface->layerHostingContext()->setRootLayer(videoLayer.get());
+        }
+
+        m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby, videoElement.document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+    }
 
     if (auto player = videoElement.player()) {
         if (auto identifier = player->identifier())
@@ -573,6 +588,10 @@ void VideoFullscreenManager::didExitFullscreen(PlaybackSessionContextIdentifier 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, interface, model] () mutable {
             model->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), contextId, interface] () mutable {
                 RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), contextId, interface] {
+                    if (interface->layerHostingContext()->rootLayer()) {
+                        interface->layerHostingContext()->setRootLayer(nullptr);
+                        interface->setLayerHostingContext(nullptr);
+                    }
                     if (protectedThis->m_page)
                         protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::CleanupFullscreen(contextId));
                 });
@@ -587,6 +606,11 @@ void VideoFullscreenManager::didCleanupFullscreen(PlaybackSessionContextIdentifi
     LOG(Fullscreen, "VideoFullscreenManager::didCleanupFullscreen(%p, %x)", this, contextId);
 
     auto [model, interface] = ensureModelAndInterface(contextId);
+
+    if (interface->layerHostingContext()->rootLayer()) {
+        interface->layerHostingContext()->setRootLayer(nullptr);
+        interface->setLayerHostingContext(nullptr);
+    }
 
     interface->setAnimationState(VideoFullscreenInterfaceContext::AnimationType::None);
     interface->setIsFullscreen(false);
@@ -653,7 +677,11 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIden
         bounds = FloatRect(0, 0, videoRect.width(), videoRect.height());
     }
 
-    model->setVideoInlineSizeFenced(bounds.size(), machSendRight);
+    if (interface->layerHostingContext()->rootLayer()) {
+        interface->layerHostingContext()->setFencePort(machSendRight.sendRight());
+        model->setVideoLayerFrame(bounds);
+    } else
+        model->setVideoInlineSizeFenced(bounds.size(), machSendRight);
 }
 
 } // namespace WebKit

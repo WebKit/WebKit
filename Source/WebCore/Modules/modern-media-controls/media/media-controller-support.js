@@ -99,7 +99,7 @@ class MediaControllerSupport
     {
         // Implemented by subclasses.
         if (this.control)
-            this.syncControl();
+            this.syncControl(event);
     }
 
     syncControl()

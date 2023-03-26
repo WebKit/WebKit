@@ -1093,8 +1093,8 @@ public:
     void flushPendingMouseEventCallbacks();
 
     bool isProcessingWheelEvents() const;
-    void handleWheelEvent(const NativeWebWheelEvent&);
-    void continueWheelEventHandling(const NativeWebWheelEvent&, const WebCore::WheelEventHandlingResult&);
+    void handleNativeWheelEvent(const NativeWebWheelEvent&);
+    void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&);
 
     bool isProcessingKeyboardEvents() const;
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
@@ -1654,7 +1654,7 @@ public:
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
     void updateReportedMediaCaptureState();
 
-    enum class CanDelayNotification { No, Yes };
+    enum class CanDelayNotification : bool { No, Yes };
     void updatePlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags, CanDelayNotification = CanDelayNotification::No);
     bool isCapturingAudio() const { return m_mediaState.containsAny(WebCore::MediaProducer::IsCapturingAudioMask); }
     bool isCapturingVideo() const { return m_mediaState.containsAny(WebCore::MediaProducer::IsCapturingVideoMask); }
@@ -2233,6 +2233,11 @@ public:
     bool allowsAnyAnimationToPlay() { return m_allowsAnyAnimationToPlay; }
     void isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanPlay) { m_allowsAnyAnimationToPlay = anyAnimationCanPlay; }
 #endif
+    String scrollbarStateForScrollingNodeID(int scrollingNodeID, bool isVertical);
+
+#if ENABLE(WEBXR) && !USE(OPENXR)
+    PlatformXRSystem* xrSystem() const { return m_xrSystem.get(); }
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2627,8 +2632,13 @@ private:
 
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
+    void handleWheelEvent(const WebWheelEvent&);
     void sendWheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<bool> rubberBandableEdges);
-    void wheelEventWasNotHandled(const NativeWebWheelEvent&);
+
+    void wheelEventHandlingCompleted(bool wasHandled);
+
+    void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
+    void sendWheelEventScrollingAccelerationCurveIfNecessary(const WebWheelEvent&);
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 

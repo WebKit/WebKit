@@ -169,7 +169,7 @@ private:
 };
 
 struct HTTPResponse {
-    enum class TerminateConnection { No, Yes };
+    enum class TerminateConnection : bool { No, Yes };
 
     HTTPResponse(Vector<uint8_t>&& body)
         : body(WTFMove(body)) { }

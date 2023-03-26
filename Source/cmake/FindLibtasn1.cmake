@@ -29,7 +29,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_LIBTASN1 libtasn1)
+pkg_check_modules(PC_LIBTASN1 QUIET libtasn1)
 
 find_path(LIBTASN1_INCLUDE_DIRS
     NAMES libtasn1.h

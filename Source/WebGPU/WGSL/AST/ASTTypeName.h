@@ -103,9 +103,22 @@ public:
         Mat3x4,
         Mat4x2,
         Mat4x3,
-        Mat4x4
+        Mat4x4,
+        Texture1d,
+        Texture2d,
+        Texture2dArray,
+        Texture3d,
+        TextureCube,
+        TextureCubeArray,
+        TextureMultisampled2d,
+        TextureStorage1d,
+        TextureStorage2d,
+        TextureStorage2dArray,
+        TextureStorage3d,
+
+        LastEntry = TextureStorage3d,
     };
-    static constexpr unsigned NumberOfBaseTypes = 12;
+    static constexpr unsigned NumberOfBaseTypes = static_cast<unsigned>(Base::LastEntry) + 1;
 
     ParameterizedTypeName(SourceSpan span, Base base, TypeName::Ref&& elementType)
         : TypeName(span)
@@ -139,6 +152,28 @@ public:
             return Base::Mat4x3;
         if (view == "mat4x4"_s)
             return Base::Mat4x4;
+        if (view == "texture_1d"_s)
+            return Base::Texture1d;
+        if (view == "texture_2d"_s)
+            return Base::Texture2d;
+        if (view == "texture_2d_array"_s)
+            return Base::Texture2dArray;
+        if (view == "texture_3d"_s)
+            return Base::Texture3d;
+        if (view == "texture_cube"_s)
+            return Base::TextureCube;
+        if (view == "texture_cube_array"_s)
+            return Base::TextureCubeArray;
+        if (view == "texture_multisampled_2d"_s)
+            return Base::TextureMultisampled2d;
+        if (view == "texture_storage_1d"_s)
+            return Base::TextureStorage1d;
+        if (view == "texture_storage_2d"_s)
+            return Base::TextureStorage2d;
+        if (view == "texture_storage_2d_array"_s)
+            return Base::TextureStorage2dArray;
+        if (view == "texture_storage_3d"_s)
+            return Base::TextureStorage3d;
         return std::nullopt;
     }
 

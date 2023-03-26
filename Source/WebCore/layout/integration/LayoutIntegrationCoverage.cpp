@@ -89,6 +89,9 @@ namespace LayoutIntegration {
 static void printReason(AvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
+    case AvoidanceReason::FlowHasMarginTrim:
+        stream << "margin-trim";
+        break;
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
@@ -277,6 +280,8 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     OptionSet<AvoidanceReason> reasons;
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
+    if (!renderer.style().marginTrim().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasMarginTrim, reasons, includeReasons);
     // These are non-standard properties.
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
@@ -346,9 +351,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 #endif
     if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
-            // Floats where the block container specifies margin-tirm need IFC implementation (geometry adjustment)
-            if (!flow.style().marginTrim().isEmpty())
-                return false;
             if (renderer.isOutOfFlowPositioned()) {
                 if (!renderer.parent()->style().isLeftToRightDirection())
                     return false;

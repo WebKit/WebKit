@@ -55,15 +55,16 @@ typedef NS_ENUM(NSUInteger, WebFeatureStatus) {
  @abstract Field indicating the category of a web feature. Used to determine how a feature should be sorted or grouped in the UI.
  */
 typedef NS_ENUM(NSUInteger, WebFeatureCategory) {
-    WebFeatureCategoryNone,
-    WebFeatureCategoryAnimation,
-    WebFeatureCategoryCSS,
-    WebFeatureCategoryDOM,
-    WebFeatureCategoryJavascript,
-    WebFeatureCategoryMedia,
-    WebFeatureCategoryNetworking,
-    WebFeatureCategoryPrivacy,
-    WebFeatureCategorySecurity
+    WebFeatureCategoryNone = 0,
+    WebFeatureCategoryAnimation = 1,
+    WebFeatureCategoryCSS = 2,
+    WebFeatureCategoryDOM = 3,
+    WebFeatureCategoryJavascript = 4,
+    WebFeatureCategoryMedia = 5,
+    WebFeatureCategoryNetworking = 6,
+    WebFeatureCategoryPrivacy = 7,
+    WebFeatureCategorySecurity = 8,
+    WebFeatureCategoryHTML = 9
 };
 
 @interface WebFeature : NSObject

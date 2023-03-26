@@ -52,7 +52,7 @@ This will define the following variables in your project:
 
 #]=======================================================================]
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_AVIF QUIET libavif)
 set(AVIF_COMPILE_OPTIONS ${PC_AVIF_CFLAGS_OTHER})
 set(AVIF_VERSION ${PC_AVIF_VERSION})

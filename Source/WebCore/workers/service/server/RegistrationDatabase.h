@@ -64,7 +64,7 @@ private:
     
     String databaseDirectoryIsolatedCopy() const { return m_databaseDirectory.isolatedCopy(); }
 
-    enum class ShouldRetry { No, Yes };
+    enum class ShouldRetry : bool { No, Yes };
     void schedulePushChanges(Vector<ServiceWorkerContextData>&&, Vector<ServiceWorkerRegistrationKey>&&, ShouldRetry, CompletionHandler<void()>&&);
     void postTaskToWorkQueue(Function<void()>&&);
 

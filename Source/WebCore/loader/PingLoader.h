@@ -56,7 +56,7 @@ public:
     static String sanitizeURLForReport(const URL&);
 
 private:
-    enum class ShouldFollowRedirects { No, Yes };
+    enum class ShouldFollowRedirects : bool { No, Yes };
     static void startPingLoad(LocalFrame&, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects, ContentSecurityPolicyImposition, ReferrerPolicy, std::optional<ViolationReportType> = std::nullopt);
 };
 

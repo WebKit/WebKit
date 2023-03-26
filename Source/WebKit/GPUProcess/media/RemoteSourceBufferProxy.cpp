@@ -365,7 +365,7 @@ void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdenti
 {
     ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
     ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
+    m_sourceBufferPrivate->enqueuedSamplesForTrackID(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)

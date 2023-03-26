@@ -81,7 +81,7 @@ enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllExceptBetweenAppBoundDomains, AllExceptManagedDomains, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
-enum class SameSiteStrictEnforcementEnabled : bool { Yes, No };
+enum class SameSiteStrictEnforcementEnabled : bool { No, Yes };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ApplyTrackingPrevention : bool { No, Yes };
 enum class ScriptWrittenCookiesOnly : bool { No, Yes };

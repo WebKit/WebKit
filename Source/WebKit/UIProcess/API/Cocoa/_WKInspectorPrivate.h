@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspector.h"
+#import <WebKit/_WKInspector.h>
 
 @class WKBrowsingContextHandle;
 @protocol _WKDiagnosticLoggingDelegate;

@@ -858,7 +858,6 @@ editing/async-clipboard/sanitize-when-reading-markup.html [ Skip ]
 # These tests are intended to exercise programmatic paste mechanism specific to Apple ports.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
-editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ]
 editing/async-clipboard/clipboard-read-while-pasting.html [ Skip ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]

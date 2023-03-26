@@ -53,7 +53,7 @@ class MediaControlTextTrackContainerElement final
 public:
     static Ref<MediaControlTextTrackContainerElement> create(Document&, HTMLMediaElement&);
 
-    enum class ForceUpdate { Yes, No };
+    enum class ForceUpdate : bool { No, Yes };
     void updateSizes(ForceUpdate force = ForceUpdate::No);
     void updateDisplay();
 

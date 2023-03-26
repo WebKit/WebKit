@@ -77,10 +77,7 @@ enum class ClearSiteDataValue : uint8_t {
     Storage = 1 << 3,
 };
 
-enum class RangeAllowWhitespace : bool {
-    No,
-    Yes
-};
+enum class RangeAllowWhitespace : bool { No, Yes };
 
 bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);

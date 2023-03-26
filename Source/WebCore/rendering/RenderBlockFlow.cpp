@@ -741,6 +741,18 @@ void LeadingTrimmer::adjustLeadingTrimAfterLayout()
 
 void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
 {
+    if (!firstChild()) {
+        auto logicalHeight = borderAndPaddingBefore() + borderAndPaddingAfter() + scrollbarLogicalHeight();
+        if (hasLineIfEmpty())
+            logicalHeight += lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+        setLogicalHeight(logicalHeight);
+
+        repaintLogicalTop = { };
+        repaintLogicalBottom = { };
+        maxFloatLogicalBottom = { };
+        return;
+    }
+
     if (childrenInline()) {
         auto leadingTrimmer = LeadingTrimmer { *this, this };
         layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
@@ -773,6 +785,8 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
 
 void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom)
 {
+    ASSERT(firstChild());
+
     LayoutUnit beforeEdge = borderAndPaddingBefore();
     LayoutUnit afterEdge = borderAndPaddingAfter() + scrollbarLogicalHeight();
 

@@ -74,7 +74,7 @@ public:
         FatalError,
     };
 
-    enum class IsEndOfStream { Yes, No };
+    enum class IsEndOfStream : bool { No, Yes };
 
     StreamingParser(ModuleInformation&, StreamingParserClient&);
 

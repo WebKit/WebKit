@@ -68,7 +68,7 @@ public:
         std::optional<PointInContextRoot> left;
         std::optional<PointInContextRoot> right;
     };
-    enum class MayBeAboveLastFloat : uint8_t { Yes, No };
+    enum class MayBeAboveLastFloat : bool { No, Yes };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat) const;
 
     FloatingState::FloatItem toFloatItem(const Box& floatBox) const;

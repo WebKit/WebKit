@@ -105,7 +105,7 @@ class SharedVideoFrameReader {
 public:
     ~SharedVideoFrameReader();
 
-    enum class UseIOSurfaceBufferPool { No, Yes };
+    enum class UseIOSurfaceBufferPool : bool { No, Yes };
     explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, const WebCore::ProcessIdentity& = { }, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
     SharedVideoFrameReader();
 

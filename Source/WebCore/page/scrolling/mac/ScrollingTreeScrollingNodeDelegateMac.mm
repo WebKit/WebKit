@@ -334,6 +334,12 @@ void ScrollingTreeScrollingNodeDelegateMac::viewSizeDidChange()
 {
     return m_scrollerPair.contentsSizeChanged();
 }
+
+String ScrollingTreeScrollingNodeDelegateMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    return m_scrollerPair.scrollbarStateForOrientation(orientation);
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)

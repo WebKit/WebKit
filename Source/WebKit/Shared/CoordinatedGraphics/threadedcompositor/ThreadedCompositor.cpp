@@ -107,7 +107,7 @@ void ThreadedCompositor::createGLContext()
     // a plain C cast expression in this one instance works in all cases.
     static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
     auto windowType = (GLNativeWindowType) m_nativeSurfaceHandle;
-    m_context = GLContext::createContextForWindow(windowType, &PlatformDisplay::sharedDisplayForCompositing());
+    m_context = GLContext::create(windowType, PlatformDisplay::sharedDisplayForCompositing());
     if (m_context)
         m_context->makeContextCurrent();
 }

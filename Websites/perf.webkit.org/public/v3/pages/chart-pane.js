@@ -277,7 +277,7 @@ class ChartPane extends ChartPaneBase {
             var platform = this._platform;
 
             this.renderReplace(this.content().querySelector('.chart-pane-title'),
-                metric.fullName() + ' on ' + platform.name());
+                metric.fullName() + ' on ' + platform.label());
         }
 
         if (this._mainChartStatus)

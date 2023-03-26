@@ -513,10 +513,10 @@ uint64_t SourceBufferPrivate::totalTrackBufferSizeInBytes() const
 void SourceBufferPrivate::addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&& description)
 {
     ASSERT(!m_trackBufferMap.contains(trackId));
-    
+
     m_hasAudio = m_hasAudio || description->isAudio();
     m_hasVideo = m_hasVideo || description->isVideo();
-    
+
     // 5.2.9 Add the track description for this track to the track buffer.
     auto trackBuffer = TrackBuffer::create(WTFMove(description), discontinuityTolerance);
 #if !RELEASE_LOG_DISABLED

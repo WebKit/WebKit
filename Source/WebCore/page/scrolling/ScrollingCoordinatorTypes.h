@@ -122,6 +122,9 @@ struct RequestedScrollData {
     ScrollType scrollType { ScrollType::User };
     ScrollClamping clamping { ScrollClamping::Clamped };
     ScrollIsAnimated animated { ScrollIsAnimated::No };
+    std::optional<std::tuple<FloatPoint, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
+
+    void merge(RequestedScrollData&&);
 
     bool operator==(const RequestedScrollData& other) const
     {
@@ -129,7 +132,8 @@ struct RequestedScrollData {
             && scrollPosition == other.scrollPosition
             && scrollType == other.scrollType
             && clamping == other.clamping
-            && animated == other.animated;
+            && animated == other.animated
+            && requestedDataBeforeAnimatedScroll == other.requestedDataBeforeAnimatedScroll;
     }
 };
 

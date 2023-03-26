@@ -70,7 +70,7 @@ void RemoteResourceCacheProxy::releaseImageBuffer(RemoteImageBufferProxy& imageB
 {
     forgetImageBuffer(imageBuffer.renderingResourceIdentifier());
 
-    m_remoteRenderingBackendProxy.releaseRemoteResource(imageBuffer.renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy.releaseRenderingResource(imageBuffer.renderingResourceIdentifier());
 }
 
 void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier identifier)
@@ -160,15 +160,11 @@ void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decom
     }
 }
 
-void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    auto iterator = m_nativeImages.find(renderingResourceIdentifier);
-    RELEASE_ASSERT(iterator != m_nativeImages.end());
-
-    auto success = m_nativeImages.remove(iterator);
-    ASSERT_UNUSED(success, success);
-
-    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
+    bool removed = m_nativeImages.remove(renderingResourceIdentifier) || m_decomposedGlyphs.remove(renderingResourceIdentifier);
+    RELEASE_ASSERT(removed);
+    m_remoteRenderingBackendProxy.releaseRenderingResource(renderingResourceIdentifier);
 }
 
 void RemoteResourceCacheProxy::clearNativeImageMap()
@@ -181,13 +177,6 @@ void RemoteResourceCacheProxy::clearNativeImageMap()
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
 {
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
-}
-
-void RemoteResourceCacheProxy::releaseDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    bool removed = m_decomposedGlyphs.remove(renderingResourceIdentifier);
-    RELEASE_ASSERT(removed);
-    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
 }
 
 void RemoteResourceCacheProxy::clearFontMap()
@@ -228,7 +217,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
     for (auto& item : m_fonts) {
         if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
             toRemove.add(item.key);
-            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key);
+            m_remoteRenderingBackendProxy.releaseRenderingResource(item.key);
         }
     }
 

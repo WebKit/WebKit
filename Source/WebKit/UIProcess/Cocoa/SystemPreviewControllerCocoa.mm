@@ -41,6 +41,7 @@
 #import <wtf/WeakObjCPtr.h>
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#import "ARKitSoftLink.h"
 #import <pal/spi/ios/SystemPreviewSPI.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
@@ -119,7 +120,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     NSString *contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s);
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
-    auto previewItem = adoptNS([[ARQuickLookPreviewItem alloc] initWithFileAtURL:_downloadedURL]);
+    auto previewItem = adoptNS([WebKit::allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL]);
     [previewItem setCanonicalWebPageURL:_originatingPageURL];
 
     _item = adoptNS([allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem.get()]);
@@ -290,7 +291,6 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
 void SystemPreviewController::setDestinationURL(URL url)
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    url.removeFragmentIdentifier();
     NSURL *nsurl = (NSURL *)url;
     NSURL *originatingPageURL = (NSURL *)m_originatingPageURL;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
@@ -316,7 +316,6 @@ void SystemPreviewController::finish(URL url)
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, url));
-    url.removeFragmentIdentifier();
     NSURL *nsurl = (NSURL *)url;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
         [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];

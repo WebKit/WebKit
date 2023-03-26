@@ -63,8 +63,10 @@ public:
     ~RemoteLayerTreeEventDispatcher();
     
     void invalidate();
+    
+    void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
 
-    void handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 
@@ -85,7 +87,7 @@ private:
 
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 
-    void willHandleWheelEvent(const NativeWebWheelEvent&);
+    void willHandleWheelEvent(const WebWheelEvent&);
     void wheelEventWasHandledByScrollingThread(WheelEventHandlingResult);
 
     DisplayLink* displayLink() const;
@@ -110,7 +112,7 @@ private:
     Lock m_scrollingTreeLock;
     RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
 
-    Deque<NativeWebWheelEvent, 2> m_wheelEventsBeingProcessed;
+    Deque<WebWheelEvent, 2> m_wheelEventsBeingProcessed; // FIXME: Remove
 
     WeakPtr<RemoteScrollingCoordinatorProxyMac> m_scrollingCoordinator;
     WebCore::PageIdentifier m_pageIdentifier;

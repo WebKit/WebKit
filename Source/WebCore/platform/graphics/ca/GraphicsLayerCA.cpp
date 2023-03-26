@@ -3089,7 +3089,7 @@ void GraphicsLayerCA::updateAnimations()
         m_animationGroups.append(WTFMove(animationGroup));
     };
 
-    enum class Additive { Yes, No };
+    enum class Additive : bool { No, Yes };
     auto prepareAnimationForAddition = [&](LayerPropertyAnimation& animation, Additive additive = Additive::Yes) {
         auto caAnim = animation.m_animation;
         caAnim->setAdditive(additive == Additive::Yes);

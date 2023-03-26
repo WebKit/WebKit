@@ -60,11 +60,14 @@ void ScopedRenderingResourcesRequest::freeRenderingResources()
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 #if PLATFORM(MAC)
     auto devices = adoptNS(MTLCopyAllDevices());
-    for (id <MTLDevice> device : devices.get())
-        [(_MTLDevice *)device _purgeDevice];
+    for (id<MTLDevice> device : devices.get()) {
+        if ([device respondsToSelector:@selector(_purgeDevice)])
+            [(_MTLDevice *)device _purgeDevice];
+    }
 #else
     RetainPtr<MTLDevice> devicePtr = adoptNS(MTLCreateSystemDefaultDevice());
-    [(_MTLDevice *)devicePtr.get() _purgeDevice];
+    if ([devicePtr.get() respondsToSelector:@selector(_purgeDevice)])
+        [(_MTLDevice *)devicePtr.get() _purgeDevice];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS
 }

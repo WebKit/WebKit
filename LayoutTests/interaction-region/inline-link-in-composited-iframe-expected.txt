@@ -14,9 +14,9 @@ This is a link, outside the frame.
 
       (interaction regions [
         (interaction
-            (rect (-3,-3) width=35 height=25)
+            (rect (-4,-4) width=37 height=27)
 )
-        (borderRadius 0.00)])
+        (borderRadius 8.00)])
       )
       (children 1
         (GraphicsLayer
@@ -28,9 +28,9 @@ This is a link, outside the frame.
 
           (interaction regions [
             (interaction
-                (rect (7,7) width=35 height=25)
+                (rect (6,6) width=37 height=27)
 )
-            (borderRadius 0.00)])
+            (borderRadius 8.00)])
           )
         )
       )

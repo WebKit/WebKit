@@ -55,7 +55,7 @@ This will define the following variables in your project:
 #]=======================================================================]
 
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_OPENGLES2 glesv2)
+pkg_check_modules(PC_OPENGLES2 QUIET glesv2)
 set(OpenGLES2_COMPILE_OPTIONS ${PC_OPENGLES2_CFLAGS_OTHER})
 set(OpenGLES2_VERSION ${PC_OPENGLES2_VERSION})
 

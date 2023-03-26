@@ -124,6 +124,25 @@ void RemoteLayerBackingStore::Buffer::encode(IPC::Encoder& encoder) const
         encoder << std::optional<RenderingResourceIdentifier>();
 }
 
+#if ASSERT_ENABLED
+static bool hasValue(const ImageBufferBackendHandle& backendHandle)
+{
+    return WTF::switchOn(backendHandle,
+        [&] (const ShareableBitmapHandle& handle) {
+            return !handle.isNull();
+        },
+        [&] (const MachSendRight& machSendRight) {
+            return !!machSendRight;
+        }
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , [&] (const CGDisplayList& handle) {
+            return !!handle.buffer();
+        }
+#endif
+    );
+}
+#endif
+
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 {
     auto handleFromBuffer = [](ImageBuffer& buffer) -> std::optional<ImageBufferBackendHandle> {
@@ -149,6 +168,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     } else if (m_frontBuffer.imageBuffer)
         handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
 
+    ASSERT(handle && hasValue(*handle));
     encoder << WTFMove(handle);
 
     encoder << m_frontBuffer;

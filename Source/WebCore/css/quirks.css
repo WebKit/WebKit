@@ -21,6 +21,8 @@
  *
  */
 
+@namespace "http://www.w3.org/1999/xhtml";
+
 /* Give floated images margins of 3px */
 img[align="left"] {
     margin-right: 3px;

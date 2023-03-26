@@ -38,6 +38,7 @@
 #include <wtf/Span.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/persistence/PersistentCoders.h>
 
 namespace WebCore {
 
@@ -76,6 +77,26 @@ public:
         CrossThreadData() = default;
         CrossThreadData(CrossThreadData&&) = default;
         CrossThreadData& operator=(CrossThreadData&&) = default;
+        CrossThreadData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, Source source, Type type, Tainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, bool isRangeRequested, std::optional<CertificateInfo> certificateInfo)
+            : url(WTFMove(url))
+            , mimeType(WTFMove(mimeType))
+            , expectedContentLength(expectedContentLength)
+            , textEncodingName(WTFMove(textEncodingName))
+            , httpStatusCode(httpStatusCode)
+            , httpStatusText(WTFMove(httpStatusText))
+            , httpVersion(WTFMove(httpVersion))
+            , httpHeaderFields(WTFMove(httpHeaderFields))
+            , networkLoadMetrics(WTFMove(networkLoadMetrics))
+            , source(source)
+            , type(type)
+            , tainting(tainting)
+            , isRedirected(isRedirected)
+            , usedLegacyTLS(usedLegacyTLS)
+            , wasPrivateRelayed(wasPrivateRelayed)
+            , isRangeRequested(isRangeRequested)
+            , certificateInfo(certificateInfo)
+        {
+        }
 
         WEBCORE_EXPORT CrossThreadData isolatedCopy() const;
 
@@ -83,15 +104,19 @@ public:
         String mimeType;
         long long expectedContentLength;
         String textEncodingName;
-        int httpStatusCode;
+        short httpStatusCode;
         String httpStatusText;
         String httpVersion;
         HTTPHeaderMap httpHeaderFields;
         std::optional<NetworkLoadMetrics> networkLoadMetrics;
+        Source source;
         Type type;
         Tainting tainting;
         bool isRedirected;
+        UsedLegacyTLS usedLegacyTLS;
+        WasPrivateRelayed wasPrivateRelayed;
         bool isRangeRequested;
+        std::optional<CertificateInfo> certificateInfo;
     };
     
     struct ResponseData {
@@ -240,7 +265,7 @@ public:
     void setTainting(Tainting tainting) { m_tainting = tainting; }
     Tainting tainting() const { return m_tainting; }
 
-    enum class PerformExposeAllHeadersCheck : uint8_t { Yes, No };
+    enum class PerformExposeAllHeadersCheck : bool { No, Yes };
     static ResourceResponse filter(const ResourceResponse&, PerformExposeAllHeadersCheck);
 
     WEBCORE_EXPORT static ResourceResponse syntheticRedirectResponse(const URL& fromURL, const URL& toURL);
@@ -510,5 +535,17 @@ template<> struct EnumTraitsForPersistence<WebCore::ResourceResponseBase::Source
         WebCore::ResourceResponseBase::Source::InspectorOverride
     >;
 };
+
+namespace Persistence {
+
+class Decoder;
+class Encoder;
+
+template<> struct Coder<WebCore::ResourceResponseBase::CrossThreadData> {
+    WEBCORE_EXPORT static void encode(Encoder&, const WebCore::ResourceResponseBase::CrossThreadData&);
+    WEBCORE_EXPORT static std::optional<WebCore::ResourceResponseBase::CrossThreadData> decode(Decoder&);
+};
+
+} // namespace Persistence
 
 } // namespace WTF

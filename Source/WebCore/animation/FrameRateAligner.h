@@ -35,13 +35,13 @@ namespace WebCore {
 class FrameRateAligner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FrameRateAligner();
+    FrameRateAligner();
     ~FrameRateAligner();
 
     void beginUpdate(ReducedResolutionSeconds, std::optional<FramesPerSecond>);
     void finishUpdate();
 
-    enum class ShouldUpdate { Yes, No };
+    enum class ShouldUpdate : bool { No, Yes };
     ShouldUpdate updateFrameRate(FramesPerSecond);
 
     std::optional<Seconds> timeUntilNextUpdateForFrameRate(FramesPerSecond, ReducedResolutionSeconds) const;

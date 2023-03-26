@@ -151,7 +151,7 @@ class Preference
   end
 
   def webFeatureCategory
-    if %w{ css dom }.include?(@category)
+    if %w{ css dom html }.include?(@category)
       "WebFeatureCategory" + @category.upcase
     else
       "WebFeatureCategory" + @category.capitalize
@@ -163,7 +163,7 @@ class Preference
   end
 
   def apiCategory
-      if %w{ css dom }.include?(@category)
+      if %w{ css dom html }.include?(@category)
         "API::FeatureCategory::" + @category.upcase
       else
         "API::FeatureCategory::" + @category.capitalize
@@ -260,7 +260,7 @@ class Preferences
   STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
 
   # Corresponds to WebFeatureCategory enum cases.
-  CATEGORIES = %w{ animation css dom javascript media networking privacy security }
+  CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
 
   def initializeParsedPreferences(parsedPreferences)
     result = []

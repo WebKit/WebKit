@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayer.h"
+#include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"
 #include <wtf/MainThread.h>
@@ -203,6 +204,15 @@ void MockMediaPlayerMediaSource::paint(GraphicsContext&, const FloatRect&)
 MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
 {
     return m_currentTime;
+}
+
+bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
+{
+    if (!m_mediaSourcePrivate)
+        return false;
+    if (auto ranges = buffered())
+        return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), *ranges);
+    return false;
 }
 
 MediaTime MockMediaPlayerMediaSource::durationMediaTime() const

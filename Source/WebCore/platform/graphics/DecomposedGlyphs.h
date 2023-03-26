@@ -27,42 +27,23 @@
 
 #include "FloatRect.h"
 #include "PositionedGlyphs.h"
-#include "RenderingResourceIdentifier.h"
-#include <wtf/HashSet.h>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include "RenderingResource.h"
 
 namespace WebCore {
 
-class DecomposedGlyphs final
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DecomposedGlyphs, WTF::DestructionThread::Main> {
+class DecomposedGlyphs final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Observer {
-    public:
-        virtual ~Observer() = default;
-        virtual void releaseDecomposedGlyphs(RenderingResourceIdentifier) = 0;
-    protected:
-        Observer() = default;
-    };
-
     static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
     static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(PositionedGlyphs&&, RenderingResourceIdentifier);
-    WEBCORE_EXPORT ~DecomposedGlyphs();
 
     const PositionedGlyphs& positionedGlyphs() const { return m_positionedGlyphs; }
-
-    void addObserver(Observer& observer) { m_observers.add(&observer); }
-    void removeObserver(Observer& observer) { m_observers.remove(&observer); }
-
-    RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
 private:
     DecomposedGlyphs(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier);
     DecomposedGlyphs(PositionedGlyphs&&, RenderingResourceIdentifier);
 
     PositionedGlyphs m_positionedGlyphs;
-    HashSet<Observer*> m_observers;
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
 } // namespace WebCore

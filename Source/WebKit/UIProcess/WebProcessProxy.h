@@ -146,10 +146,7 @@ public:
     typedef HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
-    enum class IsPrewarmed {
-        No,
-        Yes
-    };
+    enum class IsPrewarmed : bool { No, Yes };
 
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class LockdownMode : bool { Disabled, Enabled };
@@ -197,6 +194,9 @@ public:
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static RefPtr<WebPageProxy> webPage(WebPageProxyIdentifier);
     static RefPtr<WebPageProxy> audioCapturingWebPage();
+#if ENABLE(WEBXR) && !USE(OPENXR)
+    static RefPtr<WebPageProxy> webPageWithActiveXRSession();
+#endif
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
     enum class BeginsUsingDataStore : bool { No, Yes };
@@ -607,7 +607,7 @@ private:
     bool shouldTakeSuspendedAssertion() const;
     bool shouldDropSuspendedAssertionAfterDelay() const;
 
-    enum class IsWeak { No, Yes };
+    enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
         WeakOrStrongPtr(T& object, IsWeak isWeak)
