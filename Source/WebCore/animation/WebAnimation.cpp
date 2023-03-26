@@ -727,25 +727,27 @@ void WebAnimation::cancel()
         // 4. Let current finished promise be a new (pending) Promise object.
         m_finishedPromise = makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve);
 
-        // 5. Create an AnimationPlaybackEvent, cancelEvent.
-        // 6. Set cancelEvent's type attribute to cancel.
-        // 7. Set cancelEvent's currentTime to null.
-        // 8. Let timeline time be the current time of the timeline with which animation is associated. If animation is not associated with an
-        //    active timeline, let timeline time be n unresolved time value.
-        // 9. Set cancelEvent's timelineTime to timeline time. If timeline time is unresolved, set it to null.
-        // 10. If animation has a document for timing, then append cancelEvent to its document for timing's pending animation event queue along
-        //    with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
-        //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
-        //    scheduled event time is an unresolved time value.
-        // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-        auto scheduledTime = [&]() -> std::optional<Seconds> {
-            if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
-                if (auto currentTime = documentTimeline->currentTime())
-                    return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
-            }
-            return std::nullopt;
-        }();
-        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, scheduledTime);
+        if (hasEventListeners(eventNames().cancelEvent)) {
+            // 5. Create an AnimationPlaybackEvent, cancelEvent.
+            // 6. Set cancelEvent's type attribute to cancel.
+            // 7. Set cancelEvent's currentTime to null.
+            // 8. Let timeline time be the current time of the timeline with which animation is associated. If animation is not associated with an
+            //    active timeline, let timeline time be n unresolved time value.
+            // 9. Set cancelEvent's timelineTime to timeline time. If timeline time is unresolved, set it to null.
+            // 10. If animation has a document for timing, then append cancelEvent to its document for timing's pending animation event queue along
+            //    with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
+            //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
+            //    scheduled event time is an unresolved time value.
+            // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
+            auto scheduledTime = [&]() -> std::optional<Seconds> {
+                if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+                    if (auto currentTime = documentTimeline->currentTime())
+                        return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
+                }
+                return std::nullopt;
+            }();
+            enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, scheduledTime);
+        }
     }
 
     // 2. Make animation's hold time unresolved.
@@ -1009,14 +1011,16 @@ void WebAnimation::finishNotificationSteps()
     //    queue along with its target, animation. For the scheduled event time, use the result of converting animation's target
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
-    auto scheduledTime = [&]() -> std::optional<Seconds> {
-        if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
-            if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
-                return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
-        }
-        return std::nullopt;
-    }();
-    enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), scheduledTime);
+    if (hasEventListeners(eventNames().finishEvent)) {
+        auto scheduledTime = [&]() -> std::optional<Seconds> {
+            if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+                if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
+                    return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
+            }
+            return std::nullopt;
+        }();
+        enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), scheduledTime);
+    }
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get())) {
         if (RefPtr target = keyframeEffect->target()) {
             if (auto* page = target->document().page())

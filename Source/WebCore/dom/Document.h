@@ -958,6 +958,7 @@ public:
         FORCEUP_LISTENER                     = 1 << 12,
         FOCUSIN_LISTENER                     = 1 << 13,
         FOCUSOUT_LISTENER                    = 1 << 14,
+        TRANSITION_ANIMATION_LISTENER        = 1 << 15
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

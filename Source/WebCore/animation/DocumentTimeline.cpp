@@ -282,7 +282,7 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
 void DocumentTimeline::removeReplacedAnimations()
 {
     // https://drafts.csswg.org/web-animations/#removing-replaced-animations
-
+    auto& eventNames = WebCore::eventNames();
     Vector<Ref<WebAnimation>> animationsToRemove;
 
     // When asked to remove replaced animations for a Document, doc, then for every animation, animation
@@ -301,14 +301,16 @@ void DocumentTimeline::removeReplacedAnimations()
         //    event queue along with its target, animation. For the scheduled event time, use the result of applying the procedure
         //    to convert timeline time to origin-relative time to the current time of the timeline with which animation is associated.
         //    Otherwise, queue a task to dispatch removeEvent at animation. The task source for this task is the DOM manipulation task source.
-        auto scheduledTime = [&]() -> std::optional<Seconds> {
-            if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(animation->timeline())) {
-                if (auto currentTime = documentTimeline->currentTime())
-                    return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
-            }
-            return std::nullopt;
-        }();
-        animation->enqueueAnimationPlaybackEvent(eventNames().removeEvent, animation->currentTime(), scheduledTime);
+        if (animation->hasEventListeners(eventNames.removeEvent)) {
+            auto scheduledTime = [&]() -> std::optional<Seconds> {
+                if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(animation->timeline())) {
+                    if (auto currentTime = documentTimeline->currentTime())
+                        return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
+                }
+                return std::nullopt;
+            }();
+            animation->enqueueAnimationPlaybackEvent(eventNames.removeEvent, animation->currentTime(), scheduledTime);
+        }
 
         animationsToRemove.append(animation.get());
     }

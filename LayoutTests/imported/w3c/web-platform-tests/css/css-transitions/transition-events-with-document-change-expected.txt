@@ -1,0 +1,4 @@
+
+
+PASS transition events for an element changing document
+

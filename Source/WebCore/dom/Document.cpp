@@ -5481,6 +5481,8 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
         addListenerType(FOCUSIN_LISTENER);
     else if (eventType == eventNames.focusoutEvent)
         addListenerType(FOCUSOUT_LISTENER);
+    else if (eventNames.isCSSTransitionEventType(eventType))
+        addListenerType(TRANSITION_ANIMATION_LISTENER);
 }
 
 HTMLFrameOwnerElement* Document::ownerElement() const
