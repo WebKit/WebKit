@@ -98,7 +98,7 @@ inline unsigned JSStringJoiner::joinedLength(JSGlobalObject* globalObject) const
     return totalLength;
 }
 
-JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
+JSValue JSStringJoiner::joinSlow(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

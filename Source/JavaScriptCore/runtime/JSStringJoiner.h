@@ -48,6 +48,7 @@ private:
     void append(StringViewWithUnderlyingString&&);
     void append8Bit(const String&);
     unsigned joinedLength(JSGlobalObject*) const;
+    JSValue joinSlow(JSGlobalObject*);
 
     StringView m_separator;
     Vector<StringViewWithUnderlyingString> m_strings;
@@ -63,6 +64,13 @@ inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView s
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!m_strings.tryReserveCapacity(stringCount)))
         throwOutOfMemoryError(globalObject, scope);
+}
+
+inline JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
+{
+    if (m_strings.size() == 1)
+        return jsString(globalObject->vm(), m_strings[0].view.toString());
+    return joinSlow(globalObject);
 }
 
 ALWAYS_INLINE void JSStringJoiner::append(StringViewWithUnderlyingString&& string)
