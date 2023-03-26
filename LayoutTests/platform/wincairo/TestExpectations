@@ -381,10 +381,6 @@ fast/url/tab-and-newline-stripping.html [ Failure ]
 webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
 webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]
 
-# This only applies to file:// loading of ES6 Modules via the import syntax. When
-# Windows recognizes .mjs files as JavaScript, this will just work.
-js/dom/modules/import-mjs-module.html [ Failure ]
-
 # Need async scrolling
 webkit.org/b/219842 fast/events/wheel/first-wheel-event-cancelable.html [ Skip ]
 webkit.org/b/219842 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
@@ -416,8 +412,6 @@ webgl/tex-2d-video-no-change-wrap.html [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
-
-webkit.org/b/223788 js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
 
 # OffscreenCanvas isn't supported yet
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Failure ]
@@ -765,6 +759,46 @@ crypto/subtle/rsa-indexeddb-non-exportable.html [ Skip ] # Timeout
 crypto/subtle/rsa-indexeddb-private.html [ Skip ] # Timeout
 crypto/subtle/rsa-indexeddb.html [ Skip ] # Timeout
 
+# js
+
+# This only applies to file:// loading of ES6 Modules via the import syntax. When
+# Windows recognizes .mjs files as JavaScript, this will just work.
+js/dom/modules/import-mjs-module.html [ Failure ]
+
+webkit.org/b/223788 js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
+
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
+
+js/dom/deep-recursion-test.html [ Failure ]
+
+[ Debug ] js/dom/domjit-accessor-polymorphic.html [ Skip ]
+[ Debug ] js/dom/domjit-function-get-element-by-id.html [ Skip ]
+[ Debug ] js/error-should-not-strong-reference-global-object.html [ Skip ]
+[ Debug ] js/large-expressions.html [ Failure ]
+[ Debug ] js/regress-150434.html [ Skip ]
+[ Debug ] js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]
+[ Debug ] js/slow-stress/nested-function-parsing-random.html [ Skip ]
+[ Debug ] js/sort-with-side-effecting-comparisons.html [ Skip ]
+[ Debug ] js/stack-overflow-regexp.html [ Skip ]
+
+js/dfg-convert-this-dom-window.html [ Skip ] # Slow
+js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
+js/dfg-double-vote-fuzz.html [ Skip ] # Slow
+js/dfg-int52-spill-trickier.html [ Skip ] # Slow
+js/dfg-int52-spill.html [ Skip ] # Slow
+js/dom/modules/module-fetch-failure-not-cached.html [ Failure ]
+js/dom/webassembly-memory-normal-fail.html [ Failure ]
+js/dom/webassembly-memory-shared-basic.html [ Failure ]
+js/dom/webassembly-memory-shared-fail.html [ Failure ]
+
+js/date-timeClip-large-values.html [ Failure Pass ]
+
+js/weakref-finalizationregistry.html [ Timeout Pass ]
+
+webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
+
+js/throw-large-string-oom.html [ Skip ] # Pass Timeout
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # http
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -826,6 +860,8 @@ http/tests/inspector/network/xhr-response-body.html [ Failure ]
 
 http/tests/inspector/network/intercept-request-main-resource.html [ Skip ] # Timeout
 
+http/tests/inspector/network/copy-as-fetch.html [ Pass Failure ]
+
 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
 http/tests/loading/oauth.html [ Failure ]
 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
@@ -833,7 +869,6 @@ http/tests/loading/promote-img-preload-priority.html [ Failure ]
 http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
 
 http/tests/loading/307-after-303-after-post.html [ Skip ] # Timeout
-http/tests/loading/simple-subframe.html [ Skip ] # Missing
 
 http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
@@ -1394,8 +1429,6 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
 
-js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
-
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
 webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Crash ]
@@ -1543,10 +1576,12 @@ imported/w3c/web-platform-tests/page-visibility [ Skip ]
 imported/w3c/web-platform-tests/paint-timing [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 imported/w3c/web-platform-tests/performance-timeline [ Skip ]
+imported/w3c/web-platform-tests/permissions [ Skip ]
 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 imported/w3c/web-platform-tests/pointerlock [ Skip ]
 imported/w3c/web-platform-tests/preload [ Skip ]
+imported/w3c/web-platform-tests/push-api [ Skip ]
 imported/w3c/web-platform-tests/quirks [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy [ Skip ]
 imported/w3c/web-platform-tests/remote-playback [ Skip ]
@@ -1592,7 +1627,6 @@ inspector [ Skip ]
 inspector/cpu-profiler/ [ Pass ]
 inspector/memory/ [ Pass ]
 ipc [ Skip ]
-js/dom/deep-recursion-test.html [ Failure ]
 mathml [ Skip ]
 media [ Skip ]
 media/W3C [ Skip ]
@@ -1629,15 +1663,6 @@ webxr [ Skip ]
 [ Debug ] fast/xpath/xpath-result-eventlistener-crash.html [ Skip ]
 [ Debug ] fetch/fetch-worker-crash.html [ Skip ]
 [ Debug ] ietestcenter/Javascript [ Skip ]
-[ Debug ] js/dom/domjit-accessor-polymorphic.html [ Skip ]
-[ Debug ] js/dom/domjit-function-get-element-by-id.html [ Skip ]
-[ Debug ] js/error-should-not-strong-reference-global-object.html [ Skip ]
-[ Debug ] js/large-expressions.html [ Failure ]
-[ Debug ] js/regress-150434.html [ Skip ]
-[ Debug ] js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]
-[ Debug ] js/slow-stress/nested-function-parsing-random.html [ Skip ]
-[ Debug ] js/sort-with-side-effecting-comparisons.html [ Skip ]
-[ Debug ] js/stack-overflow-regexp.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 [ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
@@ -1670,12 +1695,6 @@ editing/selection/move-by-word-visually-across-object-element-1.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
 editing/selection/select-out-of-floated-non-editable-13.html [ Failure ]
-editing/selection/selection-display-block-sibling.html [ Missing ]
-editing/selection/selection-display-flex.html [ Missing ]
-editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed.html [ Missing ]
-editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed.html [ Missing ]
-editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed.html [ Missing ]
-editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed.html [ Missing ]
 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
@@ -1710,10 +1729,6 @@ fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 fast/css/font-face-multiple-faces.html [ Failure Pass ]
 fast/css/font-face-synthetic-bold-italic.html [ Failure ]
 fast/css/stylesheet-layout-with-pending-paint.html [ ImageOnlyFailure Pass ]
-fast/css/vertical-text-overflow-ellipsis-text-align-center-mixed.html [ Missing ]
-fast/css/vertical-text-overflow-ellipsis-text-align-justify-mixed.html [ Missing ]
-fast/css/vertical-text-overflow-ellipsis-text-align-left-mixed.html [ Missing ]
-fast/css/vertical-text-overflow-ellipsis-text-align-right-mixed.html [ Missing ]
 fast/custom-elements/defined-rule.html [ ImageOnlyFailure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html [ Failure ]
@@ -1783,8 +1798,6 @@ fast/events/wheel/wheelevent-basic.html [ Failure ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
-fast/html/details-marker-style-mixed.html [ Missing ]
-fast/html/details-writing-mode-mixed.html [ Missing ]
 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 fast/text/ahom.html [ ImageOnlyFailure ]
@@ -1794,7 +1807,6 @@ fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
-fast/text/combining-enclosing-keycap.html [ Missing ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/complex-grapheme-cluster-with-initial-advance.html [ ImageOnlyFailure ]
 fast/text/complex-small-caps-non-bmp-capitalize.html [ ImageOnlyFailure ]
@@ -1815,9 +1827,7 @@ fast/text/font-cursive-italic-cjk.html [ ImageOnlyFailure ]
 fast/text/font-kerning.html [ ImageOnlyFailure ]
 fast/text/font-variant-ligatures.html [ ImageOnlyFailure ]
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
-fast/text/han-generic-font-families.html [ Missing ]
 fast/text/hanging-punctuation-allow-end.html [ ImageOnlyFailure ]
-fast/text/hangul-generic-font-families.html [ Missing ]
 fast/text/hyphenate-avoid-orphaned-word.html [ Failure ]
 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
@@ -1881,7 +1891,6 @@ fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
 fast/text/updateNewFont.html [ Failure ]
 fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 fast/text/user-installed-fonts/system-ui.html [ ImageOnlyFailure ]
-fast/text/vertical-rl-rtl-linebreak-mixed.html [ Missing ]
 fast/text/wbr-pre.html [ Failure ]
 fast/text/whitespace/001.html [ Failure ]
 fast/text/whitespace/013.html [ Failure ]
@@ -1905,15 +1914,6 @@ fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failu
 fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html [ Failure ]
 fonts/fantasy.html [ Failure Pass ]
 inspector/cpu-profiler/threads.html [ Failure ]
-js/dfg-convert-this-dom-window.html [ Skip ] # Slow
-js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
-js/dfg-double-vote-fuzz.html [ Skip ] # Slow
-js/dfg-int52-spill-trickier.html [ Skip ] # Slow
-js/dfg-int52-spill.html [ Skip ] # Slow
-js/dom/modules/module-fetch-failure-not-cached.html [ Failure ]
-js/dom/webassembly-memory-normal-fail.html [ Failure ]
-js/dom/webassembly-memory-shared-basic.html [ Failure ]
-js/dom/webassembly-memory-shared-fail.html [ Failure ]
 loader/reload-subresource-when-type-changes.html [ Failure ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ] # Timeout
 loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
@@ -2462,8 +2462,6 @@ webgl/many-contexts.html [ Skip ] # Timeout
 webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 
 
-js/date-timeClip-large-values.html [ Failure Pass ]
-
 # Tests depend on the system timezone.
 storage/indexeddb/modern/date-basic-private.html [ Failure Pass ]
 storage/indexeddb/modern/date-basic.html [ Failure Pass ]
@@ -2498,15 +2496,11 @@ fast/text/atsui-multiple-renderers.html [ Failure Pass ]
 fast/text/international/thai-baht-space.html [ Failure Pass ]
 fast/text/international/thai-line-breaks.html [ Failure Pass ]
 
-js/weakref-finalizationregistry.html [ Timeout Pass ]
-
 fast/css/counters/complex-before.html [ Failure ]
 fast/dom/Document/CaretRangeFromPoint/rtl.html [ Failure ]
 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
 
 webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failure ]
-
-webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
 # Doesn't support variable fonts
 fast/text/variations [ Skip ]
