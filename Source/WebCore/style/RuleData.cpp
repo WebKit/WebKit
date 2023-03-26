@@ -65,7 +65,7 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
         return MatchBasedOnRuleHash::None;
 
     if (selector.match() == CSSSelector::Tag) {
-        const QualifiedName& tagQualifiedName = selector.tagQName();
+        auto tagQualifiedName = selector.tagQName();
         const AtomString& selectorNamespace = tagQualifiedName.namespaceURI();
         if (selectorNamespace == starAtom() || selectorNamespace == xhtmlNamespaceURI) {
             if (tagQualifiedName == anyQName())

@@ -69,17 +69,17 @@ CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& se
                 operator delete (currentSelector);
             }
             if (current != first)
-                m_selectorArray[arrayIndex].setNotFirstInTagHistory();
+                m_selectorArray[arrayIndex].setIsFirstInTagHistory(false);
             current = current->tagHistory();
             ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList() || (flattenedSize == arrayIndex + 1));
             if (current)
-                m_selectorArray[arrayIndex].setNotLastInTagHistory();
+                m_selectorArray[arrayIndex].setIsLastInTagHistory(false);
             ++arrayIndex;
         }
         ASSERT(m_selectorArray[arrayIndex - 1].isLastInTagHistory());
     }
     ASSERT(flattenedSize == arrayIndex);
-    m_selectorArray[arrayIndex - 1].setLastInSelectorList();
+    m_selectorArray[arrayIndex - 1].setIsLastInSelectorList();
 }
 
 unsigned CSSSelectorList::componentCount() const

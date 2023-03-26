@@ -268,7 +268,7 @@ Ref<StyleRule> StyleRule::createForSplitting(const Vector<const CSSSelector*>& s
     auto selectorListArray = makeUniqueArray<CSSSelector>(selectors.size());
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
-    selectorListArray[selectors.size() - 1].setLastInSelectorList();
+    selectorListArray[selectors.size() - 1].setIsLastInSelectorList();
     auto styleRule = StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin, CSSSelectorList(WTFMove(selectorListArray)));
     styleRule->markAsSplitRule();
     return styleRule;
