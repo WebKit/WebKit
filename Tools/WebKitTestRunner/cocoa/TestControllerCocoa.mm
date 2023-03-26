@@ -333,6 +333,15 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     }
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
+
+    if (m_hasOnLineOverride) {
+        m_hasOnLineOverride = false;
+        __block bool isDone = false;
+        [globalWebViewConfiguration().get().websiteDataStore _resetNetworkStateOnlineOverrideForTesting:^() {
+            isDone = true;
+        }];
+        platformRunUntil(isDone, noTimeout);
+    }
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
@@ -660,6 +669,16 @@ WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef identi
     }];
     platformRunUntil(isDone, noTimeout);
     return toWK(backgroundFetchState);
+}
+
+void TestController::setOnLineOverride(bool value)
+{
+    m_hasOnLineOverride = true;
+    __block bool isDone = false;
+    [globalWebViewConfiguration().get().websiteDataStore _overrideNetworkStateOnlineForTesting:value completionHandler:^() {
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
 }
 
 } // namespace WTR

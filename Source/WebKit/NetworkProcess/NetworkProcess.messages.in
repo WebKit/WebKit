@@ -243,5 +243,5 @@ messages -> NetworkProcess LegacyReceiver {
     ClearProxyConfigData(PAL::SessionID sessionID)
     SetProxyConfigData(PAL::SessionID sessionID, IPC::DataReference proxyConfigData, IPC::DataReference proxyIdentifierData)
 #endif
-
+    SetOnLineOverrideForTesting(enum:uint8_t WebCore::NetworkStateOnLineOverride onLineOverride) -> ();
 }

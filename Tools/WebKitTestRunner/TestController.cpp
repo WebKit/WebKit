@@ -863,7 +863,11 @@ void TestController::resumeBackgroundFetch(WKStringRef)
 void TestController::simulateClickBackgroundFetch(WKStringRef)
 {
 }
-#endif
+
+void TestController::setOnLineOverride(bool)
+{
+}
+#endif // !PLATFORM(COCOA)
 
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {

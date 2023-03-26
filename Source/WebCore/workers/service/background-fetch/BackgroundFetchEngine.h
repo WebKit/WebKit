@@ -73,6 +73,7 @@ private:
 
     using FetchesMap = HashMap<String, std::unique_ptr<BackgroundFetch>>;
     HashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
+    Vector<WeakPtr<BackgroundFetch>> m_pendingFetches;
 
     HashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;
 };

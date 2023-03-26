@@ -417,6 +417,8 @@ public:
     WKRetainPtr<WKStringRef> lastUpdatedBackgroundFetchIdentifier() const;
     WKRetainPtr<WKStringRef> backgroundFetchState(WKStringRef);
 
+    void setOnLineOverride(bool);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -722,6 +724,7 @@ private:
     
 #if PLATFORM(COCOA)
     bool m_hasSetApplicationBundleIdentifier { false };
+    bool m_hasOnLineOverride { false };
 #endif
 
     bool m_isSpeechRecognitionPermissionGranted { false };

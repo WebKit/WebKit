@@ -2409,4 +2409,9 @@ void WebsiteDataStore::setProxyConfigData(const API::Data& data, uuid_t proxyIde
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 
+void WebsiteDataStore::setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride value, CompletionHandler<void()>&& completionHandler)
+{
+    networkProcess().setOnLineOverrideForTesting(value, WTFMove(completionHandler));
+}
+
 }

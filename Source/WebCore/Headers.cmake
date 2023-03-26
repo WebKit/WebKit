@@ -2003,6 +2003,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkLoadInformation.h
     platform/network/NetworkLoadMetrics.h
     platform/network/NetworkStateNotifier.h
+    platform/network/NetworkStateOnLineOverride.h
     platform/network/NetworkStorageSession.h
     platform/network/NetworkingContext.h
     platform/network/ParsedContentRange.h

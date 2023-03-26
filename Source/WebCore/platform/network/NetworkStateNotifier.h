@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include "NetworkStateOnLineOverride.h"
+#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
-#include "Timer.h"
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS WebNetworkStateObserver;
@@ -52,6 +53,8 @@ public:
     WEBCORE_EXPORT bool onLine();
     WEBCORE_EXPORT void addListener(Function<void(bool isOnLine)>&&);
 
+    WEBCORE_EXPORT void setOnLineOverrideForTesting(NetworkStateOnLineOverride);
+
 private:
     friend NeverDestroyed<NetworkStateNotifier>;
 
@@ -74,6 +77,8 @@ private:
     std::optional<bool> m_isOnLine;
     Vector<Function<void(bool)>> m_listeners;
     Timer m_updateStateTimer;
+
+    NetworkStateOnLineOverride m_onLineOverride { NetworkStateOnLineOverride::None };
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WebNetworkStateObserver> m_observer;

@@ -969,6 +969,11 @@ void TestRunner::simulateClickBackgroundFetch(JSStringRef identifier)
     postSynchronousPageMessageWithReturnValue("SimulateClickBackgroundFetch", toWK(identifier));
 }
 
+void TestRunner::setOnLineOverride(bool value)
+{
+    postSynchronousPageMessageWithReturnValue("SetOnLineOverride", adoptWK(WKBooleanCreate(value)));
+}
+
 void TestRunner::setGeolocationPermission(bool enabled)
 {
     // FIXME: This should be done by frame.

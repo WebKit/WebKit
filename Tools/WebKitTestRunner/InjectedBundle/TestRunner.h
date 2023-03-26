@@ -309,6 +309,8 @@ public:
     JSRetainPtr<JSStringRef> lastUpdatedBackgroundFetchIdentifier() const;
     JSRetainPtr<JSStringRef> backgroundFetchState(JSStringRef);
 
+    void setOnLineOverride(bool);
+
     // Geolocation.
     void setGeolocationPermission(bool);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel);

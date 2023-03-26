@@ -4955,6 +4955,13 @@ header: <WebCore/AcceleratedEffect.h>
 };
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)
 
+header: <WebCore/NetworkStateOnLineOverride.h>
+enum class WebCore::NetworkStateOnLineOverride : uint8_t {
+    None,
+    OnLine,
+    OffLine
+};
+
 #if PLATFORM(MAC)
 header: <WebCore/CaretAnimator.h>
 [CustomHeader] enum class WebCore::CaretAnimatorType : uint8_t {

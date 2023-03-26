@@ -72,6 +72,7 @@ class SharedBuffer;
 class ProtectionSpace;
 class ResourceRequest;
 class SecurityOrigin;
+enum class NetworkStateOnLineOverride : uint8_t;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
@@ -330,6 +331,8 @@ public:
 #endif
 
     void notifyMediaStreamingActivity(bool);
+
+    void setOnLineOverrideForTesting(WebCore::NetworkStateOnLineOverride, CompletionHandler<void()>&&);
 
 private:
     explicit NetworkProcessProxy();

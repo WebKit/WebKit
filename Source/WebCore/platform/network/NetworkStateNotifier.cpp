@@ -77,7 +77,17 @@ void NetworkStateNotifier::addListener(Function<void(bool)>&& listener)
 void NetworkStateNotifier::updateState()
 {
     auto wasOnLine = m_isOnLine;
-    updateStateWithoutNotifying();
+    switch (m_onLineOverride) {
+    case NetworkStateOnLineOverride::None:
+        updateStateWithoutNotifying();
+        break;
+    case NetworkStateOnLineOverride::OnLine:
+        m_isOnLine = true;
+        break;
+    case NetworkStateOnLineOverride::OffLine:
+        m_isOnLine = false;
+        break;
+    }
     if (m_isOnLine == wasOnLine)
         return;
     for (auto& listener : m_listeners)
@@ -87,6 +97,12 @@ void NetworkStateNotifier::updateState()
 void NetworkStateNotifier::updateStateSoon()
 {
     m_updateStateTimer.startOneShot(updateStateSoonInterval);
+}
+
+void NetworkStateNotifier::setOnLineOverrideForTesting(NetworkStateOnLineOverride onLineOverride)
+{
+    m_onLineOverride = onLineOverride;
+    m_updateStateTimer.startOneShot(0_s);
 }
 
 } // namespace WebCore
