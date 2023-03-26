@@ -43,6 +43,7 @@
 #include "DocumentInlines.h"
 #include "Editor.h"
 #include "ElementInlines.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FileChooser.h"
 #include "FileInputType.h"
