@@ -167,6 +167,8 @@ public:
     SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
     SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
 
+    bool hasAssociatedSVGLayoutBox() const;
+
 protected:
     SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, ConstructionType = CreateSVGElement);
     virtual ~SVGElement();

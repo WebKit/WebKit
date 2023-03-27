@@ -1099,4 +1099,21 @@ SVGConditionalProcessingAttributes* SVGElement::conditionalProcessingAttributesI
     return m_svgRareData->conditionalProcessingAttributesIfExists();
 }
 
+bool SVGElement::hasAssociatedSVGLayoutBox() const
+{
+    if (!renderer())
+        return false;
+
+    // Legacy SVG engine specific condition.
+    if (renderer()->isLegacySVGRoot())
+        return false;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // LBSE specific condition.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return false;
+#endif
+    return true;
+}
+
 }
