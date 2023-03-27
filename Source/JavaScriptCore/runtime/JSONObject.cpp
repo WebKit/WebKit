@@ -74,7 +74,7 @@ public:
     PropertyNameForFunctionCall(PropertyName);
     PropertyNameForFunctionCall(unsigned);
 
-    JSValue value(JSGlobalObject*) const;
+    JSValue value(VM&) const;
 
 private:
     PropertyName m_propertyName;
@@ -209,10 +209,9 @@ inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(unsigned number)
 {
 }
 
-JSValue PropertyNameForFunctionCall::value(JSGlobalObject* globalObject) const
+JSValue PropertyNameForFunctionCall::value(VM& vm) const
 {
     if (!m_value) {
-        VM& vm = globalObject->vm();
         if (!m_propertyName.isNull())
             m_value = jsString(vm, String { m_propertyName.uid() });
         else {
@@ -324,7 +323,7 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
         return baseValue;
 
     MarkedArgumentBuffer args;
-    args.append(propertyName.value(m_globalObject));
+    args.append(propertyName.value(vm));
     ASSERT(!args.hasOverflowed());
     RELEASE_AND_RETURN(scope, call(m_globalObject, asObject(toJSONFunction), callData, baseValue, args));
 }
@@ -353,7 +352,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Call the replacer function.
     if (isCallableReplacer()) {
         MarkedArgumentBuffer args;
-        args.append(propertyName.value(m_globalObject));
+        args.append(propertyName.value(vm));
         args.append(value);
         ASSERT(!args.hasOverflowed());
         ASSERT(holder.object());

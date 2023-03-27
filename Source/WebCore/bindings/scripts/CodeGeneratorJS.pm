@@ -2409,13 +2409,11 @@ sub GenerateEnumerationImplementationContent
     $result .= "}\n\n";
 
 
-    # FIXME: Change to take VM& instead of JSGlobalObject*.
-    $result .= "template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, $className enumerationValue)\n";
+    $result .= "template<> JSString* convertEnumerationToJS(VM& vm, $className enumerationValue)\n";
     $result .= "{\n";
-    $result .= "    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));\n";
+    $result .= "    return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));\n";
     $result .= "}\n\n";
 
-    # FIXME: Change to take VM& instead of JSGlobalObject&.
     # FIXME: Consider using toStringOrNull to make exception checking faster.
     # FIXME: Consider finding a more efficient way to match against all the strings quickly.
     $result .= "template<> std::optional<$className> parseEnumerationFromString<${className}>(const String& stringValue)\n";
@@ -2480,7 +2478,7 @@ sub GenerateEnumerationHeaderContent
     my $exportMacro = GetExportMacroForJSClass($enumeration);
 
     $result .= "${exportMacro}String convertEnumerationToString($className);\n";
-    $result .= "template<> ${exportMacro}JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, $className);\n\n";
+    $result .= "template<> ${exportMacro}JSC::JSString* convertEnumerationToJS(JSC::VM&, $className);\n\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumerationFromString<${className}>(const String&);\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumeration<$className>(JSC::JSGlobalObject&, JSC::JSValue);\n";
     $result .= "template<> ${exportMacro}const char* expectedEnumerationValues<$className>();\n\n";

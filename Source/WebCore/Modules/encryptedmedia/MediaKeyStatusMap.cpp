@@ -85,7 +85,7 @@ JSC::JSValue MediaKeyStatusMap::get(JSC::JSGlobalObject& state, const BufferSour
 
     if (it == statuses.end())
         return JSC::jsUndefined();
-    return convertEnumerationToJS(state, it->second);
+    return convertEnumerationToJS(state.vm(), it->second);
 }
 
 MediaKeyStatusMap::Iterator::Iterator(MediaKeyStatusMap& map)
