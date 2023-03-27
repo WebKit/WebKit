@@ -55,6 +55,10 @@ find_package(PkgConfig QUIET)
 
 # libelogind provides compatible pc and header files
 pkg_check_modules(PC_SYSTEMD QUIET libsystemd)
+if (NOT PC_SYSTEMD_FOUND)
+    pkg_check_modules(PC_SYSTEMD QUIET libelogind)
+endif ()
+
 set(Journald_COMPILE_OPTIONS ${PC_SYSTEMD_CFLAGS_OTHER})
 set(Journald_VERSION ${PC_SYSTEMD_VERSION})
 
