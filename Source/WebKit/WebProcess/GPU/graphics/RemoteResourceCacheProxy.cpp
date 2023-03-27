@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "CacheableDecodedImage.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 
@@ -82,8 +83,19 @@ void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier ide
     ASSERT_UNUSED(success, success);
 }
 
+inline static RefPtr<ShareableBitmap> getExistingShareableBitmapFromNativeImage(NativeImage& image)
+{
+    if (!is<CacheableDecodedImage>(image.decodedImage()))
+        return nullptr;
+
+    return downcast<CacheableDecodedImage>(image.decodedImage()).bitmap();
+}
+
 inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(NativeImage& image)
 {
+    if (auto decodedImage = dynamicDowncast<CacheableDecodedImage>(image.decodedImage()))
+        return decodedImage->bitmap();
+
     auto imageSize = image.size();
 
     auto bitmap = ShareableBitmap::create(image.size(), { image.colorSpace() });
@@ -110,19 +122,23 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (iterator != m_nativeImages.end())
         return;
 
-    auto bitmap = createShareableBitmapFromNativeImage(image);
-    if (!bitmap)
-        return;
+    auto bitmap = getExistingShareableBitmapFromNativeImage(image);
+    if (!bitmap) {
+        bitmap = createShareableBitmapFromNativeImage(image);
+        if (!bitmap)
+            return;
+
+        auto decodedImage = CacheableDecodedImage::create(RefPtr { bitmap });
+        if (!decodedImage)
+            return;
+
+        image.setDecodedImage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decodedImage)));
+    }
 
     auto handle = bitmap->createHandle();
     if (!handle)
         return;
 
-    auto platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-    if (!platformImage)
-        return;
-
-    image.setPlatformImage(WTFMove(platformImage));
     handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
 
     m_nativeImages.add(image.renderingResourceIdentifier(), image);
@@ -172,6 +188,12 @@ void RemoteResourceCacheProxy::clearNativeImageMap()
     for (auto& nativeImage : m_nativeImages.values())
         nativeImage.get()->removeObserver(*this);
     m_nativeImages.clear();
+}
+
+void RemoteResourceCacheProxy::releaseAllNativeImages()
+{
+    clearNativeImageMap();
+    m_remoteRenderingBackendProxy.releaseAllRemoteNativeImages();
 }
 
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()

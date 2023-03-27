@@ -273,4 +273,32 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
     return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
 }
 
+void SharedMemory::setVolatile()
+{
+    ASSERT(m_data);
+
+    int purgeableState = VM_PURGABLE_VOLATILE;
+    auto kr = mach_vm_purgable_control(mach_task_self(), toVMAddress(m_data), VM_PURGABLE_SET_STATE, &purgeableState);
+
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::setVolatile: Failed to set memory volatile. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+}
+
+WebCore::SetNonVolatileResult SharedMemory::setNonVolatile()
+{
+    ASSERT(m_data);
+
+    int purgeableState = VM_PURGABLE_NONVOLATILE;
+    auto kr = mach_vm_purgable_control(mach_task_self(), toVMAddress(m_data), VM_PURGABLE_SET_STATE, &purgeableState);
+
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::setVolatile: Failed to set memory non-volatile. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+        return WebCore::SetNonVolatileResult::Empty;
+    }
+
+    if (purgeableState == VM_PURGABLE_EMPTY)
+        return WebCore::SetNonVolatileResult::Empty;
+
+    return WebCore::SetNonVolatileResult::Valid;
+}
+
 } // namespace WebKit

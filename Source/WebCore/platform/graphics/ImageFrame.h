@@ -42,19 +42,18 @@
 namespace WebCore {
 
 class ImageFrame {
+    WTF_MAKE_NONCOPYABLE(ImageFrame);
     friend class ImageSource;
 public:
     enum class Caching { Metadata, MetadataAndImage };
 
     ImageFrame();
-    ImageFrame(const ImageFrame& other) { operator=(other); }
-
+    ImageFrame(ImageFrame&&);
     ~ImageFrame();
 
     static const ImageFrame& defaultFrame();
 
-    ImageFrame& operator=(const ImageFrame& other);
-
+    unsigned clearImageAndCacheDecodedData();
     unsigned clearImage();
     unsigned clear();
 
@@ -88,6 +87,9 @@ public:
     bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
+    bool hasCachedDecodedImage(const std::optional<SubsamplingLevel>& = { }) const;
+    bool hasCachedDecodedImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
+
     Color singlePixelSolidColor() const;
 
 private:
@@ -95,6 +97,7 @@ private:
     IntSize m_size;
 
     RefPtr<NativeImage> m_nativeImage;
+    std::unique_ptr<CachedDecodedImage> m_cachedDecodedImage;
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
     DecodingOptions m_decodingOptions;
 

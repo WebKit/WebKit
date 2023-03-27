@@ -456,6 +456,7 @@ public:
     void didCompleteRenderingFrame();
 
     void releaseMemory(WTF::Critical);
+    void releaseAllRemoteImageResources();
 
     unsigned remoteImagesCountForTesting() const;
 

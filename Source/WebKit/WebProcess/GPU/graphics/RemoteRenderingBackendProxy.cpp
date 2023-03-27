@@ -267,6 +267,11 @@ void RemoteRenderingBackendProxy::releaseAllRemoteResources()
     send(Messages::RemoteRenderingBackend::ReleaseAllResources());
 }
 
+void RemoteRenderingBackendProxy::releaseAllRemoteNativeImages()
+{
+    send(Messages::RemoteRenderingBackend::ReleaseAllNativeImages());
+}
+
 void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     send(Messages::RemoteRenderingBackend::ReleaseRenderingResource(renderingResourceIdentifier));

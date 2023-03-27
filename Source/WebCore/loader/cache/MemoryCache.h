@@ -106,6 +106,7 @@ public:
     void forEachResource(const Function<void(CachedResource&)>&);
     void forEachSessionResource(PAL::SessionID, const Function<void(CachedResource&)>&);
     WEBCORE_EXPORT void destroyDecodedDataForAllImages();
+    WEBCORE_EXPORT void destroyAndCacheDecodedDataForAllImages();
 
     // Sets the cache's memory capacities, in bytes. These will hold only approximately,
     // since the decoded cost of resources like scripts and stylesheets is not known.

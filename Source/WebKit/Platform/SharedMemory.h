@@ -51,6 +51,7 @@ namespace WebCore {
 class FragmentedSharedBuffer;
 class ProcessIdentity;
 class SharedBuffer;
+enum class SetNonVolatileResult : uint8_t;
 }
 
 namespace WebKit {
@@ -130,6 +131,11 @@ public:
 #endif
 
     Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
+
+#if PLATFORM(COCOA)
+    void setVolatile();
+    WebCore::SetNonVolatileResult setNonVolatile();
+#endif
 
 private:
 #if OS(DARWIN)

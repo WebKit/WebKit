@@ -36,12 +36,13 @@ namespace WebCore {
 
 IntSize NativeImage::size() const
 {
-    return IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get()));
+    auto platformImage = this->platformImage();
+    return IntSize(CGImageGetWidth(platformImage.get()), CGImageGetHeight(platformImage.get()));
 }
 
 bool NativeImage::hasAlpha() const
 {
-    CGImageAlphaInfo info = CGImageGetAlphaInfo(m_platformImage.get());
+    CGImageAlphaInfo info = CGImageGetAlphaInfo(platformImage().get());
     return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
 }
 
@@ -57,7 +58,7 @@ Color NativeImage::singlePixelSolidColor() const
         return Color();
 
     CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
-    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), m_platformImage.get());
+    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), platformImage().get());
 
     if (!pixel[3])
         return Color::transparentBlack;
@@ -67,7 +68,7 @@ Color NativeImage::singlePixelSolidColor() const
 
 DestinationColorSpace NativeImage::colorSpace() const
 {
-    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+    return DestinationColorSpace(CGImageGetColorSpace(platformImage().get()));
 }
 
 void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
@@ -135,7 +136,7 @@ void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, con
 void NativeImage::clearSubimages()
 {
 #if CACHE_SUBIMAGES
-    CGSubimageCacheWithTimer::clearImage(m_platformImage.get());
+    CGSubimageCacheWithTimer::clearImage(platformImage().get());
 #endif
 }
 

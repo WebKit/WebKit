@@ -45,22 +45,18 @@ const ImageFrame& ImageFrame::defaultFrame()
     return sharedInstance;
 }
 
-ImageFrame& ImageFrame::operator=(const ImageFrame& other)
+ImageFrame::ImageFrame(ImageFrame&& other)
+    : m_decodingStatus(other.m_decodingStatus)
+    , m_size(other.m_size)
+    , m_nativeImage(WTFMove(other.m_nativeImage))
+    , m_cachedDecodedImage(WTFMove(other.m_cachedDecodedImage))
+    , m_subsamplingLevel(other.m_subsamplingLevel)
+    , m_decodingOptions(other.m_decodingOptions)
+    , m_orientation(other.m_orientation)
+    , m_densityCorrectedSize(other.m_densityCorrectedSize)
+    , m_duration(other.m_duration)
+    , m_hasAlpha(other.m_hasAlpha)
 {
-    if (this == &other)
-        return *this;
-
-    m_decodingStatus = other.m_decodingStatus;
-    m_size = other.m_size;
-
-    m_nativeImage = other.m_nativeImage;
-    m_subsamplingLevel = other.m_subsamplingLevel;
-    m_decodingOptions = other.m_decodingOptions;
-
-    m_orientation = other.m_orientation;
-    m_duration = other.m_duration;
-    m_hasAlpha = other.m_hasAlpha;
-    return *this;
 }
 
 void ImageFrame::setDecodingStatus(DecodingStatus decodingStatus)
@@ -75,16 +71,38 @@ DecodingStatus ImageFrame::decodingStatus() const
     return m_decodingStatus;
 }
 
-unsigned ImageFrame::clearImage()
+unsigned ImageFrame::clearImageAndCacheDecodedData()
 {
     if (!hasNativeImage())
+        return 0;
+
+    ASSERT(!m_cachedDecodedImage);
+
+    m_cachedDecodedImage = m_nativeImage->decodedImage().createCachedDecodedImage();
+    if (!m_cachedDecodedImage)
         return 0;
 
     unsigned frameBytes = this->frameBytes();
 
     m_nativeImage->clearSubimages();
     m_nativeImage = nullptr;
+
+    return frameBytes;
+}
+
+unsigned ImageFrame::clearImage()
+{
     m_decodingOptions = DecodingOptions();
+
+    unsigned frameBytes = 0;
+
+    if (m_nativeImage) {
+        frameBytes = this->frameBytes();
+        m_nativeImage->clearSubimages();
+        m_nativeImage = nullptr;
+    }
+
+    m_cachedDecodedImage.reset();
 
     return frameBytes;
 }
@@ -92,7 +110,18 @@ unsigned ImageFrame::clearImage()
 unsigned ImageFrame::clear()
 {
     unsigned frameBytes = clearImage();
-    *this = ImageFrame();
+
+    m_decodingStatus = DecodingStatus::Invalid;
+    m_size = { };
+    m_nativeImage = nullptr;
+    m_cachedDecodedImage = nullptr;
+    m_subsamplingLevel = SubsamplingLevel::Default;
+    m_decodingOptions = { };
+    m_orientation = ImageOrientation::Orientation::None;
+    m_densityCorrectedSize = std::nullopt;
+    m_duration = { };
+    m_hasAlpha = true;
+
     return frameBytes;
 }
 
@@ -114,6 +143,16 @@ bool ImageFrame::hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& s
 bool ImageFrame::hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) const
 {
     return hasNativeImage(subsamplingLevel) && m_decodingOptions.isCompatibleWith(decodingOptions);
+}
+
+bool ImageFrame::hasCachedDecodedImage(const std::optional<SubsamplingLevel>& subsamplingLevel) const
+{
+    return m_cachedDecodedImage && (!subsamplingLevel || *subsamplingLevel >= m_subsamplingLevel);
+}
+
+bool ImageFrame::hasCachedDecodedImageCompatibleWithOptions(const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) const
+{
+    return hasCachedDecodedImage(subsamplingLevel) && m_decodingOptions.isCompatibleWith(decodingOptions);
 }
 
 Color ImageFrame::singlePixelSolidColor() const

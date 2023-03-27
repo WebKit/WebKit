@@ -2124,6 +2124,7 @@ platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/ByteArrayPixelBuffer.cpp
+platform/graphics/CachedDecodedImage.cpp
 platform/graphics/CachedSubimage.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp
@@ -2137,6 +2138,7 @@ platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/ContentTypeUtilities.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
+platform/graphics/DecodedImage.cpp
 platform/graphics/DecomposedGlyphs.cpp
 platform/graphics/DestinationColorSpace.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
@@ -2207,6 +2209,7 @@ platform/graphics/MediaPlayerPrivate.cpp
 platform/graphics/Model.cpp
 platform/graphics/NamedImageGeneratedImage.cpp
 platform/graphics/NativeImage.cpp
+platform/graphics/OwnedDecodedImage.cpp
 platform/graphics/Path.cpp
 platform/graphics/PathTraversalState.cpp
 platform/graphics/PathUtilities.cpp

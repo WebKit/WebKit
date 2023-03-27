@@ -34,6 +34,7 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CacheFont(Ref<WebCore::Font> font) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     ReleaseAllResources()
+    ReleaseAllNativeImages()
     ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 
 #if PLATFORM(COCOA)

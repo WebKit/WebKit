@@ -202,6 +202,7 @@ Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
 Shared/AuxiliaryProcessCreationParameters.cpp
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
+Shared/CacheableDecodedImage.cpp
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
 Shared/DebuggableInfoData.cpp
@@ -218,6 +219,7 @@ Shared/LoadParameters.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
+Shared/PurgeableCachedDecodedImage.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
 Shared/RemoteWorkerInitializationData.cpp

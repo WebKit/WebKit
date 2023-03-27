@@ -28,10 +28,12 @@
 #pragma once
 
 #include "Color.h"
+#include "DecodedImage.h"
 #include "ImagePaintingOptions.h"
 #include "IntSize.h"
 #include "PlatformImage.h"
 #include "RenderingResource.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -40,10 +42,13 @@ class GraphicsContext;
 class NativeImage final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(UniqueRef<DecodedImage>&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
-    WEBCORE_EXPORT void setPlatformImage(PlatformImagePtr&&);
-    const PlatformImagePtr& platformImage() const { return m_platformImage; }
+    const DecodedImage& decodedImage() const { return m_decodedImage.get(); }
+    void setDecodedImage(UniqueRef<DecodedImage>&& decodedImage) { std::exchange(m_decodedImage, WTFMove(decodedImage)); }
+
+    PlatformImagePtr platformImage() const { return m_decodedImage->platformImage(); }
 
     RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
@@ -57,9 +62,9 @@ public:
     void clearSubimages();
 
 private:
-    NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier);
+    NativeImage(UniqueRef<DecodedImage>&&, RenderingResourceIdentifier);
 
-    PlatformImagePtr m_platformImage;
+    UniqueRef<DecodedImage> m_decodedImage;
 };
 
 } // namespace WebCore
