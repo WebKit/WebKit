@@ -291,14 +291,32 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
             break;
         cursor = boundFunction->targetFunction();
     }
-    for (unsigned i = 0; i < nestingCount; ++i) {
-        terminal = jsString(globalObject, vm.smallStrings.boundPrefixString(), terminal);
+
+    if (nestingCount) {
+        StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+        for (unsigned i = 0; i < nestingCount; ++i)
+            builder.append("bound "_s);
+        String terminalString = terminal->value(globalObject); // Resolving rope.
         if (UNLIKELY(scope.exception())) {
             scope.clearException();
             terminal = jsEmptyString(vm);
-            break;
+        } else {
+            builder.append(WTFMove(terminalString));
+            if (builder.hasOverflowed())
+                terminal = jsEmptyString(vm);
+            else
+                terminal = jsNontrivialString(vm, builder.toString());
         }
     }
+
+    if (terminal) {
+        terminal->value(globalObject); // Resolving rope.
+        if (UNLIKELY(scope.exception())) {
+            scope.clearException();
+            terminal = jsEmptyString(vm);
+        }
+    }
+
     m_nameMayBeNull.set(vm, this, terminal);
     return terminal;
 }
