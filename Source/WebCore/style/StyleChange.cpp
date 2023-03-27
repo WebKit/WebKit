@@ -73,21 +73,6 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
     if (s1 != s2)
         return Change::NonInherited;
 
-    // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
-    // because setStyle will do the right thing with anything else.
-    if (s1.hasAnyPublicPseudoStyles()) {
-        for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::FirstInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
-            if (s1.hasPseudoStyle(pseudoId)) {
-                RenderStyle* ps2 = s2.getCachedPseudoStyle(pseudoId);
-                if (!ps2)
-                    return Change::NonInherited;
-                RenderStyle* ps1 = s1.getCachedPseudoStyle(pseudoId);
-                if (!ps1 || *ps1 != *ps2)
-                    return Change::NonInherited;
-            }
-        }
-    }
-
     return Change::None;
 }
 
