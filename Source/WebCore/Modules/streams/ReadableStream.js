@@ -70,12 +70,28 @@ function initializeReadableStream(underlyingSource, strategy)
         let readableByteStreamControllerConstructor = @ReadableByteStreamController;
         @putByIdDirectPrivate(this, "readableStreamController", new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark, @isReadableStream));
     } else if (type === @undefined) {
-        if (strategy.highWaterMark === @undefined)
-            strategy.highWaterMark = 1;
+        let highWaterMark = strategy.highWaterMark;
+        if (highWaterMark !== @undefined)
+            highWaterMark = @toNumber(highWaterMark);
+        else
+            highWaterMark = 1;
+        const size = strategy.size;
+        if (size !== @undefined && !@isCallable(size))
+            @throwTypeError("size parameter must be a function");
 
-        @setupReadableStreamDefaultController(this, underlyingSource, strategy.size, strategy.highWaterMark, underlyingSource.start, underlyingSource.pull, underlyingSource.cancel);
+        const cancel = underlyingSource.cancel;
+        if (cancel !== @undefined && !@isCallable(cancel))
+            @throwTypeError("underlyingSource cancel must be a function");
+        const pull = underlyingSource.pull;
+        if (pull !== @undefined && !@isCallable(pull))
+            @throwTypeError("underlyingSource pull must be a function");
+        const start = underlyingSource.start;
+        if (start !== @undefined && !@isCallable(start))
+            @throwTypeError("underlyingSource start must be a function");
+
+        @setupReadableStreamDefaultController(this, underlyingSource, size, highWaterMark, start, pull, cancel);
     } else
-        @throwRangeError("Invalid type for underlying source");
+        @throwTypeError("Invalid type for underlying source");
 
     return this;
 }

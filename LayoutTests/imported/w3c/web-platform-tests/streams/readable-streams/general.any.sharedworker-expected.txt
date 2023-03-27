@@ -1,12 +1,10 @@
 
 PASS ReadableStream can be constructed with no errors
 PASS ReadableStream can't be constructed with garbage
-FAIL ReadableStream can't be constructed with an invalid type assert_throws_js: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" threw object "RangeError: Invalid type for underlying source" ("RangeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS ReadableStream can't be constructed with an invalid type
 PASS ReadableStream constructor should throw for non-function start arguments
-FAIL ReadableStream constructor will not tolerate initial garbage as cancel argument assert_throws_js: constructor should throw function "() => new ReadableStream({ cancel: '2' })" did not throw
-FAIL ReadableStream constructor will not tolerate initial garbage as pull argument assert_throws_js: constructor should throw function "() => new ReadableStream({ pull: { } })" did not throw
+PASS ReadableStream constructor will not tolerate initial garbage as cancel argument
+PASS ReadableStream constructor will not tolerate initial garbage as pull argument
 PASS ReadableStream start should be called with the proper thisArg
 PASS ReadableStream start controller parameter should be extensible
 PASS default ReadableStream getReader() should only accept mode:undefined
