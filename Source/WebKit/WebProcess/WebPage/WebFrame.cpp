@@ -180,10 +180,8 @@ WebPage* WebFrame::page() const
     if (!m_coreFrame)
         return nullptr;
 
-    if (auto* page = m_coreFrame->page())
-        return &WebPage::fromCorePage(*page);
-
-    return nullptr;
+    auto* page = m_coreFrame->page();
+    return page ? WebPage::fromCorePage(*page) : nullptr;
 }
 
 WebFrame* WebFrame::fromCoreFrame(const AbstractFrame& frame)

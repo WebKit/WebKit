@@ -77,7 +77,7 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (!m_extensionController)
-        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this);
+        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page.identifier());
 #endif
 
     m_frontendAPIDispatcher->reset();

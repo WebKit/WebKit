@@ -338,7 +338,8 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
     Page::forEachPage([&] (Page& page) {
-        WebPage::fromCorePage(page).mainWebFrame().addConsoleMessage(source, level, message);
+        if (auto* webPage = WebPage::fromCorePage(page))
+            webPage->mainWebFrame().addConsoleMessage(source, level, message);
     });
 }
 

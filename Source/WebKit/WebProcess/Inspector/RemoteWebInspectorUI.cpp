@@ -67,7 +67,7 @@ RemoteWebInspectorUI::~RemoteWebInspectorUI() = default;
 void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this);
+    m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page.identifier());
 #endif
 
     m_debuggableInfo = WTFMove(debuggableInfo);

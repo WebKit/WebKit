@@ -336,7 +336,7 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
         return;
     }
 
-    WebPage::fromCorePage(*page).sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
+    WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
         auto* client = Document::allDocumentsMap().get(clientIdentifier);
         auto* frame = client ? client->frame() : nullptr;
         auto* page = frame ? frame->page() : nullptr;

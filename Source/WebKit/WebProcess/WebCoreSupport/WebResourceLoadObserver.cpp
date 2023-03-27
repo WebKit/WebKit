@@ -371,7 +371,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
         if (auto* opener = frame->loader().opener()) {
             if (auto* openerDocument = opener->document()) {
                 if (auto* openerPage = openerDocument->page())
-                    requestStorageAccessUnderOpener(topFrameDomain, WebPage::fromCorePage(*openerPage), *openerDocument);
+                    requestStorageAccessUnderOpener(topFrameDomain, *WebPage::fromCorePage(*openerPage), *openerDocument);
             }
         }
     }
