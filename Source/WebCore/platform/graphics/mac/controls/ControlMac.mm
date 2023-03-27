@@ -209,19 +209,10 @@ static void applyViewlessCellSettings(float deviceScaleFactor, const ControlStyl
 #endif
 }
 
-static void drawSliderCell(GraphicsContext& context, const FloatRect& rect, NSSliderCell *sliderCell)
+static void performDrawingWithUnflippedContext(GraphicsContext& context, const FloatRect& rect, Function<void(const FloatRect&)>&& draw)
 {
-    LocalCurrentGraphicsContext localContext(context);
-    [sliderCell drawKnob:rect];
-}
-
-static void drawViewlessCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
-{
-    applyViewlessCellSettings(deviceScaleFactor, style, cell);
-
     auto adjustedRect = rect;
 
-    // FIXME: rdar://106067079 - Remove un-flipping the flipped coordinates.
     CGContextRef cgContext = context.platformContext();
     CGContextStateSaver stateSaver(cgContext);
 
@@ -234,12 +225,27 @@ static void drawViewlessCell(GraphicsContext& context, const FloatRect& rect, fl
     CGContextScaleCTM(cgContext, 1, -1);
 
     LocalCurrentGraphicsContext localContext(context, false);
+    draw(adjustedRect);
+}
 
-    // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawWithFrame].
+static void drawSliderCell(GraphicsContext& context, const FloatRect& rect, NSSliderCell *sliderCell)
+{
+    LocalCurrentGraphicsContext localContext(context);
+    [sliderCell drawKnob:rect];
+}
+
+static void drawViewlessCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
+{
+    applyViewlessCellSettings(deviceScaleFactor, style, cell);
+
+    // FIXME: rdar://106067079 - Remove un-flipping the flipped coordinates.
+    performDrawingWithUnflippedContext(context, rect, [&](const FloatRect& adjustedRect) {
+        // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawFocusRingMaskWithFrame].
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    [cell drawWithFrame:adjustedRect inView:nil];
+        [cell drawWithFrame:adjustedRect inView:nil];
 #pragma clang diagnostic pop
+    });
 }
 
 static void drawCellInView(GraphicsContext& context, const FloatRect& rect, NSCell *cell, NSView *view)
@@ -266,33 +272,35 @@ void ControlMac::drawCellInternal(GraphicsContext& context, const FloatRect& rec
     drawCellInView(context, rect, cell, view);
 }
 
-static void drawViewlessCellFocusRing(const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
+static void drawViewlessCellFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
 {
     applyViewlessCellSettings(deviceScaleFactor, style, cell);
 
-    // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawFocusRingMaskWithFrame].
+    // FIXME: rdar://106067079 - Remove un-flipping the flipped coordinates.
+    performDrawingWithUnflippedContext(context, rect, [&](const FloatRect& adjustedRect) {
+        // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawFocusRingMaskWithFrame].
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    [cell drawFocusRingMaskWithFrame:rect inView:nil];
+        [cell drawFocusRingMaskWithFrame:adjustedRect inView:nil];
 #pragma clang diagnostic pop
+    });
 }
 
-static void drawCellFocusRingInView(const FloatRect& rect, NSCell *cell, NSView *view)
+static void drawCellFocusRingInView(GraphicsContext& context, const FloatRect& rect, NSCell *cell, NSView *view)
 {
+    LocalCurrentGraphicsContext localContext(context);
     [cell drawFocusRingMaskWithFrame:rect inView:view];
 }
 
 void ControlMac::drawCellFocusRingInternal(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
 {
-    LocalCurrentGraphicsContext localContext(context);
-
     if (supportsViewlessCells()) {
-        drawViewlessCellFocusRing(rect, deviceScaleFactor, style, cell);
+        drawViewlessCellFocusRing(context, rect, deviceScaleFactor, style, cell);
         return;
     }
 
     auto *view = m_controlFactory.drawingView(rect, style);
-    drawCellFocusRingInView(rect, cell, view);
+    drawCellFocusRingInView(context, rect, cell, view);
 }
 
 void ControlMac::drawCellFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
