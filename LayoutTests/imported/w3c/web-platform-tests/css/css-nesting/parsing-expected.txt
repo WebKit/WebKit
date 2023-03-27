@@ -1,7 +1,5 @@
 
-PASS .foo {
-  & { color: green; }
-}
+PASS .foo { & { color: green; } }
 PASS .foo { //color: red; color: green; }
 PASS .foo {
   &.bar { color: green; }
@@ -36,14 +34,14 @@ PASS .foo, .bar {
 PASS .foo {
   & .bar & .baz & .qux { color: green; }
 }
-FAIL .foo {
+PASS .foo {
   @media (min-width: 50px) {
   & { color: green; }
 }
-} assert_equals: expected ".foo {\n  @media (min-width: 50px) { color: green; }\n}" but got ".foo {\n  @media (min-width: 50px) {\n  & { color: green; }\n}\n}"
-FAIL .foo {
+}
+PASS .foo {
   @media (min-width: 50px) { color: green; }
-} assert_equals: expected ".foo {\n  @media (min-width: 50px) { color: green; }\n}" but got ".foo {\n  @media (min-width: 50px) {\n  & { color: green; }\n}\n}"
+}
 PASS main {
   & > section, & > article {
   & > header { color: green; }
