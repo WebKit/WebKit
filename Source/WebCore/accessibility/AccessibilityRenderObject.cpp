@@ -748,8 +748,8 @@ String AccessibilityRenderObject::stringValue() const
     if (!m_renderer)
         return String();
 
-    if (isSecureField())
-        return secureFieldValue();
+    if (isPasswordField())
+        return passwordFieldValue();
 
     if (isARIAStaticText()) {
         String staticText = text();
@@ -1570,8 +1570,8 @@ int AccessibilityRenderObject::layoutCount() const
 
 String AccessibilityRenderObject::text() const
 {
-    if (isSecureField())
-        return secureFieldValue();
+    if (isPasswordField())
+        return passwordFieldValue();
     return AccessibilityNodeObject::text();
 }
     
@@ -1600,7 +1600,7 @@ String AccessibilityRenderObject::selectedText() const
 {
     ASSERT(isTextControl());
     
-    if (isSecureField())
+    if (isPasswordField())
         return String(); // need to return something distinct from empty string
     
     if (isNativeTextControl()) {
@@ -1632,7 +1632,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
 {
     ASSERT(isTextControl());
 
-    if (isSecureField())
+    if (isPasswordField())
         return PlainTextRange();
 
     // Use the text control native range if it's a native object.
@@ -2453,7 +2453,7 @@ String AccessibilityRenderObject::doAXStringForRange(const PlainTextRange& range
     if (!isTextControl())
         return String();
     
-    String elementText = isSecureField() ? secureFieldValue() : text();
+    String elementText = isPasswordField() ? passwordFieldValue() : text();
     return elementText.substring(range.start, range.length);
 }
 
@@ -3528,9 +3528,9 @@ AccessibilityRole AccessibilityRenderObject::roleValueForMSAA() const
     return m_roleForMSAA;
 }
 
-String AccessibilityRenderObject::secureFieldValue() const
+String AccessibilityRenderObject::passwordFieldValue() const
 {
-    ASSERT(isSecureField());
+    ASSERT(isPasswordField());
 
     // Look for the RenderText object in the RenderObject tree for this input field.
     RenderObject* renderer = node()->renderer();

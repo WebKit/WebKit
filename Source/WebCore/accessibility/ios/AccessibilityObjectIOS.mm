@@ -80,9 +80,9 @@ void AccessibilityObject::overrideAttachmentParent(AXCoreObject*)
 }
     
 // In iPhone only code for now. It's debateable whether this is desired on all platforms.
-int AccessibilityObject::accessibilitySecureFieldLength()
+int AccessibilityObject::accessibilityPasswordFieldLength()
 {
-    if (!isSecureField())
+    if (!isPasswordField())
         return 0;
     RenderObject* renderObject = downcast<AccessibilityRenderObject>(*this).renderer();
     

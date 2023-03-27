@@ -119,7 +119,7 @@ private:
     bool isHeading() const override { return boolAttributeValue(AXPropertyName::IsHeading); }
     bool isLandmark() const override { return boolAttributeValue(AXPropertyName::IsLandmark); }
     bool isLink() const override { return boolAttributeValue(AXPropertyName::IsLink); }
-    bool isSecureField() const override { return boolAttributeValue(AXPropertyName::IsSecureField); }
+    bool isPasswordField() const override { return boolAttributeValue(AXPropertyName::IsPasswordField); }
     bool isAttachment() const override { return boolAttributeValue(AXPropertyName::IsAttachment); }
     bool isMenuRelated() const override { return boolAttributeValue(AXPropertyName::IsMenuRelated); }
     bool isMenu() const override { return boolAttributeValue(AXPropertyName::IsMenu); }

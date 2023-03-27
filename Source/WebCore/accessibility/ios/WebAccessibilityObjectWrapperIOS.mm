@@ -812,7 +812,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     auto* backingObject = self.axBackingObject;
     if (backingObject->isFocused())
         traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
-    if (backingObject->isSecureField())
+    if (backingObject->isPasswordField())
         traits |= [self _axSecureTextFieldTrait];
 
     switch (backingObject->roleValue()) {
@@ -1174,7 +1174,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    if (!self.axBackingObject->isSecureField())
+    if (!self.axBackingObject->isPasswordField())
         return NO;
     
     return self.axBackingObject->valueAutofillButtonType() == AutoFillButtonType::StrongPassword;
@@ -1561,10 +1561,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }
 
     // rdar://8131388 WebKit should expose the same info as UIKit for its password fields.
-    if (backingObject->isSecureField() && ![self _accessibilityIsStrongPasswordField]) {
-        int secureTextLength = backingObject->accessibilitySecureFieldLength();
+    if (backingObject->isPasswordField() && ![self _accessibilityIsStrongPasswordField]) {
+        int passwordLength = backingObject->accessibilityPasswordFieldLength();
         NSMutableString* string = [NSMutableString string];
-        for (int k = 0; k < secureTextLength; ++k)
+        for (int k = 0; k < passwordLength; ++k)
             [string appendString:@"•"];
         return string;
     }

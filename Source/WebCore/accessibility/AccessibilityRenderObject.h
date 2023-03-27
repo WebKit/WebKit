@@ -179,7 +179,7 @@ public:
     String descriptionForMSAA() const override;
     AccessibilityRole roleValueForMSAA() const override;
 
-    String secureFieldValue() const override;
+    String passwordFieldValue() const override;
     void titleElementText(Vector<AccessibilityText>&) const override;
 
 protected:

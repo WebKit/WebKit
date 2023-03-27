@@ -69,7 +69,7 @@ public:
     bool isMultiSelectable() const override;
     bool isNativeImage() const;
     bool isNativeTextControl() const override;
-    bool isSecureField() const override;
+    bool isPasswordField() const override;
     bool isProgressIndicator() const override;
     bool isSearchField() const override;
     bool isSlider() const override;
