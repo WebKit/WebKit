@@ -269,8 +269,8 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     } else if (auto* workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(resourceLoader.frameLoader()->client())) {
         if (auto serviceWorkerPageIdentifier = workerFrameLoaderClient->serviceWorkerPageIdentifier()) {
             if (auto* page = Page::serviceWorkerPage(*serviceWorkerPageIdentifier)) {
-                webPage = &WebPage::fromCorePage(*page);
-                auto* frame = webPage->mainFrame();
+                webPage = WebPage::fromCorePage(*page);
+                auto* frame = webPage ? webPage->mainFrame() : nullptr;
                 webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
             }
         }
@@ -779,7 +779,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
 void WebLoaderStrategy::pageLoadCompleted(Page& page)
 {
     if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page).identifier()), 0);
+        networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page)->identifier()), 0);
 }
 
 void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
@@ -789,7 +789,7 @@ void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
     if (!networkProcessConnection)
         return;
 
-    auto& page = WebPage::fromCorePage(*frame.page());
+    auto& page = *WebPage::fromCorePage(*frame.page());
     networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
 }
 
@@ -1034,7 +1034,7 @@ bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& resp
 void WebLoaderStrategy::setResourceLoadSchedulingMode(WebCore::Page& page, WebCore::LoadSchedulingMode mode)
 {
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.send(Messages::NetworkConnectionToWebProcess::SetResourceLoadSchedulingMode(WebPage::fromCorePage(page).identifier(), mode), 0);
+    connection.send(Messages::NetworkConnectionToWebProcess::SetResourceLoadSchedulingMode(WebPage::fromCorePage(page)->identifier(), mode), 0);
 }
 
 void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>& resources)

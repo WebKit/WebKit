@@ -38,14 +38,14 @@ void WebBadgeClient::setAppBadge(Page* page, const SecurityOriginData& origin, s
 {
     std::optional<WebPageProxyIdentifier> pageIdentifier;
     if (page)
-        pageIdentifier = WebPage::fromCorePage(*page).webPageProxyIdentifier();
+        pageIdentifier = WebPage::fromCorePage(*page)->webPageProxyIdentifier();
 
     WebProcess::singleton().setAppBadge(pageIdentifier, origin, badge);
 }
 
 void WebBadgeClient::setClientBadge(Page& page, const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
-    WebProcess::singleton().setClientBadge(WebPage::fromCorePage(page).webPageProxyIdentifier(), origin, badge);
+    WebProcess::singleton().setClientBadge(WebPage::fromCorePage(page)->webPageProxyIdentifier(), origin, badge);
 }
 
 } // namespace WebKit
