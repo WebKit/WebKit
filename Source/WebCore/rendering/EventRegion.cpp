@@ -133,7 +133,18 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
 
             if (shouldConsolidateInteractionRegion(bounds, renderer))
                 return;
-            m_discoveredInteractionRectsByElement.add(interactionRegion->elementIdentifier, bounds);
+
+            auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
+            if (regionIterator != m_discoveredRegionsByElement.end()) {
+                auto discoveredRegion = regionIterator->value;
+                interactionRegion->regionInLayerCoordinates.subtract(discoveredRegion);
+                if (interactionRegion->regionInLayerCoordinates.isEmpty())
+                    return;
+
+                discoveredRegion.unite(interactionRegion->regionInLayerCoordinates);
+                m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
+            } else
+                m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->regionInLayerCoordinates);
         } else {
             if (m_occlusionRects.contains(bounds))
                 return;
@@ -154,9 +165,9 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
             continue;
 
         auto elementIdentifier = ancestor.element()->identifier();
-        auto rectIterator = m_discoveredInteractionRectsByElement.find(elementIdentifier);
-        if (rectIterator != m_discoveredInteractionRectsByElement.end()) {
-            auto parentBounds = rectIterator->value;
+        auto regionIterator = m_discoveredRegionsByElement.find(elementIdentifier);
+        if (regionIterator != m_discoveredRegionsByElement.end()) {
+            auto parentBounds = regionIterator->value.bounds();
             if (!parentBounds.contains(bounds))
                 return false;
 
