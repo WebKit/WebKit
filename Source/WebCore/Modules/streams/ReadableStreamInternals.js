@@ -535,6 +535,10 @@ function readableStreamError(stream, error)
 
     const reader = @getByIdDirectPrivate(stream, "reader");
 
+    @getByIdDirectPrivate(reader, "closedPromiseCapability").@reject.@call(@undefined, error);
+    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
+    @markPromiseAsHandled(promise);
+
     if (@isReadableStreamDefaultReader(reader)) {
         const requests = @getByIdDirectPrivate(reader, "readRequests");
         @putByIdDirectPrivate(reader, "readRequests", []);
@@ -547,10 +551,6 @@ function readableStreamError(stream, error)
         for (let index = 0, length = requests.length; index < length; ++index)
             @rejectPromise(requests[index], error);
     }
-
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").@reject.@call(@undefined, error);
-    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
-    @markPromiseAsHandled(promise);
 }
 
 function readableStreamDefaultControllerShouldCallPull(controller)
