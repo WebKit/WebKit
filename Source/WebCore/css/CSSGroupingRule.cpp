@@ -105,7 +105,7 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
     m_groupRule->wrapperRemoveRule(index);
 
     if (m_childRuleCSSOMWrappers[index])
-        m_childRuleCSSOMWrappers[index]->setParentRule(0);
+        m_childRuleCSSOMWrappers[index]->setParentRule(nullptr);
     m_childRuleCSSOMWrappers.remove(index);
 
     return { };
@@ -138,15 +138,27 @@ void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
     return;
 }
 
-void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rules) const
+void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& rules) const
 {
     auto& childRules = m_groupRule->childRules();
-
     for (unsigned index = 0 ; index < childRules.size() ; index++) {
+        // We put the declarations at the upper level when the rule:
+        // - is a style rule
+        // - has just "&" as original selector
+        // - has no child rules
+        auto childRule = childRules[index];
+        ASSERT(childRule);
+        if (childRule->isStyleRuleWithNesting()) {
+            auto& nestedStyleRule = downcast<StyleRuleWithNesting>(*childRule);
+            if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
+                decls.append(nestedStyleRule.properties().asText());
+                continue;
+            }
+        }
+        // Otherwise we print the child rule
         auto wrappedRule = item(index);
         rules.append("\n  ", wrappedRule->cssText());
     }
-
 }
 
 unsigned CSSGroupingRule::length() const

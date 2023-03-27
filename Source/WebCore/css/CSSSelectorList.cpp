@@ -193,4 +193,22 @@ bool CSSSelectorList::hasExplicitNestingParent() const
 
     return forEachSelector(functor, this);
 }
+
+bool CSSSelectorList::hasOnlyNestingSelector() const
+{
+    if (componentCount() != 1)
+        return false;
+
+    auto singleSelector = first();
+
+    if (!singleSelector)
+        return false;
+    
+    // Selector should be a single selector
+    if (singleSelector->tagHistory())
+        return false;
+
+    return singleSelector->match() == CSSSelector::Match::PseudoClass && singleSelector->pseudoClassType() == CSSSelector::PseudoClassType::PseudoClassNestingParent;
+}
+
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+typedef USVString CSSOMString;
+
 [
     Exposed=Window
 ] interface CSSStyleRule : CSSRule {
@@ -26,4 +28,8 @@
 
     // https://drafts.css-houdini.org/css-typed-om/#declared-stylepropertymap-objects
     [SameObject, EnabledBySetting=CSSTypedOMEnabled] readonly attribute StylePropertyMap styleMap;
+
+    [EnabledBySetting=CSSNestingEnabled, SameObject] readonly attribute CSSRuleList cssRules;
+    [EnabledBySetting=CSSNestingEnabled] unsigned long insertRule(CSSOMString rule, optional unsigned long index = 0);
+    [EnabledBySetting=CSSNestingEnabled] undefined deleteRule(unsigned long index);
 };
