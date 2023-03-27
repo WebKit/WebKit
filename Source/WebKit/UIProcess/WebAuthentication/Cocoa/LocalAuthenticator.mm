@@ -204,6 +204,8 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         if (it != responseMap.end() && it->second.isByteString())
             response->setLargeBlob(ArrayBuffer::create(it->second.getByteString()));
 
+        response->setAccessGroup(attributes[(id)kSecAttrAccessGroup]);
+
         result.uncheckedAppend(WTFMove(response));
     }
     return result;

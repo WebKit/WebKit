@@ -45,6 +45,7 @@ public:
     bool synchronizable() const { return m_response->synchronizable(); }
     const WTF::String& group() const { return m_response->group(); }
     RefPtr<Data> credentialID() const;
+    const WTF::String& accessGroup() const { return m_response->accessGroup(); }
 
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
 
