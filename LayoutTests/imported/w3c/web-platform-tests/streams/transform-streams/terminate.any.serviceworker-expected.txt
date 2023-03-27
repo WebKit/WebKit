@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: the stream has been terminated
-
 PASS controller.terminate() should error pipeTo()
 PASS controller.terminate() should prevent remaining chunks from being processed
 PASS controller.enqueue() should throw after controller.terminate()

@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: error1!
-
 PASS Errors must be propagated forward: starts errored; preventAbort = false; fulfilled abort promise
 PASS Errors must be propagated forward: starts errored; preventAbort = false; rejected abort promise
 PASS Errors must be propagated forward: starts errored; preventAbort = undefined (falsy); fulfilled abort promise

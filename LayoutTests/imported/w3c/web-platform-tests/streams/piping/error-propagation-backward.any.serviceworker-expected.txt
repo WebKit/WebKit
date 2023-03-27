@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
-
 PASS Errors must be propagated backward: starts errored; preventCancel omitted; fulfilled cancel promise
 PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; fulfilled cancel promise
 PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; rejected cancel promise
