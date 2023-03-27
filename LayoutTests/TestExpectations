@@ -6330,3 +6330,5 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/254259 http/tests/priority-hints/fetch-api-priority.html [ Failure Pass ]
+
+webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]
