@@ -2505,10 +2505,6 @@ webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failu
 # Doesn't support variable fonts
 fast/text/variations [ Skip ]
 
-webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
-webkit.org/b/253868 js/ShadowRealm-iframe-sandboxed.html [ Timeout Pass ]
-webkit.org/b/253868 http/tests/misc/iframe-shadow-realm.html [ Timeout Pass ]
-
 fast/text/bidi-with-non-preserved-tab.html [ ImageOnlyFailure ]
 
 webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Skip ] # Crash Timeout only on Buildbot
