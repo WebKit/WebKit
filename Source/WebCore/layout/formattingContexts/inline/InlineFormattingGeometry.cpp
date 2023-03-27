@@ -261,6 +261,13 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
     return { };
 }
 
+InlineLayoutUnit InlineFormattingGeometry::lineBoxOffsetAfterLastLine(const ConstraintsForInFlowContent& constraints) const
+{
+    auto alignmentOffset = horizontalAlignmentOffset(constraints.horizontal().logicalWidth, IsLastLineOrAfterLineBreak::Yes);
+    auto textIndent = computedTextIndent(IsIntrinsicWidthMode::No, true, constraints.horizontal().logicalWidth);
+    return alignmentOffset + constraints.horizontal().logicalLeft + textIndent;
+}
+
 LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent) const
 {
     ASSERT(outOfFlowBox.style().isOriginalDisplayInlineType());
@@ -269,8 +276,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());
-        auto alignmentOffset = horizontalAlignmentOffset(constraints.horizontal().logicalWidth, IsLastLineOrAfterLineBreak::Yes);
-        return { constraints.horizontal().logicalLeft + alignmentOffset, constraints.logicalTop() };
+        return { lineBoxOffsetAfterLastLine(constraints), constraints.logicalTop() };
     }
 
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
@@ -313,8 +319,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
     auto nextDisplayBoxIndexAfterOutOfFlow = nextDisplayBoxIndex(outOfFlowBox, boxes);
     if (!nextDisplayBoxIndexAfterOutOfFlow) {
         // This is the last content on the block and it does not fit the last line.
-        auto alignmentOffset = horizontalAlignmentOffset(constraints.horizontal().logicalWidth, IsLastLineOrAfterLineBreak::Yes);
-        return { constraints.horizontal().logicalLeft + alignmentOffset, isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
+        return { lineBoxOffsetAfterLastLine(constraints), isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
     }
     auto& nextDisplayBox = boxes[*nextDisplayBoxIndexAfterOutOfFlow];
     return leftSideToLogicalTopLeft(nextDisplayBox, lines[nextDisplayBox.lineIndex()]);

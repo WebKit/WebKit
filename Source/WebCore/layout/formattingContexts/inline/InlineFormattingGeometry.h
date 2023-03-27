@@ -65,6 +65,8 @@ public:
     InlineLayoutUnit horizontalAlignmentOffset(InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt) const;
 
 private:
+    InlineLayoutUnit lineBoxOffsetAfterLastLine(const ConstraintsForInFlowContent&) const;
+
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
 
 };
