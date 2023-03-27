@@ -165,7 +165,11 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
 
 ExceptionOr<Ref<FetchResponse>> FetchResponse::jsonForBindings(ScriptExecutionContext& context, JSC::JSValue data, Init&& init)
 {
-    String jsonString = JSC::JSONStringify(context.globalObject(), data, 0);
+    auto* globalObject = context.globalObject();
+    if (!globalObject)
+        return Exception { InvalidStateError, "Context is stopped"_s };
+
+    String jsonString = JSC::JSONStringify(globalObject, data, 0);
     if (jsonString.isNull())
         return Exception { TypeError, "Value doesn't have a JSON representation"_s };
 
