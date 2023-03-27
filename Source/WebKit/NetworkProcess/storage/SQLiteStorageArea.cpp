@@ -165,6 +165,10 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
     auto openResult  = m_database->open(m_path);
     if (!openResult && handleDatabaseCorruptionIfNeeded(m_database->lastError())) {
         databaseExists = false;
+        if (shouldCreateIfNotExists == ShouldCreateIfNotExists::No)
+            return true;
+
+        m_database = makeUnique<WebCore::SQLiteDatabase>();
         openResult = m_database->open(m_path);
     }
 
