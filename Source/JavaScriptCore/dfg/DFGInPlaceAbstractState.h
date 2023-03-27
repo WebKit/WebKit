@@ -156,6 +156,101 @@ public:
         makeHeapTopForNode(edge.node());
     }
     
+    ALWAYS_INLINE AbstractValue& forTupleNode(NodeFlowProjection node, unsigned index)
+    {
+        ASSERT(index < node->tupleSize());
+        return fastForward(m_tupleAbstractValues.at(node->tupleOffset() + index));
+    }
+
+    ALWAYS_INLINE AbstractValue& forTupleNode(Edge edge, unsigned index)
+    {
+        return forTupleNode(edge.node(), index);
+    }
+
+    ALWAYS_INLINE void clearForTupleNode(NodeFlowProjection node, unsigned index)
+    {
+        ASSERT(index < node->tupleSize());
+        AbstractValue& value = m_tupleAbstractValues.at(node->tupleOffset() + index);
+        value.clear();
+        value.m_effectEpoch = m_effectEpoch;
+    }
+
+    ALWAYS_INLINE void clearForTupleNode(Edge edge, unsigned index)
+    {
+        clearForTupleNode(edge.node(), index);
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setForTupleNode(NodeFlowProjection node, unsigned index, Arguments&&... arguments)
+    {
+        ASSERT(index < node->tupleSize());
+        AbstractValue& value = m_tupleAbstractValues.at(node->tupleOffset() + index);
+        value.set(m_graph, std::forward<Arguments>(arguments)...);
+        value.m_effectEpoch = m_effectEpoch;
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setForTupleNode(Edge edge, unsigned index, Arguments&&... arguments)
+    {
+        setForTupleNode(edge.node(), index, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setTypeForTupleNode(NodeFlowProjection node, unsigned index, Arguments&&... arguments)
+    {
+        ASSERT(index < node->tupleSize());
+        AbstractValue& value = m_tupleAbstractValues.at(node->tupleOffset() + index);
+        value.setType(m_graph, std::forward<Arguments>(arguments)...);
+        value.m_effectEpoch = m_effectEpoch;
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setTypeForTupleNode(Edge edge, unsigned index, Arguments&&... arguments)
+    {
+        setTypeForTupleNode(edge.node(), index, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setNonCellTypeForTupleNode(NodeFlowProjection node, unsigned index, Arguments&&... arguments)
+    {
+        ASSERT(index < node->tupleSize());
+        AbstractValue& value = m_tupleAbstractValues.at(node->tupleOffset() + index);
+        value.setNonCellType(std::forward<Arguments>(arguments)...);
+        value.m_effectEpoch = m_effectEpoch;
+    }
+
+    template<typename... Arguments>
+    ALWAYS_INLINE void setNonCellTypeForTupleNode(Edge edge, unsigned index, Arguments&&... arguments)
+    {
+        setNonCellTypeForTupleNode(edge.node(), index, std::forward<Arguments>(arguments)...);
+    }
+
+    ALWAYS_INLINE void makeBytecodeTopForTupleNode(NodeFlowProjection node, unsigned index)
+    {
+        ASSERT(index < node->tupleSize());
+        AbstractValue& value = m_tupleAbstractValues.at(node->tupleOffset() + index);
+        value.makeBytecodeTop();
+        value.m_effectEpoch = m_effectEpoch;
+    }
+
+    ALWAYS_INLINE void makeBytecodeTopForTupleNode(Edge edge, unsigned index)
+    {
+        makeBytecodeTopForTupleNode(edge.node(), index);
+    }
+
+    ALWAYS_INLINE void makeHeapTopForTupleNode(NodeFlowProjection node, unsigned index)
+    {
+        ASSERT(index < node->tupleSize());
+        AbstractValue& value = m_tupleAbstractValues.at(node->tupleOffset() + index);
+        value.makeHeapTop();
+        value.m_effectEpoch = m_effectEpoch;
+    }
+
+    ALWAYS_INLINE void makeHeapTopForTupleNode(Edge edge, unsigned index)
+    {
+        makeHeapTopForTupleNode(edge.node(), index);
+    }
+
     Operands<AbstractValue>& variablesForDebugging();
 
     unsigned size() const { return m_variables.size(); }
@@ -280,6 +375,7 @@ private:
 
     FlowMap<AbstractValue>& m_abstractValues;
     Operands<AbstractValue> m_variables;
+    Vector<AbstractValue> m_tupleAbstractValues;
     FastBitVector m_activeVariables;
     BasicBlock* m_block;
 

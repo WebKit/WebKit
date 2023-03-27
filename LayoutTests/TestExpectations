@@ -6210,6 +6210,9 @@ webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/l
 # This test can cause OOM error, depending on device and memory usage, and there is no guarantee. Ignore console log, which appears when OOM happens since what we would like to ensure is just no crash.
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
+# Fails and should be fixed on all platforms except glib
+webkit.org/b/254222 media/media-source/media-webm-opus-codecdelay.html [ Failure ]
+
 webkit.org/b/251624 fast/images/animated-heics-verify.html [ Skip ]
 
 # Import-assertion gets reverted to stage-2.

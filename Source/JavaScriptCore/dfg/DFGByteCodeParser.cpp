@@ -817,6 +817,10 @@ private:
         m_hasAnyForceOSRExits |= (node->op() == ForceOSRExit);
 
         m_currentBlock->append(node);
+        if (node->isTuple()) {
+            node->setTupleOffset(m_graph.m_tupleData.size());
+            m_graph.m_tupleData.grow(m_graph.m_tupleData.size() + node->tupleSize());
+        }
         if (clobbersExitState(m_graph, node))
             m_exitOK = false;
         return node;
@@ -8931,11 +8935,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addVarArgChild(nullptr); // storage for IndexedMode only.
             Node* updatedIndexAndMode = addToGraph(Node::VarArg, EnumeratorNextUpdateIndexAndMode, OpInfo(arrayMode.asWord()), OpInfo(seenModes));
 
-            Node* updatedMode = addToGraph(EnumeratorNextExtractMode, updatedIndexAndMode);
-            set(bytecode.m_mode, updatedMode);
-
-            Node* updatedIndex = addToGraph(EnumeratorNextExtractIndex, updatedIndexAndMode);
+            Node* updatedIndex = addToGraph(ExtractFromTuple, OpInfo(0), updatedIndexAndMode);
+            updatedIndex->setResult(NodeResultInt32);
             set(bytecode.m_index, updatedIndex);
+
+            Node* updatedMode = addToGraph(ExtractFromTuple, OpInfo(1), updatedIndexAndMode);
+            updatedMode->setResult(NodeResultInt32);
+            set(bytecode.m_mode, updatedMode);
 
             set(bytecode.m_propertyName, addToGraph(EnumeratorNextUpdatePropertyName, OpInfo(), OpInfo(seenModes), updatedIndex, updatedMode, enumerator));
 

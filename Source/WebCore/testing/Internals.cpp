@@ -7128,4 +7128,15 @@ bool Internals::isVisuallyNonEmpty() const
     return frameView && frameView->isVisuallyNonEmpty();
 }
 
+bool Internals::isUsingUISideCompositing() const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return false;
+    auto* page = document->page();
+    if (!page)
+        return false;
+    return page->chrome().client().isUsingUISideCompositing();
+}
+
 } // namespace WebCore

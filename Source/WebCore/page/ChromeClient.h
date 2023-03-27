@@ -631,6 +631,8 @@ public:
 
     virtual void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) = 0;
 
+    virtual bool isUsingUISideCompositing() const { return false; }
+    
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

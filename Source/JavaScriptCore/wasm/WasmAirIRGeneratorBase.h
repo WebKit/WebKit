@@ -30,6 +30,7 @@
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
 
+#include "AirCCallSpecial.h"
 #include "AirCode.h"
 #include "AirGenerate.h"
 #include "AirHelpers.h"
@@ -834,7 +835,7 @@ protected:
         B3::Value* dummyFunc = m_proc.addConstant(B3::Origin(), B3::pointerType(), bitwise_cast<uintptr_t>(func));
         B3::Value* origin = m_proc.add<B3::CCallValue>(resultType, B3::Origin(), B3::Effects::none(), dummyFunc, makeDummyValue(theArgs)...);
 
-        Inst inst(CCall, origin);
+        Inst inst(CCall, origin, Arg::special(m_proc.code().cCallSpecial()));
 
         auto callee = self().gPtr();
         append(block, Move, Arg::immPtr(tagCFunctionPtr<void*, OperationPtrTag>(func)), callee);

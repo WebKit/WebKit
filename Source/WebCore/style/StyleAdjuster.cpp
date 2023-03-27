@@ -855,7 +855,7 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
         }
         documentElementUpdate->style->setWritingMode(writingMode);
         documentElementUpdate->style->setDirection(direction);
-        documentElementUpdate->change = determineChange(*documentElementStyle, *documentElementUpdate->style);
+        documentElementUpdate->change = std::max(documentElementUpdate->change, Change::Inherited);
     }
 }
 

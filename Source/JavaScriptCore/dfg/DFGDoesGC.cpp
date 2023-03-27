@@ -519,8 +519,7 @@ bool doesGC(Graph& graph, Node* node)
     case ResolveRope:
         return true;
 
-    case EnumeratorNextExtractMode:
-    case EnumeratorNextExtractIndex:
+    case ExtractFromTuple:
         return false;
 
     case PutByValDirect:

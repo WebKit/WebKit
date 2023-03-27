@@ -1624,4 +1624,14 @@ const AtomString& WebChromeClient::searchStringForModalContainerObserver() const
 }
 #endif
 
+bool WebChromeClient::isUsingUISideCompositing() const
+{
+#if PLATFORM(COCOA)
+    return m_page.drawingArea()->type() == DrawingAreaType::RemoteLayerTree;
+#else
+    return false;
+#endif
+}
+
+
 } // namespace WebKit

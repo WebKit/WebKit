@@ -1203,4 +1203,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     SelectorFilterHashCounts selectorFilterHashCounts(DOMString selector);
 
     readonly attribute boolean isVisuallyNonEmpty;
+    
+    boolean isUsingUISideCompositing();
 };

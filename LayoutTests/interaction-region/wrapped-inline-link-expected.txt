@@ -20,15 +20,15 @@ Line
 )
         (borderRadius 8.00),
         (interaction
-            (rect (-4,16) width=38 height=27)
+            (rect (-4,23) width=38 height=20)
 )
         (borderRadius 8.00),
         (interaction
-            (rect (-4,36) width=38 height=27)
+            (rect (-4,43) width=38 height=20)
 )
         (borderRadius 8.00),
         (interaction
-            (rect (-4,56) width=38 height=27)
+            (rect (-4,63) width=38 height=20)
 )
         (borderRadius 8.00)])
       )

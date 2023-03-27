@@ -3036,6 +3036,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ExtractFromTuple: {
+        compileExtractFromTuple(node);
+        break;
+    }
+
     case Inc:
     case Dec:
         compileIncOrDec(node);
@@ -5593,16 +5598,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case EnumeratorNextUpdateIndexAndMode: {
         compileEnumeratorNextUpdateIndexAndMode(node);
-        break;
-    }
-
-    case EnumeratorNextExtractMode: {
-        compileEnumeratorNextExtractMode(node);
-        break;
-    }
-
-    case EnumeratorNextExtractIndex: {
-        compileEnumeratorNextExtractIndex(node);
         break;
     }
 

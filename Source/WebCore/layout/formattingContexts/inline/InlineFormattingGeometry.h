@@ -61,6 +61,9 @@ public:
 
     void adjustMarginStartForListMarker(const ElementBox&, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const;
 
+    enum class IsLastLineOrAfterLineBreak : bool { No, Yes };
+    InlineLayoutUnit horizontalAlignmentOffset(InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt) const;
+
 private:
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
 

@@ -94,9 +94,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     };
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if ([layer valueForKey:@"WKInteractionRegion"])
+    if ([layer valueForKey:@"WKInteractionRegionGroupName"])
         ts.dumpProperty("type", "interaction");
-    if ([layer valueForKey:@"WKInteractionRegionOcclusion"])
+    else if ([layer valueForKey:@"WKInteractionRegionType"])
         ts.dumpProperty("type", "occlusion");
 #endif
 

@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
-
 PASS Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks
 PASS Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks, but then does
 PASS Piping from an empty ReadableStream into a WritableStream that does not desire chunks, but then the readable stream becomes non-empty and the writable stream starts desiring chunks

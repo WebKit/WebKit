@@ -1377,6 +1377,8 @@ public:
     SelectorFilterHashCounts selectorFilterHashCounts(const String& selector);
 
     bool isVisuallyNonEmpty() const;
+        
+    bool isUsingUISideCompositing() const;
 
 private:
     explicit Internals(Document&);

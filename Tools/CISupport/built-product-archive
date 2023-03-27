@@ -187,10 +187,13 @@ def createZip(directoryToZip, configuration, excludePatterns=None, embedParentDi
                         mkbom.stdin.write(archiveMemberName + '\n')
                 dirsToIgnore = {name for pattern in excludePatterns for name in fnmatch.filter(dirs, pattern)}
                 for name in reversed(dirs):
-                    if name not in dirsToIgnore:
-                        continue
-                    print('Ignoring:', os.path.join(relativePath, name))
-                    dirs.remove(name)
+                    if name in dirsToIgnore:
+                        print('Ignoring:', os.path.join(relativePath, name))
+                        dirs.remove(name)
+                    else:
+                        if os.path.islink(os.path.join(root, name)):
+                            archiveMemberName = os.path.join(relativePath, name)
+                            mkbom.stdin.write(archiveMemberName + '\n')
             mkbom.stdin.close()
             if mkbom.wait():
                 return 1

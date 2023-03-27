@@ -2034,7 +2034,7 @@ custom Shuffle
 custom Patch
 
 # Instructions used for lowering C calls. These don't make it to Air generation. They get lowered to
-# something else first. The origin Value must be a CCallValue.
+# CCallSpecials first. The origin Value must be a CCallValue.
 custom CCall
 custom ColdCCall
 

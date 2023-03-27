@@ -128,6 +128,11 @@ LValue Output::opaque(LValue value)
     return m_block->appendNew<Value>(m_proc, Opaque, origin(), value);
 }
 
+LValue Output::extract(LValue value, unsigned index)
+{
+    return m_block->appendNew<ExtractValue>(m_proc, origin(), m_proc.typeAtOffset(value->type(), index), value, index);
+}
+
 LValue Output::add(LValue left, LValue right)
 {
     if (Value* result = left->addConstant(m_proc, right)) {

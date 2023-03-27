@@ -566,22 +566,33 @@ void AppendPipeline::consumeAppsinksAvailableSamples()
 void AppendPipeline::resetParserState()
 {
     ASSERT(isMainThread());
-    GST_DEBUG_OBJECT(pipeline(), "Handling resetParserState() in AppendPipeline by resetting the pipeline");
-
-    // FIXME: Implement a flush event-based resetParserState() implementation would allow the initialization segment to
-    // survive, in accordance with the spec.
 
     // This function restores the GStreamer pipeline to the same state it was when the AppendPipeline constructor
-    // finished. All previously enqueued data is lost and the demuxer is reset, losing all pads and track data.
+    // finished. All previously enqueued data is lost and the demuxer is flushed, but retains the configuration from the
+    // last received init segment, in accordance to the spec.
 
     // Unlock the streaming thread.
     m_taskQueue.startAborting();
 
-    // Reset the state of all elements in the pipeline.
-    assertedElementSetState(m_pipeline.get(), GST_STATE_READY);
+    // Flush approach requires these GStreamer patches, scheduled to land on 1.23.1:
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/4101.
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/4199.
+    if (webkitGstCheckVersion(1, 23, 1)) {
+        GST_DEBUG_OBJECT(pipeline(), "Handling resetParserState() in AppendPipeline by flushing the pipeline");
+        gst_element_send_event(m_appsrc.get(), gst_event_new_flush_start());
+        gst_element_send_event(m_appsrc.get(), gst_event_new_flush_stop(true));
 
-    // Set the pipeline to PLAYING so that it can be used again.
-    assertedElementSetState(m_pipeline.get(), GST_STATE_PLAYING);
+        GstSegment segment;
+        gst_segment_init(&segment, GST_FORMAT_BYTES);
+        gst_element_send_event(m_appsrc.get(), gst_event_new_segment(&segment));
+    } else {
+        GST_DEBUG_OBJECT(pipeline(), "Handling resetParserState() in AppendPipeline by resetting the pipeline");
+        // Reset the state of all elements in the pipeline.
+        assertedElementSetState(m_pipeline.get(), GST_STATE_READY);
+
+        // Set the pipeline to PLAYING so that it can be used again.
+        assertedElementSetState(m_pipeline.get(), GST_STATE_PLAYING);
+    }
 
     // All processing related to the previous append has been aborted and the pipeline is idle.
     // We can listen again to new requests coming from the streaming thread.

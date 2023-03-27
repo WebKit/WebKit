@@ -5,7 +5,7 @@ function assert(x) {
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
-        throw new Error(`Bad value: ${actual}.`);
+        throw new Error(`Bad value: ${actual} expected ${expected}.`);
 }
 
 const enumDesc = { value: 0, writable: true, enumerable: true, configurable: true };
@@ -15,13 +15,16 @@ const dontEnumDesc = { value: 0, writable: true, enumerable: false, configurable
 (() => {
     function test() {
         var arr = Object.defineProperties([0, 0, 0], { 1: dontEnumDesc });
+        var count = 0;
         for (var i in arr) {
+            count++;
             assert(i in arr);
             shouldBe(arr[i], 0);
             ++arr[i];
             if (i === "0")
                 Object.defineProperties(arr, { 1: enumDesc, 2: dontEnumDesc });
         }
+        shouldBe(count, 1);
         shouldBe(arr[0], 1);
         shouldBe(arr[1], 0);
         shouldBe(arr[2], 0);

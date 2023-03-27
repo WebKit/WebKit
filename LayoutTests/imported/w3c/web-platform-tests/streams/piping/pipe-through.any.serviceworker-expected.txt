@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection
-
 PASS Piping through a duck-typed pass-through transform stream should work
 PASS Piping through a transform errored on the writable end does not cause an unhandled promise rejection
 PASS pipeThrough should not call pipeTo on this

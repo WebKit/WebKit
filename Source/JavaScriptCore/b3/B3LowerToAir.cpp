@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBlockInsertionSet.h"
+#include "AirCCallSpecial.h"
 #include "AirCode.h"
 #include "AirHelpers.h"
 #include "AirInsertionSet.h"
@@ -144,6 +145,7 @@ public:
             }
             case Get:
             case Patchpoint:
+            case B3::CCall:
             case BottomTuple: {
                 if (value->type().isTuple())
                     ensureTupleTmps(value, m_tupleValueToTmps);
@@ -446,6 +448,7 @@ private:
         switch (tupleValue->opcode()) {
         case Phi:
         case Patchpoint:
+        case B3::CCall:
         case BottomTuple: {
             return m_tupleValueToTmps.find(tupleValue)->value;
         }
@@ -4457,7 +4460,7 @@ private:
         case B3::CCall: {
             CCallValue* cCall = m_value->as<CCallValue>();
 
-            Inst inst(m_isRare ? Air::ColdCCall : Air::CCall, cCall);
+            Inst inst(m_isRare ? Air::ColdCCall : Air::CCall, cCall, Arg::special(m_code.cCallSpecial()));
 
             // We have a ton of flexibility regarding the callee argument, but currently, we don't
             // use it yet. It gets weird for reasons:
@@ -4470,8 +4473,11 @@ private:
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=151052
             inst.args.append(tmp(cCall->child(0)));
 
-            if (cCall->type() != Void)
-                inst.args.append(tmp(cCall));
+            if (cCall->type() != Void) {
+                forEachImmOrTmp(cCall, [&] (Arg arg, Type, unsigned) {
+                    inst.args.append(arg.tmp());
+                });
+            }
 
             for (unsigned i = 1; i < cCall->numChildren(); ++i)
                 inst.args.append(immOrTmp(cCall->child(i)));

@@ -1458,6 +1458,15 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
     return StringImpl::tryGetUTF8ForCharacters(function, characters16(), length(), mode);
 }
 
+template<> struct VectorTraits<StringView> : VectorTraitsBase<false, void> {
+    static constexpr bool canMoveWithMemcpy = true;
+    static constexpr bool canCopyWithMemcpy = true;
+};
+
+template<> struct VectorTraits<StringViewWithUnderlyingString> : VectorTraitsBase<false, void> {
+    static constexpr bool canMoveWithMemcpy = true;
+};
+
 } // namespace WTF
 
 using WTF::append;

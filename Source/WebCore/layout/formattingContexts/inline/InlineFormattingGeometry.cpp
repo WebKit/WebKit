@@ -364,6 +364,71 @@ void InlineFormattingGeometry::adjustMarginStartForListMarker(const ElementBox& 
     listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + nestedListMarkerMarginStart - LayoutUnit { rootInlineBoxOffset }, listMarkerGeometry.marginEnd() - nestedListMarkerMarginStart + LayoutUnit { rootInlineBoxOffset } });
 }
 
+InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak isLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride) const
+{
+    if (horizontalAvailableSpace <= 0)
+        return { };
+
+    auto& rootStyle = formattingContext().root().style();
+    auto isLeftToRightDirection = inlineBaseDirectionOverride.value_or(rootStyle.direction()) == TextDirection::LTR;
+
+    auto computedHorizontalAlignment = [&] {
+        auto textAlign = rootStyle.textAlign();
+        if (isLastLineOrAfterLineBreak == IsLastLineOrAfterLineBreak::No)
+            return textAlign;
+        // The last line before a forced break or the end of the block is aligned according to text-align-last.
+        switch (rootStyle.textAlignLast()) {
+        case TextAlignLast::Auto:
+            if (textAlign == TextAlignMode::Justify)
+                return TextAlignMode::Start;
+            return textAlign;
+        case TextAlignLast::Start:
+            return TextAlignMode::Start;
+        case TextAlignLast::End:
+            return TextAlignMode::End;
+        case TextAlignLast::Left:
+            return TextAlignMode::Left;
+        case TextAlignLast::Right:
+            return TextAlignMode::Right;
+        case TextAlignLast::Center:
+            return TextAlignMode::Center;
+        case TextAlignLast::Justify:
+            return TextAlignMode::Justify;
+        default:
+            ASSERT_NOT_REACHED();
+            return TextAlignMode::Start;
+        }
+    };
+
+    switch (computedHorizontalAlignment()) {
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+        if (!isLeftToRightDirection)
+            return horizontalAvailableSpace;
+        FALLTHROUGH;
+    case TextAlignMode::Start:
+        return { };
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+        if (!isLeftToRightDirection)
+            return { };
+        FALLTHROUGH;
+    case TextAlignMode::End:
+        return horizontalAvailableSpace;
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        return horizontalAvailableSpace / 2;
+    case TextAlignMode::Justify:
+        // TextAlignMode::Justify is a run alignment (and we only do inline box alignment here)
+        return { };
+    default:
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 }
 }
 
