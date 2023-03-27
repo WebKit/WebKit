@@ -196,6 +196,7 @@ public:
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
 
     WEBCORE_EXPORT ScrollbarsController& scrollbarsController() const;
+    void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
 
     virtual bool isActive() const = 0;
     WEBCORE_EXPORT virtual void invalidateScrollbar(Scrollbar&, const IntRect&);

@@ -34,14 +34,15 @@ namespace WebCore {
 
 class Scrollbar;
 class ScrollableArea;
+class ScrollingCoordinator;
 
 class ScrollbarsController {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ScrollbarsController);
 public:
-    static std::unique_ptr<ScrollbarsController> create(ScrollableArea&);
+    WEBCORE_EXPORT static std::unique_ptr<ScrollbarsController> create(ScrollableArea&);
 
-    explicit ScrollbarsController(ScrollableArea&);
+    WEBCORE_EXPORT explicit ScrollbarsController(ScrollableArea&);
     virtual ~ScrollbarsController() = default;
     
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }

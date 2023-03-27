@@ -108,6 +108,7 @@
 #include "ScrollAnimator.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarsController.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -5802,8 +5803,14 @@ void LocalFrameView::setScrollingPerformanceTestingEnabled(bool scrollingPerform
 
 void LocalFrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    ScrollableArea::didAddScrollbar(scrollbar, orientation);
     Page* page = m_frame->page();
+    if (page) {
+        if (auto scrollbarController = page->chrome().client().createScrollbarsController(*page, *this))
+            setScrollbarsController(WTFMove(scrollbarController));
+    }
+
+    ScrollableArea::didAddScrollbar(scrollbar, orientation);
+
     if (page && page->isMonitoringWheelEvents())
         scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     if (AXObjectCache* cache = axObjectCache())

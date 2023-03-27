@@ -32,6 +32,8 @@
 #include "config.h"
 #include "ScrollableArea.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -80,6 +82,11 @@ ScrollbarsController& ScrollableArea::scrollbarsController() const
     }
 
     return *m_scrollbarsController.get();
+}
+
+void ScrollableArea::setScrollbarsController(std::unique_ptr<ScrollbarsController>&& scrollbarsController)
+{
+    m_scrollbarsController = WTFMove(scrollbarsController);
 }
 
 void ScrollableArea::setScrollOrigin(const IntPoint& origin)
