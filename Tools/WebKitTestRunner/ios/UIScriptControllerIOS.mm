@@ -1272,11 +1272,6 @@ bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
     return UIKeyboardImpl.activeInstance.isAutoShifted;
 }
 
-unsigned UIScriptControllerIOS::keyboardWillHideCount() const
-{
-    return static_cast<unsigned>(webView().keyboardWillHideCount);
-}
-
 bool UIScriptControllerIOS::isAnimatingDragCancel() const
 {
     return webView()._animatingDragCancel;

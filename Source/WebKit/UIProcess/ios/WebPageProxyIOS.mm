@@ -1026,11 +1026,6 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     m_uiClient->didNotHandleTapAsClick(point);
 }
 
-void WebPageProxy::didHandleTapAsHover()
-{
-    pageClient().didHandleTapAsHover();
-}
-
 void WebPageProxy::didCompleteSyntheticClick()
 {
     pageClient().didCompleteSyntheticClick();

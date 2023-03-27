@@ -436,13 +436,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static keyboardWillHideCount()
-    {
-        return new Promise(resolve => {
-            testRunner.runUIScript(`uiController.keyboardWillHideCount`, result => resolve(parseInt(result)));
-        });
-    }
-
     static keyboardIsAutomaticallyShifted()
     {
         return new Promise(resolve => {

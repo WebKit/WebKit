@@ -104,6 +104,7 @@ struct DragItem;
 }
 
 namespace WebKit {
+class InputViewUpdateDeferrer;
 class NativeWebTouchEvent;
 class SmartMagnificationController;
 class WebOpenPanelResultListenerProxy;
@@ -225,14 +226,6 @@ enum SuppressSelectionAssistantReason : uint8_t {
     InteractionIsHappening = 1 << 2,
     ShowingFullscreenVideo = 1 << 3,
 };
-
-enum class InputViewUpdateDeferralSource : uint8_t {
-    BecomeFirstResponder = 1 << 0,
-    TapGesture = 1 << 1,
-    ChangingFocusedElement = 1 << 2,
-};
-
-using InputViewUpdateDeferralSources = OptionSet<InputViewUpdateDeferralSource>;
 
 struct WKSelectionDrawingInfo {
     enum class SelectionType { None, Plugin, Range };
@@ -430,7 +423,7 @@ struct ImageAnalysisContextMenuActionData {
     uint64_t _positionInformationCallbackDepth;
     Vector<std::optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
     
-    WebKit::InputViewUpdateDeferralSources _inputViewUpdateDeferralSources;
+    std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
 
@@ -653,7 +646,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #endif
 - (void)_commitPotentialTapFailed;
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
-- (void)_didHandleTapAsHover;
 - (void)_didCompleteSyntheticClick;
 
 - (void)_didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;

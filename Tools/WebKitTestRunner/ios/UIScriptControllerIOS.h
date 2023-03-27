@@ -137,7 +137,6 @@ private:
     void setSelectedColorForColorPicker(double, double, double) override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;
     void toggleCapsLock(JSValueRef) override;
-    unsigned keyboardWillHideCount() const override;
     bool keyboardIsAutomaticallyShifted() const override;
     bool isAnimatingDragCancel() const override;
     JSRetainPtr<JSStringRef> selectionCaretBackgroundColor() const override;
