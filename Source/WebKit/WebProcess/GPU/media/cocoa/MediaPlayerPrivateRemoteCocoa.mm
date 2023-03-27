@@ -70,10 +70,10 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(*videoFrame);
 }
 
-WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
+std::optional<WebCore::DestinationColorSpace> MediaPlayerPrivateRemote::colorSpace()
 {
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
-        return DestinationColorSpace::SRGB();
+        return std::nullopt;
 
     auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
     auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());

@@ -65,9 +65,12 @@ Color NativeImage::singlePixelSolidColor() const
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
-DestinationColorSpace NativeImage::colorSpace() const
+std::optional<DestinationColorSpace> NativeImage::colorSpace() const
 {
-    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+    auto colorSpace = CGImageGetColorSpace(m_platformImage.get());
+    if (!CGColorSpaceSupportsOutput(colorSpace))
+        return std::nullopt;
+    return DestinationColorSpace(colorSpace);
 }
 
 void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)

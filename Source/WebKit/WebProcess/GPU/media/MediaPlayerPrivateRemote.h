@@ -305,7 +305,7 @@ private:
 #endif
     RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
-    WebCore::DestinationColorSpace colorSpace() final;
+    std::optional<WebCore::DestinationColorSpace> colorSpace() final;
 #if PLATFORM(COCOA)
     bool shouldGetNativeImageForCanvasDrawing() const final { return false; }
 #endif

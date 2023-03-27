@@ -343,8 +343,8 @@ private:
 
 #if PLATFORM(COCOA)
     void setVideoInlineSizeIfPossible(const WebCore::FloatSize&);
-    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
-    void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
+    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, std::optional<WebCore::DestinationColorSpace>)>&&);
+    void colorSpace(CompletionHandler<void(std::optional<WebCore::DestinationColorSpace>)>&&);
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     void willBeAskedToPaintGL();
 #endif

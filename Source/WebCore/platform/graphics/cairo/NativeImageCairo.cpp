@@ -57,10 +57,10 @@ Color NativeImage::singlePixelSolidColor() const
     return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
 }
 
-DestinationColorSpace NativeImage::colorSpace() const
+std::optional<DestinationColorSpace> NativeImage::colorSpace() const
 {
     notImplemented();
-    return DestinationColorSpace::SRGB();
+    return std::nullopt;
 }
 
 void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)

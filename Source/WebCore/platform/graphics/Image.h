@@ -139,7 +139,7 @@ public:
     FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
 
-    virtual DestinationColorSpace colorSpace();
+    virtual std::optional<DestinationColorSpace> colorSpace() { return std::nullopt; }
 
     // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
     // It will automatically pause once all observers no longer want to render the image anywhere.

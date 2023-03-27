@@ -402,11 +402,6 @@ void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const Fl
         m_presenter->paintCurrentFrame(context, rect);
 }
 
-DestinationColorSpace MediaPlayerPrivateMediaFoundation::colorSpace()
-{
-    return DestinationColorSpace::SRGB();
-}
-
 HRESULT beginGetEvent(WeakPtr<MediaPlayerPrivateMediaFoundation> weakThis, COMPtr<IMFMediaSession> mediaSession)
 {
     auto callback = adoptCOM(new MediaPlayerPrivateMediaFoundation::AsyncCallback([weakThis, mediaSession](IMFAsyncResult* asyncResult) {

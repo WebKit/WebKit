@@ -269,7 +269,7 @@ private:
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
-    DestinationColorSpace colorSpace() final;
+    std::optional<DestinationColorSpace> colorSpace() final;
     void waitForVideoOutputMediaDataWillChange();
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

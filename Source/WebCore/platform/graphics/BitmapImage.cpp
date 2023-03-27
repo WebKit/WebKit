@@ -658,11 +658,11 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
         imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No, nullptr, decodingStatus);
 }
 
-DestinationColorSpace BitmapImage::colorSpace()
+std::optional<DestinationColorSpace> BitmapImage::colorSpace()
 {
     if (auto nativeImage = this->nativeImage())
         return nativeImage->colorSpace();
-    return DestinationColorSpace::SRGB();
+    return std::nullopt;
 }
 
 unsigned BitmapImage::decodeCountForTesting() const

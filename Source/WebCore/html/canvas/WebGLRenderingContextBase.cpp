@@ -4548,7 +4548,8 @@ RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& vid
             return nullptr;
         }
         FloatRect imageRect { { }, imageSize };
-        imageBuffer = m_generatedImageCache.imageBuffer(imageSize, nativeImage->colorSpace(), CompositeOperator::Copy);
+        auto colorSpace = nativeImage->colorSpace().value_or(DestinationColorSpace::SRGB());
+        imageBuffer = m_generatedImageCache.imageBuffer(imageSize, colorSpace, CompositeOperator::Copy);
         if (!imageBuffer) {
             synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
             return nullptr;

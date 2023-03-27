@@ -96,7 +96,7 @@ void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetada
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
 }
 
-void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&& completionHandler)
+void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, std::optional<WebCore::DestinationColorSpace>)>&& completionHandler)
 {
     if (!m_player) {
         completionHandler(std::nullopt, DestinationColorSpace::SRGB());
@@ -124,10 +124,10 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
     completionHandler(surface->createSendRight(), nativeImage->colorSpace());
 }
 
-void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&& completionHandler)
+void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(std::optional<WebCore::DestinationColorSpace>)>&& completionHandler)
 {
     if (!m_player) {
-        completionHandler(DestinationColorSpace::SRGB());
+        completionHandler(std::nullopt);
         return;
     }
 

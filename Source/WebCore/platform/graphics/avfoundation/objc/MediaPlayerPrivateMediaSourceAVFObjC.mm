@@ -784,10 +784,12 @@ RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTim
     return VideoFrameCV::create(currentMediaTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
 }
 
-DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
+std::optional<DestinationColorSpace> MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
 {
     updateLastImage();
-    return m_lastImage ? m_lastImage->colorSpace() : DestinationColorSpace::SRGB();
+    if (!m_lastImage)
+        return std::nullopt;
+    return m_lastImage->colorSpace();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const

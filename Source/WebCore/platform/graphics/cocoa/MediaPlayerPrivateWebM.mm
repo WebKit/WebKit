@@ -502,10 +502,12 @@ RefPtr<VideoFrame> MediaPlayerPrivateWebM::videoFrameForCurrentTime()
     return VideoFrameCV::create(currentMediaTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
 }
 
-DestinationColorSpace MediaPlayerPrivateWebM::colorSpace()
+std::optional<DestinationColorSpace> MediaPlayerPrivateWebM::colorSpace()
 {
     updateLastImage();
-    return m_lastImage ? m_lastImage->colorSpace() : DestinationColorSpace::SRGB();
+    if (!m_lastImage)
+        return std::nullopt;
+    return m_lastImage->colorSpace();
 }
 
 void MediaPlayerPrivateWebM::setNaturalSize(FloatSize size)

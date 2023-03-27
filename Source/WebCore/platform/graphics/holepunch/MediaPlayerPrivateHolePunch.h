@@ -87,8 +87,6 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final { };
 
-    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
-
     bool supportsAcceleratedRendering() const final { return true; }
 
     bool shouldIgnoreIntrinsicSize() final { return true; }

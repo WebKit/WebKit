@@ -488,7 +488,7 @@ public:
 
     RefPtr<VideoFrame> videoFrameForCurrentTime();
     RefPtr<NativeImage> nativeImageForCurrentTime();
-    DestinationColorSpace colorSpace();
+    std::optional<DestinationColorSpace> colorSpace();
     bool shouldGetNativeImageForCanvasDrawing() const;
 
     using MediaPlayerEnums::NetworkState;

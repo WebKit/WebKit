@@ -194,7 +194,7 @@ public:
 
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime();
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
-    virtual DestinationColorSpace colorSpace() = 0;
+    virtual std::optional<DestinationColorSpace> colorSpace() { return std::nullopt; }
     virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
     virtual void setShouldDisableHDR(bool) { }

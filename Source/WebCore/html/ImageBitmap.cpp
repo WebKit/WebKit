@@ -377,7 +377,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRenderer->colorSpace());
+    auto colorSpace = imageForRenderer->colorSpace().value_or(DestinationColorSpace::SRGB());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, colorSpace);
     if (!bitmapData) {
         resolveWithBlankImageBuffer(scriptExecutionContext, !taintsOrigin(*cachedImage), WTFMove(promise));
         return;
@@ -490,7 +491,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRender->colorSpace());
+    auto colorSpace = imageForRender->colorSpace().value_or(DestinationColorSpace::SRGB());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, colorSpace);
 
     if (!bitmapData) {
         resolveWithBlankImageBuffer(scriptExecutionContext, canvas.originClean(), WTFMove(promise));
@@ -806,7 +808,8 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, image->colorSpace());
+    auto colorSpace = image->colorSpace().value_or(DestinationColorSpace::SRGB());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, colorSpace);
     if (!bitmapData) {
         promise.reject(InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s);
         return;

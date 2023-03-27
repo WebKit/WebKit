@@ -159,7 +159,6 @@ public:
     void setPresentationSize(const IntSize&) final { }
 
     void paint(GraphicsContext&, const FloatRect&) final { }
-    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
 };
 
 #if !RELEASE_LOG_DISABLED
@@ -1142,7 +1141,7 @@ RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
     return m_private->nativeImageForCurrentTime();
 }
 
-DestinationColorSpace MediaPlayer::colorSpace()
+std::optional<DestinationColorSpace> MediaPlayer::colorSpace()
 {
     return m_private->colorSpace();
 }

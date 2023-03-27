@@ -2792,13 +2792,17 @@ RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTim
     return m_lastImage;
 }
 
-DestinationColorSpace MediaPlayerPrivateAVFoundationObjC::colorSpace()
+std::optional<DestinationColorSpace> MediaPlayerPrivateAVFoundationObjC::colorSpace()
 {
     updateLastImage(UpdateType::UpdateSynchronously);
     if (!m_lastPixelBuffer)
-        return DestinationColorSpace::SRGB();
+        return std::nullopt;
 
-    return DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
+    auto colorSpace = createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get());
+    if (!CGColorSpaceSupportsOutput(colorSpace.get()))
+        return std::nullopt;
+
+    return DestinationColorSpace(WTFMove(colorSpace));
 }
 
 void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()

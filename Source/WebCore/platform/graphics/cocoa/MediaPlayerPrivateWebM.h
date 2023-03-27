@@ -152,7 +152,7 @@ private:
     void willBeAskedToPaintGL() final;
 #endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
-    DestinationColorSpace colorSpace() final;
+    std::optional<DestinationColorSpace> colorSpace() final;
 
     void setNaturalSize(FloatSize);
     void setHasAudio(bool);

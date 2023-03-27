@@ -237,7 +237,7 @@ private:
     void willBeAskedToPaintGL() final;
 #endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
-    DestinationColorSpace colorSpace() final;
+    std::optional<DestinationColorSpace> colorSpace() final;
 
     bool supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.
