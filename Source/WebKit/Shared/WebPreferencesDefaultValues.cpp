@@ -198,12 +198,7 @@ bool defaultMediaSessionCoordinatorEnabled()
 
 bool defaultRunningBoardThrottlingEnabled()
 {
-#if PLATFORM(MAC)
-    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RunningBoardThrottling);
-    return newSDK;
-#else
     return false;
-#endif
 }
 
 bool defaultShouldDropSuspendedAssertionAfterDelay()
