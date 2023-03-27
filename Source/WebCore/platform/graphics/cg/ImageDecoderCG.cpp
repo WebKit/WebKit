@@ -142,7 +142,11 @@ static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplin
 
 static RetainPtr<CFDictionaryRef> imageSourceAsyncOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
-    static const auto options = createImageSourceAsyncOptions().leakRef();
+    static CFMutableDictionaryRef options;
+    static std::once_flag initializeThumbnailOptionsOnce;
+    std::call_once(initializeThumbnailOptionsOnce, [] {
+        options = createImageSourceThumbnailOptions().leakRef();
+    });
     return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel, sizeForDrawing);
 }
 
