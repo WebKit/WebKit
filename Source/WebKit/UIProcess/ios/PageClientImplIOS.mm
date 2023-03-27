@@ -235,11 +235,6 @@ void PageClientImpl::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     [m_contentView _didNotHandleTapAsClick:point];
 }
 
-void PageClientImpl::didHandleTapAsHover()
-{
-    [m_contentView _didHandleTapAsHover];
-}
-
 void PageClientImpl::didCompleteSyntheticClick()
 {
     [m_contentView _didCompleteSyntheticClick];

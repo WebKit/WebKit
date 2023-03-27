@@ -249,7 +249,6 @@ private:
     void didFailNavigation(API::Navigation*) override;
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
-    void didHandleTapAsHover() override;
     void didCompleteSyntheticClick() override;
 
     void runModalJavaScriptDialog(CompletionHandler<void()>&& callback) final;
