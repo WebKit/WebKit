@@ -2302,7 +2302,7 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
 class RunBuildWebKitOrgUnitTests(shell.ShellCommandNewStyle):
     name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']
-    command = ['python3', 'runUnittests.py', 'build-webkit-org']
+    command = ['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall']
 
     def __init__(self, **kwargs):
         super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -2316,7 +2316,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommandNewStyle):
 class RunEWSUnitTests(shell.ShellCommandNewStyle):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
-    command = ['python3', 'runUnittests.py', 'ews-build']
+    command = ['python3', 'runUnittests.py', 'ews-build', '--autoinstall']
 
     def __init__(self, **kwargs):
         super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -2330,7 +2330,7 @@ class RunEWSUnitTests(shell.ShellCommandNewStyle):
 class RunBuildbotCheckConfig(shell.ShellCommand):
     name = 'buildbot-check-config'
     description = ['buildbot-checkconfig running']
-    command = ['buildbot', 'checkconfig']
+    command = ['python3', '../buildbot-cmd', 'checkconfig']
     directory = 'build/Tools/CISupport/ews-build'
     timeout = 2 * 60
 

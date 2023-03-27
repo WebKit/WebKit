@@ -838,7 +838,7 @@ class TestRunBuildbotCheckConfigForEWS(BuildStepMixinAdditions, unittest.TestCas
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + 0,
@@ -852,7 +852,7 @@ class TestRunBuildbotCheckConfigForEWS(BuildStepMixinAdditions, unittest.TestCas
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-14-Debug-Build-EWS have no schedulers to drive them')
@@ -876,7 +876,7 @@ class TestRunBuildbotCheckConfigForBuildWebKit(BuildStepMixinAdditions, unittest
             ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + 0,
@@ -890,7 +890,7 @@ class TestRunBuildbotCheckConfigForBuildWebKit(BuildStepMixinAdditions, unittest
             ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) Apple-iOS-14-Release-Build have no schedulers to drive them')
@@ -914,7 +914,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build', '--autoinstall'],
                         )
             + 0,
         )
@@ -927,7 +927,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build', '--autoinstall'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
@@ -986,7 +986,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'build-webkit-org'],
+                        command=['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall'],
                         )
             + 0,
         )
@@ -999,7 +999,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'build-webkit-org'],
+                        command=['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
