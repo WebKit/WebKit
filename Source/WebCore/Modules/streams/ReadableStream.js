@@ -152,7 +152,8 @@ function pipeThrough(streams, options)
     if (@isWritableStreamLocked(internalWritable))
         throw @makeTypeError("WritableStream is locked");
 
-    @readableStreamPipeToWritableStream(this, internalWritable, preventClose, preventAbort, preventCancel, signal);
+    const promise = @readableStreamPipeToWritableStream(this, internalWritable, preventClose, preventAbort, preventCancel, signal);
+    @markPromiseAsHandled(promise);
 
     return readable;
 }
