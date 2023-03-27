@@ -957,8 +957,10 @@ void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
     maybeUpdateCachedVideoMetrics();
     if (m_bufferedChanged) {
         m_bufferedChanged = false;
-        if (m_engineIdentifier != MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE)
+        if (m_engineIdentifier != MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE
+            && m_engineIdentifier != MediaPlayerEnums::MediaEngineIdentifier::MockMSE) {
             m_cachedState.bufferedRanges = *m_player->buffered();
+        }
     }
 }
 

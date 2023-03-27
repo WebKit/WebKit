@@ -121,6 +121,8 @@ private:
     void sourceBufferPrivateDidDropSample();
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory);
+    MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) override;
+    void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) override;
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;

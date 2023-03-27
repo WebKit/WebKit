@@ -97,11 +97,6 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
 
 MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
     : m_player(player)
-    , m_currentTime(MediaTime::zeroTime())
-    , m_readyState(MediaPlayer::ReadyState::HaveNothing)
-    , m_networkState(MediaPlayer::NetworkState::Empty)
-    , m_playing(false)
-    , m_seekCompleted(true)
 {
 }
 

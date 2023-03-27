@@ -146,6 +146,7 @@
 #include "MediaResourceLoader.h"
 #include "MediaSession.h"
 #include "MediaSessionActionDetails.h"
+#include "MediaStrategy.h"
 #include "MediaStreamTrack.h"
 #include "MediaUsageInfo.h"
 #include "MemoryCache.h"
@@ -315,10 +316,6 @@
 
 #if USE(LIBWEBRTC)
 #include "LibWebRTCProvider.h"
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-#include "MockMediaPlayerMediaSource.h"
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
@@ -4449,13 +4446,7 @@ bool Internals::isPluginSnapshotted(Element&)
 
 void Internals::initializeMockMediaSource()
 {
-#if USE(AVFOUNDATION)
-    WebCore::DeprecatedGlobalSettings::setAVFoundationEnabled(false);
-#endif
-#if USE(GSTREAMER)
-    WebCore::DeprecatedGlobalSettings::setGStreamerEnabled(false);
-#endif
-    MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
+    platformStrategies()->mediaStrategy().enableMockMediaSource();
 }
 
 void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, const AtomString& trackId, BufferedSamplesPromise&& promise)

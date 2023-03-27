@@ -35,10 +35,15 @@
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
 #include <WebCore/CDMFactory.h>
+#include <WebCore/MediaPlayer.h>
 #include <WebCore/NowPlayingManager.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/MediaSessionManagerCocoa.h>
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+#include <WebCore/DeprecatedGlobalSettings.h>
 #endif
 
 namespace WebKit {
@@ -79,5 +84,26 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
 #endif
     return WebCore::MediaStrategy::createNowPlayingManager();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void WebMediaStrategy::enableMockMediaSource()
+{
+#if USE(AVFOUNDATION)
+    WebCore::DeprecatedGlobalSettings::setAVFoundationEnabled(false);
+#endif
+#if USE(GSTREAMER)
+    WebCore::DeprecatedGlobalSettings::setGStreamerEnabled(false);
+#endif
+    m_mockMediaSourceEnabled = true;
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess) {
+        auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+        connection.send(Messages::GPUConnectionToWebProcess::EnableMockMediaSource { }, 0);
+        return;
+    }
+#endif
+    WebCore::MediaStrategy::addMockMediaSourceEngine();
+}
+#endif
 
 } // namespace WebKit

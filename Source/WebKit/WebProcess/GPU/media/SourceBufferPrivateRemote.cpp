@@ -490,6 +490,24 @@ void SourceBufferPrivateRemote::memoryPressure(uint64_t maximumBufferSize, const
         m_remoteSourceBufferIdentifier);
 }
 
+MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)
+{
+    if (!m_gpuProcessConnection)
+        return MediaTime::invalidTime();
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::MinimumUpcomingPresentationTimeForTrackID(trackID), m_remoteSourceBufferIdentifier);
+
+    return std::get<0>(sendResult.takeReplyOr(MediaTime::invalidTime()));
+}
+
+void SourceBufferPrivateRemote::setMaximumQueueDepthForTrackID(const AtomString& trackID, uint64_t depth)
+{
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().send(
+        Messages::RemoteSourceBufferProxy::SetMaximumQueueDepthForTrackID(trackID, depth), m_remoteSourceBufferIdentifier);
+}
+
 
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBufferPrivateRemote::logChannel() const
