@@ -157,11 +157,11 @@ ALWAYS_INLINE JSString* LiteralParser<CharType>::makeJSString(VM& vm, typename L
     constexpr unsigned maxAtomizeStringLength = 10;
     if (token->stringIs8Bit) {
         if (token->stringLength > maxAtomizeStringLength)
-            return jsString(vm, String(token->stringToken8, token->stringLength));
+            return jsNontrivialString(vm, String(token->stringToken8, token->stringLength));
         return jsString(vm, Identifier::fromString(vm, token->stringToken8, token->stringLength).string());
     }
     if (token->stringLength > maxAtomizeStringLength)
-        return jsString(vm, String(token->stringToken16, token->stringLength));
+        return jsNontrivialString(vm, String(token->stringToken16, token->stringLength));
     return jsString(vm, Identifier::fromString(vm, token->stringToken16, token->stringLength).string());
 }
 
