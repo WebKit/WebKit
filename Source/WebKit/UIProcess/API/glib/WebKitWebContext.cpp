@@ -640,7 +640,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      * WebKitWebContext:application-id:
      *
      * The reverse DNS application ID for this web context. Setting this property is specially
-     * required when the Application creating WebViews is not spawned using #GApplication nor
+     * required when the application creating web views is not spawned using #GApplication or
      * Flatpak. In this scenario the internal WebKit process launcher spawns its sub-processes in a
      * Bubblewrap sandbox that requires some form of application identifier.
      *
