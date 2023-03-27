@@ -13699,7 +13699,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue hash = m_out.lShr(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
 
         LValue structureID = m_out.load32(object, m_heaps.JSCell_structureID);
-        LValue index = m_out.add(hash, structureID);
+        LValue index = m_out.add(hash, m_out.bitXor(m_out.lShr(structureID, m_out.constInt32(HasOwnPropertyCache::structureIDHashShift)), structureID));
         index = m_out.zeroExtPtr(m_out.bitAnd(index, m_out.constInt32(HasOwnPropertyCache::mask)));
         ASSERT(vm().hasOwnPropertyCache());
         LValue cache = m_out.constIntPtr(vm().hasOwnPropertyCache());

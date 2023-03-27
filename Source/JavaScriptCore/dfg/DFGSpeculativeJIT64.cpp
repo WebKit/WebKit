@@ -5504,6 +5504,9 @@ void SpeculativeJIT::compile(Node* node)
         load32(Address(implGPR, UniquedStringImpl::flagsOffset()), hashGPR);
         urshift32(TrustedImm32(StringImpl::s_flagCount), hashGPR);
         load32(Address(objectGPR, JSCell::structureIDOffset()), structureIDGPR);
+        move(structureIDGPR, tempGPR);
+        urshift32(TrustedImm32(HasOwnPropertyCache::structureIDHashShift), structureIDGPR);
+        xor32(tempGPR, structureIDGPR);
         add32(structureIDGPR, hashGPR);
         and32(TrustedImm32(HasOwnPropertyCache::mask), hashGPR);
         if (hasOneBitSet(sizeof(HasOwnPropertyCache::Entry))) // is a power of 2

@@ -65,9 +65,14 @@ public:
         return result;
     }
 
+    // Due to sizeof(Structure), lower several bits are always zero.
+    // sizeof(Structure) <= 128. And 128 / 16 = 8 (0b1000). So, 3 + log2(size)
+    static constexpr unsigned structureIDHashShift = 3 + 11;
     ALWAYS_INLINE static uint32_t hash(StructureID structureID, UniquedStringImpl* impl)
     {
-        return bitwise_cast<uint32_t>(structureID) + impl->hash();
+        uint32_t value = structureID.bits();
+        uint32_t hash = (value >> structureIDHashShift) ^ value;
+        return hash + impl->hash();
     }
 
     ALWAYS_INLINE std::optional<bool> get(Structure* structure, PropertyName propName)
