@@ -515,8 +515,7 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
 
     Locker locker { m_placeholderData->bufferLock };
     bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
-    if (auto clone = imageBuffer->clone())
-        m_placeholderData->pendingCommitBuffer = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
+    m_placeholderData->pendingCommitBuffer = ImageBuffer::sinkIntoSerializedImageBuffer(imageBuffer->clone());
     if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)
         pushBufferToPlaceholder();
 }
