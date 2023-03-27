@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CSSConditionRule::CSSConditionRule(StyleRuleGroup& group, CSSStyleSheet* parent)
+CSSConditionRule::CSSConditionRule(StyleRuleBase& group, CSSStyleSheet* parent)
     : CSSGroupingRule(group, parent)
 {
 }

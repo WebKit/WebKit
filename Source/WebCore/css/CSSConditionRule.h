@@ -38,7 +38,7 @@ public:
     virtual String conditionText() const = 0;
 
 protected:
-    CSSConditionRule(StyleRuleGroup&, CSSStyleSheet* parent);
+    CSSConditionRule(StyleRuleBase&, CSSStyleSheet* parent);
 };
 
 } // namespace WebCore

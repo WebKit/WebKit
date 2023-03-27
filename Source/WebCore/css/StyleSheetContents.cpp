@@ -474,7 +474,7 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
             return true;
         if (!rule->isGroupRule())
             continue;
-        if (traverseRulesInVector(downcast<StyleRuleGroup>(*rule).childRules(), handler))
+        if (traverseRulesInVector(StyleRuleGroup::fromStyleRuleBase(*rule)->childRules(), handler))
             return true;
     }
     return false;
