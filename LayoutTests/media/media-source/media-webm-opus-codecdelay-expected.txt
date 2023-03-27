@@ -1,0 +1,15 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+Append the init segment
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(init = loader.initSegment())
+RUN(sourceBuffer.appendBuffer(init))
+EVENT(update)
+Append a partial media segment
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3.9545') OK
+END OF TEST
+
