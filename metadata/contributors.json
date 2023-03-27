@@ -82,6 +82,13 @@
    },
    {
       "emails" : [
+         "adarose@apple.com"
+      ],
+      "github" : "AdaRoseCannon",
+      "name" : "Ada Rose Cannon"
+   },
+   {
+      "emails" : [
          "abarth@webkit.org"
       ],
       "expertise" : "Security, HTML parser, webkit-patch, FrameLoader (sadly), V8 Bindings, The Chromium Port",
@@ -6128,6 +6135,7 @@
       "emails" : [
          "rmondello@apple.com"
       ],
+      "github" : "rmondello",
       "name" : "Ricky Mondello",
       "nicks" : [
          "rmondello"
