@@ -1301,21 +1301,20 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
         case NSMoveToBezierPathElement:
             [result appendString:@"\tMove to point\n"];
             break;
-            
         case NSLineToBezierPathElement:
             [result appendString:@"\tLine to\n"];
             break;
-            
         case NSCurveToBezierPathElement:
             [result appendString:@"\tCurve to\n"];
             break;
-            
         case NSClosePathBezierPathElement:
             [result appendString:@"\tClose\n"];
             break;
+        default:
+            break;
         }
     }
-    
+
     return [result createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
 
