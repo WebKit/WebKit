@@ -81,6 +81,7 @@
 #include "WasmCapabilities.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
+#include <bmalloc/bmalloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -194,6 +195,9 @@ NO_RETURN_WITH_VALUE static void jscExit(int status)
         }
     }
 #endif // ENABLE(DFG_JIT)
+
+    bmalloc::api::shutdownScavenger();
+
     exit(status);
 }
 
