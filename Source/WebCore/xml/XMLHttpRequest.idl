@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Add ReadableStream to the union when supported.
-typedef (Blob or BufferSource or DOMFormData or USVString or URLSearchParams) BodyInit;
+typedef (Blob or BufferSource or DOMFormData or USVString or URLSearchParams) XMLHttpRequestBodyInit;
 
 enum XMLHttpRequestResponseType {
     "",
@@ -67,7 +66,7 @@ enum XMLHttpRequestResponseType {
     attribute unsigned long timeout;
     attribute boolean withCredentials;
     [SameObject] readonly attribute XMLHttpRequestUpload upload;
-    undefined send(optional (Document or BodyInit)? body = null);
+    undefined send(optional (Document or XMLHttpRequestBodyInit)? body = null);
     undefined abort();
 
     // response

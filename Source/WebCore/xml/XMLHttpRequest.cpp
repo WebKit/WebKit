@@ -160,7 +160,7 @@ void XMLHttpRequest::didCacheResponse()
 ExceptionOr<Document*> XMLHttpRequest::responseXML()
 {
     ASSERT(scriptExecutionContext()->isDocument());
-    
+
     if (responseType() != ResponseType::EmptyString && responseType() != ResponseType::Document)
         return Exception { InvalidStateError };
 
@@ -469,10 +469,9 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
         return WTFMove(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
-        if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
-            // FIXME: this should include the charset used for encoding.
+        if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
             m_requestHeaders.set(HTTPHeaderName::ContentType, document.isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
-        } else {
+        else {
             String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
             replaceCharsetInMediaTypeIfNeeded(contentType);
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
@@ -524,13 +523,13 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
         if (!m_url.url().protocolIsInHTTPFamily()) {
             // FIXME: We would like to support posting Blobs to non-http URLs (e.g. custom URL schemes)
             // but because of the architecture of blob-handling that will require a fair amount of work.
-            
+
             ASCIILiteral consoleMessage { "POST of a Blob to non-HTTP protocols in XMLHttpRequest.send() is currently unsupported."_s };
             scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
-            
+
             return createRequest();
         }
-        
+
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
             const String& blobType = body.type();
             if (!blobType.isEmpty() && isValidContentType(blobType))
@@ -703,7 +702,6 @@ bool XMLHttpRequest::internalAbort()
 {
     m_error = true;
 
-    // FIXME: when we add the support for multi-part XHR, we will have to think be careful with this initialization.
     m_receivedLength = 0;
 
     m_decoder = nullptr;
@@ -767,7 +765,7 @@ void XMLHttpRequest::networkError()
     dispatchErrorEvents(eventNames().errorEvent);
     internalAbort();
 }
-    
+
 void XMLHttpRequest::abortError()
 {
     ASSERT(m_wasAbortedByClient);
