@@ -79,7 +79,7 @@ class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
 public:
-    static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel);
+    static Ref<NetworkStorageManager> create(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
 
     void startReceivingMessageFromConnection(IPC::Connection&);
@@ -117,7 +117,7 @@ public:
 #endif // ENABLE(SERVICE_WORKER)
 
 private:
-    NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel);
+    NetworkStorageManager(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel);
     ~NetworkStorageManager();
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
     enum class ShouldWriteOriginFile : bool { No, Yes };
@@ -208,6 +208,7 @@ private:
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
 
     PAL::SessionID m_sessionID;
+    String m_queueName;
     Ref<SuspendableWorkQueue> m_queue;
     String m_path;
     FileSystem::Salt m_salt;

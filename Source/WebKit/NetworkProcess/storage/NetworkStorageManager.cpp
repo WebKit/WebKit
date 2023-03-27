@@ -63,6 +63,13 @@ namespace WebKit {
 static const Seconds defaultBackupExclusionPeriod { 24_h };
 #endif
 
+// FIXME: Remove this if rdar://104754030 is fixed.
+static HashMap<String, WeakPtr<NetworkStorageManager>>& activePaths()
+{
+    static MainThreadNeverDestroyed<HashMap<String, WeakPtr<NetworkStorageManager>>> pathToManagerMap;
+    return pathToManagerMap;
+}
+
 static String encode(const String& string, FileSystem::Salt salt)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
@@ -123,14 +130,15 @@ static void deleteEmptyOriginDirectory(const String& directory)
     FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
 }
 
-Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel level)
+Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel level)
 {
-    return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, level));
+    return adoptRef(*new NetworkStorageManager(sessionID, identifier, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, level));
 }
 
-NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel level)
+NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel level)
     : m_sessionID(sessionID)
-    , m_queue(SuspendableWorkQueue::create("com.apple.WebKit.Storage", SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
+    , m_queueName(makeString("com.apple.WebKit.Storage.", sessionID.toUInt64(), ".", static_cast<uint64_t>(identifier->data() >> 64), static_cast<uint64_t>(identifier->data())))
+    , m_queue(SuspendableWorkQueue::create(m_queueName.utf8().data(), SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
     , m_defaultOriginQuota(defaultOriginQuota)
     , m_defaultThirdPartyOriginQuota(defaultThirdPartyOriginQuota)
     , m_originQuotaRatio(originQuotaRatio)
@@ -140,6 +148,16 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
 #endif
 {
     ASSERT(RunLoop::isMain());
+
+    if (!path.isEmpty()) {
+        auto addResult = activePaths().add(path, *this);
+        if (!addResult.isNewEntry) {
+            if (auto existingManager = addResult.iterator->value)
+                RELEASE_LOG_ERROR(Storage, "%p - NetworkStorageManager::NetworkStorageManager path for session %" PRIu64 " is already in use by session %" PRIu64, this, m_sessionID.toUInt64(), existingManager->sessionID().toUInt64());
+            else
+                addResult.iterator->value = *this;
+        }
+    }
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), level]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
