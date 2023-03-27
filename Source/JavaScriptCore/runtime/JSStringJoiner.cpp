@@ -37,7 +37,11 @@ JSStringJoiner::~JSStringJoiner()
 template<typename CharacterType>
 static inline void appendStringToData(CharacterType*& data, StringView string)
 {
-    string.getCharacters(data);
+    if constexpr (std::is_same_v<CharacterType, LChar>) {
+        ASSERT(string.is8Bit());
+        string.getCharacters8(data);
+    } else
+        string.getCharacters(data);
     data += string.length();
 }
 
