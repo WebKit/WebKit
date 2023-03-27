@@ -645,9 +645,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      * Bubblewrap sandbox that requires some form of application identifier.
      *
      * If no application ID is provided the WebContext will attempt to use the #GApplication
-     * identifier. If that fails and the WebProcess sandbox remains enabled (which is the default
-     * behavior since 2.40) the UIProcess will crash, unless the user has explicitly opted-out of
-     * sandboxing using the `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1` environment variable.
+     * identifier. If that fails and the web process sandbox remains enabled, the application will crash.
      *
      * Since: 2.40.1
      */
