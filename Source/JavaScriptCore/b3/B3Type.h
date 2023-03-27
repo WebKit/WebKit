@@ -135,11 +135,18 @@ inline bool Type::isVector() const
     return kind() == V128;
 }
 
-inline Type pointerType()
+constexpr Type pointerType()
 {
     if (is32Bit())
         return Int32;
     return Int64;
+}
+
+constexpr Type registerType()
+{
+    if (isRegister64Bit())
+        return Int64;
+    return Int32;
 }
 
 inline size_t sizeofType(Type type)

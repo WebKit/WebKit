@@ -2353,7 +2353,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPropertyEnumeratorCell, JSCell*, (JSGlobalO
     RELEASE_AND_RETURN(scope, propertyNameEnumerator(globalObject, base));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue baseValue, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
+JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, UGPRPair, (JSGlobalObject* globalObject, EncodedJSValue baseValue, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2375,13 +2375,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, EncodedJSVal
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-#if USE(JSVALUE64)
-    JSValue result = bitwise_cast<JSValue>(static_cast<uint64_t>(mode) << 32 | index | JSValue::DoubleEncodeOffset);
-#else
-    JSValue result = JSValue(mode, index);
-#endif
-    ASSERT(result.isDouble());
-    return JSValue::encode(result);
+    return makeUGPRPair(index, static_cast<uint32_t>(mode));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (JSGlobalObject* globalObject, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))

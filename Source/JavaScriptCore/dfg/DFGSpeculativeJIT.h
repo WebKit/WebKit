@@ -907,6 +907,32 @@ public:
         generationInfo(node).initConstant(node, node->refCount());
     }
 
+    void strictInt32TupleResultWithoutUsingChildren(GPRReg reg, Node* node, unsigned index, DataFormat format = DataFormatInt32)
+    {
+        ASSERT(index < node->tupleSize());
+        unsigned refCount = m_graph.m_tupleData.at(node->tupleOffset() + index).refCount;
+        if (!refCount)
+            return;
+        ASSERT(refCount == 1);
+        VirtualRegister virtualRegister = m_graph.m_tupleData.at(node->tupleOffset() + index).virtualRegister;
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+        if (format == DataFormatInt32) {
+            jitAssertIsInt32(reg);
+            m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
+            info.initInt32(node, refCount, reg);
+        } else {
+#if USE(JSVALUE64)
+            RELEASE_ASSERT(format == DataFormatJSInt32);
+            jitAssertIsJSInt32(reg);
+            m_gprs.retain(reg, virtualRegister, SpillOrderJS);
+            info.initJSValue(node, refCount, reg, format);
+#elif USE(JSVALUE32_64)
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        }
+    }
+
     template<typename OperationType, typename ResultRegType, typename... Args>
     std::enable_if_t<
         FunctionTraits<OperationType>::hasResult,
@@ -1515,9 +1541,8 @@ public:
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
 
+    void compileExtractFromTuple(Node*);
     void compileEnumeratorNextUpdateIndexAndMode(Node*);
-    void compileEnumeratorNextExtractMode(Node*);
-    void compileEnumeratorNextExtractIndex(Node*);
     void compileEnumeratorNextUpdatePropertyName(Node*);
     void compileEnumeratorGetByVal(Node*);
     template<typename SlowPathFunctionType>
@@ -2237,7 +2262,6 @@ public:
     }
 };
 
-#if USE(JSVALUE32_64)
 class GPRFlushedCallResult2 : public GPRTemporary {
 public:
     GPRFlushedCallResult2(SpeculativeJIT* jit)
@@ -2245,7 +2269,6 @@ public:
     {
     }
 };
-#endif
 
 class FPRResult : public FPRTemporary {
 public:

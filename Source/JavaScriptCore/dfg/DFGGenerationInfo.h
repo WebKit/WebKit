@@ -147,6 +147,14 @@ public:
 
     // Get the node that produced this value.
     Node* node() { return m_node; }
+
+    void initFromTupleResult(Node* newNode)
+    {
+        ASSERT(m_useCount == 1);
+        ASSERT(newNode->child1().node() == m_node);
+        m_node = newNode;
+        m_useCount = m_node->refCount();
+    }
     
     void noticeOSRBirth(VariableEventStreamBuilder& stream, Node* node, VirtualRegister virtualRegister)
     {
