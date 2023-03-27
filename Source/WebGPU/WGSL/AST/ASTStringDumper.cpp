@@ -345,22 +345,7 @@ void StringDumper::visit(NamedTypeName& type)
 
 void StringDumper::visit(ParameterizedTypeName& type)
 {
-    constexpr ASCIILiteral base[] = {
-        "Vec2"_s,
-        "Vec3"_s,
-        "Vec4"_s,
-        "Mat2x2"_s,
-        "Mat2x3"_s,
-        "Mat2x4"_s,
-        "Mat3x2"_s,
-        "Mat3x3"_s,
-        "Mat3x4"_s,
-        "Mat4x2"_s,
-        "Mat4x3"_s,
-        "Mat4x4"_s
-    };
-    auto b = WTF::enumToUnderlyingType(type.base());
-    m_out.print(base[b], "<");
+    m_out.print(ParameterizedTypeName::baseToString(type.base()), "<");
     visit(type.elementType());
     m_out.print(">");
 }
