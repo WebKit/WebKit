@@ -30,9 +30,9 @@
 
 #include "CCallHelpers.h"
 #include "CacheableIdentifierInlines.h"
+#include "InlineCacheCompiler.h"
 #include "LinkBuffer.h"
 #include "LinkTimeConstant.h"
-#include "PolymorphicAccess.h"
 #include "ProxyObject.h"
 #include "StructureStubInfo.h"
 
@@ -59,140 +59,6 @@ Ref<AccessCase> ProxyObjectAccessCase::cloneImpl() const
     auto result = adoptRef(*new ProxyObjectAccessCase(*this));
     result->resetState();
     return result;
-}
-
-void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::JumpList& fallThrough)
-{
-    CCallHelpers& jit = *state.jit;
-    CodeBlock* codeBlock = jit.codeBlock();
-    VM& vm = state.m_vm;
-    ECMAMode ecmaMode = state.m_ecmaMode;
-    StructureStubInfo& stubInfo = *state.stubInfo;
-    JSValueRegs valueRegs = stubInfo.valueRegs();
-    GPRReg baseGPR = stubInfo.m_baseGPR;
-    GPRReg scratchGPR = state.scratchGPR;
-    GPRReg thisGPR = stubInfo.thisValueIsInExtraGPR() ? stubInfo.thisGPR() : baseGPR;
-
-    JSGlobalObject* globalObject = state.m_globalObject;
-
-    jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
-    fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ProxyObjectType)));
-
-    AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall();
-
-    jit.store32(
-        CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-        CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-
-    state.setSpillStateForJSCall(spillState);
-
-    ASSERT(!callLinkInfo());
-    auto* callLinkInfo = state.m_callLinkInfos.add(stubInfo.codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No);
-    m_callLinkInfo = callLinkInfo;
-
-    callLinkInfo->disallowStubs();
-
-    callLinkInfo->setUpCall(CallLinkInfo::Call, scratchGPR);
-
-    unsigned numberOfParameters;
-    JSFunction* proxyInternalMethod = nullptr;
-
-    switch (m_type) {
-    case ProxyObjectHas:
-        numberOfParameters = 2;
-        proxyInternalMethod = globalObject->performProxyObjectHasFunction();
-        break;
-    case ProxyObjectLoad:
-        numberOfParameters = 3;
-        proxyInternalMethod = globalObject->performProxyObjectGetFunction();
-        break;
-    case ProxyObjectStore:
-        numberOfParameters = 4;
-        proxyInternalMethod = ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunction() : globalObject->performProxyObjectSetSloppyFunction();
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
-    ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
-    unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
-
-    unsigned alignedNumberOfBytesForCall = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
-
-    jit.subPtr(
-        CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-        CCallHelpers::stackPointerRegister);
-
-    CCallHelpers::Address calleeFrame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
-
-    jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + PayloadOffset));
-
-    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
-
-    if (!stubInfo.hasConstantIdentifier) {
-        RELEASE_ASSERT(identifier());
-        GPRReg propertyGPR = stubInfo.propertyGPR();
-        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-    } else
-        jit.storeTrustedValue(identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-
-    switch (m_type) {
-    case ProxyObjectLoad:
-        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
-        break;
-    case ProxyObjectStore:
-        jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
-        jit.storeValue(valueRegs, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register)));
-        break;
-    default:
-        break;
-    }
-
-    ASSERT(proxyInternalMethod);
-    jit.move(CCallHelpers::TrustedImmPtr(proxyInternalMethod), scratchGPR);
-    jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
-
-    auto slowCase = CallLinkInfo::emitFastPath(jit, callLinkInfo, scratchGPR, scratchGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);
-    auto doneLocation = jit.label();
-
-    if (m_type != ProxyObjectStore)
-        jit.setupResults(valueRegs);
-
-    auto done = jit.jump();
-
-    slowCase.link(&jit);
-    auto slowPathStart = jit.label();
-    jit.move(scratchGPR, GPRInfo::regT0);
-#if USE(JSVALUE32_64)
-    // We *always* know that the proxy function, if non-null, is a cell.
-    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
-#endif
-    jit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
-    callLinkInfo->emitSlowPath(vm, jit);
-
-    if (m_type != ProxyObjectStore)
-        jit.setupResults(valueRegs);
-
-    done.link(&jit);
-
-    int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
-    jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-
-    RegisterSet dontRestore;
-    if (m_type != ProxyObjectStore) {
-        // This is the result value. We don't want to overwrite the result with what we stored to the stack.
-        // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-        dontRestore.add(valueRegs, IgnoreVectors);
-    }
-    state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
-
-    jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
-        this->callLinkInfo()->setCodeLocations(
-            linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
-            linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
-    });
-    state.succeed();
 }
 
 void ProxyObjectAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const

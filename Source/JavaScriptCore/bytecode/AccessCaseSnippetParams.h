@@ -31,10 +31,11 @@
 
 namespace JSC {
 
-struct AccessGenerationState;
+class InlineCacheCompiler;
 
 class AccessCaseSnippetParams final : public SnippetParams {
 public:
+    friend class InlineCacheCompiler;
     AccessCaseSnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : SnippetParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
     {
@@ -44,10 +45,10 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~SlowPathCallGenerator() { }
-        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&) = 0;
+        virtual CCallHelpers::JumpList generate(InlineCacheCompiler&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&) = 0;
     };
 
-    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&);
+    CCallHelpers::JumpList emitSlowPathCalls(InlineCacheCompiler&, const RegisterSetBuilder& usedRegistersBySnippet, CCallHelpers&);
 
 private:
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) final;

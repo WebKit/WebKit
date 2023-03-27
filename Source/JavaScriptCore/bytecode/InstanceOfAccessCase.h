@@ -35,6 +35,7 @@ class InstanceOfAccessCase final : public AccessCase {
 public:
     using Base = AccessCase;
     friend class AccessCase;
+    friend class InlineCacheCompiler;
     
     static Ref<AccessCase> create(
         VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,

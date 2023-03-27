@@ -35,12 +35,10 @@ class IntrinsicGetterAccessCase final : public AccessCase {
 public:
     using Base = AccessCase;
     friend class AccessCase;
+    friend class InlineCacheCompiler;
 
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction.get(); }
     Intrinsic intrinsic() const { return m_intrinsicFunction->intrinsic(); }
-
-    static bool canEmitIntrinsicGetter(StructureStubInfo&, JSFunction*, Structure*);
-    void emitIntrinsicGetter(AccessGenerationState&);
 
     static Ref<AccessCase> create(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, RefPtr<PolyProtoAccessChain>&&);
 

@@ -247,6 +247,7 @@ bytecode/ICStatusUtils.cpp
 bytecode/InByStatus.cpp
 bytecode/InByVariant.cpp
 bytecode/InlineAccess.cpp
+bytecode/InlineCacheCompiler.cpp
 bytecode/InlineCallFrame.cpp
 bytecode/InlineCallFrameSet.cpp
 bytecode/InstanceOfAccessCase.cpp
@@ -267,7 +268,6 @@ bytecode/ObjectPropertyConditionSet.cpp
 bytecode/Opcode.cpp
 bytecode/ParseHash.cpp
 bytecode/PolyProtoAccessChain.cpp
-bytecode/PolymorphicAccess.cpp
 bytecode/PreciseJumpTargets.cpp
 bytecode/ProgramCodeBlock.cpp
 bytecode/PropertyCondition.cpp
@@ -656,7 +656,6 @@ jit/ExecutableMemoryHandle.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/GPRInfo.cpp
 jit/ICStats.cpp
-jit/IntrinsicEmitter.cpp
 jit/JIT.cpp
 jit/JITAddGenerator.cpp
 jit/JITArithmetic.cpp

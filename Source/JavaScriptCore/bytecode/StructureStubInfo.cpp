@@ -29,7 +29,7 @@
 #include "BaselineJITRegisters.h"
 #include "CacheableIdentifierInlines.h"
 #include "DFGJITCode.h"
-#include "PolymorphicAccess.h"
+#include "InlineCacheCompiler.h"
 #include "Repatch.h"
 
 namespace JSC {
@@ -198,7 +198,8 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // PolymorphicAccess.
         clearBufferedStructures();
         
-        result = m_stub->regenerate(locker, vm, globalObject, codeBlock, ecmaMode, *this);
+        InlineCacheCompiler compiler(vm, globalObject, ecmaMode, *this);
+        result = compiler.regenerate(locker, *m_stub, codeBlock);
         
         if (StructureStubInfoInternal::verbose)
             dataLog("Regeneration result: ", result, "\n");

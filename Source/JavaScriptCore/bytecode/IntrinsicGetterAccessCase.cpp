@@ -30,6 +30,7 @@
 
 #include "HeapInlines.h"
 #include "JSCellInlines.h"
+#include "JSTypedArrays.h"
 
 namespace JSC {
 
@@ -49,6 +50,19 @@ Ref<AccessCase> IntrinsicGetterAccessCase::cloneImpl() const
     auto result = adoptRef(*new IntrinsicGetterAccessCase(*this));
     result->resetState();
     return result;
+}
+
+bool IntrinsicGetterAccessCase::doesCalls() const
+{
+    switch (intrinsic()) {
+    case TypedArrayByteOffsetIntrinsic:
+    case TypedArrayByteLengthIntrinsic:
+    case TypedArrayLengthIntrinsic:
+        return isResizableOrGrowableSharedTypedArrayIncludingDataView(structure()->classInfoForCells());
+    default:
+        return false;
+    }
+    return false;
 }
 
 } // namespace JSC
