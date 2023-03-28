@@ -72,10 +72,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <sys/reason.h>
-#endif
-
 namespace JSC { namespace LLInt {
 
 #define LLINT_BEGIN_NO_SET_PC() \
