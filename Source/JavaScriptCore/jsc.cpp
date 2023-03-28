@@ -194,7 +194,11 @@ NO_RETURN_WITH_VALUE static void jscExit(int status)
         }
     }
 #endif // ENABLE(DFG_JIT)
+#if OS(WINDOWS)
+    TerminateProcess(GetCurrentProcess(), status);
+#else
     exit(status);
+#endif
 }
 
 static unsigned asyncTestPasses { 0 };
