@@ -83,7 +83,7 @@ private:
     void rubberBandingStateChanged(bool) final;
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
 
-    ScrollerPairMac m_scrollerPair;
+    Ref<ScrollerPairMac> m_scrollerPair;
 
     bool m_inMomentumPhase { false };
 };
