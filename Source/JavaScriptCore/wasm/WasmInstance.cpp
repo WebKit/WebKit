@@ -302,6 +302,36 @@ template bool Instance::copyDataSegment<uint32_t>(uint32_t, uint32_t, uint32_t, 
 template bool Instance::copyDataSegment<uint64_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint64_t>&);
 
 
+void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, uint32_t length, FixedVector<uint64_t>& values)
+{
+    // Caller should have already checked that the (offset + length) calculation doesn't overflow int32,
+    // and that the (offset + length) doesn't overflow the element segment
+    ASSERT(!sumOverflows<uint32_t>(srcOffset, length));
+    ASSERT((srcOffset + length) <= segment.length());
+
+    for (uint32_t srcIndex = srcOffset; srcIndex < length; ++srcIndex) {
+        const auto dstIndex = srcIndex - srcOffset;
+
+        // Represent the null function as the null JS value
+        if (Element::isNullFuncIndex(segment.functionIndices[srcIndex])) {
+            values[dstIndex] = static_cast<uint64_t>(JSValue::encode(jsNull()));
+            continue;
+        }
+
+        // FIXME
+        // This will have to be updated to handle element types other than function references
+        // when https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
+        uint32_t functionIndex = segment.functionIndices[srcIndex];
+
+        // A wrapper for this function should have been created during parsing.
+        // A future optimization would be for the parser to not create the wrappers,
+        // and create them here dynamically instead.
+        JSValue value = getFunctionWrapper(functionIndex);
+        ASSERT(value.isCallable());
+        values[dstIndex] = static_cast<uint64_t>(JSValue::encode(value));
+    }
+}
+
 void Instance::tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex)
 {
     RELEASE_ASSERT(elementIndex < m_module->moduleInformation().elementCount());

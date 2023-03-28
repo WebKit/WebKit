@@ -320,6 +320,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
@@ -2012,6 +2013,14 @@ auto LLIntGenerator::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, Exp
 {
     ResultList results;
     addCallBuiltin(LLIntBuiltin::ArrayNewData, { addConstantWithoutPush(Types::I32, typeIndex), addConstantWithoutPush(Types::I32, dataIndex), size, offset }, results);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayNewElem, { addConstantWithoutPush(Types::I32, typeIndex), addConstantWithoutPush(Types::I32, elemSegmentIndex), size, offset }, results);
     result = results.at(0);
     return { };
 }

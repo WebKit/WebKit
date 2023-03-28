@@ -411,6 +411,7 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
@@ -869,6 +870,12 @@ protected:
     void emitAtomicStoreOp(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
     ExpressionType emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset);
     ExpressionType emitAtomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, uint32_t offset);
+
+    const StorageType arrayElementType(uint32_t);
+
+    using arrayCreateFromSegmentOperation = EncodedJSValue (*)(JSC::Wasm::Instance*, uint32_t, uint32_t, uint32_t, uint32_t);
+    void emitCreateArray(uint32_t, ExpressionType, ExpressionType, ExpressionType&);
+    void emitCreateArrayFromSegment(arrayCreateFromSegmentOperation, uint32_t, uint32_t, ExpressionType, ExpressionType, ExceptionType, ExpressionType&);
 
     void emitRefTestOrCast(CastKind, ExpressionType, bool, int32_t, ExpressionType&);
     template <typename Branch, typename Generator>
@@ -2459,20 +2466,65 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCheckedFloatingPointTruncat
 }
 
 template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
+const StorageType AirIRGeneratorBase<Derived, ExpressionType>::arrayElementType(uint32_t typeIndex)
 {
     const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
+    return arraySignature.as<ArrayType>()->elementType().type;
+}
+
+// Emit code to create an array with type `typeIndex` and size `size` with all elements
+// initialized to `initializer`, storing the array reference in `result`
+template<typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::emitCreateArray(uint32_t typeIndex, ExpressionType size, ExpressionType initializer, ExpressionType& result)
+{
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
+
+    result = self().tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayNew, result, instanceValue(), self().addConstant(Types::I32, typeIndex), size, initializer);
+}
+
+// Emit code to create an array using operation `operation`, which must be parameterized over a type index,
+// segment index, size, and offset. (Currently this can be either a data segment or element segment.)
+// It's assumed that the operation could return `null` and that this should be handled by throwing
+// an exception with type `exceptionType`.
+template<typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::emitCreateArrayFromSegment(arrayCreateFromSegmentOperation operation, uint32_t typeIndex, uint32_t segmentIndex, ExpressionType size, ExpressionType offset, ExceptionType exceptionType, ExpressionType& result)
+{
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
+    ASSERT(arraySignature.is<ArrayType>());
+
+    // The result type is a non-nullable reference to an array
+    result = self().tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+
+    emitCCall(operation,
+        result,
+        instanceValue(),
+        self().addConstant(Types::I32, typeIndex),
+        self().addConstant(Types::I32, segmentIndex),
+        size,
+        offset);
+
+    // Check for null return value (indicating that this access is out of bounds for the segment)
+    emitThrowOnNullReference(result, exceptionType);
+}
+
+template<typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
+{
+#if ASSERT_ENABLED
+    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
+    ASSERT(arraySignature.is<ArrayType>());
+#endif
 
     ExpressionType tmpForValue;
     // FIXME: This will need to be changed to support arrays of vectors:
     // https://bugs.webkit.org/show_bug.cgi?id=251330
     self().emitCoerceToI64(value, tmpForValue);
 
-    result = self().tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    emitCCall(&operationWasmArrayNew, result, instanceValue(), self().addConstant(Types::I32, typeIndex), size, tmpForValue);
+    emitCreateArray(typeIndex, size, tmpForValue, result);
 
     return { };
 }
@@ -2480,10 +2532,9 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNew(uint32_t typeIndex
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
-    ASSERT(arraySignature.is<ArrayType>());
-    const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
+    const StorageType& elementType = arrayElementType(typeIndex);
 
+    // The default initializer is `null` for arrays of reference types, and 0 otherwise
     ExpressionType tmpForValue;
     if (Wasm::isRefType(elementType))
         tmpForValue = self().addConstant(elementType.as<Type>(), JSValue::encode(jsNull()));
@@ -2492,10 +2543,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t ty
         self().emitZeroInitialize(tmpForValue);
     }
 
-    result = self().tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    emitCCall(&operationWasmArrayNew, result, instanceValue(), self().addConstant(Types::I32, typeIndex), size, tmpForValue);
+    emitCreateArray(typeIndex, size, tmpForValue, result);
 
     return { };
 }
@@ -2503,22 +2551,26 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewDefault(uint32_t ty
 template<typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
 {
-    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
-    ASSERT(arraySignature.is<ArrayType>());
-
-    // The result type is a non-nullable reference to an array
-    result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
-
-    emitCCall(&operationWasmArrayNewData,
-        result,
-        instanceValue(),
-        self().addConstant(Types::I32, typeIndex),
-        self().addConstant(Types::I32, dataIndex),
+    emitCreateArrayFromSegment(&operationWasmArrayNewData,
+        typeIndex,
+        dataIndex,
         arraySize,
-        offset);
+        offset,
+        ExceptionType::OutOfBoundsDataSegmentAccess,
+        result);
+    return { };
+}
 
-    // Check for null return value (indicating that this access is out of bounds for the segment)
-    emitThrowOnNullReference(result, ExceptionType::OutOfBoundsDataSegmentAccess);
+template<typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
+{
+    emitCreateArrayFromSegment(&operationWasmArrayNewElem,
+        typeIndex,
+        elemSegmentIndex,
+        arraySize,
+        offset,
+        ExceptionType::OutOfBoundsElementSegmentAccess,
+        result);
     return { };
 }
 
@@ -2527,9 +2579,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(ExtGCOpType arrayG
 {
     ASSERT(arrayGetKind == ExtGCOpType::ArrayGet || arrayGetKind == ExtGCOpType::ArrayGetS || arrayGetKind == ExtGCOpType::ArrayGetU);
 
-    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
-    ASSERT(arraySignature.is<ArrayType>());
-    Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    Wasm::StorageType elementType = arrayElementType(typeIndex);
     Wasm::Type resultType = elementType.unpacked();
 
     // Ensure arrayref is non-null.

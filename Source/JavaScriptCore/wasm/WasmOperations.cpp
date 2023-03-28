@@ -1010,6 +1010,14 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewData, EncodedJSValue, (Instance* i
     return arrayNewData(instance, typeIndex, dataSegmentIndex, arraySize, offset);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewElem, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t elemSegmentIndex, uint32_t arraySize, uint32_t offset))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return arrayNewElem(instance, typeIndex, elemSegmentIndex, arraySize, offset);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);

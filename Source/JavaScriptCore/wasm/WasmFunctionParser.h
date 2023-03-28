@@ -252,6 +252,8 @@ private:
 
     // FIXME add a macro as above for WASM_TRY_APPEND_TO_CONTROL_STACK https://bugs.webkit.org/show_bug.cgi?id=165862
 
+    void addReferencedFunctions(const Element&);
+
     Context& m_context;
     Stack m_expressionStack;
     ControlStack m_controlStack;
@@ -1443,6 +1445,19 @@ auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialRe
 }
 
 template<typename Context>
+void FunctionParser<Context>::addReferencedFunctions(const Element& segment)
+{
+    ASSERT(segment.elementType == TableElementType::Funcref);
+
+    // Add each function index as a referenced function. This ensures that
+    // wrappers will be created for GC.
+    for (uint32_t functionIndex : segment.functionIndices) {
+        if (functionIndex != Element::nullFuncIndex)
+            m_info.addReferencedFunction(functionIndex);
+    }
+}
+
+template<typename Context>
 auto FunctionParser<Context>::parseExpression() -> PartialResult
 {
     switch (m_currentOpcode) {
@@ -1872,6 +1887,64 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewData(typeIndex, dataIndex, size, offset, result));
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
+            return { };
+        }
+        case ExtGCOpType::ArrayNewElem: {
+
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new_elem");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new_elem type index ", typeIndex, " is out of bounds");
+
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new_elem type index ", typeIndex, " does not reference an array definition");
+            const FieldType& fieldType = typeDefinition.as<ArrayType>()->elementType();
+
+            // Get the element segment index
+            uint32_t elemSegmentIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(elemSegmentIndex), "can't get elements segment index for array.new_elem");
+            uint32_t numElementsSegments = m_info.elements.size();
+            WASM_VALIDATOR_FAIL_IF(!(numElementsSegments), "array.new_elem in module with no elements segments");
+            WASM_VALIDATOR_FAIL_IF(elemSegmentIndex >= numElementsSegments, "array.new_elem segment index ",
+                elemSegmentIndex, " is out of bounds (maximum element segment index is ", numElementsSegments -1, ")");
+
+            // Get the element type for this segment
+            const Element& elementsSegment = m_info.elements[elemSegmentIndex];
+            TableElementType segmentElementType = elementsSegment.elementType;
+
+            // Array element type must be a supertype of the element type for this element segment
+            const StorageType storageType = fieldType.type;
+            WASM_VALIDATOR_FAIL_IF(storageType.is<PackedType>(), "type mismatch in array.new_elem: expected `funcref` or `externref`");
+
+            // FIXME in the current implementation, segment element types can only be `funcref` or `externref`, so subtyping is trivial
+            // this will need to be extended once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
+            switch (segmentElementType) {
+            case TableElementType::Funcref: {
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(funcrefType(), storageType.as<Type>()), "type mismatch in array.new_elem: segment elements have type funcref but array.new_elem operation expects elements of type ", storageType);
+                // Create function wrappers for any functions in this element segment.
+                // We conservatively assume that the `array.new_canon_elem` instruction will be executed.
+                // An optimization would be to lazily create the wrappers when the array is initialized.
+                addReferencedFunctions(elementsSegment);
+                break;
+            }
+            case TableElementType::Externref: {
+                WASM_VALIDATOR_FAIL_IF(!isExternref(storageType.as<Type>()), "type mismatch in array.new_elem: segment elements have type externref but array.new_elem operation expects elements of type ", storageType);
+                break;
+            }
+            }
+
+            // Get the array size
+            TypedExpression size;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new_elem");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new_elem: size has type ", size.type().kind, " expected ", TypeKind::I32);
+
+            // Get the offset into the data segment
+            TypedExpression offset;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "array.new_elem");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "array.new_elem: offset has type ", offset.type().kind, " expected ", TypeKind::I32);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addArrayNewElem(typeIndex, elemSegmentIndex, size, offset, result));
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
             return { };
         }
