@@ -126,12 +126,13 @@ void RunLoop::wakeUp()
 RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
     MSG message;
-    if (!::GetMessage(&message, nullptr, 0, 0))
-        return CycleResult::Stop;
+    while (::PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
+        if (message.message == WM_QUIT)
+            return CycleResult::Stop;
 
-    ::TranslateMessage(&message);
-    ::DispatchMessage(&message);
-
+        ::TranslateMessage(&message);
+        ::DispatchMessage(&message);
+    }
     return CycleResult::Continue;
 }
 
