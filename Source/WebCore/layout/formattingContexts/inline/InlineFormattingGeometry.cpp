@@ -261,10 +261,11 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
     return { };
 }
 
-InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const ConstraintsForInFlowContent& constraints, InlineLayoutUnit lastLineLogicalBottom, const FloatingContext& floatingContext) const
+InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const ConstraintsForInFlowContent& constraints, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext& floatingContext) const
 {
-    auto textIndent = computedTextIndent(IsIntrinsicWidthMode::No, true, constraints.horizontal().logicalWidth);
-    auto floatConstraints = floatConstraintsForLine(lastLineLogicalBottom, 0, floatingContext);
+    auto contentHasPreviousLine = lastLineLogicalBottom ? std::make_optional(true) : std::nullopt;
+    auto textIndent = computedTextIndent(IsIntrinsicWidthMode::No, contentHasPreviousLine, constraints.horizontal().logicalWidth);
+    auto floatConstraints = floatConstraintsForLine(lastLineLogicalBottom.value_or(constraints.logicalTop()), 0, floatingContext);
     auto lineBoxOffset = constraints.horizontal().logicalLeft;
     // FIXME: Add missing RTL support.
     if (floatConstraints.left)
@@ -282,7 +283,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());
-        return { contentLeftAfterLastLine(constraints, constraints.logicalTop(), floatingContext), constraints.logicalTop() };
+        return { contentLeftAfterLastLine(constraints, { }, floatingContext), constraints.logicalTop() };
     }
 
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
