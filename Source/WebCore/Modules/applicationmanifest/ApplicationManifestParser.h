@@ -28,6 +28,7 @@
 #if ENABLE(APPLICATION_MANIFEST)
 
 #include "ApplicationManifest.h"
+#include <optional>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ private:
 
     URL parseStartURL(const JSON::Object&, const URL&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
+    const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);
     String parseName(const JSON::Object&);
     String parseDescription(const JSON::Object&);
     String parseShortName(const JSON::Object&);

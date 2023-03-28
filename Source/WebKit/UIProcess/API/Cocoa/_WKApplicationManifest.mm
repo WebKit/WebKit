@@ -137,7 +137,6 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
 
 @end
 
-    
 @implementation _WKApplicationManifest
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -154,6 +153,10 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
     URL scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
+    NSInteger orientation = [aDecoder decodeIntegerForKey:@"orientation"];
+    std::optional<WebCore::ScreenOrientationLockType> orientationValue = std::nullopt;
+    if (orientation != NSNotFound)
+        orientationValue = static_cast<WebCore::ScreenOrientationLockType>(orientation);
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
     WebCore::CocoaColor *backgroundColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color"];
@@ -166,6 +169,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
         WTFMove(description),
         WTFMove(scopeURL),
         static_cast<WebCore::ApplicationManifest::Display>(display),
+        WTFMove(orientationValue),
         WTFMove(startURL),
         WTFMove(manifestId),
         WebCore::roundAndClampToSRGBALossy(backgroundColor.CGColor),
@@ -195,6 +199,10 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     [aCoder encodeObject:self.applicationDescription forKey:@"description"];
     [aCoder encodeObject:self.scope forKey:@"scope"];
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().display) forKey:@"display"];
+
+    // If orientation has value, encode the integer value, otherwise encode NSNotFound.
+    [aCoder encodeInteger:(_applicationManifest->applicationManifest().orientation.has_value() ? static_cast<NSInteger>(*_applicationManifest->applicationManifest().orientation) : NSNotFound) forKey:@"orientation"];
+
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
     [aCoder encodeObject:self.manifestId forKey:@"manifestId"];
     [aCoder encodeObject:self.backgroundColor forKey:@"background_color"];
@@ -269,6 +277,35 @@ static NSString *nullableNSString(const WTF::String& string)
     ASSERT_NOT_REACHED();
 }
 
+- (std::optional<_WKApplicationManifestOrientation>)orientation
+{
+    if (!_applicationManifest->applicationManifest().orientation.has_value())
+        return std::nullopt;
+
+    switch (*_applicationManifest->applicationManifest().orientation) {
+    case WebCore::ScreenOrientationLockType::Any:
+        return _WKApplicationManifestOrientationAny;
+    case WebCore::ScreenOrientationLockType::Landscape:
+        return _WKApplicationManifestOrientationLandscape;
+    case WebCore::ScreenOrientationLockType::LandscapePrimary:
+        return _WKApplicationManifestOrientationLandscapePrimary;
+    case WebCore::ScreenOrientationLockType::LandscapeSecondary:
+        return _WKApplicationManifestOrientationLandscapeSecondary;
+    case WebCore::ScreenOrientationLockType::Natural:
+        return _WKApplicationManifestOrientationNatural;
+    case WebCore::ScreenOrientationLockType::Portrait:
+        return _WKApplicationManifestOrientationPortrait;
+    case WebCore::ScreenOrientationLockType::PortraitPrimary:
+        return _WKApplicationManifestOrientationPortraitPrimary;
+    case WebCore::ScreenOrientationLockType::PortraitSecondary:
+        return _WKApplicationManifestOrientationPortraitSecondary;
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+
 - (NSArray<_WKApplicationManifestIcon *> *)icons
 {
     return createNSArray(_applicationManifest->applicationManifest().icons, [] (auto& coreIcon) -> id {
@@ -341,6 +378,11 @@ static NSString *nullableNSString(const WTF::String& string)
 - (_WKApplicationManifestDisplayMode)displayMode
 {
     return _WKApplicationManifestDisplayModeBrowser;
+}
+
+- (std::optional<_WKApplicationManifestOrientation>)orientation
+{
+    return std::nullopt;
 }
 
 - (NSArray<_WKApplicationManifestIcon *> *)icons
