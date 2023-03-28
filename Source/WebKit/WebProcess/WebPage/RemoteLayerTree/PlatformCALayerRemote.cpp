@@ -203,8 +203,13 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
                 m_properties.children[i] = m_children[i]->layerID();
         }
 
-        if (type() == PlatformCALayer::Type::RemoteCustom) {
+        // FIXME: the below is only necessary when blockMediaLayerRehostingInWebContentProcess() is disabled.
+        // Once that setting is made unnecessary, remove this entire conditional as well.
+        if (type() == PlatformCALayer::Type::RemoteCustom
+            && !downcast<PlatformCALayerRemoteCustom>(*this).hasVideo()) {
             RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties, RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort);
+            didCommit();
+            return;
         }
 
         transaction.layerPropertiesChanged(*this);
