@@ -56,6 +56,10 @@
 #include <epoxy/egl.h>
 #endif
 
+#if USE(GBM)
+#include "AcceleratedBackingStoreDMABuf.h"
+#endif
+
 #if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
 #endif
@@ -197,8 +201,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
     addTableRow(versionObject, "GTK version"_s, makeString(GTK_MAJOR_VERSION, '.', GTK_MINOR_VERSION, '.', GTK_MICRO_VERSION, " (build) "_s, gtk_get_major_version(), '.', gtk_get_minor_version(), '.', gtk_get_micro_version(), " (runtime)"_s));
 
+#if USE(GBM)
+    bool usingDMABufRenderer = AcceleratedBackingStoreDMABuf::checkRequirements();
+#else
+    bool usingDMABufRenderer = false;
+#endif
+
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !usingDMABufRenderer) {
         addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
 
 #if WPE_FDO_CHECK_VERSION(1, 6, 1)
@@ -220,15 +230,20 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     startTable("Display Information"_s);
 
 #if PLATFORM(GTK)
-    auto typeString =
+    StringBuilder typeStringBuilder;
 #if PLATFORM(WAYLAND)
-        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland ? "Wayland"_s :
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
+        typeStringBuilder.append("Wayland"_s);
+        typeStringBuilder.append(usingDMABufRenderer ? " (DMABuf renderer)"_s : " (WPE renderer)"_s);
+    }
 #endif
 #if PLATFORM(X11)
-        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 ? "X11"_s :
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
+        typeStringBuilder.append("X11"_s);
+        typeStringBuilder.append(usingDMABufRenderer ? " (DMABuf renderer)"_s : " (XWindow renderer)"_s);
+    }
 #endif
-        "Unknown"_s;
-    addTableRow(displayObject, "Type"_s, WTFMove(typeString));
+    addTableRow(displayObject, "Type"_s, !typeStringBuilder.isEmpty() ? typeStringBuilder.toString() : "Unknown"_s);
 #endif // PLATFORM(GTK)
 
     auto rect = IntRect(screenRect(nullptr));

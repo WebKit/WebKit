@@ -57,9 +57,8 @@ EGLSurface GLContext::createWindowSurfaceWPE(EGLDisplay display, EGLConfig confi
 
 std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, WindowSurface)) {
+    if (!getEGLConfig(platformDisplay, &config, WindowSurface)) {
         WTFLogAlways("Cannot obtain EGL WPE context configuration: %s\n", lastErrorString());
         return nullptr;
     }
@@ -82,6 +81,7 @@ std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platform
         return nullptr;
     }
 
+    EGLDisplay display = platformDisplay.eglDisplay();
     EGLSurface surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
     if (surface == EGL_NO_SURFACE) {
         WTFLogAlways("Cannot create EGL WPE window surface: %s\n", lastErrorString());

@@ -406,6 +406,16 @@ uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()
     return m_surface->window();
 }
 
+void LayerTreeHost::didCreateGLContext()
+{
+    m_surface->didCreateGLContext();
+}
+
+void LayerTreeHost::willDestroyGLContext()
+{
+    m_surface->willDestroyGLContext();
+}
+
 void LayerTreeHost::didDestroyGLContext()
 {
     m_surface->finalize();

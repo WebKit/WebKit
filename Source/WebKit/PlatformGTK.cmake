@@ -53,6 +53,8 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/ViewGestureController
 
+    UIProcess/gtk/AcceleratedBackingStoreDMABuf
+
     WebProcess/gtk/GtkSettingsManagerProxy
     WebProcess/WebPage/ViewGestureGeometryCollector
 )

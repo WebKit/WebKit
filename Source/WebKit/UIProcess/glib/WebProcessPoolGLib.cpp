@@ -54,7 +54,11 @@
 
 #if PLATFORM(GTK)
 #include "GtkSettingsManager.h"
+#if USE(GBM)
+#include "AcceleratedBackingStoreDMABuf.h"
 #endif
+#endif
+
 
 namespace WebKit {
 
@@ -82,8 +86,13 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 #endif
 
+#if PLATFORM(GTK) && USE(GBM)
+    if (AcceleratedBackingStoreDMABuf::checkRequirements())
+        parameters.useDMABufSurfaceForCompositing = true;
+#endif
+
 #if PLATFORM(WAYLAND)
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland) {
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland && !parameters.useDMABufSurfaceForCompositing) {
         wpe_loader_init("libWPEBackend-fdo-1.0.so.1");
         if (AcceleratedBackingStoreWayland::checkRequirements()) {
             parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };

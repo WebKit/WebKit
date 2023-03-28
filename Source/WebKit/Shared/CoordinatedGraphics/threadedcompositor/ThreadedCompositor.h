@@ -47,6 +47,8 @@ public:
     class Client {
     public:
         virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
+        virtual void didCreateGLContext() = 0;
+        virtual void willDestroyGLContext() = 0;
         virtual void didDestroyGLContext() = 0;
 
         virtual void resize(const WebCore::IntSize&) = 0;

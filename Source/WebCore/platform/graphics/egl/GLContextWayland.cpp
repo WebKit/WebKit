@@ -48,15 +48,15 @@ EGLSurface GLContext::createWindowSurfaceWayland(EGLDisplay display, EGLConfig c
 
 std::unique_ptr<GLContext> GLContext::createWaylandContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, WindowSurface))
+    if (!getEGLConfig(platformDisplay, &config, WindowSurface))
         return nullptr;
 
     EGLContext context = createContextForEGLVersion(platformDisplay, config, sharingContext);
     if (context == EGL_NO_CONTEXT)
         return nullptr;
 
+    EGLDisplay display = platformDisplay.eglDisplay();
     WlUniquePtr<struct wl_surface> wlSurface(downcast<PlatformDisplayWayland>(platformDisplay).createSurface());
     if (!wlSurface) {
         eglDestroyContext(display, context);

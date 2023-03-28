@@ -48,6 +48,10 @@
 #include <wpe/wpe.h>
 #endif
 
+#if PLATFORM(GTK) && USE(EGL)
+#include <WebCore/PlatformDisplayHeadless.h>
+#endif
+
 #if PLATFORM(GTK) && !USE(GTK4)
 #include <WebCore/ScrollbarThemeGtk.h>
 #endif
@@ -119,14 +123,19 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
+#if PLATFORM(GTK) && USE(EGL)
+    if (parameters.useDMABufSurfaceForCompositing)
+        m_displayForCompositing = WebCore::PlatformDisplayHeadless::create();
+#endif
+
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !parameters.isServiceWorkerProcess) {
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !parameters.isServiceWorkerProcess && !parameters.useDMABufSurfaceForCompositing) {
         auto hostClientFileDescriptor = parameters.hostClientFileDescriptor.release();
         if (hostClientFileDescriptor != -1) {
             wpe_loader_init(parameters.implementationLibraryName.data());
-            m_wpeDisplay = WebCore::PlatformDisplayLibWPE::create();
-            if (!m_wpeDisplay->initialize(hostClientFileDescriptor))
-                m_wpeDisplay = nullptr;
+            m_displayForCompositing = WebCore::PlatformDisplayLibWPE::create();
+            if (!downcast<WebCore::PlatformDisplayLibWPE>(*m_displayForCompositing).initialize(hostClientFileDescriptor))
+                m_displayForCompositing = nullptr;
         }
     }
 #endif

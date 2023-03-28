@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,49 @@
 
 #pragma once
 
-#include <WebCore/IntSize.h>
-#include <wtf/Noncopyable.h>
+#include "AcceleratedSurface.h"
+
+#if USE(GBM)
+#include <wtf/WeakPtr.h>
+
+typedef void *EGLImage;
+struct gbm_bo;
 
 namespace WebKit {
 
 class WebPage;
 
-class AcceleratedSurface {
-    WTF_MAKE_NONCOPYABLE(AcceleratedSurface); WTF_MAKE_FAST_ALLOCATED;
+class AcceleratedSurfaceDMABuf final : public AcceleratedSurface, public CanMakeWeakPtr<AcceleratedSurfaceDMABuf> {
 public:
-    class Client {
-    public:
-        virtual void frameComplete() = 0;
-    };
+    static std::unique_ptr<AcceleratedSurfaceDMABuf> create(WebPage&, Client&);
+    ~AcceleratedSurfaceDMABuf();
 
-    static std::unique_ptr<AcceleratedSurface> create(WebPage&, Client&);
-    virtual ~AcceleratedSurface() = default;
+    uint64_t window() const override { return 0; }
+    uint64_t surfaceID() const override;
+    void clientResize(const WebCore::IntSize&) override;
+    bool shouldPaintMirrored() const override
+    {
+#if PLATFORM(GTK) && USE(GTK4)
+        return false;
+#else
+        return true;
+#endif
+    }
+    void didCreateGLContext() override;
+    void willDestroyGLContext() override;
+    void willRenderFrame() override;
+    void didRenderFrame() override;
 
-    virtual uint64_t window() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual uint64_t surfaceID() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual bool hostResize(const WebCore::IntSize&);
-    virtual void clientResize(const WebCore::IntSize&) { };
-    virtual bool shouldPaintMirrored() const { return false; }
+private:
+    AcceleratedSurfaceDMABuf(WebPage&, Client&);
 
-    virtual void initialize() { }
-    virtual void didCreateGLContext() { }
-    virtual void willDestroyGLContext() { }
-    virtual void finalize() { }
-    virtual void willRenderFrame() { }
-    virtual void didRenderFrame() { }
-
-protected:
-    AcceleratedSurface(WebPage&, Client&);
-
-    WebPage& m_webPage;
-    Client& m_client;
-    WebCore::IntSize m_size;
+    unsigned m_texture { 0 };
+    unsigned m_fbo { 0 };
+    unsigned m_depthStencilBuffer { 0 };
+    EGLImage m_backImage { nullptr };
+    EGLImage m_frontImage { nullptr };
 };
 
 } // namespace WebKit
+
+#endif // USE(GBM)

@@ -262,6 +262,7 @@ UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
 UIProcess/gtk/AcceleratedBackingStore.cpp @no-unify
+UIProcess/gtk/AcceleratedBackingStoreDMABuf.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreWayland.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
 UIProcess/gtk/Clipboard.cpp
@@ -328,6 +329,7 @@ WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
 WebProcess/WebPage/glib/WebPageGLib.cpp
 
+WebProcess/WebPage/gtk/AcceleratedSurfaceDMABuf.cpp
 WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp @no-unify
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
