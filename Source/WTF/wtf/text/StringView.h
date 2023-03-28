@@ -283,10 +283,19 @@ struct StringViewWithUnderlyingString {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     StringView view;
     String underlyingString;
+
+    String toString() const;
 };
 
 inline StringView::StringView()
 {
+}
+
+inline String StringViewWithUnderlyingString::toString() const
+{
+    if (LIKELY(view.length() == underlyingString.length()))
+        return underlyingString;
+    return view.toString();
 }
 
 #if CHECK_STRINGVIEW_LIFETIME
