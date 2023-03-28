@@ -1,0 +1,3 @@
+
+PASS badging a non-fully active document should reject with InvalidStateError
+

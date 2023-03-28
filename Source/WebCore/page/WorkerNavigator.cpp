@@ -62,7 +62,7 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
 {
     auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
     if (!scope) {
-        promise->reject();
+        promise->reject(InvalidStateError);
         return;
     }
 
