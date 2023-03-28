@@ -78,6 +78,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     parsedManifest.description = parseDescription(*manifest);
     parsedManifest.shortName = parseShortName(*manifest);
     parsedManifest.scope = parseScope(*manifest, documentURL, parsedManifest.startURL);
+    parsedManifest.backgroundColor = parseColor(*manifest, "background_color"_s);
     parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
     parsedManifest.icons = parseIcons(*manifest);
     parsedManifest.id = parseId(*manifest, parsedManifest.startURL);

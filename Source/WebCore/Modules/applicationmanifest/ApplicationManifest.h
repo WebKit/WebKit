@@ -62,6 +62,7 @@ struct ApplicationManifest {
     Display display;
     URL startURL;
     URL id;
+    Color backgroundColor;
     Color themeColor;
     Vector<Icon> icons;
 };

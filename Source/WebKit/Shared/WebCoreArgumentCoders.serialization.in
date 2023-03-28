@@ -799,6 +799,7 @@ struct WebCore::ApplicationManifest {
     WebCore::ApplicationManifest::Display display
     URL startURL
     URL id
+    WebCore::Color backgroundColor
     WebCore::Color themeColor
     Vector<WebCore::ApplicationManifest::Icon> icons
 }

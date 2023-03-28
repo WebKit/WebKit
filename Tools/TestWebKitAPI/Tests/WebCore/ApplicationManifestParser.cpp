@@ -140,6 +140,13 @@ public:
         testScope(rawJSON, String(), expectedValue);
     }
 
+    void testBackgroundColor(const String& rawJSON, const Color& expectedValue)
+    {
+        auto manifest = parseTopLevelProperty("background_color"_s, rawJSON);
+        auto value = manifest.backgroundColor;
+        EXPECT_EQ(expectedValue, value);
+    }
+
     void testThemeColor(const String& rawJSON, const Color& expectedValue)
     {
         auto manifest = parseTopLevelProperty("theme_color"_s, rawJSON);
@@ -384,6 +391,26 @@ TEST_F(ApplicationManifestParserTest, Scope)
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
     testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s);
+}
+
+TEST_F(ApplicationManifestParserTest, BackgroundColor)
+{
+    testBackgroundColor("123"_s, Color());
+    testBackgroundColor("null"_s, Color());
+    testBackgroundColor("true"_s, Color());
+    testBackgroundColor("{ }"_s, Color());
+    testBackgroundColor("[ ]"_s, Color());
+    testBackgroundColor("\"\""_s, Color());
+    testBackgroundColor("\"garbage string\""_s, Color());
+
+    testBackgroundColor("\"red\""_s, Color::red);
+    testBackgroundColor("\"#f00\""_s, Color::red);
+    testBackgroundColor("\"#ff0000\""_s, Color::red);
+    testBackgroundColor("\"#ff0000ff\""_s, Color::red);
+    testBackgroundColor("\"rgb(255, 0, 0)\""_s, Color::red);
+    testBackgroundColor("\"rgba(255, 0, 0, 1)\""_s, Color::red);
+    testBackgroundColor("\"hsl(0, 100%, 50%)\""_s, Color::red);
+    testBackgroundColor("\"hsla(0, 100%, 50%, 1)\""_s, Color::red);
 }
 
 TEST_F(ApplicationManifestParserTest, ThemeColor)
