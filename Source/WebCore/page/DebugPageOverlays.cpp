@@ -299,13 +299,12 @@ bool InteractionRegionOverlay::updateRegion()
     return true;
 }
 
-static Vector<Path> pathsForRegion(const Region& region, float borderRadius)
+static Vector<Path> pathsForRect(const IntRect& rect, float borderRadius)
 {
     static constexpr float radius = 4;
 
-    Vector<FloatRect> rects = region.rects().map([] (auto rect) -> FloatRect {
-        return rect;
-    });
+    Vector<FloatRect> rects;
+    rects.append(rect);
     return PathUtilities::pathsWithShrinkWrappedRects(rects, std::max(borderRadius, radius));
 }
 
@@ -355,7 +354,7 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
     auto& [layer, graphicsLayer] = *layerPair;
 
     std::optional<InteractionRegion> hitRegion;
-    Region hitRegionInOverlayCoordinates;
+    IntRect hitRectInOverlayCoordinates;
     float hitRegionArea = 0;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
@@ -366,23 +365,20 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
     for (const auto& region : regions) {
         float area = 0;
         FloatRect boundingRect;
-        Region regionInOverlayCoordinates;
 
-        for (auto rect : region.regionInLayerCoordinates.rects()) {
-            rect.move(roundedIntSize(graphicsLayer.offsetFromRenderer()));
-            IntRect rectInOverlayCoordinates = layer.renderer().localToAbsoluteQuad(FloatRect { rect }).enclosingBoundingBox();
-            if (boundingRect.isEmpty())
-                boundingRect = rectInOverlayCoordinates;
-            else
-                boundingRect.unite(rectInOverlayCoordinates);
-            area += rectInOverlayCoordinates.area();
-            regionInOverlayCoordinates.unite(rectInOverlayCoordinates);
-        }
+        auto rect = region.rectInLayerCoordinates;
+        rect.move(roundedIntSize(graphicsLayer.offsetFromRenderer()));
+        IntRect rectInOverlayCoordinates = layer.renderer().localToAbsoluteQuad(FloatRect { rect }).enclosingBoundingBox();
+        if (boundingRect.isEmpty())
+            boundingRect = rectInOverlayCoordinates;
+        else
+            boundingRect.unite(rectInOverlayCoordinates);
+        area += rectInOverlayCoordinates.area();
 
         if (!boundingRect.contains(m_mouseLocationInContentCoordinates))
             continue;
 
-        auto paths = pathsForRegion(regionInOverlayCoordinates, region.borderRadius);
+        auto paths = pathsForRect(rectInOverlayCoordinates, region.borderRadius);
         bool didHitRegion = false;
         for (const auto& path : paths) {
             if (path.contains(m_mouseLocationInContentCoordinates)) {
@@ -400,12 +396,12 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
         if (didHitRegion && (!hitRegion || area < hitRegionArea)) {
             hitRegion = region;
             hitRegionArea = area;
-            hitRegionInOverlayCoordinates = regionInOverlayCoordinates;
+            hitRectInOverlayCoordinates = rectInOverlayCoordinates;
         }
     }
     
     if (hitRegion)
-        hitRegion->regionInLayerCoordinates = hitRegionInOverlayCoordinates;
+        hitRegion->rectInLayerCoordinates = hitRectInOverlayCoordinates;
 
     return hitRegion;
 #else
@@ -534,7 +530,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         Vector<Path> clipPaths;
 
         if (shouldClip)
-            clipPaths = pathsForRegion(region->regionInLayerCoordinates, region->borderRadius);
+            clipPaths = pathsForRect(region->rectInLayerCoordinates, region->borderRadius);
 
         bool shouldUseBackdropGradient = !shouldClip || !region || (!valueForSetting("wash"_s) && valueForSetting("clip"_s));
 

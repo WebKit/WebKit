@@ -185,12 +185,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!hasListener || !hasPointer || isTooBigForInteraction) {
         bool isOverlay = checkedRegionArea.value() <= frameViewArea && (renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned());
         if (isOverlay && isOriginalMatch) {
-            Region boundsRegion;
-            boundsRegion.unite(bounds);
-
             return { {
                 matchedElement->identifier(),
-                boundsRegion,
+                bounds,
                 0,
                 InteractionRegion::Type::Occlusion
             } };
@@ -221,13 +218,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         }
     }
     borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
-
-    Region boundsRegion;
-    boundsRegion.unite(bounds);
-
+    
     return { {
         matchedElement->identifier(),
-        boundsRegion,
+        bounds,
         borderRadius,
         InteractionRegion::Type::Interaction
     } };
@@ -235,7 +229,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
 {
-    ts.dumpProperty(interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "interaction", interactionRegion.regionInLayerCoordinates);
+    ts.dumpProperty(interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "interaction", interactionRegion.rectInLayerCoordinates);
     ts.dumpProperty("borderRadius", interactionRegion.borderRadius);
 
     return ts;

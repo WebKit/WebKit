@@ -3692,11 +3692,10 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
         context.setStrokeThickness(1);
 
         for (const auto& region : eventRegion.interactionRegions()) {
-            for (auto rect : region.regionInLayerCoordinates.rects()) {
-                Path path;
-                path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });
-                context.strokePath(path);
-            }
+            auto rect = region.rectInLayerCoordinates;
+            Path path;
+            path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });
+            context.strokePath(path);
         }
     }
 #endif

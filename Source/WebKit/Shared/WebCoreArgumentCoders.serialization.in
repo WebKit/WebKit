@@ -4733,7 +4733,7 @@ struct WebCore::GlobalWindowIdentifier {
 
 struct WebCore::InteractionRegion {
     WebCore::ElementIdentifier elementIdentifier;
-    WebCore::Region regionInLayerCoordinates;
+    WebCore::IntRect rectInLayerCoordinates;
     float borderRadius;
     WebCore::InteractionRegion::Type type;
 };
