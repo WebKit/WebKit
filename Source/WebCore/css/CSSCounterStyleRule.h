@@ -41,6 +41,7 @@ public:
 
     const StyleProperties& properties() const { return m_properties; }
     const CSSCounterStyleDescriptors& descriptors() const { return m_descriptors; };
+    CSSCounterStyleDescriptors& mutableDescriptors() { return m_descriptors; };
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID id) const { return m_properties->getPropertyCSSValue(id); }
     MutableStyleProperties& mutableProperties();
 
@@ -63,6 +64,7 @@ private:
     explicit StyleRuleCounterStyle(const AtomString&, Ref<StyleProperties>&&, CSSCounterStyleDescriptors&&);
 
     AtomString m_name;
+    // FIXME: we can get rid of m_properties and use only m_descriptors for storing the descriptors data (rdar://107267784).
     Ref<StyleProperties> m_properties;
     CSSCounterStyleDescriptors m_descriptors;
 };
@@ -103,7 +105,7 @@ public:
 private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);
 
-    void setterInternal(CSSPropertyID, const String&);
+    bool setterInternal(CSSPropertyID, const String&);
 
     Ref<StyleRuleCounterStyle> m_counterStyleRule;
 };

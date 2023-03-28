@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static CSSCounterStyleDescriptors::Ranges translateRangeFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::Ranges translateRangeFromStyleProperties(const StyleProperties& properties)
 {
     auto ranges = properties.getPropertyCSSValue(CSSPropertyRange);
     if (!ranges)
@@ -69,7 +69,7 @@ static String symbolToString(const CSSValue* value)
     return primitiveValue.stringValue();
 }
 
-static CSSCounterStyleDescriptors::AdditiveSymbols translateAdditiveSymbolsFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::AdditiveSymbols translateAdditiveSymbolsFromStyleProperties(const StyleProperties& properties)
 {
     auto value = properties.getPropertyCSSValue(CSSPropertyAdditiveSymbols);
     if (!value)
@@ -85,7 +85,7 @@ static CSSCounterStyleDescriptors::AdditiveSymbols translateAdditiveSymbolsFromS
     return result;
 }
 
-static CSSCounterStyleDescriptors::Pad translatePadFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::Pad translatePadFromStyleProperties(const StyleProperties& properties)
 {
     auto value = properties.getPropertyCSSValue(CSSPropertyPad);
     if (!value)
@@ -98,7 +98,7 @@ static CSSCounterStyleDescriptors::Pad translatePadFromStyleProperties(const Sty
     return { static_cast<unsigned>(std::max(0, length)), symbolToString(&list[1]) };
 }
 
-static CSSCounterStyleDescriptors::NegativeSymbols translateNegativeSymbolsFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::NegativeSymbols translateNegativeSymbolsFromStyleProperties(const StyleProperties& properties)
 {
     auto negative = properties.getPropertyCSSValue(CSSPropertyNegative);
     if (!negative)
@@ -114,7 +114,7 @@ static CSSCounterStyleDescriptors::NegativeSymbols translateNegativeSymbolsFromS
     return result;
 }
 
-static Vector<CSSCounterStyleDescriptors::Symbol> translateSymbolsFromStyleProperties(const StyleProperties& properties)
+Vector<CSSCounterStyleDescriptors::Symbol> translateSymbolsFromStyleProperties(const StyleProperties& properties)
 {
     auto symbolsValues = properties.getPropertyCSSValue(CSSPropertySymbols);
     if (!symbolsValues)
@@ -129,7 +129,7 @@ static Vector<CSSCounterStyleDescriptors::Symbol> translateSymbolsFromStylePrope
     return result;
 }
 
-static CSSCounterStyleDescriptors::Name translateFallbackNameFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::Name translateFallbackNameFromStyleProperties(const StyleProperties& properties)
 {
     auto fallback = properties.getPropertyCSSValue(CSSPropertyFallback);
     if (!fallback)
@@ -137,7 +137,7 @@ static CSSCounterStyleDescriptors::Name translateFallbackNameFromStyleProperties
     return makeAtomString(symbolToString(fallback.get()));
 }
 
-static CSSCounterStyleDescriptors::Symbol translatePrefixFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::Symbol translatePrefixFromStyleProperties(const StyleProperties& properties)
 {
     auto prefix = properties.getPropertyCSSValue(CSSPropertyPrefix);
     if (!prefix)
@@ -145,7 +145,7 @@ static CSSCounterStyleDescriptors::Symbol translatePrefixFromStyleProperties(con
     return symbolToString(prefix.get());
 }
 
-static CSSCounterStyleDescriptors::Symbol translateSuffixFromStyleProperties(const StyleProperties& properties)
+CSSCounterStyleDescriptors::Symbol translateSuffixFromStyleProperties(const StyleProperties& properties)
 {
     auto suffix = properties.getPropertyCSSValue(CSSPropertySuffix);
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-suffix
@@ -155,7 +155,7 @@ static CSSCounterStyleDescriptors::Symbol translateSuffixFromStyleProperties(con
     return symbolToString(suffix.get());
 }
 
-static std::pair<CSSCounterStyleDescriptors::Name, int> extractDataFromSystemDescriptor(const StyleProperties& properties, CSSCounterStyleDescriptors::System system)
+std::pair<CSSCounterStyleDescriptors::Name, int> extractDataFromSystemDescriptor(const StyleProperties& properties, CSSCounterStyleDescriptors::System system)
 {
     auto systemValue = properties.getPropertyCSSValue(CSSPropertySystem);
     // If no value is provided after `fixed`, the first synbol value is implicitly 1 (https://www.w3.org/TR/css-counter-styles-3/#first-symbol-value).
@@ -254,4 +254,51 @@ bool CSSCounterStyleDescriptors::isValid() const
     return areSymbolsValidForSystem();
 }
 
+void CSSCounterStyleDescriptors::setNegative(CSSCounterStyleDescriptors::NegativeSymbols negative)
+{
+    m_negativeSymbols = WTFMove(negative);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Negative, true);
+}
+
+void CSSCounterStyleDescriptors::setPrefix(CSSCounterStyleDescriptors::Symbol prefix)
+{
+    m_prefix = WTFMove(prefix);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Prefix, true);
+}
+
+void CSSCounterStyleDescriptors::setSuffix(CSSCounterStyleDescriptors::Symbol suffix)
+{
+    m_suffix = WTFMove(suffix);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Suffix, true);
+}
+
+void CSSCounterStyleDescriptors::setRanges(CSSCounterStyleDescriptors::Ranges ranges)
+{
+    m_ranges = WTFMove(ranges);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Range, true);
+}
+
+void CSSCounterStyleDescriptors::setPad(CSSCounterStyleDescriptors::Pad pad)
+{
+    m_pad = WTFMove(pad);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Pad, true);
+}
+
+void CSSCounterStyleDescriptors::setFallbackName(CSSCounterStyleDescriptors::Name name)
+{
+    m_fallbackName = WTFMove(name);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Fallback, true);
+}
+
+void CSSCounterStyleDescriptors::setSymbols(Vector<CSSCounterStyleDescriptors::Symbol> symbols)
+{
+    m_symbols = WTFMove(symbols);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::Symbols, true);
+}
+
+void CSSCounterStyleDescriptors::setAdditiveSymbols(CSSCounterStyleDescriptors::AdditiveSymbols additiveSymbols)
+{
+    m_additiveSymbols = WTFMove(additiveSymbols);
+    m_explicitlySetDescriptors.set(ExplicitlySetDescriptors::AdditiveSymbols, true);
+}
 } // namespace WebCore

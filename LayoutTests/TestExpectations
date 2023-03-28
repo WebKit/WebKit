@@ -4884,9 +4884,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
 
-# Tests that fail because @counter-style is not implemented yet. Skipping directory until rdar://107184142 is implemented.
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom [ Skip ]
-
 # More @counter-style failures due to not being implemented.
 imported/w3c/web-platform-tests/css/css-conditional/at-media-content-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-004.html [ ImageOnlyFailure ]
