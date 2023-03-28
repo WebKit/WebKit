@@ -14,10 +14,10 @@ const iterCount = 9
 function verifyStack(stack, e) {
     let str = e.stack.toString()
     let trace = str.split('\n')
-    let expected = ["*", "wasm-stub@[wasm code]"]
+    let expected = ["*"]
     for (let i of stack)
         expected.push(`<?>.wasm-function[${i}]@[wasm code]`)
-    expected = expected.concat(["wasm-stub@[wasm code]", "*"])
+    expected = expected.concat(["*"])
 
     if (trace.length != expected.length)
         throw "unexpected length, got: \n" + str + "\nExpected:\n" + expected.join("\n")

@@ -459,23 +459,31 @@ void StackVisitor::Frame::setToEnd()
 
 bool StackVisitor::Frame::isImplementationVisibilityPrivate() const
 {
-    auto* executable = [&] () -> ExecutableBase* {
-        if (auto* codeBlock = this->codeBlock())
-            return codeBlock->ownerExecutable();
+    ImplementationVisibility implementationVisibility = [&] () -> ImplementationVisibility {
+        if (auto* codeBlock = this->codeBlock()) {
+            if (auto* executable = codeBlock->ownerExecutable())
+                return executable->implementationVisibility();
+            return ImplementationVisibility::Public;
+        }
+
+#if ENABLE(WEBASSEMBLY)
+        if (isWasmFrame())
+            return callee().asWasmCallee()->implementationVisibility();
+#endif
 
         if (callee().isCell()) {
             if (auto* callee = this->callee().asCell()) {
-                if (auto* jsFunction = jsDynamicCast<JSFunction*>(callee))
-                    return jsFunction->executable();
+                if (auto* jsFunction = jsDynamicCast<JSFunction*>(callee)) {
+                    if (auto* executable = jsFunction->executable())
+                        return executable->implementationVisibility();
+                    return ImplementationVisibility::Public;
+                }
             }
         }
 
-        return nullptr;
+        return ImplementationVisibility::Public;
     }();
-    if (!executable)
-        return false;
-
-    switch (executable->implementationVisibility()) {
+    switch (implementationVisibility) {
     case ImplementationVisibility::Public:
         return false;
 

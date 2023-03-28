@@ -42,7 +42,6 @@ for (let i = 0; i < 10000; ++i) {
     assert.truthy(stacktrace);
     stacktrace = stacktrace.split("\n");
     assert.truthy(stacktrace[0].indexOf("imp") !== -1); // the arrow function import named "imp".
-    assert.eq(stacktrace[1], "wasm-stub@[wasm code]"); // the wasm->js stub
     let found = false;
     for (let i = 0; i < stacktrace.length; ++i) {
         let str = stacktrace[i];
