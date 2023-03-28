@@ -261,14 +261,20 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
     return { };
 }
 
-InlineLayoutUnit InlineFormattingGeometry::lineBoxOffsetAfterLastLine(const ConstraintsForInFlowContent& constraints) const
+InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const ConstraintsForInFlowContent& constraints, InlineLayoutUnit lastLineLogicalBottom, const FloatingContext& floatingContext) const
 {
-    auto alignmentOffset = horizontalAlignmentOffset(constraints.horizontal().logicalWidth, IsLastLineOrAfterLineBreak::Yes);
     auto textIndent = computedTextIndent(IsIntrinsicWidthMode::No, true, constraints.horizontal().logicalWidth);
-    return alignmentOffset + constraints.horizontal().logicalLeft + textIndent;
+    auto floatConstraints = floatConstraintsForLine(lastLineLogicalBottom, 0, floatingContext);
+    auto lineBoxOffset = constraints.horizontal().logicalLeft;
+    // FIXME: Add missing RTL support.
+    if (floatConstraints.left)
+        lineBoxOffset = std::max(lineBoxOffset, floatConstraints.left->x);
+    lineBoxOffset += textIndent;
+    auto rootInlineBoxOffset = horizontalAlignmentOffset(constraints.horizontal().logicalWidth, IsLastLineOrAfterLineBreak::Yes); 
+    return lineBoxOffset + rootInlineBoxOffset;
 }
 
-LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent) const
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent, const FloatingContext& floatingContext) const
 {
     ASSERT(outOfFlowBox.style().isOriginalDisplayInlineType());
     auto& lines = displayContent.lines;
@@ -276,7 +282,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());
-        return { lineBoxOffsetAfterLastLine(constraints), constraints.logicalTop() };
+        return { contentLeftAfterLastLine(constraints, constraints.logicalTop(), floatingContext), constraints.logicalTop() };
     }
 
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
@@ -319,7 +325,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
     auto nextDisplayBoxIndexAfterOutOfFlow = nextDisplayBoxIndex(outOfFlowBox, boxes);
     if (!nextDisplayBoxIndexAfterOutOfFlow) {
         // This is the last content on the block and it does not fit the last line.
-        return { lineBoxOffsetAfterLastLine(constraints), isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
+        return { contentLeftAfterLastLine(constraints, currentLine.bottom(), floatingContext), isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
     }
     auto& nextDisplayBox = boxes[*nextDisplayBoxIndexAfterOutOfFlow];
     return leftSideToLogicalTopLeft(nextDisplayBox, lines[nextDisplayBox.lineIndex()]);

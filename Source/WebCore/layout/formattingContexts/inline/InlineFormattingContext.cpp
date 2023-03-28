@@ -161,7 +161,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
         return PreviousLine { lastLineIndex, { }, lastDisplayBox.isLineBreak(), lastDisplayBox.style().direction(), { } };
     };
     auto displayContent = lineLayout(inlineItems, needsLayoutRange, previousLine(), { constraints, { } }, blockLayoutState).displayContent;
-    computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), constraints, displayContent);
+    computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), constraints, displayContent, blockLayoutState.floatingState());
     // FIXME: Transition to non-formatting state based inline content.
     inlineFormattingState.lines() = WTFMove(displayContent.lines);
     inlineFormattingState.boxes() = WTFMove(displayContent.boxes);
@@ -191,7 +191,7 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowContentForIntegration(co
 
     auto inlineConstraints = downcast<ConstraintsForInlineContent>(constraints);
     auto layoutResult = lineLayout(inlineItems, needsLayoutRange, previousLine(), inlineConstraints, blockLayoutState);
-    computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), inlineConstraints, layoutResult.displayContent);
+    computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), inlineConstraints, layoutResult.displayContent, blockLayoutState.floatingState());
     return layoutResult;
 }
 
@@ -300,7 +300,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(const InlineItems& inline
     return layoutResult;
 }
 
-void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList& outOfFlowBoxes, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent)
+void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList& outOfFlowBoxes, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent, const FloatingState& floatingState)
 {
     // This function computes the static position for out-of-flow content inside the inline formatting context.
     // As per spec, the static position of an out-of-flow box is computed as if the position was set to static.
@@ -309,10 +309,11 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
     // place the out-of-flow box at the logical right position.
     auto& formattingGeometry = this->formattingGeometry();
     auto& formattingState = this->formattingState();
+    auto floatingContext = FloatingContext { *this, floatingState };
 
     for (auto& outOfFlowBox : outOfFlowBoxes) {
         if (outOfFlowBox->style().isOriginalDisplayInlineType()) {
-            formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowInlineLevelBox(outOfFlowBox, constraints, displayContent));
+            formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowInlineLevelBox(outOfFlowBox, constraints, displayContent, floatingContext));
             continue;
         }
         formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowBlockLevelBox(outOfFlowBox, constraints, displayContent));

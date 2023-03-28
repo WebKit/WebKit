@@ -1,0 +1,29 @@
+<style>
+.container {
+  width: 100px;
+  height: 45px;
+  font-size: 10px;
+  color: transparent;
+  font-family: Ahem;
+  background-color: green;
+  clear: both;
+}
+
+.out_of_flow {
+  display: inline;
+  width: 25px;
+  height: 25px;
+  background-color: blue;
+  position: absolute;
+}
+
+.floater {
+  float: left;
+  width: 50px;
+  height: 45px;
+  background-color: transparent;
+}
+</style>
+<div class=container><div class=floater></div>some<br>text<br><div class=out_of_flow></div>
+<div class=container><div class=floater style="float: right"></div>some<br>text<br><div class=out_of_flow></div>
+<div class=container style="direction: rtl"><div class=floater style="float: right"></div>some<br>text<br><div class=out_of_flow></div>

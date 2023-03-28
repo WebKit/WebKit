@@ -73,7 +73,7 @@ public:
 
 private:
     InlineLayoutResult lineLayout(const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
-    void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&);
+    void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
