@@ -671,6 +671,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             floatingObject.setIsPlaced(true);
 
             renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft());
+            renderer.repaint();
         }
 
         if (layoutBox.isOutOfFlowPositioned()) {
