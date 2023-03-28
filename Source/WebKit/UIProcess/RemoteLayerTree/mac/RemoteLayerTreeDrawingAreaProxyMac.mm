@@ -35,11 +35,14 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/FloatPoint.h>
+#import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebKit {
@@ -174,6 +177,15 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     else if (m_transactionIDAfterEndingTransientZoom && transaction.transactionID() >= m_transactionIDAfterEndingTransientZoom) {
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
+    }
+    if (m_usesOverlayScrollbars != m_webPageProxy.scrollingCoordinatorProxy()->overlayScrollbarsEnabled()) {
+        m_usesOverlayScrollbars = m_webPageProxy.scrollingCoordinatorProxy()->overlayScrollbarsEnabled();
+        WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(m_usesOverlayScrollbars);
+        
+        ScrollerStyle::setUseOverlayScrollbars(m_usesOverlayScrollbars);
+        
+        NSScrollerStyle style = m_usesOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
+        [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
     }
 
     layoutBannerLayers(transaction);

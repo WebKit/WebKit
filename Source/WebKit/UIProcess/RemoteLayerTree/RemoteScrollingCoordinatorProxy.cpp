@@ -398,6 +398,11 @@ void RemoteScrollingCoordinatorProxy::viewSizeDidChange()
         m_scrollingTree->viewSizeDidChange();
 }
 
+bool RemoteScrollingCoordinatorProxy::overlayScrollbarsEnabled()
+{
+    return m_scrollingTree->overlayScrollbarsEnabled();
+}
+
 String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID scrollingNodeID, bool isVertical)
 {
     if (auto node = m_scrollingTree->nodeForID(scrollingNodeID)) {

@@ -61,6 +61,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
     , m_wheelEventGesturesBecomeNonBlocking(stateNode.wheelEventGesturesBecomeNonBlocking())
     , m_scrollingPerformanceTestingEnabled(stateNode.scrollingPerformanceTestingEnabled())
+    , m_overlayScrollbarsEnabled(stateNode.overlayScrollbarsEnabled())
 {
     if (hasChangedProperty(Property::RootContentsLayer))
         setRootContentsLayer(stateNode.rootContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -112,6 +113,7 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
         Property::MinLayoutViewportOrigin,
         Property::MaxLayoutViewportOrigin,
         Property::OverrideVisualViewportSize,
+        Property::OverlayScrollbarsEnabled,
     };
 
     auto properties = ScrollingStateScrollingNode::applicableProperties();
@@ -307,6 +309,14 @@ void ScrollingStateFrameScrollingNode::setScrollingPerformanceTestingEnabled(boo
     
     m_scrollingPerformanceTestingEnabled = enabled;
     setPropertyChanged(Property::ScrollingPerformanceTestingEnabled);
+}
+
+void ScrollingStateFrameScrollingNode::setOverlayScrollbarsEnabled(bool enabled)
+{
+    if (m_overlayScrollbarsEnabled == enabled)
+        return;
+    m_overlayScrollbarsEnabled = enabled;
+    setPropertyChanged(Property::OverlayScrollbarsEnabled);
 }
 
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

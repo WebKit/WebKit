@@ -3024,6 +3024,7 @@ header: <WebCore/ScrollingStateNode.h>
     ViewportConstraints
     OverflowScrollingNode
     KeyboardScrollData
+    OverlayScrollbarsEnabled
 };
 #endif
 

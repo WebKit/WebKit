@@ -116,7 +116,10 @@ public:
 
     bool wheelEventGesturesBecomeNonBlocking() const { return m_wheelEventGesturesBecomeNonBlocking; }
     WEBCORE_EXPORT void setWheelEventGesturesBecomeNonBlocking(bool);
-
+    
+    bool overlayScrollbarsEnabled() const { return m_overlayScrollbarsEnabled; }
+    WEBCORE_EXPORT void setOverlayScrollbarsEnabled(bool);
+    
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
@@ -149,6 +152,7 @@ private:
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wheelEventGesturesBecomeNonBlocking { false };
     bool m_scrollingPerformanceTestingEnabled { false };
+    bool m_overlayScrollbarsEnabled { false };
 };
 
 } // namespace WebCore

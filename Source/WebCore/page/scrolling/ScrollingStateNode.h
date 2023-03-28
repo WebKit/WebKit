@@ -247,14 +247,15 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MinLayoutViewportOrigin                     = 1LLU << 37,
     MaxLayoutViewportOrigin                     = 1LLU << 38,
     OverrideVisualViewportSize                  = 1LLU << 39,
+    OverlayScrollbarsEnabled                    = 1LLU << 40,
     // ScrollingStatePositionedNode
-    RelatedOverflowScrollingNodes               = 1LLU << 40,
-    LayoutConstraintData                        = 1LLU << 41,
+    RelatedOverflowScrollingNodes               = 1LLU << 41,
+    LayoutConstraintData                        = 1LLU << 42,
     // ScrollingStateFixedNode, ScrollingStateStickyNode
-    ViewportConstraints                         = 1LLU << 42,
+    ViewportConstraints                         = 1LLU << 43,
     // ScrollingStateOverflowScrollProxyNode
-    OverflowScrollingNode                       = 1LLU << 43,
-    KeyboardScrollData                          = 1LLU << 44,
+    OverflowScrollingNode                       = 1LLU << 44,
+    KeyboardScrollData                          = 1LLU << 45,
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
