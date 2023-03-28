@@ -1,15 +1,10 @@
 async function checkEncoderSupport(test, config) {
+  assert_equals("function", typeof VideoEncoder.isConfigSupported);
   let supported = false;
   try {
     const support = await VideoEncoder.isConfigSupported(config);
     supported = support.supported;
   } catch (e) {}
-
-  if (!supported) {
-    // Mark the test 'passed', unfortunately assert_implements_optional()
-    // doesn't do it by itself.
-    test.done();
-  }
 
   assert_implements_optional(supported, 'Unsupported config: ' +
                              JSON.stringify(config));
@@ -74,7 +69,7 @@ function validateBlackDots(frame, count) {
       y = y -1;
 
     let rgba = ctx.getImageData(x, y, 2, 2).data;
-    const tolerance = 70;
+    const tolerance = 40;
     if ((rgba[0] > tolerance || rgba[1] > tolerance || rgba[2] > tolerance)
       && (rgba[4] > tolerance || rgba[5] > tolerance || rgba[6] > tolerance)
       && (rgba[8] > tolerance || rgba[9] > tolerance || rgba[10] > tolerance)

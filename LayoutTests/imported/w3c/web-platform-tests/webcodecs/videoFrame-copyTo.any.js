@@ -15,70 +15,6 @@ function makeRGBA_2x2() {
   return new VideoFrame(data, init);
 }
 
-function makeRGBA_4x2() {
-  const data = new Uint8Array([
-       1, 2, 3, 4,  5, 6, 7, 8,
-       9,10,11,12, 13,14,15,16,
-      21,22,23,24, 25,26,27,28,
-      29,30,31,32, 33,34,35,36,
-  ]);
-  const init = {
-      format: 'RGBA',
-      timestamp: 0,
-      codedWidth: 4,
-      codedHeight: 2,
-  };
-  return new VideoFrame(data, init);
-}
-
-function makeRGBA_2x4() {
-  const data = new Uint8Array([
-       1, 2, 3, 4,  5, 6, 7, 8,
-       9,10,11,12, 13,14,15,16,
-      21,22,23,24, 25,26,27,28,
-      29,30,31,32, 33,34,35,36,
-  ]);
-  const init = {
-      format: 'RGBA',
-      timestamp: 0,
-      codedWidth: 2,
-      codedHeight: 4,
-  };
-  return new VideoFrame(data, init);
-}
-
-function makeBGRA_4x2() {
-  const data = new Uint8Array([
-       1, 2, 3, 4,  5, 6, 7, 8,
-       9,10,11,12, 13,14,15,16,
-      21,22,23,24, 25,26,27,28,
-      29,30,31,32, 33,34,35,36,
-  ]);
-  const init = {
-      format: 'BGRA',
-      timestamp: 0,
-      codedWidth: 4,
-      codedHeight: 2,
-  };
-  return new VideoFrame(data, init);
-}
-
-function makeBGRA_2x4() {
-  const data = new Uint8Array([
-       1, 2, 3, 4,  5, 6, 7, 8,
-       9,10,11,12, 13,14,15,16,
-      21,22,23,24, 25,26,27,28,
-      29,30,31,32, 33,34,35,36,
-  ]);
-  const init = {
-      format: 'BGRA',
-      timestamp: 0,
-      codedWidth: 2,
-      codedHeight: 4,
-  };
-  return new VideoFrame(data, init);
-}
-
 const NV12_DATA = new Uint8Array([
       1, 2, 3, 4,   // y
       5, 6, 7, 8,
@@ -91,26 +27,6 @@ function makeNV12_4x2() {
       timestamp: 0,
       codedWidth: 4,
       codedHeight: 2,
-  };
-  return new VideoFrame(NV12_DATA, init);
-}
-
-function makeNV12_2x4() {
-  const init = {
-      format: 'NV12',
-      timestamp: 0,
-      codedWidth: 2,
-      codedHeight: 4,
-  };
-  return new VideoFrame(NV12_DATA, init);
-}
-
-function makeI420_2x4() {
-  const init = {
-      format: 'I420',
-      timestamp: 0,
-      codedWidth: 2,
-      codedHeight: 4,
   };
   return new VideoFrame(NV12_DATA, init);
 }
@@ -205,7 +121,7 @@ promise_test(async t => {
   const layout = await frame.copyTo(data, options);
   assert_layout_equals(layout, options.layout);
   assert_buffer_equals(data, expectedData);
-}, 'Test stride and offset work.');
+}, 'Test I420 stride and offset work.');
 
 promise_test(async t => {
   const frame = makeI420_4x2();
@@ -230,7 +146,77 @@ promise_test(async t => {
   const layout = await frame.copyTo(data, options);
   assert_layout_equals(layout, options.layout);
   assert_buffer_equals(data, expectedData);
-}, 'Test stride and offset with padding.');
+}, 'Test I420 stride and offset with padding.');
+
+promise_test(async t => {
+  const init = {
+    format: 'I420A',
+    timestamp: 0,
+    codedWidth: 4,
+    codedHeight: 2,
+  };
+  const buf = new Uint8Array([
+    1, 2, 3, 4,     // y
+    5, 6, 7, 8,
+    9, 10,          // u
+    11, 12,         // v
+    13, 14, 15, 16, // a
+    17, 18, 19, 20,
+  ]);
+  const frame = new VideoFrame(buf, init);
+  const options = {
+      layout: [
+          {offset: 12, stride: 4},
+          {offset: 8, stride: 2},
+          {offset: 10, stride: 2},
+          {offset: 0, stride: 4},
+      ],
+  };
+  const expectedData = new Uint8Array([
+      13, 14, 15, 16, // a
+      17, 18, 19, 20,
+      9, 10,          // u
+      11, 12,         // v
+      1, 2, 3, 4,     // y
+      5, 6, 7, 8,
+  ]);
+  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
+  const data = new Uint8Array(expectedData.length);
+  const layout = await frame.copyTo(data, options);
+  assert_layout_equals(layout, options.layout);
+  assert_buffer_equals(data, expectedData);
+}, 'Test I420A stride and offset work.');
+
+promise_test(async t => {
+  const init = {
+    format: 'NV12',
+    timestamp: 0,
+    codedWidth: 4,
+    codedHeight: 2,
+  };
+  const buf = new Uint8Array([
+    1, 2, 3, 4,   // y
+    5, 6, 7, 8,
+    9, 10, 11, 12 // uv
+  ]);
+  const frame = new VideoFrame(buf, init);
+  const options = {
+      layout: [
+          {offset: 4, stride: 4},
+          {offset: 0, stride: 4},
+      ],
+  };
+  const expectedData = new Uint8Array([
+      9, 10, 11, 12, // uv
+      1, 2, 3, 4,    // y
+      5, 6, 7, 8
+  ]);
+  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
+  const data = new Uint8Array(expectedData.length);
+  const layout = await frame.copyTo(data, options);
+  assert_layout_equals(layout, options.layout);
+  assert_buffer_equals(data, expectedData);
+}, 'Test NV12 stride and offset work.');
 
 promise_test(async t => {
   const frame = makeI420_4x2();
@@ -321,154 +307,9 @@ promise_test(async t => {
   assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
   const data = new Uint8Array(expectedData.length);
   const layout = await frame.copyTo(data, options);
-
   assert_layout_equals(layout, expectedLayout);
   assert_buffer_equals(data, expectedData);
-}, 'Test left crop I420.');
-
-promise_test(async t => {
-  const frame = makeNV12_4x2();
-  const options = {
-      rect: {x: 2, y: 0, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 2},
-      {offset: 4, stride: 2},
-  ];
-  const expectedData = new Uint8Array([
-      3, 4,  // y
-      7, 8,
-      11,    // u
-      12     // v
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test left crop NV12.');
-
-promise_test(async t => {
-  const frame = makeRGBA_4x2();
-  const options = {
-      rect: {x: 2, y: 0, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 8},
-  ];
-  const expectedData = new Uint8Array([
-       9, 10, 11, 12,   13, 14, 15 ,16,
-      29, 30, 31, 32,   33, 34, 35, 36
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test left crop RGBA.');
-
-promise_test(async t => {
-  const frame = makeBGRA_4x2();
-  const options = {
-      rect: {x: 2, y: 0, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 8},
-  ];
-  const expectedData = new Uint8Array([
-       9, 10, 11, 12,   13, 14, 15 ,16,
-      29, 30, 31, 32,   33, 34, 35, 36
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test left crop BGRA.');
-
-promise_test(async t => {
-  const frame = makeI420_2x4();
-  const options = {
-      rect: {x: 0, y: 2, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 2},
-      {offset: 4, stride: 1},
-      {offset: 5, stride: 1},
-  ];
-  const expectedData = new Uint8Array([
-      5, 6,  // y
-      7, 8,
-      10,    // u
-      12     // v
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test top crop I420.');
-
-promise_test(async t => {
-  const frame = makeNV12_2x4();
-  const options = {
-      rect: {x: 0, y: 2, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 2},
-      {offset: 4, stride: 2},
-  ];
-  const expectedData = new Uint8Array([
-      5, 6,  // y
-      7, 8,
-      11,    // u
-      12     // v
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test top crop NV12.');
-
-promise_test(async t => {
-  const frame = makeRGBA_2x4();
-  const options = {
-      rect: {x: 0, y: 1, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 8},
-  ];
-  const expectedData = new Uint8Array([
-       9, 10, 11, 12,   13, 14, 15 ,16,
-      21, 22, 23, 24,   25, 26, 27, 28
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test top crop RGBA.');
-
-promise_test(async t => {
-  const frame = makeBGRA_2x4();
-  const options = {
-      rect: {x: 0, y: 1, width: 2, height: 2},
-  };
-  const expectedLayout = [
-      {offset: 0, stride: 8},
-  ];
-  const expectedData = new Uint8Array([
-       9, 10, 11, 12,   13, 14, 15 ,16,
-      21, 22, 23, 24,   25, 26, 27, 28
-  ]);
-  assert_equals(frame.allocationSize(options), expectedData.length, 'allocationSize()');
-  const data = new Uint8Array(expectedData.length);
-  const layout = await frame.copyTo(data, options);
-  assert_layout_equals(layout, expectedLayout);
-  assert_buffer_equals(data, expectedData);
-}, 'Test top crop BGRA.');
+}, 'Test left crop.');
 
 promise_test(async t => {
   const frame = makeI420_4x2();

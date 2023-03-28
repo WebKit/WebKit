@@ -1,5 +1,5 @@
 
-Harness Error (FAIL), message = Error: mp4a.40.2 unsupported
+Harness Error (FAIL), message = ReferenceError: Can't find variable: AudioDecoder
 
 NOTRUN Test isConfigSupported()
 NOTRUN Test that AudioDecoder.isConfigSupported() returns a parsed configuration
