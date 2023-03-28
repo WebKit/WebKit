@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,11 @@ class SourceBrush {
 public:
     struct Brush {
         struct LogicalGradient {
-            Ref<Gradient> gradient;
+            std::variant<Ref<Gradient>, RenderingResourceIdentifier> gradient;
             AffineTransform spaceTransform;
+
+            template<typename Encoder> void encode(Encoder&) const;
+            template<typename Decoder> static std::optional<LogicalGradient> decode(Decoder&);
         };
 
         std::variant<LogicalGradient, Ref<Pattern>> brush;
@@ -52,9 +55,10 @@ public:
 
     WEBCORE_EXPORT Gradient* gradient() const;
     WEBCORE_EXPORT Pattern* pattern() const;
-    const AffineTransform& gradientSpaceTransform() const;
+    WEBCORE_EXPORT const AffineTransform& gradientSpaceTransform() const;
+    WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 
-    void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
+    WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
     void setPattern(Ref<Pattern>&&);
 
     bool isInlineColor() const { return !m_brush && m_color.tryGetAsSRGBABytes(); }
@@ -67,7 +71,21 @@ private:
 
 inline bool operator==(const SourceBrush::Brush::LogicalGradient& a, const SourceBrush::Brush::LogicalGradient& b)
 {
-    return a.gradient.ptr() == b.gradient.ptr() && a.spaceTransform == b.spaceTransform;
+    if (a.spaceTransform != b.spaceTransform)
+        return false;
+
+    return WTF::switchOn(a.gradient,
+        [&] (const Ref<Gradient>& aGradient) {
+            if (auto* bGradient = std::get_if<Ref<Gradient>>(&b.gradient))
+                return aGradient.ptr() == bGradient->ptr();
+            return false;
+        },
+        [&] (RenderingResourceIdentifier aRenderingResourceIdentifier) {
+            if (auto* bRenderingResourceIdentifier = std::get_if<RenderingResourceIdentifier>(&b.gradient))
+                return aRenderingResourceIdentifier == *bRenderingResourceIdentifier;
+            return false;
+        }
+    );
 }
 
 inline bool operator!=(const SourceBrush::Brush::LogicalGradient& a, const SourceBrush::Brush::LogicalGradient& b)
@@ -104,6 +122,54 @@ inline bool operator==(const SourceBrush& a, const SourceBrush& b)
 inline bool operator!=(const SourceBrush& a, const SourceBrush& b)
 {
     return !(a == b);
+}
+
+template<class Encoder>
+void SourceBrush::Brush::LogicalGradient::encode(Encoder& encoder) const
+{
+    encoder << spaceTransform;
+
+    WTF::switchOn(gradient,
+        [&] (const Ref<Gradient>& gradient) {
+            if (gradient->hasValidRenderingResourceIdentifier())
+                encoder << true << gradient->renderingResourceIdentifier();
+            else
+                encoder << false << gradient;
+        },
+        [&] (RenderingResourceIdentifier renderingResourceIdentifier) {
+            encoder << true << renderingResourceIdentifier;
+        }
+    );
+}
+
+template<class Decoder>
+std::optional<SourceBrush::Brush::LogicalGradient> SourceBrush::Brush::LogicalGradient::decode(Decoder& decoder)
+{
+    std::optional<AffineTransform> spaceTransform;
+    decoder >> spaceTransform;
+    if (!spaceTransform)
+        return std::nullopt;
+
+    std::optional<bool> hasRenderingResourceIdentifier;
+    decoder >> hasRenderingResourceIdentifier;
+    if (!hasRenderingResourceIdentifier)
+        return std::nullopt;
+
+    if (*hasRenderingResourceIdentifier) {
+        std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+        decoder >> renderingResourceIdentifier;
+        if (!renderingResourceIdentifier)
+            return std::nullopt;
+        
+        return { { { *renderingResourceIdentifier }, *spaceTransform } };
+    }
+
+    std::optional<Ref<Gradient>> gradient;
+    decoder >> gradient;
+    if (!gradient)
+        return std::nullopt;
+
+    return { { { WTFMove(*gradient) }, *spaceTransform } };
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SourceBrush&);

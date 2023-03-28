@@ -44,23 +44,43 @@ public:
 
     virtual ~RenderingResource()
     {
+        if (!hasValidRenderingResourceIdentifier())
+            return;
         for (auto observer : m_observers)
-            observer->releaseRenderingResource(m_renderingResourceIdentifier);
+            observer->releaseRenderingResource(renderingResourceIdentifier());
     }
 
-    RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
+    bool hasValidRenderingResourceIdentifier() const
+    {
+        return m_renderingResourceIdentifier.has_value();
+    }
 
-    void addObserver(Observer& observer) { m_observers.add(&observer); }
-    void removeObserver(Observer& observer) { m_observers.remove(&observer); }
+    RenderingResourceIdentifier renderingResourceIdentifier() const
+    {
+        ASSERT(m_renderingResourceIdentifier);
+        return *m_renderingResourceIdentifier;
+    }
+
+    void addObserver(Observer& observer)
+    {
+        ASSERT(hasValidRenderingResourceIdentifier());
+        m_observers.add(&observer);
+    }
+
+    void removeObserver(Observer& observer)
+    {
+        ASSERT(hasValidRenderingResourceIdentifier());
+        m_observers.remove(&observer);
+    }
 
 protected:
-    RenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
+    RenderingResource(std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
         : m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
     }
 
     HashSet<Observer*> m_observers;
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
+    std::optional<RenderingResourceIdentifier> m_renderingResourceIdentifier;
 };
 
 } // namespace WebCore

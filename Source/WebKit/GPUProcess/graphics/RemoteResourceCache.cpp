@@ -70,6 +70,11 @@ void RemoteResourceCache::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decompos
     m_resourceHeap.add(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
 }
 
+void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+{
+    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(gradient));
+}
+
 NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
@@ -96,6 +101,11 @@ DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(QualifiedRendering
     return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
 }
 
+Gradient* RemoteResourceCache::cachedGradient(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_resourceHeap.getGradient(renderingResourceIdentifier);
+}
+
 void RemoteResourceCache::releaseAllResources()
 {
     m_resourceHeap.releaseAllResources();
@@ -106,7 +116,8 @@ bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIde
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
         || m_resourceHeap.removeNativeImage(renderingResourceIdentifier)
         || m_resourceHeap.removeFont(renderingResourceIdentifier)
-        || m_resourceHeap.removeDecomposedGlyphs(renderingResourceIdentifier))
+        || m_resourceHeap.removeDecomposedGlyphs(renderingResourceIdentifier)
+        || m_resourceHeap.removeGradient(renderingResourceIdentifier))
         return true;
 
     // Caching the remote resource should have happened before releasing it.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Torch Mobile, Inc.
  *
@@ -32,6 +32,7 @@
 #include "FloatPoint.h"
 #include "GradientColorStops.h"
 #include "GraphicsTypes.h"
+#include "RenderingResource.h"
 #include <variant>
 #include <wtf/Vector.h>
 
@@ -57,8 +58,7 @@ class AffineTransform;
 class FloatRect;
 class GraphicsContext;
 
-class Gradient : public RefCounted<Gradient> {
-    friend WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);
+class Gradient : public RenderingResource {
 public:
     struct LinearData {
         FloatPoint point0;
@@ -80,17 +80,16 @@ public:
 
     using Data = std::variant<LinearData, RadialData, ConicData>;
 
-    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { });
-
-    bool isZeroSize() const;
+    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, std::optional<RenderingResourceIdentifier> = std::nullopt);
 
     const Data& data() const { return m_data; }
+    ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
+    GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
+    const GradientColorStops& stops() const { return m_stops; }
 
     WEBCORE_EXPORT void addColorStop(GradientColorStop&&);
 
-    const GradientColorStops& stops() const { return m_stops; }
-    GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
-    ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
+    bool isZeroSize() const;
 
     void fill(GraphicsContext&, const FloatRect&);
     void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
@@ -107,7 +106,7 @@ public:
 #endif
 
 private:
-    explicit Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&);
+    Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, std::optional<RenderingResourceIdentifier>);
 
     void stopsChanged();
 
@@ -121,5 +120,7 @@ private:
     std::optional<GradientRendererCG> m_platformRenderer;
 #endif
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);
 
 } // namespace WebCore

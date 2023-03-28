@@ -373,6 +373,17 @@ void RemoteRenderingBackend::cacheDecomposedGlyphsWithQualifiedIdentifier(Ref<De
     m_remoteResourceCache.cacheDecomposedGlyphs(WTFMove(decomposedGlyphs), decomposedGlyphsIdentifier);
 }
 
+void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    cacheGradientWithQualifiedIdentifier(WTFMove(gradient), { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::cacheGradientWithQualifiedIdentifier(Ref<Gradient>&& gradient, QualifiedRenderingResourceIdentifier gradientResourceIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+    m_remoteResourceCache.cacheGradient(WTFMove(gradient), gradientResourceIdentifier);
+}
+
 void RemoteRenderingBackend::releaseAllResources()
 {
     ASSERT(!RunLoop::isMain());

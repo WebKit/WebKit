@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,11 +87,19 @@ void Recorder::appendStateChangeItem(const GraphicsContextState& state)
     if (state.changes().contains(GraphicsContextState::Change::FillBrush)) {
         if (auto pattern = fillPattern())
             recordResourceUse(pattern->tileImage());
+        else if (auto gradient = fillGradient()) {
+            if (gradient->hasValidRenderingResourceIdentifier())
+                recordResourceUse(*gradient);
+        }
     }
 
     if (state.changes().contains(GraphicsContextState::Change::StrokeBrush)) {
         if (auto pattern = strokePattern())
             recordResourceUse(pattern->tileImage());
+        else if (auto gradient = strokeGradient()) {
+            if (gradient->hasValidRenderingResourceIdentifier())
+                recordResourceUse(*gradient);
+        }
     }
 
     recordSetState(state);

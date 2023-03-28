@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "QualifiedRenderingResourceIdentifier.h"
 #include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/Font.h>
+#include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -63,6 +64,11 @@ public:
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::DecomposedGlyphs>&& decomposedGlyphs)
     {
         add(renderingResourceIdentifier, WTFMove(decomposedGlyphs), m_decomposedGlyphsCount);
+    }
+
+    void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::Gradient>&& gradient)
+    {
+        add(renderingResourceIdentifier, WTFMove(gradient), m_gradientCount);
     }
 
     WebCore::ImageBuffer* getImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
@@ -99,6 +105,11 @@ public:
         return get<WebCore::DecomposedGlyphs>(renderingResourceIdentifier);
     }
 
+    WebCore::Gradient* getGradient(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+    {
+        return get<WebCore::Gradient>(renderingResourceIdentifier);
+    }
+
     bool removeImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
         return remove<WebCore::ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
@@ -119,22 +130,29 @@ public:
         return remove<WebCore::DecomposedGlyphs>(renderingResourceIdentifier, m_decomposedGlyphsCount);
     }
 
+    bool removeGradient(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+    {
+        return remove<WebCore::Gradient>(renderingResourceIdentifier, m_gradientCount);
+    }
+
     void releaseAllResources()
     {
         checkInvariants();
 
-        if (!m_nativeImageCount && !m_fontCount && !m_decomposedGlyphsCount)
+        if (!m_nativeImageCount && !m_fontCount && !m_decomposedGlyphsCount && !m_gradientCount)
             return;
 
         m_resources.removeIf([] (const auto& resource) {
             return std::holds_alternative<Ref<WebCore::NativeImage>>(resource.value)
                 || std::holds_alternative<Ref<WebCore::Font>>(resource.value)
-                || std::holds_alternative<Ref<WebCore::DecomposedGlyphs>>(resource.value);
+                || std::holds_alternative<Ref<WebCore::DecomposedGlyphs>>(resource.value)
+                || std::holds_alternative<Ref<WebCore::Gradient>>(resource.value);
         });
 
         m_nativeImageCount = 0;
         m_fontCount = 0;
         m_decomposedGlyphsCount = 0;
+        m_gradientCount = 0;
 
         checkInvariants();
     }
@@ -194,6 +212,7 @@ private:
         unsigned nativeImageCount = 0;
         unsigned fontCount = 0;
         unsigned decomposedGlyphsCount = 0;
+        unsigned gradientCount = 0;
         for (const auto& pair : m_resources) {
             WTF::switchOn(pair.value, [&] (std::monostate) {
                 ASSERT_NOT_REACHED();
@@ -205,25 +224,36 @@ private:
                 ++fontCount;
             }, [&] (const Ref<WebCore::DecomposedGlyphs>&) {
                 ++decomposedGlyphsCount;
+            }, [&] (const Ref<WebCore::Gradient>&) {
+                ++gradientCount;
             });
         }
         ASSERT(imageBufferCount == m_imageBufferCount);
         ASSERT(nativeImageCount == m_nativeImageCount);
         ASSERT(fontCount == m_fontCount);
         ASSERT(decomposedGlyphsCount == m_decomposedGlyphsCount);
-        ASSERT(m_resources.size() == m_imageBufferCount + m_nativeImageCount + m_fontCount + m_decomposedGlyphsCount);
+        ASSERT(gradientCount == m_gradientCount);
+        ASSERT(m_resources.size() == m_imageBufferCount + m_nativeImageCount + m_fontCount + m_decomposedGlyphsCount + m_gradientCount);
 #endif
     }
 
-    using Resource = std::variant<std::monostate, Ref<WebCore::ImageBuffer>, Ref<WebCore::NativeImage>, Ref<WebCore::Font>, Ref<WebCore::DecomposedGlyphs>>;
+    using Resource = std::variant<
+        std::monostate,
+        Ref<WebCore::ImageBuffer>,
+        Ref<WebCore::NativeImage>,
+        Ref<WebCore::Font>,
+        Ref<WebCore::DecomposedGlyphs>,
+        Ref<WebCore::Gradient>
+    >;
     HashMap<QualifiedRenderingResourceIdentifier, Resource> m_resources;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     unsigned m_imageBufferCount { 0 };
     unsigned m_nativeImageCount { 0 };
     unsigned m_fontCount { 0 };
     unsigned m_decomposedGlyphsCount { 0 };
+    unsigned m_gradientCount { 0 };
 };
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS)
