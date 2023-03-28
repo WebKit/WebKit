@@ -1441,6 +1441,8 @@ void RenderBox::clearTrimmedMarginsMarkings()
 
 bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) const
 {
+    if (!isInFlow())
+        return false;
 #if ASSERT_ENABLED
     // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
     // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
@@ -1456,6 +1458,8 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
 
 bool RenderBox::hasTrimmedMargin(PhysicalDirection physicalDirection) const
 {
+    if (!isInFlow())
+        return false;
 #if ASSERT_ENABLED
     // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
     // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
