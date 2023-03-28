@@ -800,7 +800,7 @@ private:
         }
     }
 
-    Attribute processAttribute(CharSpan nameSpan, std::variant<LCharSpan, UCharSpan> valueSpan)
+    static Attribute processAttribute(CharSpan nameSpan, std::variant<LCharSpan, UCharSpan> valueSpan)
     {
         auto name = HTMLNameCache::makeAttributeQualifiedName(nameSpan);
         auto value = std::visit([](auto span) {
