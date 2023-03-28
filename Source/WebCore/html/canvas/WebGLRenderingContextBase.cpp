@@ -3566,7 +3566,7 @@ IntRect WebGLRenderingContextBase::getImageDataSize(ImageData* pixels)
 #if ENABLE(WEB_CODECS)
 static bool isVideoFrameFormatEligibleToCopy(WebCodecsVideoFrame& frame)
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     // FIXME: We should be able to remove the YUV restriction, see https://bugs.webkit.org/show_bug.cgi?id=251234.
     auto format = frame.format();
     return format && (*format == VideoPixelFormat::I420 || *format == VideoPixelFormat::NV12);
