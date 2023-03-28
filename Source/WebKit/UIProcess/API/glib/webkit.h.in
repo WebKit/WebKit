@@ -46,6 +46,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitBackForwardList.h>
 #include <@API_INCLUDE_PREFIX@/WebKitBackForwardListItem.h>
 #if PLATFORM(GTK)
+#include <@API_INCLUDE_PREFIX@/WebKitClipboardPermissionRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitColorChooserRequest.h>
 #endif
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>

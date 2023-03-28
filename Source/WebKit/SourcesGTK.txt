@@ -132,6 +132,7 @@ UIProcess/API/glib/WebKitAuthenticationRequest.cpp @no-unify
 UIProcess/API/glib/WebKitAutomationSession.cpp @no-unify
 UIProcess/API/glib/WebKitBackForwardList.cpp @no-unify
 UIProcess/API/glib/WebKitBackForwardListItem.cpp @no-unify
+UIProcess/API/glib/WebKitClipboardPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitContextMenuClient.cpp @no-unify
 UIProcess/API/glib/WebKitCookieManager.cpp @no-unify
 UIProcess/API/glib/WebKitCredential.cpp @no-unify

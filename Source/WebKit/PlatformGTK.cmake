@@ -118,6 +118,7 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitAutomationSession.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardList.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardListItem.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitClipboardPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitCredential.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenu.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenuActions.h.in
