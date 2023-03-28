@@ -59,7 +59,7 @@ void IconLoader::startLoading()
     if (m_resource)
         return;
 
-    auto* frame = m_documentLoader.frame();
+    auto* frame = m_documentLoader->frame();
     if (!frame)
         return;
 
@@ -125,7 +125,7 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
 
     // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
     // trigger IconLoader::stopLoading() during destruction, so we should just return here.
-    m_documentLoader.finishedLoadingIcon(*this, data);
+    m_documentLoader->finishedLoadingIcon(*this, data);
 }
 
 }

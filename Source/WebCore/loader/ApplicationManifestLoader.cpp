@@ -53,7 +53,7 @@ ApplicationManifestLoader::~ApplicationManifestLoader()
 bool ApplicationManifestLoader::startLoading()
 {
     ASSERT(!m_resource);
-    auto* frame = m_documentLoader.frame();
+    auto* frame = m_documentLoader->frame();
     if (!frame)
         return false;
 
@@ -107,8 +107,8 @@ std::optional<ApplicationManifest>& ApplicationManifestLoader::processManifest()
 {
     if (!m_processedManifest && m_resource) {
         auto manifestURL = m_url;
-        auto documentURL = m_documentLoader.url();
-        auto frame = m_documentLoader.frame();
+        auto documentURL = m_documentLoader->url();
+        auto frame = m_documentLoader->frame();
         auto document = frame ? frame->document() : nullptr;
         m_processedManifest = m_resource->process(manifestURL, documentURL, document);
     }
@@ -118,7 +118,7 @@ std::optional<ApplicationManifest>& ApplicationManifestLoader::processManifest()
 void ApplicationManifestLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    m_documentLoader.finishedLoadingApplicationManifest(*this);
+    m_documentLoader->finishedLoadingApplicationManifest(*this);
 }
 
 } // namespace WebCore
