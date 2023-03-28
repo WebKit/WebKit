@@ -266,13 +266,22 @@ InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const Constr
     auto contentHasPreviousLine = lastLineLogicalBottom ? std::make_optional(true) : std::nullopt;
     auto textIndent = computedTextIndent(IsIntrinsicWidthMode::No, contentHasPreviousLine, constraints.horizontal().logicalWidth);
     auto floatConstraints = floatConstraintsForLine(lastLineLogicalBottom.value_or(constraints.logicalTop()), 0, floatingContext);
-    auto lineBoxOffset = constraints.horizontal().logicalLeft;
+    auto lineBoxLeft = constraints.horizontal().logicalLeft;
+    auto lineBoxWidth = constraints.horizontal().logicalWidth;
     // FIXME: Add missing RTL support.
-    if (floatConstraints.left)
-        lineBoxOffset = std::max(lineBoxOffset, floatConstraints.left->x);
-    lineBoxOffset += textIndent;
-    auto rootInlineBoxOffset = horizontalAlignmentOffset(constraints.horizontal().logicalWidth, IsLastLineOrAfterLineBreak::Yes); 
-    return lineBoxOffset + rootInlineBoxOffset;
+    if (floatConstraints.left) {
+        auto floatOffset = std::max(0_lu, floatConstraints.left->x - constraints.horizontal().logicalLeft);
+        lineBoxLeft += floatOffset;
+        lineBoxWidth -= floatOffset;
+    }
+    if (floatConstraints.right) {
+        auto lineBoxRight = (constraints.horizontal().logicalLeft + constraints.horizontal().logicalWidth);
+        auto floatOffset = std::max(0_lu, lineBoxRight - floatConstraints.right->x);
+        lineBoxWidth -= floatOffset;
+    }
+    lineBoxLeft += textIndent;
+    auto rootInlineBoxLeft = horizontalAlignmentOffset(lineBoxWidth, IsLastLineOrAfterLineBreak::Yes);
+    return lineBoxLeft + rootInlineBoxLeft;
 }
 
 LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent, const FloatingContext& floatingContext) const
