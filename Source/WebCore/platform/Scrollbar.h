@@ -135,6 +135,8 @@ public:
     bool supportsUpdateOnSecondaryThread() const;
     static NativeScrollbarVisibility nativeScrollbarVisibility(const Scrollbar*);
 
+    float deviceScaleFactor() const;
+
 protected:
     Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = nullptr, bool isCustomScrollbar = false);
 

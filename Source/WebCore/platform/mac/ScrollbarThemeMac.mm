@@ -529,8 +529,11 @@ void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(Scrollbar& scrollbar
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static void scrollerImpPaint(NSScrollerImp *scrollerImp, bool enabled)
+static void paintScrollbar(Scrollbar& scrollbar, GraphicsContext& context)
 {
+    LocalCurrentGraphicsContext localContext { context };
+
+    NSScrollerImp *scrollerImp = scrollbarMap().get(&scrollbar).get();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Use rectForPart: here; it will take the expansion transition progress into account.
     NSRect trackRect = [scrollerImp rectForPart:NSScrollerKnobSlot];
@@ -538,7 +541,7 @@ static void scrollerImpPaint(NSScrollerImp *scrollerImp, bool enabled)
 
     // If the scrollbar is not enabled, then there is nothing to scroll to, and we shouldn't
     // call drawKnob.
-    if (enabled)
+    if (scrollbar.enabled())
         [scrollerImp drawKnob];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -557,9 +560,19 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
 
     GraphicsContextStateSaver stateSaver(context);
     context.clip(damageRect);
-    context.translate(scrollbar.frameRect().location());
-    LocalCurrentGraphicsContext localContext(context);
-    scrollerImpPaint(scrollbarMap().get(&scrollbar).get(), scrollbar.enabled());
+
+    auto scrollbarRect = scrollbar.frameRect();
+    if (context.platformContext()) {
+        context.translate(scrollbarRect.location());
+        paintScrollbar(scrollbar, context);
+    } else {
+        auto imageBuffer = [&] {
+            auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), DestinationColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local);
+            paintScrollbar(scrollbar, buffer->context());
+            return buffer;
+        }();
+        context.drawImageBuffer(*imageBuffer, scrollbarRect);
+    }
 
     return true;
 }
