@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,33 @@
 
 #pragma once
 
-#include "MessageReceiver.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include <WebCore/SecurityOriginData.h>
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 
-namespace IPC {
-
-class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver> {
-
-};
-
+namespace WebCore {
+struct ClientOrigin;
 }
+
+namespace WebKit {
+
+class NetworkStorageManager;
+
+class NetworkQuotaManager {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    NetworkQuotaManager(uint64_t quota, const Vector<std::pair<WebCore::ClientOrigin, uint64_t>>&, Function<bool(const WebCore::SecurityOriginData&)>&&);
+    void originUsageUpdated(const WebCore::ClientOrigin&, uint64_t usage);
+    void originVisited(const WebCore::ClientOrigin&);
+    
+private:
+    void performEvictionIfNeeded();
+    
+    uint64_t m_quota;
+    Function<bool(const WebCore::SecurityOriginData&)> m_evictDataFunction;
+    ListHashSet<WebCore::SecurityOriginData> m_origins;
+    HashMap<WebCore::SecurityOriginData, HashMap<WebCore::SecurityOriginData, uint64_t>> m_originUsageMap;
+};
+    
+} // namespace WebKit

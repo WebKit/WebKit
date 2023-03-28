@@ -85,6 +85,7 @@ public:
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
     bool isActive() const;
+    bool hasDataInMemory() const;
     bool isEmpty();
     DataTypeSizeMap fetchDataTypesInList(OptionSet<WebsiteDataType>, bool shouldComputeSize);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
@@ -269,10 +270,18 @@ bool OriginStorageManager::StorageBucket::isActive() const
     // We cannot remove the bucket if it has in-memory data, otherwise session
     // data may be lost.
     return (m_fileSystemStorageManager && m_fileSystemStorageManager->isActive())
-        || (m_localStorageManager && (m_localStorageManager->hasDataInMemory() || m_localStorageManager->isActive()))
-        || (m_sessionStorageManager && (m_sessionStorageManager->hasDataInMemory() || m_sessionStorageManager->isActive()))
-        || (m_idbStorageManager && (m_idbStorageManager->hasDataInMemory() || m_idbStorageManager->isActive()))
-        || (m_cacheStorageManager && (m_cacheStorageManager->hasDataInMemory() || m_cacheStorageManager->isActive()));
+        || (m_localStorageManager && m_localStorageManager->isActive())
+        || (m_sessionStorageManager && m_sessionStorageManager->isActive())
+        || (m_idbStorageManager && m_idbStorageManager->isActive())
+        || (m_cacheStorageManager &&  m_cacheStorageManager->isActive());
+}
+
+bool OriginStorageManager::StorageBucket::hasDataInMemory() const
+{
+    return (m_localStorageManager && m_localStorageManager->hasDataInMemory())
+        || (m_sessionStorageManager && m_sessionStorageManager->hasDataInMemory())
+        || (m_idbStorageManager && m_idbStorageManager->hasDataInMemory())
+        || (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory());
 }
 
 bool OriginStorageManager::StorageBucket::isEmpty()
@@ -614,12 +623,12 @@ String OriginStorageManager::originFileIdentifier()
     return originFileName;
 }
 
-Ref<QuotaManager> OriginStorageManager::createQuotaManager()
+Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager()
 {
     auto idbStoragePath = resolvedPath(WebsiteDataType::IndexedDBDatabases);
     auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
     auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
-    QuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }, idbStoragePath, cacheStoragePath, fileSystemStoragePath]() {
+    OriginQuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }, idbStoragePath, cacheStoragePath, fileSystemStoragePath]() {
         uint64_t fileSystemStorageSize = valueOrDefault(FileSystem::directorySize(fileSystemStoragePath));
         if (weakThis) {
             if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
@@ -631,16 +640,17 @@ Ref<QuotaManager> OriginStorageManager::createQuotaManager()
         }
         return IDBStorageManager::idbStorageSize(idbStoragePath) + CacheStorageManager::cacheStorageSize(cacheStoragePath) + fileSystemStorageSize;
     };
-    return QuotaManager::create(m_quota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }));
+    return OriginQuotaManager::create(m_quota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }), std::exchange(m_notifyUsageUpdateFunction, { }));
 }
 
-OriginStorageManager::OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
+OriginStorageManager::OriginStorageManager(uint64_t quota, OriginQuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, OriginQuotaManager::NotifyUsageUpdateFunction&& notifyUsageUpdateFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
     : m_path(WTFMove(path))
     , m_customLocalStoragePath(WTFMove(customLocalStoragePath))
     , m_customIDBStoragePath(WTFMove(customIDBStoragePath))
     , m_customCacheStoragePath(WTFMove(customCacheStoragePath))
     , m_quota(quota)
     , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
+    , m_notifyUsageUpdateFunction(WTFMove(notifyUsageUpdateFunction))
     , m_level(level)
 {
     ASSERT(!RunLoop::isMain());
@@ -662,7 +672,7 @@ OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
     return *m_defaultBucket;
 }
 
-QuotaManager& OriginStorageManager::quotaManager()
+OriginQuotaManager& OriginStorageManager::quotaManager()
 {
     if (!m_quotaManager)
         m_quotaManager = createQuotaManager();
@@ -678,7 +688,7 @@ FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSys
             return completionHandler(false);
 
         strongReference->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
-            completionHandler(decision == QuotaManager::Decision::Grant);
+            completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     });
 }
@@ -716,7 +726,7 @@ IDBStorageManager& OriginStorageManager::idbStorageManager(IDBStorageRegistry& r
             return completionHandler(false);
 
         strongReference->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
-            completionHandler(decision == QuotaManager::Decision::Grant);
+            completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     });
 }
@@ -738,7 +748,7 @@ CacheStorageManager& OriginStorageManager::cacheStorageManager(CacheStorageRegis
             return completionHandler(false);
 
         quotaManager.get()->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
-            completionHandler(decision == QuotaManager::Decision::Grant);
+            completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     }, WTFMove(queue));
 }
@@ -751,7 +761,7 @@ BackgroundFetchStoreManager& OriginStorageManager::backgroundFetchManager(Ref<Wo
             return completionHandler(false);
 
         quotaManager.get()->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
-            completionHandler(decision == QuotaManager::Decision::Grant);
+            completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     });
 }
@@ -765,6 +775,11 @@ String OriginStorageManager::resolvedPath(WebsiteDataType type)
 bool OriginStorageManager::isActive()
 {
     return defaultBucket().isActive();
+}
+
+bool OriginStorageManager::hasDataInMemory()
+{
+    return defaultBucket().hasDataInMemory();
 }
 
 bool OriginStorageManager::isEmpty()

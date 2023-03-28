@@ -100,7 +100,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << isBlobRegistryTopOriginPartitioningEnabled;
 
     encoder << unifiedOriginStorageLevel;
-    encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota << originQuotaRatio;
+    encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota << originQuotaRatio << totalQuotaRatio << volumeCapacityOverride;
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
     encoder << indexedDBDirectory << indexedDBDirectoryExtensionHandle;
     encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
@@ -382,6 +382,16 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!originQuotaRatio)
         return std::nullopt;
 
+    std::optional<std::optional<double>> totalQuotaRatio;
+    decoder >> totalQuotaRatio;
+    if (!totalQuotaRatio)
+        return std::nullopt;
+
+    std::optional<std::optional<uint64_t>> volumeCapacityOverride;
+    decoder >> volumeCapacityOverride;
+    if (!volumeCapacityOverride)
+        return std::nullopt;
+
     std::optional<String> localStorageDirectory;
     decoder >> localStorageDirectory;
     if (!localStorageDirectory)
@@ -507,6 +517,8 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*perOriginStorageQuota)
         , WTFMove(*perThirdPartyOriginStorageQuota)
         , WTFMove(*originQuotaRatio)
+        , WTFMove(*totalQuotaRatio)
+        , WTFMove(*volumeCapacityOverride)
         , WTFMove(*localStorageDirectory)
         , WTFMove(*localStorageDirectoryExtensionHandle)
         , WTFMove(*indexedDBDirectory)

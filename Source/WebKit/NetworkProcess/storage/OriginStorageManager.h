@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Connection.h"
-#include "QuotaManager.h"
+#include "OriginQuotaManager.h"
 #include "WebsiteDataType.h"
 #include <wtf/text/WTFString.h>
 
@@ -57,7 +57,7 @@ class OriginStorageManager : public CanMakeWeakPtr<OriginStorageManager> {
 public:
     static String originFileIdentifier();
 
-    OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
+    OriginStorageManager(uint64_t quota, OriginQuotaManager::IncreaseQuotaFunction&&, OriginQuotaManager::NotifyUsageUpdateFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
@@ -65,7 +65,7 @@ public:
     void setPersisted(bool value);
     WebCore::StorageEstimate estimate();
     const String& path() const { return m_path; }
-    QuotaManager& quotaManager();
+    OriginQuotaManager& quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
     FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
@@ -83,6 +83,7 @@ public:
     void closeCacheStorageManager();
     String resolvedPath(WebsiteDataType);
     bool isActive();
+    bool hasDataInMemory();
     bool isEmpty();
     using DataTypeSizeMap = HashMap<WebsiteDataType, uint64_t, IntHash<WebsiteDataType>, WTF::StrongEnumHashTraits<WebsiteDataType>>;
     DataTypeSizeMap fetchDataTypesInList(OptionSet<WebsiteDataType>, bool shouldComputeSize);
@@ -97,7 +98,7 @@ public:
 #endif
 
 private:
-    Ref<QuotaManager> createQuotaManager();
+    Ref<OriginQuotaManager> createQuotaManager();
     enum class StorageBucketMode : bool;
     class StorageBucket;
     StorageBucket& defaultBucket();
@@ -108,8 +109,9 @@ private:
     String m_customIDBStoragePath;
     String m_customCacheStoragePath;
     uint64_t m_quota;
-    QuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
-    RefPtr<QuotaManager> m_quotaManager;
+    OriginQuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
+    OriginQuotaManager::NotifyUsageUpdateFunction m_notifyUsageUpdateFunction;
+    RefPtr<OriginQuotaManager> m_quotaManager;
     bool m_persisted { false };
     UnifiedOriginStorageLevel m_level;
     Markable<WallTime> m_originFileCreationTimestamp;

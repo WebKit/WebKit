@@ -879,6 +879,8 @@
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC19471850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */; };
+		3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */; };
+		3AE104C029CBC8BB00661165 /* OriginQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */; };
 		3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */; };
 		3F418EF91887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */; };
 		3F418EFB1887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */; };
@@ -4399,6 +4401,10 @@
 		37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLAuthenticationChallenge.h; sourceTree = "<group>"; };
 		3A8997E029B25E8E00AB88B6 /* WebCookieCacheCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieCacheCocoa.mm; sourceTree = "<group>"; };
 		3AA50E2C28D37F8700D024E4 /* ProcessAssertionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessAssertionCocoa.mm; sourceTree = "<group>"; };
+		3AB0C59129C8162200141B5E /* NetworkQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkQuotaManager.cpp; sourceTree = "<group>"; };
+		3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkQuotaManager.h; sourceTree = "<group>"; };
+		3AE104BD29CBC8BA00661165 /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginQuotaManager.cpp; sourceTree = "<group>"; };
+		3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginQuotaManager.h; sourceTree = "<group>"; };
 		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource113.cpp; sourceTree = "<group>"; };
 		3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFullscreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		3F418EF61887BD97002795FD /* VideoFullscreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerMessages.h; sourceTree = "<group>"; };
@@ -7585,6 +7591,7 @@
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				5750F3292032D4E300389347 /* Frameworks */,
+				3AE104BB29CAAEDB00661165 /* Recovered References */,
 			);
 			name = WebKit2;
 			sourceTree = "<group>";
@@ -10233,6 +10240,14 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
+		3AE104BB29CAAEDB00661165 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				7A830B2D29B7F3EB00848075 /* WebPageInlines.h */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		413075971DE84ED70039EC69 /* webrtc */ = {
 			isa = PBXGroup;
 			children = (
@@ -11555,9 +11570,13 @@
 				93E799CB2760497A0074008A /* LocalStorageManager.h */,
 				93E799D8276121080074008A /* MemoryStorageArea.cpp */,
 				93E799D5276121070074008A /* MemoryStorageArea.h */,
+				3AB0C59129C8162200141B5E /* NetworkQuotaManager.cpp */,
+				3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */,
 				93085DC326E1BBBD000EC6A7 /* NetworkStorageManager.cpp */,
 				93085DC426E1BBBD000EC6A7 /* NetworkStorageManager.h */,
 				93085DC726E1C6EE000EC6A7 /* NetworkStorageManager.messages.in */,
+				3AE104BD29CBC8BA00661165 /* OriginQuotaManager.cpp */,
+				3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */,
 				93085DC526E1C6CF000EC6A7 /* OriginStorageManager.cpp */,
 				93085DC626E1C6CF000EC6A7 /* OriginStorageManager.h */,
 				93B631EE27ABACA800443A44 /* QuotaManager.cpp */,
@@ -14385,6 +14404,7 @@
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */,
 				5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */,
+				3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
 				51240EC0220B694C005CFC63 /* NetworkResourceLoadMap.h in Headers */,
@@ -14407,6 +14427,7 @@
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				41DD72AB2682167300A90C71 /* NWSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
+				3AE104C029CBC8BB00661165 /* OriginQuotaManager.h in Headers */,
 				93085DCA26E29775000EC6A7 /* OriginStorageManager.h in Headers */,
 				F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,

@@ -69,6 +69,12 @@ public:
     std::optional<double> originQuotaRatio() const { return m_originQuotaRatio; }
     void setOriginQuotaRatio(std::optional<double> ratio) { m_originQuotaRatio = ratio; }
 
+    std::optional<double> totalQuotaRatio() const { return m_totalQuotaRatio; }
+    void setTotalQuotaRatio(std::optional<double> ratio) { m_totalQuotaRatio = ratio; }
+
+    std::optional<uint64_t> volumeCapacityOverride() const { return m_volumeCapacityOverride; }
+    void setVolumeCapacityOverride(std::optional<uint64_t> capacity) { m_volumeCapacityOverride = capacity; }
+
     const String& applicationCacheDirectory() const { return m_applicationCacheDirectory; }
     void setApplicationCacheDirectory(String&& directory) { m_applicationCacheDirectory = WTFMove(directory); }
     
@@ -251,6 +257,8 @@ private:
     String m_generalStorageDirectory;
     uint64_t m_perOriginStorageQuota;
     std::optional<double> m_originQuotaRatio;
+    std::optional<double> m_totalQuotaRatio;
+    std::optional<uint64_t> m_volumeCapacityOverride;
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;
     String m_applicationCacheFlatFileSubdirectoryName { "Files"_s };
