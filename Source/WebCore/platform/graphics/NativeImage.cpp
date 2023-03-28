@@ -26,26 +26,27 @@
 #include "config.h"
 #include "NativeImage.h"
 
+#include "OwnedDecodedImage.h"
+
 namespace WebCore {
 
 RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (!platformImage)
+    auto decodedImage = OwnedDecodedImage::create(WTFMove(platformImage));
+    if (!decodedImage)
         return nullptr;
-    return adoptRef(*new NativeImage(WTFMove(platformImage), renderingResourceIdentifier));
+    return create(makeUniqueRefFromNonNullUniquePtr(WTFMove(decodedImage)), renderingResourceIdentifier);
 }
 
-NativeImage::NativeImage(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
+RefPtr<NativeImage> NativeImage::create(UniqueRef<DecodedImage>&& decodedImage, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    return adoptRef(*new NativeImage(WTFMove(decodedImage), renderingResourceIdentifier));
+}
+
+NativeImage::NativeImage(UniqueRef<DecodedImage>&& decodedImage, RenderingResourceIdentifier renderingResourceIdentifier)
     : RenderingResource(renderingResourceIdentifier)
-    , m_platformImage(WTFMove(platformImage))
+    , m_decodedImage(WTFMove(decodedImage))
 {
-    ASSERT(m_platformImage);
-}
-
-void NativeImage::setPlatformImage(PlatformImagePtr&& platformImage)
-{
-    ASSERT(platformImage);
-    m_platformImage = WTFMove(platformImage);
 }
 
 } // namespace WebCore

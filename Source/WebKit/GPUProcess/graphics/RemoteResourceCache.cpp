@@ -111,6 +111,11 @@ void RemoteResourceCache::releaseAllResources()
     m_resourceHeap.releaseAllResources();
 }
 
+void RemoteResourceCache::releaseAllNativeImages()
+{
+    m_resourceHeap.releaseAllNativeImages();
+}
+
 bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)

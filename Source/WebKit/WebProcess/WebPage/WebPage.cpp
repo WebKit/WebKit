@@ -4675,6 +4675,14 @@ void WebPage::releaseMemory(Critical)
 #endif
 }
 
+void WebPage::releaseAllRemoteImageResources()
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseAllNativeImages();
+#endif
+}
+
 unsigned WebPage::remoteImagesCountForTesting() const
 {
 #if ENABLE(GPU_PROCESS)

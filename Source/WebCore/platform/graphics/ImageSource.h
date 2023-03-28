@@ -66,6 +66,7 @@ public:
     void destroyDecodedData(size_t begin, size_t end);
     void destroyIncompleteDecodedData();
     void clearFrameBufferCache(size_t beforeFrame);
+    void destroyAndCacheDecodedData();
 
     void growFrames();
     void clearMetadata();
@@ -114,6 +115,7 @@ public:
     bool frameHasImageAtIndex(size_t);
     bool frameHasFullSizeNativeImageAtIndex(size_t, const std::optional<SubsamplingLevel>&);
     bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t, const std::optional<SubsamplingLevel>&, const DecodingOptions&);
+    bool frameHasCachedDecodedImageCompatibleWithOptionsAtIndex(size_t, const std::optional<SubsamplingLevel>&, const DecodingOptions&);
     SubsamplingLevel frameSubsamplingLevelAtIndex(size_t);
 
     // ImageFrame metadata which forces caching or re-caching the ImageFrame.
@@ -125,6 +127,8 @@ public:
     RefPtr<NativeImage> createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     RefPtr<NativeImage> frameImageAtIndex(size_t);
     RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
+
+    bool setFrameImageFromCachedDecodedImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
 
 private:
     ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
@@ -165,6 +169,9 @@ private:
     void cacheMetadataAtIndex(size_t, SubsamplingLevel, DecodingStatus = DecodingStatus::Invalid);
     void cachePlatformImageAtIndex(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus = DecodingStatus::Invalid);
     void cachePlatformImageAtIndexAsync(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus);
+    void cacheNativeImageAtIndex(RefPtr<NativeImage>&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus = DecodingStatus::Invalid);
+
+    RefPtr<NativeImage> createFrameImageFromCachedDecodedImageAtIndex(size_t, SubsamplingLevel, const DecodingOptions&);
 
     struct ImageFrameRequest;
     static const int BufferSize = 8;

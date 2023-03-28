@@ -157,6 +157,22 @@ public:
         checkInvariants();
     }
 
+    void releaseAllNativeImages()
+    {
+        checkInvariants();
+
+        if (!m_nativeImageCount)
+            return;
+
+        m_resources.removeIf([] (const auto& resource) {
+            return std::holds_alternative<Ref<WebCore::NativeImage>>(resource.value);
+        });
+
+        m_nativeImageCount = 0;
+
+        checkInvariants();
+    }
+
 private:
     template <typename T>
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<T>&& object, unsigned& counter)

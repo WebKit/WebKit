@@ -135,6 +135,7 @@ public:
     virtual String accessibilityDescription() const { return String(); } // null string if unknown
 
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
+    virtual void destroyAndCacheDecodedData() { }
 
     FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }

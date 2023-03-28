@@ -43,6 +43,7 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "ProcessAssertion.h"
+#include "PurgeableCachedDecodedImage.h"
 #include "RemoteAudioHardwareListener.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
@@ -1654,6 +1655,10 @@ void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     m_nonVisibleProcessMemoryCleanupTimer.stop();
 #endif
+
+#if ENABLE(PURGEABLE_DECODED_IMAGE_DATA_CACHE)
+    PurgeableCachedDecodedImage::stopCleanup();
+#endif
 }
 
 void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
@@ -1667,6 +1672,10 @@ void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
         if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
             m_nonVisibleProcessMemoryCleanupTimer.startOneShot(nonVisibleProcessMemoryCleanupDelay);
+#endif
+
+#if ENABLE(PURGEABLE_DECODED_IMAGE_DATA_CACHE)
+        PurgeableCachedDecodedImage::startCleanup();
 #endif
     }
 }
@@ -1699,6 +1708,12 @@ void WebProcess::nonVisibleProcessMemoryCleanupTimerFired()
         page->releaseMemory(Critical::Yes);
 }
 #endif
+
+void WebProcess::releaseAllRemoteImageResources()
+{
+    for (auto& page : m_pageMap.values())
+        page->releaseAllRemoteImageResources();
+}
 
 void WebProcess::registerStorageAreaMap(StorageAreaMap& storageAreaMap)
 {

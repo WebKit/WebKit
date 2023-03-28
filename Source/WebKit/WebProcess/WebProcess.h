@@ -270,6 +270,8 @@ public:
     void nonVisibleProcessMemoryCleanupTimerFired();
 #endif
 
+    void releaseAllRemoteImageResources();
+
     void registerStorageAreaMap(StorageAreaMap&);
     void unregisterStorageAreaMap(StorageAreaMap&);
     WeakPtr<StorageAreaMap> storageAreaMap(StorageAreaMapIdentifier) const;

@@ -101,6 +101,7 @@ public:
 
     bool frameHasFullSizeNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_source->frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }
     bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) { return m_source->frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
+    bool frameHasCachedDecodedImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) { return m_source->frameHasCachedDecodedImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
 
     SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) const { return m_source->frameSubsamplingLevelAtIndex(index); }
 
@@ -176,6 +177,8 @@ private:
     // If the image is large enough, calls destroyDecodedData() and passes
     // |destroyAll| along.
     void destroyDecodedDataIfNecessary(bool destroyAll = true);
+
+    void destroyAndCacheDecodedData() final;
 
     FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->sourceSize(orientation); }
     bool hasDensityCorrectedSize() const override { return m_source->hasDensityCorrectedSize(); }

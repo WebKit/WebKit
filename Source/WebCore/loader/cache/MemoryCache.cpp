@@ -239,12 +239,23 @@ void MemoryCache::forEachSessionResource(PAL::SessionID sessionID, const Functio
 
 void MemoryCache::destroyDecodedDataForAllImages()
 {
-    MemoryCache::singleton().forEachResource([](CachedResource& resource) {
+    forEachResource([](CachedResource& resource) {
         if (!resource.isImage())
             return;
 
         if (auto image = downcast<CachedImage>(resource).image())
             image->destroyDecodedData();
+    });
+}
+
+void MemoryCache::destroyAndCacheDecodedDataForAllImages()
+{
+    forEachResource([](CachedResource& resource) {
+        if (!resource.isImage())
+            return;
+
+        if (auto image = downcast<CachedImage>(resource).image())
+            image->destroyAndCacheDecodedData();
     });
 }
 

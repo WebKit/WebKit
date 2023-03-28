@@ -1553,6 +1553,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/VideoFrameMetadata.h
     platform/VideoFrameTimeMetadata.h
     platform/VideoPixelFormat.h
+    platform/VolatilityTypes.h
     platform/WebCorePersistentCoders.h
     platform/Widget.h
     platform/WindowsKeyboardCodes.h
@@ -1616,6 +1617,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
     platform/graphics/ByteArrayPixelBuffer.h
+    platform/graphics/CachedDecodedImage.h
     platform/graphics/CachedSubimage.h
     platform/graphics/Color.h
     platform/graphics/ColorComponents.h
@@ -1635,6 +1637,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ComplexTextController.h
     platform/graphics/ContentTypeUtilities.h
     platform/graphics/DashArray.h
+    platform/graphics/DecodedImage.h
     platform/graphics/DecodingOptions.h
     platform/graphics/DecomposedGlyphs.h
     platform/graphics/DestinationColorSpace.h
@@ -1749,6 +1752,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/NullGraphicsContext.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h
+    platform/graphics/OwnedDecodedImage.h
     platform/graphics/Path.h
     platform/graphics/PathUtilities.h
     platform/graphics/Pattern.h

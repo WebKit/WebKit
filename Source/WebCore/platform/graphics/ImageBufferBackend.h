@@ -36,6 +36,7 @@
 #include "PixelBufferFormat.h"
 #include "PlatformLayer.h"
 #include "RenderingMode.h"
+#include "VolatilityTypes.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -60,16 +61,6 @@ class ProcessIdentity;
 enum class PreserveResolution : bool {
     No,
     Yes,
-};
-
-enum class SetNonVolatileResult : uint8_t {
-    Valid,
-    Empty
-};
-
-enum class VolatilityState : uint8_t {
-    NonVolatile,
-    Volatile
 };
 
 class ThreadSafeImageBufferFlusher {

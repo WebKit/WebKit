@@ -98,6 +98,13 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
     invalidatePlatformData();
 }
 
+void BitmapImage::destroyAndCacheDecodedData()
+{
+    LOG(Images, "BitmapImage::%s - %p - url: %s", __FUNCTION__, this, sourceURL().string().utf8().data());
+
+    m_source->destroyAndCacheDecodedData();
+}
+
 void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 {
     // If we have decoded frames but there is no encoded data, we shouldn't destroy
@@ -260,9 +267,13 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         // If the current frame is incomplete, a new request for decoding this frame has to be made even if
         // it is currently being decoded. New data may have been received since the previous request was made.
         if ((!frameIsCompatible && !frameIsBeingDecoded) || m_currentFrameDecodingStatus == DecodingStatus::Invalid) {
-            LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().string().utf8().data());
-            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, sizeForDrawing);
-            m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+            if (m_source->setFrameImageFromCachedDecodedImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing)))
+                LOG(Images, "BitmapImage::%s - %p - url: %s [created frame image from cached decoded image]", __FUNCTION__, this, sourceURL().string().utf8().data());
+            else {
+                LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().string().utf8().data());
+                m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, sizeForDrawing);
+                m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+            }
         }
 
         if (m_currentFrameDecodingStatus == DecodingStatus::Decoding)
@@ -498,6 +509,8 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
     if (shouldUseAsyncDecodingForAnimatedImages()) {
         if (frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(nextFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous))
             LOG(Images, "BitmapImage::%s - %p - url: %s [cachedFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_cachedFrameCount, nextFrame);
+        else if (m_source->setFrameImageFromCachedDecodedImageAtIndex(nextFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous)))
+            LOG(Images, "BitmapImage::%s - %p - url: %s [created frame image from cached decoded image, nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), nextFrame);
         else {
             m_source->requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel);
             m_currentFrameDecodingStatus = DecodingStatus::Decoding;
@@ -593,8 +606,12 @@ void BitmapImage::decode(Function<void()>&& callback)
         if (frameIsCompatible)
             internalStartAnimation();
         else if (!frameIsBeingDecoded) {
-            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
-            m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+            if (m_source->setFrameImageFromCachedDecodedImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous))
+                internalStartAnimation();
+            else {
+                m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel);
+                m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+            }
         }
         return;
     }
@@ -605,8 +622,10 @@ void BitmapImage::decode(Function<void()>&& callback)
     if (frameIsCompatible)
         callDecodingCallbacks();
     else if (!frameIsBeingDecoded) {
-        m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
-        m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+        if (!m_source->setFrameImageFromCachedDecodedImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous)) {
+            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel);
+            m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+        }
     }
 }
 

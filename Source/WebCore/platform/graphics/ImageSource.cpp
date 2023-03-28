@@ -27,6 +27,7 @@
 #include "ImageSource.h"
 
 #include "BitmapImage.h"
+#include "CachedDecodedImage.h"
 #include "ImageDecoder.h"
 #include "ImageObserver.h"
 #include "Logging.h"
@@ -131,6 +132,16 @@ void ImageSource::destroyDecodedData(size_t begin, size_t end)
 
     for (size_t index = begin; index < end; ++index)
         decodedSize += m_frames[index].clearImage();
+
+    decodedSizeReset(decodedSize);
+}
+
+void ImageSource::destroyAndCacheDecodedData()
+{
+    unsigned decodedSize = 0;
+
+    for (auto& frame : m_frames)
+        decodedSize += frame.clearImageAndCacheDecodedData();
 
     decodedSizeReset(decodedSize);
 }
@@ -277,7 +288,7 @@ void ImageSource::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsamplin
         frame.m_duration = m_decoder->frameDurationAtIndex(index);
 }
 
-void ImageSource::cachePlatformImageAtIndex(PlatformImagePtr&& platformImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, DecodingStatus decodingStatus)
+void ImageSource::cacheNativeImageAtIndex(RefPtr<NativeImage>&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, DecodingStatus decodingStatus)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -291,12 +302,18 @@ void ImageSource::cachePlatformImageAtIndex(PlatformImagePtr&& platformImage, si
         return;
 
     // Move the new image to the cache.
-    frame.m_nativeImage = NativeImage::create(WTFMove(platformImage));
+    frame.m_nativeImage = WTFMove(nativeImage);
+    frame.m_cachedDecodedImage.reset();
     frame.m_decodingOptions = decodingOptions;
     cacheMetadataAtIndex(index, subsamplingLevel, decodingStatus);
 
     // Update the observer with the new image frame bytes.
     decodedSizeIncreased(frame.frameBytes());
+}
+
+void ImageSource::cachePlatformImageAtIndex(PlatformImagePtr&& platformImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, DecodingStatus decodingStatus)
+{
+    cacheNativeImageAtIndex(NativeImage::create(WTFMove(platformImage)), index, subsamplingLevel, decodingOptions, decodingStatus);
 }
 
 void ImageSource::cachePlatformImageAtIndexAsync(PlatformImagePtr&& platformImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, DecodingStatus decodingStatus)
@@ -431,6 +448,30 @@ void ImageSource::stopAsyncDecodingQueue()
     LOG(Images, "ImageSource::%s - %p - url: %s [decoding has been stopped]", __FUNCTION__, this, sourceURL().string().utf8().data());
 }
 
+RefPtr<NativeImage> ImageSource::createFrameImageFromCachedDecodedImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
+{
+    if (index >= m_frames.size())
+        return nullptr;
+
+    ImageFrame& frame = m_frames[index];
+
+    if (!frame.hasCachedDecodedImageCompatibleWithOptions(subsamplingLevel, decodingOptions))
+        return nullptr;
+
+    return std::exchange(frame.m_cachedDecodedImage, { })->createNativeImage();
+}
+
+bool ImageSource::setFrameImageFromCachedDecodedImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
+{
+    auto image = createFrameImageFromCachedDecodedImageAtIndex(index, subsamplingLevel, decodingOptions);
+    if (!image)
+        return false;
+
+    cacheNativeImageAtIndex(WTFMove(image), index, subsamplingLevel, decodingOptions);
+
+    return frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions);
+}
+
 const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     if (index >= m_frames.size())
@@ -441,6 +482,9 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
         return frame;
 
     SubsamplingLevel subsamplingLevelValue = subsamplingLevel ? subsamplingLevel.value() : frame.subsamplingLevel();
+
+    if (setFrameImageFromCachedDecodedImageAtIndex(index, subsamplingLevelValue, decodingOptions))
+        return frame;
 
     switch (caching) {
     case ImageFrame::Caching::Metadata:
@@ -668,6 +712,11 @@ bool ImageSource::frameHasFullSizeNativeImageAtIndex(size_t index, const std::op
 bool ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     return frameAtIndex(index).hasDecodedNativeImageCompatibleWithOptions(subsamplingLevel, decodingOptions);
+}
+
+bool ImageSource::frameHasCachedDecodedImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
+{
+    return frameAtIndex(index).hasCachedDecodedImageCompatibleWithOptions(subsamplingLevel, decodingOptions);
 }
 
 SubsamplingLevel ImageSource::frameSubsamplingLevelAtIndex(size_t index)

@@ -100,6 +100,8 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
 
+    const ShareableBitmapConfiguration& configuration() const { return m_configuration; }
+
     void* data() const;
     size_t bytesPerRow() const { return calculateBytesPerRow(m_size, m_configuration); }
     size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration); }
