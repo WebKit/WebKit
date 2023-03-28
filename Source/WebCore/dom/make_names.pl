@@ -1593,6 +1593,7 @@ END
 
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "ElementName.h"
 #include "Settings.h"
 #include "TagName.h"
 #include <wtf/RobinHoodHashMap.h>
@@ -1879,9 +1880,9 @@ sub printWrapperFactoryCppFile
 
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "ElementName.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
 END
 ;
@@ -1893,8 +1894,6 @@ END
 using namespace JSC;
 
 namespace WebCore {
-
-using Create$parameters{namespace}ElementWrapperFunction = JSDOMObject* (*)(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 END
 ;
@@ -1909,17 +1908,11 @@ END
 
 print F <<END
 
-static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> create$parameters{namespace}WrapperMap()
+JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
-    struct TableEntry {
-        decltype($parameters{namespace}Names::${firstTagIdentifier}Tag)& name;
-        Create$parameters{namespace}ElementWrapperFunction function;
-    };
-
-    static constexpr TableEntry table[] = {
+    switch (element->elementName()) {
 END
 ;
-
     for my $elementKey (sort keys %allElements) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
         next if usesDefaultJSWrapper($elementKey) && ($parameters{fallbackJSInterfaceName} eq $parameters{namespace} . "Element");
@@ -1936,31 +1929,13 @@ END
         } else {
             $ucName = $allElements{$elementKey}{JSInterfaceName};
         }
-
-        print F "        { $parameters{namespace}Names::$allElements{$elementKey}{identifier}Tag, create${ucName}Wrapper },\n";
-
-        if ($conditional) {
-            print F "#endif\n";
-        }
+        print F "    case ElementName::" . $parameters{namespace} . "_" . $allElements{$elementKey}{identifier} . ":\n";
+        print F "        return create${ucName}Wrapper(globalObject, WTFMove(element));\n";
+        print F "#endif\n" if $conditional;
     }
-
-    print F <<END
-    };
-
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> map;
-    for (auto& entry : table)
-        map.add(entry.name.get().localName(), entry.function);
-    return map;
-}
-
-JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
-{
-    static NeverDestroyed functions = create$parameters{namespace}WrapperMap();
-    if (auto function = functions.get().get(element->localName()))
-        return function(globalObject, WTFMove(element));
-END
-;
-
+    print F "    default:\n";
+    print F "        break;\n";
+    print F "    }\n";
     if ($parameters{customElementInterfaceName}) {
         print F <<END
     if (!element->isUnknownElement())
@@ -1983,7 +1958,6 @@ END
 }
 END
 ;
-
     print F "\n#endif\n" if $parameters{guardFactoryWith};
 
     close F;
