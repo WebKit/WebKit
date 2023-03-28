@@ -294,57 +294,61 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     bool isIdle = currentPhase == AnimationEffectPhase::Idle;
 
     if (is<CSSAnimation>(*this)) {
-        // https://drafts.csswg.org/css-animations-2/#events
-        if ((wasIdle || wasBefore) && isActive)
-            enqueueDOMEvent(eventNames().animationstartEvent, intervalStart, effectTimeAtStart());
-        else if ((wasIdle || wasBefore) && isAfter) {
-            enqueueDOMEvent(eventNames().animationstartEvent, intervalStart, effectTimeAtStart());
-            enqueueDOMEvent(eventNames().animationendEvent, intervalEnd, effectTimeAtEnd());
-        } else if (wasActive && isBefore)
-            enqueueDOMEvent(eventNames().animationendEvent, intervalStart, effectTimeAtEnd());
-        else if (wasActive && isActive && m_previousIteration != iteration) {
-            auto iterationBoundary = iteration;
-            if (m_previousIteration > iteration)
-                iterationBoundary++;
-            auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : 0_s;
-            enqueueDOMEvent(eventNames().animationiterationEvent, elapsedTime, effectTimeAtIteration(iteration));
-        } else if (wasActive && isAfter)
-            enqueueDOMEvent(eventNames().animationendEvent, intervalEnd, effectTimeAtEnd());
-        else if (wasAfter && isActive)
-            enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd, effectTimeAtStart());
-        else if (wasAfter && isBefore) {
-            enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd, effectTimeAtStart());
-            enqueueDOMEvent(eventNames().animationendEvent, intervalStart, effectTimeAtEnd());
-        } else if ((!wasIdle && !wasAfter) && isIdle)
-            enqueueDOMEvent(eventNames().animationcancelEvent, elapsedTime, elapsedTime);
-    } else if (is<CSSTransition>(*this) && m_owningElement->document().hasListenerType(Document::TRANSITION_ANIMATION_LISTENER)) {
-        // https://drafts.csswg.org/css-transitions-2/#transition-events
-        if (wasIdle && (isPending || isBefore))
-            enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, effectTimeAtStart());
-        else if (wasIdle && isActive) {
-            auto scheduledEffectTime = effectTimeAtStart();
-            enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, scheduledEffectTime);
-            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, scheduledEffectTime);
-        } else if (wasIdle && isAfter) {
-            enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, effectTimeAtStart());
-            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, effectTimeAtStart());
-            enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd, effectTimeAtEnd());
-        } else if ((m_wasPending || wasBefore) && isActive)
-            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, effectTimeAtStart());
-        else if ((m_wasPending || wasBefore) && isAfter) {
-            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, effectTimeAtStart());
-            enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd, effectTimeAtEnd());
-        } else if (wasActive && isAfter)
-            enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd, effectTimeAtEnd());
-        else if (wasActive && isBefore)
-            enqueueDOMEvent(eventNames().transitionendEvent, intervalStart, effectTimeAtEnd());
-        else if (wasAfter && isActive)
-            enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd, effectTimeAtStart());
-        else if (wasAfter && isBefore) {
-            enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd, effectTimeAtStart());
-            enqueueDOMEvent(eventNames().transitionendEvent, intervalStart, effectTimeAtEnd());
-        } else if ((!wasIdle && !wasAfter) && isIdle)
-            enqueueDOMEvent(eventNames().transitioncancelEvent, elapsedTime, elapsedTime);
+        if (m_owningElement->document().hasListenerType(Document::CSS_ANIMATION_LISTENER)) {
+            // https://drafts.csswg.org/css-animations-2/#events
+            if ((wasIdle || wasBefore) && isActive)
+                enqueueDOMEvent(eventNames().animationstartEvent, intervalStart, effectTimeAtStart());
+            else if ((wasIdle || wasBefore) && isAfter) {
+                enqueueDOMEvent(eventNames().animationstartEvent, intervalStart, effectTimeAtStart());
+                enqueueDOMEvent(eventNames().animationendEvent, intervalEnd, effectTimeAtEnd());
+            } else if (wasActive && isBefore)
+                enqueueDOMEvent(eventNames().animationendEvent, intervalStart, effectTimeAtEnd());
+            else if (wasActive && isActive && m_previousIteration != iteration) {
+                auto iterationBoundary = iteration;
+                if (m_previousIteration > iteration)
+                    iterationBoundary++;
+                auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : 0_s;
+                enqueueDOMEvent(eventNames().animationiterationEvent, elapsedTime, effectTimeAtIteration(iteration));
+            } else if (wasActive && isAfter)
+                enqueueDOMEvent(eventNames().animationendEvent, intervalEnd, effectTimeAtEnd());
+            else if (wasAfter && isActive)
+                enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd, effectTimeAtStart());
+            else if (wasAfter && isBefore) {
+                enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd, effectTimeAtStart());
+                enqueueDOMEvent(eventNames().animationendEvent, intervalStart, effectTimeAtEnd());
+            } else if ((!wasIdle && !wasAfter) && isIdle)
+                enqueueDOMEvent(eventNames().animationcancelEvent, elapsedTime, elapsedTime);
+        }
+    } else if (is<CSSTransition>(*this)) {
+        if (m_owningElement->document().hasListenerType(Document::CSS_TRANSITION_LISTENER)) {
+            // https://drafts.csswg.org/css-transitions-2/#transition-events
+            if (wasIdle && (isPending || isBefore))
+                enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, effectTimeAtStart());
+            else if (wasIdle && isActive) {
+                auto scheduledEffectTime = effectTimeAtStart();
+                enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, scheduledEffectTime);
+                enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, scheduledEffectTime);
+            } else if (wasIdle && isAfter) {
+                enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart, effectTimeAtStart());
+                enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, effectTimeAtStart());
+                enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd, effectTimeAtEnd());
+            } else if ((m_wasPending || wasBefore) && isActive)
+                enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, effectTimeAtStart());
+            else if ((m_wasPending || wasBefore) && isAfter) {
+                enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart, effectTimeAtStart());
+                enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd, effectTimeAtEnd());
+            } else if (wasActive && isAfter)
+                enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd, effectTimeAtEnd());
+            else if (wasActive && isBefore)
+                enqueueDOMEvent(eventNames().transitionendEvent, intervalStart, effectTimeAtEnd());
+            else if (wasAfter && isActive)
+                enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd, effectTimeAtStart());
+            else if (wasAfter && isBefore) {
+                enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd, effectTimeAtStart());
+                enqueueDOMEvent(eventNames().transitionendEvent, intervalStart, effectTimeAtEnd());
+            } else if ((!wasIdle && !wasAfter) && isIdle)
+                enqueueDOMEvent(eventNames().transitioncancelEvent, elapsedTime, elapsedTime);
+        }
     }
 
     m_wasPending = isPending;
