@@ -27,5 +27,5 @@ PASS Reading twice on an errored stream
 PASS Reading twice on a stream that gets errored
 PASS getReader() should call ToString() on mode
 PASS controller.close() should clear the list of pending read requests
-FAIL Second reader can read chunks after first reader was released with pending read requests There are still pending read requests, cannot release the lock
+PASS Second reader can read chunks after first reader was released with pending read requests
 

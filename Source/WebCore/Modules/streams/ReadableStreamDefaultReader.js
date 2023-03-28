@@ -74,10 +74,7 @@ function releaseLock()
     if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
         return;
 
-    if (@getByIdDirectPrivate(this, "readRequests").length)
-        @throwTypeError("There are still pending read requests, cannot release the lock");
-
-    @readableStreamReaderGenericRelease(this);
+    @readableStreamDefaultReaderRelease(this);
 }
 
 @getter

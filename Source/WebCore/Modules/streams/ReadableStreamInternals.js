@@ -539,12 +539,9 @@ function readableStreamError(stream, error)
     const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
     @markPromiseAsHandled(promise);
 
-    if (@isReadableStreamDefaultReader(reader)) {
-        const requests = @getByIdDirectPrivate(reader, "readRequests");
-        @putByIdDirectPrivate(reader, "readRequests", []);
-        for (let index = 0, length = requests.length; index < length; ++index)
-            @rejectPromise(requests[index], error);
-    } else {
+    if (@isReadableStreamDefaultReader(reader))
+        @readableStreamDefaultReaderErrorReadRequests(reader, error);
+    else {
         @assert(@isReadableStreamBYOBReader(reader));
         const requests = @getByIdDirectPrivate(reader, "readIntoRequests");
         @putByIdDirectPrivate(reader, "readIntoRequests", []);
@@ -778,6 +775,12 @@ function isReadableStreamDisturbed(stream)
     return @getByIdDirectPrivate(stream, "disturbed");
 }
 
+function readableStreamDefaultReaderRelease(reader)
+{
+    @readableStreamReaderGenericRelease(reader);
+    @readableStreamDefaultReaderErrorReadRequests(reader, @makeTypeError("releasing lock of reader"));
+}
+
 function readableStreamReaderGenericRelease(reader)
 {
     "use strict";
@@ -794,6 +797,14 @@ function readableStreamReaderGenericRelease(reader)
     @markPromiseAsHandled(promise);
     @putByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "reader", @undefined);
     @putByIdDirectPrivate(reader, "ownerReadableStream", @undefined);
+}
+
+function readableStreamDefaultReaderErrorReadRequests(reader, error)
+{
+    const requests = @getByIdDirectPrivate(reader, "readRequests");
+    @putByIdDirectPrivate(reader, "readRequests", []);
+    for (let index = 0, length = requests.length; index < length; ++index)
+        @rejectPromise(requests[index], error);
 }
 
 function readableStreamDefaultControllerCanCloseOrEnqueue(controller)

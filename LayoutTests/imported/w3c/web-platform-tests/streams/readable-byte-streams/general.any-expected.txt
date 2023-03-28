@@ -16,7 +16,7 @@ PASS ReadableStream with byte source: Test that closing a stream does not releas
 PASS ReadableStream with byte source: Test that closing a stream does not release a BYOB reader automatically
 PASS ReadableStream with byte source: Test that erroring a stream does not release a reader automatically
 PASS ReadableStream with byte source: Test that erroring a stream does not release a BYOB reader automatically
-FAIL ReadableStream with byte source: releaseLock() on ReadableStreamDefaultReader must reject pending read() promise_test: Unhandled rejection with value: object "TypeError: There are still pending read requests, cannot release the lock"
+PASS ReadableStream with byte source: releaseLock() on ReadableStreamDefaultReader must reject pending read()
 FAIL ReadableStream with byte source: releaseLock() on ReadableStreamBYOBReader must reject pending read() promise_test: Unhandled rejection with value: object "TypeError: There are still pending read requests, cannot release the lock"
 PASS ReadableStream with byte source: Automatic pull() after start()
 PASS ReadableStream with byte source: Automatic pull() after start() and read()
