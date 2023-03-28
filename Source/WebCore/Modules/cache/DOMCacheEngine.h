@@ -100,6 +100,7 @@ struct CrossThreadRecord {
         , responseBodySize(responseBodySize)
     {
     }
+    CrossThreadRecord isolatedCopy() &&;
 
     uint64_t identifier;
     uint64_t updateResponseCounter;
