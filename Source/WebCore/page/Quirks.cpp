@@ -1584,4 +1584,19 @@ bool Quirks::shouldDisableFetchMetadata() const
     return equalLettersIgnoringASCIICase(host, "victoriassecret.com"_s) || host.endsWithIgnoringASCIICase(".victoriassecret.com"_s);
 }
 
+#if PLATFORM(COCOA)
+bool Quirks::shouldAdvertiseSupportForHLSSubtitleTypes() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldAdvertiseSupportForHLSSubtitleTypes) {
+        auto domain = RegistrableDomain(m_document->url()).string();
+        m_shouldAdvertiseSupportForHLSSubtitleTypes = domain == "hulu.com"_s;
+    }
+
+    return *m_shouldAdvertiseSupportForHLSSubtitleTypes;
+}
+#endif
+
 }
