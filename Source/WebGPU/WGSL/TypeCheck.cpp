@@ -325,9 +325,35 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
 
 void TypeChecker::visit(AST::CallExpression& call)
 {
-    auto* target = resolve(call.target());
-    // FIXME: validate arguments
-    inferred(target);
+    Vector<Type*> arguments;
+    arguments.reserveInitialCapacity(call.arguments().size());
+    for (auto& argument : call.arguments())
+        arguments.append(infer(argument));
+
+    auto& target = call.target();
+    if (is<AST::NamedTypeName>(target)) {
+        auto& namedTarget = downcast<AST::NamedTypeName>(target);
+        auto* result = chooseOverload(namedTarget.name(), arguments);
+        if (result)
+            inferred(result);
+        else {
+            StringPrintStream argumentsString;
+            bool first = true;
+            for (auto* argument : arguments) {
+                if (!first)
+                    argumentsString.print(", ");
+                first = false;
+                argumentsString.print(*argument);
+            }
+            typeError(call.span(), "no matching overload for initializer ", namedTarget.name(), "(", argumentsString.toString(), ")");
+        }
+        return;
+    }
+
+    // FIXME: add support parameterized type constructors (e.g. vec4<f32>(...))
+    // FIXME: add support for user-defined function calls
+    auto* result = resolve(target);
+    inferred(result);
 }
 
 // Literal Expressions
