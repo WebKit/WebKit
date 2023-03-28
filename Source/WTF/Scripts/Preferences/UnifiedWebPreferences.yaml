@@ -172,19 +172,6 @@ AccessHandleEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
-AdjustURLForBindingsDebugModeEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Adjust URL for bindings debug mode"
-  humanReadableDescription: "Enable logging for when a URL is adjusted for JavaScript bindings"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 AggressiveTileRetentionEnabled:
   type: bool
   status: embedder
