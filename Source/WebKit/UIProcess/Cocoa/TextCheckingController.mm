@@ -44,7 +44,7 @@ void TextCheckingController::replaceRelativeToSelection(NSAttributedString *anno
     if (!m_page.hasRunningProcess())
         return;
 
-    m_page.send(Messages::TextCheckingControllerProxy::ReplaceRelativeToSelection({ annotatedString, nil }, selectionOffset, length, relativeReplacementLocation, relativeReplacementLength));
+    m_page.send(Messages::TextCheckingControllerProxy::ReplaceRelativeToSelection(WebCore::AttributedString::fromNSAttributedString(annotatedString), selectionOffset, length, relativeReplacementLocation, relativeReplacementLength));
 }
 
 void TextCheckingController::removeAnnotationRelativeToSelection(NSString *annotationName, int64_t selectionOffset, uint64_t length)

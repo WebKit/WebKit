@@ -4910,8 +4910,9 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
 {
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", proposedRange.location, proposedRange.length);
     m_page->attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler = makeBlockPtr(completionHandler)](const WebCore::AttributedString& string, const EditingRange& actualRange) {
-        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", string.string.get());
-        completionHandler(string.string.get(), actualRange);
+        auto attributedString = string.nsAttributedString();
+        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", attributedString.get());
+        completionHandler(attributedString.get(), actualRange);
     });
 }
 

@@ -35,11 +35,25 @@ header: <WebCore/ResourceRequest.h>
     std::optional<WebCore::ResourceRequestRequester> m_requester
 };
 
-struct WebCore::AttributedString {
-    RetainPtr<NSAttributedString> string;
-    RetainPtr<NSDictionary> documentAttributes;
-};
+[Nested] struct WebCore::AttributedString::AttributeValue {
+#if PLATFORM(MAC)
+    std::variant<double, String, URL, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<NSFont>, RetainPtr<NSColor>> value;
 #endif
+#if PLATFORM(IOS_FAMILY)
+    std::variant<double, String, URL, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<UIFont>, RetainPtr<UIColor>> value;
+#endif
+}
+
+[Nested] struct WebCore::AttributedString::Range {
+    size_t location
+    size_t length
+};
+
+struct WebCore::AttributedString {
+    String string;
+    [Validator='WebCore::AttributedString::rangesAreSafe(*string, *attributes)'] Vector<std::pair<WebCore::AttributedString::Range, HashMap<String, WebCore::AttributedString::AttributeValue>>> attributes;
+    std::optional<HashMap<String, WebCore::AttributedString::AttributeValue>> documentAttributes;
+};
 
 #if ENABLE(MEDIA_RECORDER)
 struct WebCore::MediaRecorderPrivateOptions {

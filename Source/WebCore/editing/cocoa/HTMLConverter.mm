@@ -78,20 +78,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIFoundationSoftLink.h"
 #import "WAKAppKitStubs.h"
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
-
-SOFT_LINK_CLASS(UIFoundation, NSColor)
-SOFT_LINK_CLASS(UIFoundation, NSShadow)
-SOFT_LINK_CLASS(UIFoundation, NSTextAttachment)
-SOFT_LINK_CLASS(UIFoundation, NSMutableParagraphStyle)
-SOFT_LINK_CLASS(UIFoundation, NSParagraphStyle)
-SOFT_LINK_CLASS(UIFoundation, NSTextList)
-SOFT_LINK_CLASS(UIFoundation, NSTextBlock)
-SOFT_LINK_CLASS(UIFoundation, NSTextTableBlock)
-SOFT_LINK_CLASS(UIFoundation, NSTextTable)
-SOFT_LINK_CLASS(UIFoundation, NSTextTab)
 
 #define PlatformNSShadow            getNSShadowClass()
 #define PlatformNSTextAttachment    getNSTextAttachmentClass()
@@ -416,7 +406,7 @@ AttributedString HTMLConverter::convert()
     if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
         [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
 
-    return { WTFMove(_attrStr), WTFMove(_documentAttrs) };
+    return AttributedString::fromNSAttributedStringAndDocumentAttributes(WTFMove(_attrStr), WTFMove(_documentAttrs));
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2459,7 +2449,7 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         stringLength += currentTextLength;
     }
 
-    return { WTFMove(string), nil };
+    return AttributedString::fromNSAttributedString(WTFMove(string));
 }
 
 #endif

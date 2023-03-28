@@ -177,6 +177,7 @@ editing/SelectionGeometryGatherer.cpp
 editing/SmartReplaceCF.cpp
 editing/cocoa/AlternativeTextContextController.mm
 editing/cocoa/AlternativeTextUIController.mm
+editing/cocoa/AttributedString.mm
 editing/cocoa/AutofillElements.cpp
 editing/cocoa/DataDetection.mm
 editing/cocoa/DictionaryLookup.mm
@@ -530,6 +531,7 @@ platform/ios/SelectionGeometry.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm
 platform/ios/TileControllerMemoryHandlerIOS.cpp
+platform/ios/UIFoundationSoftLink.mm
 platform/ios/UserAgentIOS.mm
 platform/ios/ValidationBubbleIOS.mm
 platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify
