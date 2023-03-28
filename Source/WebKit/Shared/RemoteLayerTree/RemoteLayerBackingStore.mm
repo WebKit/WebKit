@@ -124,7 +124,7 @@ void RemoteLayerBackingStore::Buffer::encode(IPC::Encoder& encoder) const
         encoder << std::optional<RenderingResourceIdentifier>();
 }
 
-#if ASSERT_ENABLED
+#if !LOG_DISABLED
 static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 {
     return WTF::switchOn(backendHandle,
@@ -168,7 +168,12 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     } else if (m_frontBuffer.imageBuffer)
         handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
 
-    ASSERT(handle && hasValue(*handle));
+    // It would be nice to ASSERT(handle && hasValue(*handle)) here, but when we hit the timeout in RemoteImageBufferProxy::ensureBackendCreated(), we don't have a handle.
+#if !LOG_DISABLED
+    if (!(handle && hasValue(*handle)))
+        LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " encode - no buffer handle; did ensureBackendCreated() time out?");
+#endif
+
     encoder << WTFMove(handle);
 
     encoder << m_frontBuffer;
