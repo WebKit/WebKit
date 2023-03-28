@@ -31,6 +31,7 @@
 #include "IndexingType.h"
 #include "JITOperations.h"
 #include "TypedArrayType.h"
+#include "UGPRPair.h"
 #include <wtf/text/StringSearch.h>
 
 namespace JSC {
@@ -49,20 +50,6 @@ struct UnlinkedStringJumpTable;
 namespace DFG {
 
 struct OSRExitBase;
-
-
-#if USE(JSVALUE64)
-struct UGPRPair {
-    // We carefully use UCPURegister so both parameters are returned in their own registers.
-    UCPURegister first;
-    UCPURegister second;
-};
-constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return { first, second }; }
-#else
-using UGPRPair = uint64_t;
-constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return static_cast<uint64_t>(second) << 32 | first; }
-#endif
-
 
 JSC_DECLARE_JIT_OPERATION(operationStringFromCharCode, JSCell*, (JSGlobalObject*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationStringFromCharCodeUntyped, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));

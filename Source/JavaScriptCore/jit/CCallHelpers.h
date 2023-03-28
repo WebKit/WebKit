@@ -413,7 +413,7 @@ private:
         using InfoType = InfoTypeForReg<RegType>;
         unsigned numArgRegisters = InfoType::numberOfArgumentRegisters;
 #if OS(WINDOWS) && CPU(X86_64)
-        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
 #else
         unsigned currentArgCount = argSourceRegs.argCount(arg);
 #endif
@@ -423,7 +423,11 @@ private:
             return;
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addStackArg(arg), args...);
     }
 
@@ -612,7 +616,7 @@ private:
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
 #if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
 #else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
 #endif
@@ -622,7 +626,11 @@ private:
             return;
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
@@ -672,7 +680,7 @@ private:
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
 #if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
 #else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
 #endif
@@ -682,12 +690,14 @@ private:
             return;
         }
 
+
+#if OS(WINDOWS) && CPU(X86_64)
+        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
-
-#undef CURRENT_ARGUMENT_TYPE
-#undef RESULT_TYPE
 
     template<typename OperationType, unsigned gprIndex>
     constexpr void finalizeGPRArguments(std::index_sequence<>)
@@ -755,6 +765,13 @@ private:
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
 #endif
         setupStubArgs<numFPRSources, FPRReg>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
+
+#if OS(WINDOWS) && CPU(X86_64)
+        if constexpr (std::is_same<RESULT_TYPE, UGPRPair>::value) {
+            unsigned pokeOffset = calculatePokeOffset(numGPRArgs + /* implicit first parameter */ 1, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+            addPtr(TrustedImm32(pokeOffset * sizeof(CPURegister)), stackPointerRegister, GPRInfo::argumentGPR0);
+        }
+#endif
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
@@ -777,6 +794,9 @@ private:
 
         finalizeGPRArguments<OperationType, 0>(std::make_index_sequence<FunctionTraits<OperationType>::arity>());
     }
+
+#undef CURRENT_ARGUMENT_TYPE
+#undef RESULT_TYPE
 
 public:
 

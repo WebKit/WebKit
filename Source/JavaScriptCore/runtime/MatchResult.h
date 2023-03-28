@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SlowPathReturnType.h"
+#include "UGPRPair.h"
 #include <wtf/NotFound.h>
 #include <wtf/PrintStream.h>
 
@@ -40,7 +40,7 @@ struct MatchResult {
     {
     }
 
-    ALWAYS_INLINE MatchResult(SlowPathReturnType match)
+    ALWAYS_INLINE MatchResult(UGPRPair match)
     {
         decodeResult(match, start, end);
     }
@@ -67,8 +67,8 @@ struct MatchResult {
 };
 
 #if ENABLE(JIT)
-static_assert(sizeof(SlowPathReturnType) == 2 * sizeof(size_t), "https://bugs.webkit.org/show_bug.cgi?id=198518#c11");
-static_assert(sizeof(MatchResult) == sizeof(SlowPathReturnType), "Match result and SlowPathReturnType should be the same size");
+static_assert(sizeof(UGPRPair) == 2 * sizeof(size_t), "https://bugs.webkit.org/show_bug.cgi?id=198518#c11");
+static_assert(sizeof(MatchResult) == sizeof(UGPRPair), "Match result and UGPRPair should be the same size");
 #endif
 
 } // namespace JSC

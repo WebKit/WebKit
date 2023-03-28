@@ -318,7 +318,7 @@
 		0F5A1274192D9FDF008764A3 /* DFGDoesGC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5A1272192D9FDF008764A3 /* DFGDoesGC.h */; };
 		0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5A6282188C98D40072C9DF /* FTLValueRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5AE2C41DF4F2800066EFE1 /* VMInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F5B4A331C84F0D600F1B17E /* SlowPathReturnType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5B4A331C84F0D600F1B17E /* UGPRPair.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B4A321C84F0D600F1B17E /* UGPRPair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5BF1641F2317120029D91D /* B3HoistLoopInvariantValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1621F2317120029D91D /* B3HoistLoopInvariantValues.h */; };
 		0F5BF1671F23A0980029D91D /* B3BackwardsCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1661F23A0980029D91D /* B3BackwardsCFG.h */; };
 		0F5BF1691F23A0AA0029D91D /* B3NaturalLoops.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1681F23A0AA0029D91D /* B3NaturalLoops.h */; };
@@ -2836,7 +2836,7 @@
 		0F5A1272192D9FDF008764A3 /* DFGDoesGC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDoesGC.h; path = dfg/DFGDoesGC.h; sourceTree = "<group>"; };
 		0F5A6281188C98D40072C9DF /* FTLValueRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLValueRange.cpp; path = ftl/FTLValueRange.cpp; sourceTree = "<group>"; };
 		0F5A6282188C98D40072C9DF /* FTLValueRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLValueRange.h; path = ftl/FTLValueRange.h; sourceTree = "<group>"; };
-		0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowPathReturnType.h; sourceTree = "<group>"; };
+		0F5B4A321C84F0D600F1B17E /* UGPRPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UGPRPair.h; sourceTree = "<group>"; };
 		0F5BF1611F2317120029D91D /* B3HoistLoopInvariantValues.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = B3HoistLoopInvariantValues.cpp; path = b3/B3HoistLoopInvariantValues.cpp; sourceTree = "<group>"; };
 		0F5BF1621F2317120029D91D /* B3HoistLoopInvariantValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3HoistLoopInvariantValues.h; path = b3/B3HoistLoopInvariantValues.h; sourceTree = "<group>"; };
 		0F5BF1661F23A0980029D91D /* B3BackwardsCFG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3BackwardsCFG.h; path = b3/B3BackwardsCFG.h; sourceTree = "<group>"; };
@@ -8297,7 +8297,6 @@
 				0F2B66D617B6B5AB00A7AE3F /* SimpleTypedArrayController.cpp */,
 				0F2B66D717B6B5AB00A7AE3F /* SimpleTypedArrayController.h */,
 				FE8C0311264A6910001A44AD /* SlowPathFunction.h */,
-				0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
 				425BA1337E4344E1B269A671 /* SourceOrigin.h */,
@@ -8420,6 +8419,7 @@
 				0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */,
 				0F2D4DE319832D91007D4B19 /* TypeSet.cpp */,
 				0F2D4DE419832D91007D4B19 /* TypeSet.h */,
+				0F5B4A321C84F0D600F1B17E /* UGPRPair.h */,
 				A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
 				A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */,
@@ -11170,7 +11170,6 @@
 				FE041553252EC0730091EB5D /* SlotVisitorMacros.h in Headers */,
 				A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */,
 				FE8C0312264A6911001A44AD /* SlowPathFunction.h in Headers */,
-				0F5B4A331C84F0D600F1B17E /* SlowPathReturnType.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
 				E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */,
 				FE187A0F1C030D6C0038BBCA /* SnippetOperand.h in Headers */,
@@ -11289,6 +11288,7 @@
 				52C952B719A289850069B386 /* TypeProfiler.h in Headers */,
 				0F2D4DEC19832DC4007D4B19 /* TypeProfilerLog.h in Headers */,
 				0F2D4DF019832DD6007D4B19 /* TypeSet.h in Headers */,
+				0F5B4A331C84F0D600F1B17E /* UGPRPair.h in Headers */,
 				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
 				A7A8AF4217ADB5F3005AB174 /* Uint32Array.h in Headers */,

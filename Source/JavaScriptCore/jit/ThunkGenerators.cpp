@@ -1619,7 +1619,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     // If we find that the JIT code is null (i.e. has been jettisoned), then we need to re-materialize it for the call below. Note that we know
     // that operationMaterializeRemoteFunctionTargetCode should be able to re-materialize the JIT code (except for any OOME) because we only
     // went down this code path after we found a non-null JIT code (in the noCode check) above i.e. it should be possible to materialize the JIT code.
-    // FIXME: Windows x64 is not supported since operationMaterializeRemoteFunctionTargetCode returns SlowPathReturnType.
+    // FIXME: Windows x64 is not supported since operationMaterializeRemoteFunctionTargetCode returns UGPRPair.
     jit.setupArguments<decltype(operationMaterializeRemoteFunctionTargetCode)>(GPRInfo::regT0);
     jit.prepareCallOperation(vm);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeRemoteFunctionTargetCode)), GPRInfo::nonArgGPR0);

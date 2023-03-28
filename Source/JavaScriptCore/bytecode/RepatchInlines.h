@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-inline SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
+inline UGPRPair handleHostCall(JSGlobalObject* globalObject, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -91,7 +91,7 @@ inline SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
         reinterpret_cast<void*>(KeepTheFrame));
 }
 
-ALWAYS_INLINE SlowPathReturnType linkFor(CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo)
+ALWAYS_INLINE UGPRPair linkFor(CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo)
 {
     CallFrame* callFrame = calleeFrame->callerFrame();
     VM& vm = globalObject->vm();
@@ -169,7 +169,7 @@ ALWAYS_INLINE SlowPathReturnType linkFor(CallFrame* calleeFrame, JSGlobalObject*
     return encodeResult(codePtr.taggedPtr(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 
-ALWAYS_INLINE SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalObject, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
+ALWAYS_INLINE UGPRPair virtualForWithFunction(JSGlobalObject* globalObject, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
 {
     CallFrame* callFrame = calleeFrame->callerFrame();
     VM& vm = globalObject->vm();
