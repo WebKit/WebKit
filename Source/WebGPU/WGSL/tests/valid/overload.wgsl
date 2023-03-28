@@ -43,3 +43,59 @@ fn testMultiply() {
   let r1 = m * v2;
   let r2 = v4 * m;
 }
+
+fn testTextureSample() {
+  {
+    let t: texture_1d<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, 1);
+  }
+
+  {
+    let t: texture_2d<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec2<f32>(0, 0));
+  }
+
+  {
+    let t: texture_2d<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec2<f32>(0, 0), vec2<i32>(1, 1));
+  }
+
+  {
+    let t: texture_2d_array<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec2<f32>(0, 0), 0);
+  }
+
+  {
+    let t: texture_2d_array<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec2<f32>(0, 0), 0, vec2<i32>(1, 1));
+  }
+
+  {
+    let t: texture_3d<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec3<f32>(0, 0, 0));
+  }
+
+  {
+    let t: texture_cube<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec3<f32>(0, 0, 0));
+  }
+
+  {
+    let t: texture_3d<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec3<f32>(0, 0, 0), vec3<i32>(0, 0, 0));
+  }
+
+  {
+    let t: texture_cube_array<f32>;
+    let s: sampler;
+    let r = textureSample(t, s, vec3<f32>(0, 0, 0), 0);
+  }
+}
