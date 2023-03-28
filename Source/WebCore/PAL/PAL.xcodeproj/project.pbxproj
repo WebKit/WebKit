@@ -94,6 +94,7 @@
 		57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */; };
 		5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C787223AC3E770065F47E /* ManagedConfigurationSoftLink.mm */; };
 		5CB898B2286274FA00CA3485 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB898B1286274FA00CA3485 /* QuarantineSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CF869ED29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CF869EC29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B47F2A328587B9700E793C8 /* CoreGraphicsSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B47F2A128587B9700E793C8 /* CoreGraphicsSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B47F2A428587B9700E793C8 /* CoreGraphicsSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B47F2A228587B9700E793C8 /* CoreGraphicsSoftLink.cpp */; };
 		93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */; };
@@ -940,6 +941,7 @@
 		5C7C787223AC3E770065F47E /* ManagedConfigurationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ManagedConfigurationSoftLink.mm; sourceTree = "<group>"; };
 		5C7C787523AC3E850065F47E /* ManagedConfigurationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedConfigurationSPI.h; sourceTree = "<group>"; };
 		5CB898B1286274FA00CA3485 /* QuarantineSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuarantineSPI.h; sourceTree = "<group>"; };
+		5CF869EC29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSKeyedUnarchiverSPI.h; sourceTree = "<group>"; };
 		63E369F921AFA83F001C14BC /* NSProgressSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSProgressSPI.h; sourceTree = "<group>"; };
 		71B1141F26823ACD004D6701 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
 		72BA2A872951462500678507 /* NSTextFieldCellSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSTextFieldCellSPI.h; sourceTree = "<group>"; };
@@ -1143,6 +1145,7 @@
 				0C2DA1321F3BEB4900DBC317 /* NSExtensionSPI.h */,
 				0C2DA1331F3BEB4900DBC317 /* NSFileManagerSPI.h */,
 				F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */,
+				5CF869EC29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h */,
 				63E369F921AFA83F001C14BC /* NSProgressSPI.h */,
 				0C2DA1341F3BEB4900DBC317 /* NSStringSPI.h */,
 				0C2DA1351F3BEB4900DBC317 /* NSTouchBarSPI.h */,
@@ -1882,6 +1885,7 @@
 				DD20DE2927BC90D80093D175 /* NSGraphicsSPI.h in Headers */,
 				DD20DE2A27BC90D80093D175 /* NSImageSPI.h in Headers */,
 				DD20DE2B27BC90D80093D175 /* NSImmediateActionGestureRecognizerSPI.h in Headers */,
+				5CF869ED29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h in Headers */,
 				DD20DE2C27BC90D80093D175 /* NSMenuSPI.h in Headers */,
 				DD20DE2D27BC90D80093D175 /* NSPasteboardSPI.h in Headers */,
 				DD20DE2E27BC90D80093D175 /* NSPopoverColorWellSPI.h in Headers */,
