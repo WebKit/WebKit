@@ -138,7 +138,12 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     if (!executionContextDocument.frame())
         return nullptr;
-    auto* globalObject = toJSLocalDOMWindow(*executionContextDocument.frame(), isolatedWorld());
+
+    auto* isolatedWorld = this->isolatedWorld();
+    if (UNLIKELY(!isolatedWorld))
+        return nullptr;
+
+    auto* globalObject = toJSLocalDOMWindow(*executionContextDocument.frame(), *isolatedWorld);
     if (!globalObject)
         return nullptr;
 

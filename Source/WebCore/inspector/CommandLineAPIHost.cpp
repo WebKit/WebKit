@@ -119,7 +119,7 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(J
             auto& jsListener = downcast<JSEventListener>(eventListener->callback());
 
             // Hide listeners from other contexts.
-            if (&jsListener.isolatedWorld() != &currentWorld(lexicalGlobalObject))
+            if (jsListener.isolatedWorld() != &currentWorld(lexicalGlobalObject))
                 continue;
 
             auto* function = jsListener.ensureJSFunction(*scriptExecutionContext);
