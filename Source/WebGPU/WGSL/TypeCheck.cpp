@@ -55,6 +55,7 @@ public:
     // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
+    void visit(AST::CompoundStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -203,11 +204,11 @@ void TypeChecker::visit(AST::Function& function)
 
 void TypeChecker::visitFunctionBody(AST::Function& function)
 {
-    ContextProvider::ContextScope functionContext(this);
+    ContextScope functionContext(this);
 
     for (auto& parameter : function.parameters()) {
         auto* parameterType = resolve(parameter.typeName());
-        ContextProvider::introduceVariable(parameter.name(), parameterType);
+        introduceVariable(parameter.name(), parameterType);
     }
 
     AST::Visitor::visit(function.body());
@@ -229,6 +230,12 @@ void TypeChecker::visit(AST::ReturnStatement& statement)
 
     // FIXME: unify type with the curent function's return type
     UNUSED_PARAM(type);
+}
+
+void TypeChecker::visit(AST::CompoundStatement& statement)
+{
+    ContextScope blockScope(this);
+    AST::Visitor::visit(statement);
 }
 
 // Expressions
@@ -387,7 +394,7 @@ void TypeChecker::visit(AST::ArrayTypeName& array)
 
 void TypeChecker::visit(AST::NamedTypeName& namedType)
 {
-    auto* const* type = ContextProvider::readVariable(namedType.name());
+    auto* const* type = readVariable(namedType.name());
     if (type) {
         inferred(*type);
         return;
