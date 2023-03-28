@@ -257,6 +257,7 @@ private:
 #endif
 
     bool m_isOpaque;
+    RemoteLayerBackingStore::Type m_type;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, SwapBuffersDisplayRequirement);

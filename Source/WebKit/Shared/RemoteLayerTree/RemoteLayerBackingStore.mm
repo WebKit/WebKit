@@ -159,6 +159,8 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
     encoder << m_parameters.isOpaque;
 
+    encoder << m_parameters.type;
+
     // FIXME: For simplicity this should be moved to the end of display() once the buffer handles can be created once
     // and stored in m_bufferHandle. http://webkit.org/b/234169
     std::optional<ImageBufferBackendHandle> handle;
@@ -192,6 +194,9 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLayerBackingStoreProperties& result)
 {
     if (!decoder.decode(result.m_isOpaque))
+        return false;
+
+    if (!decoder.decode(result.m_type))
         return false;
 
     if (!decoder.decode(result.m_bufferHandle))
@@ -666,7 +671,7 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
         if (!replayCGDisplayListsIntoBackingStore) {
             [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
             [layer setValue:@1 forKeyPath:WKCGDisplayListBifurcationEnabledKey];
-            layer.drawsAsynchronously = (m_parameters.type == Type::IOSurface);
+            layer.drawsAsynchronously = (m_type == Type::IOSurface);
         } else
             layer.opaque = m_isOpaque;
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];
