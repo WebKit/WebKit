@@ -294,7 +294,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         static size_t sizeFor(ParenContextSizes& parenContextSizes)
         {
-            return sizeof(ParenContext) + sizeof(Subpatterns) * parenContextSizes.numSubpatterns() + sizeof(uintptr_t) * parenContextSizes.frameSlots();
+            return sizeof(ParenContext) + sizeof(Subpatterns) * parenContextSizes.numSubpatterns() + sizeof(unsigned) * (parenContextSizes.numDuplicateNamedCaptures()) + sizeof(uintptr_t) * parenContextSizes.frameSlots();
         }
 
         static constexpr ptrdiff_t nextOffset()
@@ -447,8 +447,11 @@ class YarrGenerator final : public YarrJITInfo {
                 static_assert(is64Bit());
                 m_jit.load64(MacroAssembler::Address(parenContextReg, ParenContext::subpatternOffset(subpattern)), tempReg);
                 m_jit.store64(tempReg, MacroAssembler::Address(m_regs.output, (subpattern << 1) * sizeof(unsigned)));
-                if (hasNamedCaptures)
-                    duplicateNamedCaptureGroups.set(m_pattern.m_duplicateNamedGroupForSubpatternId[subpattern]);
+                if (hasNamedCaptures) {
+                    unsigned duplicateNamedGroup = m_pattern.m_duplicateNamedGroupForSubpatternId[subpattern];
+                    if (duplicateNamedGroup)
+                        duplicateNamedCaptureGroups.set(duplicateNamedGroup);
+                }
             }
             for (unsigned duplicateNamedGroupId : duplicateNamedCaptureGroups) {
                 m_jit.load32(MacroAssembler::Address(parenContextReg, ParenContext::duplicateNamedCaptureOffset(m_parenContextSizes, duplicateNamedGroupId)), tempReg);
