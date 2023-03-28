@@ -169,8 +169,15 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-InlineLayoutResult InlineFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints, BlockLayoutState& blockLayoutState)
+InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContentForIntegration(const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
 {
+    if (!root().hasInFlowChild()) {
+        // Float and/or out-of-flow only content does not support partial layout.
+        ASSERT(!m_lineDamage);
+        layoutFloatContentOnly(constraints, blockLayoutState);
+        return { { }, InlineLayoutResult::Range::Full };
+    }
+
     auto& inlineFormattingState = formattingState();
     auto needsLayoutStartPosition = !m_lineDamage || !m_lineDamage->start() ? InlineItemPosition() : m_lineDamage->start()->inlineItemPosition;
     auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || m_lineDamage;
@@ -188,11 +195,13 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowContentForIntegration(co
         // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
+    return lineLayout(inlineItems, needsLayoutRange, previousLine(), constraints, blockLayoutState);
+}
 
-    auto inlineConstraints = downcast<ConstraintsForInlineContent>(constraints);
-    auto layoutResult = lineLayout(inlineItems, needsLayoutRange, previousLine(), inlineConstraints, blockLayoutState);
-    computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), inlineConstraints, layoutResult.displayContent, blockLayoutState.floatingState());
-    return layoutResult;
+void InlineFormattingContext::layoutOutOfFlowContentForIntegration(const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState, const InlineDisplay::Content& inlineDisplayContent)
+{
+    // Collecting out-of-flow boxes happens during the in-flow phase.
+    computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), constraints, inlineDisplayContent, blockLayoutState.floatingState());
 }
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraintsForIntegration()
@@ -298,6 +307,32 @@ InlineLayoutResult InlineFormattingContext::lineLayout(const InlineItems& inline
         previousLineEnd = lineContentEnd;
     }
     return layoutResult;
+}
+
+void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
+{
+    ASSERT(!root().hasInFlowChild());
+
+    auto& inlineFormattingState = formattingState();
+    auto& floatingState = blockLayoutState.floatingState();
+    auto floatingContext = FloatingContext { *this, floatingState };
+
+    InlineItemsBuilder { root(), inlineFormattingState }.build({ });
+
+    for (auto& inlineItem : inlineFormattingState.inlineItems()) {
+        if (!inlineItem.isFloat()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        auto& floatBox = inlineItem.layoutBox();
+        auto& floatBoxGeometry = inlineFormattingState.boxGeometry(floatBox);
+        auto staticPosition = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
+        staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
+        floatBoxGeometry.setLogicalTopLeft(staticPosition);
+
+        floatBoxGeometry.setLogicalTopLeft(floatingContext.positionForFloat(floatBox, constraints.horizontal()));
+        floatingState.append(floatingContext.toFloatItem(floatBox));
+    }
 }
 
 void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList& outOfFlowBoxes, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent, const FloatingState& floatingState)

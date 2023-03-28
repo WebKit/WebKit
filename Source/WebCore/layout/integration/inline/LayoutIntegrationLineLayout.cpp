@@ -584,9 +584,12 @@ std::optional<LayoutRect> LineLayout::layout()
         auto partialContentTop = LayoutUnit { m_inlineContent->displayContent().lines[damagedLineIndex - 1].lineBoxLogicalRect().maxY() };
         auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
-    };
+    }();
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
-    auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
+    auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContentForIntegration(inlineContentConstraints, blockLayoutState);
+    inlineFormattingContext.layoutOutOfFlowContentForIntegration(inlineContentConstraints, blockLayoutState, layoutResult.displayContent);
+
     auto repaintRect = LayoutRect { constructContent(WTFMove(layoutResult)) };
 
     auto adjustments = adjustContent();

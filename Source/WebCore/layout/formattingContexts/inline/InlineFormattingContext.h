@@ -68,11 +68,13 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    InlineLayoutResult layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&, BlockLayoutState&);
+    InlineLayoutResult layoutInFlowAndFloatContentForIntegration(const ConstraintsForInlineContent&, BlockLayoutState&);
+    void layoutOutOfFlowContentForIntegration(const ConstraintsForInlineContent&, BlockLayoutState&, const InlineDisplay::Content&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
     InlineLayoutResult lineLayout(const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
+    void layoutFloatContentOnly(const ConstraintsForInlineContent&, BlockLayoutState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
