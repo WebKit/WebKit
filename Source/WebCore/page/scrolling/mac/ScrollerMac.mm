@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ScrollTypesMac.h"
 #import "ScrollerPairMac.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/FloatPoint.h>
@@ -329,9 +330,7 @@ ScrollerMac::~ScrollerMac()
 void ScrollerMac::attach()
 {
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
-
-    NSScrollerStyle newStyle = [m_pair.scrollerImpPair() scrollerStyle];
-    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:newStyle controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
+    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
     [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
 }
 
@@ -339,17 +338,16 @@ void ScrollerMac::setHostLayer(CALayer *layer)
 {
     if (m_hostLayer == layer)
         return;
-    
-    Locker locker { m_pair.scrollerImpPairLock() };
 
     m_hostLayer = layer;
 
     [m_scrollerImp setLayer:layer];
 
+    NSScrollerImp *scrollerImp = layer ? m_scrollerImp.get() : nil;
     if (m_orientation == ScrollbarOrientation::Vertical)
-        [m_pair.scrollerImpPair() setVerticalScrollerImp:layer ? m_scrollerImp.get() : nil];
+        m_pair.setVerticalScrollerImp(scrollerImp);
     else
-        [m_pair.scrollerImpPair() setHorizontalScrollerImp:layer ?  m_scrollerImp.get() : nil];
+        m_pair.setHorizontalScrollerImp(scrollerImp);
 }
 
 void ScrollerMac::updateValues()

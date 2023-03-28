@@ -200,10 +200,6 @@ struct SoupNetworkProxySettings;
 struct PasteboardWebContent;
 #endif
 
-#if ENABLE(CONTENT_FILTERING)
-class ContentFilterUnblockHandler;
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 struct MediaConstraints;
 #endif
@@ -351,13 +347,6 @@ template<> struct ArgumentCoder<WebCore::BlobPart> {
     static void encode(Encoder&, const WebCore::BlobPart&);
     static std::optional<WebCore::BlobPart> decode(Decoder&);
 };
-
-#if ENABLE(CONTENT_FILTERING)
-template<> struct ArgumentCoder<WebCore::ContentFilterUnblockHandler> {
-    static void encode(Encoder&, const WebCore::ContentFilterUnblockHandler&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ContentFilterUnblockHandler&);
-};
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {

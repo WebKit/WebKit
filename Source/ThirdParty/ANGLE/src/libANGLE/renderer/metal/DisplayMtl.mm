@@ -938,10 +938,12 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.copyTextureCHROMIUM           = true;
     mNativeExtensions.copyCompressedTextureCHROMIUM = false;
 
+#if !defined(ANGLE_PLATFORM_WATCHOS) || !ANGLE_PLATFORM_WATCHOS
     if (@available(iOS 14.0, macOS 10.11, macCatalyst 14.0, tvOS 16.0, *))
     {
         mNativeExtensions.textureMirrorClampToEdgeEXT = true;
     }
+#endif
 
     // EXT_debug_marker is not implemented yet, but the entry points must be exposed for the
     // Metal backend to be used in Chrome (http://anglebug.com/4946)

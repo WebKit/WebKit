@@ -79,6 +79,9 @@ public:
 #if USE(WPE_RENDERER)
         WPE,
 #endif
+#if USE(EGL)
+        Headless,
+#endif
     };
 
     virtual Type type() const = 0;
@@ -94,6 +97,7 @@ public:
 
     struct EGLExtensions {
         bool KHR_image_base { false };
+        bool KHR_surfaceless_context { false };
         bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
     };

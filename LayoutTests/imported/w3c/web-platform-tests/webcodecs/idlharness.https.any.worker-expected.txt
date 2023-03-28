@@ -1,0 +1,170 @@
+
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+PASS idl_test validation
+FAIL AudioDecoder interface: existence and properties of interface object assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface object length assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface object name assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: attribute state assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: attribute decodeQueueSize assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: operation configure(AudioDecoderConfig) assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: operation decode(EncodedAudioChunk) assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: operation flush() assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: operation reset() assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: operation close() assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: operation isConfigSupported(AudioDecoderConfig) assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL VideoDecoder interface: existence and properties of interface object assert_equals: prototype of self's property "VideoDecoder" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
+PASS VideoDecoder interface object length
+PASS VideoDecoder interface object name
+FAIL VideoDecoder interface: existence and properties of interface prototype object assert_equals: prototype of VideoDecoder.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
+PASS VideoDecoder interface: existence and properties of interface prototype object's "constructor" property
+PASS VideoDecoder interface: existence and properties of interface prototype object's @@unscopables property
+PASS VideoDecoder interface: attribute state
+PASS VideoDecoder interface: attribute decodeQueueSize
+PASS VideoDecoder interface: operation configure(VideoDecoderConfig)
+PASS VideoDecoder interface: operation decode(EncodedVideoChunk)
+PASS VideoDecoder interface: operation flush()
+PASS VideoDecoder interface: operation reset()
+PASS VideoDecoder interface: operation close()
+PASS VideoDecoder interface: operation isConfigSupported(VideoDecoderConfig)
+FAIL AudioEncoder interface: existence and properties of interface object assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface object length assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface object name assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: attribute state assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: attribute encodeQueueSize assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: operation configure(AudioEncoderConfig) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: operation encode(AudioData) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: operation flush() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: operation reset() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: operation close() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: operation isConfigSupported(AudioEncoderConfig) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL VideoEncoder interface: existence and properties of interface object assert_equals: prototype of self's property "VideoEncoder" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
+PASS VideoEncoder interface object length
+PASS VideoEncoder interface object name
+FAIL VideoEncoder interface: existence and properties of interface prototype object assert_equals: prototype of VideoEncoder.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
+PASS VideoEncoder interface: existence and properties of interface prototype object's "constructor" property
+PASS VideoEncoder interface: existence and properties of interface prototype object's @@unscopables property
+PASS VideoEncoder interface: attribute state
+PASS VideoEncoder interface: attribute encodeQueueSize
+PASS VideoEncoder interface: operation configure(VideoEncoderConfig)
+PASS VideoEncoder interface: operation encode(VideoFrame, optional VideoEncoderEncodeOptions)
+PASS VideoEncoder interface: operation flush()
+PASS VideoEncoder interface: operation reset()
+PASS VideoEncoder interface: operation close()
+PASS VideoEncoder interface: operation isConfigSupported(VideoEncoderConfig)
+FAIL EncodedAudioChunk interface: existence and properties of interface object assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface object length assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface object name assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: existence and properties of interface prototype object assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: attribute type assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: attribute timestamp assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: attribute duration assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: attribute byteLength assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+FAIL EncodedAudioChunk interface: operation copyTo(BufferSource) assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+PASS EncodedVideoChunk interface: existence and properties of interface object
+PASS EncodedVideoChunk interface object length
+PASS EncodedVideoChunk interface object name
+PASS EncodedVideoChunk interface: existence and properties of interface prototype object
+PASS EncodedVideoChunk interface: existence and properties of interface prototype object's "constructor" property
+PASS EncodedVideoChunk interface: existence and properties of interface prototype object's @@unscopables property
+PASS EncodedVideoChunk interface: attribute type
+PASS EncodedVideoChunk interface: attribute timestamp
+PASS EncodedVideoChunk interface: attribute duration
+PASS EncodedVideoChunk interface: attribute byteLength
+PASS EncodedVideoChunk interface: operation copyTo(BufferSource)
+FAIL AudioData interface: existence and properties of interface object assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface object length assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface object name assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: attribute format assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: attribute sampleRate assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: attribute numberOfFrames assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: attribute numberOfChannels assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: attribute duration assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: attribute timestamp assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: operation allocationSize(AudioDataCopyToOptions) assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: operation copyTo(BufferSource, AudioDataCopyToOptions) assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: operation clone() assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+FAIL AudioData interface: operation close() assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+PASS VideoFrame interface: existence and properties of interface object
+PASS VideoFrame interface object length
+PASS VideoFrame interface object name
+PASS VideoFrame interface: existence and properties of interface prototype object
+PASS VideoFrame interface: existence and properties of interface prototype object's "constructor" property
+PASS VideoFrame interface: existence and properties of interface prototype object's @@unscopables property
+PASS VideoFrame interface: attribute format
+FAIL VideoFrame interface: attribute planes assert_true: The prototype object must have a property "planes" expected true got false
+PASS VideoFrame interface: attribute codedWidth
+PASS VideoFrame interface: attribute codedHeight
+FAIL VideoFrame interface: attribute cropLeft assert_true: The prototype object must have a property "cropLeft" expected true got false
+FAIL VideoFrame interface: attribute cropTop assert_true: The prototype object must have a property "cropTop" expected true got false
+FAIL VideoFrame interface: attribute cropWidth assert_true: The prototype object must have a property "cropWidth" expected true got false
+FAIL VideoFrame interface: attribute cropHeight assert_true: The prototype object must have a property "cropHeight" expected true got false
+PASS VideoFrame interface: attribute displayWidth
+PASS VideoFrame interface: attribute displayHeight
+PASS VideoFrame interface: attribute duration
+PASS VideoFrame interface: attribute timestamp
+PASS VideoFrame interface: operation clone()
+PASS VideoFrame interface: operation close()
+FAIL Plane interface: existence and properties of interface object assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface object length assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface object name assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: attribute stride assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: attribute rows assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: attribute length assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL Plane interface: operation readInto(ArrayBufferView) assert_own_property: self does not have own property "Plane" expected property "Plane" missing
+FAIL ImageDecoder interface: existence and properties of interface object assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface object length assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface object name assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: attribute complete assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: attribute completed assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: attribute tracks assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: operation decode(optional ImageDecodeOptions) assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: operation reset() assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: operation close() assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageDecoder interface: operation isTypeSupported(DOMString) assert_own_property: self does not have own property "ImageDecoder" expected property "ImageDecoder" missing
+FAIL ImageTrackList interface: existence and properties of interface object assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface object length assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface object name assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: attribute ready assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: attribute length assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: attribute selectedIndex assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrackList interface: attribute selectedTrack assert_own_property: self does not have own property "ImageTrackList" expected property "ImageTrackList" missing
+FAIL ImageTrack interface: existence and properties of interface object assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface object length assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface object name assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: attribute animated assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: attribute frameCount assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: attribute repetitionCount assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: attribute onchange assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+FAIL ImageTrack interface: attribute selected assert_own_property: self does not have own property "ImageTrack" expected property "ImageTrack" missing
+

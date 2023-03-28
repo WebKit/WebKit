@@ -115,7 +115,7 @@ const char* GLContext::lastErrorString()
     return errorString(eglGetError());
 }
 
-bool GLContext::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType, Function<bool(int)>&& checkCompatibleVisuals)
+bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config, EGLSurfaceType surfaceType, Function<bool(int)>&& checkCompatibleVisuals)
 {
 #if !PLATFORM(X11)
     UNUSED_PARAM(checkCompatibleVisuals);
@@ -145,6 +145,12 @@ bool GLContext::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceTy
     };
 
     switch (surfaceType) {
+    case GLContext::Surfaceless:
+        if (platformDisplay.type() == PlatformDisplay::Type::Headless)
+            attributeList[13] = EGL_PBUFFER_BIT;
+        else
+            attributeList[13] = EGL_WINDOW_BIT;
+        break;
     case GLContext::PbufferSurface:
         attributeList[13] = EGL_PBUFFER_BIT;
         break;
@@ -152,11 +158,11 @@ bool GLContext::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceTy
         attributeList[13] = EGL_PIXMAP_BIT;
         break;
     case GLContext::WindowSurface:
-    case GLContext::Surfaceless:
         attributeList[13] = EGL_WINDOW_BIT;
         break;
     }
 
+    EGLDisplay display = platformDisplay.eglDisplay();
     EGLint count;
     if (!eglChooseConfig(display, attributeList, nullptr, 0, &count)) {
         RELEASE_LOG_INFO(Compositing, "Cannot get count of available EGL configurations: %s.", lastErrorString());
@@ -234,9 +240,8 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
     }
 #endif
 
-    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, WindowSurface, WTFMove(checkCompatibleVisuals))) {
+    if (!getEGLConfig(platformDisplay, &config, WindowSurface, WTFMove(checkCompatibleVisuals))) {
         RELEASE_LOG_INFO(Compositing, "Cannot obtain EGL window context configuration: %s\n", lastErrorString());
         return nullptr;
     }
@@ -247,6 +252,7 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
         return nullptr;
     }
 
+    EGLDisplay display = platformDisplay.eglDisplay();
     EGLSurface surface = EGL_NO_SURFACE;
     switch (platformDisplay.type()) {
 #if PLATFORM(X11)
@@ -264,6 +270,8 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
         surface = createWindowSurfaceWPE(display, config, window);
         break;
 #endif // USE(WPE_RENDERER)
+    case PlatformDisplay::Type::Headless:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     if (surface == EGL_NO_SURFACE) {
@@ -282,9 +290,8 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
 
 std::unique_ptr<GLContext> GLContext::createPbufferContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, PbufferSurface)) {
+    if (!getEGLConfig(platformDisplay, &config, PbufferSurface)) {
         RELEASE_LOG_INFO(Compositing, "Cannot obtain EGL Pbuffer configuration: %s\n", lastErrorString());
         return nullptr;
     }
@@ -295,6 +302,7 @@ std::unique_ptr<GLContext> GLContext::createPbufferContext(PlatformDisplay& plat
         return nullptr;
     }
 
+    EGLDisplay display = platformDisplay.eglDisplay();
     static const int pbufferAttributes[] = { EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE };
     EGLSurface surface = eglCreatePbufferSurface(display, config, pbufferAttributes);
     if (surface == EGL_NO_SURFACE) {
@@ -321,7 +329,7 @@ std::unique_ptr<GLContext> GLContext::createSurfacelessContext(PlatformDisplay& 
     }
 
     EGLConfig config;
-    if (!getEGLConfig(display, &config, Surfaceless)) {
+    if (!getEGLConfig(platformDisplay, &config, Surfaceless)) {
         RELEASE_LOG_INFO(Compositing, "Cannot obtain EGL surfaceless configuration: %s\n", lastErrorString());
         return nullptr;
     }
@@ -351,6 +359,13 @@ std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, Platform
     }
 
     EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContext*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
+    if (platformDisplay.type() == PlatformDisplay::Type::Headless) {
+        auto context = createSurfacelessContext(platformDisplay, eglSharingContext);
+        if (!context)
+            WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
+        return context;
+    }
+
     auto context = window ? createWindowContext(window, platformDisplay, eglSharingContext) : nullptr;
     if (!context)
         context = createSurfacelessContext(platformDisplay, eglSharingContext);
@@ -371,6 +386,8 @@ std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, Platform
             context = createWPEContext(platformDisplay, eglSharingContext);
             break;
 #endif
+        case PlatformDisplay::Type::Headless:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     if (!context) {
@@ -426,6 +443,8 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
             context = createWPEContext(platformDisplay);
             break;
 #endif
+        case PlatformDisplay::Type::Headless:
+            break;
         }
     }
     if (!context) {

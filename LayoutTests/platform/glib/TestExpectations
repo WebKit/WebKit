@@ -312,7 +312,8 @@ fast/css/accent-color/range.html [ Pass ]
 fast/css/accent-color/text.html [ Pass ]
 
 # Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
-media/video-with-alpha.html [ Pass ]
+# Currently failing due to a different issue below.
+# media/video-with-alpha.html [ Pass ]
 
 # Only GStreamer is honoring the CodecDelay field
 webkit.org/b/254222 media/media-source/media-webm-opus-codecdelay.html [ Pass ]
@@ -1003,6 +1004,13 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/254520 media/video-ended-event-negative-playback.html [ Failure Timeout Pass ]
+webkit.org/b/254519 media/media-continues-playing-after-replace-source.html [ Failure Pass ]
+webkit.org/b/254518 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Failure Timeout Pass ]
+webkit.org/b/254521 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Pass Failure ]
+webkit.org/b/254522 media/video-volume.html [ Pass Failure ]
+webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
+
 webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure Crash ]
 webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]
@@ -1030,6 +1038,18 @@ media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
+
+# Player is often not rendering in image tests, especially in Release
+webkit.org/b/234352 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ ImageOnlyFailure Pass ]
+webkit.org/b/234352 media/media-source/media-source-video-renders.html [ ImageOnlyFailure Pass ]
+webkit.org/b/234352 media/track/track-webvtt-no-snap-to-lines-overlap.html [ ImageOnlyFailure Pass ]
+webkit.org/b/234352 media/track/track-webvtt-snap-to-lines-inline-style.html [ ImageOnlyFailure Pass ]
+webkit.org/b/234352 media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure Pass ]
+webkit.org/b/234352 media/video-with-alpha.html [ ImageOnlyFailure Pass ]
+
+# Race conditions from missing this patch: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3471
+webkit.org/b/254514 media/media-source/media-source-current-time.html [ Failure Pass ]
+webkit.org/b/254514 media/media-source/media-source-seek-unbuffered.html [ Failure Pass Timeout ]
 
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
@@ -1063,7 +1083,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-tra
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 
 webkit.org/b/227934 media/media-source/media-webm-vorbis-partial.html [ Failure ]
-webkit.org/b/227934 media/media-source/media-webm-opus-partial.html [ Failure ]
 
 webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.https.html [ Failure ]
 
@@ -1097,7 +1116,7 @@ webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
 
-webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Crash ]
+webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Crash Pass ]
 
 webkit.org/b/245639 media/video-as-img-with-alpha.html [ ImageOnlyFailure ]
 
@@ -1149,7 +1168,7 @@ media/modern-media-controls/volume-support/volume-support-drag.html [ Failure ]
 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Skip ] # Timeout
 
-media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout ]
+media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Media-controls-related bugs
@@ -1725,7 +1744,7 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ 
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ] # Timeout.
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
@@ -1746,6 +1765,12 @@ webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
+webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass Timeout ]
+webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure Pass ]
+webkit.org/b/252878 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
+webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
+webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
@@ -1813,6 +1838,10 @@ webkit.org/b/224074 webrtc/concurrentVideoPlayback2.html [ Timeout Pass ]
 # Pending investigation.
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
+
+# Flakes moved from wpe/TestExpectations -- if they're flaky in WPE they're very likely to be flaky in GTK
+http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
+media/video-seek-to-current-time.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2178,6 +2207,11 @@ media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Pass ]
 webkit.org/b/205857 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 
+webkit.org/b/251550 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Crash Pass ]
+webkit.org/b/251550 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash Pass ]
+webkit.org/b/251550 media/encrypted-media/mock-MediaKeySession-update.html [ Crash Pass ]
+webkit.org/b/251550 media/encrypted-media/mock-MediaKeySession-load.html [ Crash Pass ]
+
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]
@@ -2513,6 +2547,9 @@ http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html [ 
 #////////////////////////////////////////////////////////////////////////////////////////
 # NEEDS TRIAGING. If unsure, put it in this section.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# Failing in macOS ports as well, but seem to reproduce more often in GStreamer ports, may or may not be the same bug.
+webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
@@ -2903,7 +2940,7 @@ webkit.org/b/198830 media/context-menu-actions.html [ Failure ]
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
 webkit.org/b/254207 media/media-source/media-source-remove-readystate.html [ Failure ]
-webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [ Failure ]
+webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [ Pass Failure Timeout ]
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
 
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure Timeout ]
@@ -2911,7 +2948,7 @@ webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure Timeout ]
 webkit.org/b/131546 media/track/track-in-band.html [ Failure ]
 
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
-webkit.org/b/177536 media/video-object-fit.html [ ImageOnlyFailure ]
+webkit.org/b/177536 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Crash ]
 
@@ -3012,7 +3049,7 @@ webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
 # Test is a flaky timeout. The test is also skipped in iOS and Windows.
 media/video-remote-control-playpause.html [ Skip ]
 
-webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Pass ]
+webkit.org/b/207062 webkit.org/b/244776 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Pass Crash ]
 
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 webkit.org/b/229738 fast/text/word-break.html [ Failure ]

@@ -60,6 +60,7 @@ public:
     bool selectorsNeedNamespaceResolution();
     bool hasInvalidSelector() const;
     bool hasExplicitNestingParent() const;
+    bool hasOnlyNestingSelector() const;
 
     String selectorsText() const;
     void buildSelectorsText(StringBuilder&) const;

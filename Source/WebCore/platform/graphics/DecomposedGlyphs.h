@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "FloatRect.h"
 #include "PositionedGlyphs.h"
 #include "RenderingResource.h"
 
@@ -40,7 +39,6 @@ public:
     const PositionedGlyphs& positionedGlyphs() const { return m_positionedGlyphs; }
 
 private:
-    DecomposedGlyphs(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier);
     DecomposedGlyphs(PositionedGlyphs&&, RenderingResourceIdentifier);
 
     PositionedGlyphs m_positionedGlyphs;

@@ -36,7 +36,7 @@
             makeASample(6, 6, 1, 1, 1, SAMPLE_FLAG.NONE),
             makeASample(8, 7, 1, 1, 1, SAMPLE_FLAG.NONE),
         ]);
-        
+
         run('sourceBuffer.appendBuffer(samples)');
         await waitFor(sourceBuffer, 'updateend');
 
@@ -56,7 +56,7 @@
 
         endTest();
     });
-    
+
     </script>
 </head>
 <body>

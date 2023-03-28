@@ -562,7 +562,7 @@ end
 def cloopEmitCallSlowPath(operands)
     $asm.putc "{"
     $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
-    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
+    $asm.putc "    UGPRPair result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
     $asm.putc "    decodeResult(result, t0, t1);"
     $asm.putc "}"
 end
@@ -575,7 +575,7 @@ end
 def cloopEmitCallSlowPath3(operands)
     $asm.putc "{"
     $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
-    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump});"
+    $asm.putc "    UGPRPair result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump});"
     $asm.putc "    decodeResult(result, t0, t1);"
     $asm.putc "}"
 end
@@ -583,7 +583,7 @@ end
 def cloopEmitCallSlowPath4(operands)
     $asm.putc "{"
     $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
-    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump}, #{operands[4].clDump});"
+    $asm.putc "    UGPRPair result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump}, #{operands[4].clDump});"
     $asm.putc "    decodeResult(result, t0, t1);"
     $asm.putc "}"
 end

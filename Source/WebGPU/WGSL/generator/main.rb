@@ -75,6 +75,10 @@ class NumericValue
         @value = value
     end
 
+    def to_s
+      value.to_s
+    end
+
     def to_cpp
         "AbstractValue { #{value}u }"
     end
@@ -88,11 +92,42 @@ class AbstractType
     end
 
     def [](*arguments)
-        ParameterizedType.new(self, arguments)
+        # This is a bit hacky, but the idea is that types such as Vector can
+        # either become:
+        # 1) An AbstractType, if it receives a variable. This AbstractType will
+        #    later be promoted to a concrete type once an overload is chosen.
+        # 2) A concrete type if it's given a concrete type. Since there are no
+        #    variables involved, we can immediately construct a concrete type.
+        if arguments[0].is_a? Variable
+            ParameterizedAbstractType.new(self, arguments)
+        else
+            Constructor.new(@name.downcase)[*arguments]
+        end
     end
 
     def to_s
         @name.to_s
+    end
+end
+
+class Constructor
+    attr_reader :name, :arguments
+
+    def initialize(name, arguments = nil)
+        @name = name
+        @arguments = arguments
+    end
+
+    def [](*arguments)
+        return Constructor.new(@name, arguments)
+    end
+
+    def to_s
+        "#{name.to_s}[#{arguments.map(&:to_s).join(", ")}]"
+    end
+
+    def to_cpp
+        "AbstractType { m_types.#{name}Type(#{arguments.map { |a| a.respond_to? :to_cpp and a.to_cpp or a}.join ", "}) }"
     end
 end
 
@@ -108,11 +143,11 @@ class PrimitiveType
     end
 
     def to_cpp
-        "AbstractType { m_types.#{name.downcase}Type() }"
+        "m_types.#{name.downcase}Type()"
     end
 end
 
-class ParameterizedType
+class ParameterizedAbstractType
     attr_reader :base, :arguments
 
     def initialize(base, arguments)
@@ -229,10 +264,20 @@ module DSL
         Matrix = AbstractType.new(:Matrix)
         Array = AbstractType.new(:Array)
 
+        Texture = Constructor.new(:texture)
+
+        Texture1d = Variable.new(:"Types::Texture::Kind::Texture1d", nil)
+        Texture2d = Variable.new(:"Types::Texture::Kind::Texture2d", nil)
+        Texture2dArray = Variable.new(:"Types::Texture::Kind::Texture2dArray", nil)
+        Texture3d = Variable.new(:"Types::Texture::Kind::Texture3d", nil)
+        TextureCube = Variable.new(:"Types::Texture::Kind::TextureCube", nil)
+        TextureCubeArray = Variable.new(:"Types::Texture::Kind::TextureCubeArray", nil)
+
         Bool = PrimitiveType.new(:Bool)
         I32 = PrimitiveType.new(:I32)
         U32 = PrimitiveType.new(:U32)
         F32 = PrimitiveType.new(:F32)
+        Sampler = PrimitiveType.new(:Sampler)
         AbstractInt = PrimitiveType.new(:AbstractInt)
 
 
@@ -243,6 +288,7 @@ module DSL
 
         Number = Constraint.new(:Number)
         Float = Constraint.new(:Float)
+        ConcreteInteger = Constraint.new(:ConcreteInteger)
         EOS
     end
 

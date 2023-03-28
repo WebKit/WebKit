@@ -380,6 +380,7 @@ public:
     bool isMouseClickRelatedEventType(const AtomString& eventType) const;
     bool isMouseMoveRelatedEventType(const AtomString& eventType) const;
     bool isCSSTransitionEventType(const AtomString& eventType) const;
+    bool isCSSAnimationEventType(const AtomString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomString& eventType) const;
 #endif
@@ -465,6 +466,17 @@ inline bool EventNames::isCSSTransitionEventType(const AtomString& eventType) co
         || eventType == transitionrunEvent
         || eventType == transitionstartEvent
         || eventType == webkitTransitionEndEvent;
+}
+
+inline bool EventNames::isCSSAnimationEventType(const AtomString& eventType) const
+{
+    return eventType == animationcancelEvent
+        || eventType == animationendEvent
+        || eventType == animationiterationEvent
+        || eventType == animationstartEvent
+        || eventType == webkitAnimationEndEvent
+        || eventType == webkitAnimationIterationEvent
+        || eventType == webkitAnimationStartEvent;
 }
 
 inline std::array<std::reference_wrapper<const AtomString>, 13> EventNames::touchRelatedEventNames() const

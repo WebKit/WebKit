@@ -38,8 +38,7 @@ template<typename T> std::optional<T> parseEnumeration(JSC::JSGlobalObject&, JSC
 template<typename T> const char* expectedEnumerationValues();
 
 // Specialized by generated code for IDL enumeration conversion.
-template<typename T> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, T);
-
+template<typename T> JSC::JSString* convertEnumerationToJS(JSC::VM&, T);
 
 template<typename T> struct Converter<IDLEnumeration<T>> : DefaultConverter<IDLEnumeration<T>> {
     template<typename ExceptionThrower = DefaultExceptionThrower>
@@ -65,7 +64,7 @@ template<typename T> struct JSConverter<IDLEnumeration<T>> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, T value)
     {
-        return convertEnumerationToJS(lexicalGlobalObject, value);
+        return convertEnumerationToJS(lexicalGlobalObject.vm(), value);
     }
 };
 

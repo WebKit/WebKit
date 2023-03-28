@@ -228,6 +228,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(GTK)
+    bool useDMABufSurfaceForCompositing { false };
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;
 #endif

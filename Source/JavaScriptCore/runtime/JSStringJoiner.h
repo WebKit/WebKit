@@ -69,7 +69,7 @@ inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView s
 inline JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
 {
     if (m_strings.size() == 1)
-        return jsString(globalObject->vm(), m_strings[0].view.toString());
+        return jsString(globalObject->vm(), m_strings[0].toString());
     return joinSlow(globalObject);
 }
 

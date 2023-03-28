@@ -55,6 +55,7 @@ public:
     // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
+    void visit(AST::CompoundStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -203,11 +204,11 @@ void TypeChecker::visit(AST::Function& function)
 
 void TypeChecker::visitFunctionBody(AST::Function& function)
 {
-    ContextProvider::ContextScope functionContext(this);
+    ContextScope functionContext(this);
 
     for (auto& parameter : function.parameters()) {
         auto* parameterType = resolve(parameter.typeName());
-        ContextProvider::introduceVariable(parameter.name(), parameterType);
+        introduceVariable(parameter.name(), parameterType);
     }
 
     AST::Visitor::visit(function.body());
@@ -229,6 +230,12 @@ void TypeChecker::visit(AST::ReturnStatement& statement)
 
     // FIXME: unify type with the curent function's return type
     UNUSED_PARAM(type);
+}
+
+void TypeChecker::visit(AST::CompoundStatement& statement)
+{
+    ContextScope blockScope(this);
+    AST::Visitor::visit(statement);
 }
 
 // Expressions
@@ -318,9 +325,35 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
 
 void TypeChecker::visit(AST::CallExpression& call)
 {
-    auto* target = resolve(call.target());
-    // FIXME: validate arguments
-    inferred(target);
+    Vector<Type*> arguments;
+    arguments.reserveInitialCapacity(call.arguments().size());
+    for (auto& argument : call.arguments())
+        arguments.append(infer(argument));
+
+    auto& target = call.target();
+    if (is<AST::NamedTypeName>(target)) {
+        auto& namedTarget = downcast<AST::NamedTypeName>(target);
+        auto* result = chooseOverload(namedTarget.name(), arguments);
+        if (result)
+            inferred(result);
+        else {
+            StringPrintStream argumentsString;
+            bool first = true;
+            for (auto* argument : arguments) {
+                if (!first)
+                    argumentsString.print(", ");
+                first = false;
+                argumentsString.print(*argument);
+            }
+            typeError(call.span(), "no matching overload for initializer ", namedTarget.name(), "(", argumentsString.toString(), ")");
+        }
+        return;
+    }
+
+    // FIXME: add support parameterized type constructors (e.g. vec4<f32>(...))
+    // FIXME: add support for user-defined function calls
+    auto* result = resolve(target);
+    inferred(result);
 }
 
 // Literal Expressions
@@ -387,7 +420,7 @@ void TypeChecker::visit(AST::ArrayTypeName& array)
 
 void TypeChecker::visit(AST::NamedTypeName& namedType)
 {
-    auto* const* type = ContextProvider::readVariable(namedType.name());
+    auto* const* type = readVariable(namedType.name());
     if (type) {
         inferred(*type);
         return;

@@ -7148,11 +7148,6 @@ void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashS
     MediaPlayer::clearMediaCacheForOrigins(path, origins);
 }
 
-void HTMLMediaElement::resetMediaEngines()
-{
-    MediaPlayer::resetMediaEngines();
-}
-
 void HTMLMediaElement::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
     // FIXME: We should try to reconcile this so there's no difference for PLATFORM(IOS_FAMILY).

@@ -44,12 +44,14 @@ public:
     void cacheNativeImage(Ref<WebCore::NativeImage>&&, QualifiedRenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
+    void cacheGradient(Ref<WebCore::Gradient>&&, QualifiedRenderingResourceIdentifier);
 
     RemoteImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
     RefPtr<RemoteImageBuffer> takeImageBuffer(QualifiedRenderingResourceIdentifier);
     WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier) const;
+    WebCore::Gradient* cachedGradient(QualifiedRenderingResourceIdentifier) const;
 
     std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
 

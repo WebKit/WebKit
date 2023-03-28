@@ -127,6 +127,8 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_unifiedOriginStorageLevel = this->m_unifiedOriginStorageLevel;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_originQuotaRatio = this->m_originQuotaRatio;
+    copy->m_totalQuotaRatio = this->m_totalQuotaRatio;
+    copy->m_volumeCapacityOverride = this->m_volumeCapacityOverride;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
     copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;

@@ -46,15 +46,15 @@ EGLSurface GLContext::createWindowSurfaceX11(EGLDisplay display, EGLConfig confi
 
 std::unique_ptr<GLContext> GLContext::createPixmapContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, PixmapSurface))
+    if (!getEGLConfig(platformDisplay, &config, PixmapSurface))
         return nullptr;
 
     EGLContext context = createContextForEGLVersion(platformDisplay, config, sharingContext);
     if (context == EGL_NO_CONTEXT)
         return nullptr;
 
+    EGLDisplay display = platformDisplay.eglDisplay();
     EGLint visualId;
     if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &visualId)) {
         eglDestroyContext(display, context);

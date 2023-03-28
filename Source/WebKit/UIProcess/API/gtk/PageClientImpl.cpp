@@ -38,6 +38,7 @@
 #include "WebContextMenuProxyGtk.h"
 #include "WebDataListSuggestionsDropdownGtk.h"
 #include "WebEventFactory.h"
+#include "WebKitClipboardPermissionRequestPrivate.h"
 #include "WebKitColorChooser.h"
 #include "WebKitPopupMenu.h"
 #include "WebKitWebViewBaseInternal.h"
@@ -56,6 +57,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -552,13 +554,19 @@ void PageClientImpl::derefView()
 void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get("CLIPBOARD"_s);
-    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [originIdentifier, completionHandler = WTFMove(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
+    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, completionHandler = WTFMove(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
         if (PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
             completionHandler(DOMPasteAccessResponse::GrantedForGesture);
             return;
         }
 
-        completionHandler(DOMPasteAccessResponse::DeniedForGesture);
+        if (!WEBKIT_IS_WEB_VIEW(weakWebView.get())) {
+            completionHandler(DOMPasteAccessResponse::DeniedForGesture);
+            return;
+        }
+
+        GRefPtr<WebKitClipboardPermissionRequest> request = adoptGRef(webkitClipboardPermissionRequestCreate(WTFMove(completionHandler)));
+        webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(weakWebView.get()), WEBKIT_PERMISSION_REQUEST(request.get()));
     });
 }
 

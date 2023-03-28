@@ -65,6 +65,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& video
     : PlatformCALayerRemote(LayerTypeAVPlayerLayer, owner, context)
 {
     m_layerHostingContext = LayerHostingContext::createTransportLayerForRemoteHosting(videoElement.layerHostingContextID());
+    m_hasVideo = true;
 }
 
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(LayerType layerType, PlatformLayer * customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)

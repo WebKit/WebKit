@@ -45,9 +45,9 @@ String convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestStandaloneEnumeration enumerationValue)
+template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneEnumeration enumerationValue)
 {
-    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
 template<> std::optional<TestStandaloneEnumeration> parseEnumerationFromString<TestStandaloneEnumeration>(const String& stringValue)

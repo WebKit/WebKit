@@ -1,4 +1,4 @@
 
 PASS Simple CSSOM manipulation of subrules
-FAIL Simple CSSOM manipulation of subrules 1 assert_throws_dom: function "() => { ss.cssRules[0].cssRules[0].insertRule('@font-face {}', 0); }" threw object "TypeError: undefined is not an object (evaluating 'ss.cssRules[0].cssRules[0]')" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL Simple CSSOM manipulation of subrules 1 assert_throws_dom: function "() => { ss.cssRules[0].cssRules[0].insertRule('@font-face {}', 0); }" did not throw
 

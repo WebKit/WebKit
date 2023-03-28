@@ -49,7 +49,7 @@ void CSSCounterStyleRegistry::resolveUserAgentReferences()
 }
 void CSSCounterStyleRegistry::resolveReferencesIfNeeded()
 {
-    if (!hasUnresolvedReferences)
+    if (!m_hasUnresolvedReferences)
         return;
 
     for (auto& [name, counter] : m_authorCounterStyles) {
@@ -58,7 +58,7 @@ void CSSCounterStyleRegistry::resolveReferencesIfNeeded()
         if (counter->isExtendsSystem() && counter->isExtendsUnresolved())
             resolveExtendsReference(*counter, &m_authorCounterStyles);
     }
-    hasUnresolvedReferences = false;
+    m_hasUnresolvedReferences = false;
 }
 
 void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counterStyle, CounterStyleMap* map)
@@ -107,7 +107,7 @@ void CSSCounterStyleRegistry::resolveFallbackReference(CSSCounterStyle& counter,
 
 void CSSCounterStyleRegistry::addCounterStyle(const CSSCounterStyleDescriptors& descriptors)
 {
-    hasUnresolvedReferences = true;
+    m_hasUnresolvedReferences = true;
     m_authorCounterStyles.set(descriptors.m_name, CSSCounterStyle::create(descriptors, false));
 }
 
@@ -227,6 +227,19 @@ bool isCounterStyleUnsupportedByUserAgent(CSSValueID valueID)
     default:
         return false;
     }
+}
+
+void CSSCounterStyleRegistry::clearAuthorCounterStyles()
+{
+    if (m_authorCounterStyles.isEmpty())
+        return;
+    m_authorCounterStyles.clear();
+    invalidate();
+}
+
+void CSSCounterStyleRegistry::invalidate()
+{
+    m_hasUnresolvedReferences = true;
 }
 
 }

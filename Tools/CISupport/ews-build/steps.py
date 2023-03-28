@@ -191,51 +191,33 @@ class GitHubMixin(object):
         else:
             defer.returnValue(response)
 
-    # FIXME: Remove when all GitHub requests are using Twisted's deferred requests
-    def fetch_data_from_url_with_authentication_github_old(self, url):
-        response = None
-        try:
-            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.get(
-                url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-            )
-            if response.status_code // 100 != 2:
-                self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-                return False if response.status_code // 100 == 4 else None
-        except Exception as e:
-            # Catching all exceptions here to safeguard access token.
-            self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
-            return None
-        return response
-
+    @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return None
+            return defer.returnValue(None)
 
         pr_url = '{}/pulls/{}'.format(api_url, pr_number)
-        content = self.fetch_data_from_url_with_authentication_github_old(pr_url)
+        content = yield self.fetch_data_from_url_with_authentication_github(pr_url)
         if not content:
-            return content
+            return defer.returnValue(content)
 
         for attempt in range(retry + 1):
             try:
                 pr_json = content.json()
                 if pr_json and len(pr_json):
-                    return pr_json
+                    return defer.returnValue(pr_json)
             except Exception as e:
-                self._addToLog('stdio', 'Failed to get pull request data from {}, error: {}'.format(pr_url, e))
+                yield self._addToLog('stdio', 'Failed to get pull request data from {}, error: {}'.format(pr_url, e))
 
-            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+            yield self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
             if attempt > retry:
-                return None
+                return defer.returnValue(None)
             wait_for = (attempt + 1) * 15
-            self._addToLog('stdio', 'Backing off for {} seconds before retrying.\n'.format(wait_for))
-            time.sleep(wait_for)
+            yield self._addToLog('stdio', 'Backing off for {} seconds before retrying.\n'.format(wait_for))
+            yield task.deferLater(reactor, wait_for, lambda: None)
 
-        return None
+        return defer.returnValue(None)
 
     @defer.inlineCallbacks
     def get_reviewers(self, pr_number, repository_url=None):
@@ -254,7 +236,7 @@ class GitHubMixin(object):
                 break
             response_content = content.json() or []
             if not isinstance(response_content, list):
-                self._addToLog('stdio', f"Malformed response when listing reviews with '{url}'\n")
+                yield self._addToLog('stdio', f"Malformed response when listing reviews with '{url}'\n")
                 break
             reviews += response_content
             if len(response_content) < self.PER_PAGE_LIMIT:
@@ -322,13 +304,13 @@ class GitHubMixin(object):
 
     @defer.inlineCallbacks
     def should_send_email_for_pr(self, pr_number, repository_url=None):
-        pr_json = self.get_pr_json(pr_number, repository_url=repository_url)
+        pr_json = yield self.get_pr_json(pr_number, repository_url=repository_url)
         if not pr_json:
             return defer.returnValue(True)
 
         is_hash_outdated = yield self._is_hash_outdated(pr_json)
         if 1 == is_hash_outdated:
-            self._addToLog('stdio', 'Skipping email since hash {} on PR #{} is outdated\n'.format(
+            yield self._addToLog('stdio', 'Skipping email since hash {} on PR #{} is outdated\n'.format(
                 self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number,
             ))
             return defer.returnValue(False)
@@ -1802,7 +1784,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             return defer.returnValue(FAILURE)
 
         repository_url = self.getProperty('repository', '')
-        pr_json = self.get_pr_json(pr_number, repository_url, retry=3)
+        pr_json = yield self.get_pr_json(pr_number, repository_url, retry=3)
 
         pr_closed = yield self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
@@ -2061,7 +2043,7 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         rc = SKIPPED
         repository_url = self.getProperty('repository', '')
-        pr_json = self.get_pr_json(pr_number, repository_url)
+        pr_json = yield self.get_pr_json(pr_number, repository_url)
 
         if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
             yield self._addToLog('stdio', 'Skipping this step on non-production instance.\n')
@@ -2448,7 +2430,7 @@ class ReRunWebKitPerlTests(RunWebKitPerlTests):
 class RunBuildWebKitOrgUnitTests(shell.ShellCommandNewStyle):
     name = 'build-webkit-org-unit-tests'
     description = ['build-webkit-unit-tests running']
-    command = ['python3', 'runUnittests.py', 'build-webkit-org']
+    command = ['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall']
 
     def __init__(self, **kwargs):
         super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -2462,7 +2444,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommandNewStyle):
 class RunEWSUnitTests(shell.ShellCommandNewStyle):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
-    command = ['python3', 'runUnittests.py', 'ews-build']
+    command = ['python3', 'runUnittests.py', 'ews-build', '--autoinstall']
 
     def __init__(self, **kwargs):
         super().__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -2476,7 +2458,7 @@ class RunEWSUnitTests(shell.ShellCommandNewStyle):
 class RunBuildbotCheckConfig(shell.ShellCommand):
     name = 'buildbot-check-config'
     description = ['buildbot-checkconfig running']
-    command = ['buildbot', 'checkconfig']
+    command = ['python3', '../buildbot-cmd', 'checkconfig']
     directory = 'build/Tools/CISupport/ews-build'
     timeout = 2 * 60
 

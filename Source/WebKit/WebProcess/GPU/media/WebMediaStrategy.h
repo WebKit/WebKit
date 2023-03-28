@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-class WebMediaStrategy : public WebCore::MediaStrategy {
+class WebMediaStrategy final : public WebCore::MediaStrategy {
 public:
     virtual ~WebMediaStrategy();
 
@@ -43,6 +43,9 @@ private:
         const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override;
 #endif
     std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
+#if ENABLE(MEDIA_SOURCE)
+    void enableMockMediaSource() final;
+#endif
 
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcess { false };

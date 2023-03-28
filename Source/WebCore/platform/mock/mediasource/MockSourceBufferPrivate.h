@@ -46,6 +46,8 @@ public:
 
     void clearMediaSource() { m_mediaSource = nullptr; }
 
+    bool isActive() const final;
+
 private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
@@ -67,7 +69,6 @@ private:
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
     void setActive(bool) final;
-    bool isActive() const final;
 
     void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;

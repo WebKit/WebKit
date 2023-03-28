@@ -43,10 +43,16 @@ public:
         AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) = 0;
 #endif
     virtual std::unique_ptr<NowPlayingManager> createNowPlayingManager() const;
-
+    void resetMediaEngines();
+#if ENABLE(MEDIA_SOURCE)
+    virtual void enableMockMediaSource();
+    bool mockMediaSourceEnabled() const;
+    static void addMockMediaSourceEngine();
+#endif
 protected:
     MediaStrategy();
     virtual ~MediaStrategy();
+    bool m_mockMediaSourceEnabled { false };
 };
 
 } // namespace WebCore

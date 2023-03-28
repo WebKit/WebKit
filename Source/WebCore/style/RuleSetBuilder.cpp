@@ -411,8 +411,6 @@ void RuleSetBuilder::addMutatingRulesToResolver()
                 continue;
             auto& registry = m_resolver->document().styleScope().counterStyleRegistry();
             registry.addCounterStyle(downcast<StyleRuleCounterStyle>(rule.get()).descriptors());
-            // FIXME: we probably need a cache solultion like fontSelector (invalidateMatchedDeclarations)
-            // KeyFrame does it differently, search for keyframesRuleDidChange. (rdar://103018993)
             continue;
         }
         if (is<StyleRuleProperty>(rule)) {

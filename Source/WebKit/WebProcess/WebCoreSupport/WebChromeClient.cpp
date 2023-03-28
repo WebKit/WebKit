@@ -141,6 +141,10 @@
 #include "WebIconUtilities.h"
 #endif
 
+#if PLATFORM(MAC)
+#include <WebCore/ScrollbarsController.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
@@ -1051,6 +1055,21 @@ RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& p
 }
 
 #endif
+
+#if PLATFORM(MAC)
+std::unique_ptr<ScrollbarsController> WebChromeClient::createScrollbarsController(Page& page, ScrollableArea& area) const
+{
+    ASSERT_UNUSED(page, m_page.corePage() == &page);
+    switch (m_page.drawingArea()->type()) {
+    case DrawingAreaType::RemoteLayerTree:
+        return makeUnique<ScrollbarsController>(area);
+    default:
+        return nullptr;
+    }
+    return nullptr;
+}
+#endif
+
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 

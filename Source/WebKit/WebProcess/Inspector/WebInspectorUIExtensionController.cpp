@@ -42,13 +42,11 @@
 
 namespace WebKit {
 
-WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::InspectorFrontendClient& inspectorFrontend)
+WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::InspectorFrontendClient& inspectorFrontend, WebCore::PageIdentifier pageIdentifier)
     : m_frontendClient(inspectorFrontend)
+    , m_inspectorPageIdentifier(pageIdentifier)
 {
-    auto* page = inspectorFrontend.frontendPage();
-    ASSERT(page);
-
-    m_inspectorPageIdentifier = WebPage::fromCorePage(*page).identifier();
+    ASSERT(inspectorFrontend.frontendPage() && WebPage::fromCorePage(*inspectorFrontend.frontendPage())->identifier() == pageIdentifier);
 
     WebProcess::singleton().addMessageReceiver(Messages::WebInspectorUIExtensionController::messageReceiverName(), m_inspectorPageIdentifier, *this);
 }

@@ -40,10 +40,14 @@
 #include "AcceleratedBackingStoreX11.h"
 #endif
 
+#if USE(GBM)
+#include "AcceleratedBackingStoreDMABuf.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
-#if PLATFORM(WAYLAND)
+#if USE(GBM)
 static bool gtkCanUseHardwareAcceleration()
 {
     static bool canUseHardwareAcceleration;
@@ -68,6 +72,10 @@ static bool gtkCanUseHardwareAcceleration()
 
 bool AcceleratedBackingStore::checkRequirements()
 {
+#if USE(GBM)
+    if (AcceleratedBackingStoreDMABuf::checkRequirements())
+        return gtkCanUseHardwareAcceleration();
+#endif
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return AcceleratedBackingStoreWayland::checkRequirements() && gtkCanUseHardwareAcceleration();
@@ -85,6 +93,10 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
     if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
         return nullptr;
 
+#if USE(GBM)
+    if (AcceleratedBackingStoreDMABuf::checkRequirements())
+        return AcceleratedBackingStoreDMABuf::create(webPage);
+#endif
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return AcceleratedBackingStoreWayland::create(webPage);

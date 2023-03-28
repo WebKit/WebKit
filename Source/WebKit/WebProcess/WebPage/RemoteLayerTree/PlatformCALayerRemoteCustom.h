@@ -49,6 +49,8 @@ public:
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;
 
+    bool hasVideo() const { return m_hasVideo; }
+
 private:
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemoteCustom(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
@@ -62,6 +64,7 @@ private:
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
 
+    bool m_hasVideo { false };
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<PlatformLayer> m_platformLayer;
 };

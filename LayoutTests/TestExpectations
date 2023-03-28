@@ -4876,18 +4876,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
 
-# Tests that fail because @counter-style is not implemented yet. Could skip the entire directory instead.
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
-
 # More @counter-style failures due to not being implemented.
 imported/w3c/web-platform-tests/css/css-conditional/at-media-content-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-004.html [ ImageOnlyFailure ]
@@ -6166,6 +6154,7 @@ imported/w3c/web-platform-tests/wasm/serialization/module/share-module-cross-ori
 imported/w3c/web-platform-tests/wasm/serialization/module/window-domain-success.sub.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/window-similar-but-cross-origin-success.sub.html [ Skip ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.window.html [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onicecandidateerror.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html [ Skip ]
@@ -6176,7 +6165,11 @@ imported/w3c/web-platform-tests/workers/modules/shared-worker-import-data-url.wi
 imported/w3c/web-platform-tests/workers/modules/shared-worker-options-credentials.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-after-setting-document-domain.htm [ Skip ]
 
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_annexb [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.html [ DumpJSConsoleLogInStdErr ]
 
@@ -6331,3 +6324,5 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/254259 http/tests/priority-hints/fetch-api-priority.html [ Failure Pass ]
+
+webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]

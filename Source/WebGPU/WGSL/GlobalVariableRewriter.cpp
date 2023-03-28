@@ -236,10 +236,23 @@ void RewriteGlobalVariables::insertStructs()
 
             ASSERT(global.declaration->maybeTypeName());
             auto span = global.declaration->span();
+
+            auto* type = global.declaration->maybeTypeName()->resolvedType();
+            bool shouldBeReference = true;
+            if (std::get_if<Types::Texture>(type))
+                shouldBeReference = false;
+            else if (auto* primitive = std::get_if<Types::Primitive>(type)) {
+                if (primitive->kind == Types::Primitive::Sampler)
+                    shouldBeReference = false;
+            }
+
+            AST::TypeName::Ref memberType = *global.declaration->maybeTypeName();
+            if (shouldBeReference)
+                memberType = adoptRef(*new AST::ReferenceTypeName(span, WTFMove(memberType)));
             structMembers.append(makeUniqueRef<AST::StructureMember>(
                 span,
                 AST::Identifier::make(global.declaration->name()),
-                adoptRef(*new AST::ReferenceTypeName(span, *global.declaration->maybeTypeName())),
+                WTFMove(memberType),
                 AST::Attribute::List {
                     adoptRef(*new AST::BindingAttribute(span, binding))
                 }

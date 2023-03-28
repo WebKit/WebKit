@@ -37,6 +37,7 @@ namespace JSC { namespace Wasm {
 
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : m_compilationMode(compilationMode)
+    , m_implementationVisibility(ImplementationVisibility::Private)
 {
 }
 

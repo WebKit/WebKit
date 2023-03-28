@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,10 +143,23 @@ void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
         return true;
     };
 
-    if (!fixPatternTileImage(item.state().fillBrush().pattern()))
+    auto fixBrushGradient = [&](SourceBrush& brush) -> bool {
+        auto gradientIdentifier = brush.gradientIdentifier();
+        if (!gradientIdentifier)
+            return true;
+        auto gradient = resourceCache().cachedGradient({ *gradientIdentifier, m_webProcessIdentifier });
+        if (!gradient) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        brush.setGradient(*gradient, brush.gradientSpaceTransform());
+        return true;
+    };
+
+    if (!fixPatternTileImage(item.state().fillBrush().pattern()) || !fixBrushGradient(item.state().fillBrush()))
         return;
 
-    if (!fixPatternTileImage(item.state().strokeBrush().pattern()))
+    if (!fixPatternTileImage(item.state().strokeBrush().pattern()) || !fixBrushGradient(item.state().strokeBrush()))
         return;
 
     handleItem(WTFMove(item));

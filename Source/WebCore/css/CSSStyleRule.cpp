@@ -142,42 +142,88 @@ Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
     return { };
 }
 
+// https://w3c.github.io/csswg-drafts/cssom-1/#serialize-a-css-rule
 String CSSStyleRule::cssText() const
 {
     StringBuilder builder;
     builder.append(selectorText());
     builder.append(" {");
 
-    auto declarations = m_styleRule->properties().asText();
+    auto declsString = m_styleRule->properties().asText();
+    StringBuilder decls;
+    StringBuilder rules;
 
-    if (nestedRules().isEmpty()) {
-        if (!declarations.isEmpty())
-            builder.append(' ', declarations, " }");
-        else
-            builder.append(" }");
+    decls.append(declsString);
+    cssTextForDeclsAndRules(decls, rules);
 
+    if (decls.isEmpty() && rules.isEmpty()) {
+        builder.append(" }");
         return builder.toString();
     }
 
-    builder.append("\n  ", declarations);
-    for (const auto& nestedRule : nestedRules()) {
-        auto wrapped = nestedRule->createCSSOMWrapper();
-        auto text = wrapped->cssText();
-        builder.append(text, "\n}");
+    if (rules.isEmpty()) {
+        builder.append(' ');
+        builder.append(decls);
+        builder.append(" }");
+        return builder.toString();
     }
 
+    if (decls.isEmpty()) {
+        builder.append(rules);
+        builder.append("\n}");
+        return builder.toString();
+    }
+
+    builder.append("\n  ");
+    builder.append(decls);
+    builder.append(rules);
+    builder.append("\n}");
     return builder.toString();
+}
+
+void CSSStyleRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& rules) const
+{
+    // FIXME: share this with CSSGroupingRule.
+    for (unsigned index = 0 ; index < nestedRules().size() ; index++) {
+        // We put the declarations at the upper level when the rule:
+        // - is a style rule
+        // - has just "&" as selector
+        // - has no child rules
+        auto childRule = nestedRules()[index];
+        if (childRule->isStyleRuleWithNesting()) {
+            auto& nestedStyleRule = downcast<StyleRuleWithNesting>(childRule.get());
+            if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
+                decls.append(nestedStyleRule.properties().asText());
+                continue;
+            }
+        }
+        // Otherwise we print the child rule
+        auto wrappedRule = item(index);
+        rules.append("\n  ", wrappedRule->cssText());
+    }
 }
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    if (m_styleRule->isStyleRuleWithNesting())
-        m_styleRule = downcast<StyleRuleWithNesting>(rule);
+    if (rule.isStyleRuleWithNesting())
+        m_styleRule = downcast<StyleRuleWithNesting>(rule);        
     else
         m_styleRule = downcast<StyleRule>(rule);
-
+        
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
+}
+
+ExceptionOr<unsigned> CSSStyleRule::insertRule(const String&, unsigned)
+{
+    // FIXME: to implement (or use CSSGroupingRule).
+    return Exception { NotSupportedError };
+}
+
+ExceptionOr<void> CSSStyleRule::deleteRule(unsigned)
+{
+    // FIXME: to implement (or use CSSGroupingRule).
+    return Exception { NotSupportedError };
 }
 
 unsigned CSSStyleRule::length() const

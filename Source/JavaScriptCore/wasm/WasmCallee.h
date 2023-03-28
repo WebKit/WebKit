@@ -52,6 +52,7 @@ class Callee : public ThreadSafeRefCounted<Callee> {
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
+    ImplementationVisibility implementationVisibility() const { return m_implementationVisibility; }
 
     CodePtr<WasmEntryPtrTag> entrypoint() const;
     RegisterAtOffsetList* calleeSaveRegisters();
@@ -76,6 +77,7 @@ protected:
 
 private:
     const CompilationMode m_compilationMode;
+    ImplementationVisibility m_implementationVisibility { ImplementationVisibility::Public };
     const IndexOrName m_indexOrName;
 
 protected:

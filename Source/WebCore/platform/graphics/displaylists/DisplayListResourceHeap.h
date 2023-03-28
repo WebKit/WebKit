@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "DecomposedGlyphs.h"
 #include "Font.h"
+#include "Gradient.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "RenderingResourceIdentifier.h"
@@ -46,6 +47,7 @@ public:
     virtual std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier) const = 0;
     virtual Font* getFont(RenderingResourceIdentifier) const = 0;
     virtual DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier) const = 0;
+    virtual Gradient* getGradient(RenderingResourceIdentifier) const = 0;
 };
 
 class LocalResourceHeap : public ResourceHeap {
@@ -68,6 +70,11 @@ public:
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<DecomposedGlyphs>&& decomposedGlyphs)
     {
         m_resources.add(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
+    }
+
+    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Gradient>&& gradient)
+    {
+        m_resources.add(renderingResourceIdentifier, WTFMove(gradient));
     }
 
     ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const final
@@ -104,6 +111,11 @@ public:
         return get<DecomposedGlyphs>(renderingResourceIdentifier);
     }
 
+    Gradient* getGradient(RenderingResourceIdentifier renderingResourceIdentifier) const final
+    {
+        return get<Gradient>(renderingResourceIdentifier);
+    }
+
     void clear()
     {
         m_resources.clear();
@@ -120,9 +132,18 @@ private:
         return std::get<Ref<T>>(iterator->value).ptr();
     }
 
-    using Resource = std::variant<std::monostate, Ref<ImageBuffer>, Ref<NativeImage>, Ref<Font>, Ref<DecomposedGlyphs>>;
+    using Resource = std::variant<
+        std::monostate,
+        Ref<ImageBuffer>,
+        Ref<NativeImage>,
+        Ref<Font>,
+        Ref<DecomposedGlyphs>,
+        Ref<Gradient>
+    >;
+
     HashMap<RenderingResourceIdentifier, Resource> m_resources;
 };
 
-}
-}
+} // namespace DisplayList
+
+} // namespace WebCore

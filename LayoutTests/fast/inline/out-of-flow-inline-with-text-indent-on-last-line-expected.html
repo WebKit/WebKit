@@ -1,0 +1,24 @@
+<style>
+.container {
+  width: 50px;
+  height: 45px;
+  font-size: 10px;
+  color: transparent;
+  font-family: Ahem;
+  background-color: green;
+}
+.ref {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-color: blue;
+  position: relative;
+}
+</style>
+<div class=container>some text<br><div class=ref></div></div>
+<div class=container>some text<br><div class=ref style="left: 25px;"></div></div>
+<div class=container>some text<br><div class=ref style="left: -25px;"></div></div>
+<div class=container>some text<br><div class=ref></div></div>
+<div class=container>some text<br><div class=ref style="left: 50px;"></div></div>
+<div class=container>some text<br><div class=ref style="left: 20px; top: 0px; height: 30px;"></div></div>
+<div class=container></div>

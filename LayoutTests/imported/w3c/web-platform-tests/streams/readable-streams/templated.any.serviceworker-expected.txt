@@ -9,7 +9,7 @@ PASS ReadableStream (empty) reader: read() should never settle
 PASS ReadableStream (empty) reader: two read()s should both never settle
 PASS ReadableStream (empty) reader: read() should return distinct promises each time
 PASS ReadableStream (empty) reader: getReader() again on the stream should fail
-FAIL ReadableStream (empty) reader: releasing the lock should reject all pending read requests promise_test: Unhandled rejection with value: object "TypeError: There are still pending read requests, cannot release the lock"
+PASS ReadableStream (empty) reader: releasing the lock should reject all pending read requests
 PASS ReadableStream (empty) reader: releasing the lock should cause further read() calls to reject with a TypeError
 PASS ReadableStream (empty) reader: releasing the lock should cause closed calls to reject with a TypeError
 PASS ReadableStream (empty) reader: releasing the lock should cause locked to become false

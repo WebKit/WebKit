@@ -275,12 +275,10 @@ fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Failure 
 fast/events/scrollbar-double-click.html [ Failure ]
 fast/rendering/render-style-null-optgroup-crash.html [ Failure Pass ]
 gamepad/gamepad-visibility-1.html [ Failure ]
-http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 media/no-fullscreen-when-hidden.html [ Failure ]
 media/video-background-tab-playback.html [ Failure ]
 media/video-muted-holds-sleep-assertion.html [ Failure ]
-media/video-seek-to-current-time.html [ Failure ]
 media/video-unmuted-after-play-holds-sleep-assertion.html [ Failure ]
 scrollingcoordinator/scrolling-tree/composited-in-offscreen-fixed.html [ Failure ]
 scrollingcoordinator/scrolling-tree/fixed-inside-stacking-overflow-inside-transformed.html [ Failure ]
@@ -1029,9 +1027,6 @@ webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rend
 
 webkit.org/b/219474 svg/custom/animate-initial-pause-unpause.html [ Timeout Pass ]
 
-webkit.org/b/251550 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Crash Pass ]
-webkit.org/b/251550 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash Pass ]
-
 # Flaky tests detected from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure Pass ]
@@ -1047,9 +1042,6 @@ webkit.org/b/252878 fast/hidpi/image-set-as-background-quotes.html [ ImageOnlyFa
 webkit.org/b/252878 fast/hidpi/image-set-gradient.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/image-set-gradient-multi.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/image-set-units.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
-webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
 webkit.org/b/252878 fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass Timeout ]
 webkit.org/b/252878 fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Pass Timeout ]
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Crash Failure Pass ]
@@ -1059,7 +1051,6 @@ webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-voices.html [ Crash Pa
 webkit.org/b/252878 fast/visual-viewport/resize-event-fired-window-resized.html [ Pass Timeout ]
 webkit.org/b/252878 gamepad/gamepad-event-handlers.html [ Pass Timeout ]
 webkit.org/b/252878 http/tests/media/video-play-waiting.html [ Failure Pass ]
-webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 webkit.org/b/252878 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass Timeout ]
 webkit.org/b/252878 http/wpt/fetch/fetch-in-pagehide.html [ Failure Pass ]
 webkit.org/b/252878 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]

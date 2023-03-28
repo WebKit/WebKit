@@ -27,9 +27,9 @@
 #include "InstanceOfStatus.h"
 
 #include "ICStatusUtils.h"
+#include "InlineCacheCompiler.h"
 #include "InstanceOfAccessCase.h"
 #include "JSCellInlines.h"
-#include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {

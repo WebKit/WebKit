@@ -69,11 +69,6 @@ static bool isInteractionLayer(CALayer *layer)
     return interactionRegionTypeForLayer(layer) == InteractionRegion::Type::Interaction;
 }
 
-static bool isOcclusionLayer(CALayer *layer)
-{
-    return interactionRegionTypeForLayer(layer) == InteractionRegion::Type::Occlusion;
-}
-
 static bool isAnyInteractionRegionLayer(CALayer *layer)
 {
     return !!interactionRegionTypeForLayer(layer);

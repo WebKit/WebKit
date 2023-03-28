@@ -70,6 +70,6 @@ function wasmFrameCountFromError(e) {
         // There are 5 total calls, and each call does:
         // JS entry, wasm entry, js call stub.
         // The last call that traps just has JS entry and wasm entry.
-        assert.eq(wasmFrameCountFromError(e), 5 * 3 + 2);
+        assert.eq(wasmFrameCountFromError(e), 6);
     }
 }

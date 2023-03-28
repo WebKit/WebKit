@@ -523,6 +523,45 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
     _configuration->setOriginQuotaRatio(ratio);
 }
 
+- (NSNumber *)totalQuotaRatio
+{
+    auto ratio = _configuration->totalQuotaRatio();
+    if (!ratio)
+        return nil;
+
+    return [NSNumber numberWithFloat:*ratio];
+}
+
+- (void)setTotalQuotaRatio:(NSNumber *)totalQuotaRatio
+{
+    std::optional<double> ratio = std::nullopt;
+    if (totalQuotaRatio) {
+        ratio = [totalQuotaRatio doubleValue];
+        if (!ratio.value())
+            [NSException raise:NSInvalidArgumentException format:@"totalQuotaRatio is 0.0"];
+    }
+
+    _configuration->setTotalQuotaRatio(ratio);
+}
+
+- (NSNumber *)volumeCapacityOverride
+{
+    auto capacity = _configuration->volumeCapacityOverride();
+    if (!capacity)
+        return nil;
+
+    return [NSNumber numberWithUnsignedLongLong:*capacity];
+}
+
+- (void)setVolumeCapacityOverride:(NSNumber *)mockVolumeCapactiy
+{
+    std::optional<uint64_t> capacity = std::nullopt;
+    if (mockVolumeCapactiy)
+        capacity = [mockVolumeCapactiy unsignedLongLongValue];
+
+    _configuration->setVolumeCapacityOverride(capacity);
+}
+
 - (NSUInteger)testSpeedMultiplier
 {
     return _configuration->testSpeedMultiplier();

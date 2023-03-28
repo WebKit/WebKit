@@ -120,6 +120,8 @@ private:
 
     // ThreadedCompositor::Client
     uint64_t nativeSurfaceHandleForCompositing() override;
+    void didCreateGLContext() override;
+    void willDestroyGLContext() override;
     void didDestroyGLContext() override;
     void resize(const WebCore::IntSize&) override;
     void willRenderFrame() override;

@@ -1852,6 +1852,8 @@ imported/w3c/web-platform-tests/preload/prefetch-headers.html [ Skip ]
 imported/w3c/web-platform-tests/preload/prefetch-types.html [ Skip ]
 imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Skip ]
 
+webkit.org/b/254528 imported/w3c/web-platform-tests/preload/onerror-event.html [ Pass Failure ]
+
 webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html [ Pass Failure ]
 
 webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html [ Pass ImageOnlyFailure ]

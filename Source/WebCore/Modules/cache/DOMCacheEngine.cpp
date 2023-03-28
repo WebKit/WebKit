@@ -185,6 +185,22 @@ Record fromCrossThreadRecord(CrossThreadRecord&& record)
     };
 }
 
+CrossThreadRecord CrossThreadRecord::isolatedCopy() &&
+{
+    return CrossThreadRecord {
+        identifier,
+        updateResponseCounter,
+        requestHeadersGuard,
+        WTFMove(request).isolatedCopy(),
+        WTFMove(options).isolatedCopy(),
+        WTFMove(referrer).isolatedCopy(),
+        responseHeadersGuard,
+        WTFMove(response).isolatedCopy(),
+        isolatedResponseBody(responseBody),
+        responseBodySize
+    };
+}
+
 } // namespace DOMCacheEngine
 
 } // namespace WebCore

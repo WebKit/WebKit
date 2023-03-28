@@ -152,7 +152,7 @@ private:
     void destroyWPETarget();
 #endif
 
-    static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType, Function<bool(int)>&& = nullptr);
+    static bool getEGLConfig(PlatformDisplay&, EGLConfig*, EGLSurfaceType, Function<bool(int)>&& = nullptr);
 
     PlatformDisplay& m_display;
     unsigned m_version { 0 };

@@ -81,6 +81,7 @@ public:
     void visit(AST::VariableStatement&) override;
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::CompoundStatement&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::FieldAccessExpression&) override;
     void visit(AST::NamedTypeName&) override;
@@ -171,6 +172,12 @@ void NameManglerVisitor::visitVariableDeclaration(AST::Variable& variable, Mangl
 {
     introduceVariable(variable.name(), kind);
     AST::Visitor::visit(variable);
+}
+
+void NameManglerVisitor::visit(AST::CompoundStatement& statement)
+{
+    ContextScope blockScope(this);
+    AST::Visitor::visit(statement);
 }
 
 void NameManglerVisitor::visit(AST::IdentifierExpression& identifier)

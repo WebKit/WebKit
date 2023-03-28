@@ -36,6 +36,7 @@ class GetterSetterAccessCase final : public ProxyableAccessCase {
 public:
     using Base = ProxyableAccessCase;
     friend class AccessCase;
+    friend class InlineCacheCompiler;
 
     // This can return null if it hasn't been generated yet. That's
     // actually somewhat likely because of how we do buffering of new cases.
@@ -47,8 +48,6 @@ public:
     OptimizingCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
-
-    void emitDOMJITGetter(AccessGenerationState&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
 
     static Ref<AccessCase> create(
         VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*,

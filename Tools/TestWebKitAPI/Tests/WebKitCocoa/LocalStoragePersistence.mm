@@ -41,6 +41,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -526,6 +527,56 @@ TEST(WKWebView, LocalStorageNoSizeOverflow)
         receivedScriptMessage = true;
     }];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
+TEST(WebKit, LocalStorageCorruptedDatabase)
+{
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *localStorageDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/LocalStorage"];
+    NSURL *localStorageFile = [localStorageDirectory URLByAppendingPathComponent:@"localstorage.sqlite3"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:localStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:localStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    NSString* content = @"This is a string";
+    NSData* data = [content dataUsingEncoding:NSUTF8StringEncoding];
+    [fileManager createFileAtPath:localStorageFile.path contents:data attributes: nil];
+    uint64_t fileSize = FileSystem::fileSize(localStorageFile.path).value_or(std::numeric_limits<uint64_t>::max());
+    EXPECT_EQ(16U, fileSize);
+
+    NSString *htmlString = @"<script> \
+        result = localStorage.getItem('testkey'); \
+        if (!result) \
+            result = '[null]'; \
+        window.webkit.messageHandlers.testHandler.postMessage(result); \
+        </script>";
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    auto messageHandler = adoptNS([[LocalStorageMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"[null]", [lastScriptMessage body]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:localStorageFile.path]);
+    [webView stringByEvaluatingJavaScript:@"localStorage.setItem('testkey', 'testvalue')"];
+    done = false;
+    WKWebsiteDataStoreSyncLocalStorage((WKWebsiteDataStoreRef)configuration.get().websiteDataStore, nullptr, [](void*) {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    // Ensure item is stored by getting it in another WKWebView.
+    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [secondWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"testvalue", [lastScriptMessage body]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:localStorageFile.path]);
 }
 
 #if PLATFORM(IOS_FAMILY)

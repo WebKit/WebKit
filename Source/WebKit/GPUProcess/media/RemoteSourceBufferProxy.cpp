@@ -375,6 +375,16 @@ void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const M
     completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 
+void RemoteSourceBufferProxy::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID, CompletionHandler<void(MediaTime)>&& completionHandler)
+{
+    completionHandler(m_sourceBufferPrivate->minimumUpcomingPresentationTimeForTrackID(trackID));
+}
+
+void RemoteSourceBufferProxy::setMaximumQueueDepthForTrackID(const AtomString& trackID, uint64_t depth)
+{
+    m_sourceBufferPrivate->setMaximumQueueDepthForTrackID(trackID, depth);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

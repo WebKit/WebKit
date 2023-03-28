@@ -35,10 +35,11 @@ class ProxyObjectAccessCase final : public AccessCase {
 public:
     using Base = AccessCase;
     friend class AccessCase;
+    friend class InlineCacheCompiler;
 
     static Ref<AccessCase> create(VM&, JSCell* owner, AccessType, CacheableIdentifier);
 
-    void emit(AccessGenerationState&, MacroAssembler::JumpList& fallThrough);
+    void emit(InlineCacheCompiler&, MacroAssembler::JumpList& fallThrough);
 
     OptimizingCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
 

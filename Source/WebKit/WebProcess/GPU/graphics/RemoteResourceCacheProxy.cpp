@@ -45,6 +45,7 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
     clearNativeImageMap();
     clearImageBufferBackends();
     clearDecomposedGlyphsMap();
+    clearGradientMap();
 }
 
 void RemoteResourceCacheProxy::clear()
@@ -53,6 +54,7 @@ void RemoteResourceCacheProxy::clear()
     clearImageBufferBackends();
     m_imageBuffers.clear();
     clearDecomposedGlyphsMap();
+    clearGradientMap();
 }
 
 void RemoteResourceCacheProxy::cacheImageBuffer(RemoteImageBufferProxy& imageBuffer)
@@ -160,9 +162,19 @@ void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decom
     }
 }
 
+void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
+{
+    if (m_gradients.add(gradient.renderingResourceIdentifier(), gradient).isNewEntry) {
+        gradient.addObserver(*this);
+        m_remoteRenderingBackendProxy.cacheGradient(gradient);
+    }
+}
+
 void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    bool removed = m_nativeImages.remove(renderingResourceIdentifier) || m_decomposedGlyphs.remove(renderingResourceIdentifier);
+    bool removed = m_nativeImages.remove(renderingResourceIdentifier)
+        || m_decomposedGlyphs.remove(renderingResourceIdentifier)
+        || m_gradients.remove(renderingResourceIdentifier);
     RELEASE_ASSERT(removed);
     m_remoteRenderingBackendProxy.releaseRenderingResource(renderingResourceIdentifier);
 }
@@ -203,6 +215,13 @@ void RemoteResourceCacheProxy::clearDecomposedGlyphsMap()
     m_decomposedGlyphs.clear();
 }
 
+void RemoteResourceCacheProxy::clearGradientMap()
+{
+    for (auto& gradients : m_gradients.values())
+        gradients.get()->removeObserver(*this);
+    m_gradients.clear();
+}
+
 void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
 {
     static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 4;
@@ -239,6 +258,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
     clearFontMap();
     clearImageBufferBackends();
     clearDecomposedGlyphsMap();
+    clearGradientMap();
 
     for (auto& imageBuffer : m_imageBuffers.values()) {
         if (!imageBuffer)
@@ -252,6 +272,7 @@ void RemoteResourceCacheProxy::releaseMemory()
     clearNativeImageMap();
     clearFontMap();
     clearDecomposedGlyphsMap();
+    clearGradientMap();
     m_remoteRenderingBackendProxy.releaseAllRemoteResources();
 }
 

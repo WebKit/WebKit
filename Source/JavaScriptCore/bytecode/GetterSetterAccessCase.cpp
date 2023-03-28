@@ -28,12 +28,7 @@
 
 #if ENABLE(JIT)
 
-#include "AccessCaseSnippetParams.h"
-#include "DOMJITCallDOMGetterSnippet.h"
-#include "DOMJITGetterSetter.h"
 #include "JSCJSValueInlines.h"
-#include "PolymorphicAccess.h"
-#include "StructureStubInfo.h"
 
 namespace JSC {
 
@@ -107,121 +102,6 @@ void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Ind
     if (callLinkInfo())
         out.print(comma, "callLinkInfo = ", RawPointer(callLinkInfo()));
     out.print(comma, "customAccessor = ", RawPointer(m_customAccessor.taggedPtr()));
-}
-
-void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, const DOMJIT::GetterSetter* domJIT, GPRReg baseForGetGPR)
-{
-    CCallHelpers& jit = *state.jit;
-    StructureStubInfo& stubInfo = *state.stubInfo;
-    JSValueRegs valueRegs = stubInfo.valueRegs();
-    GPRReg baseGPR = stubInfo.m_baseGPR;
-    GPRReg scratchGPR = state.scratchGPR;
-
-    // We construct the environment that can execute the DOMJIT::Snippet here.
-    Ref<DOMJIT::CallDOMGetterSnippet> snippet = domJIT->compiler()();
-
-    Vector<GPRReg> gpScratch;
-    Vector<FPRReg> fpScratch;
-    Vector<SnippetParams::Value> regs;
-
-    auto allocator = state.makeDefaultScratchAllocator(scratchGPR);
-
-    GPRReg paramBaseGPR = InvalidGPRReg;
-    GPRReg paramGlobalObjectGPR = InvalidGPRReg;
-    JSValueRegs paramValueRegs = valueRegs;
-    GPRReg remainingScratchGPR = InvalidGPRReg;
-
-    // valueRegs and baseForGetGPR may be the same. For example, in Baseline JIT, we pass the same regT0 for baseGPR and valueRegs.
-    // In FTL, there is no constraint that the baseForGetGPR interferes with the result. To make implementation simple in
-    // Snippet, Snippet assumes that result registers always early interfere with input registers, in this case,
-    // baseForGetGPR. So we move baseForGetGPR to the other register if baseForGetGPR == valueRegs.
-    if (baseForGetGPR != valueRegs.payloadGPR()) {
-        paramBaseGPR = baseForGetGPR;
-        if (!snippet->requireGlobalObject)
-            remainingScratchGPR = scratchGPR;
-        else
-            paramGlobalObjectGPR = scratchGPR;
-    } else {
-        jit.move(valueRegs.payloadGPR(), scratchGPR);
-        paramBaseGPR = scratchGPR;
-        if (snippet->requireGlobalObject)
-            paramGlobalObjectGPR = allocator.allocateScratchGPR();
-    }
-
-    JSGlobalObject* globalObjectForDOMJIT = structure()->globalObject();
-
-    regs.append(paramValueRegs);
-    regs.append(paramBaseGPR);
-    if (snippet->requireGlobalObject) {
-        ASSERT(paramGlobalObjectGPR != InvalidGPRReg);
-        regs.append(SnippetParams::Value(paramGlobalObjectGPR, globalObjectForDOMJIT));
-    }
-
-    if (snippet->numGPScratchRegisters) {
-        unsigned i = 0;
-        if (remainingScratchGPR != InvalidGPRReg) {
-            gpScratch.append(remainingScratchGPR);
-            ++i;
-        }
-        for (; i < snippet->numGPScratchRegisters; ++i)
-            gpScratch.append(allocator.allocateScratchGPR());
-    }
-
-    for (unsigned i = 0; i < snippet->numFPScratchRegisters; ++i)
-        fpScratch.append(allocator.allocateScratchFPR());
-
-    // Let's store the reused registers to the stack. After that, we can use allocated scratch registers.
-    ScratchRegisterAllocator::PreservedState preservedState =
-        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
-
-    if (GetterSetterAccessCaseInternal::verbose) {
-        dataLog("baseGPR = ", baseGPR, "\n");
-        dataLog("valueRegs = ", valueRegs, "\n");
-        dataLog("scratchGPR = ", scratchGPR, "\n");
-        dataLog("paramBaseGPR = ", paramBaseGPR, "\n");
-        if (paramGlobalObjectGPR != InvalidGPRReg)
-            dataLog("paramGlobalObjectGPR = ", paramGlobalObjectGPR, "\n");
-        dataLog("paramValueRegs = ", paramValueRegs, "\n");
-        for (unsigned i = 0; i < snippet->numGPScratchRegisters; ++i)
-            dataLog("gpScratch[", i, "] = ", gpScratch[i], "\n");
-    }
-
-    if (snippet->requireGlobalObject)
-        jit.move(CCallHelpers::TrustedImmPtr(globalObjectForDOMJIT), paramGlobalObjectGPR);
-
-    // We just spill the registers used in Snippet here. For not spilled registers here explicitly,
-    // they must be in the used register set passed by the callers (Baseline, DFG, and FTL) if they need to be kept.
-    // Some registers can be locked, but not in the used register set. For example, the caller could make baseGPR
-    // same to valueRegs, and not include it in the used registers since it will be changed.
-    RegisterSetBuilder usedRegisters;
-    for (auto& value : regs) {
-        SnippetReg reg = value.reg();
-        if (reg.isJSValueRegs())
-            usedRegisters.add(reg.jsValueRegs(), IgnoreVectors);
-        else if (reg.isGPR())
-            usedRegisters.add(reg.gpr(), IgnoreVectors);
-        else
-            usedRegisters.add(reg.fpr(), IgnoreVectors);
-    }
-    for (GPRReg reg : gpScratch)
-        usedRegisters.add(reg, IgnoreVectors);
-    for (FPRReg reg : fpScratch)
-        usedRegisters.add(reg, IgnoreVectors);
-    if (jit.codeBlock()->useDataIC())
-        usedRegisters.add(stubInfo.m_stubInfoGPR, IgnoreVectors);
-    auto registersToSpillForCCall = RegisterSetBuilder::registersToSaveForCCall(usedRegisters);
-
-    AccessCaseSnippetParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
-    snippet->generator()->run(jit, params);
-    allocator.restoreReusedRegistersByPopping(jit, preservedState);
-    state.succeed();
-    
-    CCallHelpers::JumpList exceptions = params.emitSlowPathCalls(state, registersToSpillForCCall, jit);
-    if (!exceptions.empty()) {
-        exceptions.link(&jit);
-        allocator.restoreReusedRegistersByPopping(jit, preservedState);
-        state.emitExplicitExceptionHandler();
-    }
 }
 
 } // namespace JSC

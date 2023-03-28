@@ -156,6 +156,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
+    WebCore::CocoaColor *backgroundColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color"];
     WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
     NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
 
@@ -167,6 +168,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
         static_cast<WebCore::ApplicationManifest::Display>(display),
         WTFMove(startURL),
         WTFMove(manifestId),
+        WebCore::roundAndClampToSRGBALossy(backgroundColor.CGColor),
         WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
         makeVector<WebCore::ApplicationManifest::Icon>(icons),
     };
@@ -195,6 +197,7 @@ static std::optional<WebCore::ApplicationManifest::Icon> makeVectorElement(const
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().display) forKey:@"display"];
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
     [aCoder encodeObject:self.manifestId forKey:@"manifestId"];
+    [aCoder encodeObject:self.backgroundColor forKey:@"background_color"];
     [aCoder encodeObject:self.themeColor forKey:@"theme_color"];
     [aCoder encodeObject:self.icons forKey:@"icons"];
 }
@@ -238,6 +241,11 @@ static NSString *nullableNSString(const WTF::String& string)
 - (NSURL *)startURL
 {
     return _applicationManifest->applicationManifest().startURL;
+}
+
+- (WebCore::CocoaColor *)backgroundColor
+{
+    return cocoaColor(_applicationManifest->applicationManifest().backgroundColor).autorelease();
 }
 
 - (WebCore::CocoaColor *)themeColor
@@ -316,6 +324,11 @@ static NSString *nullableNSString(const WTF::String& string)
 }
 
 - (NSURL *)startURL
+{
+    return nil;
+}
+
+- (WebCore::CocoaColor *)backgroundColor
 {
     return nil;
 }

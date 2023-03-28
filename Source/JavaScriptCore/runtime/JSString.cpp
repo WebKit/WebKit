@@ -205,10 +205,12 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     } else
         atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
 
-    convertToNonRope(String { atomString });
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
-    if (valueInternal().impl()->hasOneRef())
-        vm.heap.reportExtraMemoryAllocated(valueInternal().impl()->cost());
+    if (atomString.impl()->hasOneRef())
+        vm.heap.reportExtraMemoryAllocated(atomString.impl()->cost());
+
+    convertToNonRope(String { atomString });
+
     return atomString;
 }
 

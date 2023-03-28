@@ -91,6 +91,8 @@ public:
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
 
+    StringBuilder& stringBuilder() { return m_stringBuilder; }
+
 private:
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -437,9 +439,21 @@ void FunctionDefinitionWriter::visit(AST::Expression& expression)
     AST::Visitor::visit(expression);
 }
 
-void FunctionDefinitionWriter::visit(AST::CallExpression& call)
+static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
 {
     bool first = true;
+    writer->stringBuilder().append("(");
+    for (unsigned i = startOffset; i < call.arguments().size(); ++i) {
+        if (!first)
+            writer->stringBuilder().append(", ");
+        writer->visit(call.arguments()[i]);
+        first = false;
+    }
+    writer->stringBuilder().append(")");
+};
+
+void FunctionDefinitionWriter::visit(AST::CallExpression& call)
+{
     if (is<AST::ArrayTypeName>(call.target())) {
         m_stringBuilder.append("{\n");
         {
@@ -448,21 +462,40 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
                 m_stringBuilder.append(m_indent);
                 visit(argument);
                 m_stringBuilder.append(",\n");
-                first = false;
             }
         }
         m_stringBuilder.append(m_indent, "}");
-    } else {
-        visit(call.target());
-        m_stringBuilder.append("(");
-        for (auto& argument : call.arguments()) {
-            if (!first)
-                m_stringBuilder.append(", ");
-            visit(argument);
-            first = false;
-        }
-        m_stringBuilder.append(")");
+        return;
     }
+
+    if (is<AST::NamedTypeName>(call.target())) {
+#define ALIAS(alias) \
+    [](FunctionDefinitionWriter* writer, AST::CallExpression& call) { \
+        writer->stringBuilder().append(alias); \
+        visitArguments(writer, call, 1); \
+    }
+
+        static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "textureSample", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
+                ASSERT(call.arguments().size() > 1);
+                writer->visit(call.arguments()[0]);
+                writer->stringBuilder().append(".sample");
+                visitArguments(writer, call, 1);
+            } },
+            { "vec2", ALIAS("float2") },
+            { "vec3", ALIAS("float3") },
+            { "vec4", ALIAS("float4") },
+        };
+#undef ALIAS
+        static constexpr SortedArrayMap builtins { builtinMappings };
+        if (auto mappedBuiltin = builtins.get(downcast<AST::NamedTypeName>(call.target()).name().id())) {
+            mappedBuiltin(this, call);
+            return;
+        }
+    }
+
+    visit(call.target());
+    visitArguments(this, call);
 }
 
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)

@@ -11,10 +11,10 @@ for (let i = 0; i < 10000; ++i) {
     } catch (e) {
         let str = e.stack.toString()
         let trace = str.split('\n')
-        let expected = ["*", "wasm-stub@[wasm code]", "<?>.wasm-function[g]@[wasm code]",
+        let expected = ["*", "<?>.wasm-function[g]@[wasm code]",
         "<?>.wasm-function[f]@[wasm code]", "<?>.wasm-function[e]@[wasm code]", "<?>.wasm-function[d]@[wasm code]",
         "<?>.wasm-function[c]@[wasm code]", "<?>.wasm-function[b]@[wasm code]", "<?>.wasm-function[a]@[wasm code]",
-        "<?>.wasm-function[main]@[wasm code]", "wasm-stub@[wasm code]", "*"]
+        "<?>.wasm-function[main]@[wasm code]", "*"]
         if (trace.length != expected.length)
             throw "unexpected length"
         for (let i = 0; i < trace.length; ++i) {

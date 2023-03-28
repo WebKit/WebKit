@@ -30,9 +30,9 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "InlineCacheCompiler.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
-#include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -56,25 +56,6 @@ Ref<AccessCase> ModuleNamespaceAccessCase::cloneImpl() const
     result->resetState();
     return result;
 }
-
-void ModuleNamespaceAccessCase::emit(AccessGenerationState& state, MacroAssembler::JumpList& fallThrough)
-{
-    CCallHelpers& jit = *state.jit;
-    StructureStubInfo& stubInfo = *state.stubInfo;
-    JSValueRegs valueRegs = stubInfo.valueRegs();
-    GPRReg baseGPR = stubInfo.m_baseGPR;
-
-    fallThrough.append(
-        jit.branchPtr(
-            CCallHelpers::NotEqual,
-            baseGPR,
-            CCallHelpers::TrustedImmPtr(m_moduleNamespaceObject.get())));
-
-    jit.loadValue(&m_moduleEnvironment->variableAt(m_scopeOffset), valueRegs);
-    state.failAndIgnore.append(jit.branchIfEmpty(valueRegs));
-    state.succeed();
-}
-
 
 } // namespace JSC
 

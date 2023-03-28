@@ -799,6 +799,7 @@ struct WebCore::ApplicationManifest {
     WebCore::ApplicationManifest::Display display
     URL startURL
     URL id
+    WebCore::Color backgroundColor
     WebCore::Color themeColor
     Vector<WebCore::ApplicationManifest::Icon> icons
 }
@@ -2021,11 +2022,6 @@ class WebCore::TransformOperations {
     WebCore::GradientColorStops stops();
 }
 
-[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush::Brush::LogicalGradient {
-    Ref<WebCore::Gradient> gradient;
-    WebCore::AffineTransform spaceTransform;
-}
-
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Pattern::Parameters {
     bool repeatX;
     bool repeatY;
@@ -3029,6 +3025,7 @@ header: <WebCore/ScrollingStateNode.h>
     ViewportConstraints
     OverflowScrollingNode
     KeyboardScrollData
+    OverlayScrollbarsEnabled
 };
 #endif
 

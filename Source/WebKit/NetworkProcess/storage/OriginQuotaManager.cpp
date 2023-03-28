@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "QuotaManager.h"
+#include "OriginQuotaManager.h"
 
 #include <wtf/SetForScope.h>
 
@@ -32,32 +32,33 @@ namespace WebKit {
 
 static constexpr uint64_t defaultMinimumReportedQuota = 10 * GB;
 
-Ref<QuotaManager> QuotaManager::create(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction)
+Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
 {
-    return adoptRef(*new QuotaManager(quota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction)));
+    return adoptRef(*new OriginQuotaManager(quota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction)));
 }
 
-QuotaManager::QuotaManager(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction)
+OriginQuotaManager::OriginQuotaManager(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
     : m_quota(quota)
     , m_initialQuota(quota)
     , m_getUsageFunction(WTFMove(getUsageFunction))
     , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
+    , m_notifyUsageUpdateFunction(WTFMove(notifyUsageUpdateFunction))
 {
     ASSERT(m_quota);
 }
 
-uint64_t QuotaManager::usage()
+uint64_t OriginQuotaManager::usage()
 {
     return m_getUsageFunction();
 }
 
-void QuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
+void OriginQuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
 {
-    m_requests.append(QuotaManager::Request { spaceRequested, WTFMove(callback), QuotaIncreaseRequestIdentifier { } });
+    m_requests.append(OriginQuotaManager::Request { spaceRequested, WTFMove(callback), QuotaIncreaseRequestIdentifier { } });
     handleRequests();
 }
 
-void QuotaManager::handleRequests()
+void OriginQuotaManager::handleRequests()
 {
     if (m_currentRequest)
         return;
@@ -83,12 +84,12 @@ void QuotaManager::handleRequests()
     }
 }
 
-bool QuotaManager::grantWithCurrentQuota(uint64_t spaceRequested)
+bool OriginQuotaManager::grantWithCurrentQuota(uint64_t spaceRequested)
 {
     if (grantFastPath(spaceRequested))
         return true;
 
-    // When QuotaManager is used for the first time, we want to make sure its initial quota is bigger than existing disk usage,
+    // When OriginQuotaManager is used for the first time, we want to make sure its initial quota is bigger than existing disk usage,
     // based on the assumption that the quota was increased to at least the disk usage under user's permission before.
     bool shouldUpdateQuotaBasedOnUsage = !m_usage;
     m_usage = m_getUsageFunction();
@@ -97,21 +98,31 @@ bool QuotaManager::grantWithCurrentQuota(uint64_t spaceRequested)
         m_quota = std::max(m_quota, defaultQuotaStep * ((*m_usage / defaultQuotaStep) + 1));
     }
     m_quotaCountdown = *m_usage < m_quota ? m_quota - *m_usage : 0;
+    usageUpdated(*m_usage);
 
     return grantFastPath(spaceRequested);
 }
 
-bool QuotaManager::grantFastPath(uint64_t spaceRequested)
+void OriginQuotaManager::usageUpdated(uint64_t newUsage)
+{
+    if (m_notifyUsageUpdateFunction)
+        m_notifyUsageUpdateFunction(newUsage);
+}
+
+bool OriginQuotaManager::grantFastPath(uint64_t spaceRequested)
 {
     if (spaceRequested <= m_quotaCountdown) {
         m_quotaCountdown -= spaceRequested;
+        // If spaceRequested is 0, usage is not updated.
+        if (spaceRequested)
+            usageUpdated(m_quota - m_quotaCountdown);
         return true;
     }
 
     return false;
 }
 
-void QuotaManager::didIncreaseQuota(QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
+void OriginQuotaManager::didIncreaseQuota(QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     if (!m_currentRequest || m_currentRequest->identifier != identifier)
         return;
@@ -130,19 +141,19 @@ void QuotaManager::didIncreaseQuota(QuotaIncreaseRequestIdentifier identifier, s
         handleRequests();
 }
 
-void QuotaManager::resetQuotaUpdatedBasedOnUsageForTesting()
+void OriginQuotaManager::resetQuotaUpdatedBasedOnUsageForTesting()
 {
     resetQuotaForTesting();
     m_usage = std::nullopt;
 }
 
-void QuotaManager::resetQuotaForTesting()
+void OriginQuotaManager::resetQuotaForTesting()
 {
     m_quota = m_initialQuota;
     m_quotaCountdown = 0;
 }
 
-uint64_t QuotaManager::reportedQuota() const
+uint64_t OriginQuotaManager::reportedQuota() const
 {
     if (!m_usage || (m_usage && m_usage.value() < defaultMinimumReportedQuota))
         return std::min(m_quota, defaultMinimumReportedQuota);

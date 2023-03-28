@@ -2446,6 +2446,16 @@ static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
 
+inline bool HTMLTreeBuilder::consumeAndInsertWhitespace(ExternalCharacterTokenBuffer& buffer)
+{
+    auto leadingWhitespace = buffer.takeLeadingWhitespace();
+    if (!leadingWhitespace.isEmpty())
+        m_tree.insertTextNode(leadingWhitespace);
+    if (buffer.isEmpty())
+        return true;
+    return false;
+}
+
 void HTMLTreeBuilder::processCharacterBuffer(ExternalCharacterTokenBuffer& buffer)
 {
 ReprocessBuffer:
@@ -2490,20 +2500,14 @@ ReprocessBuffer:
         ASSERT(m_insertionMode == InsertionMode::InHead);
         FALLTHROUGH;
     case InsertionMode::InHead: {
-        String leadingWhitespace = buffer.takeLeadingWhitespace();
-        if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
-        if (buffer.isEmpty())
+        if (consumeAndInsertWhitespace(buffer))
             return;
         defaultForInHead();
         ASSERT(m_insertionMode == InsertionMode::AfterHead);
         FALLTHROUGH;
     }
     case InsertionMode::AfterHead: {
-        String leadingWhitespace = buffer.takeLeadingWhitespace();
-        if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
-        if (buffer.isEmpty())
+        if (consumeAndInsertWhitespace(buffer))
             return;
         defaultForAfterHead();
         ASSERT(m_insertionMode == InsertionMode::InBody);
@@ -2538,10 +2542,7 @@ ReprocessBuffer:
         buffer.giveRemainingTo(m_pendingTableCharacters);
         break;
     case InsertionMode::InColumnGroup: {
-        String leadingWhitespace = buffer.takeLeadingWhitespace();
-        if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
-        if (buffer.isEmpty())
+        if (consumeAndInsertWhitespace(buffer))
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
             ASSERT(isParsingFragmentOrTemplateContents());
@@ -2553,25 +2554,25 @@ ReprocessBuffer:
         goto ReprocessBuffer;
     }
     case InsertionMode::AfterBody:
-    case InsertionMode::AfterAfterBody:
+    case InsertionMode::AfterAfterBody: {
+        if (consumeAndInsertWhitespace(buffer))
+            return;
         // FIXME: parse error
         m_insertionMode = InsertionMode::InBody;
         goto ReprocessBuffer;
+    }
     case InsertionMode::Text:
         m_tree.insertTextNode(buffer.takeRemaining());
         break;
     case InsertionMode::InHeadNoscript: {
-        String leadingWhitespace = buffer.takeLeadingWhitespace();
-        if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace);
-        if (buffer.isEmpty())
+        if (consumeAndInsertWhitespace(buffer))
             return;
         defaultForInHeadNoscript();
         goto ReprocessBuffer;
     }
     case InsertionMode::InFrameset:
     case InsertionMode::AfterFrameset: {
-        String leadingWhitespace = buffer.takeRemainingWhitespace();
+        auto leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty())
             m_tree.insertTextNode(leadingWhitespace);
         // FIXME: We should generate a parse error if we skipped over any
@@ -2583,7 +2584,7 @@ ReprocessBuffer:
         m_tree.insertTextNode(buffer.takeRemaining());
         break;
     case InsertionMode::AfterAfterFrameset: {
-        String leadingWhitespace = buffer.takeRemainingWhitespace();
+        auto leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty()) {
             m_tree.reconstructTheActiveFormattingElements();
             m_tree.insertTextNode(leadingWhitespace);
@@ -2886,7 +2887,7 @@ static bool hasAttribute(const AtomHTMLToken& token, const QualifiedName& name)
 void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
 {
     HTMLStackItem& adjustedCurrentNode = adjustedCurrentStackItem();
-    
+
     switch (token.type()) {
     case HTMLToken::Type::Uninitialized:
         ASSERT_NOT_REACHED();

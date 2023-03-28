@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef MockMediaPlayerMediaSource_h
@@ -97,10 +97,10 @@ private:
 
     MediaTime m_currentTime;
     MediaTime m_duration;
-    MediaPlayer::ReadyState m_readyState;
-    MediaPlayer::NetworkState m_networkState;
-    bool m_playing;
-    bool m_seekCompleted;
+    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+    MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
+    bool m_playing { false };
+    bool m_seekCompleted { false };
 };
 
 }

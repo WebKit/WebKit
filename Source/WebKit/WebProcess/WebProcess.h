@@ -707,7 +707,7 @@ private:
     WeakHashMap<WebCore::UserGestureToken, uint64_t> m_userGestureTokens;
 
 #if PLATFORM(WAYLAND)
-    std::unique_ptr<WebCore::PlatformDisplayLibWPE> m_wpeDisplay;
+    std::unique_ptr<WebCore::PlatformDisplay> m_displayForCompositing;
 #endif
 
     bool m_hasSuspendedPageProxy { false };

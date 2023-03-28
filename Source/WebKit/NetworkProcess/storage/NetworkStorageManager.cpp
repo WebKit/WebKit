@@ -39,9 +39,10 @@
 #include "LocalStorageManager.h"
 #include "Logging.h"
 #include "NetworkProcessProxyMessages.h"
+#include "NetworkQuotaManager.h"
 #include "NetworkStorageManagerMessages.h"
+#include "OriginQuotaManager.h"
 #include "OriginStorageManager.h"
-#include "QuotaManager.h"
 #include "SessionStorageManager.h"
 #include "StorageAreaBase.h"
 #include "StorageAreaMapMessages.h"
@@ -49,7 +50,6 @@
 #include "StorageUtilities.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
-#include <WebCore/ClientOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
@@ -62,6 +62,13 @@ namespace WebKit {
 #if PLATFORM(IOS_FAMILY)
 static const Seconds defaultBackupExclusionPeriod { 24_h };
 #endif
+
+// FIXME: Remove this if rdar://104754030 is fixed.
+static HashMap<String, WeakPtr<NetworkStorageManager>>& activePaths()
+{
+    static MainThreadNeverDestroyed<HashMap<String, WeakPtr<NetworkStorageManager>>> pathToManagerMap;
+    return pathToManagerMap;
+}
 
 static String encode(const String& string, FileSystem::Salt salt)
 {
@@ -123,23 +130,36 @@ static void deleteEmptyOriginDirectory(const String& directory)
     FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
 }
 
-Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel level)
+Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
 {
-    return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, level));
+    return adoptRef(*new NetworkStorageManager(sessionID, identifier, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, totalQuotaRatio, volumeCapacityOverride, level));
 }
 
-NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, UnifiedOriginStorageLevel level)
+NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
     : m_sessionID(sessionID)
-    , m_queue(SuspendableWorkQueue::create("com.apple.WebKit.Storage", SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
+    , m_queueName(makeString("com.apple.WebKit.Storage.", sessionID.toUInt64(), ".", static_cast<uint64_t>(identifier->data() >> 64), static_cast<uint64_t>(identifier->data())))
+    , m_queue(SuspendableWorkQueue::create(m_queueName.utf8().data(), SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
     , m_defaultOriginQuota(defaultOriginQuota)
     , m_defaultThirdPartyOriginQuota(defaultThirdPartyOriginQuota)
     , m_originQuotaRatio(originQuotaRatio)
+    , m_totalQuotaRatio(totalQuotaRatio)
+    , m_volumeCapacityOverride(volumeCapacityOverride)
     , m_parentConnection(connection)
 #if PLATFORM(IOS_FAMILY)
     , m_backupExclusionPeriod(defaultBackupExclusionPeriod)
 #endif
 {
     ASSERT(RunLoop::isMain());
+
+    if (!path.isEmpty()) {
+        auto addResult = activePaths().add(path, *this);
+        if (!addResult.isNewEntry) {
+            if (auto existingManager = addResult.iterator->value)
+                RELEASE_LOG_ERROR(Storage, "%p - NetworkStorageManager::NetworkStorageManager path for session %" PRIu64 " is already in use by session %" PRIu64, this, m_sessionID.toUInt64(), existingManager->sessionID().toUInt64());
+            else
+                addResult.iterator->value = *this;
+        }
+    }
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), level]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
@@ -173,11 +193,18 @@ NetworkStorageManager::~NetworkStorageManager()
 
 bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)
 {
-    return types.contains(WebsiteDataType::LocalStorage)
-        || types.contains(WebsiteDataType::SessionStorage)
-        || types.contains(WebsiteDataType::FileSystem)
-        || types.contains(WebsiteDataType::IndexedDBDatabases)
-        || types.contains(WebsiteDataType::DOMCache);
+    return allManagedTypes().containsAny(types);
+}
+
+OptionSet<WebsiteDataType> NetworkStorageManager::allManagedTypes()
+{
+    return {
+        WebsiteDataType::LocalStorage,
+        WebsiteDataType::SessionStorage,
+        WebsiteDataType::FileSystem,
+        WebsiteDataType::IndexedDBDatabases,
+        WebsiteDataType::DOMCache
+    };
 }
 
 void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
@@ -224,7 +251,7 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
         m_originStorageManagers.removeIf([&](auto& entry) {
             auto& manager = entry.value;
             manager->connectionClosed(connection);
-            bool shouldRemove = !manager->isActive();
+            bool shouldRemove = !manager->isActive() && !manager->hasDataInMemory();
             if (shouldRemove) {
                 manager->deleteEmptyDirectory();
                 deleteEmptyOriginDirectory(manager->path());
@@ -266,6 +293,7 @@ void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOr
 #if PLATFORM(IOS_FAMILY)
         includeOriginInBackupIfNecessary(*manager);
 #endif
+        updateOriginModificationTime(origin);
         return;
     }
 
@@ -288,6 +316,52 @@ void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOr
 #else
     UNUSED_PARAM(didWrite);
 #endif
+
+    if (m_quotaManager)
+        m_quotaManager->originVisited(origin);
+}
+
+NetworkQuotaManager& NetworkStorageManager::quotaManager()
+{
+    if (!m_quotaManager) {
+        Vector<std::pair<WebCore::ClientOrigin, WallTime>> origins;
+        forEachOriginDirectory([&](auto directory) {
+            auto originFile = originFilePath(directory);
+            auto modificationTime = FileSystem::fileModificationTime(originFile);
+            if (modificationTime) {
+                if (auto origin = readOriginFromFile(originFile))
+                    origins.append({ *origin, *modificationTime });
+            }
+        });
+
+        std::sort(origins.begin(), origins.end(), [&](const auto& a, const auto& b) {
+            return a.second < b.second;
+        });
+
+        Vector<std::pair<WebCore::ClientOrigin, uint64_t>> usages;
+        for (auto& origin : origins) {
+            auto usage = originStorageManager(origin.first).quotaManager().usage();
+            usages.append({ origin.first, usage });
+            removeOriginStorageManagerIfPossible(origin.first);
+        }
+
+        uint64_t quota = std::numeric_limits<uint64_t>::max();
+        if (m_totalQuotaRatio) {
+            if (m_volumeCapacityOverride)
+                quota = m_totalQuotaRatio.value() * m_volumeCapacityOverride.value();
+            else if (auto capacity = FileSystem::volumeCapacity(m_path))
+                quota = m_totalQuotaRatio.value() * capacity.value();
+        }
+        m_quotaManager = makeUnique<NetworkQuotaManager>(quota, usages, [weakThis = ThreadSafeWeakPtr { *this }](auto origin) {
+            if (auto strongThis = weakThis.get()) {
+                strongThis->evictDataByTopOrigin(origin);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    return *m_quotaManager;
 }
 
 OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile)
@@ -300,19 +374,26 @@ OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore:
         auto idbStoragePath = IDBStorageManager::idbStorageOriginDirectory(m_customIDBStoragePath, origin);
         auto cacheStoragePath = CacheStorageManager::cacheStorageOriginDirectory(m_customCacheStoragePath, origin);
         CacheStorageManager::copySaltFileToOriginDirectory(m_customCacheStoragePath, cacheStoragePath);
-        QuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
+        OriginQuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
             IPC::Connection::send(connection, Messages::NetworkProcessProxy::IncreaseQuota(sessionID, origin, identifier, currentQuota, currentUsage, requestedIncrease), 0);
         };
         uint64_t quota = m_defaultOriginQuota;
         if (m_originQuotaRatio) {
-            if (auto capacity = FileSystem::volumeCapacity(m_path)) {
+            if (m_volumeCapacityOverride) {
+                quota = m_originQuotaRatio.value() * m_volumeCapacityOverride.value();
+                increaseQuotaFunction = { };
+            } else if (auto capacity = FileSystem::volumeCapacity(m_path)) {
                 quota = m_originQuotaRatio.value() * capacity.value();
                 increaseQuotaFunction = { };
             }
         }
         if (origin.topOrigin != origin.clientOrigin)
             quota = quota / m_defaultOriginQuota * m_defaultThirdPartyOriginQuota;
-        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_unifiedOriginStorageLevel);
+        OriginQuotaManager::NotifyUsageUpdateFunction notifyUsageUpdateFunction = [weakThis = ThreadSafeWeakPtr { *this }, origin](uint64_t usage) {
+            if (auto strongThis = weakThis.get())
+                strongThis->quotaManager().originUsageUpdated(origin, usage);
+        };
+        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_unifiedOriginStorageLevel);
     }).iterator->value;
 
     if (shouldWriteOriginFile == ShouldWriteOriginFile::Yes)
@@ -330,7 +411,7 @@ bool NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::
         return true;
 
     auto& manager = iterator->value;
-    if (manager->isActive())
+    if (manager->isActive() || manager->hasDataInMemory())
         return false;
 
     manager->deleteEmptyDirectory();
@@ -338,6 +419,24 @@ bool NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::
 
     m_originStorageManagers.remove(iterator);
     return true;
+}
+
+void NetworkStorageManager::updateOriginModificationTime(const WebCore::ClientOrigin& origin)
+{
+    assertIsCurrent(workQueue());
+    // This function should be called when origin is in use, i.e. OriginStorageManager exists.
+    auto* manager = m_originStorageManagers.get(origin);
+    if (!manager)
+        return;
+
+    auto originDirectory = manager->path();
+    if (originDirectory.isEmpty())
+        return;
+
+    auto originFile = originFilePath(originDirectory);
+    FileSystem::updateFileModificationTime(originFile);
+    if (m_quotaManager)
+        m_quotaManager->originVisited(origin);
 }
 
 void NetworkStorageManager::persisted(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
@@ -768,13 +867,37 @@ void NetworkStorageManager::moveData(OptionSet<WebsiteDataType> types, WebCore::
     });
 }
 
+bool NetworkStorageManager::evictDataByTopOrigin(const WebCore::SecurityOriginData& topOrigin)
+{
+    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(workQueue());
+
+    Vector<WebCore::ClientOrigin> originsToEvict;
+    for (auto& origin : getAllOrigins()) {
+        if (origin.topOrigin != topOrigin)
+            continue;
+
+        if (auto* originManager = m_originStorageManagers.get(origin)) {
+            if (originManager->isActive())
+                return false;
+        }
+        originsToEvict.append(origin);
+    }
+
+    for (auto& origin : originsToEvict) {
+        originStorageManager(origin, ShouldWriteOriginFile::No).deleteData(allManagedTypes(), -WallTime::infinity());
+        removeOriginStorageManagerIfPossible(origin);
+    }
+    return true;
+}
+
 void NetworkStorageManager::getOriginDirectory(WebCore::ClientOrigin&& origin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, type, origin = crossThreadCopy(WTFMove(origin)), completionHandler = WTFMove(completionHandler)]() mutable {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(originStorageManager(origin).resolvedPath(type))]() mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(originStorageManager(origin, ShouldWriteOriginFile::No).resolvedPath(type))]() mutable {
             completionHandler(WTFMove(directory));
         });
         removeOriginStorageManagerIfPossible(origin);
@@ -865,7 +988,7 @@ void NetworkStorageManager::requestSpace(const WebCore::ClientOrigin& origin, ui
     m_queue->dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(origin), size, completionHandler = WTFMove(completionHandler)]() mutable {
         originStorageManager(origin).quotaManager().requestSpace(size, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), decision]() mutable {
-                completionHandler(decision == QuotaManager::Decision::Grant);
+                completionHandler(decision == OriginQuotaManager::Decision::Grant);
             });
         });
     });

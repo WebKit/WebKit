@@ -34,66 +34,66 @@ namespace JSC {
 // According to C++ rules, a type used for the return signature of function with C linkage (i.e.
 // 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
 // warnings, or worse, a change in the ABI used to return these types.
-struct SlowPathReturnType {
-    CPURegister a;
-    CPURegister b;
+struct UGPRPair {
+    UCPURegister first;
+    UCPURegister second;
 };
-static_assert(sizeof(SlowPathReturnType) >= sizeof(void*) * 2, "SlowPathReturnType should fit in two machine registers");
+static_assert(sizeof(UGPRPair) >= sizeof(void*) * 2, "UGPRPair should fit in two machine registers");
 
-inline SlowPathReturnType encodeResult(const void* a, const void* b)
+constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return { first, second }; }
+
+inline UGPRPair encodeResult(const void* a, const void* b)
 {
-    SlowPathReturnType result;
-    result.a = reinterpret_cast<CPURegister>(a);
-    result.b = reinterpret_cast<CPURegister>(b);
-    return result;
+    return makeUGPRPair(reinterpret_cast<UCPURegister>(a), reinterpret_cast<UCPURegister>(b));
 }
 
-inline void decodeResult(SlowPathReturnType result, const void*& a, const void*& b)
+inline void decodeResult(UGPRPair result, const void*& a, const void*& b)
 {
-    a = reinterpret_cast<void*>(result.a);
-    b = reinterpret_cast<void*>(result.b);
+    a = reinterpret_cast<void*>(result.first);
+    b = reinterpret_cast<void*>(result.second);
 }
 
-inline void decodeResult(SlowPathReturnType result, size_t& a, size_t& b)
+inline void decodeResult(UGPRPair result, size_t& a, size_t& b)
 {
-    a = static_cast<size_t>(result.a);
-    b = static_cast<size_t>(result.b);
+    a = static_cast<size_t>(result.first);
+    b = static_cast<size_t>(result.second);
 }
 
 #else // USE(JSVALUE32_64)
-typedef int64_t SlowPathReturnType;
+using UGPRPair = uint64_t;
+
+constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return static_cast<uint64_t>(second) << 32 | first; }
 
 typedef union {
     struct {
         const void* a;
         const void* b;
     } pair;
-    int64_t i;
-} SlowPathReturnTypeEncoding;
+    uint64_t i;
+} UGPRPairEncoding;
 
-inline SlowPathReturnType encodeResult(const void* a, const void* b)
+
+inline UGPRPair encodeResult(const void* a, const void* b)
 {
-    SlowPathReturnTypeEncoding u;
-    u.pair.a = a;
-    u.pair.b = b;
-    return u.i;
+    return makeUGPRPair(reinterpret_cast<UCPURegister>(a), reinterpret_cast<UCPURegister>(b));
 }
 
-inline void decodeResult(SlowPathReturnType result, const void*& a, const void*& b)
+inline void decodeResult(UGPRPair result, const void*& a, const void*& b)
 {
-    SlowPathReturnTypeEncoding u;
+    UGPRPairEncoding u;
     u.i = result;
     a = u.pair.a;
     b = u.pair.b;
 }
 
-inline void decodeResult(SlowPathReturnType result, size_t& a, size_t& b)
+inline void decodeResult(UGPRPair result, size_t& a, size_t& b)
 {
-    SlowPathReturnTypeEncoding u;
+    UGPRPairEncoding u;
     u.i = result;
     a = bitwise_cast<size_t>(u.pair.a);
     b = bitwise_cast<size_t>(u.pair.b);
 }
+
 #endif // USE(JSVALUE32_64)
 
 } // namespace JSC

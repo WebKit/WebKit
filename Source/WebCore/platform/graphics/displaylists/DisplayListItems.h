@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,6 +257,7 @@ public:
 
     WEBCORE_EXPORT SetState(const GraphicsContextState&);
 
+    GraphicsContextState& state() { return m_state; }
     const GraphicsContextState& state() const { return m_state; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&);

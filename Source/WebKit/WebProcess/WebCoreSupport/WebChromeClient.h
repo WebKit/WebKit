@@ -51,7 +51,6 @@ public:
     WebPage& page() const { return m_page; }
 
 private:
-
     void didInsertMenuElement(WebCore::HTMLMenuElement&) final;
     void didRemoveMenuElement(WebCore::HTMLMenuElement&) final;
     void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&) final;
@@ -280,6 +279,10 @@ private:
 
 #if ENABLE(ASYNC_SCROLLING)
     RefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page&) const final;
+#endif
+
+#if PLATFORM(MAC)
+    std::unique_ptr<WebCore::ScrollbarsController> createScrollbarsController(WebCore::Page&, WebCore::ScrollableArea&) const final;
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

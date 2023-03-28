@@ -31,7 +31,7 @@
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "ICStatusUtils.h"
-#include "PolymorphicAccess.h"
+#include "InlineCacheCompiler.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 

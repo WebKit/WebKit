@@ -262,7 +262,30 @@ static std::optional<size_t> nextDisplayBoxIndex(const Box& outOfFlowBox, const 
     return { };
 }
 
-LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft, const InlineDisplay::Content& displayContent) const
+InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const ConstraintsForInFlowContent& constraints, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext& floatingContext) const
+{
+    auto contentHasPreviousLine = lastLineLogicalBottom ? std::make_optional(true) : std::nullopt;
+    auto textIndent = computedTextIndent(IsIntrinsicWidthMode::No, contentHasPreviousLine, constraints.horizontal().logicalWidth);
+    auto floatConstraints = floatConstraintsForLine(lastLineLogicalBottom.value_or(constraints.logicalTop()), 0, floatingContext);
+    auto lineBoxLeft = constraints.horizontal().logicalLeft;
+    auto lineBoxWidth = constraints.horizontal().logicalWidth;
+    // FIXME: Add missing RTL support.
+    if (floatConstraints.left) {
+        auto floatOffset = std::max(0_lu, floatConstraints.left->x - constraints.horizontal().logicalLeft);
+        lineBoxLeft += floatOffset;
+        lineBoxWidth -= floatOffset;
+    }
+    if (floatConstraints.right) {
+        auto lineBoxRight = (constraints.horizontal().logicalLeft + constraints.horizontal().logicalWidth);
+        auto floatOffset = std::max(0_lu, lineBoxRight - floatConstraints.right->x);
+        lineBoxWidth -= floatOffset;
+    }
+    lineBoxLeft += textIndent;
+    auto rootInlineBoxLeft = horizontalAlignmentOffset(lineBoxWidth, IsLastLineOrAfterLineBreak::Yes);
+    return lineBoxLeft + rootInlineBoxLeft;
+}
+
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent, const FloatingContext& floatingContext) const
 {
     ASSERT(outOfFlowBox.style().isOriginalDisplayInlineType());
     auto& lines = displayContent.lines;
@@ -270,7 +293,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());
-        return contentBoxTopLeft;
+        return { contentLeftAfterLastLine(constraints, { }, floatingContext), constraints.logicalTop() };
     }
 
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
@@ -313,20 +336,20 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
     auto nextDisplayBoxIndexAfterOutOfFlow = nextDisplayBoxIndex(outOfFlowBox, boxes);
     if (!nextDisplayBoxIndexAfterOutOfFlow) {
         // This is the last content on the block and it does not fit the last line.
-        // FIXME: This still has line type of constraints like text-align.
-        return LayoutPoint { contentBoxTopLeft.x(), isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
+        return { contentLeftAfterLastLine(constraints, currentLine.bottom(), floatingContext), isHorizontalWritingMode ? currentLine.bottom() : currentLine.right() };
     }
     auto& nextDisplayBox = boxes[*nextDisplayBoxIndexAfterOutOfFlow];
     return leftSideToLogicalTopLeft(nextDisplayBox, lines[nextDisplayBox.lineIndex()]);
 }
 
-LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(const Box& outOfFlowBox, LayoutPoint contentBoxTopLeft, const InlineDisplay::Content& displayContent) const
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(const Box& outOfFlowBox, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent) const
 {
     ASSERT(outOfFlowBox.style().isDisplayBlockLevel());
 
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
     auto& lines = displayContent.lines;
     auto& boxes = displayContent.boxes;
+    auto contentBoxTopLeft = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
 
     if (lines.isEmpty()) {
         ASSERT(boxes.isEmpty());
