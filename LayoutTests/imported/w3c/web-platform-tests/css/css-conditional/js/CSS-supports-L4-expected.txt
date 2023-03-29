@@ -11,4 +11,10 @@ PASS selector() with forgiving :where, 1 arg
 PASS selector() with forgiving :where, multiple args
 PASS selector() with forgiving :has, 1 arg
 PASS selector() with forgiving :has, multiple args
+PASS selector() with unforgiving :nth-child, 1 arg
+PASS selector() with unforgiving :nth-last-child, 1 arg
+PASS selector() with unforgiving :nth-child, multiple args
+PASS selector() with unforgiving :nth-last-child, multiple args
+PASS selector() with a non-identifier after :nth-child's An+B index
+PASS selector() with a non-identifier after :nth-last-child's An+B index
 
