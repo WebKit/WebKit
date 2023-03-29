@@ -9,7 +9,8 @@
             "\\A<https?://webkit.org/b/(?P<id>\\d+)>\\Z"
         ],
         "redact" : {
-            "product:Security": true
+            "project:Security": true,
+            "component:Security": true
         }, "radar_importer": {
             "name": "Radar WebKit Bug Importer",
             "emails": ["webkit-bug-importer@group.apple.com"],
