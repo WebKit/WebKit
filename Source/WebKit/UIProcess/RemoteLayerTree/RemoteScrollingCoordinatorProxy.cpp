@@ -155,6 +155,9 @@ void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const
 
 void RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit()
 {
+    // FIXME: (rdar://106293351) Set the `m_needsApplyLayerPositionsAfterCommit` flag in a more
+    // reasonable place once UI-side compositing scrolling synchronization is implemented
+    m_scrollingTree->setNeedsApplyLayerPositionsAfterCommit();
     m_scrollingTree->applyLayerPositionsAfterCommit();
 }
 
