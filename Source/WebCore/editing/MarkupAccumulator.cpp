@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -305,32 +305,6 @@ void MarkupAccumulator::appendCustomAttributes(StringBuilder&, const Element&, N
 {
 }
 
-void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, const Element& element, const Attribute& attribute)
-{
-    ASSERT(element.isURLAttribute(attribute));
-    String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
-    char quoteChar = '"';
-    if (WTF::protocolIsJavaScript(resolvedURLString)) {
-        // minimal escaping for javascript urls
-        if (resolvedURLString.contains('&'))
-            resolvedURLString = makeStringByReplacingAll(resolvedURLString, '&', "&amp;"_s);
-
-        if (resolvedURLString.contains('"')) {
-            if (resolvedURLString.contains('\''))
-                resolvedURLString = makeStringByReplacingAll(resolvedURLString, '"', "&quot;"_s);
-            else
-                quoteChar = '\'';
-        }
-        result.append(quoteChar, resolvedURLString, quoteChar);
-        return;
-    }
-
-    // FIXME: This does not fully match other browsers. Firefox percent-escapes non-ASCII characters for innerHTML.
-    result.append(quoteChar);
-    appendAttributeValue(result, resolvedURLString, false);
-    result.append(quoteChar);
-}
-
 static bool shouldAddNamespaceElement(const Element& element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
@@ -558,13 +532,14 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
 
     result.append('=');
 
-    if (element.isURLAttribute(attribute))
-        appendQuotedURLAttributeValue(result, element, attribute);
-    else {
-        result.append('"');
+    result.append('"');
+    if (element.isURLAttribute(attribute)) {
+        // FIXME: This does not fully match other browsers. Firefox percent-escapes
+        // non-ASCII characters for innerHTML.
+        appendAttributeValue(result, resolveURLIfNeeded(element, attribute.value()), isSerializingHTML);
+    } else
         appendAttributeValue(result, attribute.value(), isSerializingHTML);
-        result.append('"');
-    }
+    result.append('"');
 
     if (!isSerializingHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
         appendNamespace(result, effectiveXMLPrefixedName->prefix(), effectiveXMLPrefixedName->namespaceURI(), *namespaces);
