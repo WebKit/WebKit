@@ -70,6 +70,7 @@ public:
     void setSymbols(const Vector<CSSCounterStyleDescriptors::Symbol>& symbols) { m_descriptors.m_symbols = symbols; }
     void setAdditiveSymbols(const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols) { m_descriptors.m_additiveSymbols = additiveSymbols; }
     void setSpeakAs(CSSCounterStyleDescriptors::SpeakAs speakAs) { m_descriptors.m_speakAs = speakAs; }
+    void setFirstSymbolValueForFixedSystem(int firstSymbolValue) { m_descriptors.m_fixedSystemFirstSymbolValue = firstSymbolValue; }
 
     void setFallbackReference(RefPtr<CSSCounterStyle>&&);
     bool isFallbackUnresolved() { return !m_fallbackReference; }
