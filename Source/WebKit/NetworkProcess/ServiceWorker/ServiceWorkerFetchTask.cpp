@@ -150,7 +150,7 @@ void ServiceWorkerFetchTask::contextClosed()
     if (m_isDone)
         return;
 
-    if (m_wasHandled) {
+    if (m_wasHandled && !m_isLoadingFromPreloader) {
         didFail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
         return;
     }
