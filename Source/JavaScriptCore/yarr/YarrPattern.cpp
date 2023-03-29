@@ -735,8 +735,8 @@ private:
         Vector<CharacterRange> resultRanges;
 
         constexpr size_t chunkSize = 2048;
-        Bitmap<chunkSize> lhsASCIIBitmap;
-        Bitmap<chunkSize> rhsASCIIBitmap;
+        Bitmap<chunkSize> lhsChunkBitmap;
+        Bitmap<chunkSize> rhsChunkBitmap;
 
         UChar32 chunkLo = INT_MAX, chunkHi;
 
@@ -751,6 +751,16 @@ private:
         if (!m_rangesUnicode.isEmpty())
             chunkLo = std::min(chunkLo, m_rangesUnicode[0].begin);
 
+        if (!rhsMatchesUnicode.isEmpty())
+            chunkLo = std::min(chunkLo, rhsMatchesUnicode[0]);
+
+        if (!rhsRangesUnicode.isEmpty())
+            chunkLo = std::min(chunkLo, rhsRangesUnicode[0].begin);
+
+        // If both the LHS and RHS are empty, bail out.
+        if (chunkLo == INT_MAX)
+            return;
+
         while (lhsMatchIndex < m_matchesUnicode.size() || lhsRangeIndex < m_rangesUnicode.size() || rhsMatchIndex < rhsMatchesUnicode.size() || rhsRangeIndex < rhsRangesUnicode.size()) {
             if (rhsMatchIndex >= rhsMatchesUnicode.size() && rhsRangeIndex > rhsRangesUnicode.size() && m_setOp == CharacterClassSetOp::Intersection) {
                 // RHS is exhausted, we can short cut from here. Can't intersect anything more so bail out.
@@ -764,7 +774,7 @@ private:
                 if (ch > chunkHi)
                     break;
 
-                lhsASCIIBitmap.set(ch - chunkLo);
+                lhsChunkBitmap.set(ch - chunkLo);
             }
 
             for (; lhsRangeIndex < m_rangesUnicode.size(); ++lhsRangeIndex) {
@@ -776,18 +786,18 @@ private:
                 auto end = std::min(range.end, chunkHi);
 
                 for (UChar32 ch = begin; ch <= end; ch++)
-                    lhsASCIIBitmap.set(ch - chunkLo);
+                    lhsChunkBitmap.set(ch - chunkLo);
 
                 if (range.end > chunkHi)
                     break;
             }
 
             for (; rhsMatchIndex < rhsMatchesUnicode.size(); ++rhsMatchIndex) {
-                UChar32 ch = rhsMatchesUnicode[lhsMatchIndex];
+                UChar32 ch = rhsMatchesUnicode[rhsMatchIndex];
                 if (ch > chunkHi)
                     break;
 
-                rhsASCIIBitmap.set(ch - chunkLo);
+                rhsChunkBitmap.set(ch - chunkLo);
             }
 
             for (; rhsRangeIndex < rhsRangesUnicode.size(); ++rhsRangeIndex) {
@@ -799,7 +809,7 @@ private:
                 auto end = std::min(range.end, chunkHi);
 
                 for (UChar32 ch = begin; ch <= end; ch++)
-                    rhsASCIIBitmap.set(ch);
+                    rhsChunkBitmap.set(ch - chunkLo);
 
                 if (range.end > chunkHi)
                     break;
@@ -808,15 +818,15 @@ private:
             switch (m_setOp) {
             case CharacterClassSetOp::Default:
             case CharacterClassSetOp::Union:
-                lhsASCIIBitmap.merge(rhsASCIIBitmap);
+                lhsChunkBitmap.merge(rhsChunkBitmap);
                 break;
 
             case CharacterClassSetOp::Intersection:
-                lhsASCIIBitmap.filter(rhsASCIIBitmap);
+                lhsChunkBitmap.filter(rhsChunkBitmap);
                 break;
 
             case CharacterClassSetOp::Subtraction:
-                lhsASCIIBitmap.exclude(rhsASCIIBitmap);
+                lhsChunkBitmap.exclude(rhsChunkBitmap);
                 break;
             }
 
@@ -831,7 +841,7 @@ private:
                     resultRanges.append(CharacterRange(lo, hi));
             };
 
-            for (auto setVal : lhsASCIIBitmap) {
+            for (auto setVal : lhsChunkBitmap) {
                 UChar32 ch = static_cast<UChar32>(setVal) + chunkLo;
                 if (firstCharUnset) {
                     lo = hi = ch;
@@ -850,8 +860,8 @@ private:
                 addCharToResults();
 
             chunkLo = chunkHi + 1;
-            lhsASCIIBitmap.clearAll();
-            rhsASCIIBitmap.clearAll();
+            lhsChunkBitmap.clearAll();
+            rhsChunkBitmap.clearAll();
         }
 
         m_matchesUnicode.swap(resultMatches);
