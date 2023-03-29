@@ -2665,13 +2665,9 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    
-    auto range = [self rangeForTextMarkers:textMarkers];
-    if (!range)
-        return 0;
 
-    int length = AXObjectCache::lengthForRange(SimpleRange { *range });
-    return length < 0 ? 0 : length;
+    auto range = [self rangeForTextMarkers:textMarkers];
+    return range ? AXObjectCache::lengthForRange(*range) : 0;
 }
 
 - (WebAccessibilityTextMarker *)startOrEndTextMarkerForTextMarkers:(NSArray *)textMarkers isStart:(BOOL)isStart

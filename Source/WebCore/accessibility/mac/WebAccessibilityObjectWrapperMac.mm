@@ -3580,18 +3580,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:AXLengthForTextMarkerRangeAttribute]) {
-        int length = Accessibility::retrieveValueFromMainThread<int>([textMarkerRange = retainPtr(textMarkerRange), protectedSelf = retainPtr(self)] () -> int {
+        unsigned length = Accessibility::retrieveValueFromMainThread<unsigned>([textMarkerRange = retainPtr(textMarkerRange), protectedSelf = retainPtr(self)] () -> unsigned {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return 0;
 
             auto range = rangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange.get());
-            if (!range)
-                return 0;
-            return AXObjectCache::lengthForRange(SimpleRange { *range });
+            return range ? AXObjectCache::lengthForRange(*range) : 0;
         });
-        if (length < 0)
-            return nil;
         return @(length);
     }
 
