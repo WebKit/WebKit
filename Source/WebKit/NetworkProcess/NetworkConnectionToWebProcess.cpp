@@ -85,6 +85,10 @@
 #include <WebCore/SecurityPolicy.h>
 #include <wtf/LogInitialization.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/OSObjectPtr.h>
+#endif
+
 #if ENABLE(APPLE_PAY_REMOTE_UI)
 #include "WebPaymentCoordinatorProxyMessages.h"
 #endif
@@ -1410,58 +1414,35 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 }
 #endif
 
+
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(const String& logChannel, const String& logString, uint8_t logType)
+static CString validatedASCIIString(const String& string, unsigned maxLength)
 {
-    WTFLogChannel* channel = getLogChannel(logChannel);
-    if (!channel)
-        channel = WebCore::getLogChannel(logChannel);
-    if (!channel)
-        channel = WTF::getLogChannel(logChannel);
-
-    CString string = logString.ascii();
-
-    // Truncate long log strings and only log printable characters
-    constexpr unsigned maxLength = 256;
-    auto stringLength = string.length();
-
-    if (stringLength > maxLength) {
-        string.mutableData()[maxLength] = 0;
-        stringLength = maxLength;
-    }
+    String shortString = string.substring(0, maxLength);
+    CString validatedString = shortString.ascii();
+    auto stringLength = validatedString.length();
 
     for (unsigned i = 0; i < stringLength; i++) {
-        char c = string.data()[i];
+        char c = validatedString.data()[i];
         if (c >= 32 && c <= 126)
             continue;
-
-        string.mutableData()[i] = ' ';
+        validatedString.mutableData()[i] = ' ';
     }
+    return validatedString;
+}
 
-#define LOGFORMATSTRING "WebContent (%llu): %s"
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(const String& logChannel, const String& logCategory, const String& logString, uint8_t logType, int32_t pid)
+{
+    // Truncate long strings and only accept printable characters
+    CString string = validatedASCIIString(logString, 2048);
+    CString channel = validatedASCIIString(logChannel, 64);
+    CString category = validatedASCIIString(logCategory, 64);
 
-    if (!channel) {
-        os_log(OS_LOG_DEFAULT, LOGFORMATSTRING, m_webProcessIdentifier.toUInt64(), string.data());
-        return;
-    }
+    OSObjectPtr<os_log_t> osLogChannel = adoptOSObject(os_log_create(channel.data(), category.data()));
 
-    switch (logType) {
-    case OS_LOG_TYPE_DEFAULT:
-        os_log(channel->osLogChannel, LOGFORMATSTRING, m_webProcessIdentifier.toUInt64(), string.data());
-        break;
-    case OS_LOG_TYPE_INFO:
-        os_log_info(channel->osLogChannel, LOGFORMATSTRING, m_webProcessIdentifier.toUInt64(), string.data());
-        break;
-    case OS_LOG_TYPE_DEBUG:
-        os_log_debug(channel->osLogChannel, LOGFORMATSTRING, m_webProcessIdentifier.toUInt64(), string.data());
-        break;
-    case OS_LOG_TYPE_ERROR:
-        os_log_error(channel->osLogChannel, LOGFORMATSTRING, m_webProcessIdentifier.toUInt64(), string.data());
-        break;
-    case OS_LOG_TYPE_FAULT:
-        os_log_fault(channel->osLogChannel, LOGFORMATSTRING, m_webProcessIdentifier.toUInt64(), string.data());
-        break;
-    }
+    RELEASE_ASSERT(logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT);
+
+    os_log_with_type(osLogChannel.get(), static_cast<os_log_type_t>(logType), "WebContent[pid=%d, identifier=%llu]: %s", pid, m_webProcessIdentifier.toUInt64(), string.data());
 }
 #endif
 

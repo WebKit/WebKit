@@ -202,7 +202,7 @@ public:
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void logOnBehalfOfWebContent(const String& logChannel, const String& logString, uint8_t logType);
+    void logOnBehalfOfWebContent(const String& logChannel, const String& logCategory, const String& logString, uint8_t logType, int32_t pid);
 #endif
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters, IPC::Connection::Identifier);
