@@ -386,30 +386,28 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
 
     auto pointerId = event.pointerId();
 
+    auto& element = downcast<Element>(*target);
     if (event.pointerType() != touchPointerEventType()) {
         if (RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId))
             capturingData->pointerIsPressed = isPointerdown;
-        return;
+    } else if (isPointerdown) {
+        // https://w3c.github.io/pointerevents/#implicit-pointer-capture
+
+        // Some input devices (such as touchscreens) implement a "direct manipulation" metaphor where a pointer is intended to act primarily on the UI
+        // element it became active upon (providing a physical illusion of direct contact, instead of indirect contact via a cursor that conceptually
+        // floats above the UI). Such devices are identified by the InputDeviceCapabilities.pointerMovementScrolls property and should have "implicit
+        // pointer capture" behavior as follows.
+
+        // Direct manipulation devices should behave exactly as if setPointerCapture was called on the target element just before the invocation of any
+        // pointerdown listeners. The hasPointerCapture API may be used (eg. within any pointerdown listener) to determine whether this has occurred. If
+        // releasePointerCapture is not called for the pointer before the next pointer event is fired, then a gotpointercapture event will be dispatched
+        // to the target (as normal) indicating that capture is active.
+
+        auto capturingData = ensureCapturingDataForPointerEvent(event);
+        capturingData->pointerIsPressed = true;
+        setPointerCapture(&element, pointerId);
     }
-
-    if (!isPointerdown)
-        return;
-
-    // https://w3c.github.io/pointerevents/#implicit-pointer-capture
-
-    // Some input devices (such as touchscreens) implement a "direct manipulation" metaphor where a pointer is intended to act primarily on the UI
-    // element it became active upon (providing a physical illusion of direct contact, instead of indirect contact via a cursor that conceptually
-    // floats above the UI). Such devices are identified by the InputDeviceCapabilities.pointerMovementScrolls property and should have "implicit
-    // pointer capture" behavior as follows.
-
-    // Direct manipulation devices should behave exactly as if setPointerCapture was called on the target element just before the invocation of any
-    // pointerdown listeners. The hasPointerCapture API may be used (eg. within any pointerdown listener) to determine whether this has occurred. If
-    // releasePointerCapture is not called for the pointer before the next pointer event is fired, then a gotpointercapture event will be dispatched
-    // to the target (as normal) indicating that capture is active.
-
-    auto capturingData = ensureCapturingDataForPointerEvent(event);
-    capturingData->pointerIsPressed = true;
-    setPointerCapture(downcast<Element>(target), pointerId);
+    element.document().handlePopoverLightDismiss(event, element);
 }
 
 auto PointerCaptureController::ensureCapturingDataForPointerEvent(const PointerEvent& event) -> Ref<CapturingData>

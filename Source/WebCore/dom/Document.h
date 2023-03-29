@@ -1633,7 +1633,7 @@ public:
     HTMLElement* topmostAutoPopover() const;
 
     void hideAllPopoversUntil(Element*, FocusPreviousElement, FireEvents);
-    void handlePopoverLightDismiss(PointerEvent&);
+    void handlePopoverLightDismiss(const PointerEvent&, Node&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
