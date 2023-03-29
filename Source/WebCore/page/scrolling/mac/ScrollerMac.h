@@ -58,6 +58,7 @@ public:
     RetainPtr<NSScrollerImp> takeScrollerImp() { return std::exchange(m_scrollerImp, { }); }
     NSScrollerImp *scrollerImp() { return m_scrollerImp.get(); }
     void setScrollerImp(NSScrollerImp *imp) { m_scrollerImp = imp; }
+    void updateScrollbarStyle();
 
     FloatPoint convertFromContent(const FloatPoint&) const;
 

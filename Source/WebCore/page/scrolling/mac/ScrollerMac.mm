@@ -365,6 +365,11 @@ void ScrollerMac::updateValues()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+void ScrollerMac::updateScrollbarStyle()
+{
+    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()];
+}
+
 FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
 {
     return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };

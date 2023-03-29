@@ -334,6 +334,8 @@ void ScrollerPairMac::setScrollbarStyle(ScrollbarStyle style)
     m_scrollbarStyle = style;
 
     ensureOnMainThreadWithProtectedThis([this, scrollerStyle = nsScrollerStyle(style)] {
+        m_horizontalScroller.updateScrollbarStyle();
+        m_verticalScroller.updateScrollbarStyle();
         [m_scrollerImpPair setScrollerStyle:scrollerStyle];
     });
 }
