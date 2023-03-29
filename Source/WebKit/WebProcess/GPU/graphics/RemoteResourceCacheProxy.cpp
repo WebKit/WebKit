@@ -31,6 +31,7 @@
 #include "ArgumentCoders.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include <WebCore/FontCustomPlatformData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -139,10 +140,14 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)
 {
+    if (font.platformData().customPlatformData())
+        recordFontCustomPlatformDataUse(*font.platformData().customPlatformData());
+
     auto result = m_fonts.add(font.renderingResourceIdentifier(), m_renderingUpdateID);
 
     if (result.isNewEntry) {
-        m_remoteRenderingBackendProxy.cacheFont(font);
+        auto renderingResourceIdentifier = font.platformData().customPlatformData() ? std::optional(font.platformData().customPlatformData()->m_renderingResourceIdentifier) : std::nullopt;
+        m_remoteRenderingBackendProxy.cacheFont(font.attributes(), font.platformData().attributes(), renderingResourceIdentifier);
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
         return;
     }
@@ -151,6 +156,23 @@ void RemoteResourceCacheProxy::recordFontUse(Font& font)
     if (currentState != m_renderingUpdateID) {
         currentState = m_renderingUpdateID;
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
+    }
+}
+
+void RemoteResourceCacheProxy::recordFontCustomPlatformDataUse(const FontCustomPlatformData& customPlatformData)
+{
+    auto result = m_fontCustomPlatformDatas.add(customPlatformData.m_renderingResourceIdentifier, m_renderingUpdateID);
+
+    if (result.isNewEntry) {
+        m_remoteRenderingBackendProxy.cacheFontCustomPlatformData(customPlatformData);
+        ++m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate;
+        return;
+    }
+
+    auto& currentState = result.iterator->value;
+    if (currentState != m_renderingUpdateID) {
+        currentState = m_renderingUpdateID;
+        ++m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate;
     }
 }
 
@@ -189,6 +211,7 @@ void RemoteResourceCacheProxy::clearNativeImageMap()
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
 {
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
+    m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate = 0;
 }
 
 void RemoteResourceCacheProxy::clearFontMap()
@@ -228,21 +251,37 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
 
     unsigned totalFontCount = m_fonts.size();
     RELEASE_ASSERT(m_numberOfFontsUsedInCurrentRenderingUpdate <= totalFontCount);
-    if (totalFontCount == m_numberOfFontsUsedInCurrentRenderingUpdate)
-        return;
-
-    HashSet<WebCore::RenderingResourceIdentifier> toRemove;
-    auto renderingUpdateID = m_renderingUpdateID;
-    for (auto& item : m_fonts) {
-        if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
-            toRemove.add(item.key);
-            m_remoteRenderingBackendProxy.releaseRenderingResource(item.key);
+    if (totalFontCount != m_numberOfFontsUsedInCurrentRenderingUpdate) {
+        HashSet<WebCore::RenderingResourceIdentifier> toRemove;
+        auto renderingUpdateID = m_renderingUpdateID;
+        for (auto& item : m_fonts) {
+            if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
+                toRemove.add(item.key);
+                m_remoteRenderingBackendProxy.releaseRenderingResource(item.key);
+            }
         }
+
+        m_fonts.removeIf([&](const auto& bucket) {
+            return toRemove.contains(bucket.key);
+        });
     }
 
-    m_fonts.removeIf([&](const auto& bucket) {
-        return toRemove.contains(bucket.key);
-    });
+    totalFontCount = m_fontCustomPlatformDatas.size();
+    RELEASE_ASSERT(m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate <= totalFontCount);
+    if (totalFontCount != m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate) {
+        HashSet<WebCore::RenderingResourceIdentifier> toRemove;
+        auto renderingUpdateID = m_renderingUpdateID;
+        for (auto& item : m_fontCustomPlatformDatas) {
+            if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
+                toRemove.add(item.key);
+                m_remoteRenderingBackendProxy.releaseRenderingResource(item.key);
+            }
+        }
+
+        m_fontCustomPlatformDatas.removeIf([&](const auto& bucket) {
+            return toRemove.contains(bucket.key);
+        });
+    }
 }
 
 void RemoteResourceCacheProxy::didPaintLayers()

@@ -31,7 +31,8 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmapHandle handle) Synchronous NotStreamEncodableReply
     GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmapHandle handle) Synchronous NotStreamEncodableReply
     CacheNativeImage(WebKit::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
-    CacheFont(Ref<WebCore::Font> font) NotStreamEncodable
+    CacheFont(WebCore::Font::Attributes data, WebCore::FontPlatformData::Attributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
+    CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     CacheGradient(Ref<WebCore::Gradient> gradient, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     ReleaseAllResources()

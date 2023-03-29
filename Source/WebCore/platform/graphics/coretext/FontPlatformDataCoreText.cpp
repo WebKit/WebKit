@@ -24,6 +24,7 @@
 #include "FontPlatformData.h"
 
 #include "Font.h"
+#include "FontCustomPlatformData.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -32,8 +33,8 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const CreationData* creationData)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, creationData)
+FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, customPlatformData)
 {
     ASSERT_ARG(font, font);
     m_font = font;
@@ -45,6 +46,59 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
 #if PLATFORM(IOS_FAMILY)
     m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
 #endif
+}
+
+static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFStringRef referenceURL, CFStringRef postScriptName)
+{
+    auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL, nullptr));
+    if (!url)
+        return nullptr;
+    auto fontDescriptors = adoptCF(CTFontManagerCreateFontDescriptorsFromURL(url.get()));
+    if (!fontDescriptors || !CFArrayGetCount(fontDescriptors.get()))
+        return nullptr;
+    if (CFArrayGetCount(fontDescriptors.get()) == 1)
+        return static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), 0));
+
+    for (CFIndex i = 0; i < CFArrayGetCount(fontDescriptors.get()); ++i) {
+        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), i));
+        auto currentPostScriptName = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontNameAttribute));
+        if (CFEqual(currentPostScriptName.get(), postScriptName))
+            return fontDescriptor;
+    }
+    return nullptr;
+}
+
+static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions options, CFStringRef referenceURL, CFStringRef desiredPostScriptName)
+{
+    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes));
+    if (fontDescriptor) {
+        auto font = adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
+        auto actualPostScriptName = adoptCF(CTFontCopyPostScriptName(font.get()));
+        if (CFEqual(actualPostScriptName.get(), desiredPostScriptName))
+            return font;
+    }
+
+    // CoreText couldn't round-trip the font.
+    // We can fall back to doing our best to find it ourself.
+    fontDescriptor = findFontDescriptor(referenceURL, desiredPostScriptName);
+    if (!fontDescriptor)
+        fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
+    ASSERT(fontDescriptor);
+    return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
+}
+
+FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
+{
+    RetainPtr<CTFontRef> ctFont;
+    if (custom) {
+        auto baseFontDescriptor = custom->fontDescriptor.get();
+        RELEASE_ASSERT(baseFontDescriptor);
+        auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, data.m_attributes.get()));
+        ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), data.m_size, nullptr));
+    } else
+        ctFont = createCTFont(data.m_attributes.get(), data.m_size, data.m_options, data.m_url.get(), data.m_psName.get());
+
+    return WebCore::FontPlatformData(ctFont.get(), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, custom);
 }
 
 bool isSystemFont(CTFontRef font)
@@ -183,6 +237,23 @@ void FontPlatformData::updateSize(float size)
     ASSERT(m_font.get());
     m_font = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, nullptr));
     m_ctFont = nullptr;
+}
+
+FontPlatformData::Attributes FontPlatformData::attributes() const
+{
+    Attributes result(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
+
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_font.get()));
+    result.m_attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+
+    if (!m_customPlatformData) {
+        result.m_options = CTFontDescriptorGetOptions(fontDescriptor.get());
+        auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(m_font.get(), kCTFontReferenceURLAttribute)));
+        result.m_url = CFURLGetString(referenceURL.get());
+        result.m_psName = adoptCF(CTFontCopyPostScriptName(m_font.get()));
+    }
+
+    return result;
 }
 
 } // namespace WebCore

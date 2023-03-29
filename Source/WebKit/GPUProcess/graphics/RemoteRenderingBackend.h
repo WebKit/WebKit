@@ -123,7 +123,8 @@ private:
     void cacheNativeImage(const ShareableBitmapHandle&, WebCore::RenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&, WebCore::RenderingResourceIdentifier);
-    void cacheFont(Ref<WebCore::Font>&&);
+    void cacheFont(const WebCore::Font::Attributes&, WebCore::FontPlatformData::Attributes, std::optional<WebCore::RenderingResourceIdentifier>);
+    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
     void releaseAllResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
@@ -140,6 +141,7 @@ private:
     void cacheGradientWithQualifiedIdentifier(Ref<WebCore::Gradient>&&, QualifiedRenderingResourceIdentifier);
     void releaseRenderingResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
     void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
+    void cacheFontCustomPlatformDataWithQualifiedIdentifier(Ref<WebCore::FontCustomPlatformData>&&, QualifiedRenderingResourceIdentifier);
 
 #if PLATFORM(COCOA)
     void prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData&, PrepareBackingStoreBuffersOutputData&);

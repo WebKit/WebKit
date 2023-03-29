@@ -86,6 +86,7 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/Font.h>
+#include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBGetResult.h>
@@ -478,17 +479,36 @@ bool ArgumentCoder<RefPtr<Image>>::decode(Decoder& decoder, RefPtr<Image>& image
 
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
 {
-    encoder << font.origin();
-    encoder << (font.isInterstitial() ? Font::Interstitial::Yes : Font::Interstitial::No);
-    encoder << font.visibility();
-    encoder << (font.isTextOrientationFallback() ? Font::OrientationFallback::Yes : Font::OrientationFallback::No);
-    encoder << font.renderingResourceIdentifier();
+    encoder << font.attributes();
     // Intentionally don't encode m_isBrokenIdeographFallback because it doesn't affect drawGlyphs().
 
     encodePlatformData(encoder, font);
 }
 
 std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
+{
+    std::optional<Font::Attributes> attributes;
+    decoder >> attributes;
+    if (!attributes)
+        return std::nullopt;
+
+    auto platformData = decodePlatformData(decoder);
+    if (!platformData)
+        return std::nullopt;
+
+    return Font::create(*platformData, attributes->origin, attributes->isInterstitial, attributes->visibility, attributes->isTextOrientationFallback, attributes->renderingResourceIdentifier);
+}
+
+void ArgumentCoder<WebCore::Font::Attributes>::encode(Encoder& encoder, const WebCore::Font::Attributes& attributes)
+{
+    encoder << attributes.origin;
+    encoder << attributes.isInterstitial;
+    encoder << attributes.visibility;
+    encoder << attributes.isTextOrientationFallback;
+    encoder << attributes.ensureRenderingResourceIdentifier();
+}
+
+std::optional<Font::Attributes> ArgumentCoder<Font::Attributes>::decode(Decoder& decoder)
 {
     std::optional<Font::Origin> origin;
     decoder >> origin;
@@ -515,11 +535,81 @@ std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
     if (!renderingResourceIdentifier)
         return std::nullopt;
 
-    auto platformData = decodePlatformData(decoder);
-    if (!platformData)
+    return std::optional<Font::Attributes>({ renderingResourceIdentifier, origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value() });
+}
+
+void ArgumentCoder<WebCore::FontCustomPlatformData>::encode(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
+{
+    encodePlatformData(encoder, customPlatformData);
+
+    encoder << customPlatformData.m_renderingResourceIdentifier;
+}
+
+std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>::decode(Decoder& decoder)
+{
+    auto result = decodePlatformData(decoder);
+    if (result) {
+        std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+        decoder >> renderingResourceIdentifier;
+        if (!renderingResourceIdentifier)
+            return std::nullopt;
+
+        (*result)->m_renderingResourceIdentifier = *renderingResourceIdentifier;
+    }
+
+    return result;
+}
+
+void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encode(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+{
+    encoder << data.m_orientation;
+    encoder << data.m_widthVariant;
+    encoder << data.m_textRenderingMode;
+    encoder << data.m_size;
+    encoder << data.m_syntheticBold;
+    encoder << data.m_syntheticOblique;
+
+    encodePlatformData(encoder, data);
+}
+
+std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attributes>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::FontOrientation> orientation;
+    decoder >> orientation;
+    if (!orientation)
         return std::nullopt;
 
-    return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingResourceIdentifier);
+    std::optional<WebCore::FontWidthVariant> widthVariant;
+    decoder >> widthVariant;
+    if (!widthVariant)
+        return std::nullopt;
+
+    std::optional<WebCore::TextRenderingMode> textRenderingMode;
+    decoder >> textRenderingMode;
+    if (!textRenderingMode)
+        return std::nullopt;
+
+    std::optional<float> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
+
+    std::optional<bool> syntheticBold;
+    decoder >> syntheticBold;
+    if (!syntheticBold)
+        return std::nullopt;
+
+    std::optional<bool> syntheticOblique;
+    decoder >> syntheticOblique;
+    if (!syntheticOblique)
+        return std::nullopt;
+
+    FontPlatformData::Attributes result(size.value(), orientation.value(), widthVariant.value(), textRenderingMode.value(), syntheticBold.value(), syntheticOblique.value());
+
+    if (!decodePlatformData(decoder, result))
+        return std::nullopt;
+
+    return result;
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)

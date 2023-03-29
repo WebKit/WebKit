@@ -96,6 +96,17 @@ Font* RemoteResourceCache::cachedFont(QualifiedRenderingResourceIdentifier rende
     return m_resourceHeap.getFont(renderingResourceIdentifier);
 }
 
+void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& font, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+{
+    ASSERT(renderingResourceIdentifier.object() == font->m_renderingResourceIdentifier);
+    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(font));
+}
+
+FontCustomPlatformData* RemoteResourceCache::cachedFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_resourceHeap.getFontCustomPlatformData(renderingResourceIdentifier);
+}
+
 DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
@@ -117,7 +128,8 @@ bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIde
         || m_resourceHeap.removeNativeImage(renderingResourceIdentifier)
         || m_resourceHeap.removeFont(renderingResourceIdentifier)
         || m_resourceHeap.removeDecomposedGlyphs(renderingResourceIdentifier)
-        || m_resourceHeap.removeGradient(renderingResourceIdentifier))
+        || m_resourceHeap.removeGradient(renderingResourceIdentifier)
+        || m_resourceHeap.removeFontCustomPlatformData(renderingResourceIdentifier))
         return true;
 
     // Caching the remote resource should have happened before releasing it.
