@@ -375,7 +375,9 @@ EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
     if (text.parentElement())
         parentName = &text.parentElement()->tagQName();
 
-    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag))
+    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag 
+        || *parentName == noembedTag || *parentName == noframesTag || *parentName == plaintextTag 
+        || *parentName == iframeTag))
         return EntityMaskInCDATA;
     return EntityMaskInHTMLPCDATA;
 }
