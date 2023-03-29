@@ -3673,6 +3673,8 @@ webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-posi
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-rtl.html [ ImageOnlyFailure ]
 
+webkit.org/b/254666 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html [ Skip ]
+
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-change-object-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html [ ImageOnlyFailure ]

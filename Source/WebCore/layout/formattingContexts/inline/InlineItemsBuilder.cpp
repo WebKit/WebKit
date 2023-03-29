@@ -182,7 +182,6 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
-    ASSERT(root().hasInFlowOrFloatingChild());
     auto layoutQueue = initializeLayoutQueue(root(), startPosition, m_formattingState.inlineItems());
 
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
