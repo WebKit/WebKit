@@ -130,6 +130,7 @@ void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullSc
 void WKBundlePageWillEnterFullScreen(WKBundlePageRef pageRef)
 {
 #if ENABLE(FULLSCREEN_API)
+    WebKit::toImpl(pageRef)->fullScreenManager()->saveScrollPosition();
     WebKit::toImpl(pageRef)->fullScreenManager()->willEnterFullScreen();
 #else
     UNUSED_PARAM(pageRef);
@@ -158,6 +159,7 @@ void WKBundlePageDidExitFullScreen(WKBundlePageRef pageRef)
 {
 #if ENABLE(FULLSCREEN_API)
     WebKit::toImpl(pageRef)->fullScreenManager()->didExitFullScreen();
+    WebKit::toImpl(pageRef)->fullScreenManager()->restoreScrollPosition();
 #else
     UNUSED_PARAM(pageRef);
 #endif
