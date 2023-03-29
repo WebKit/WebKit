@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+// Copyright 2014-2017 The Chromium Authors. All rights reserved.
 // Copyright (C) 2016 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -187,12 +187,12 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
     // When there are no more tokens to read:
     // While there are still operator tokens in the stack:
     while (!stack.isEmpty()) {
-        // If the operator token on the top of the stack is a parenthesis, then there are mismatched parentheses.
+        // If the operator token on the top of the stack is a parenthesis, then there are unclosed parentheses.
         CSSParserTokenType type = stack.last().type();
-        if (type == LeftParenthesisToken || type == FunctionToken)
-            return false;
-        // Pop the operator onto the output queue.
-        appendOperator(stack.last());
+        if (type != LeftParenthesisToken && type != FunctionToken) {
+            // Pop the operator onto the output queue.
+            appendOperator(stack.last());
+        }
         stack.removeLast();
     }
     return true;

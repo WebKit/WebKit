@@ -860,7 +860,6 @@ imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-tra
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-hidden-attribute.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-layout-stale-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
-imported/w3c/web-platform-tests/streams/readable-streams/global.html [ Pass Failure ]
 
 # Cross-Origin-Embedder-Policy: credentialless is not supported.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless
@@ -1839,9 +1838,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/t
 # Flaky tests.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
 
 # Newly importing W3C tests needed support for reftest-wait.
@@ -1948,12 +1944,10 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-conditional/at-supports-046.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-conditional/css-supports-036.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-format-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-tech-001.html [ ImageOnlyFailure ]
+webkit.org/b/252153 imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-tech-001.html [ ImageOnlyFailure ]
+webkit.org/b/254682 imported/w3c/web-platform-tests/css/css-conditional/at-supports-047.html [ ImageOnlyFailure ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
@@ -3673,6 +3667,8 @@ webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-posi
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-rtl.html [ ImageOnlyFailure ]
 
+webkit.org/b/254666 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html [ Skip ]
+
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-change-object-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html [ ImageOnlyFailure ]
@@ -3726,11 +3722,6 @@ webkit.org/b/86071 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05
 webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ ImageOnlyFailure ]
 webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ ImageOnlyFailure ]
 
-# font-size-adjust CSS Fonts Module level 5 (current implementation is at level 4)
-webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-009.html [ ImageOnlyFailure ]
-webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-010.html [ ImageOnlyFailure ]
-webkit.org/b/15257 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-011.html [ ImageOnlyFailure ]
-
 # @font-face: ascent-override, descent-override, and line-gap-override
 webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/ascent-descent-override.html [ ImageOnlyFailure ]
 webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/line-gap-override.html [ ImageOnlyFailure ]
@@ -3762,30 +3753,12 @@ webgl/webgl-metal-disabled.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 
 # webkit.org/b/203763 2019 WebGL test gardening: These tests pass in Safari and the conformance suite, but timeout in TestRunner and MiniBrowser.
-webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec3.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec3.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-mat2.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-mat3.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-mat4.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec3.html [ Skip ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/shader-with-reserved-words.html [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/shaders-with-mis-matching-uniforms.html [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/struct-unary-operators.html [ Skip ]
 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Skip ]
-webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ]
 
 # webkit.org/b/203908 Tests generate inconsistent results or time out
 webgl/1.0.3/conformance/textures/texture-npot-video.html [ Skip ]
 webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
-webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
 
 # WebGL 2 Conformance Suite rules for regular bots post ANGLE backend adoption.
 # DEQP is skipped on the main fleet of bots because of the long run time.
@@ -3799,7 +3772,6 @@ webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
 webkit.org/b/214893 [ Debug ] webgl/2.0.0/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 
 # webkit.org/b/208211 Additional inconsitencies between Intel bots and AMD machine
-webgl/2.0.0/conformance/extensions/angle-instanced-arrays.html [ Pass Failure ]
 webgl/2.0.0/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/clipping-wide-points.html [ Pass Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit.html [ Pass Failure ]
@@ -3815,10 +3787,6 @@ webgl/2.0.0/conformance2/textures/svg_image [ Skip ]
 
 # To-be-addressed WebGL 2 Timeouts and Failures
 # webkit.org/b/189641
-webgl/2.0.0/conformance/extensions/oes-texture-float-with-canvas.html [ Slow ]
-webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-canvas.html [ Slow ]
-webgl/2.0.0/conformance/glsl/misc/shader-with-non-reserved-words.html [ Skip ]
-webgl/2.0.0/conformance/glsl/misc/shader-with-reserved-words.html [ Skip ]
 webgl/2.0.0/conformance/textures/misc/texture-size-limit.html [ Slow ]
 webgl/2.0.0/conformance/textures/misc/texture-npot-video.html [ Skip ]
 webgl/2.0.0/conformance2/misc/uninitialized-test-2.html [ Skip ]
@@ -3896,30 +3864,23 @@ webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bi
 webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgba32f-rgba-float.html [ Pass Failure ]
 webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-3d-rgba8ui-rgba_integer-unsigned_byte.html [ Pass Failure ]
 
-# Failing on certain hardware configurations: macOS with Intel GPUs. Also slow.
-webkit.org/b/220753 webgl/conformance/extensions/webgl-multi-draw.html [ Pass Failure Slow ]
-
 # WebGL conformance test suite 1.0.x is skipped until 1.0.3 is retired.
 webgl/1.0.x [ Skip ]
 
 # Explicitly enable tests which we have fixed and do not have corresponding 1.0.3 test functionality.
 webgl/1.0.x/conformance/canvas/to-data-url-test.html [ Pass ]
 webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Pass ]
-webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Pass ]
-webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
 webgl/1.0.x/conformance/textures/misc/exif-orientation.html [ Pass ]
-webgl/1.0.x/conformance/extensions/ext-color-buffer-half-float.html [ Pass ]
-webgl/1.0.x/conformance/extensions/ext-polygon-offset-clamp.html [ Pass ]
-webgl/1.0.x/conformance/extensions/ext-sRGB.html [ Pass ]
-webgl/1.0.x/conformance/extensions/oes-texture-float.html [ Pass ]
-webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Pass ]
-webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/1.0.x/conformance/programs/program-test.html [ Pass ]
 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass ]
 
 webgl/1.0.x/conformance/attribs [ Pass ]
 webgl/1.0.x/conformance/buffers [ Pass ]
+webgl/1.0.x/conformance/context [ Pass ]
+webgl/1.0.x/conformance/extensions [ Pass ]
+webgl/1.0.x/conformance/glsl [ Pass ]
+webgl/1.0.x/conformance/limits [ Pass ]
 webgl/1.0.x/conformance/textures/canvas/ [ Pass ]
 
 # Debug builds on slower machines run close to the time out especially with GPUP enabled
@@ -3928,14 +3889,13 @@ webkit.org/b/238691 [ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.
 # WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
 webgl/2.0.y [ Skip ]
 
+webkit.org/b/254730 [ Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html [ Slow ]
+
 # Explicitly enable tests which we have fixed and do not have corresponding 2.0.0 test functionality.
 webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Pass ]
 webgl/2.0.y/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/2.0.y/conformance/misc/expando-loss.html [ Pass ]
-webgl/2.0.y/conformance/glsl/bugs/character-set.html [ Pass ]
-webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/2.0.y/conformance/textures/misc/exif-orientation.html [ Pass ]
-webgl/2.0.y/conformance/extensions/ext-polygon-offset-clamp.html [ Pass ]
 webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/2.0.y/conformance/programs/program-test.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-filter-anisotropic.html [ Pass ]
@@ -3953,7 +3913,10 @@ webgl/2.0.y/conformance2/offscreencanvas [ Pass ]
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
 webgl/2.0.y/conformance/attribs [ Pass ]
 webgl/2.0.y/conformance/buffers [ Pass ]
-webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
+webgl/2.0.y/conformance/context [ Pass ]
+webgl/2.0.y/conformance/extensions [ Pass ]
+webgl/2.0.y/conformance/glsl [ Pass ]
+webgl/2.0.y/conformance/limits [ Pass ]
 webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass ]
 webgl/2.0.y/conformance/textures/canvas/ [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
@@ -3970,21 +3933,29 @@ webgl/2.0.y/conformance2/textures/canvas/ [ Pass ]
 fast/canvas/webgl/invalid-passed-params.html [ Skip ]
 webgl/1.0.3/conformance/attribs [ Skip ]
 webgl/1.0.3/conformance/buffers [ Skip ]
-webgl/1.0.3/conformance/context/constants-and-properties.html  [ Skip ]
-webgl/1.0.3/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
+webgl/1.0.3/conformance/context [ Skip ]
+webgl/1.0.3/conformance/extensions [ Skip ]
+webgl/1.0.3/conformance/glsl [ Skip ]
+webgl/1.0.3/conformance/limits [ Skip ]
 webgl/1.0.3/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/1.0.3/conformance/programs/program-test.html [ Skip ]
 webgl/1.0.3/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/2.0.0/conformance/attribs [ Skip ]
 webgl/2.0.0/conformance/buffers [ Skip ]
-webgl/2.0.0/conformance/context/constants-and-properties.html  [ Skip ]
-webgl/2.0.0/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
+webgl/2.0.0/conformance/context [ Skip ]
+webgl/2.0.0/conformance/extensions [ Skip ]
+webgl/2.0.0/conformance/glsl [ Skip ]
+webgl/2.0.0/conformance/limits [ Skip ]
 webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
 webgl/2.0.0/conformance/programs/program-test.html [ Skip ]
 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/2.0.0/conformance/textures/canvas/ [ Skip ]
 webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Skip ]
 webgl/2.0.0/conformance2/textures/canvas/ [ Skip ]
+
+# ANGLE does not support this yet. Mark as Skip since it is a long test and may time out.
+webkit.org/b/251514 webgl/1.0.x/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+webkit.org/b/251514 webgl/2.0.y/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 # https://github.com/KhronosGroup/WebGL/issues/3341
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
@@ -4205,10 +4176,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/logical-physical-mapping-001.html [ ImageOnlyFailure ]
 
 # Vertical form controls support.
-webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
-webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-vertical.optional.html [ ImageOnlyFailure ]
-webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html [ ImageOnlyFailure ]
-webkit.org/b/247754 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional.html [ ImageOnlyFailure ]
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional.html [ ImageOnlyFailure ]
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vrl.optional.html [ ImageOnlyFailure ]
@@ -4884,10 +4851,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
 
-# More @counter-style failures due to not being implemented.
-imported/w3c/web-platform-tests/css/css-conditional/at-media-content-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-004.html [ ImageOnlyFailure ]
-
 # CSS will-change failures
 webkit.org/b/224928 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
@@ -5233,8 +5196,6 @@ webkit.org/b/239959 ipc/stream-sync-crash-no-timeout.html [ Skip ]
 
 # The test invokes random messages, potentially produces random results.
 ipc/start-message-testing.html [ Skip ]
-
-webkit.org/b/183994 imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html [ Failure ]
 
 # Test is crashing in Debug builds since import.
 webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
