@@ -45,18 +45,18 @@ private:
     ApplicationManifestParser(RefPtr<Document>);
     ApplicationManifest parseManifest(const String&, const URL&, const URL&);
 
-    URL parseStartURL(const JSON::Object&, const URL&);
+    const URL parseStartURL(const JSON::Object&, const URL&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
     const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);
-    String parseName(const JSON::Object&);
-    String parseDescription(const JSON::Object&);
-    String parseShortName(const JSON::Object&);
-    URL parseScope(const JSON::Object&, const URL&, const URL&);
-    Vector<ApplicationManifest::Icon> parseIcons(const JSON::Object&);
-    URL parseId(const JSON::Object&, const URL&);
+    const String parseName(const JSON::Object&);
+    const String parseDescription(const JSON::Object&);
+    const String parseShortName(const JSON::Object&);
+    const URL parseScope(const JSON::Object&, const URL&, const URL&);
+    const Vector<ApplicationManifest::Icon> parseIcons(const JSON::Object&);
+    const URL parseId(const JSON::Object&, const URL&);
 
-    Color parseColor(const JSON::Object&, const String& propertyName);
-    String parseGenericString(const JSON::Object&, const String&);
+    const Color parseColor(const JSON::Object&, const String& propertyName);
+    const String parseGenericString(const JSON::Object&, const String&);
 
     void logManifestPropertyNotAString(const String&);
     void logManifestPropertyInvalidURL(const String&);
