@@ -756,11 +756,6 @@ LayoutRect RenderBox::paddingBoxRect() const
         height() - borderTop() - borderBottom() - horizontalScrollbarHeight());
 }
 
-LayoutRect RenderBox::contentBoxRect() const
-{
-    return { contentBoxLocation(), contentSize() };
-}
-
 LayoutPoint RenderBox::contentBoxLocation() const
 {
     LayoutUnit scrollbarSpace = shouldPlaceVerticalScrollbarOnLeft() ? verticalScrollbarWidth() : 0;

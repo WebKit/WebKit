@@ -3811,11 +3811,6 @@ ScrollLatchingController& Page::scrollLatchingController()
         
     return *m_scrollLatchingController;
 }
-
-ScrollLatchingController* Page::scrollLatchingControllerIfExists()
-{
-    return m_scrollLatchingController.get();
-}
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 enum class DispatchedOnDocumentEventLoop : bool { No, Yes };

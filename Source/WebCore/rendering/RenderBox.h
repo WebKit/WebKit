@@ -952,6 +952,11 @@ inline void RenderBox::setInlineBoxWrapper(LegacyInlineElementBox* boxWrapper)
     m_inlineBoxWrapper = boxWrapper;
 }
 
+inline LayoutRect RenderBox::contentBoxRect() const
+{
+    return { contentBoxLocation(), contentSize() };
+}
+
 LayoutUnit synthesizedBaseline(const RenderBox&, const RenderStyle& parentStyle, LineDirectionMode, BaselineSynthesisEdge);
 
 } // namespace WebCore

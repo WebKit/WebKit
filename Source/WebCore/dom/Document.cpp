@@ -2022,11 +2022,6 @@ void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
     formController().setStateForNewFormElements(stateVector);
 }
 
-LocalFrameView* Document::view() const
-{
-    return m_frame ? m_frame->view() : nullptr;
-}
-
 Ref<Range> Document::createRange()
 {
     return Range::create(*this);
