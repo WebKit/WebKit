@@ -292,6 +292,7 @@ void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterSty
     m_isExtendedUnresolved = false;
 
     setSystem(extendedCounterStyle.system());
+    setFirstSymbolValueForFixedSystem(extendedCounterStyle.firstSymbolValueForFixedSystem());
 
     if (!explicitlySetDescriptors().contains(CSSCounterStyleDescriptors::ExplicitlySetDescriptors::Negative))
         setNegative(extendedCounterStyle.negative());

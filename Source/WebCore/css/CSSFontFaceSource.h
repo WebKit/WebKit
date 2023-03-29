@@ -90,10 +90,10 @@ private:
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;
-    std::unique_ptr<FontCustomPlatformData> m_immediateFontCustomPlatformData;
+    RefPtr<FontCustomPlatformData> m_immediateFontCustomPlatformData;
 
     WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElement;
-    std::unique_ptr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
+    RefPtr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
 
     Status m_status { Status::Pending };
     bool m_hasSVGFontFaceElement { false };

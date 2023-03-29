@@ -125,7 +125,7 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
         return;
 
     if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
-        auto bounds = interactionRegion->regionInLayerCoordinates.bounds();
+        auto bounds = interactionRegion->rectInLayerCoordinates;
         if (interactionRegion->type == InteractionRegion::Type::Interaction) {
             if (m_interactionRects.contains(bounds))
                 return;
@@ -137,14 +137,27 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
             auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
             if (regionIterator != m_discoveredRegionsByElement.end()) {
                 auto discoveredRegion = regionIterator->value;
-                interactionRegion->regionInLayerCoordinates.subtract(discoveredRegion);
-                if (interactionRegion->regionInLayerCoordinates.isEmpty())
+                
+                Region tempRegion;
+                tempRegion.unite(interactionRegion->rectInLayerCoordinates);
+                tempRegion.subtract(discoveredRegion);
+                if (tempRegion.isEmpty())
                     return;
-
-                discoveredRegion.unite(interactionRegion->regionInLayerCoordinates);
+                
+                discoveredRegion.unite(tempRegion);
                 m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
+                
+                for (auto rect : tempRegion.rects()) {
+                    m_interactionRegions.append({
+                        interactionRegion->elementIdentifier,
+                        rect,
+                        interactionRegion->borderRadius,
+                        InteractionRegion::Type::Interaction
+                    });
+                }
+                return;
             } else
-                m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->regionInLayerCoordinates);
+                m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
         } else {
             if (m_occlusionRects.contains(bounds))
                 return;
@@ -197,7 +210,7 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
 
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
-    m_eventRegion.uniteInteractionRegions(m_interactionRegions);
+    m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }
 
 #endif
@@ -313,7 +326,7 @@ void EventRegion::translate(const IntSize& offset)
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     for (auto& region : m_interactionRegions)
-        region.regionInLayerCoordinates.translate(offset);
+        region.rectInLayerCoordinates.move(offset);
 #endif
 }
 
@@ -459,7 +472,7 @@ bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
-void EventRegion::uniteInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
+void EventRegion::appendInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
 {
     m_interactionRegions.appendVector(interactionRegions);
 }

@@ -77,7 +77,7 @@ private:
 
     WeakPtr<ScriptExecutionContext> m_context;
     SharedBufferBuilder m_data;
-    std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
+    RefPtr<FontCustomPlatformData> m_fontCustomPlatformData;
 };
 
 } // namespace WebCore

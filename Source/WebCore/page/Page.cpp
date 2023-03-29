@@ -277,24 +277,24 @@ static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoader
 }
 
 Page::Page(PageConfiguration&& pageConfiguration)
-    : m_chrome(makeUnique<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
-    , m_dragCaretController(makeUnique<DragCaretController>())
+    : m_chrome(makeUniqueRef<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
+    , m_dragCaretController(makeUniqueRef<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(makeUnique<DragController>(*this, WTFMove(pageConfiguration.dragClient)))
+    , m_dragController(makeUniqueRef<DragController>(*this, WTFMove(pageConfiguration.dragClient)))
 #endif
     , m_focusController(makeUnique<FocusController>(*this, pageInitialActivityState()))
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuController(makeUnique<ContextMenuController>(*this, WTFMove(pageConfiguration.contextMenuClient)))
+    , m_contextMenuController(makeUniqueRef<ContextMenuController>(*this, WTFMove(pageConfiguration.contextMenuClient)))
 #endif
-    , m_userInputBridge(makeUnique<UserInputBridge>(*this))
-    , m_inspectorController(makeUnique<InspectorController>(*this, WTFMove(pageConfiguration.inspectorClient)))
-    , m_pointerCaptureController(makeUnique<PointerCaptureController>(*this))
+    , m_userInputBridge(makeUniqueRef<UserInputBridge>(*this))
+    , m_inspectorController(makeUniqueRef<InspectorController>(*this, WTFMove(pageConfiguration.inspectorClient)))
+    , m_pointerCaptureController(makeUniqueRef<PointerCaptureController>(*this))
 #if ENABLE(POINTER_LOCK)
-    , m_pointerLockController(makeUnique<PointerLockController>(*this))
+    , m_pointerLockController(makeUniqueRef<PointerLockController>(*this))
 #endif
     , m_settings(Settings::create(this))
-    , m_progress(makeUnique<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
-    , m_backForwardController(makeUnique<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
+    , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
+    , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientForMainFrame), pageConfiguration.mainFrameIdentifier))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
@@ -313,9 +313,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_activityState(pageInitialActivityState())
     , m_alternativeTextClient(WTFMove(pageConfiguration.alternativeTextClient))
-    , m_consoleClient(makeUnique<PageConsoleClient>(*this))
+    , m_consoleClient(makeUniqueRef<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
-    , m_inspectorDebuggable(makeUnique<PageDebuggable>(*this))
+    , m_inspectorDebuggable(makeUniqueRef<PageDebuggable>(*this))
 #endif
     , m_socketProvider(WTFMove(pageConfiguration.socketProvider))
     , m_cookieJar(WTFMove(pageConfiguration.cookieJar))
@@ -2896,7 +2896,7 @@ void Page::setRemoteInspectionNameOverride(const String& name)
     m_inspectorDebuggable->setNameOverride(name);
 }
 
-void Page::remoteInspectorInformationDidChange() const
+void Page::remoteInspectorInformationDidChange()
 {
     m_inspectorDebuggable->update();
 }

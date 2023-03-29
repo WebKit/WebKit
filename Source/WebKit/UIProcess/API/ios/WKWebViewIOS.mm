@@ -2143,6 +2143,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_beginAutomaticLiveResizeIfNeeded
 {
+    if (![self usesStandardContentView])
+        return;
+
     if (_perProcessState.liveResizeParameters)
         return;
 

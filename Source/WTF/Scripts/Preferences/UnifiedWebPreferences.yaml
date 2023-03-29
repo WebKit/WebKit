@@ -6629,17 +6629,6 @@ UseLegacyBackgroundSizeShorthandBehavior:
     WebCore:
       default: false
 
-UseLegacyTextAlignPositionedElementBehavior:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 UsePreHTML5ParserQuirks:
   type: bool
   status: embedder

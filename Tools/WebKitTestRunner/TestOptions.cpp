@@ -75,6 +75,7 @@ const TestFeatures& TestOptions::defaults()
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
             { "AllowsInlineMediaPlayback", true },
+            { "AppBadgeEnabled", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
             { "BroadcastChannelOriginPartitioningEnabled", false },

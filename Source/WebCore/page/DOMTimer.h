@@ -70,7 +70,7 @@ private:
 
     WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
 
-    bool isDOMTimersThrottlingEnabled(Document&) const;
+    bool isDOMTimersThrottlingEnabled(const Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
     // SuspendableTimerBase

@@ -102,6 +102,7 @@ public:
     {
         m_cachedContentsBuffers = WTFMove(buffers);
     }
+
 private:
     void initializeLayer();
 

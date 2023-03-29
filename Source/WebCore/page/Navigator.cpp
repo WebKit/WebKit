@@ -388,13 +388,19 @@ void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<Deferre
 {
     auto* frame = this->frame();
     if (!frame) {
-        promise->reject();
+        promise->reject(InvalidStateError);
         return;
     }
 
     auto* page = frame->page();
     if (!page) {
-        promise->reject();
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    auto* document = frame->document();
+    if (document && !document->isFullyActive()) {
+        promise->reject(InvalidStateError);
         return;
     }
 

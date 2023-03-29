@@ -27,6 +27,7 @@
 #include "WebCoreArgumentCoders.h"
 
 #include <WebCore/Font.h>
+#include <WebCore/FontCustomPlatformData.h>
 
 namespace IPC {
 
@@ -41,6 +42,28 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;
+}
+
+void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
+{
+    ASSERT_NOT_REACHED();
+}
+
+std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
+{
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
+{
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace IPC

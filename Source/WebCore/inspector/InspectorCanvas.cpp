@@ -113,18 +113,17 @@ InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
 
 HTMLCanvasElement* InspectorCanvas::canvasElement() const
 {
-    return dynamicDowncast<HTMLCanvasElement>(m_context.canvasBase());
+    return dynamicDowncast<HTMLCanvasElement>(m_context->canvasBase());
 }
 
 ScriptExecutionContext* InspectorCanvas::scriptExecutionContext() const
 {
-    return m_context.canvasBase().scriptExecutionContext();
+    return m_context->canvasBase().scriptExecutionContext();
 }
 
-JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec) const
+JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
 {
     JSC::JSLockHolder lock(exec);
-
     auto* globalObject = deprecatedGlobalObjectForPrototype(exec);
     if (is<CanvasRenderingContext2D>(m_context))
         return toJS(exec, globalObject, downcast<CanvasRenderingContext2D>(m_context));
@@ -141,12 +140,12 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec) const
 
 HashSet<Element*> InspectorCanvas::clientNodes() const
 {
-    return m_context.canvasBase().cssCanvasClients();
+    return m_context->canvasBase().cssCanvasClients();
 }
 
 void InspectorCanvas::canvasChanged()
 {
-    if (!m_context.hasActiveInspectorCanvasCallTracer())
+    if (!m_context->hasActiveInspectorCanvasCallTracer())
         return;
 
     // Since 2D contexts are able to be fully reproduced in the frontend, we don't need snapshots.
@@ -172,7 +171,7 @@ void InspectorCanvas::resetRecordingData()
 
     // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
 
-    m_context.setHasActiveInspectorCanvasCallTracer(false);
+    m_context->setHasActiveInspectorCanvasCallTracer(false);
 }
 
 bool InspectorCanvas::hasRecordingData() const
@@ -892,7 +891,7 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
         // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
     }
 
-    if (auto attributes = buildObjectForCanvasContextAttributes(m_context))
+    if (auto attributes = buildObjectForCanvasContextAttributes(m_context.get()))
         canvas->setContextAttributes(attributes.releaseNonNull());
 
     // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
@@ -1180,8 +1179,8 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
     auto initialStatePayload = Protocol::Recording::InitialState::create().release();
 
     auto attributesPayload = JSON::Object::create();
-    attributesPayload->setInteger("width"_s, m_context.canvasBase().width());
-    attributesPayload->setInteger("height"_s, m_context.canvasBase().height());
+    attributesPayload->setInteger("width"_s, m_context->canvasBase().width());
+    attributesPayload->setInteger("height"_s, m_context->canvasBase().height());
 
     auto statesPayload = JSON::ArrayOf<JSON::Object>::create();
 
@@ -1246,7 +1245,7 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
         }
     }
 
-    if (auto contextAttributes = buildObjectForCanvasContextAttributes(m_context))
+    if (auto contextAttributes = buildObjectForCanvasContextAttributes(m_context.get()))
         parametersPayload->addItem(contextAttributes.releaseNonNull());
 
     initialStatePayload->setAttributes(WTFMove(attributesPayload));

@@ -21,9 +21,7 @@
                 (rect (0,0) width=1536 height=2008)
 
               (interaction regions [
-                (occlusion
-                    (rect (0,0) width=1536 height=2008)
-)
+                (occlusion (0,0) width=1536 height=2008)
                 (borderRadius 0.00)])
               )
             )
@@ -39,9 +37,7 @@
                 (rect (0,0) width=1536 height=2008)
 
               (interaction regions [
-                (occlusion
-                    (rect (0,0) width=1536 height=2008)
-)
+                (occlusion (0,0) width=1536 height=2008)
                 (borderRadius 0.00)])
               )
             )

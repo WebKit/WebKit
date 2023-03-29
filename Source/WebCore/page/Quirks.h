@@ -164,7 +164,11 @@ public:
     bool shouldDisableLazyIframeLoadingQuirk() const;
 
     bool shouldDisableFetchMetadata() const;
-    
+
+#if PLATFORM(COCOA)
+    bool shouldAdvertiseSupportForHLSSubtitleTypes() const;
+#endif
+
 private:
     bool needsQuirks() const;
 
@@ -223,6 +227,9 @@ private:
 #endif
     mutable std::optional<bool> m_shouldDisableLazyImageLoadingQuirk;
     mutable std::optional<bool> m_shouldDisableLazyIframeLoadingQuirk;
+#if PLATFORM(COCOA)
+    mutable std::optional<bool> m_shouldAdvertiseSupportForHLSSubtitleTypes;
+#endif
 };
 
 } // namespace WebCore

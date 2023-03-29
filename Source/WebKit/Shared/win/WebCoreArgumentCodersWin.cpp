@@ -88,8 +88,7 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
     if (!includesCreationData)
         return std::nullopt;
 
-    std::unique_ptr<FontCustomPlatformData> fontCustomPlatformData;
-    FontPlatformData::CreationData* creationData = nullptr;
+    RefPtr<FontCustomPlatformData> fontCustomPlatformData;
 
     if (includesCreationData.value()) {
         std::optional<Ref<SharedBuffer>> fontFaceData;
@@ -105,7 +104,6 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
         fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
         if (!fontCustomPlatformData)
             return std::nullopt;
-        creationData = &fontCustomPlatformData->creationData;
     }
 
     std::optional<LOGFONT> logFont;
@@ -120,7 +118,48 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
     if (!gdiFont)
         return std::nullopt;
 
-    return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, creationData);
+    return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, fontCustomPlatformData.get());
 }
+
+void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
+{
+    encoder << customPlatformData.creationData.fontFaceData;
+    encoder << customPlatformData.creationData.itemInCollection;
+}
+
+std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
+{
+    std::optional<Ref<SharedBuffer>> fontFaceData;
+    decoder >> fontFaceData;
+    if (!fontFaceData)
+        return std::nullopt;
+
+    std::optional<String> itemInCollection;
+    decoder >> itemInCollection;
+    if (!itemInCollection)
+        return std::nullopt;
+
+    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+    return fontCustomPlatformData.releaseNonNull();
+}
+
+void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+{
+    encoder << data.m_font;
+}
+
+bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
+{
+    std::optional<LOGFONT> logFont;
+    decoder >> logFont;
+    if (!logFont)
+        return false;
+
+    data.m_font = *logFont;
+    return true;
+}
+
 
 } // namespace IPC

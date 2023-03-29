@@ -33,6 +33,7 @@
 #include "KeepaliveRequestTracker.h"
 #include "ResourceTimingInformation.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -139,8 +140,7 @@ public:
     LocalFrame* frame() const; // Can be null
     Document* document() const { return m_document.get(); } // Can be null
     void setDocument(Document* document) { m_document = document; }
-    void clearDocumentLoader() { m_documentLoader = nullptr; }
-
+    void clearDocumentLoader(); 
     void loadDone(LoadCompletionType, bool shouldPerformPostLoadActions = true);
 
     WEBCORE_EXPORT void garbageCollectDocumentResources();
@@ -207,7 +207,7 @@ private:
     MemoryCompactRobinHoodHashSet<URL> m_cachedSVGImagesURLs;
     mutable DocumentResourceMap m_documentResources;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    DocumentLoader* m_documentLoader;
+    CheckedPtr<DocumentLoader>  m_documentLoader;
 
     int m_requestCount { 0 };
 

@@ -320,6 +320,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
@@ -2016,6 +2017,14 @@ auto LLIntGenerator::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, Exp
     return { };
 }
 
+auto LLIntGenerator::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayNewElem, { addConstantWithoutPush(Types::I32, typeIndex), addConstantWithoutPush(Types::I32, elemSegmentIndex), size, offset }, results);
+    result = results.at(0);
+    return { };
+}
+
 auto LLIntGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     result = push();
@@ -2041,35 +2050,33 @@ auto LLIntGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
 
 auto LLIntGenerator::addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
 {
-    // Allocate space for the return value
-    result = push();
-
     // Special-case the 0-arguments case since the logic below only makes sense with at least one argument
     if (!args.size()) {
+        result = push();
         WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::No), VirtualRegister());
         return { };
     }
 
-    // "Pop" the stack in order to use the same slot for the result and the first arg
-    m_stackSize--;
+    // Allocate stack slots for walkExpressionStack() to use
+    m_stackSize += args.size();
 
-    // By similar reasoning to the `addThrow` operation:
-    // We have to materialize the arguments here since it might include constants or
-    // delayed moves, but the wasm_struct_new opcode expects all the arguments to be contiguous
-    // in the stack.
-    for (unsigned i = 0; i < args.size(); ++i) {
-        auto& arg = args[i];
-        ExpressionType argLoc = push();
-        WasmMov::emit(this, argLoc, arg);
-        arg = argLoc;
-    }
+    // The logic here is similar to addThrow(); see comments there.
+    // It's important to use walkExpressionStack() here and not call push() explicitly,
+    // because the stack consistency checking that push() does will fail if there's
+    // more than one struct field. The parser pops the arguments off the stack before
+    // calling into this method, and by pushing arguments, we get out of sync
+    // with the parser's expression stack.
+    walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
+        if (arg == slot)
+            return;
+        WasmMov::emit(this, slot, arg);
+        arg = slot;
+    });
 
-    // Arguments are passed in reverse order (the last arg will be at the highest virtual register index, which
-    // will have the lowest address.)
-    // The implementation of struct_new has to iterate over its arguments in reverse order.
+    result = args[0];
     WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::No), args.last());
 
-    // Subtract 1 from the arg length to account for leaving the return value on the stack
+    // "Pop" arguments off, minus one slot for the return value
     m_stackSize -= args.size() - 1;
 
     return { };

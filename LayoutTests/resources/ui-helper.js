@@ -860,6 +860,35 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static scrollbarState(scroller, isVertical)
+    {
+        if (!this.isWebKit2() || this.isIOSFamily())
+            return Promise.resolve();
+        if (internals.isUsingUISideCompositing()) {
+            return new Promise(resolve => {
+                testRunner.runUIScript(`(function() {
+                    uiController.doAfterNextStablePresentationUpdate(function() {
+                        uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${internals.scrollingNodeIDForNode(scroller)}, ${isVertical}));
+                    });
+                })()`, state => {
+                    resolve(state);
+                });
+            });    
+        } else {
+            return isVertical ? Promise.resolve(internals.verticalScrollbarState(scroller)) : Promise.resolve(internals.horizontalScrollbarState(scroller));
+        }
+    }
+
+    static verticalScrollbarState(scroller)
+    {
+        return UIHelper.scrollbarState(scroller, true);
+    }
+
+    static horizontalScrollbarState(scroller)
+    {
+        return UIHelper.scrollbarState(scroller, false);
+    }
+
     static getUICaretViewRect()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

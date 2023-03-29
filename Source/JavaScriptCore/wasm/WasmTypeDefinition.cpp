@@ -571,6 +571,7 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
     case LLIntBuiltin::RefCast:
         return *singleton().m_Ref_RefI32I32;
     case LLIntBuiltin::ArrayNewData:
+    case LLIntBuiltin::ArrayNewElem:
         return *singleton().m_Ref_I32I32I32I32;
     }
     RELEASE_ASSERT_NOT_REACHED();

@@ -202,7 +202,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL hiddenPageDOMTimerThrottlingEnabled;
 @property (nonatomic) BOOL hiddenPageCSSAnimationSuspensionEnabled;
 @property (nonatomic) BOOL lowPowerVideoAudioBufferSizeEnabled;
-@property (nonatomic) BOOL useLegacyTextAlignPositionedElementBehavior;
 @property (nonatomic) BOOL mediaSourceEnabled;
 @property (nonatomic) BOOL shouldConvertPositionStyleOnCopy;
 @property (nonatomic) BOOL imageControlsEnabled;

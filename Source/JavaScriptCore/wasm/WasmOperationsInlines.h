@@ -101,13 +101,21 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
 }
 
 template<typename T>
-EncodedJSValue createArrayFromDataSegment(Instance* instance, FieldType elementType, size_t arraySize,
-    unsigned dataSegmentIndex, unsigned offset, FixedVector<T>&& tempValues, RefPtr<const Wasm::RTT> rtt) {
+EncodedJSValue createArrayValue(Instance* instance, FieldType fieldType, size_t arraySize, FixedVector<T>&& tempValues, RefPtr<const Wasm::RTT> rtt)
+{
     JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = jsInstance->globalObject();
-
     VM& vm = globalObject->vm();
 
+    JSWebAssemblyArray* array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, arraySize, WTFMove(tempValues), rtt);
+
+    return JSValue::encode(JSValue(array));
+}
+
+template<typename T>
+EncodedJSValue createArrayFromDataSegment(Instance* instance, FieldType elementType, size_t arraySize,
+    unsigned dataSegmentIndex, unsigned offset, FixedVector<T>&& tempValues, RefPtr<const Wasm::RTT> rtt)
+{
     // Determine the array length in bytes from the element type and desired array size
     size_t elementSize = elementType.type.elementSize();
 
@@ -129,9 +137,16 @@ EncodedJSValue createArrayFromDataSegment(Instance* instance, FieldType elementT
     }
 
     // Finally, return a JS value representing an array of the values from `tempValues`
-    JSWebAssemblyArray* array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), elementType, arraySize, WTFMove(tempValues), rtt);
+    return createArrayValue(instance, elementType, arraySize, WTFMove(tempValues), rtt);
+}
 
-    return JSValue::encode(JSValue(array));
+inline EncodedJSValue createArrayFromElementSegment(Instance* instance, size_t arraySize, unsigned elemSegmentIndex, unsigned offset, FixedVector<uint64_t>&& tempValues, RefPtr<const Wasm::RTT> rtt)
+{
+    // Copy the data from the segment into the temp `values` vector
+    instance->copyElementSegment(instance->module().moduleInformation().elements[elemSegmentIndex], offset, arraySize, tempValues);
+
+    // Finally, return a JS value representing an array of the values from `tempValues`
+    return createArrayValue(instance, FieldType { StorageType { Types::I64 }, Mutability::Mutable }, arraySize, WTFMove(tempValues), rtt);
 }
 
 inline EncodedJSValue arrayNewData(Instance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset)
@@ -140,7 +155,6 @@ inline EncodedJSValue arrayNewData(Instance* instance, uint32_t typeIndex, uint3
 
     // Check that the type index is within bounds
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
-
     Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
     ASSERT(arraySignature.is<ArrayType>());
     // Get the array element type
@@ -178,6 +192,30 @@ inline EncodedJSValue arrayNewData(Instance* instance, uint32_t typeIndex, uint3
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline EncodedJSValue arrayNewElem(Instance* instance, uint32_t typeIndex, uint32_t elemSegmentIndex, uint32_t arraySize, uint32_t offset)
+{
+    auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
+
+    // Check that the type index is within bounds
+    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
+
+#if ASSERT_ENABLED
+    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+#else
+    UNUSED_PARAM(typeIndex);
+#endif
+
+    // Ensure that adding the offset to the desired array length doesn't overflow int32 or
+    // overflow the length of the element segment
+    size_t segmentLength = instance->module().moduleInformation().elements[elemSegmentIndex].length();
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, arraySize) || ((offset + arraySize) > segmentLength)))
+        return JSValue::encode(jsNull());
+
+    FixedVector<uint64_t> values(arraySize);
+    return createArrayFromElementSegment(instance, arraySize, elemSegmentIndex, offset, WTFMove(values), arrayRTT);
 }
 
 inline EncodedJSValue arrayGet(Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index)

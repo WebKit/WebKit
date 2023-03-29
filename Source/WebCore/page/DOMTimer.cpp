@@ -64,17 +64,17 @@ public:
         , m_initialDOMTreeVersion(m_contextIsDocument ? downcast<Document>(m_context).domTreeVersion() : 0)
         , m_previous(m_contextIsDocument ? std::exchange(current, this) : nullptr)
     {
-        m_context.setTimerNestingLevel(nestingLevel);
+        m_context->setTimerNestingLevel(nestingLevel);
     }
 
     ~DOMTimerFireState()
     {
         if (m_contextIsDocument)
             current = m_previous;
-        m_context.setTimerNestingLevel(0);
+        m_context->setTimerNestingLevel(0);
     }
 
-    Document* contextDocument() const { return m_contextIsDocument ? &downcast<Document>(m_context) : nullptr; }
+    const Document* contextDocument() const { return m_contextIsDocument ? &downcast<Document>(m_context) : nullptr; }
 
     void setScriptMadeUserObservableChanges() { m_scriptMadeUserObservableChanges = true; }
     void setScriptMadeNonUserObservableChanges() { m_scriptMadeNonUserObservableChanges = true; }
@@ -85,7 +85,7 @@ public:
         if (m_scriptMadeUserObservableChanges)
             return true;
 
-        Document* document = contextDocument();
+        auto* document = contextDocument();
         // To be conservative, we also consider any DOM Tree change to be user observable.
         return document && document->domTreeVersion() != m_initialDOMTreeVersion;
     }
@@ -93,7 +93,7 @@ public:
     static DOMTimerFireState* current;
 
 private:
-    ScriptExecutionContext& m_context;
+    Ref<ScriptExecutionContext> m_context;
     bool m_contextIsDocument;
     bool m_scriptMadeNonUserObservableChanges { false };
     bool m_scriptMadeUserObservableChanges { false };
@@ -236,7 +236,7 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
     context.removeTimeout(timeoutId);
 }
 
-inline bool DOMTimer::isDOMTimersThrottlingEnabled(Document& document) const
+inline bool DOMTimer::isDOMTimersThrottlingEnabled(const Document& document) const
 {
     auto* page = document.page();
     if (!page)
@@ -246,7 +246,7 @@ inline bool DOMTimer::isDOMTimersThrottlingEnabled(Document& document) const
 
 void DOMTimer::updateThrottlingStateIfNecessary(const DOMTimerFireState& fireState)
 {
-    Document* contextDocument = fireState.contextDocument();
+    auto* contextDocument = fireState.contextDocument();
     // We don't throttle timers in worker threads.
     if (!contextDocument)
         return;

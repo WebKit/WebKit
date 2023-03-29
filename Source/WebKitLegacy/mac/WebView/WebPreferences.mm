@@ -2382,16 +2382,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey];
 }
 
-- (BOOL)useLegacyTextAlignPositionedElementBehavior
-{
-    return [self _boolValueForKey:WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey];
-}
-
-- (void)setUseLegacyTextAlignPositionedElementBehavior:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey];
-}
-
 - (BOOL)mediaSourceEnabled
 {
     return [self _boolValueForKey:WebKitMediaSourceEnabledPreferenceKey];

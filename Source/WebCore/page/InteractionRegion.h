@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ElementIdentifier.h"
-#include "FloatRect.h"
+#include "IntRect.h"
 #include "Region.h"
 
 namespace IPC {
@@ -48,7 +48,7 @@ struct InteractionRegion {
     enum class Type : bool { Interaction, Occlusion };
 
     ElementIdentifier elementIdentifier;
-    Region regionInLayerCoordinates;
+    IntRect rectInLayerCoordinates;
     float borderRadius { 0 };
     Type type;
 
@@ -58,7 +58,7 @@ struct InteractionRegion {
 inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
     return a.elementIdentifier == b.elementIdentifier
-        && a.regionInLayerCoordinates == b.regionInLayerCoordinates
+        && a.rectInLayerCoordinates == b.rectInLayerCoordinates
         && a.borderRadius == b.borderRadius
         && a.type == b.type;
 }

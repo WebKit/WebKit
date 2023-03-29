@@ -770,6 +770,18 @@ struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
 };
 #endif
 
+header: <WebCore/ScreenOrientationLockType.h>
+enum class WebCore::ScreenOrientationLockType : uint8_t {
+    Any
+    Natural
+    Landscape
+    Portrait
+    PortraitPrimary
+    PortraitSecondary
+    LandscapePrimary
+    LandscapeSecondary
+};
+
 #if ENABLE(APPLICATION_MANIFEST)
 [Nested] enum class WebCore::ApplicationManifest::Display : uint8_t {
     Browser
@@ -797,6 +809,7 @@ struct WebCore::ApplicationManifest {
     String description
     URL scope
     WebCore::ApplicationManifest::Display display
+    std::optional<WebCore::ScreenOrientationLockType> orientation
     URL startURL
     URL id
     WebCore::Color backgroundColor
@@ -4720,7 +4733,7 @@ struct WebCore::GlobalWindowIdentifier {
 
 struct WebCore::InteractionRegion {
     WebCore::ElementIdentifier elementIdentifier;
-    WebCore::Region regionInLayerCoordinates;
+    WebCore::IntRect rectInLayerCoordinates;
     float borderRadius;
     WebCore::InteractionRegion::Type type;
 };

@@ -43,6 +43,12 @@ Color blendSourceOver(const Color& backdrop, const Color& source)
     auto [backdropR, backdropG, backdropB, backdropA] = backdrop.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     auto [sourceR, sourceG, sourceB, sourceA] = source.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
+    if (!backdropA || sourceA == 255)
+        return source;
+
+    if (!sourceA)
+        return backdrop;
+
     int d = 0xFF * (backdropA + sourceA) - backdropA * sourceA;
     int a = d / 0xFF;
     int r = (backdropR * backdropA * (0xFF - sourceA) + 0xFF * sourceA * sourceR) / d;

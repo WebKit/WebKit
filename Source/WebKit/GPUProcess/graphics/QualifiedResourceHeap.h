@@ -30,6 +30,7 @@
 #include "QualifiedRenderingResourceIdentifier.h"
 #include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/Font.h>
+#include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
@@ -71,6 +72,11 @@ public:
         add(renderingResourceIdentifier, WTFMove(gradient), m_gradientCount);
     }
 
+    void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>&& customPlatformData)
+    {
+        add(renderingResourceIdentifier, WTFMove(customPlatformData), m_customPlatformDataCount);
+    }
+
     WebCore::ImageBuffer* getImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
     {
         return get<WebCore::ImageBuffer>(renderingResourceIdentifier);
@@ -110,6 +116,11 @@ public:
         return get<WebCore::Gradient>(renderingResourceIdentifier);
     }
 
+    WebCore::FontCustomPlatformData* getFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+    {
+        return get<WebCore::FontCustomPlatformData>(renderingResourceIdentifier);
+    }
+
     bool removeImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
         return remove<WebCore::ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);
@@ -135,6 +146,11 @@ public:
         return remove<WebCore::Gradient>(renderingResourceIdentifier, m_gradientCount);
     }
 
+    bool removeFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+    {
+        return remove<WebCore::FontCustomPlatformData>(renderingResourceIdentifier, m_customPlatformDataCount);
+    }
+
     void releaseAllResources()
     {
         checkInvariants();
@@ -146,13 +162,15 @@ public:
             return std::holds_alternative<Ref<WebCore::NativeImage>>(resource.value)
                 || std::holds_alternative<Ref<WebCore::Font>>(resource.value)
                 || std::holds_alternative<Ref<WebCore::DecomposedGlyphs>>(resource.value)
-                || std::holds_alternative<Ref<WebCore::Gradient>>(resource.value);
+                || std::holds_alternative<Ref<WebCore::Gradient>>(resource.value)
+                || std::holds_alternative<Ref<WebCore::FontCustomPlatformData>>(resource.value);
         });
 
         m_nativeImageCount = 0;
         m_fontCount = 0;
         m_decomposedGlyphsCount = 0;
         m_gradientCount = 0;
+        m_customPlatformDataCount = 0;
 
         checkInvariants();
     }
@@ -211,6 +229,7 @@ private:
         unsigned imageBufferCount = 0;
         unsigned nativeImageCount = 0;
         unsigned fontCount = 0;
+        unsigned customPlatformDataCount = 0;
         unsigned decomposedGlyphsCount = 0;
         unsigned gradientCount = 0;
         for (const auto& pair : m_resources) {
@@ -222,6 +241,8 @@ private:
                 ++nativeImageCount;
             }, [&] (const Ref<WebCore::Font>&) {
                 ++fontCount;
+            }, [&] (const Ref<WebCore::FontCustomPlatformData>&) {
+                ++customPlatformDataCount;
             }, [&] (const Ref<WebCore::DecomposedGlyphs>&) {
                 ++decomposedGlyphsCount;
             }, [&] (const Ref<WebCore::Gradient>&) {
@@ -231,9 +252,10 @@ private:
         ASSERT(imageBufferCount == m_imageBufferCount);
         ASSERT(nativeImageCount == m_nativeImageCount);
         ASSERT(fontCount == m_fontCount);
+        ASSERT(customPlatformDataCount == m_customPlatformDataCount);
         ASSERT(decomposedGlyphsCount == m_decomposedGlyphsCount);
         ASSERT(gradientCount == m_gradientCount);
-        ASSERT(m_resources.size() == m_imageBufferCount + m_nativeImageCount + m_fontCount + m_decomposedGlyphsCount + m_gradientCount);
+        ASSERT(m_resources.size() == m_imageBufferCount + m_nativeImageCount + m_fontCount + m_decomposedGlyphsCount + m_customPlatformDataCount + m_gradientCount);
 #endif
     }
 
@@ -243,7 +265,8 @@ private:
         Ref<WebCore::NativeImage>,
         Ref<WebCore::Font>,
         Ref<WebCore::DecomposedGlyphs>,
-        Ref<WebCore::Gradient>
+        Ref<WebCore::Gradient>,
+        Ref<WebCore::FontCustomPlatformData>
     >;
     HashMap<QualifiedRenderingResourceIdentifier, Resource> m_resources;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
@@ -252,6 +275,7 @@ private:
     unsigned m_fontCount { 0 };
     unsigned m_decomposedGlyphsCount { 0 };
     unsigned m_gradientCount { 0 };
+    unsigned m_customPlatformDataCount { 0 };
 };
 
 } // namespace WebKit
