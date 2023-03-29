@@ -134,7 +134,7 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
     return { };
 }
 
-static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, const Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
+static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
 {
     if (RefPtr frame = initiatingDocumentLoader.frame(); !frame || !frame->isMainFrame())
         return;

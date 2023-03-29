@@ -80,6 +80,7 @@ public:
     virtual ~Chrome();
 
     ChromeClient& client() { return m_client; }
+    const ChromeClient& client() const { return m_client; }
 
     // HostWindow methods.
     void invalidateRootView(const IntRect&) override;
