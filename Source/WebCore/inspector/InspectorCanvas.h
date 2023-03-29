@@ -52,12 +52,13 @@ public:
 
     const String& identifier() const { return m_identifier; }
 
-    CanvasRenderingContext& canvasContext() const { return m_context; }
+    const CanvasRenderingContext& canvasContext() const { return m_context.get(); }
+    CanvasRenderingContext& canvasContext() { return m_context.get(); }
     HTMLCanvasElement* canvasElement() const;
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
-    JSC::JSValue resolveContext(JSC::JSGlobalObject*) const;
+    JSC::JSValue resolveContext(JSC::JSGlobalObject*);
 
     HashSet<Element*> clientNodes() const;
 
@@ -130,7 +131,7 @@ private:
 
     String m_identifier;
 
-    CanvasRenderingContext& m_context;
+    CheckedRef<CanvasRenderingContext> m_context;
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> m_frames;

@@ -276,6 +276,18 @@ inline bool is(const Ref<ArgType, PtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename Target, typename Source, typename PtrTraits>
+inline Target& downcast(Ref<Source, PtrTraits>& source)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename PtrTraits>
+inline Target& downcast(const Ref<Source, PtrTraits>& source)
+{
+    return downcast<Target>(source.get());
+}
+
 } // namespace WTF
 
 using WTF::Ref;

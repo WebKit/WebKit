@@ -338,6 +338,18 @@ inline bool is(const WeakPtr<ArgType, WeakPtrImpl>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename Target, typename Source, typename WeakPtrImpl>
+inline Target* downcast(WeakPtr<Source, WeakPtrImpl>& source)
+{
+    return downcase<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename WeakPtrImpl>
+inline Target* downcast(const WeakPtr<Source, WeakPtrImpl>& source)
+{
+    return downcast<Target>(source.get());
+}
+
 template<typename T, typename U, typename WeakPtrImpl> inline bool operator==(const WeakPtr<T, WeakPtrImpl>& a, const WeakPtr<U, WeakPtrImpl>& b)
 {
     return a.get() == b.get();

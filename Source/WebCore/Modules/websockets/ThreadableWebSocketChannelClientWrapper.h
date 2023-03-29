@@ -90,7 +90,7 @@ private:
 
     void processPendingTasks();
 
-    ScriptExecutionContext& m_context;
+    WeakPtr<ScriptExecutionContext> m_context;
     WebSocketChannelClient* m_client;
     WorkerThreadableWebSocketChannel::Peer* m_peer;
     bool m_failedWebSocketChannelCreation;

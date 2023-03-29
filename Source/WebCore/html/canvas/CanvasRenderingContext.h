@@ -28,6 +28,7 @@
 #include "CanvasBase.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "ScriptWrappable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
@@ -49,7 +50,7 @@ class SVGImageElement;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
 
-class CanvasRenderingContext : public ScriptWrappable {
+class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<CanvasRenderingContext>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext);
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext);
 public:
