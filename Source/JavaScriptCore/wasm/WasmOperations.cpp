@@ -1040,6 +1040,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmIsSubRTT, bool, (RTT* maybeSubRTT, RTT* ta
     return maybeSubRTT->isSubRTT(*targetRTT);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmExternInternalize, EncodedJSValue, (EncodedJSValue reference))
+{
+    return externInternalize(reference);
+}
+
 } } // namespace JSC::Wasm
 
 IGNORE_WARNINGS_END

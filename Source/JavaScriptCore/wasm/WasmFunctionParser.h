@@ -2119,13 +2119,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
                 break;
             default:
-                ASSERT(heapType >= 0);
+                ASSERT(isTypeIndexHeapType(heapType));
                 const TypeDefinition& signature = m_info.typeSignatures[heapType];
                 if (signature.expand().is<FunctionSignature>())
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
                 else
-                    // FIXME: once anyref is added this can allow any subtype of that.
-                    WASM_VALIDATOR_FAIL_IF(isExternref(ref.type()) || isSubtype(ref.type(), funcrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
                 resultTypeIndex = signature.index();
                 break;
             }
@@ -2140,6 +2139,26 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 m_expressionStack.constructAndAppend(Types::I32, result);
             }
 
+            return { };
+        }
+        case ExtGCOpType::ExternInternalize: {
+            TypedExpression reference;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.internalize");
+            WASM_VALIDATOR_FAIL_IF(!isExternref(reference.type()), "extern.internalize reference to type ", reference.type(), " expected ", TypeKind::Externref);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addExternInternalize(reference, result));
+            m_expressionStack.constructAndAppend(anyrefType(reference.type().isNullable()), result);
+            return { };
+        }
+        case ExtGCOpType::ExternExternalize: {
+            TypedExpression reference;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.externalize");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(reference.type(), anyrefType()), "extern.externalize reference to type ", reference.type(), " expected ", TypeKind::Anyref);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addExternExternalize(reference, result));
+            m_expressionStack.constructAndAppend(externrefType(reference.type().isNullable()), result);
             return { };
         }
         default:

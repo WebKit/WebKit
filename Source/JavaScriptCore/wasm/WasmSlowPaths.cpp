@@ -808,6 +808,11 @@ WASM_SLOW_PATH_DECL(call_builtin)
         gprStart[0] = static_cast<EncodedJSValue>(result);
         WASM_END();
     }
+    case Wasm::LLIntBuiltin::ExternInternalize: {
+        auto reference = takeGPR().encodedJSValue();
+        gprStart[0] = Wasm::externInternalize(reference);
+        WASM_END();
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

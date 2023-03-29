@@ -421,6 +421,8 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result);
 
     // Basic operators
     //
@@ -883,6 +885,7 @@ protected:
     void emitLoadRTTFromFuncref(ExpressionType, ExpressionType&);
     void emitLoadRTTFromObject(ExpressionType, ExpressionType&);
     Inst makeBranchNotRTTKind(ExpressionType, RTTKind);
+    Inst makeBranchNotWasmGCObject(ExpressionType);
 
     void unifyValuesWithBlock(const Stack& resultStack, const ResultList& stack);
 
@@ -2813,7 +2816,6 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind cas
     switch (static_cast<TypeKind>(heapType)) {
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
-    case Wasm::TypeKind::Eqref:
     case Wasm::TypeKind::Anyref:
         // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
         break;
@@ -2829,15 +2831,63 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind cas
             m_currentBlock = m_code.addBlock();
         }
         break;
-    case Wasm::TypeKind::I31ref:
+    case Wasm::TypeKind::Eqref: {
+        auto nop = [] (CCallHelpers&, const B3::StackmapGenerationParams&) { };
+        BasicBlock* endBlock = castKind == CastKind::Cast ? continuation : trueBlock;
+        BasicBlock* checkObject = m_code.addBlock();
+
+        // Check the I31ref cast first, then branch to object cases if false.
+        emitCheckOrBranchForCast(CastKind::Test, [&]() {
+            return self().makeBranchNotInt32(reference);
+        }, nop, checkObject);
+        auto tmpForI31 = self().g32();
+        auto tmpForLimit = self().g32();
+        self().emitCoerceFromI64(Types::I32, reference, tmpForI31);
+        append(Move, Arg::bigImm(Wasm::maxI31ref), tmpForLimit);
+        emitCheckOrBranchForCast(CastKind::Test, [&]() {
+            return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), tmpForI31, tmpForLimit);
+        }, nop, checkObject);
+        append(Move, Arg::bigImm(Wasm::minI31ref), tmpForLimit);
+        emitCheckOrBranchForCast(CastKind::Test, [&]() {
+            return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::LessThan), tmpForI31, tmpForLimit);
+        }, nop, checkObject);
+        append(Jump);
+        m_currentBlock->setSuccessors(endBlock);
+
+        // Check that it's a GC object if not an I31.
+        m_currentBlock = checkObject;
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return self().makeBranchNotCell(reference);
+        }, castFailure, falseBlock);
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return makeBranchNotWasmGCObject(reference);
+        }, castFailure, falseBlock);
+        break;
+    }
+    case Wasm::TypeKind::I31ref: {
         emitCheckOrBranchForCast(castKind, [&]() {
             return self().makeBranchNotInt32(reference);
         }, castFailure, falseBlock);
+        auto tmpForI31 = self().g32();
+        auto tmpForLimit = self().g32();
+        self().emitCoerceFromI64(Types::I32, reference, tmpForI31);
+        append(Move, Arg::bigImm(Wasm::maxI31ref), tmpForLimit);
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), tmpForI31, tmpForLimit);
+        }, castFailure, falseBlock);
+        append(Move, Arg::bigImm(Wasm::minI31ref), tmpForLimit);
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::LessThan), tmpForI31, tmpForLimit);
+        }, castFailure, falseBlock);
         break;
+    }
     case Wasm::TypeKind::Arrayref:
     case Wasm::TypeKind::Structref: {
         emitCheckOrBranchForCast(castKind, [&]() {
             return self().makeBranchNotCell(reference);
+        }, castFailure, falseBlock);
+        emitCheckOrBranchForCast(castKind, [&]() {
+            return makeBranchNotWasmGCObject(reference);
         }, castFailure, falseBlock);
         auto tmpForRTT = self().gPtr();
         emitLoadRTTFromObject(reference, tmpForRTT);
@@ -2858,6 +2908,9 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitRefTestOrCast(CastKind cas
             // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
             emitCheckOrBranchForCast(castKind, [&]() {
                 return self().makeBranchNotCell(reference);
+            }, castFailure, falseBlock);
+            emitCheckOrBranchForCast(castKind, [&]() {
+                return makeBranchNotWasmGCObject(reference);
             }, castFailure, falseBlock);
             emitLoadRTTFromObject(reference, tmpForRTT);
             emitCheckOrBranchForCast(castKind, [&]() {
@@ -2937,6 +2990,32 @@ Inst AirIRGeneratorBase<Derived, ExpressionType>::makeBranchNotRTTKind(Expressio
     auto tmpForRTTKind = self().g32();
     append(Load8, Arg::addr(rtt, RTT::offsetOfKind()), tmpForRTTKind);
     return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), tmpForRTTKind, Arg::imm(static_cast<uint8_t>(targetKind)));
+}
+
+template <typename Derived, typename ExpressionType>
+Inst AirIRGeneratorBase<Derived, ExpressionType>::makeBranchNotWasmGCObject(ExpressionType cell)
+{
+    auto tmpForJSType = self().g32();
+    auto tmpForGCType = self().g32();
+    append(Load8, Arg::addr(cell, JSCell::typeInfoTypeOffset()), tmpForJSType);
+    append(Move, Arg::bigImm(JSType::WebAssemblyGCObjectType), tmpForGCType);
+    return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), tmpForJSType, tmpForGCType);
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addExternInternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    result = self().tmpForType(anyrefType(reference.type().isNullable()));
+    emitCCall(&operationWasmExternInternalize, result, reference);
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addExternExternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    result = self().gRef(externrefType(reference.type().isNullable()));
+    self().emitMoveWithoutTypeCheck(reference, result);
+    return { };
 }
 
 template<typename Derived, typename ExpressionType>

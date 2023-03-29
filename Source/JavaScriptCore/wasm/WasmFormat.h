@@ -62,6 +62,9 @@ enum class TableElementType : uint8_t {
     Funcref
 };
 
+constexpr int32_t maxI31ref = 1073741823;
+constexpr int32_t minI31ref = -1073741824;
+
 inline bool isValueType(Type type)
 {
     switch (type.kind) {
@@ -196,10 +199,11 @@ inline Type funcrefType()
     return Types::Funcref;
 }
 
-inline Type externrefType()
+inline Type externrefType(bool isNullable = true)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
+        return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
+    ASSERT(isNullable);
     return Types::Externref;
 }
 
@@ -209,10 +213,10 @@ inline Type eqrefType()
     return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Eqref) };
 }
 
-inline Type anyrefType()
+inline Type anyrefType(bool isNullable = true)
 {
     ASSERT(Options::useWebAssemblyGC());
-    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Anyref) };
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Anyref) };
 }
 
 inline Type arrayrefType()

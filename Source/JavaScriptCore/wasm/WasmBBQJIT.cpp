@@ -3604,6 +3604,21 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&) BBQ_STUB
 
+    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result)
+    {
+        Vector<Value, 8> arguments = {
+            reference
+        };
+        emitCCall(&operationWasmExternInternalize, arguments, TypeKind::Anyref, result);
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result)
+    {
+        result = reference;
+        return { };
+    }
+
     // Basic operators
     PartialResult WARN_UNUSED_RETURN addSelect(Value condition, Value lhs, Value rhs, Value& result)
     {
