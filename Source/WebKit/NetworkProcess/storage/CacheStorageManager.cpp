@@ -223,15 +223,17 @@ void CacheStorageManager::makeDirty()
     m_updateCounter = nextUpdateNumber();
 }
 
-String CacheStorageManager::saltFilePath() const
+static FileSystem::Salt readOrMakeSalt(const String& saltDirectory)
 {
-    return FileSystem::pathByAppendingComponent(m_path, originSaltFileName);
+    if (saltDirectory.isEmpty())
+        return { };
+    return valueOrDefault(FileSystem::readOrMakeSalt(FileSystem::pathByAppendingComponent(saltDirectory, originSaltFileName)));
 }
 
 CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
     : m_updateCounter(nextUpdateNumber())
     , m_path(path)
-    , m_salt(valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath())))
+    , m_salt(readOrMakeSalt(m_path))
     , m_registry(registry)
     , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
     , m_queue(WTFMove(queue))
