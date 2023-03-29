@@ -39,6 +39,10 @@
 @class WKProcessGroup;
 @class WKViewData;
 
+// FIXME: Remove this file once rdar://105559864 and rdar://105560420 and rdar://105560497 are complete.
+// Note: rdar://105011969 tracks additional use of this file, but those are unused test utilities that are never built.
+// Also, this stub needs to be kept as long as Ventura-based macOS versions are used for performance testing.
+
 WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, 10.14.4), ios(8.0, 12.2))
 @interface WKView : NSView <NSTextInputClient> {
 @private
