@@ -107,7 +107,7 @@ void ApplicationManifestParser::logDeveloperWarning(const String& message)
         m_document->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, makeString("Parsing application manifest "_s, m_manifestURL.string(), ": "_s, message)));
 }
 
-URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const URL& documentURL)
+const URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const URL& documentURL)
 {
     auto value = manifest.getValue("start_url"_s);
     if (!value)
@@ -197,22 +197,22 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
     return std::nullopt;
 }
 
-String ApplicationManifestParser::parseName(const JSON::Object& manifest)
+const String ApplicationManifestParser::parseName(const JSON::Object& manifest)
 {
     return parseGenericString(manifest, "name"_s);
 }
 
-String ApplicationManifestParser::parseDescription(const JSON::Object& manifest)
+const String ApplicationManifestParser::parseDescription(const JSON::Object& manifest)
 {
     return parseGenericString(manifest, "description"_s);
 }
 
-String ApplicationManifestParser::parseShortName(const JSON::Object& manifest)
+const String ApplicationManifestParser::parseShortName(const JSON::Object& manifest)
 {
     return parseGenericString(manifest, "short_name"_s);
 }
 
-Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JSON::Object& manifest)
+const Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JSON::Object& manifest)
 {
     auto manifestIcons = manifest.getValue("icons"_s);
 
@@ -315,7 +315,7 @@ static bool isInScope(const URL& scopeURL, const URL& targetURL)
     return false;
 }
 
-URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& startURL)
+const URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& startURL)
 {
     auto idValue = manifest.getValue("id"_s);
     if (!idValue)
@@ -345,7 +345,7 @@ URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& 
     return idURL;
 }
 
-URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)
+const URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)
 {
     URL defaultScope { startURL, "./"_s };
 
@@ -383,12 +383,12 @@ URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const UR
     return scopeURL;
 }
 
-Color ApplicationManifestParser::parseColor(const JSON::Object& manifest, const String& propertyName)
+const Color ApplicationManifestParser::parseColor(const JSON::Object& manifest, const String& propertyName)
 {
     return CSSParser::parseColorWithoutContext(parseGenericString(manifest, propertyName));
 }
 
-String ApplicationManifestParser::parseGenericString(const JSON::Object& manifest, const String& propertyName)
+const String ApplicationManifestParser::parseGenericString(const JSON::Object& manifest, const String& propertyName)
 {
     auto value = manifest.getValue(propertyName);
     if (!value)
