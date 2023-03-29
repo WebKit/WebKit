@@ -4948,7 +4948,7 @@ public:
             ),
             BLOCK(
                 if (rhs.isConst())
-                    m_jit.rotateLeft64(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(rhs.asI32())), resultLocation.asGPR());
+                    m_jit.rotateLeft64(lhsLocation.asGPR(), TrustedImm32(rhs.asI32()), resultLocation.asGPR());
                 else {
                     moveShiftAmountIfNecessary(rhsLocation);
                     emitMoveConst(lhs, resultLocation);
