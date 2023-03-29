@@ -58,13 +58,12 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
     , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
     m_connectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
-    m_sourceBufferPrivate->setClient(this);
-    m_sourceBufferPrivate->setIsAttached(true);
+    m_sourceBufferPrivate->setClient(*this);
 }
 
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
-    m_sourceBufferPrivate->setIsAttached(false);
+    m_sourceBufferPrivate->detach();
     m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
 }
 
@@ -119,14 +118,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateStreamEndedWithDecodeError()
         return;
 
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateStreamEndedWithDecodeError(), m_identifier);
-}
-
-void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool decodeError)
-{
-    if (!m_connectionToWebProcess)
-        return;
-
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendError(decodeError), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)

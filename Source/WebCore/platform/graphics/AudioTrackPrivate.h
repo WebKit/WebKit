@@ -87,6 +87,8 @@ public:
     const char* logClassName() const override { return "AudioTrackPrivate"; }
 #endif
 
+    Type type() const final { return Type::Audio; }
+
 protected:
     AudioTrackPrivate() = default;
 
@@ -98,6 +100,10 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrackPrivate)
+static bool isType(const WebCore::TrackPrivateBase& track) { return track.type() == WebCore::TrackPrivateBase::Type::Audio; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WTF {
 

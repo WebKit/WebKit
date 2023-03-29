@@ -72,7 +72,7 @@ public:
     void setActive(bool) final;
     bool isActive() const final;
 
-    void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&&);
+    void didReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&);
     void didReceiveSample(Ref<MediaSample>&&);
     void didReceiveAllPendingSamples();
     void appendParsingFailed();

@@ -414,12 +414,6 @@ void SourceBufferPrivateRemote::sourceBufferPrivateStreamEndedWithDecodeError()
         m_client->sourceBufferPrivateStreamEndedWithDecodeError();
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateAppendError(bool decodeError)
-{
-    if (m_client)
-        m_client->sourceBufferPrivateAppendError(decodeError);
-}
-
 void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset)
 {
     m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;

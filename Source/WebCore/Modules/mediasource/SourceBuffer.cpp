@@ -99,8 +99,7 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_private->setClient(this);
-    m_private->setIsAttached(true);
+    m_private->setClient(*this);
 }
 
 SourceBuffer::~SourceBuffer()
@@ -108,8 +107,7 @@ SourceBuffer::~SourceBuffer()
     ASSERT(isRemoved());
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_private->setIsAttached(false);
-    m_private->setClient(nullptr);
+    m_private->detach();
 }
 
 ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
@@ -447,7 +445,7 @@ void SourceBuffer::removedFromMediaSource()
 
     m_private->clearTrackBuffers();
     m_private->removedFromMediaSource();
-    m_private->setIsAttached(false);
+    m_private->detach();
     m_source = nullptr;
 }
 
@@ -725,7 +723,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // 2. If the initialization segment has no audio, video, or text tracks, then run the append error algorithm
     // with the decode error parameter set to true and abort these steps.
     if (segment.audioTracks.isEmpty() && segment.videoTracks.isEmpty() && segment.textTracks.isEmpty()) {
-        appendError(true);
+        // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
         completionHandler(ReceiveResult::AppendError);
         return;
     }
@@ -735,7 +733,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         // 3.1. Verify the following properties. If any of the checks fail then run the append error algorithm
         // with the decode error parameter set to true and abort these steps.
         if (!validateInitializationSegment(segment)) {
-            appendError(true);
+            // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
             completionHandler(ReceiveResult::AppendError);
             return;
         }
@@ -793,7 +791,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
             ASSERT(textTrack);
             downcast<InbandTextTrack>(*textTrack).setPrivate(*textTrackInfo.track);
         }
-        
+
         if (!trackIdPairs.isEmpty())
             m_private->updateTrackIds(WTFMove(trackIdPairs));
 
@@ -809,11 +807,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         // 5.1 If the initialization segment contains tracks with codecs the user agent does not support,
         // then run the append error algorithm with the decode error parameter set to true and abort these steps.
         // NOTE: This check is the responsibility of the SourceBufferPrivate.
+        // appendError will be called once sourceBufferPrivateAppendComplete gets called once the completionHandler is run.
         if (auto& allowedMediaAudioCodecIDs = document().settings().allowedMediaAudioCodecIDs()) {
             for (auto& audioTrackInfo : segment.audioTracks) {
                 if (audioTrackInfo.description && allowedMediaAudioCodecIDs->contains(FourCC::fromString(audioTrackInfo.description->codec())))
                     continue;
-                appendError(true);
                 completionHandler(ReceiveResult::AppendError);
                 return;
             }
@@ -823,7 +821,6 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
             for (auto& videoTrackInfo : segment.videoTracks) {
                 if (videoTrackInfo.description && allowedMediaVideoCodecIDs->contains(FourCC::fromString(videoTrackInfo.description->codec())))
                     continue;
-                appendError(true);
                 completionHandler(ReceiveResult::AppendError);
                 return;
             }
@@ -948,14 +945,15 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // (Note: Issue #155 adds this step after step 5:)
     // 6. Set  pending initialization segment for changeType flag  to false.
     m_pendingInitializationSegmentForChangeType = false;
-    completionHandler(ReceiveResult::Succeeded);
 
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
     if (m_private->readyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
         for (auto& sourceBuffer : *m_source->sourceBuffers()) {
-            if (!sourceBuffer->m_receivedFirstInitializationSegment)
+            if (!sourceBuffer->m_receivedFirstInitializationSegment) {
+                completionHandler(ReceiveResult::Succeeded);
                 return;
+            }
         }
 
         // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
@@ -968,6 +966,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
     // attribute to HAVE_METADATA.
     if (activeTrackFlag && m_private->readyState() > MediaPlayer::ReadyState::HaveCurrentData)
         m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+
+    completionHandler(ReceiveResult::Succeeded);
 }
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)
@@ -1018,11 +1018,6 @@ bool SourceBuffer::validateInitializationSegment(const InitializationSegment& se
     }
 
     return true;
-}
-
-void SourceBuffer::sourceBufferPrivateAppendError(bool decodeError)
-{
-    appendError(decodeError);
 }
 
 void SourceBuffer::appendError(bool decodeError)
