@@ -403,7 +403,7 @@ void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, Ref<F
 {
     auto image = BitmapImage::create();
     image->setData(WTFMove(imageBuffer), true);
-    m_impl->setPromisedDataForImage(image.ptr(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName, originIdentifier);
+    m_impl->setPromisedDataForImage(image.get(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName, originIdentifier);
 }
 
 void PageClientImpl::updateSecureInputState()
