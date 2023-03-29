@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/url/IdnaTestV2.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/url/README.md
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml
@@ -23,7 +24,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/data-uri-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/url/failure.html
 /LayoutTests/imported/w3c/web-platform-tests/url/historical.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/javascript-urls.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/percent-encoding.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/toascii.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.any.js
@@ -32,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters-a-area.window.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters-stripping.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/url-statics-canparse.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-tojson.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlencoded-parser.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.any.js
@@ -42,5 +46,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-getall.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-has.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-set.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-size.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-sort.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-stringifier.any.js
