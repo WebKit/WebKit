@@ -4397,3 +4397,7 @@ webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-
 
 webkit.org/b/254073 webgl/1.0.x/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
 webkit.org/b/254073 webgl/2.0.y/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
+
+# webkit.org/b/254690 REGRESSION(262009@main): 2X webgl/conformance/textures/canvas (layout-tests) are flaky timeouts
+webgl/1.0.x/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
+webgl/2.0.y/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
