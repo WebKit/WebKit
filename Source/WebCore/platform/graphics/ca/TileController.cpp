@@ -63,13 +63,14 @@ String TileController::zoomedOutTileGridContainerLayerName()
     return "Zoomed-out TileGrid container"_s;
 }
 
-TileController::TileController(PlatformCALayer* rootPlatformLayer)
+TileController::TileController(PlatformCALayer* rootPlatformLayer, AllowScrollPerformanceLogging shouldLogScrollingPerformance)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_deviceScaleFactor(owningGraphicsLayer()->platformCALayerDeviceScaleFactor())
     , m_tileGrid(makeUnique<TileGrid>(*this))
     , m_tileRevalidationTimer(*this, &TileController::tileRevalidationTimerFired)
     , m_tileSizeChangeTimer(*this, &TileController::tileSizeChangeTimerFired, tileSizeUpdateDelay)
     , m_marginEdges(false, false, false, false)
+    , m_shouldAllowScrollPerformanceLogging(shouldLogScrollingPerformance)
 {
 }
 
@@ -794,7 +795,8 @@ void TileController::removeUnparentedTilesNow()
 
 void TileController::logFilledVisibleFreshTile(unsigned blankPixelCount)
 {
-    owningGraphicsLayer()->platformCALayerLogFilledVisibleFreshTile(blankPixelCount);
+    if (m_shouldAllowScrollPerformanceLogging == AllowScrollPerformanceLogging::Yes)
+        owningGraphicsLayer()->platformCALayerLogFilledVisibleFreshTile(blankPixelCount);
 }
 
 } // namespace WebCore

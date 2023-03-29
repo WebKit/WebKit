@@ -1204,6 +1204,8 @@ void WebPageProxy::close()
     if (m_isClosed)
         return;
 
+    logScrollingPerformanceData();
+
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
@@ -12062,6 +12064,14 @@ String WebPageProxy::scrollbarStateForScrollingNodeID(int scrollingNodeID, bool 
     return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
 #else
     return ""_s;
+#endif
+}
+
+void WebPageProxy::logScrollingPerformanceData()
+{
+#if PLATFORM(COCOA)
+    if (m_scrollingPerformanceData)
+        m_scrollingPerformanceData->logData();
 #endif
 }
 

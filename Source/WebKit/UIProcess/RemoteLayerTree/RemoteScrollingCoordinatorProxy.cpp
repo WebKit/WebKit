@@ -30,6 +30,7 @@
 
 #include "NativeWebWheelEvent.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
+#include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingCoordinatorMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
@@ -184,6 +185,9 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     m_scrollingTree->addPendingScrollUpdate(WTFMove(scrollUpdate));
 
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll " << scrolledNodeID << " to " << newScrollPosition << " waitingForDidScrollReply " << m_waitingForDidScrollReply);
+
+    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = m_webPageProxy.scrollingPerformanceData())
+        scrollPerfData->didScroll(m_scrollingTree->layoutViewport());
 
     if (!m_waitingForDidScrollReply) {
         sendScrollingTreeNodeDidScroll();
@@ -355,14 +359,19 @@ void RemoteScrollingCoordinatorProxy::resetStateAfterProcessExited()
     m_uiState.reset();
 }
 
-void RemoteScrollingCoordinatorProxy::reportExposedUnfilledArea(MonotonicTime timestamp, unsigned unfilledArea)
+void RemoteScrollingCoordinatorProxy::reportFilledVisibleFreshTile(MonotonicTime timestamp, unsigned unfilledArea)
 {
-    m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea), timestamp, unfilledArea);
+    m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::FilledTile), timestamp, unfilledArea);
+}
+
+void RemoteScrollingCoordinatorProxy::reportExposedUnfilledArea(MonotonicTime, unsigned)
+{
 }
 
 void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, OptionSet<SynchronousScrollingReason> reasons)
 {
-    m_webPageProxy.logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), timestamp, reasons.toRaw());
+    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = m_webPageProxy.scrollingPerformanceData())
+        scrollPerfData->didChangeSynchronousScrollingReasons(timestamp, reasons.toRaw());
 }
 
 void RemoteScrollingCoordinatorProxy::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
@@ -410,6 +419,11 @@ String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore
             return scrollingNode->scrollbarStateForOrientation(isVertical ? ScrollbarOrientation::Vertical : ScrollbarOrientation::Horizontal);
     }
     return ""_s;
+}
+
+bool RemoteScrollingCoordinatorProxy::scrollingPerformanceTestingEnabled() const
+{
+    return m_scrollingTree->scrollingPerformanceTestingEnabled();
 }
 
 } // namespace WebKit

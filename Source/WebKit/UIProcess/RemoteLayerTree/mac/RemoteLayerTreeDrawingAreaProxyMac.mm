@@ -30,6 +30,7 @@
 
 #import "DrawingArea.h"
 #import "DrawingAreaMessages.h"
+#import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteScrollingCoordinatorProxyMac.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
@@ -41,6 +42,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
+#import <WebCore/TileController.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -186,6 +188,13 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
         
         NSScrollerStyle style = m_usesOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
         [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
+    }
+
+    m_webPageProxy.setScrollPerformanceDataCollectionEnabled(m_webPageProxy.scrollingCoordinatorProxy()->scrollingPerformanceTestingEnabled());
+    
+    if (transaction.createdLayers().size() > 0) {
+        if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = m_webPageProxy.scrollingPerformanceData())
+            scrollPerfData->didCommitLayerTree(LayoutRect(transaction.scrollPosition(),  transaction.baseLayoutViewportSize()));
     }
 
     layoutBannerLayers(transaction);
