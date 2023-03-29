@@ -316,10 +316,6 @@ WK_EXPORT bool WKPreferencesGetContentChangeObserverEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetUseGiantTiles(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetUseGiantTiles(WKPreferencesRef);
 
-// Defaults to false.
-WK_EXPORT void WKPreferencesSetUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef, bool enabled);
-WK_EXPORT bool WKPreferencesUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef);
-
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetMediaSourceEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetMediaSourceEnabled(WKPreferencesRef preferencesRef);
