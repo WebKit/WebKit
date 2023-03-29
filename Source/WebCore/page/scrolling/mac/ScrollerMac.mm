@@ -343,11 +343,7 @@ void ScrollerMac::setHostLayer(CALayer *layer)
 
     [m_scrollerImp setLayer:layer];
 
-    NSScrollerImp *scrollerImp = layer ? m_scrollerImp.get() : nil;
-    if (m_orientation == ScrollbarOrientation::Vertical)
-        m_pair.setVerticalScrollerImp(scrollerImp);
-    else
-        m_pair.setHorizontalScrollerImp(scrollerImp);
+    updatePairScrollerImps();
 }
 
 void ScrollerMac::updateValues()
@@ -368,11 +364,21 @@ void ScrollerMac::updateValues()
 void ScrollerMac::updateScrollbarStyle()
 {
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()];
+    updatePairScrollerImps();
 }
 
 FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
 {
     return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
+}
+
+void ScrollerMac::updatePairScrollerImps()
+{
+    NSScrollerImp *scrollerImp = m_hostLayer ? m_scrollerImp.get() : nil;
+    if (m_orientation == ScrollbarOrientation::Vertical)
+        m_pair.setVerticalScrollerImp(scrollerImp);
+    else
+        m_pair.setHorizontalScrollerImp(scrollerImp);
 }
 
 String ScrollerMac::scrollbarState() const
