@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1288,11 +1288,11 @@ public:
             return shouldBlindForSpecificArch(static_cast<uint32_t>(value));
         return shouldBlindForSpecificArch(static_cast<uint64_t>(value));
     }
-    
+
+#if CPU(X86_64)
     bool shouldBlind(ImmPtr imm)
     {
-        if (!canBlind())
-            return false;
+        static_assert(canBlind());
         
 #if ENABLE(FORCED_JIT_BLINDING)
         UNUSED_PARAM(imm);
@@ -1326,6 +1326,13 @@ public:
 
         return shouldBlindPointerForSpecificArch(static_cast<uintptr_t>(value));
     }
+#else
+    static constexpr bool shouldBlind(ImmPtr)
+    {
+        static_assert(!canBlind());
+        return false;
+    }
+#endif
 
     uint8_t generateRotationSeed(size_t widthInBits)
     {
@@ -1358,8 +1365,11 @@ public:
         rotateRightPtr(constant.rotation, dest);
     }
 
+#if CPU(X86_64)
     bool shouldBlind(Imm64 imm)
     {
+        static_assert(canBlind());
+
 #if ENABLE(FORCED_JIT_BLINDING)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
@@ -1401,6 +1411,13 @@ public:
 
         return shouldBlindForSpecificArch(value);
     }
+#else
+    static constexpr bool shouldBlind(Imm64)
+    {
+        static_assert(!canBlind());
+        return false;
+    }
+#endif
     
     struct RotatedImm64 {
         RotatedImm64(uint64_t v1, uint8_t v2)
@@ -1494,8 +1511,11 @@ public:
     }
 #endif // CPU(X86_64) || CPU(ARM64)
 
+#if CPU(X86_64)
     bool shouldBlind(Imm32 imm)
     {
+        static_assert(canBlind());
+
 #if ENABLE(FORCED_JIT_BLINDING)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
@@ -1524,6 +1544,13 @@ public:
         return shouldBlindForSpecificArch(value);
 #endif // ENABLE(FORCED_JIT_BLINDING)
     }
+#else
+    static constexpr bool shouldBlind(Imm32)
+    {
+        static_assert(!canBlind());
+        return false;
+    }
+#endif
 
     struct BlindedImm32 {
         BlindedImm32(int32_t v1, int32_t v2)
