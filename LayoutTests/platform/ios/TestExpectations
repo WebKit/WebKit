@@ -4071,6 +4071,8 @@ webkit.org/b/251302 accessibility/ios-simulator/table-cell-ranges.html [ Failure
 
 webkit.org/b/251306 http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-app-bound-domain-blocked.html [ Pass Crash ]
 
+webkit.org/b/254630 fast/canvas/offscreen-scaling.html [ Pass Failure ]
+
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]

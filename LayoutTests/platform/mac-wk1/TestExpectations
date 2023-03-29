@@ -1914,6 +1914,8 @@ webkit.org/b/244696 [ Debug ] media/modern-media-controls/media-documents/insert
 
 webkit.org/b/213896 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Pass Failure ]
 
+webkit.org/b/254630 fast/canvas/offscreen-scaling.html [ Pass Failure ]
+
 # ENABLE_INPUT_TYPE_* are not enabled on wk1.
 fast/forms/date
 fast/forms/datetimelocal
