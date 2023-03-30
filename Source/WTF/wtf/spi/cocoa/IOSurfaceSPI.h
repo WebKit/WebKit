@@ -58,7 +58,6 @@ extern const CFStringRef kIOSurfacePixelFormat;
 extern const CFStringRef kIOSurfaceWidth;
 extern const CFStringRef kIOSurfaceElementWidth;
 extern const CFStringRef kIOSurfaceElementHeight;
-extern const CFStringRef kIOSurfaceName;
 extern const CFStringRef kIOSurfacePlaneWidth;
 extern const CFStringRef kIOSurfacePlaneHeight;
 extern const CFStringRef kIOSurfacePlaneBytesPerRow;

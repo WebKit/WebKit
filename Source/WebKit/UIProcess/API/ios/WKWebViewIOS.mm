@@ -1205,7 +1205,7 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
 #else
     WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::BGRA;
 #endif
-    auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot, snapshotFormat);
+    auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), snapshotFormat);
     if (!surface)
         return nullptr;
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
@@ -1214,7 +1214,7 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
     WebCore::IOSurface::Format compressedFormat = WebCore::IOSurface::Format::YUV422;
     if (WebCore::IOSurface::allowConversionFromFormatToFormat(snapshotFormat, compressedFormat)) {
         auto viewSnapshot = WebKit::ViewSnapshot::create(nullptr);
-        WebCore::IOSurface::convertToFormat(nullptr, WTFMove(surface), WebCore::IOSurface::Name::Snapshot, WebCore::IOSurface::Format::YUV422, [viewSnapshot](std::unique_ptr<WebCore::IOSurface> convertedSurface) {
+        WebCore::IOSurface::convertToFormat(nullptr, WTFMove(surface), WebCore::IOSurface::Format::YUV422, [viewSnapshot](std::unique_ptr<WebCore::IOSurface> convertedSurface) {
             if (convertedSurface)
                 viewSnapshot->setSurface(WTFMove(convertedSurface));
         });
@@ -3800,7 +3800,7 @@ static bool isLockdownModeWarningNeeded()
     NSString *displayName = self.window.screen.displayConfiguration.name;
     if (displayName && !self.window.hidden) {
         TraceScope snapshotScope(RenderServerSnapshotStart, RenderServerSnapshotEnd);
-        auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot);
+        auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::DestinationColorSpace::SRGB());
         if (!surface) {
             completionHandler(nullptr);
             return;
