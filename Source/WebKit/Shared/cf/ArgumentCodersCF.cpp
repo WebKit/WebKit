@@ -652,12 +652,6 @@ std::optional<RetainPtr<CFNumberRef>> ArgumentCoder<RetainPtr<CFNumberRef>>::dec
 template<typename Encoder>
 void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef string)
 {
-    if (!string) {
-        encoder << true;
-        return;
-    }
-    encoder << false;
-
     CFIndex length = CFStringGetLength(string);
     CFStringEncoding encoding = CFStringGetFastestEncoding(string);
 
@@ -679,14 +673,6 @@ template void ArgumentCoder<CFStringRef>::encode<StreamConnectionEncoder>(Stream
 
 std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder)
 {
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return std::nullopt;
-
-    if (*isNull)
-        return { { nullptr } };
-
     std::optional<uint32_t> encodingFromIPC;
     decoder >> encodingFromIPC;
     if (!encodingFromIPC)

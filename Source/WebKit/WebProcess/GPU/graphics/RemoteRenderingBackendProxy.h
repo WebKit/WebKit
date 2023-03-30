@@ -96,8 +96,7 @@ public:
     RefPtr<ShareableBitmap> getShareableBitmap(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution);
     RefPtr<WebCore::Image> getFilteredImage(WebCore::RenderingResourceIdentifier, WebCore::Filter&);
     void cacheNativeImage(const ShareableBitmapHandle&, WebCore::RenderingResourceIdentifier);
-    void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformData::Attributes&, std::optional<WebCore::RenderingResourceIdentifier>);
-    void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
+    void cacheFont(Ref<WebCore::Font>&&);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void releaseAllRemoteResources();

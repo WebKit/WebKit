@@ -45,7 +45,6 @@ public:
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, QualifiedRenderingResourceIdentifier);
-    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&, QualifiedRenderingResourceIdentifier);
 
     RemoteImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
     RefPtr<RemoteImageBuffer> takeImageBuffer(QualifiedRenderingResourceIdentifier);
@@ -53,7 +52,6 @@ public:
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier) const;
     WebCore::Gradient* cachedGradient(QualifiedRenderingResourceIdentifier) const;
-    WebCore::FontCustomPlatformData* cachedFontCustomPlatformData(QualifiedRenderingResourceIdentifier) const;
 
     std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
 

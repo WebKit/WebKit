@@ -134,7 +134,7 @@ public:
     const Font& invisibleFont() const;
 
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
-    bool isTextOrientationFallback() const { return m_attributes.isTextOrientationFallback == OrientationFallback::Yes; }
+    bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
 
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
     float sizePerUnit() const { return platformData().size() / (fontMetrics().unitsPerEm() ? fontMetrics().unitsPerEm() : 1); }
@@ -179,9 +179,9 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-    Origin origin() const { return m_attributes.origin; }
-    bool isInterstitial() const { return m_attributes.isInterstitial == Interstitial::Yes; }
-    Visibility visibility() const { return m_attributes.visibility; }
+    Origin origin() const { return m_origin; }
+    bool isInterstitial() const { return m_isInterstitial; }
+    Visibility visibility() const { return m_visibility; }
     bool allowsAntialiasing() const { return m_allowsAntialiasing; }
 
 #if !LOG_DISABLED
@@ -214,18 +214,6 @@ public:
 
     void setIsUsedInSystemFallbackFontCache() { m_isUsedInSystemFallbackFontCache = true; }
     bool isUsedInSystemFallbackFontCache() const { return m_isUsedInSystemFallbackFontCache; }
-
-    class Attributes {
-    public:
-        WEBCORE_EXPORT RenderingResourceIdentifier ensureRenderingResourceIdentifier() const;
-
-        mutable std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-        Font::Origin origin : 1;
-        Font::Interstitial isInterstitial : 1;
-        Font::Visibility visibility : 1;
-        Font::OrientationFallback isTextOrientationFallback : 1;
-    };
-    const Attributes& attributes() const { return m_attributes; }
 
 private:
     WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, std::optional<RenderingResourceIdentifier>);
@@ -301,7 +289,7 @@ private:
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
 
-    Attributes m_attributes;
+    mutable std::optional<RenderingResourceIdentifier> m_renderingResourceIdentifier;
 
     struct DerivedFonts {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -343,7 +331,13 @@ private:
     float m_spaceWidth { 0 };
     float m_syntheticBoldOffset { 0 };
 
+    Origin m_origin; // Whether or not we are custom font loaded via @font-face
+    Visibility m_visibility; // @font-face's internal timer can cause us to show fonts even when a font is being downloaded.
+
     unsigned m_treatAsFixedPitch : 1;
+    unsigned m_isInterstitial : 1; // Whether or not this custom font is the last resort placeholder for a loading font
+
+    unsigned m_isTextOrientationFallback : 1;
     unsigned m_isBrokenIdeographFallback : 1;
     unsigned m_hasVerticalGlyphs : 1;
 

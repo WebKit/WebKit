@@ -25,7 +25,6 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include "FontCustomPlatformData.h"
 #include "HWndDC.h"
 #include "SharedBuffer.h"
 #include <wtf/HashMap.h>
@@ -38,8 +37,8 @@ using std::min;
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::AutoTextRendering, customPlatformData)
+FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, const CreationData* creationData)
+    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::AutoTextRendering, creationData)
 {
     m_font = SharedGDIObject<HFONT>::create(WTFMove(font));
 
@@ -71,24 +70,6 @@ RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) con
 
     SelectObject(hdc, oldFont);
     return buffer;
-}
-
-FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
-{
-    LOGFONT logFont = data.m_font;
-    if (custom)
-        wcscpy_s(logFont.lfFaceName, LF_FACESIZE, custom->name.wideCharacters().data());
-
-    auto gdiFont = adoptGDIObject(CreateFontIndirect(&logFont));
-    return FontPlatformData(WTFMove(gdiFont), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, custom);
-}
-
-FontPlatformData::Attributes FontPlatformData::attributes() const
-{
-    Attributes result(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
-
-    GetObject(hfont(), sizeof(LOGFONT), &result.m_font);
-    return result;
 }
 
 }

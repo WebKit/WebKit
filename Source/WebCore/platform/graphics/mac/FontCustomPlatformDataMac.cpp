@@ -53,13 +53,13 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, fontCreationContext);
     ASSERT(font);
-    FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
+    FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), &creationData);
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
     return platformData;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
@@ -86,7 +86,7 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
         fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(array.get(), 0));
 
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
-    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
+    return makeUnique<FontCustomPlatformData>(fontDescriptor.get(), WTFMove(creationData));
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
