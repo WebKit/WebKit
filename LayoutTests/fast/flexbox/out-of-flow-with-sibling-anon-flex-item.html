@@ -1,0 +1,28 @@
+<style>
+div {
+  background-color: green;
+  height: 20px;
+  width: 20px;
+  font-size: 12px;
+  color: transparent;
+  font-family: Monospace;
+}
+
+.flex {
+  display: flex;
+}
+
+.out_of_flow {
+  display: none;
+  position: absolute;
+  margin-top: 20px;
+}
+</style>
+<div class=flex>
+  PASS if no
+  <div id=show_this class=out_of_flow>gap</div>
+</div>
+<script>
+document.body.offsetHeight;
+show_this.style.display = "block";
+</script>
