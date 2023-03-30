@@ -69,6 +69,7 @@ HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE = 'origin'
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
+MAX_COMMITS_IN_PR_SERIES = 50
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -5387,7 +5388,7 @@ class ValidateSquashed(shell.ShellCommand):
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
-        self.command = ['git', 'log', '--oneline', head_ref, f'^{base_ref}', '--max-count=2']
+        self.command = ['git', 'log', '--oneline', head_ref, f'^{base_ref}', f'--max-count={MAX_COMMITS_IN_PR_SERIES + 1}']
 
         self.log_observer = BufferLogObserverClass(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
@@ -5420,17 +5421,34 @@ class ValidateSquashed(shell.ShellCommand):
             return rc
 
         log_text = self.log_observer.getStdout()
-        if len(log_text.splitlines()) == 1:
-            self.summary = 'Verified commit is squashed'
-            return SUCCESS
+        commit_count = len(log_text.splitlines())
+        self.setProperty('commit_count', commit_count)
 
-        self.summary = 'Can only land squashed commits'
-        comment = 'This change contains multiple commits which are not squashed together'
-        if pr_number:
-            comment = f"{comment}, blocking PR #{pr_number}"
-        elif patch_id:
-            comment = f"{comment}, rejecting attachment {patch_id} from commit queue"
-        comment += '. Please squash the commits to land.'
+        classification = self.getProperty('classification', [])
+        if not isinstance(classification, list):
+            classification = []
+
+        if ['Cherry-pick'] == classification:
+            if commit_count > 0 and commit_count < MAX_COMMITS_IN_PR_SERIES:
+                self.summary = 'Commit sequence is entirely cherry-picks'
+                return SUCCESS
+
+            self.summary = 'Too many commits in a pull-request'
+            comment = 'Policy allows for multiple cherry-picks to be landed simultaneously ' \
+                      f'but there is a limit of {MAX_COMMITS_IN_PR_SERIES}, blocking PR #{pr_number} because it has {commit_count} commits. ' \
+                      'Please break this change into multiple pull requests.'
+        else:
+            if commit_count == 1:
+                self.summary = 'Verified commit is squashed'
+                return SUCCESS
+
+            self.summary = 'Can only land squashed commits'
+            comment = 'This change contains multiple commits which are not squashed together'
+            if pr_number:
+                comment = f"{comment}, blocking PR #{pr_number}"
+            elif patch_id:
+                comment = f"{comment}, rejecting attachment {patch_id} from commit queue"
+            comment += '. Please squash the commits to land.'
 
         self.setProperty('comment_text', comment)
         self.setProperty('build_finish_summary', self.summary)
@@ -5502,7 +5520,10 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return super().getResultSummary()
 
     def doStepIf(self, step):
-        return self.getProperty('reviewers_full_names')
+        classification = self.getProperty('classification', [])
+        if not isinstance(classification, list):
+            classification = []
+        return self.getProperty('reviewers_full_names') and ['Cherry-pick'] != classification
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -5646,6 +5667,12 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         self.rebase_enabled = rebase_enabled
         self.contributors = {}
 
+    def number_commits_to_canonicalize(self):
+        commit_count = self.getProperty('commit_count', 1)
+        if not self.rebase_enabled:
+            commit_count += 2
+        return commit_count
+
     def run(self):
         self.commands = []
         self.contributors, errors = Contributors.load(use_network=True)
@@ -5663,7 +5690,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
             if head_ref:
                 commands += [['git', 'branch', '-f', base_ref, head_ref]]
             commands += [['git', 'checkout', base_ref]]
-        commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1' if self.rebase_enabled else '3'])
+        commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', str(self.number_commits_to_canonicalize())])
 
         if self.getProperty('github.number', ''):
             committer = (self.getProperty('owners', []) or [''])[0]
@@ -5694,7 +5721,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         return super().run()
 
     def getResultSummary(self):
-        commit_pluralized = "commit" if self.rebase_enabled else "commits"
+        commit_pluralized = "commit" if self.number_commits_to_canonicalize() == 1 else "commits"
         if self.results == SUCCESS:
             return {'step': f'Canonicalized {commit_pluralized}'}
         if self.results == FAILURE:
@@ -5737,7 +5764,7 @@ class PushPullRequestBranch(shell.ShellCommand):
 class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
     name = 'update-pull-request'
     haltOnFailure = False
-    command = ['git', 'log', '-1', '--no-decorate']
+    command = ['git', 'log', '--no-decorate']
     ESCAPE_TABLE = {
         '"': '&quot;',
         "'": '&apos;',
@@ -5795,15 +5822,26 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
         rc = 0
 
         if not self.setProperty('sensitive', False):
+            self.command.append('-{}'.format(self.getProperty('commit_count', 1)))
             rc = yield super().run()
 
             loglines = self.log_observer.getStdout().splitlines()
 
             title = loglines[4][4:].rstrip()
-            description = f'#### {loglines[0].split()[1]}\n<pre>\n'
-            for line in loglines[4:]:
-                description += self.escape_html(line[4:] + '\n')
-            description += '</pre>\n'
+            description = ''
+            index = 0
+            while index < len(loglines):
+                line = loglines[index]
+                if line.startswith('commit'):
+                    if description:
+                        description = description[:-1] + f'</pre>\n{70 * "-"}\n'
+                    description += f'#### {line.split()[1]}\n<pre>\n'
+                    index += 4
+                else:
+                    description += self.escape_html(line[4:] + '\n')
+                    index += 1
+            if description:
+                description += '</pre>\n'
 
             bug_id = self.bug_id_from_log(loglines)
             if bug_id:
