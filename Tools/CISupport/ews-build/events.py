@@ -24,6 +24,7 @@ import calendar
 import datetime
 import json
 import os
+import re
 import time
 import twisted
 
@@ -31,6 +32,7 @@ from base64 import b64encode
 from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
+from rapidfuzz import fuzz
 from steps import GitHub
 from twisted.internet import defer
 from twisted.internet.defer import succeed
@@ -278,6 +280,63 @@ class logging_disabled(object):
         log.msg = self.saved_logger
 
 
+# Based off of webkitscmpy's CommitClassifier, although modified to not raise exceptions
+# when provided invalid commit classes.
+class CommitClassifier(object):
+    class HeaderFilter(object):
+        DEFAULT_FUZZ_RATIO = 90
+
+        @classmethod
+        def fuzzy(cls, string, ratio=None):
+            ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio
+            return lambda x: fuzz.partial_ratio(string, x) >= ratio
+
+        def __init__(self, value):
+            self.description = value
+            if isinstance(value, str):
+                self.do = lambda x: re.search(value, x)
+            elif isinstance(value, dict) and 'value' in value:
+                self.description = 'fuzz({}, {}%)'.format(value['value'], value.get('ratio', self.DEFAULT_FUZZ_RATIO))
+                self.do = self.fuzzy(value['value'], ratio=value.get('ratio'))
+            else:
+                self.do = None
+
+        def __repr__(self):
+            return self.description
+
+        def __call__(self, string):
+            return bool(self.do(string)) if self.do else False
+
+    def __init__(self, name=None, pickable=True, headers=None, paths=None, **kwargs):
+        self.name = name or '?'
+        self.pickable = pickable
+        self.headers = [self.HeaderFilter(header) for header in headers or []]
+        self.paths = [re.compile(r'^{}'.format(path)) for path in (paths or [])]
+
+        if not self.headers and not self.paths:
+            log.msg(f'Commit class {self.name} matches all commits')
+
+        for argument, _ in kwargs.items():
+            log.msg(f'{argument} is not a valid member of CommitClassifier')
+
+    def matches(self, header, files):
+        if not self.headers and not self.paths:
+            return False
+
+        if self.headers and not header:
+            return False
+        if self.headers and not any([h(header) for h in self.headers]):
+            return False
+
+        if self.paths and not files:
+            return False
+        if self.paths and not all([
+            any([p.match(path) for p in self.paths]) for path in files
+        ]):
+            return False
+        return True
+
+
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     OPEN_STATES = ('open',)
     PUBLIC_REPOS = ('WebKit/WebKit',)
@@ -287,11 +346,55 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     LABEL_PROCESS_DELAY = 10
     ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue')
 
+    _commit_classes = []
+    _last_commit_classes_refresh = 0
+    COMMIT_CLASSES_REFRESH = 60 * 60 * 24  # Refresh our commit-classes once a day
+    COMMIT_CLASSES_URL = f'https://raw.githubusercontent.com/{PUBLIC_REPOS[0]}/main/metadata/commit_classes.json'
+
+
     @classmethod
     def file_with_status_sign(cls, info):
         if info.get('status') in ('removed', 'renamed'):
             return '--- {}'.format(info['filename'])
         return '+++ {}'.format(info['filename'])
+
+    @classmethod
+    @defer.inlineCallbacks
+    def commit_classes(cls):
+        current_time = time.time()
+        if cls._last_commit_classes_refresh + cls.COMMIT_CLASSES_REFRESH > time.time():
+            return defer.returnValue(cls._commit_classes)
+
+        try:
+            response = yield TwistedAdditions.request(
+                url=cls.COMMIT_CLASSES_URL,
+                type=b'GET',
+                timeout=60,
+                logger=log.msg,
+            )
+            if not response or response.status_code // 100 != 2:
+                log.msg(f'Failed to fetch metadata/commit_classes.json from network with status code {response.status_code}')
+            else:
+                cls._commit_classes = [CommitClassifier(**node) for node in response.json()]
+                cls._last_commit_classes_refresh = current_time
+        except Exception as e:
+            log.msg('Exception while fetching metadata/commit_classes.json from network')
+            log.msg(f'    {e}')
+
+        return defer.returnValue(cls._commit_classes)
+
+    @classmethod
+    @defer.inlineCallbacks
+    def classifiy(cls, message, files):
+        classes = yield cls.commit_classes()
+        if not classes:
+            return defer.returnValue(None)
+
+        header = message.splitlines()[0]
+        for klass in classes:
+            if klass.matches(header, files):
+                return defer.returnValue(klass.name)
+        return defer.returnValue(None)
 
     def _get_payload(self, request):
         # Disable excessive logging inside _get_payload()
@@ -299,7 +402,42 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             return super()._get_payload(request)
 
     def _get_commit_msg(self, repo, sha):
+        # Used by buildbot to skip commits based on their commit message.
+        # even though we want to grab commit messages for each commit in the PR,
+        # we excplicitly _do not_ want to use this functionality, hence why we're
+        # disabling it.
         return ''
+
+    @defer.inlineCallbacks
+    def _get_commit_messages(self, repo, head, count):
+        if not head or not count:
+            return defer.returnValue([])
+
+        username, access_token = GitHub.credentials()
+        auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+
+        response = yield TwistedAdditions.request(
+            url="{}/repos/{}/commits".format(self.github_api_endpoint, repo),
+            type=b'GET',
+            timeout=60,
+            params=dict(
+                per_page=100,
+                sha=head,
+            ), headers=dict(
+                Authorization=['Basic {}'.format(auth_header)],
+                Accept=['application/vnd.github.v3+json'],
+            ), logger=log.msg,
+        )
+        if not response or response.status_code // 100 != 2:
+            return defer.returnValue([])
+
+        result = []
+        data = response.json()
+        for i in range(min(count, len(data))):
+            message = (data[i].get('commit') or {}).get('message')
+            if message:
+                result.append(message)
+        return defer.returnValue(result)
 
     @defer.inlineCallbacks
     def _get_pr_files(self, repo, number):
@@ -344,6 +482,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
                     del result[field]
         return result
 
+    @defer.inlineCallbacks
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
         action = payload.get('action')
@@ -354,24 +493,43 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
 
         if state not in self.OPEN_STATES:
             log.msg("PR #{} is '{}', which triggers nothing".format(pr_number, state))
-            return ([], 'git')
+            return defer.returnValue(([], 'git'))
+
+        if sender in self.ACCOUNTS_TO_IGNORE:
+            log.msg(f"PR #{pr_number} ({head_sha}) was updated by '{sender}', ignoring it")
+            return defer.returnValue(([], 'git'))
 
         log.msg(f'Handling PR #{pr_number} with hash: {head_sha}')
         if action == 'labeled' and self.UNSAFE_MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for unsafe-merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
-            time.sleep(self.LABEL_PROCESS_DELAY)
-            return super().handle_pull_request(payload, 'unsafe_merge_queue')
-        if action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
+            yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
+            event = 'unsafe_merge_queue'
+        elif action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
             log.msg(f'PR #{pr_number} ({head_sha}) was labeled for merge-queue')
             # 'labeled' is usually an ignored action, override it to force build
+            yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
             payload['action'] = 'synchronize'
-            time.sleep(self.LABEL_PROCESS_DELAY)
-            return super().handle_pull_request(payload, 'merge_queue')
+            event = 'merge_queue'
 
-        if sender in self.ACCOUNTS_TO_IGNORE:
-            log.msg(f"PR #{pr_number} ({head_sha}) was updated by '{sender}', ignoring it")
-            return ([], 'git')
+        result = yield super().handle_pull_request(payload, event)
+        changes = result[0]
+        if not changes or 'properties' not in changes[0]:
+            return defer.returnValue(result)
+        change = changes[0]
 
-        return super().handle_pull_request(payload, event)
+        repo_full_name = payload['repository']['full_name']
+        head_sha = payload['pull_request']['head']['sha']
+        number_commits = payload['pull_request']['commits']
+        messages = yield self._get_commit_messages(repo_full_name, head_sha, number_commits)
+
+        raw_files = [file.split(' ', 1)[-1] for file in change.get('files') or []]
+
+        classes = set()
+        for message in messages:
+            classification = yield self.classifiy(message, raw_files)
+            classes.add(classification or 'Unclassified')
+        change['properties'].update({'classification': list(classes)})
+
+        return defer.returnValue(([change], result[1]))
