@@ -314,7 +314,7 @@ void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination des
 void CachedResourceRequest::setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier clientIdentifier)
 {
     if (!m_options.clientIdentifier)
-        m_options.clientIdentifier = clientIdentifier.object();
+        m_options.clientIdentifier = clientIdentifier;
 }
 
 void CachedResourceRequest::setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier identifier)

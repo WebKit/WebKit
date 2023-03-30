@@ -2188,7 +2188,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         m_resultingClientId = ScriptExecutionContextIdentifier::generate();
         ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
         scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
-        mainResourceLoadOptions.resultingClientIdentifier = m_resultingClientId.object();
+        mainResourceLoadOptions.resultingClientIdentifier = m_resultingClientId;
     }
 #endif
 
