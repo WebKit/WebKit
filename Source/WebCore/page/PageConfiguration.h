@@ -87,6 +87,12 @@ class WebRTCProvider;
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
+
+    struct RemoteMainFrameCreationParameters {
+        UniqueRef<RemoteFrameClient> remoteFrameClient;
+        WebCore::ProcessIdentifier remoteProcessIdentifier;
+    };
+
     WEBCORE_EXPORT PageConfiguration(
         PAL::SessionID,
         UniqueRef<EditorClient>&&,
@@ -97,7 +103,7 @@ public:
         Ref<BackForwardClient>&&,
         Ref<CookieJar>&&,
         UniqueRef<ProgressTrackerClient>&&,
-        std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&&,
+        std::variant<UniqueRef<FrameLoaderClient>, RemoteMainFrameCreationParameters>&&,
         FrameIdentifier mainFrameIdentifier,
         UniqueRef<SpeechRecognitionProvider>&&,
         UniqueRef<MediaRecorderProvider>&&,
@@ -144,7 +150,9 @@ public:
     Ref<BackForwardClient> backForwardClient;
     Ref<CookieJar> cookieJar;
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
-    std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame;
+
+    std::variant<UniqueRef<FrameLoaderClient>, RemoteMainFrameCreationParameters> clientForMainFrame;
+
     FrameIdentifier mainFrameIdentifier;
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;

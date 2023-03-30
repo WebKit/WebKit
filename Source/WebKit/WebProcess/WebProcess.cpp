@@ -136,6 +136,7 @@
 #include <WebCore/RemoteCommandListener.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/ScriptController.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
@@ -1379,6 +1380,31 @@ void WebProcess::setEnhancedAccessibility(bool flag)
 {
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
 }
+
+void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+{
+    auto* webFrame = WebProcess::singleton().webFrame(identifier);
+    if (!webFrame)
+        return;
+
+    if (!webFrame->coreFrame())
+        return;
+
+    auto* domWindow = webFrame->coreFrame()->window();
+    if (!domWindow)
+        return;
+
+    auto* frame = domWindow->frame();
+    if (!frame)
+        return;
+
+    auto& script = frame->script();
+    auto globalObject = script.globalObject(WebCore::mainThreadNormalWorld());
+    if (!globalObject)
+        return;
+
+    domWindow->postMessageFromRemoteFrame(*globalObject, target, message);
+}
     
 void WebProcess::startMemorySampler(SandboxExtension::Handle&& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
 {
@@ -2245,6 +2271,7 @@ RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFacto
     return *supplement<RemoteMediaEngineConfigurationFactory>();
 }
 #endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

@@ -54,4 +54,22 @@ DOMWindow::~DOMWindow()
     allWindows().remove(identifier());
 }
 
+std::optional<ExceptionOr<RefPtr<SecurityOrigin>>> DOMWindow::createTargetOriginForPostMessage(const String& targetOrigin, RefPtr<Document>& sourceDocument)
+{
+    RefPtr<SecurityOrigin> targetSecurityOrigin;
+    if (targetOrigin == "/"_s) {
+        if (!sourceDocument)
+            return std::nullopt;
+        targetSecurityOrigin = &sourceDocument->securityOrigin();
+    } else if (targetOrigin != "*"_s) {
+        targetSecurityOrigin = &SecurityOrigin::createFromString(targetOrigin).leakRef();
+        // It doesn't make sense target a postMessage at an opaque origin
+        // because there's no way to represent an opaque origin in a string.
+        if (targetSecurityOrigin->isOpaque())
+            return Exception { SyntaxError };
+    }
+
+    return targetSecurityOrigin;
+}
+
 } // namespace WebCore

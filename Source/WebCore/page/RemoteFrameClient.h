@@ -30,12 +30,15 @@
 namespace WebCore {
 
 class IntSize;
+class SecurityOriginData;
+struct MessageWithMessagePorts;
 
 class RemoteFrameClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual void frameDetached() = 0;
     virtual void sizeDidChange(IntSize) = 0;
+    virtual void postMessageToRemote(ProcessIdentifier, FrameIdentifier, std::optional<SecurityOriginData>, const MessageWithMessagePorts&) = 0;
     virtual ~RemoteFrameClient() { }
 };
 
