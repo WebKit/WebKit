@@ -4280,8 +4280,8 @@ public:
                     ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1))
                     : m_jit.branch64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm64(-1));
                 throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
-                checkedForNegativeOne = true;
             }
+            checkedForNegativeOne = true;
 
             lhsLocation = Location::fromGPR(wasmScratchGPR);
             emitMoveConst(lhs, lhsLocation);
@@ -4297,6 +4297,14 @@ public:
 
         ScratchScope<1, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
         if (isSigned && !IsMod && !checkedForNegativeOne) {
+            // The following code freely clobbers wasmScratchGPR. This would be a bug if either of our operands were
+            // stored in wasmScratchGPR, which is the case if one of our operands is a constant - but in that case,
+            // we should be able to rule out this check based on the value of that constant above.
+            ASSERT(!lhs.isConst());
+            ASSERT(!rhs.isConst());
+            ASSERT(lhsLocation.asGPR() != wasmScratchGPR);
+            ASSERT(rhsLocation.asGPR() != wasmScratchGPR);
+
             if constexpr (is32)
                 m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), wasmScratchGPR);
             else
