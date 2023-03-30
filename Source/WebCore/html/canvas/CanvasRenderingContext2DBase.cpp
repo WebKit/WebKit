@@ -1068,7 +1068,7 @@ void CanvasRenderingContext2DBase::postProcessPixelBuffer() const
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return;
 
-    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, false, suppliedColors())) {
+    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, false)) {
         IntSize destOffset { 0, 0 };
         IntRect sourceRect = computeImageDataRect(*buffer, dirtyRect.width(), dirtyRect.height(), dirtyRect, destOffset);
         buffer->putPixelBuffer(*pixelBuffer, sourceRect, IntPoint { destOffset });
@@ -2368,7 +2368,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, m_wasLastDrawPutImageData, suppliedColors())) {
+    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, m_wasLastDrawPutImageData)) {
         IntSize destOffset { 0, 0 };
         IntRect sourceRect = computeImageDataRect(*buffer, imageDataRect.width(), imageDataRect.height(), imageDataRect, destOffset);
         buffer->putPixelBuffer(*pixelBuffer, sourceRect, IntPoint { destOffset });

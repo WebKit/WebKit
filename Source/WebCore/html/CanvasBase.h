@@ -127,7 +127,7 @@ public:
     virtual void dispatchEvent(Event&) = 0;
 
     bool shouldInjectNoiseBeforeReadback() const;
-    bool postProcessPixelBuffer(Ref<PixelBuffer>&&, bool, const HashSet<uint32_t>&) const;
+    bool postProcessPixelBuffer(Ref<PixelBuffer>&&, bool) const;
 
 protected:
     explicit CanvasBase(IntSize);

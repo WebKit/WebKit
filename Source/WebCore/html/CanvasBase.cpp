@@ -47,6 +47,10 @@
 #include <atomic>
 #include <wtf/Vector.h>
 
+#if ENABLE(WEB_CRYPTO)
+#include <pal/crypto/CryptoDigest.h>
+#endif
+
 static std::atomic<size_t> s_activePixelMemory { 0 };
 
 namespace WebCore {
@@ -363,18 +367,30 @@ bool CanvasBase::shouldInjectNoiseBeforeReadback() const
     return scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
 }
 
-bool CanvasBase::postProcessPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, bool wasLastDrawByBitMap, const HashSet<uint32_t>& suppliedColors) const
+bool CanvasBase::postProcessPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, bool wasLastDrawByBitMap) const
 {
+#if ENABLE(WEB_CRYPTO)
     if (!shouldInjectNoiseBeforeReadback() || wasLastDrawByBitMap)
         return false;
 
     ASSERT(pixelBuffer->format().pixelFormat == PixelFormat::RGBA8);
 
+    // FIXME: This should be moved into the constructor. There's no reason to recompute this every time.
     constexpr auto contextString { "Canvas2DContextString"_s };
-    unsigned salt = computeHash<String, uint64_t>(contextString, *scriptExecutionContext()->noiseInjectionHashSalt());
+    auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    if (!digest)
+        return false;
+
+    const auto hashSalt = *scriptExecutionContext()->noiseInjectionHashSalt();
+    Vector<uint8_t> message { reinterpret_cast<const uint8_t*>(contextString.characters()), contextString.length() };
+    message.append(reinterpret_cast<const uint8_t*>(&hashSalt), sizeof hashSalt);
+    digest->addBytes(message.data(), message.size());
+    auto result = digest->computeHash();
+    uint64_t salt = *reinterpret_cast<uint64_t*>(result.data());
+
     constexpr int bytesPerPixel = 4;
     auto* bytes = pixelBuffer->bytes();
-    HashMap<uint32_t, uint32_t> pixelColorMap;
+    HashMap<uint32_t, uint32_t> colorMap;
     bool wasPixelBufferModified { false };
 
     for (size_t i = 0; i < pixelBuffer->sizeInBytes(); i += bytesPerPixel) {
@@ -385,45 +401,49 @@ bool CanvasBase::postProcessPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, bool was
         bool isBlack { !redChannel && !greenChannel && !blueChannel };
 
         uint32_t pixel = (redChannel << 24) | (greenChannel << 16) | (blueChannel << 8) | alphaChannel;
-        // FIXME: Consider isEquivalentColor comparision instead of exact match
-        if (!pixel || !alphaChannel || !suppliedColors.isValidValue(pixel) || suppliedColors.contains(pixel))
+        if (!pixel || !alphaChannel || !colorMap.isValidKey(pixel))
             continue;
 
-        if (auto color = pixelColorMap.get(pixel)) {
+        uint32_t modifiedPixel { 0 };
+        if (auto color = colorMap.get(pixel)) {
             alphaChannel = static_cast<uint8_t>(color);
             blueChannel = static_cast<uint8_t>(color >> 8);
             greenChannel = static_cast<uint8_t>(color >> 16);
             redChannel = static_cast<uint8_t>(color >> 24);
-            continue;
+            modifiedPixel = color;
+        } else {
+            const uint64_t pixelHash = computeHash(computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel));
+            // +/- 13 is roughly ~5% of the 255 max value.
+            const auto clampedFivePercent = static_cast<uint32_t>(((pixelHash * 26) / std::numeric_limits<uint32_t>::max()) - 13);
+
+            const auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue) {
+                if (colorComponentOffset + originalComponentValue > std::numeric_limits<uint8_t>::max())
+                    return std::numeric_limits<uint8_t>::max() - originalComponentValue;
+                if (colorComponentOffset + originalComponentValue < 0)
+                    return -originalComponentValue;
+                return colorComponentOffset;
+            };
+
+            // If alpha is non-zero and the color channels are zero, then only tweak the alpha channel's value;
+            if (isBlack)
+                alphaChannel += clampedColorComponentOffset(clampedFivePercent, alphaChannel);
+            else {
+                // If alpha and any of the color channels are non-zero, then tweak all of the channels;
+                redChannel += clampedColorComponentOffset(clampedFivePercent, redChannel);
+                greenChannel += clampedColorComponentOffset(clampedFivePercent, greenChannel);
+                blueChannel += clampedColorComponentOffset(clampedFivePercent, blueChannel);
+                alphaChannel += clampedColorComponentOffset(clampedFivePercent, alphaChannel);
+            }
+            modifiedPixel = (redChannel << 24) | (greenChannel << 16) | (blueChannel << 8) | alphaChannel;
+            colorMap.set(pixel, modifiedPixel);
         }
 
-        const uint64_t pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
-        // +/- ~13 is roughly 5% of the 255 max value.
-        const auto clampedFivePercent = static_cast<uint32_t>(((pixelHash * 26) / std::numeric_limits<uint32_t>::max()) - 13);
-
-        const auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue) {
-            if (colorComponentOffset + originalComponentValue > std::numeric_limits<uint8_t>::max())
-                return std::numeric_limits<uint8_t>::max() - originalComponentValue;
-            if (colorComponentOffset + originalComponentValue < 0)
-                return -originalComponentValue;
-            return colorComponentOffset;
-        };
-
-        // If alpha is non-zero and the color channels are zero, then only tweak the alpha channel's value;
-        if (isBlack)
-            alphaChannel += clampedColorComponentOffset(clampedFivePercent, alphaChannel);
-        else {
-            // If alpha and any of the color channels are non-zero, then tweak all of the channels;
-            redChannel += clampedColorComponentOffset(clampedFivePercent, redChannel);
-            greenChannel += clampedColorComponentOffset(clampedFivePercent, greenChannel);
-            blueChannel += clampedColorComponentOffset(clampedFivePercent, blueChannel);
-            alphaChannel += clampedColorComponentOffset(clampedFivePercent, alphaChannel);
-        }
-        uint32_t modifiedPixel = (redChannel << 24) | (greenChannel << 16) | (blueChannel << 8) | alphaChannel;
-        pixelColorMap.set(pixel, modifiedPixel);
         wasPixelBufferModified = true;
     }
     return wasPixelBufferModified;
+#else
+    return false;
+#endif
 }
 
 size_t CanvasBase::activePixelMemory()

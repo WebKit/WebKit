@@ -816,7 +816,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
         return nullptr;
 
     if (pixelBuffer)
-        postProcessPixelBuffer(*pixelBuffer, false, { });
+        postProcessPixelBuffer(*pixelBuffer, false);
 
     return ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
 #else
