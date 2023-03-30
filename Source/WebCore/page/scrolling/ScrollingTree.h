@@ -207,9 +207,6 @@ public:
 
     virtual bool isScrollingSynchronizedWithMainThread() WTF_REQUIRES_LOCK(m_treeLock) { return true; }
 
-    virtual void willSendEventToMainThread(const PlatformWheelEvent&) { }
-    virtual void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) { };
-
     Lock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
@@ -244,12 +241,12 @@ public:
     WEBCORE_EXPORT bool overlayScrollbarsEnabled();
     
 protected:
-    WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
+    WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
     void setMainFrameScrollPosition(FloatPoint);
 
-    void setGestureState(std::optional<WheelScrollGestureState>);
-    std::optional<WheelScrollGestureState> gestureState();
+    WEBCORE_EXPORT void setGestureState(std::optional<WheelScrollGestureState>);
+    WEBCORE_EXPORT std::optional<WheelScrollGestureState> gestureState();
 
     std::optional<FramesPerSecond> nominalFramesPerSecond();
 

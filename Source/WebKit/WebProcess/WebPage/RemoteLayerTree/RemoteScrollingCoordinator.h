@@ -44,7 +44,7 @@ class WebPage;
 class RemoteScrollingCoordinatorTransaction;
 class RemoteScrollingUIState;
 
-class RemoteScrollingCoordinator : public WebCore::AsyncScrollingCoordinator, public IPC::MessageReceiver {
+class RemoteScrollingCoordinator final : public WebCore::AsyncScrollingCoordinator, public IPC::MessageReceiver {
 public:
     static Ref<RemoteScrollingCoordinator> create(WebPage* page)
     {
@@ -57,6 +57,13 @@ public:
 
     void addNodeWithActiveRubberBanding(WebCore::ScrollingNodeID);
     void removeNodeWithActiveRubberBanding(WebCore::ScrollingNodeID);
+
+    struct NodeAndGestureState {
+        WebCore::ScrollingNodeID wheelGestureNode { 0 };
+        std::optional<WebCore::WheelScrollGestureState> wheelGestureState;
+    };
+
+    NodeAndGestureState takeCurrentWheelGestureInfo() { return std::exchange(m_currentWheelGestureInfo, { }); }
 
 private:
     RemoteScrollingCoordinator(WebPage*);
@@ -88,12 +95,16 @@ private:
     void startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
     void stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
 
+    WebCore::WheelEventHandlingResult handleWheelEventForScrolling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
+
     WebPage* m_webPage;
 
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveRubberBanding;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveScrollSnap;
     HashSet<WebCore::ScrollingNodeID> m_nodesWithActiveUserScrolls;
-    
+
+    NodeAndGestureState m_currentWheelGestureInfo;
+
     bool m_clearScrollLatchingInNextTransaction { false };
 };
 

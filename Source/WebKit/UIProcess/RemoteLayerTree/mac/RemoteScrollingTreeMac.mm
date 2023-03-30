@@ -253,6 +253,66 @@ void RemoteScrollingTreeMac::receivedWheelEventWithPhases(PlatformWheelEventPhas
     });
 }
 
+void RemoteScrollingTreeMac::willSendEventForDefaultHandling(const PlatformWheelEvent&)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    Locker locker { m_treeLock };
+    m_receivedBeganEventFromMainThread = false;
+}
+
+void RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion(const PlatformWheelEvent& wheelEvent)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    if (!wheelEvent.isGestureStart())
+        return;
+
+    Locker locker { m_treeLock };
+
+    static constexpr auto maxAllowableMainThreadDelay = 50_ms;
+    auto startTime = MonotonicTime::now();
+    auto timeoutTime = startTime + maxAllowableMainThreadDelay;
+
+    bool receivedEvent = m_waitingForBeganEventCondition.waitUntil(m_treeLock, timeoutTime, [&] {
+        assertIsHeld(m_treeLock);
+        return m_receivedBeganEventFromMainThread;
+    });
+    if (!receivedEvent) {
+        // Timed out, go asynchronous.
+        setGestureState(WheelScrollGestureState::NonBlocking);
+    }
+
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion took " << (MonotonicTime::now() - startTime).milliseconds() << "ms - timed out " << !receivedEvent << " gesture state is " << gestureState());
+}
+
+void RemoteScrollingTreeMac::wheelEventDefaultHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
+{
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::wheelEventDefaultHandlingCompleted - targetNodeID " << targetNodeID << " gestureState " << gestureState);
+
+    ASSERT(ScrollingThread::isCurrentThread());
+    
+    Locker locker { m_treeLock };
+
+    if (!m_receivedBeganEventFromMainThread && wheelEvent.isGestureStart()) {
+        setGestureState(gestureState);
+
+        m_receivedBeganEventFromMainThread = true;
+        m_waitingForBeganEventCondition.notifyOne();
+    }
+
+    bool allowLatching = false;
+    OptionSet<WheelEventProcessingSteps> processingSteps;
+    if (gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
+        allowLatching = true;
+        processingSteps = { WheelEventProcessingSteps::AsyncScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
+    }
+
+    SetForScope disallowLatchingScope(m_allowLatching, allowLatching);
+    RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
+    handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), EventTargeting::NodeOnly);
+}
+
 void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, reason] {

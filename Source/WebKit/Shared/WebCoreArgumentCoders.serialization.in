@@ -1253,6 +1253,12 @@ enum class WebCore::ScrollPinningBehavior : uint8_t {
     PinToBottom
 };
 
+header: <WebCore/PlatformWheelEvent.h>
+enum class WebCore::WheelScrollGestureState : uint8_t {
+    Blocking,
+    NonBlocking
+};
+
 struct WebCore::ExceptionDetails {
     String message;
     int lineNumber;
