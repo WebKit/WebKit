@@ -70,6 +70,8 @@ public:
     Span<const CSSPropertyID> deferredPropertyIDs() const;
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
+    const HashSet<AnimatableProperty> overriddenAnimatedProperties() const;
+
 private:
     void buildCascade();
     bool addNormalMatches(CascadeLevel);
@@ -96,11 +98,12 @@ private:
         AnimationLayer(const HashSet<AnimatableProperty>&);
 
         const HashSet<AnimatableProperty>& properties;
+        HashSet<AnimatableProperty> overriddenProperties;
         bool hasCustomProperties { false };
         bool hasFontSize { false };
         bool hasLineHeight { false };
     };
-    const std::optional<AnimationLayer> m_animationLayer;
+    std::optional<AnimationLayer> m_animationLayer;
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.
