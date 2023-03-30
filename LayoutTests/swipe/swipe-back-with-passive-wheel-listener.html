@@ -10,6 +10,7 @@
         border: 1px solid black;
     }
 </style>
+<script src="../resources/ui-helper.js"></script>
 <script src="resources/swipe-test.js"></script>
 <script>
     var logElement;
@@ -66,7 +67,7 @@
         const swipeTarget = document.getElementById('swipeTarget');
         swipeTarget.addEventListener('wheel', () => { }, { passive: true });
 
-        await startSwipeGesture();
+        await startSlowSwipeGesture();
     };
 </script>
 </head>
