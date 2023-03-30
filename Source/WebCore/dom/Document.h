@@ -429,7 +429,6 @@ public:
     void invalidateAccessKeyCache();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
-    void clearSelectorQueryCache();
 
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
@@ -2055,8 +2054,6 @@ private:
     std::unique_ptr<HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>> m_accessKeyCache;
 
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
-
-    std::unique_ptr<SelectorQueryCache> m_selectorQueryCache;
 
     RenderPtr<RenderView> m_renderView;
     std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
