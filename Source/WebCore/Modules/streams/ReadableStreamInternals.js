@@ -107,7 +107,7 @@ function readableStreamPipeTo(stream, sink)
     "use strict";
     @assert(@isReadableStream(stream));
 
-    const reader = new @ReadableStreamDefaultReader(stream);
+    const reader = @acquireReadableStreamDefaultReader(stream);
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(() => { }, (e) => { sink.error(e); });
 
@@ -133,7 +133,9 @@ function readableStreamPipeTo(stream, sink)
 
 function acquireReadableStreamDefaultReader(stream)
 {
-    return new @ReadableStreamDefaultReader(stream);
+    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
+    const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
+    return new readableStreamDefaultReaderConstructor(stream);
 }
 
 // FIXME: Replace readableStreamPipeTo by below function.
@@ -389,7 +391,7 @@ function readableStreamTee(stream, shouldClone)
     @assert(@isReadableStream(stream));
     @assert(typeof(shouldClone) === "boolean");
 
-    const reader = new @ReadableStreamDefaultReader(stream);
+    const reader = @acquireReadableStreamDefaultReader(stream);
 
     const teeState = {
         stream: stream,
@@ -413,8 +415,10 @@ function readableStreamTee(stream, shouldClone)
     @putByIdDirectPrivate(branch2Source, "pull", pullFunction);
     @putByIdDirectPrivate(branch2Source, "cancel", @readableStreamTeeBranch2CancelFunction(teeState, stream));
 
-    const branch1 = new @ReadableStream(branch1Source);
-    const branch2 = new @ReadableStream(branch2Source);
+    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
+    const readableStreamConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStream");
+    const branch1 = new readableStreamConstructor(branch1Source);
+    const branch2 = new readableStreamConstructor(branch2Source);
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(@undefined, function(e) {
         @readableStreamDefaultControllerError(branch1.@readableStreamController, e);
