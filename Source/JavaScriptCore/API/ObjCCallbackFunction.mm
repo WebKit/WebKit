@@ -728,10 +728,8 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protoco
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
     if (!isInstanceMethod) {
-        [invocation setTarget:cls];
         // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
-        // FIXME: What releases it?
-        CFRetain((__bridge CFTypeRef)cls);
+        [invocation setTarget:[cls retain]];
     }
     return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
 }
