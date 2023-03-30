@@ -27,64 +27,11 @@
 
 #if HAVE(IOSURFACE)
 
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
-
-#include <IOSurface/IOSurface.h>
-
-#else
-
-#include <CoreFoundation/CFBase.h>
-#include <mach/mach_port.h>
-#include <wtf/spi/cocoa/IOReturnSPI.h>
-#include <wtf/spi/cocoa/IOTypesSPI.h>
-
-typedef struct __IOSurface *IOSurfaceRef;
-
-#endif
+#import <IOSurface/IOSurface.h>
 
 #ifdef __OBJC__
 #import <IOSurface/IOSurfaceObjC.h>
 #endif
-
-WTF_EXTERN_C_BEGIN
-
-extern const CFStringRef kIOSurfaceAllocSize;
-extern const CFStringRef kIOSurfaceBytesPerElement;
-extern const CFStringRef kIOSurfaceBytesPerRow;
-extern const CFStringRef kIOSurfaceCacheMode;
-extern const CFStringRef kIOSurfaceColorSpace;
-extern const CFStringRef kIOSurfaceHeight;
-extern const CFStringRef kIOSurfacePixelFormat;
-extern const CFStringRef kIOSurfaceWidth;
-extern const CFStringRef kIOSurfaceElementWidth;
-extern const CFStringRef kIOSurfaceElementHeight;
-extern const CFStringRef kIOSurfaceName;
-extern const CFStringRef kIOSurfacePlaneWidth;
-extern const CFStringRef kIOSurfacePlaneHeight;
-extern const CFStringRef kIOSurfacePlaneBytesPerRow;
-extern const CFStringRef kIOSurfacePlaneOffset;
-extern const CFStringRef kIOSurfacePlaneSize;
-extern const CFStringRef kIOSurfacePlaneInfo;
-
-size_t IOSurfaceAlignProperty(CFStringRef property, size_t value);
-IOSurfaceRef IOSurfaceCreate(CFDictionaryRef properties);
-mach_port_t IOSurfaceCreateMachPort(IOSurfaceRef buffer);
-size_t IOSurfaceGetAllocSize(IOSurfaceRef buffer);
-void *IOSurfaceGetBaseAddress(IOSurfaceRef buffer);
-size_t IOSurfaceGetBytesPerRow(IOSurfaceRef buffer);
-size_t IOSurfaceGetHeight(IOSurfaceRef buffer);
-size_t IOSurfaceGetPropertyMaximum(CFStringRef property);
-size_t IOSurfaceGetWidth(IOSurfaceRef buffer);
-OSType IOSurfaceGetPixelFormat(IOSurfaceRef buffer);
-void IOSurfaceIncrementUseCount(IOSurfaceRef buffer);
-Boolean IOSurfaceIsInUse(IOSurfaceRef buffer);
-IOReturn IOSurfaceLock(IOSurfaceRef buffer, uint32_t options, uint32_t *seed);
-IOSurfaceRef IOSurfaceLookupFromMachPort(mach_port_t);
-IOReturn IOSurfaceUnlock(IOSurfaceRef buffer, uint32_t options, uint32_t *seed);
-size_t IOSurfaceGetWidthOfPlane(IOSurfaceRef buffer, size_t planeIndex);
-size_t IOSurfaceGetHeightOfPlane(IOSurfaceRef buffer, size_t planeIndex);
-
-WTF_EXTERN_C_END
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -118,12 +65,6 @@ kern_return_t IOSurfaceSetOwnershipIdentity(IOSurfaceRef buffer, mach_port_t tas
 WTF_EXTERN_C_END
 
 #endif
-
-WTF_EXTERN_C_BEGIN
-
-IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
-
-WTF_EXTERN_C_END
 
 #if HAVE(IOSURFACE_ACCELERATOR)
 #if USE(APPLE_INTERNAL_SDK)
