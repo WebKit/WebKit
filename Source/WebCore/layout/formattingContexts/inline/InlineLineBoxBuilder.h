@@ -59,7 +59,7 @@ private:
     bool isFirstLine() const { return m_lineContent.isFirstFormattedLine != LineBuilder::LineContent::FirstFormattedLine::No; }
     bool isLastLine() const { return m_lineContent.isLastLineWithInlineContent; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const LineBuilder::LineContent lineContent() const { return m_lineContent; }
+    const LineBuilder::LineContent& lineContent() const { return m_lineContent; }
     const Box& rootBox() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return isFirstLine() ? rootBox().firstLineStyle() : rootBox().style(); }
 
