@@ -142,20 +142,22 @@ Type* OverloadResolver::materialize(const AbstractType& abstractType) const
             return type;
         },
         [&](TypeVariable variable) -> Type* {
-            auto* resolvedType = resolve(variable);
-            ASSERT(resolvedType);
-            return resolvedType;
+            return resolve(variable);
         },
         [&](const AbstractVector& vector) -> Type* {
-            auto* element = materialize(vector.element);
-            auto size = materialize(vector.size);
-            return m_types.vectorType(element, size);
+            if (auto* element = materialize(vector.element)) {
+                auto size = materialize(vector.size);
+                return m_types.vectorType(element, size);
+            }
+            return nullptr;
         },
         [&](const AbstractMatrix& matrix) -> Type* {
-            auto* element = materialize(matrix.element);
-            auto columns = materialize(matrix.columns);
-            auto rows = materialize(matrix.rows);
-            return m_types.matrixType(element, columns, rows);
+            if (auto* element = materialize(matrix.element)) {
+                auto columns = materialize(matrix.columns);
+                auto rows = materialize(matrix.rows);
+                return m_types.matrixType(element, columns, rows);
+            }
+            return nullptr;
         });
 }
 
@@ -207,7 +209,10 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
         ASSERT(rank != s_noConversion);
         viableOverload.ranks[i] = rank;
     }
+
     viableOverload.result = materialize(candidate.result);
+    if (!viableOverload.result)
+        return std::nullopt;
 
     if (shouldDumpOverloadDebugInformation) {
         log("found a viable candidate '", candidate, "' materialized as '(");
