@@ -56,7 +56,7 @@ struct ViableOverload {
 
 class OverloadResolver {
 public:
-    OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>&, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions);
+    OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions);
 
     Type* resolve();
 
@@ -81,15 +81,17 @@ private:
 
     TypeStore& m_types;
     const Vector<OverloadCandidate>& m_candidates;
-    const Vector<Type*>& m_arguments;
+    const Vector<Type*>& m_valueArguments;
+    const Vector<Type*>& m_typeArguments;
     FixedVector<Type*> m_typeSubstitutions;
     FixedVector<std::optional<unsigned>> m_numericSubstitutions;
 };
 
-OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& arguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions)
+OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions)
     : m_types(types)
     , m_candidates(candidates)
-    , m_arguments(arguments)
+    , m_valueArguments(valueArguments)
+    , m_typeArguments(typeArguments)
     , m_typeSubstitutions(numberOfTypeSubstitutions)
     , m_numericSubstitutions(numberOfValueSubstitutions)
 {
@@ -184,27 +186,33 @@ FixedVector<std::optional<ViableOverload>> OverloadResolver::considerCandidates(
 
 std::optional<ViableOverload> OverloadResolver::considerCandidate(const OverloadCandidate& candidate)
 {
-    if (candidate.parameters.size() != m_arguments.size())
+    if (candidate.parameters.size() != m_valueArguments.size())
+        return std::nullopt;
+
+    if (m_typeArguments.size() > candidate.typeVariables.size())
         return std::nullopt;
 
     m_typeSubstitutions.fill(nullptr);
     m_numericSubstitutions.fill(std::nullopt);
 
+    for (unsigned i = 0; i < m_typeArguments.size(); ++i)
+        assign(candidate.typeVariables[i], m_typeArguments[i]);
+
     logLn("Considering overload: ", candidate);
 
-    ViableOverload viableOverload { &candidate, FixedVector<unsigned>(m_arguments.size()), nullptr };
-    for (unsigned i = 0; i < m_arguments.size(); ++i) {
+    ViableOverload viableOverload { &candidate, FixedVector<unsigned>(m_valueArguments.size()), nullptr };
+    for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
-        auto* argument = m_arguments[i];
+        auto* argument = m_valueArguments[i];
         logLn("matching parameter #", i, " '", parameter, "' with argument '", *argument, "'");
         if (!unify(parameter, argument)) {
             logLn("rejected on parameter #", i);
             return std::nullopt;
         }
     }
-    for (unsigned i = 0; i < m_arguments.size(); ++i) {
+    for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
-        auto* argument = m_arguments[i];
+        auto* argument = m_valueArguments[i];
         auto rank = calculateRank(parameter, argument);
         ASSERT(rank != s_noConversion);
         viableOverload.ranks[i] = rank;
@@ -372,7 +380,8 @@ unsigned OverloadResolver::conversionRank(Type* from, Type* to) const
 
 constexpr unsigned primitivePair(Types::Primitive::Kind first, Types::Primitive::Kind second)
 {
-    return first << sizeof(Types::Primitive::Kind) | second;
+    static_assert(sizeof(Types::Primitive::Kind) == 1);
+    return static_cast<unsigned>(first) << 8 | second;
 }
 
 // https://www.w3.org/TR/WGSL/#conversion-rank
@@ -444,7 +453,7 @@ unsigned OverloadResolver::conversionRankImpl(Type* from, Type* to) const
     return s_noConversion;
 }
 
-Type* resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& arguments)
+Type* resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments)
 {
 
     unsigned numberOfTypeSubstitutions = 0;
@@ -453,7 +462,7 @@ Type* resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candid
         numberOfTypeSubstitutions = std::max(numberOfTypeSubstitutions, static_cast<unsigned>(candidate.typeVariables.size()));
         numberOfValueSubstitutions = std::max(numberOfValueSubstitutions, static_cast<unsigned>(candidate.numericVariables.size()));
     }
-    OverloadResolver resolver(types, candidates, arguments, numberOfTypeSubstitutions, numberOfValueSubstitutions);
+    OverloadResolver resolver(types, candidates, valueArguments, typeArguments, numberOfTypeSubstitutions, numberOfValueSubstitutions);
     return resolver.resolve();
 }
 

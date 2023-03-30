@@ -89,7 +89,7 @@ struct OverloadCandidate {
     AbstractType result;
 };
 
-Type* resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>&);
+Type* resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments);
 
 } // namespace WGSL
 
