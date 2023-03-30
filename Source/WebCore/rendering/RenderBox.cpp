@@ -3250,8 +3250,11 @@ LayoutUnit RenderBox::computeLogicalHeightWithoutLayout() const
 
 std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    if (is<RenderReplaced>(this))
-        return computeReplacedLogicalHeightUsing(heightType, height) + borderAndPaddingLogicalHeight();
+    if (is<RenderReplaced>(this)) {
+        if ((heightType == MinSize || heightType == MaxSize) && !replacedMinMaxLogicalHeightComputesAsNone(heightType))
+            return computeReplacedLogicalHeightUsing(heightType, height) + borderAndPaddingLogicalHeight();
+        return std::nullopt;
+    }
     if (std::optional<LayoutUnit> logicalHeight = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
         return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight.value());
     return std::nullopt;
@@ -3566,6 +3569,13 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutU
 LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Length logicalHeight) const
 {
     ASSERT(heightType == MinSize || heightType == MainOrPreferredSize || !logicalHeight.isAuto());
+#if ASSERT_ENABLED
+    // This function should get called with MinSize/MaxSize only if replacedMinMaxLogicalHeightComputesAsNone
+    // returns false, otherwise we should not try to compute those values as they may be incorrect. The caller
+    // should make sure this condition holds before calling this function
+    if (heightType == MinSize || heightType == MaxSize)
+        ASSERT(!replacedMinMaxLogicalHeightComputesAsNone(heightType));
+#endif
     if (heightType == MinSize && logicalHeight.isAuto())
         return adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit>(0));
 
