@@ -1204,8 +1204,6 @@ void WebPageProxy::close()
     if (m_isClosed)
         return;
 
-    logScrollingPerformanceData();
-
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
@@ -8439,6 +8437,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
+#if PLATFORM(MAC)
+    m_scrollPerformanceDataCollectionEnabled = false;
+#endif
     m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
 #endif
 
@@ -12086,14 +12087,6 @@ String WebPageProxy::scrollbarStateForScrollingNodeID(int scrollingNodeID, bool 
     return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
 #else
     return ""_s;
-#endif
-}
-
-void WebPageProxy::logScrollingPerformanceData()
-{
-#if PLATFORM(COCOA)
-    if (m_scrollingPerformanceData)
-        m_scrollingPerformanceData->logData();
 #endif
 }
 
