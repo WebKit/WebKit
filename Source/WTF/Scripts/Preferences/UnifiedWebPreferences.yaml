@@ -1378,20 +1378,6 @@ CanvasFiltersEnabled:
     WebCore:
       default: false
 
-CanvasNoiseInjectionEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Canvas Noise Injection"
-  humanReadableDescription: "Enable canvas (2D/WebGL) noise injection"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CanvasUsesAcceleratedDrawing:
   type: bool
   status: embedder
