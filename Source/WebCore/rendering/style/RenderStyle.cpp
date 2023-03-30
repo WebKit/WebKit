@@ -2137,7 +2137,7 @@ void RenderStyle::setFontSize(float size)
     fontCascade().update(selector);
 }
 
-void RenderStyle::setFontSizeAdjust(std::optional<float> sizeAdjust)
+void RenderStyle::setFontSizeAdjust(FontSizeAdjust sizeAdjust)
 {
     auto selector = fontCascade().fontSelector();
     auto description = fontDescription();

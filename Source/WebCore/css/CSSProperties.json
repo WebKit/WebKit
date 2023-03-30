@@ -574,13 +574,23 @@
         "font-size-adjust": {
             "inherited": true,
             "values": [
-                "none"
+                "none",
+                "ex-height",
+                "cap-height",
+                "ch-width",
+                "ic-width",
+                "ic-height"
             ],
             "codegen-properties": {
+                "converter": "FontSizeAdjust",
                 "custom": "Value",
                 "font-property": true,
                 "high-priority": true,
-                "parser-grammar": "none | <number [0,inf]>"
+                "separator": " ",
+                "parser-function": "consumeFontSizeAdjust",
+                "parser-function-allows-number-or-integer-input": true,
+                "parser-grammar-unused": "none | [ [ ex-height | cap-height | ch-width | ic-width | ic-height ]? <number [0,inf]> ]",
+                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
             },
             "specification": {
                 "category": "css-fonts",

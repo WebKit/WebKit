@@ -75,6 +75,7 @@ namespace WebCore {
 
 class FontDescription;
 struct FontCustomPlatformData;
+struct FontSizeAdjust;
 
 // This class is conceptually immutable. Once created, no instances should ever change (in an observable way).
 class FontPlatformData {
@@ -164,7 +165,7 @@ public:
     static FontPlatformData cloneWithSyntheticOblique(const FontPlatformData&, bool);
 
     static FontPlatformData cloneWithSize(const FontPlatformData&, float);
-    void updateSizeWithFontSizeAdjust(const std::optional<float>& fontSizeAdjust);
+    void updateSizeWithFontSizeAdjust(const FontSizeAdjust&);
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }

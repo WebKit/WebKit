@@ -52,6 +52,7 @@
 #include "CalculationValue.h"
 #include "FontPalette.h"
 #include "FontSelectionValueInlines.h"
+#include "FontSizeAdjust.h"
 #include "FrameDestructionObserverInlines.h"
 #include "GridPositionsResolver.h"
 #include "Length.h"
@@ -152,6 +153,7 @@ public:
 #endif
     static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
     static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
+    static FontSizeAdjust convertFontSizeAdjust(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
     static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
     static FontSelectionValue convertFontStyleAngle(const CSSValue&);
@@ -1512,6 +1514,26 @@ inline FontVariationSettings BuilderConverter::convertFontVariationSettings(Buil
         settings.insert({ feature.tag(), feature.value() });
     }
     return settings;
+}
+
+inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, const CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        if (primitiveValue.valueID() == CSSValueNone
+            || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()))
+            return FontCascadeDescription::initialFontSizeAdjust();
+
+        ASSERT(primitiveValue.isNumber());
+        return { FontSizeAdjust::Metric::ExHeight, primitiveValue.floatValue() };
+    }
+
+    ASSERT(value.isPair());
+    const auto& pair = downcast<CSSValuePair>(value);
+
+    auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair.first()).valueID());
+    float aValue = downcast<CSSPrimitiveValue>(pair.second()).floatValue();
+    return { metric, aValue };
 }
 
 #if PLATFORM(IOS_FAMILY)

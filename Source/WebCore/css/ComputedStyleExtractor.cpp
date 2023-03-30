@@ -350,12 +350,18 @@ static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const N
     return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
 }
 
-static Ref<CSSPrimitiveValue> fontSizeAdjustFromStyle(const RenderStyle& style)
+static Ref<CSSValue> fontSizeAdjustFromStyle(const RenderStyle& style)
 {
-    auto adjust = style.fontSizeAdjust();
-    if (!adjust)
+    auto fontSizeAdjust = style.fontSizeAdjust();
+    if (!fontSizeAdjust.value)
         return CSSPrimitiveValue::create(CSSValueNone);
-    return CSSPrimitiveValue::create(*adjust);
+
+    auto metric = fontSizeAdjust.metric;
+    float value = *fontSizeAdjust.value;
+    if (metric == FontSizeAdjust::Metric::ExHeight)
+        return CSSPrimitiveValue::create(value);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(metric), CSSPrimitiveValue::create(value));
 }
 
 static Ref<CSSPrimitiveValue> textSpacingTrimFromStyle(const RenderStyle& style)
@@ -2660,7 +2666,7 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
         return variantSettingsOmittingExpressible.isAllNormal()
             && fontStretch
             && fontStyle
-            && !description.fontSizeAdjust()
+            && !description.fontSizeAdjust().value
             && description.kerning() == Kerning::Auto
             && description.featureSettings().isEmpty()
             && description.opticalSizing() == FontOpticalSizing::Enabled

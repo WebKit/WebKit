@@ -58,6 +58,14 @@ small-caption
 // This has to go after the -apple-system versions.
 status-bar
 
+// font-size-adjust:
+//
+ex-height
+cap-height
+ch-width
+ic-width
+ic-height
+
 //
 // CSS_PROP_FONT_STYLE:
 //
